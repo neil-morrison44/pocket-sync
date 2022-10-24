@@ -9,7 +9,7 @@ use walkdir::WalkDir;
 struct SaveInfo {
     game: String,
     path: PathBuf,
-    date_modified: SystemTime, //DateTime<Utc>,
+    date_modified: DateTime<Utc>, //DateTime<Utc>,
 }
 #[derive(Debug)]
 enum PlatformSave {
@@ -46,19 +46,12 @@ fn find_pocket_saves(path: &PathBuf) -> Result<Vec<PlatformSave>, String> {
 
         if let Some(extension) = entry.path().extension() {
             if extension == "sav" {
-                if let Ok(metadata) = fs::metadata(entry.path()) {
-                    println!("{}", entry.path().display());
-                    if let Ok(time) = metadata.modified() {
-                        println!("{time:?}");
-
-                        saves.push(PlatformSave::PocketSave(SaveInfo {
-                            game: String::from(entry.file_name().to_str().unwrap_or("unknown")),
-                            path: PathBuf::from(entry.path()),
-                            date_modified: time,
-                        }))
-                    } else {
-                        println!("Not supported on this platform");
-                    }
+                if let Ok(time) = fs::metadata(entry.path()).and_then(|md| md.modified()) {
+                    saves.push(PlatformSave::PocketSave(SaveInfo {
+                        game: String::from(entry.file_name().to_str().unwrap_or("unknown")),
+                        path: PathBuf::from(entry.path()),
+                        date_modified: DateTime::from(time),
+                    }))
                 }
             }
         }
