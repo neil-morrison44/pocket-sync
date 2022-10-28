@@ -9,16 +9,19 @@ use walkdir::{DirEntry, WalkDir};
 use clap::Parser;
 use ftp::FtpStream;
 
+use crate::save_compare::{remove_duplicates, SaveComparison};
+
 mod cores;
-#[derive(Debug)]
-struct SaveInfo {
-    game: String,
-    path: PathBuf,
-    date_modified: u64,
-    core: cores::Core,
+mod save_compare;
+#[derive(Debug, PartialEq)]
+pub struct SaveInfo {
+    pub game: String,
+    pub path: PathBuf,
+    pub date_modified: u64,
+    pub core: cores::Core,
 }
 #[derive(Debug)]
-enum PlatformSave {
+pub enum PlatformSave {
     PocketSave(SaveInfo),
     MiSTerSave(SaveInfo),
 }
@@ -42,13 +45,46 @@ fn main() {
     println!("Hello, world!");
     let args = Args::parse();
 
-    if let Ok(saves) = find_pocket_saves(&args.path) {
-        dbg!(saves);
+    if let Ok(pocket_saves) = find_pocket_saves(&args.path) {
+        dbg!(&pocket_saves);
+
+        if let Ok(mister_saves) =
+            find_mister_saves(&args.host_mister, &args.user_mister, &args.password_mister)
+        {
+            dbg!(&mister_saves);
+
+            let mut save_comparisons: Vec<SaveComparison> = Vec::new();
+
+            for pocket_save in &pocket_saves {
+                save_comparisons.push(save_compare::checkSave(
+                    &pocket_save,
+                    &pocket_saves,
+                    &mister_saves,
+                    0,
+                ))
+            }
+
+            for mister_save in &mister_saves {
+                save_comparisons.push(save_compare::checkSave(
+                    &mister_save,
+                    &pocket_saves,
+                    &mister_saves,
+                    0,
+                ))
+            }
+
+            let save_comparisons = remove_duplicates(save_comparisons);
+
+            dbg!(save_comparisons);
+        } else {
+            println!("Failed to get MiSTer saves")
+        }
+    } else {
+        println!("Failed to get Pocket saves")
     }
 
-    let mister_saves =
-        find_mister_saves(&args.host_mister, &args.user_mister, &args.password_mister).unwrap();
-    dbg!(mister_saves);
+    // let mister_saves =
+    //     find_mister_saves(&args.host_mister, &args.user_mister, &args.password_mister).unwrap();
 }
 
 fn find_pocket_saves(path: &PathBuf) -> Result<Vec<PlatformSave>, String> {
