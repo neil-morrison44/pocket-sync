@@ -74,7 +74,7 @@ fn find_matching_mister_save<'a>(
 ) -> Option<&'a SaveInfo> {
     for mister_save in saves {
         if let PlatformSave::MiSTerSave(mister_save) = mister_save {
-            if (mister_save.core == save.core && mister_save.game == save.game) {
+            if mister_save.core == save.core && mister_save.game == save.game {
                 return Some(&mister_save);
             }
         }
@@ -88,7 +88,7 @@ fn find_matching_pocket_save<'a>(
 ) -> Option<&'a SaveInfo> {
     for pocket_save in saves {
         if let PlatformSave::PocketSave(pocket_save) = pocket_save {
-            if (pocket_save.core == save.core && pocket_save.game == save.game) {
+            if pocket_save.core == save.core && pocket_save.game == save.game {
                 return Some(&pocket_save);
             }
         }

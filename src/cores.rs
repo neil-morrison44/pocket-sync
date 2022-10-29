@@ -1,147 +1,128 @@
-#[derive(Debug)]
-pub enum Core {
-    MiSTer(String),
-    Pocket(String),
+#[derive(Debug, PartialEq)]
+pub enum SupportedCore {
+    GB,
+    GBC,
+    GBA,
+    TGFX16,
+    NES,
+    SNES,
+    GameGear,
+    MasterSystem,
+    Genesis,
+    NEOGEO,
+    Arduboy,
+    SuperVision,
 }
 
-impl PartialEq for Core {
-    fn eq(&self, other: &Core) -> bool {
-        match self {
-            Core::MiSTer(value_a) => match other {
-                Core::MiSTer(value_b) => value_a == value_b,
-                Core::Pocket(value_b) => value_a == &pocket_core_to_mister_core(value_b),
-            },
-            Core::Pocket(value_a) => match other {
-                Core::Pocket(value_b) => value_a == value_b,
-                Core::MiSTer(value_b) => value_a == &mister_core_to_pocket_core(value_b),
-            },
+pub trait TransformCore {
+    fn to_pocket(&self) -> String;
+    fn to_mister(&self) -> String;
+
+    fn from_pocket(name: &str) -> Option<SupportedCore>;
+    fn from_mister(name: &str) -> Option<SupportedCore>;
+}
+
+impl TransformCore for SupportedCore {
+    fn from_mister(name: &str) -> Option<SupportedCore> {
+        // Some cores on the MiSTer do double duty (GAMEBOY, SMS) will need to work out
+        // How to deal with that (save file header? try to find the full rom name?)
+        match name {
+            "Arduboy" => Some(SupportedCore::Arduboy),
+            "NES" => Some(SupportedCore::NES),
+            "SNES" => Some(SupportedCore::SNES),
+            "GAMEBOY" => Some(SupportedCore::GBC),
+            "GBA" => Some(SupportedCore::GBA),
+            "SMS" => Some(SupportedCore::MasterSystem),
+            "TGFX16" => Some(SupportedCore::TGFX16),
+            "NEOGEO" => Some(SupportedCore::NEOGEO),
+            "Genesis" => Some(SupportedCore::Genesis),
+            "SuperVision" => Some(SupportedCore::SuperVision),
+            _ => None,
         }
     }
+
+    fn from_pocket(name: &str) -> Option<SupportedCore> {
+        match name {
+            "arduboy" => Some(SupportedCore::Arduboy),
+            "gb" => Some(SupportedCore::GB),
+            "gba" => Some(SupportedCore::GBA),
+            "gbc" => Some(SupportedCore::GBC),
+            "geneis" => Some(SupportedCore::Genesis),
+            "gg" => Some(SupportedCore::GameGear),
+            "nes" => Some(SupportedCore::NES),
+            "ng" => Some(SupportedCore::NEOGEO),
+            "pce" => Some(SupportedCore::TGFX16),
+            "sms" => Some(SupportedCore::MasterSystem),
+            "snes" => Some(SupportedCore::SNES),
+            "supervision" => Some(SupportedCore::SuperVision),
+            _ => None,
+        }
+    }
+
+    fn to_mister(&self) -> String {
+        String::from(match self {
+            SupportedCore::Arduboy => "Arduboy",
+            SupportedCore::GameGear => "SMS",
+            SupportedCore::GB => "GAMEBOY",
+            SupportedCore::GBA => "GBA",
+            SupportedCore::GBC => "GAMEBOY",
+            SupportedCore::Genesis => "Genesis",
+            SupportedCore::MasterSystem => "SMS",
+            SupportedCore::NEOGEO => "NEOGEO",
+            SupportedCore::NES => "NES",
+            SupportedCore::SNES => "SNES",
+            SupportedCore::SuperVision => "SuperVision",
+            SupportedCore::TGFX16 => "TGFX16",
+        })
+    }
+
+    fn to_pocket(&self) -> String {
+        String::from(match self {
+            SupportedCore::Arduboy => "arduboy",
+            SupportedCore::GameGear => "gg",
+            SupportedCore::GB => "gb",
+            SupportedCore::GBA => "gba",
+            SupportedCore::GBC => "gbc",
+            SupportedCore::Genesis => "genesis",
+            SupportedCore::MasterSystem => "sms",
+            SupportedCore::NEOGEO => "ng",
+            SupportedCore::NES => "nes",
+            SupportedCore::SNES => "snes",
+            SupportedCore::SuperVision => "supervision",
+            SupportedCore::TGFX16 => "pce",
+        })
+    }
 }
 
-fn mister_core_to_pocket_core(core: &str) -> String {
-    // might be better to load these in
-    if core == "NES" {
-        return String::from("nes");
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn self_compare() {
+        let mister_core_a = SupportedCore::from_mister("SNES").unwrap();
+        let mister_core_b = SupportedCore::from_mister("SNES").unwrap();
+        assert_eq!(mister_core_a, mister_core_b);
+
+        let mister_core_a = SupportedCore::from_mister("NES").unwrap();
+        assert_ne!(mister_core_a, mister_core_b);
     }
 
-    if core == "GAMEBOY" {
-        return String::from("gbc");
+    #[test]
+    fn things_that_should_match() {
+        let mister_core = SupportedCore::from_mister("SNES").unwrap();
+        let pocket_core = SupportedCore::from_pocket("snes").unwrap();
+        assert_eq!(mister_core, pocket_core);
+
+        let mister_core = SupportedCore::from_mister("GAMEBOY").unwrap();
+        let pocket_core = SupportedCore::from_pocket("gbc").unwrap();
+        assert_eq!(pocket_core.to_mister(), mister_core.to_mister());
     }
 
-    if core == "GBA" {
-        return String::from("gba");
+    #[test]
+    fn things_that_should_return_none() {
+        let mister_core = SupportedCore::from_mister("PSX");
+        let pocket_core = SupportedCore::from_pocket("galaga");
+        assert_eq!(mister_core, None);
+        assert_eq!(pocket_core, None);
     }
-
-    if core == "Genesis" {
-        return String::from("genesis");
-    }
-
-    if core == "NEOGEO" {
-        return String::from("ng");
-    }
-
-    if core == "TGFX16" {
-        return String::from("pce");
-    }
-
-    if core == "SNES" {
-        return String::from("snes");
-    }
-
-    if core == "SMS" {
-        return String::from("sms");
-    }
-
-    if core == "Arduboy" {
-        return String::from("arduboy");
-    }
-
-    if core == "SuperVision" {
-        return String::from("supervision");
-    }
-
-    return String::from(core.to_ascii_lowercase());
-}
-
-fn pocket_core_to_mister_core(core: &str) -> String {
-    // might be better to load these in
-    if core == "nes" {
-        return String::from("NES");
-    }
-
-    if core == "gbc" {
-        return String::from("GAMEBOY");
-    }
-
-    if core == "gb" {
-        return String::from("GAMEBOY");
-    }
-
-    if core == "gba" {
-        return String::from("GBA");
-    }
-
-    if core == "genesis" {
-        return String::from("Genesis");
-    }
-
-    if core == "ng" {
-        return String::from("NEOGEO");
-    }
-
-    if core == "pce" {
-        return String::from("TGFX16");
-    }
-
-    if core == "snes" {
-        return String::from("SNES");
-    }
-
-    if core == "sms" {
-        return String::from("SMS");
-    }
-
-    if core == "gg" {
-        return String::from("SMS");
-    }
-
-    if core == "arduboy" {
-        return String::from("Arduboy");
-    }
-
-    if core == "supervision" {
-        return String::from("SuperVision");
-    }
-
-    return String::from(core.to_ascii_lowercase());
-}
-
-#[test]
-fn self_compare() {
-    let mister_core_a = Core::MiSTer(String::from("SNES"));
-    let mister_core_b = Core::MiSTer(String::from("SNES"));
-    assert_eq!(mister_core_a, mister_core_b);
-
-    let mister_core_a = Core::MiSTer(String::from("PSX"));
-    assert_ne!(mister_core_a, mister_core_b);
-}
-
-#[test]
-fn things_that_should_match() {
-    let mister_core = Core::MiSTer(String::from("SNES"));
-    let pocket_core = Core::Pocket(String::from("snes"));
-    assert_eq!(mister_core, pocket_core);
-
-    let mister_core = Core::MiSTer(String::from("GAMEBOY"));
-    let pocket_core = Core::Pocket(String::from("gbc"));
-    assert_eq!(pocket_core, mister_core);
-}
-
-#[test]
-fn things_that_shouldnt_match() {
-    let mister_core = Core::MiSTer(String::from("PSX"));
-    let pocket_core = Core::Pocket(String::from("snes"));
-    assert_ne!(mister_core, pocket_core);
-    assert_ne!(pocket_core, mister_core);
 }

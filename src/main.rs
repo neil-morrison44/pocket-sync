@@ -2,7 +2,7 @@ mod config_file;
 mod cores;
 mod save_compare;
 
-use cores::Core;
+use cores::{SupportedCore, TransformCore};
 use std::{
     fs,
     path::{Path, PathBuf},
@@ -21,7 +21,7 @@ pub struct SaveInfo {
     pub game: String,
     pub path: PathBuf,
     pub date_modified: u64,
-    pub core: cores::Core,
+    pub core: SupportedCore,
 }
 #[derive(Debug)]
 pub enum PlatformSave {
@@ -106,15 +106,18 @@ fn find_pocket_saves(path: &PathBuf) -> Result<Vec<PlatformSave>, String> {
         if let Some(extension) = entry.path().extension() {
             if extension == "sav" {
                 if let Ok(time) = fs::metadata(entry.path()).and_then(|md| md.modified()) {
-                    saves.push(PlatformSave::PocketSave(SaveInfo {
-                        game: String::from(entry.file_name().to_str().unwrap_or("unknown")),
-                        path: PathBuf::from(entry.path()),
-                        date_modified: time
-                            .duration_since(SystemTime::UNIX_EPOCH)
-                            .unwrap_or(Duration::from_secs(0))
-                            .as_secs(),
-                        core: Core::Pocket(get_pocket_system_name(&entry)),
-                    }))
+                    if let Some(core) = SupportedCore::from_pocket(&get_pocket_system_name(&entry))
+                    {
+                        saves.push(PlatformSave::PocketSave(SaveInfo {
+                            game: String::from(entry.file_name().to_str().unwrap_or("unknown")),
+                            path: PathBuf::from(entry.path()),
+                            date_modified: time
+                                .duration_since(SystemTime::UNIX_EPOCH)
+                                .unwrap_or(Duration::from_secs(0))
+                                .as_secs(),
+                            core,
+                        }))
+                    }
                 }
             }
         }
@@ -152,11 +155,6 @@ fn find_mister_saves(
     let mut saves: Vec<PlatformSave> = Vec::new();
     println!("Current directory: {}", ftp_stream.pwd()?);
     let _ = ftp_stream.cwd("/media/fat/saves")?;
-
-    println!("Current directory: {}", ftp_stream.pwd()?);
-
-    // println!("File List: {:?}", ftp_stream.list(None)?);
-
     let systems = ftp_stream.nlst(None)?;
 
     for system in systems {
@@ -167,12 +165,14 @@ fn find_mister_saves(
 
         for system_save in system_saves {
             if let Some(modtime) = ftp_stream.mdtm(&system_save)? {
-                saves.push(PlatformSave::MiSTerSave(SaveInfo {
-                    game: String::from(&system_save),
-                    path: PathBuf::from(format!("/media/fat/saves/{system}/{system_save}")),
-                    date_modified: modtime.num_seconds_from_unix_epoch() as u64,
-                    core: Core::MiSTer(String::from(&system)),
-                }))
+                if let Some(core) = SupportedCore::from_mister(&system) {
+                    saves.push(PlatformSave::MiSTerSave(SaveInfo {
+                        game: String::from(&system_save),
+                        path: PathBuf::from(format!("/media/fat/saves/{system}/{system_save}")),
+                        date_modified: modtime.num_seconds_from_unix_epoch() as u64,
+                        core,
+                    }))
+                }
             }
         }
 
