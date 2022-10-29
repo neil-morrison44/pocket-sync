@@ -1,28 +1,52 @@
 mod config_file;
 mod cores;
+mod mister_ftp;
 mod save_compare;
+mod user_input;
 
+use chrono::TimeZone;
+use clap::Parser;
 use cores::{SupportedCore, TransformCore};
 use std::{
-    fs,
+    fmt, fs,
     path::{Path, PathBuf},
-    time::{Duration, SystemTime},
+    time::{Duration, SystemTime, UNIX_EPOCH},
 };
 use walkdir::{DirEntry, WalkDir};
 
-use clap::Parser;
-use ftp::FtpStream;
-
-use crate::config_file::PocketSyncConfig;
-use crate::save_compare::{remove_duplicates, SaveComparison};
+use crate::{
+    config_file::PocketSyncConfig,
+    mister_ftp::logged_in_ftp,
+    user_input::{report_status, UserInput},
+};
+use crate::{
+    save_compare::{remove_duplicates, SaveComparison},
+    user_input::choose_save,
+};
 
 #[derive(Debug, PartialEq)]
 pub struct SaveInfo {
     pub game: String,
     pub path: PathBuf,
-    pub date_modified: u64,
+    pub date_modified: i64,
     pub core: SupportedCore,
 }
+
+impl fmt::Display for SaveInfo {
+    // This trait requires `fmt` with this exact signature.
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let time = chrono::Local.timestamp(self.date_modified.try_into().unwrap(), 0);
+
+        write!(
+            f,
+            "Name: {}\nLast Modified: {}\nCore: {}",
+            self.game,
+            time,
+            self.core.to_pocket()
+        )
+    }
+}
+
 #[derive(Debug)]
 pub enum PlatformSave {
     PocketSave(SaveInfo),
@@ -33,13 +57,10 @@ pub enum PlatformSave {
 #[command(author, version, about, long_about = None)]
 struct Args {
     path: PathBuf,
-
     #[arg(long)]
     host_mister: String,
-
     #[arg(long, default_value = "root")]
     user_mister: String,
-
     #[arg(long, default_value = "1")]
     password_mister: String,
 }
@@ -47,19 +68,12 @@ struct Args {
 fn main() {
     println!("Hello, world!");
     let args = Args::parse();
-
-    let config = PocketSyncConfig::read(&args.path);
-
-    dbg!(config);
+    let mut config = PocketSyncConfig::read(&args.path);
 
     if let Ok(pocket_saves) = find_pocket_saves(&args.path) {
-        dbg!(&pocket_saves);
-
         if let Ok(mister_saves) =
             find_mister_saves(&args.host_mister, &args.user_mister, &args.password_mister)
         {
-            dbg!(&mister_saves);
-
             let mut save_comparisons: Vec<SaveComparison> = Vec::new();
 
             for pocket_save in &pocket_saves {
@@ -67,7 +81,7 @@ fn main() {
                     &pocket_save,
                     &pocket_saves,
                     &mister_saves,
-                    0,
+                    config.last_run_timestamp,
                 ))
             }
 
@@ -76,22 +90,71 @@ fn main() {
                     &mister_save,
                     &pocket_saves,
                     &mister_saves,
-                    0,
+                    config.last_run_timestamp,
                 ))
             }
 
             let save_comparisons = remove_duplicates(save_comparisons);
 
-            dbg!(save_comparisons);
+            let user_choice = report_status(&save_comparisons);
+
+            match user_choice {
+                UserInput::Cancel => {
+                    println!("Ok, exiting!");
+                    std::process::exit(0);
+                }
+                _ => {}
+            }
+
+            for save_comp in save_comparisons {
+                let choice = match &save_comp {
+                    SaveComparison::Conflict(save_pair) => choose_save(&save_pair),
+                    SaveComparison::MiSTerNewer(_) | SaveComparison::MiSTerOnly(_) => {
+                        UserInput::UseMister
+                    }
+                    SaveComparison::PocketNewer(_) | SaveComparison::PocketOnly(_) => {
+                        UserInput::UsePocket
+                    }
+                    SaveComparison::NoSyncNeeded => UserInput::Skip,
+                };
+
+                if let Ok(mut ftp_stream) =
+                    logged_in_ftp(&args.host_mister, &args.user_mister, &args.password_mister)
+                {
+                    match choice {
+                        UserInput::UseMister => {
+                            save_comp
+                                .use_mister(&mut ftp_stream, &args.path)
+                                .expect("Failed to copy save from MiSTer");
+                        }
+                        UserInput::UsePocket => {
+                            save_comp
+                                .use_pocket(&mut ftp_stream, &args.path)
+                                .expect("Failed to copy save from Pocket");
+                        }
+                        _ => {}
+                    }
+                }
+            }
+
+            let start = SystemTime::now();
+            config.last_run_timestamp = start
+                .duration_since(UNIX_EPOCH)
+                .expect("Time went backwards")
+                .as_secs() as i64;
+
+            config.write(&args.path);
+
+            println!("All done!");
+            std::process::exit(0);
         } else {
-            println!("Failed to get MiSTer saves")
+            println!("Failed to get MiSTer saves");
+            std::process::exit(1);
         }
     } else {
-        println!("Failed to get Pocket saves")
+        println!("Failed to get Pocket saves");
+        std::process::exit(1);
     }
-
-    // let mister_saves =
-    //     find_mister_saves(&args.host_mister, &args.user_mister, &args.password_mister).unwrap();
 }
 
 fn find_pocket_saves(path: &PathBuf) -> Result<Vec<PlatformSave>, String> {
@@ -114,7 +177,7 @@ fn find_pocket_saves(path: &PathBuf) -> Result<Vec<PlatformSave>, String> {
                             date_modified: time
                                 .duration_since(SystemTime::UNIX_EPOCH)
                                 .unwrap_or(Duration::from_secs(0))
-                                .as_secs(),
+                                .as_secs() as i64,
                             core,
                         }))
                     }
@@ -149,9 +212,8 @@ fn find_mister_saves(
     host: &str,
     user: &str,
     password: &str,
-) -> Result<Vec<PlatformSave>, ftp::FtpError> {
-    let mut ftp_stream = FtpStream::connect(format!("{host}:21"))?;
-    ftp_stream.login(user, password)?;
+) -> Result<Vec<PlatformSave>, suppaftp::FtpError> {
+    let mut ftp_stream = logged_in_ftp(host, user, password)?;
     let mut saves: Vec<PlatformSave> = Vec::new();
     println!("Current directory: {}", ftp_stream.pwd()?);
     let _ = ftp_stream.cwd("/media/fat/saves")?;
@@ -164,20 +226,19 @@ fn find_mister_saves(
         let system_saves = ftp_stream.nlst(None)?;
 
         for system_save in system_saves {
-            if let Some(modtime) = ftp_stream.mdtm(&system_save)? {
-                if let Some(core) = SupportedCore::from_mister(&system) {
-                    saves.push(PlatformSave::MiSTerSave(SaveInfo {
-                        game: String::from(&system_save),
-                        path: PathBuf::from(format!("/media/fat/saves/{system}/{system_save}")),
-                        date_modified: modtime.num_seconds_from_unix_epoch() as u64,
-                        core,
-                    }))
-                }
+            let modtime = ftp_stream.mdtm(&system_save)?;
+            if let Some(core) = SupportedCore::from_mister(&system) {
+                saves.push(PlatformSave::MiSTerSave(SaveInfo {
+                    game: String::from(&system_save),
+                    path: PathBuf::from(format!("/media/fat/saves/{system}/{system_save}")),
+                    date_modified: modtime.timestamp_nanos() / 1000,
+                    core,
+                }))
             }
         }
 
         let _ = ftp_stream.cwd("..")?;
     }
-
+    let _ = ftp_stream.quit()?;
     return Ok(saves);
 }

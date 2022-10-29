@@ -3,8 +3,8 @@ use std::{fs, io::ErrorKind, path::PathBuf};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PocketSyncConfig {
-    last_run_timestamp: Option<u64>,
-    ignore_list: Vec<String>,
+    pub last_run_timestamp: i64,
+    pub ignore_list: Vec<String>,
 }
 
 impl PocketSyncConfig {
@@ -13,7 +13,7 @@ impl PocketSyncConfig {
         if let Ok(data) = fs::read_to_string(&json_path).or_else(|err| match err.kind() {
             ErrorKind::NotFound => {
                 let default_struct = PocketSyncConfig {
-                    last_run_timestamp: None,
+                    last_run_timestamp: 0,
                     ignore_list: vec![],
                 };
 

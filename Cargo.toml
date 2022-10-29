@@ -6,8 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+chrono = "0.4.22"
 clap = { version = "4.0.18", features = ["derive"] }
-ftp = "3.0.1"
+filetime = "0.2.18"
+suppaftp = "4.5.2"
+question = "0.2.2"
 serde = { version = "1.0.147", features = ["derive"] }
 serde_json = "1.0.87"
 walkdir = "2.3.2"
