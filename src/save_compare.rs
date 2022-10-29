@@ -14,7 +14,7 @@ pub enum SaveComparison<'a> {
     Conflict(SavePair<'a>),
 }
 
-pub fn checkSave<'a>(
+pub fn check_save<'a>(
     save: &'a PlatformSave,
     pocket_saves: &'a Vec<PlatformSave>,
     mister_saves: &'a Vec<PlatformSave>,

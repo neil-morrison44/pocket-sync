@@ -1,3 +1,7 @@
+mod config_file;
+mod cores;
+mod save_compare;
+
 use cores::Core;
 use std::{
     fs,
@@ -9,10 +13,9 @@ use walkdir::{DirEntry, WalkDir};
 use clap::Parser;
 use ftp::FtpStream;
 
+use crate::config_file::PocketSyncConfig;
 use crate::save_compare::{remove_duplicates, SaveComparison};
 
-mod cores;
-mod save_compare;
 #[derive(Debug, PartialEq)]
 pub struct SaveInfo {
     pub game: String,
@@ -45,6 +48,10 @@ fn main() {
     println!("Hello, world!");
     let args = Args::parse();
 
+    let config = PocketSyncConfig::read(&args.path);
+
+    dbg!(config);
+
     if let Ok(pocket_saves) = find_pocket_saves(&args.path) {
         dbg!(&pocket_saves);
 
@@ -56,7 +63,7 @@ fn main() {
             let mut save_comparisons: Vec<SaveComparison> = Vec::new();
 
             for pocket_save in &pocket_saves {
-                save_comparisons.push(save_compare::checkSave(
+                save_comparisons.push(save_compare::check_save(
                     &pocket_save,
                     &pocket_saves,
                     &mister_saves,
@@ -65,7 +72,7 @@ fn main() {
             }
 
             for mister_save in &mister_saves {
-                save_comparisons.push(save_compare::checkSave(
+                save_comparisons.push(save_compare::check_save(
                     &mister_save,
                     &pocket_saves,
                     &mister_saves,
