@@ -36,7 +36,6 @@ impl fmt::Display for SaveInfo {
     // This trait requires `fmt` with this exact signature.
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let time = chrono::Local.timestamp(self.date_modified.try_into().unwrap(), 0);
-
         write!(
             f,
             "Name: {}\nLast Modified: {}\nCore: {}",
@@ -66,7 +65,6 @@ struct Args {
 }
 
 fn main() {
-    println!("Hello, world!");
     let args = Args::parse();
     let mut config = PocketSyncConfig::read(&args.path);
 
@@ -95,7 +93,6 @@ fn main() {
             }
 
             let save_comparisons = remove_duplicates(save_comparisons);
-
             let user_choice = report_status(&save_comparisons);
 
             match user_choice {
@@ -117,6 +114,10 @@ fn main() {
                     }
                     SaveComparison::NoSyncNeeded => UserInput::Skip,
                 };
+
+                if choice == UserInput::Skip {
+                    continue;
+                }
 
                 if let Ok(mut ftp_stream) =
                     logged_in_ftp(&args.host_mister, &args.user_mister, &args.password_mister)
@@ -143,6 +144,8 @@ fn main() {
                 .expect("Time went backwards")
                 .as_secs() as i64;
 
+            // Push a little bit into the future so an immediate re-run finds nothing
+            config.last_run_timestamp += 60;
             config.write(&args.path);
 
             println!("All done!");
@@ -158,6 +161,7 @@ fn main() {
 }
 
 fn find_pocket_saves(path: &PathBuf) -> Result<Vec<PlatformSave>, String> {
+    println!("Scanning Pocket files");
     let mut saves: Vec<PlatformSave> = Vec::new();
     let saves_path = Path::new(path).join("Saves");
 
@@ -213,25 +217,23 @@ fn find_mister_saves(
     user: &str,
     password: &str,
 ) -> Result<Vec<PlatformSave>, suppaftp::FtpError> {
+    println!("Connecting to MiSTer");
     let mut ftp_stream = logged_in_ftp(host, user, password)?;
     let mut saves: Vec<PlatformSave> = Vec::new();
-    println!("Current directory: {}", ftp_stream.pwd()?);
     let _ = ftp_stream.cwd("/media/fat/saves")?;
     let systems = ftp_stream.nlst(None)?;
 
     for system in systems {
-        println!("Found Core: {}", &system);
+        print!(".");
         let _ = ftp_stream.cwd(&system)?;
-
         let system_saves = ftp_stream.nlst(None)?;
-
         for system_save in system_saves {
             let modtime = ftp_stream.mdtm(&system_save)?;
             if let Some(core) = SupportedCore::from_mister(&system) {
                 saves.push(PlatformSave::MiSTerSave(SaveInfo {
                     game: String::from(&system_save),
                     path: PathBuf::from(format!("/media/fat/saves/{system}/{system_save}")),
-                    date_modified: modtime.timestamp_nanos() / 1000,
+                    date_modified: modtime.timestamp(),
                     core,
                 }))
             }
@@ -240,5 +242,6 @@ fn find_mister_saves(
         let _ = ftp_stream.cwd("..")?;
     }
     let _ = ftp_stream.quit()?;
+    print!("\n");
     return Ok(saves);
 }

@@ -2,13 +2,13 @@ use question::{Answer, Question};
 
 use crate::save_compare::{SaveComparison, SavePair};
 
+#[derive(PartialEq)]
 pub enum UserInput {
     Ok,
     Cancel,
     UseMister,
     UsePocket,
     Skip,
-    AddToIgnoreList,
 }
 
 pub fn choose_save(save_pair: &SavePair) -> UserInput {
@@ -32,13 +32,18 @@ pub fn report_status(saves: &Vec<SaveComparison>) -> UserInput {
     let (mister_count, pocket_count, conflict_count, no_sync_needed_count) =
         count_save_types(&saves);
     println!(
-        "Found {} Saves; with {} conflicts, {} newer MiSTer saves, {} newer pocket saves, and {} which don't need synced",
+        "Found {} Saves\nWith {} conflicts, {} newer MiSTer saves, {} newer Pocket saves, and {} which don't need synced",
         saves.len(),
         conflict_count,
         mister_count,
         pocket_count,
         no_sync_needed_count
     );
+
+    if saves.len() == no_sync_needed_count as usize {
+        println!("No saves to sync! Exiting...");
+        std::process::exit(0);
+    }
 
     let answer = Question::new("Do you want to continue the sync?")
         .yes_no()

@@ -4,7 +4,6 @@ use std::{fs, io::ErrorKind, path::PathBuf};
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PocketSyncConfig {
     pub last_run_timestamp: i64,
-    pub ignore_list: Vec<String>,
 }
 
 impl PocketSyncConfig {
@@ -14,7 +13,6 @@ impl PocketSyncConfig {
             ErrorKind::NotFound => {
                 let default_struct = PocketSyncConfig {
                     last_run_timestamp: 0,
-                    ignore_list: vec![],
                 };
 
                 default_struct.write(pocket_path);

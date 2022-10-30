@@ -38,7 +38,7 @@ impl<'a> fmt::Display for SavePair<'a> {
     // This trait requires `fmt` with this exact signature.
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let titles = match self.is_pocket_newer() {
-            true => ("-- Pocket (newer)", "-- Mister (older)"),
+            true => ("-- Pocket (newer)", "-- MiSTer (older)"),
             false => ("-- MiSTer (newer)", "-- Pocket (older)"),
         };
 
@@ -69,42 +69,45 @@ impl SaveComparison<'_> {
         ftp_stream: &mut suppaftp::FtpStream,
         pocket_path: &PathBuf,
     ) -> Result<(), suppaftp::FtpError> {
-        let path = match self {
-            SaveComparison::MiSTerOnly(save_info) => &save_info.path,
+        let mister_save_info = match self {
+            SaveComparison::MiSTerOnly(save_info) => &save_info,
             Self::PocketNewer(save_pair)
             | Self::MiSTerNewer(save_pair)
-            | Self::Conflict(save_pair) => &save_pair.mister.path,
+            | Self::Conflict(save_pair) => &save_pair.mister,
             _ => {
                 panic!("Attempt to use a non-existent MiSTer save");
             }
         };
-
+        let path = &mister_save_info.path;
         let _ = ftp_stream.cwd(path.parent().unwrap().to_path_buf().to_str().unwrap())?;
         let file_name = path.file_name().unwrap();
         let mut save_file = ftp_stream.retr_as_buffer(file_name.to_str().unwrap())?;
 
         let pocket_save_path = match self {
-            SaveComparison::MiSTerOnly(save_info) => {
-                pocket_path.join(format!("/Saves/{}/common", save_info.core.to_pocket()))
-            }
+            SaveComparison::MiSTerOnly(save_info) => pocket_path.join(format!(
+                "Saves/{}/{}/{}",
+                save_info.core.to_pocket(),
+                save_info.core.pocket_folder(),
+                save_info.game
+            )),
             Self::PocketNewer(save_pair)
             | Self::MiSTerNewer(save_pair)
-            | Self::Conflict(save_pair) => save_pair.pocket.path.clone(),
+            | Self::Conflict(save_pair) => pocket_path.join(save_pair.pocket.path.clone()),
             Self::PocketOnly(_) => panic!("Attempt to use a non-existent MiSTer save"),
             Self::NoSyncNeeded => panic!("Attempt to sync when NoSyncNeeded"),
         };
 
         println!(
-            "Copying {} to {}",
-            &path.to_str().unwrap(),
-            &pocket_save_path.to_str().unwrap()
+            "Copying {} ({}) \nMiSTer -> Pocket",
+            mister_save_info.game,
+            mister_save_info.core.to_pocket()
         );
 
-        if let Ok(mut file) = File::create(pocket_save_path) {
-            let mut buf: Vec<u8> = Vec::new();
-            save_file.read_to_end(&mut buf).unwrap();
-            file.write(&buf).unwrap();
-        }
+        let mut file = File::create(pocket_save_path).unwrap();
+        let mut buf: Vec<u8> = Vec::new();
+        save_file.read_to_end(&mut buf).unwrap();
+        file.write(&buf).unwrap();
+
         return Ok(());
     }
 
@@ -113,26 +116,30 @@ impl SaveComparison<'_> {
         ftp_stream: &mut suppaftp::FtpStream,
         pocket_path: &PathBuf,
     ) -> Result<(), suppaftp::FtpError> {
-        let path = match self {
-            SaveComparison::PocketOnly(save_info) => &save_info.path,
+        let pocket_save_info = match self {
+            SaveComparison::PocketOnly(save_info) => &save_info,
             Self::PocketNewer(save_pair)
             | Self::MiSTerNewer(save_pair)
-            | Self::Conflict(save_pair) => &save_pair.pocket.path,
+            | Self::Conflict(save_pair) => &save_pair.pocket,
             _ => {
                 panic!("Attempt to use a non-existent Pocket save");
             }
         };
-
+        let path = &pocket_save_info.path;
         let file_name = path.file_name().unwrap();
-        // let mut save_file = ftp_stream.simple_retr(file_name.to_str().unwrap())?;
-
         let mister_save_path = match self {
             SaveComparison::PocketOnly(save_info) => {
                 pocket_path.join(format!("/media/fat/saves/{}", save_info.core.to_mister()))
             }
             Self::PocketNewer(save_pair)
             | Self::MiSTerNewer(save_pair)
-            | Self::Conflict(save_pair) => save_pair.mister.path.clone(),
+            | Self::Conflict(save_pair) => save_pair
+                .mister
+                .path
+                .clone()
+                .parent()
+                .unwrap()
+                .to_path_buf(),
             Self::MiSTerOnly(_) => panic!("Attempt to use a non-existent MiSTer save"),
             Self::NoSyncNeeded => panic!("Attempt to sync when NoSyncNeeded"),
         };
@@ -142,7 +149,11 @@ impl SaveComparison<'_> {
         let mister_path_buf = &mister_save_path.to_path_buf();
         let mister_path = mister_path_buf.to_str().unwrap();
 
-        println!("Copying {} to {mister_path}", &path.to_str().unwrap());
+        println!(
+            "Copying {} ({}) \nPocket -> MiSTer\n---",
+            pocket_save_info.game,
+            pocket_save_info.core.to_mister()
+        );
 
         ftp_stream.cwd(mister_path)?;
         ftp_stream.put_file(file_name.to_str().unwrap(), &mut file)?;
@@ -240,8 +251,13 @@ pub fn remove_duplicates<'a>(save_comparisons: Vec<SaveComparison<'a>>) -> Vec<S
     let mut singles: Vec<SaveComparison> = Vec::new();
 
     for save_comparison in save_comparisons {
-        if !singles.contains(&save_comparison) {
-            singles.push(save_comparison)
+        match &save_comparison {
+            SaveComparison::NoSyncNeeded => singles.push(save_comparison),
+            _ => {
+                if !singles.contains(&save_comparison) {
+                    singles.push(save_comparison)
+                }
+            }
         }
     }
 

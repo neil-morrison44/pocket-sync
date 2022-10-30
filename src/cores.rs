@@ -20,43 +20,26 @@ pub trait TransformCore {
 
     fn from_pocket(name: &str) -> Option<SupportedCore>;
     fn from_mister(name: &str) -> Option<SupportedCore>;
+
+    fn pocket_folder(&self) -> String;
 }
 
 impl TransformCore for SupportedCore {
-    fn from_mister(name: &str) -> Option<SupportedCore> {
-        // Some cores on the MiSTer do double duty (GAMEBOY, SMS) will need to work out
-        // How to deal with that (save file header? try to find the full rom name?)
-        match name {
-            "Arduboy" => Some(SupportedCore::Arduboy),
-            "NES" => Some(SupportedCore::NES),
-            "SNES" => Some(SupportedCore::SNES),
-            "GAMEBOY" => Some(SupportedCore::GBC),
-            "GBA" => Some(SupportedCore::GBA),
-            "SMS" => Some(SupportedCore::MasterSystem),
-            "TGFX16" => Some(SupportedCore::TGFX16),
-            "NEOGEO" => Some(SupportedCore::NEOGEO),
-            "Genesis" => Some(SupportedCore::Genesis),
-            "SuperVision" => Some(SupportedCore::SuperVision),
-            _ => None,
-        }
-    }
-
-    fn from_pocket(name: &str) -> Option<SupportedCore> {
-        match name {
-            "arduboy" => Some(SupportedCore::Arduboy),
-            "gb" => Some(SupportedCore::GB),
-            "gba" => Some(SupportedCore::GBA),
-            "gbc" => Some(SupportedCore::GBC),
-            "geneis" => Some(SupportedCore::Genesis),
-            "gg" => Some(SupportedCore::GameGear),
-            "nes" => Some(SupportedCore::NES),
-            "ng" => Some(SupportedCore::NEOGEO),
-            "pce" => Some(SupportedCore::TGFX16),
-            "sms" => Some(SupportedCore::MasterSystem),
-            "snes" => Some(SupportedCore::SNES),
-            "supervision" => Some(SupportedCore::SuperVision),
-            _ => None,
-        }
+    fn to_pocket(&self) -> String {
+        String::from(match self {
+            SupportedCore::Arduboy => "arduboy",
+            SupportedCore::GameGear => "gg",
+            SupportedCore::GB => "gb",
+            SupportedCore::GBA => "gba",
+            SupportedCore::GBC => "gbc",
+            SupportedCore::Genesis => "genesis",
+            SupportedCore::MasterSystem => "sms",
+            SupportedCore::NEOGEO => "ng",
+            SupportedCore::NES => "nes",
+            SupportedCore::SNES => "snes",
+            SupportedCore::SuperVision => "supervision",
+            SupportedCore::TGFX16 => "pce",
+        })
     }
 
     fn to_mister(&self) -> String {
@@ -76,20 +59,46 @@ impl TransformCore for SupportedCore {
         })
     }
 
-    fn to_pocket(&self) -> String {
+    fn from_pocket(name: &str) -> Option<SupportedCore> {
+        match name {
+            "arduboy" => Some(SupportedCore::Arduboy),
+            "gb" => Some(SupportedCore::GB),
+            "gba" => Some(SupportedCore::GBA),
+            "gbc" => Some(SupportedCore::GBC),
+            "genesis" => Some(SupportedCore::Genesis),
+            "gg" => Some(SupportedCore::GameGear),
+            "nes" => Some(SupportedCore::NES),
+            "ng" => Some(SupportedCore::NEOGEO),
+            "pce" => Some(SupportedCore::TGFX16),
+            "sms" => Some(SupportedCore::MasterSystem),
+            "snes" => Some(SupportedCore::SNES),
+            "supervision" => Some(SupportedCore::SuperVision),
+            _ => None,
+        }
+    }
+
+    fn from_mister(name: &str) -> Option<SupportedCore> {
+        // Some cores on the MiSTer do double duty (GAMEBOY, SMS) will need to work out
+        // How to deal with that (save file header? try to find the full rom name?)
+        match name {
+            "Arduboy" => Some(SupportedCore::Arduboy),
+            "NES" => Some(SupportedCore::NES),
+            "SNES" => Some(SupportedCore::SNES),
+            "GAMEBOY" => Some(SupportedCore::GBC),
+            "GBA" => Some(SupportedCore::GBA),
+            "SMS" => Some(SupportedCore::MasterSystem),
+            "TGFX16" => Some(SupportedCore::TGFX16),
+            "NEOGEO" => Some(SupportedCore::NEOGEO),
+            "Genesis" => Some(SupportedCore::Genesis),
+            "SuperVision" => Some(SupportedCore::SuperVision),
+            _ => None,
+        }
+    }
+
+    fn pocket_folder(&self) -> String {
         String::from(match self {
-            SupportedCore::Arduboy => "arduboy",
-            SupportedCore::GameGear => "gg",
-            SupportedCore::GB => "gb",
-            SupportedCore::GBA => "gba",
-            SupportedCore::GBC => "gbc",
-            SupportedCore::Genesis => "genesis",
-            SupportedCore::MasterSystem => "sms",
-            SupportedCore::NEOGEO => "ng",
-            SupportedCore::NES => "nes",
-            SupportedCore::SNES => "snes",
-            SupportedCore::SuperVision => "supervision",
-            SupportedCore::TGFX16 => "pce",
+            Self::NEOGEO => "Mazamars312.NeoGeo",
+            _ => "common",
         })
     }
 }
