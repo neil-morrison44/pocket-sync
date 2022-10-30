@@ -1,6 +1,8 @@
 # pocket-sync
 A tool for syncing the Analogue Pocket (initially with MiSTer)
 
+[![asciicast](https://asciinema.org/a/VnRRsQj8BOikkHi3PKgo4OeWI.svg)](https://asciinema.org/a/VnRRsQj8BOikkHi3PKgo4OeWI?autoplay=1)
+
 
 __WARNING__ this is a _very_ early release - please don't use it without having backed up your saves.
 I recommend backing up via `zip -r saves_backup.zip saves` on the MiSTer & `zip -r saves_backup.zip Saves` on the Pocket.
