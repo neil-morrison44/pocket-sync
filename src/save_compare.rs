@@ -1,4 +1,8 @@
-use crate::{cores::TransformCore, PlatformSave, SaveInfo};
+use crate::{
+    cores::TransformCore,
+    pocket_files::{convert_rom_path_to_save_path, find_roms_for_save},
+    PlatformSave, SaveInfo,
+};
 use std::{
     fmt,
     fs::File,
@@ -83,19 +87,33 @@ impl SaveComparison<'_> {
         let file_name = path.file_name().unwrap();
         let mut save_file = ftp_stream.retr_as_buffer(file_name.to_str().unwrap())?;
 
-        let pocket_save_path = match self {
-            SaveComparison::MiSTerOnly(save_info) => pocket_path.join(format!(
-                "Saves/{}/{}/{}",
-                save_info.core.to_pocket(),
-                save_info.core.pocket_folder(),
-                save_info.game
-            )),
+        let pocket_save_paths: Vec<PathBuf> = match self {
+            SaveComparison::MiSTerOnly(save_info) => {
+                let found = find_roms_for_save(
+                    &save_info.game,
+                    &save_info.core.rom_filetypes(),
+                    &pocket_path,
+                )
+                .iter()
+                .map(|p| convert_rom_path_to_save_path(p))
+                .collect();
+
+                found
+            }
             Self::PocketNewer(save_pair)
             | Self::MiSTerNewer(save_pair)
-            | Self::Conflict(save_pair) => pocket_path.join(save_pair.pocket.path.clone()),
+            | Self::Conflict(save_pair) => vec![pocket_path.join(save_pair.pocket.path.clone())],
             Self::PocketOnly(_) => panic!("Attempt to use a non-existent MiSTer save"),
             Self::NoSyncNeeded => panic!("Attempt to sync when NoSyncNeeded"),
         };
+
+        if pocket_save_paths.len() == 0 {
+            println!(
+                "Couldn't find \"{}\" on the pocket, skipping",
+                mister_save_info.game.replace(".sav", "")
+            );
+            return Ok(());
+        }
 
         println!(
             "Copying {} ({}) \nMiSTer -> Pocket",
@@ -103,10 +121,15 @@ impl SaveComparison<'_> {
             mister_save_info.core.to_pocket()
         );
 
-        let mut file = File::create(pocket_save_path).unwrap();
-        let mut buf: Vec<u8> = Vec::new();
-        save_file.read_to_end(&mut buf).unwrap();
-        file.write(&buf).unwrap();
+        for pocket_save_path in pocket_save_paths {
+            let prefix = pocket_save_path.parent().unwrap();
+            std::fs::create_dir_all(prefix).unwrap();
+
+            let mut file = File::create(pocket_save_path).unwrap();
+            let mut buf: Vec<u8> = Vec::new();
+            save_file.read_to_end(&mut buf).unwrap();
+            file.write(&buf).unwrap();
+        }
 
         return Ok(());
     }
@@ -195,6 +218,14 @@ fn get_comparison<'a>(
     mister_save_info: &'a SaveInfo,
     last_merge: i64,
 ) -> SaveComparison<'a> {
+    if mister_save_info.date_modified < 86400 {
+        // MiSTer save was updated while the RTC wasn't running - raise as a conflict to be safe
+        return SaveComparison::Conflict(SavePair {
+            pocket: pocket_save_info,
+            mister: mister_save_info,
+        });
+    }
+
     if pocket_save_info.date_modified < last_merge && mister_save_info.date_modified < last_merge {
         return SaveComparison::NoSyncNeeded;
     }

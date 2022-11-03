@@ -22,6 +22,8 @@ pub trait TransformCore {
     fn from_mister(name: &str) -> Option<SupportedCore>;
 
     fn pocket_folder(&self) -> String;
+
+    fn rom_filetypes(&self) -> Vec<String>;
 }
 
 impl TransformCore for SupportedCore {
@@ -100,6 +102,27 @@ impl TransformCore for SupportedCore {
             Self::NEOGEO => "Mazamars312.NeoGeo",
             _ => "common",
         })
+    }
+
+    fn rom_filetypes(&self) -> Vec<String> {
+        (match self {
+            SupportedCore::Arduboy => vec!["hex"],
+            SupportedCore::GameGear => vec!["gg"],
+            SupportedCore::GB => vec!["gb"],
+            SupportedCore::GBA => vec!["gba"],
+            SupportedCore::GBC => vec!["gbc"],
+            SupportedCore::Genesis => vec!["md", "bin", "gen", "smd"],
+            SupportedCore::MasterSystem => vec!["sms"],
+            SupportedCore::NEOGEO => vec!["json"],
+            SupportedCore::NES => vec!["nes"],
+            SupportedCore::SNES => vec!["smc", "sfc"],
+            SupportedCore::SuperVision => vec!["sv", "bin"],
+            SupportedCore::TGFX16 => vec!["pce"],
+            _ => vec![],
+        })
+        .iter()
+        .map(|s| s.to_string())
+        .collect()
     }
 }
 

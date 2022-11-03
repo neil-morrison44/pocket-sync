@@ -1,6 +1,7 @@
 mod config_file;
 mod cores;
 mod mister_ftp;
+mod pocket_files;
 mod save_compare;
 mod user_input;
 
