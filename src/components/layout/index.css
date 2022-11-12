@@ -1,0 +1,30 @@
+.layout{
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.layout__sidebar-menu{
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0px;
+  padding: 10px;
+  height: calc(100vh - 20px);
+  background-color: #555;
+}
+
+.layout__sidebar-menu-item{
+  padding: 10px;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.layout__sidebar-menu-item--disabled{
+  cursor: unset;
+}
+
+.layout__content {
+  flex-grow: 1;
+  min-height: 100vh;
+}
