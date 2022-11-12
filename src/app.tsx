@@ -1,8 +1,8 @@
-import { Suspense, useState } from "react"
 import { invoke } from "@tauri-apps/api/tauri"
-import "./App.css"
+import "./font.css"
+import "./app.css"
 import { useRecoilState } from "recoil"
-import { pocketPathAtom, screenshotDataAtom } from "./recoil/atoms"
+import { pocketPathAtom } from "./recoil/atoms"
 import { Layout } from "./components/layout"
 
 export const App = () => {

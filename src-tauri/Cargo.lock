@@ -493,15 +493,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "deflate"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c86f7e25f518f4b81808a2cf1c50996a61f5c2eb394b2393bd87f2a4780a432f"
-dependencies = [
- "adler32",
-]
-
-[[package]]
 name = "derive_more"
 version = "0.99.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1907,7 +1898,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f0b0cabbbd20c2d7f06dbf015e06aad59b6ca3d9ed14848783e98af9aaf19925"
 dependencies = [
  "bitflags",
- "deflate 0.7.20",
+ "deflate",
  "inflate",
  "num-iter",
 ]
@@ -1928,7 +1919,6 @@ dependencies = [
 name = "pocket-sync"
 version = "0.0.0"
 dependencies = [
- "deflate 1.0.0",
  "serde",
  "serde_json",
  "tauri",

@@ -1,7 +1,23 @@
 import { selector, selectorFamily } from "recoil"
 import { invoke } from "@tauri-apps/api/tauri"
-import { Screenshot } from "../types"
-import { inflate } from "fflate"
+import { Screenshot, VideoJSON } from "../types"
+
+export const VideoJSONSelectorFamily = selectorFamily<
+  VideoJSON,
+  { authorName: string; coreName: string }
+>({
+  key: "VideoJSONSelectorFamily",
+  get:
+    ({ authorName, coreName }) =>
+    async () => {
+      const jsonText = await invoke<string>("get_video_json", {
+        authorName,
+        coreName,
+      })
+
+      return JSON.parse(jsonText) as VideoJSON
+    },
+})
 
 export const screenshotsListSelector = selector<string[]>({
   key: "screenshotsListSelector",
@@ -17,18 +33,9 @@ export const SingleScreenshotSelectorFamily = selectorFamily<
     const data = await invoke<number[]>("get_screenshot", {
       fileName,
     })
-    const compressedBuf = new Uint8Array(data)
-    const buf = await new Promise<Uint8Array>((resolve) => {
-      inflate(new Uint8Array(compressedBuf), {}, (err, inflated) =>
-        resolve(inflated)
-      )
-    })
-
+    const buf = new Uint8Array(data)
     const file = new File([buf], fileName, { type: "image/png" })
-
     const metadataBuffer = buf.slice(buf.length - 528)
-
-    console.log({ metadataBuffer })
 
     let utf8decoder = new TextDecoder()
     // The unpacking here might not be right if there's unused ranges
@@ -51,14 +58,14 @@ export const SingleScreenshotSelectorFamily = selectorFamily<
       .decode(metadataBuffer.slice(metadataBuffer.length - 16 * 10))
       .replaceAll("\u0000", "")
 
-    console.log({ authorName, coreName, gameName, platformName })
-
     return {
       file_name: fileName,
       file,
       game: gameName,
       platform: platformName,
       timestamp: new Date(file.lastModified),
+      author: authorName,
+      core: coreName,
     }
   },
 })

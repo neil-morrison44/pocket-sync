@@ -4,8 +4,12 @@
   line-height: 24px;
   font-weight: 400;
 
-  color: #0f0f0f;
-  background-color: #f6f6f6;
+  color: #f6f6f6;
+  --background-colour: #2f2f2f;
+  --hover-colour: #222;
+  --info-colour: #111;
+  --light-colour: #555;
+  background-color: var(--background-colour);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -66,8 +70,8 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
+  color: #ffffff;
+  background-color: #0f0f0f98;
   transition: border-color 0.25s;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
 }
@@ -83,25 +87,4 @@ button:hover {
 input,
 button {
   outline: none;
-}
-
-#greet-input {
-  margin-right: 5px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
-  }
-
-  a:hover {
-    color: #24c8db;
-  }
-
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
-  }
 }

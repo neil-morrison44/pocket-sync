@@ -1,7 +1,6 @@
 .layout{
   display: flex;
   align-items: flex-start;
-  gap: 10px;
 }
 
 .layout__sidebar-menu{
@@ -9,15 +8,22 @@
   flex-direction: column;
   position: sticky;
   top: 0px;
-  padding: 10px;
-  height: calc(100vh - 20px);
-  background-color: #555;
+  height: 100vh;
+  background-color: var(--light-colour);
 }
 
 .layout__sidebar-menu-item{
-  padding: 10px;
-  font-size: 1.25rem;
+  padding: 20px;
+  font-size: 1.5rem;
   cursor: pointer;
+}
+
+.layout__sidebar-menu-item:hover{
+  background-color: var(--hover-colour);
+}
+
+.layout__sidebar-menu-item--active{
+  background-color: var(--background-colour);
 }
 
 .layout__sidebar-menu-item--disabled{
@@ -27,4 +33,5 @@
 .layout__content {
   flex-grow: 1;
   min-height: 100vh;
+  overflow: hidden;
 }

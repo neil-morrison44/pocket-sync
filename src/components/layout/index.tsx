@@ -4,8 +4,7 @@ import { Screenshots } from "../screenshots"
 import "./index.css"
 
 export const Layout = () => {
-  const views = ["screenshots"]
-
+  const views = ["Games", "Cores", "Screenshots", "Saves"]
   const [viewName, setViewName] = useState("")
 
   return (
@@ -13,7 +12,9 @@ export const Layout = () => {
       <div className="layout__sidebar-menu">
         {views.map((v) => (
           <div
-            className="layout__sidebar-menu-item"
+            className={`layout__sidebar-menu-item ${
+              viewName === v ? "layout__sidebar-menu-item--active" : ""
+            }`}
             key={v}
             onClick={() => setViewName(v)}
           >
@@ -23,7 +24,7 @@ export const Layout = () => {
       </div>
       <div className="layout__content">
         <Suspense fallback={<Loader />}>
-          {viewName === "screenshots" && <Screenshots />}
+          {viewName === "Screenshots" && <Screenshots />}
         </Suspense>
       </div>
     </div>

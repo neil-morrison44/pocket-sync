@@ -4,7 +4,7 @@
 )]
 
 use std::fs;
-use std::io::Read;
+use std::io::{Read, Write};
 use std::path::PathBuf;
 use std::sync::Mutex;
 use tauri::api::dialog;
@@ -34,16 +34,40 @@ fn get_screenshot(state: tauri::State<PocketSyncState>, file_name: &str) -> Resu
     let mut buffer = vec![0; metadata.len() as usize];
 
     f.read(&mut buffer).expect("buffer overflow");
-    let compressed = deflate::deflate_bytes(&buffer);
 
-    Ok(compressed)
+    Ok(buffer)
+}
+
+#[tauri::command(async)]
+fn get_video_json(
+    state: tauri::State<PocketSyncState>,
+    author_name: &str,
+    core_name: &str,
+) -> Result<String, ()> {
+    let pocket_path = state.0.lock().unwrap();
+    let path = pocket_path
+        .join("Cores")
+        .join(format!("{}.{}", author_name, core_name))
+        .join("video.json");
+
+    let video_json = fs::read_to_string(path).unwrap();
+    Ok(video_json)
+}
+
+#[tauri::command(async)]
+fn save_file(path: &str, buffer: Vec<u8>) -> Result<bool, ()> {
+    let file_path = PathBuf::from(path);
+    let mut file = fs::File::create(file_path).unwrap();
+
+    file.write_all(&buffer).unwrap();
+
+    Ok(true)
 }
 
 #[tauri::command(async)]
 fn list_screenshots(state: tauri::State<PocketSyncState>) -> Result<Vec<String>, ()> {
     let pocket_path = state.0.lock().unwrap();
     let screenshots_path = pocket_path.join("Memories/Screenshots");
-
     let paths = fs::read_dir(screenshots_path).unwrap();
 
     Ok(paths
@@ -61,7 +85,9 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             open_pocket,
             list_screenshots,
-            get_screenshot
+            get_screenshot,
+            get_video_json,
+            save_file
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
