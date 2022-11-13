@@ -1,9 +1,15 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite"
+import react from "@vitejs/plugin-react"
+import postcssNesting from "postcss-nesting"
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  css: {
+    postcss: {
+      plugins: [postcssNesting],
+    },
+  },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   // prevent vite from obscuring rust errors
@@ -24,4 +30,4 @@ export default defineConfig({
     // produce sourcemaps for debug builds
     sourcemap: !!process.env.TAURI_DEBUG,
   },
-});
+})

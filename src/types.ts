@@ -21,3 +21,10 @@ export type VideoJSON = {
     }[]
   }
 }
+
+export type ContentView =
+  | "Pocket Sync"
+  | "Games"
+  | "Cores"
+  | "Screenshots"
+  | "Saves"

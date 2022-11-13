@@ -60,6 +60,8 @@ a:hover {
 
 h1 {
   text-align: center;
+  font-family: "Analogue";
+  font-size: 4rem;
 }
 
 input,

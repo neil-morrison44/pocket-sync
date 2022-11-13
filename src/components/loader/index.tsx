@@ -3,8 +3,11 @@ import "./index.css"
 
 type LoaderProps = {
   className?: string
+  fullHeight?: boolean
 }
 
-export const Loader = ({ className }: LoaderProps) => (
-  <div className={`loader ${className || ""}`}></div>
+export const Loader = ({ className, fullHeight }: LoaderProps) => (
+  <div
+    className={`loader ${className || ""} ${fullHeight ? "loader--full" : ""}`}
+  ></div>
 )

@@ -5,6 +5,18 @@
   gap: 15px;
   padding: 10px;
   cursor: pointer;
+
+  @media (min-width: 640px) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  @media (min-width: 860px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  @media (min-width: 1200px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  }
 }
 
 .screenshots__item{
@@ -50,23 +62,4 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-}
-
-
-@media (min-width: 640px) {
-  .screenshots {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-}
-
-@media (min-width: 860px) {
-  .screenshots {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-  }
-}
-
-@media (min-width: 1200px) {
-  .screenshots {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  }
 }

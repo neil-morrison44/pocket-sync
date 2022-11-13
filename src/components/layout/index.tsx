@@ -1,11 +1,18 @@
 import React, { Suspense, useState } from "react"
+import { ContentView } from "../../types"
 import { Loader } from "../loader"
 import { Screenshots } from "../screenshots"
 import "./index.css"
 
 export const Layout = () => {
-  const views = ["Games", "Cores", "Screenshots", "Saves"]
-  const [viewName, setViewName] = useState("")
+  const views: ContentView[] = [
+    "Pocket Sync",
+    "Games",
+    "Cores",
+    "Screenshots",
+    "Saves",
+  ]
+  const [viewName, setViewName] = useState<ContentView>("Pocket Sync")
 
   return (
     <div className="layout">
@@ -23,7 +30,7 @@ export const Layout = () => {
         ))}
       </div>
       <div className="layout__content">
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={<Loader fullHeight />}>
           {viewName === "Screenshots" && <Screenshots />}
         </Suspense>
       </div>

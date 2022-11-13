@@ -21,10 +21,10 @@
   justify-content: center;
   padding: 10px 20px;
   accent-color: white;
-}
 
-.screenshot-info__controls-item:hover{
-  background-color: var(--hover-colour);
+  &:hover{
+    background-color: var(--hover-colour);
+  }
 }
 
 .screenshot-info__controls-item--back-button::before{

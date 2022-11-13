@@ -7,6 +7,10 @@
   justify-content: center;
 }
 
+.loader--full{
+  height: 100vh;
+}
+
 .loader::before{
   content: "";
   display: block;
@@ -18,7 +22,6 @@
 
   animation: spin 2s infinite linear;
   will-change: transform;
-
 }
 
 @keyframes spin {
