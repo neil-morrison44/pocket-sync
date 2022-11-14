@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use std::fs;
+use std::fs::{self};
 use std::io::{Read, Write};
 use std::path::PathBuf;
 use std::sync::Mutex;
@@ -25,9 +25,9 @@ fn open_pocket(state: tauri::State<PocketSyncState>) -> Result<String, ()> {
 }
 
 #[tauri::command(async)]
-fn get_screenshot(state: tauri::State<PocketSyncState>, file_name: &str) -> Result<Vec<u8>, ()> {
+fn read_binary_file(state: tauri::State<PocketSyncState>, path: &str) -> Result<Vec<u8>, ()> {
     let pocket_path = state.0.lock().unwrap();
-    let path = pocket_path.join("Memories/Screenshots").join(file_name);
+    let path = pocket_path.join(path);
 
     let mut f = fs::File::open(&path).expect("no file found");
     let metadata = fs::metadata(&path).expect("unable to read metadata");
@@ -39,17 +39,9 @@ fn get_screenshot(state: tauri::State<PocketSyncState>, file_name: &str) -> Resu
 }
 
 #[tauri::command(async)]
-fn get_video_json(
-    state: tauri::State<PocketSyncState>,
-    author_name: &str,
-    core_name: &str,
-) -> Result<String, ()> {
+fn read_text_file(state: tauri::State<PocketSyncState>, path: &str) -> Result<String, ()> {
     let pocket_path = state.0.lock().unwrap();
-    let path = pocket_path
-        .join("Cores")
-        .join(format!("{}.{}", author_name, core_name))
-        .join("video.json");
-
+    let path = pocket_path.join(path);
     let video_json = fs::read_to_string(path).unwrap();
     Ok(video_json)
 }
@@ -65,9 +57,9 @@ fn save_file(path: &str, buffer: Vec<u8>) -> Result<bool, ()> {
 }
 
 #[tauri::command(async)]
-fn list_screenshots(state: tauri::State<PocketSyncState>) -> Result<Vec<String>, ()> {
+fn list_files(path: &str, state: tauri::State<PocketSyncState>) -> Result<Vec<String>, ()> {
     let pocket_path = state.0.lock().unwrap();
-    let screenshots_path = pocket_path.join("Memories/Screenshots");
+    let screenshots_path = pocket_path.join(path);
     let paths = fs::read_dir(screenshots_path).unwrap();
 
     Ok(paths
@@ -84,9 +76,9 @@ fn main() {
         .manage(PocketSyncState(Default::default()))
         .invoke_handler(tauri::generate_handler![
             open_pocket,
-            list_screenshots,
-            get_screenshot,
-            get_video_json,
+            list_files,
+            read_binary_file,
+            read_text_file,
             save_file
         ])
         .run(tauri::generate_context!())

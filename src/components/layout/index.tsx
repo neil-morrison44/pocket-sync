@@ -1,5 +1,6 @@
 import React, { Suspense, useState } from "react"
 import { ContentView } from "../../types"
+import { Cores } from "../cores"
 import { Loader } from "../loader"
 import { Screenshots } from "../screenshots"
 import "./index.css"
@@ -32,6 +33,7 @@ export const Layout = () => {
       <div className="layout__content">
         <Suspense fallback={<Loader fullHeight />}>
           {viewName === "Screenshots" && <Screenshots />}
+          {viewName === "Cores" && <Cores />}
         </Suspense>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { Screenshot } from "./item"
 import "./index.css"
 import { Loader } from "../loader"
 import { ScreenshotInfo } from "./info"
+import { Grid } from "../grid"
 
 export const Screenshots = () => {
   const [selected, setSelected] = useState<string | null>(null)
@@ -18,7 +19,7 @@ export const Screenshots = () => {
   }
 
   return (
-    <div className="screenshots">
+    <Grid className="screenshots">
       {screenshots.map((fileName) => (
         <Suspense
           fallback={<Loader className="screenshots__loading-item" />}
@@ -30,6 +31,6 @@ export const Screenshots = () => {
           />
         </Suspense>
       ))}
-    </div>
+    </Grid>
   )
 }

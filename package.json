@@ -13,7 +13,9 @@
     "@tauri-apps/api": "^1.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "recoil": "^0.7.6"
+    "react-markdown": "^8.0.3",
+    "recoil": "^0.7.6",
+    "remark-gfm": "^3.0.1"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.1.0",

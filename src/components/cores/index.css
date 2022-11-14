@@ -1,0 +1,38 @@
+.cores__platform-image {
+  width: 100%;
+}
+
+.cores__info-blurb{
+  background-color: var(--info-colour);
+  padding: 10px;
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+.cores__info-blurb-name{
+  font-weight: bold;
+}
+
+.cores__author-tag{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cores__author-tag-image{
+  width: 24px;
+  height: 24px;
+}
+
+.cores__item{
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+
+  &:hover, &:focus {
+    transform: scale(1.1);
+  }
+}

@@ -1,0 +1,40 @@
+.core-info{
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.core-info__image{
+  width: 100%;
+  image-rendering: pixelated;
+}
+
+
+.core-info__title{
+  padding: 0px 20px;
+  font-size: 2rem;
+}
+
+.core-info__info{
+  background-color: var(--info-colour);
+  padding: 10px;
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.core-info__info-row{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.core-info__author-tag{
+  display: inline-flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+
+  image-rendering: pixelated;
+}

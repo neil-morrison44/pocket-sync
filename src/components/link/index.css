@@ -1,0 +1,9 @@
+.link{
+  text-decoration: underline;
+  cursor: pointer;
+  display: inline-block;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}

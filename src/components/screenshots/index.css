@@ -1,28 +1,8 @@
-.screenshots {
-  display: grid;
-  grid-auto-flow: row;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  padding: 10px;
-  cursor: pointer;
-
-  @media (min-width: 640px) {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-
-  @media (min-width: 860px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-  }
-
-  @media (min-width: 1200px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  }
-}
-
 .screenshots__item{
   overflow: hidden;
   position: relative;
   aspect-ratio: 160 / 144;
+  cursor: pointer;
 }
 
 .screenshots__item-image{

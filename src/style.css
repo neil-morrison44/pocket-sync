@@ -9,6 +9,7 @@
   --hover-colour: #222;
   --info-colour: #111;
   --light-colour: #555;
+  --green-colour: rgb(88, 144, 80);
   background-color: var(--background-colour);
 
   font-synthesis: none;
@@ -16,6 +17,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  accent-color: white;
 }
 
 body {
@@ -62,6 +64,17 @@ h1 {
   text-align: center;
   font-family: "Analogue";
   font-size: 4rem;
+  font-smooth: never;
+  -webkit-font-smoothing : none;
+}
+
+h2 {
+  text-align: left;
+  font-family: "Analogue";
+  font-size: 3rem;
+  font-smooth: never;
+  -webkit-font-smoothing : none;
+  padding: 0 10px;
 }
 
 input,

@@ -7,6 +7,7 @@ import {
 import "./info.css"
 
 import { useSaveFile } from "../../hooks/saveFile"
+import { Controls } from "../controls"
 
 type ScreenshotInfo = {
   fileName: string
@@ -88,42 +89,28 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfo) => {
 
   return (
     <div className="screenshot-info">
-      <div className="screenshot-info__controls">
-        <div
-          role="button"
-          className="screenshot-info__controls-item screenshot-info__controls-item--back-button"
-          onClick={onBack}
-        >
-          {"Back to List"}
-        </div>
-
-        <div
-          role="button"
-          className="screenshot-info__controls-item"
-          onClick={() => saveFile(screenshot.file_name, imageSrc)}
-        >
-          {"Save"}
-        </div>
-
-        <div
-          className="screenshot-info__controls-item"
-          role="button"
-          onClick={openShareSheet}
-        >
-          {"Share"}
-        </div>
-
-        <label className="screenshot-info__controls-item screenshot-info__controls-checkbox">
-          {"Upscaled"}
-          <input
-            type="checkbox"
-            checked={imageMode === "upscaled"}
-            onChange={({ target }) =>
-              target.checked ? setImageMode("upscaled") : setImageMode("raw")
-            }
-          />
-        </label>
-      </div>
+      <Controls
+        controls={[
+          {
+            type: "back-button",
+            text: "Back to list",
+            onClick: onBack,
+          },
+          {
+            type: "button",
+            text: "Save",
+            onClick: () => saveFile(screenshot.file_name, imageSrc),
+          },
+          { type: "button", text: "Share", onClick: openShareSheet },
+          {
+            type: "checkbox",
+            text: "Upscaled",
+            checked: imageMode === "upscaled",
+            onChange: (checked) =>
+              checked ? setImageMode("upscaled") : setImageMode("raw"),
+          },
+        ]}
+      />
       <img className="screenshot-info__raw-image" src={imageSrc}></img>
 
       <div className="screenshot-info__info">
