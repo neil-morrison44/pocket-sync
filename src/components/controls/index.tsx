@@ -20,13 +20,14 @@ type Control = {
 )
 
 type ControlProps = {
-  controls: Control[]
+  controls: (Control | null)[]
 }
 
 export const Controls = ({ controls }: ControlProps) => {
   return (
     <div className="controls">
       {controls.map((control) => {
+        if (control === null) return null
         switch (control.type) {
           case "button":
             return (

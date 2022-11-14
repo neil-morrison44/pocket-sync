@@ -7,6 +7,7 @@ import {
 import { Grid } from "../grid"
 import { Loader } from "../loader"
 import { CoreInfo } from "./info"
+import { InstalledCoreInfo } from "./info/installed"
 import { CoreItem } from "./item"
 
 export const Cores = () => {
@@ -14,15 +15,11 @@ export const Cores = () => {
   const coresList = useRecoilValue(coresListSelector)
   const coreInventory = useRecoilValue(CoreInventorySelector)
 
-  console.log({ coreInventory })
-
   const notInstalledCores = useMemo(() => {
     return coreInventory.data.filter(
       ({ identifier }) => !coresList.includes(identifier)
     )
   }, [coresList, coreInventory])
-
-  console.log(notInstalledCores)
 
   const sortedList = useMemo(
     () =>
@@ -57,9 +54,15 @@ export const Cores = () => {
 
       <h2>{`Available (${notInstalledCores.length})`}</h2>
       <Grid>
-        {notInstalledCores.map(({ identifier: core }) => (
+        {notInstalledCores.map(({ identifier: core, platform }) => (
           <Suspense fallback={<Loader />} key={core}>
-            <div>{core}</div>
+            <div
+              className="cores__item cores__item--not-installed"
+              onClick={() => setSelectedCore(core)}
+            >
+              <div>{platform}</div>
+              <div className="cores__not-installed-item-id">{core}</div>
+            </div>
           </Suspense>
         ))}
       </Grid>

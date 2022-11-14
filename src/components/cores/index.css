@@ -36,3 +36,16 @@
     transform: scale(1.1);
   }
 }
+
+.cores__item--not-installed{
+  background-color: var(--info-colour);
+  justify-content: space-between;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.cores__not-installed-item-id{
+  font-weight: normal;
+  font-size: 0.825rem;
+}
