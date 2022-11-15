@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from "react"
+import React, { Suspense, useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
 import { screenshotsListSelector } from "../../recoil/selectors"
 import { Screenshot } from "./item"
@@ -12,6 +12,10 @@ export const Screenshots = () => {
   const [selected, setSelected] = useState<string | null>(null)
   const screenshots = useRecoilValue(screenshotsListSelector)
 
+  const sortedScreenshots = useMemo(() => {
+    return [...screenshots].sort((a, b) => b.localeCompare(a))
+  }, [screenshots])
+
   if (selected) {
     return (
       <ScreenshotInfo fileName={selected} onBack={() => setSelected(null)} />
@@ -20,7 +24,7 @@ export const Screenshots = () => {
 
   return (
     <Grid className="screenshots">
-      {screenshots.map((fileName) => (
+      {sortedScreenshots.map((fileName) => (
         <Suspense
           fallback={<Loader className="screenshots__loading-item" />}
           key={fileName}

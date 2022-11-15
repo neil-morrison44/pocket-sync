@@ -38,3 +38,14 @@
 
   image-rendering: pixelated;
 }
+
+
+.core-info__supports {
+  background-color: var(--light-colour);
+  padding: 0 5px;
+  border-radius: 5px;
+}
+
+.core-info__supports--false{
+  opacity: 0.2;
+}

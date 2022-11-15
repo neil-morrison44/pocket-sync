@@ -16,6 +16,7 @@ import { Releases } from "./releases"
 import { Version } from "../version"
 import { useUninstallCore } from "../../../hooks/useUninstallCore"
 import { useInstallCore } from "../../../hooks/useInstallCore"
+import { ReactNode } from "react"
 
 type CoreInfoProps = {
   coreName: string
@@ -95,39 +96,25 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
         )}
 
         <div className="core-info__info-row">
-          <strong>{"Supports Sleep:"}</strong>
-          <input
-            readOnly
-            type="checkbox"
-            checked={coreInfo.core.framework.sleep_supported}
-          />
-        </div>
+          <strong>{"Supports:"}</strong>
 
-        <div className="core-info__info-row">
-          <strong>{"Supports Dock:"}</strong>
-          <input
-            readOnly
-            type="checkbox"
-            checked={coreInfo.core.framework.dock.supported}
-          />
-        </div>
+          <SupportsBubble supports={coreInfo.core.framework.sleep_supported}>
+            Sleep
+          </SupportsBubble>
 
-        <div className="core-info__info-row">
-          <strong>{"Supports Dock Analog:"}</strong>
-          <input
-            readOnly
-            type="checkbox"
-            checked={coreInfo.core.framework.dock.analog_output}
-          />
-        </div>
+          <SupportsBubble supports={coreInfo.core.framework.dock.supported}>
+            Dock
+          </SupportsBubble>
 
-        <div className="core-info__info-row">
-          <strong>{"Supports Cartridges:"}</strong>
-          <input
-            readOnly
-            type="checkbox"
-            checked={coreInfo.core.framework.hardware.cartridge_adapter !== -1}
-          />
+          <SupportsBubble supports={coreInfo.core.framework.dock.analog_output}>
+            Dock Analog
+          </SupportsBubble>
+
+          <SupportsBubble
+            supports={coreInfo.core.framework.hardware.cartridge_adapter !== -1}
+          >
+            Cartridges
+          </SupportsBubble>
         </div>
         {inventoryItem && inventoryItem.repository.platform === "github" && (
           <Releases inventoryItem={inventoryItem} />
@@ -136,3 +123,14 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
     </div>
   )
 }
+
+type SupportsBubbleProps = {
+  children: ReactNode
+  supports: boolean
+}
+
+const SupportsBubble = ({ supports, children }: SupportsBubbleProps) => (
+  <div className={`core-info__supports core-info__supports--${supports}`}>
+    {children}
+  </div>
+)
