@@ -2,7 +2,7 @@ import "./index.css"
 
 type Control = {
   text: string
-  type: "button" | "back-button" | "checkbox"
+  type: "button" | "back-button" | "checkbox" | "select" | "search"
 } & (
   | {
       type: "button"
@@ -17,6 +17,17 @@ type Control = {
       checked: boolean
       onChange: (checked: boolean) => void
     }
+  | {
+      type: "select"
+      options: string[]
+      selected: string
+      onChange: (value: string) => void
+    }
+  | {
+      type: "search"
+      value: string
+      onChange: (value: string) => void
+    }
 )
 
 type ControlProps = {
@@ -29,6 +40,35 @@ export const Controls = ({ controls }: ControlProps) => {
       {controls.map((control) => {
         if (!control) return null
         switch (control.type) {
+          case "search":
+            return (
+              <div className="controls__item controls__item--search">
+                <input
+                  className="controls__search-input"
+                  placeholder={control.text}
+                  type="search"
+                  onChange={({ target }) => control.onChange(target.value)}
+                  autoComplete="off"
+                  value={control.value}
+                  spellCheck={false}
+                />
+              </div>
+            )
+          case "select":
+            return (
+              <div className="controls__item" key={control.text}>
+                {control.text}
+                <select
+                  onChange={({ target }) => control.onChange(target.value)}
+                >
+                  {control.options.map((v) => (
+                    <option value={v} key={v} selected={v === control.selected}>
+                      {v}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )
           case "button":
             return (
               <div

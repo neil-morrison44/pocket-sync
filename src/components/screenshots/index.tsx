@@ -7,10 +7,13 @@ import "./index.css"
 import { Loader } from "../loader"
 import { ScreenshotInfo } from "./info"
 import { Grid } from "../grid"
+import { useSaveScroll } from "../../hooks/useSaveScroll"
 
 export const Screenshots = () => {
   const [selected, setSelected] = useState<string | null>(null)
   const screenshots = useRecoilValue(screenshotsListSelector)
+
+  const { pushScroll, popScroll } = useSaveScroll()
 
   const sortedScreenshots = useMemo(() => {
     return [...screenshots].sort((a, b) => b.localeCompare(a))
@@ -18,7 +21,13 @@ export const Screenshots = () => {
 
   if (selected) {
     return (
-      <ScreenshotInfo fileName={selected} onBack={() => setSelected(null)} />
+      <ScreenshotInfo
+        fileName={selected}
+        onBack={() => {
+          setSelected(null)
+          popScroll()
+        }}
+      />
     )
   }
 
@@ -31,7 +40,10 @@ export const Screenshots = () => {
         >
           <Screenshot
             fileName={fileName}
-            onClick={() => setSelected(fileName)}
+            onClick={() => {
+              pushScroll()
+              setSelected(fileName)
+            }}
           />
         </Suspense>
       ))}

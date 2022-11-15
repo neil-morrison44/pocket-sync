@@ -5,6 +5,7 @@
   background-color: var(--info-colour);
   position: sticky;
   top: 0;
+  z-index: 100;
 }
 
 .controls__item{
@@ -38,4 +39,16 @@
   display: flex;
   gap: 0.2em;
   align-items: center;
+}
+
+
+.controls__search-input{
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 5px 10px;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  width: 200px;
+  transition: border-color 0.25s;
 }

@@ -12,6 +12,7 @@
   background-color: var(--light-colour);
   flex-basis: max-content;
   flex-shrink: 0;
+  z-index: 100;
 }
 
 .layout__sidebar-menu-item{
