@@ -1,0 +1,34 @@
+.about {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100vh;
+  text-align: center;
+}
+
+
+.about__update-link{
+  font-size: 2rem;
+  background-color: var(--green-colour);
+  padding: 20px;
+  border-radius: 25px;
+}
+
+.about__top{
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.about__info{
+  background-color: var(--info-colour);
+  width: 100%;
+  max-height: fit-content;
+  flex-grow: 1;
+  justify-self: flex-end;
+  text-align: left;
+  padding: 0px 20px;
+  box-sizing: border-box;
+}

@@ -89,26 +89,30 @@ export type InventoryItem = {
     owner: string
     name: string
   }
-  release?: {
-    tag_name: Semver | string
-    release_date: string
-    platform: {
-      category: string
-      name: string
-      manufacturer: string
-      year: number
-    }
-    assets: [
-      {
-        platform: PlatformId
-        filename?: string
-        extensions?: string[]
-      }
-    ]
+  release?: InventoryItemRelease
+  prerelease?: InventoryItemRelease
+}
+
+type InventoryItemRelease = {
+  tag_name: Semver | string
+  release_date: string
+  platform: {
+    category: string
+    name: string
+    manufacturer: string
+    year: number
   }
+  assets: [
+    {
+      platform: PlatformId
+      filename?: string
+      extensions?: string[]
+    }
+  ]
 }
 
 export type GithubRelease = {
+  html_url: string
   id: number
   tag_name: string
   name: string

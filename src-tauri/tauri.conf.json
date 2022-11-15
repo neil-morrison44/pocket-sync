@@ -6,8 +6,8 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "pocket-sync",
-    "version": "0.0.0"
+    "productName": "Pocket Sync",
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -28,7 +28,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "today.neil.pocket-sync",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -57,7 +57,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "pocket-sync",
+        "title": "Pocket Sync",
         "width": 800
       }
     ]

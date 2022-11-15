@@ -4,6 +4,7 @@ import {
   CoreAuthorImageSelectorFamily,
   CoreInfoSelectorFamily,
   CoreInventorySelector,
+  DownloadURLSelectorFamily,
 } from "../../../recoil/selectors"
 import { Controls } from "../../controls"
 import { Link } from "../../link"
@@ -13,6 +14,8 @@ import { PlatformImage } from "../platformImage"
 import { useInventoryItem } from "../../../hooks/useInventoryItem"
 import { Releases } from "./releases"
 import { Version } from "../version"
+import { useUninstallCore } from "../../../hooks/useUninstallCore"
+import { useInstallCore } from "../../../hooks/useInstallCore"
 
 type CoreInfoProps = {
   coreName: string
@@ -22,7 +25,10 @@ type CoreInfoProps = {
 export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
   const authorImageSrc = useRecoilValue(CoreAuthorImageSelectorFamily(coreName))
+  const uninstall = useUninstallCore()
+  const install = useInstallCore()
   const inventoryItem = useInventoryItem(coreName)
+  const downloadUrl = useRecoilValue(DownloadURLSelectorFamily(coreName))
 
   return (
     <div className="core-info">
@@ -32,6 +38,16 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             type: "back-button",
             text: "Back to list",
             onClick: onBack,
+          },
+          {
+            type: "button",
+            text: "Uninstall",
+            onClick: () => uninstall(coreName),
+          },
+          downloadUrl && {
+            type: "button",
+            text: "Update",
+            onClick: () => install(coreName, downloadUrl),
           },
         ]}
       />

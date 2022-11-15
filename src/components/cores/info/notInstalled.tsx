@@ -1,5 +1,8 @@
 import { useMemo } from "react"
+import { useRecoilValue } from "recoil"
+import { useInstallCore } from "../../../hooks/useInstallCore"
 import { useInventoryItem } from "../../../hooks/useInventoryItem"
+import { DownloadURLSelectorFamily } from "../../../recoil/selectors"
 import { Controls } from "../../controls"
 import { Link } from "../../link"
 import { Releases } from "./releases"
@@ -20,6 +23,9 @@ export const NotInstalledCoreInfo = ({
     return `https://github.com/${inventoryItem.repository.owner}/${inventoryItem.repository.name}`
   }, [inventoryItem])
 
+  const download_url = useRecoilValue(DownloadURLSelectorFamily(coreName))
+  const installCore = useInstallCore()
+
   return (
     <div className="core-info">
       <Controls
@@ -29,11 +35,11 @@ export const NotInstalledCoreInfo = ({
             text: "Back to list",
             onClick: onBack,
           },
-          inventoryItem && {
+          download_url && {
             type: "button",
             text: "Install",
             onClick: () => {
-              console.log("install ", coreName)
+              installCore(coreName, download_url)
             },
           },
         ]}
