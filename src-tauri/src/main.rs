@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use futures::lock::Mutex;
+use futures_locks::RwLock;
 use reqwest::StatusCode;
 use std::fs::{self};
 use std::io::Read;
@@ -11,13 +11,13 @@ use std::io::{Cursor, Write};
 use std::path::PathBuf;
 use tauri::api::dialog;
 
-struct PocketSyncState(Mutex<PathBuf>);
+struct PocketSyncState(RwLock<PathBuf>);
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command(async)]
 async fn open_pocket(state: tauri::State<'_, PocketSyncState>) -> Result<String, ()> {
     if let Some(pocket_path) = dialog::blocking::FileDialogBuilder::new().pick_folder() {
-        let mut path_state = state.0.lock().await;
+        let mut path_state = state.0.write().await;
         *path_state = pocket_path;
 
         Ok(format!("path: {:?}", &path_state))
@@ -31,7 +31,7 @@ async fn read_binary_file(
     state: tauri::State<'_, PocketSyncState>,
     path: &str,
 ) -> Result<Vec<u8>, ()> {
-    let pocket_path = state.0.lock().await;
+    let pocket_path = state.0.read().await;
     let path = pocket_path.join(path);
 
     let mut f = fs::File::open(&path).expect("no file found");
@@ -48,7 +48,7 @@ async fn read_text_file(
     state: tauri::State<'_, PocketSyncState>,
     path: &str,
 ) -> Result<String, ()> {
-    let pocket_path = state.0.lock().await;
+    let pocket_path = state.0.read().await;
     let path = pocket_path.join(path);
     let video_json = fs::read_to_string(path).unwrap();
     Ok(video_json)
@@ -69,7 +69,7 @@ async fn list_files(
     path: &str,
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<Vec<String>, ()> {
-    let pocket_path = state.0.lock().await;
+    let pocket_path = state.0.read().await;
     let dir_path = pocket_path.join(path);
     let paths = fs::read_dir(dir_path).unwrap();
 
@@ -82,7 +82,7 @@ async fn list_files(
         .collect())
 }
 
-#[tauri::command(async)]
+#[tauri::command]
 async fn install_core(
     core_name: &str,
     zip_url: &str,
@@ -92,7 +92,7 @@ async fn install_core(
     // folders we want to allow them to change
     // or prevent them from changing existing platform images etc
     let response = reqwest::get(zip_url).await.unwrap();
-    let pocket_path = state.0.lock().await;
+    let pocket_path = state.0.read().await;
 
     match response.status() {
         StatusCode::OK => {
@@ -111,7 +111,7 @@ async fn uninstall_core(
     core_name: &str,
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<bool, ()> {
-    let pocket_path = state.0.lock().await;
+    let pocket_path = state.0.read().await;
     let core_path = pocket_path.join("Cores").join(core_name);
     println!("I will remove {:?}", &core_path);
     if core_path.exists() && core_path.is_dir() {

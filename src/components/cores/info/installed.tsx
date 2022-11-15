@@ -97,24 +97,29 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
 
         <div className="core-info__info-row">
           <strong>{"Supports:"}</strong>
+          <div className="core-info__supports-bubbles">
+            <SupportsBubble supports={coreInfo.core.framework.sleep_supported}>
+              {"Save States / Sleep"}
+            </SupportsBubble>
 
-          <SupportsBubble supports={coreInfo.core.framework.sleep_supported}>
-            Sleep
-          </SupportsBubble>
+            <SupportsBubble supports={coreInfo.core.framework.dock.supported}>
+              {"Dock"}
+            </SupportsBubble>
 
-          <SupportsBubble supports={coreInfo.core.framework.dock.supported}>
-            Dock
-          </SupportsBubble>
+            <SupportsBubble
+              supports={coreInfo.core.framework.dock.analog_output}
+            >
+              {"Dock (Analog)"}
+            </SupportsBubble>
 
-          <SupportsBubble supports={coreInfo.core.framework.dock.analog_output}>
-            Dock Analog
-          </SupportsBubble>
-
-          <SupportsBubble
-            supports={coreInfo.core.framework.hardware.cartridge_adapter !== -1}
-          >
-            Cartridges
-          </SupportsBubble>
+            <SupportsBubble
+              supports={
+                coreInfo.core.framework.hardware.cartridge_adapter !== -1
+              }
+            >
+              {"Cartridges"}
+            </SupportsBubble>
+          </div>
         </div>
         {inventoryItem && inventoryItem.repository.platform === "github" && (
           <Releases inventoryItem={inventoryItem} />

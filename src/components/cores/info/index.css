@@ -39,8 +39,14 @@
   image-rendering: pixelated;
 }
 
+.core-info__supports-bubbles{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
 .core-info__supports {
+  white-space: nowrap;
   background-color: var(--light-colour);
   padding: 0 5px;
   border-radius: 5px;
