@@ -52,6 +52,19 @@
   border-radius: 5px;
 }
 
+.core-info__platforms{
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.core-info__platform-loader{
+  width: 100px;
+  aspect-ratio: 4 / 2;
+  border-radius: 15px;
+}
+
 .core-info__supports--false{
   opacity: 0.2;
 }

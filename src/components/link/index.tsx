@@ -11,13 +11,13 @@ type LinkProps = {
 
 export const Link = ({ children, className, href }: LinkProps) => {
   return (
-    <div
+    <span
       className={`link ${className}`}
       onClick={() => {
         if (href) open(href)
       }}
     >
       {children}
-    </div>
+    </span>
   )
 }

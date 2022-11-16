@@ -5,6 +5,7 @@ import {
   GithubRelease,
   InventoryJSON,
   PlatformId,
+  PlatformInfoJSON,
   Screenshot,
   VideoJSON,
 } from "../types"
@@ -160,6 +161,23 @@ export const PlatformImageSelectorFamily = selectorFamily<string, PlatformId>({
           resolve(renderBinImage(response, 521, 165, true))
         }
       })
+    },
+})
+
+export const PlatformInfoSelectorFamily = selectorFamily<
+  PlatformInfoJSON,
+  PlatformId
+>({
+  key: "PlatformInfoSelectorFamily",
+  get:
+    (platformId: PlatformId) =>
+    async ({ get }) => {
+      get(fileSystemInvalidationAtom)
+      const response = await invoke<string>("read_text_file", {
+        path: `Platforms/${platformId}.json`,
+      })
+
+      return JSON.parse(response) as PlatformInfoJSON
     },
 })
 

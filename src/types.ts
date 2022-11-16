@@ -34,8 +34,7 @@ export type Category = string
 export type AuthorName = string
 export type Semver = `${number}.${number}.${number}`
 
-export type PlatformJSON = {
-  id: PlatformId
+export type PlatformInfoJSON = {
   platform: {
     category: Category
     name: string

@@ -16,7 +16,9 @@ import { Releases } from "./releases"
 import { Version } from "../version"
 import { useUninstallCore } from "../../../hooks/useUninstallCore"
 import { useInstallCore } from "../../../hooks/useInstallCore"
-import { ReactNode } from "react"
+import { ReactNode, Suspense } from "react"
+import { CorePlatformInfo } from "./platform"
+import { Loader } from "../../loader"
 
 type CoreInfoProps = {
   coreName: string
@@ -120,6 +122,19 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
               {"Cartridges"}
             </SupportsBubble>
           </div>
+        </div>
+
+        <div className="core-info__info-row">
+          <strong>{"Platforms:"}</strong>
+          <Suspense
+            fallback={<Loader className="core-info__platform-loader" />}
+          >
+            <div className="core-info__platforms">
+              {coreInfo.core.metadata.platform_ids.map((id) => (
+                <CorePlatformInfo platformId={id} key={id} />
+              ))}
+            </div>
+          </Suspense>
         </div>
         {inventoryItem && inventoryItem.repository.platform === "github" && (
           <Releases inventoryItem={inventoryItem} />
