@@ -56,13 +56,17 @@ export const Controls = ({ controls }: ControlProps) => {
             )
           case "select":
             return (
-              <div className="controls__item" key={control.text}>
+              <div
+                className="controls__item controls__item--select"
+                key={control.text}
+              >
                 {control.text}
                 <select
+                  value={control.selected}
                   onChange={({ target }) => control.onChange(target.value)}
                 >
                   {control.options.map((v) => (
-                    <option value={v} key={v} selected={v === control.selected}>
+                    <option value={v} key={v}>
                       {v}
                     </option>
                   ))}

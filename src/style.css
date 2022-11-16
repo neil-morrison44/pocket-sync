@@ -27,11 +27,13 @@ body {
 
 .container {
   margin: 0;
-  padding-top: 10vh;
+  padding: 10vh 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   text-align: center;
+  height: 100vh;
+  box-sizing: border-box;
 }
 
 .logo {

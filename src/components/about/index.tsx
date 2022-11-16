@@ -5,6 +5,8 @@ import {
   GithubReleasesSelectorFamily,
 } from "../../recoil/selectors"
 import { Link } from "../link"
+import { Pocket } from "../three/pocket"
+import { RandomScreenshotScreen } from "../three/randomScreenshotScreen"
 
 import "./index.css"
 
@@ -36,6 +38,8 @@ export const About = () => {
             className="about__update-link"
           >{`Update Available! ${selfReleases[0].tag_name}`}</Link>
         )}
+
+        <Pocket spin screenMaterial={<RandomScreenshotScreen />} />
       </div>
 
       <div className="about__info">

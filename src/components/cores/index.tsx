@@ -1,7 +1,9 @@
 import { Suspense, useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
+import { useCategoryLookup } from "../../hooks/useCategoryLookup"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import {
+  CateogryListselector,
   CoreInventorySelector,
   coresListSelector,
 } from "../../recoil/selectors"
@@ -17,16 +19,24 @@ export const Cores = () => {
   const coresList = useRecoilValue(coresListSelector)
   const coreInventory = useRecoilValue(CoreInventorySelector)
   const { pushScroll, popScroll } = useSaveScroll()
-
   const [searchQuery, setSearchQuery] = useState<string>("")
+  const [filterCategory, setFilterCategory] = useState<string>("All")
+  const lookupCategory = useCategoryLookup()
 
   const notInstalledCores = useMemo(() => {
     return coreInventory.data
       .filter(({ identifier }) => !coresList.includes(identifier))
+      .filter(({ release, prerelease }) => {
+        if (filterCategory === "All") return true
+
+        if (release?.platform.category === filterCategory) return true
+        if (prerelease?.platform.category === filterCategory) return true
+        return false
+      })
       .filter((core) =>
         core.identifier.toLowerCase().includes(searchQuery.toLowerCase())
       )
-  }, [searchQuery, coresList, coreInventory])
+  }, [searchQuery, filterCategory, coresList, coreInventory])
 
   const sortedList = useMemo(
     () =>
@@ -40,11 +50,17 @@ export const Cores = () => {
 
           return switchedA.localeCompare(switchedB)
         })
+        .filter((core) => {
+          if (filterCategory === "All") return true
+          return lookupCategory(core) === filterCategory
+        })
         .filter((core) =>
           core.toLowerCase().includes(searchQuery.toLowerCase())
         ),
-    [searchQuery, coresList]
+    [searchQuery, filterCategory, coresList]
   )
+
+  const categoryList = useRecoilValue(CateogryListselector)
 
   if (selectedCore) {
     return (
@@ -70,10 +86,10 @@ export const Cores = () => {
           },
           {
             type: "select",
-            options: ["Arcade"],
-            selected: "Arcade",
+            options: categoryList,
+            selected: filterCategory,
             text: "Category",
-            onChange: (v) => console.log(v),
+            onChange: (v) => setFilterCategory(v),
           },
         ]}
       />

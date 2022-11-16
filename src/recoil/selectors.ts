@@ -1,8 +1,10 @@
 import { selector, selectorFamily } from "recoil"
 import { invoke } from "@tauri-apps/api/tauri"
 import {
+  Category,
   CoreInfoJSON,
   GithubRelease,
+  InventoryItem,
   InventoryJSON,
   PlatformId,
   PlatformInfoJSON,
@@ -248,4 +250,22 @@ export const DownloadURLSelectorFamily = selectorFamily<string | null, string>({
 export const AppVersionSelector = selector<string>({
   key: "AppVersionSelector",
   get: async () => await getVersion(),
+})
+
+export const CateogryListselector = selector<Category[]>({
+  key: "CateogryListselector",
+  get: ({ get }) => {
+    const inventory = get(CoreInventorySelector)
+
+    const cateogrySet = new Set(
+      inventory.data.map(({ release, prerelease }) => {
+        const releaseDetails = release ?? prerelease
+        if (!releaseDetails) return "Uncategorized"
+        const { platform } = releaseDetails
+        return platform.category ?? "Uncategorized"
+      })
+    )
+
+    return ["All", ...Array.from(cateogrySet)]
+  },
 })
