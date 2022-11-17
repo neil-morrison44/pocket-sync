@@ -14,3 +14,8 @@ export const PocketModelColourAtom = atom<"black" | "white">({
   key: "PocketModelColourAtom",
   default: "black",
 })
+
+export const iventoryInvalidationAtom = atom<number>({
+  key: "iventoryInvalidationAtom",
+  default: Date.now(),
+})

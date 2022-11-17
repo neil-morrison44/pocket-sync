@@ -4,7 +4,6 @@ import {
   Category,
   CoreInfoJSON,
   GithubRelease,
-  InventoryItem,
   InventoryJSON,
   PlatformId,
   PlatformInfoJSON,
@@ -12,7 +11,7 @@ import {
   VideoJSON,
 } from "../types"
 import { renderBinImage } from "../components/utils/renderBinImage"
-import { fileSystemInvalidationAtom } from "./atoms"
+import { fileSystemInvalidationAtom, iventoryInvalidationAtom } from "./atoms"
 import { getVersion } from "@tauri-apps/api/app"
 
 export const VideoJSONSelectorFamily = selectorFamily<
@@ -185,7 +184,8 @@ export const PlatformInfoSelectorFamily = selectorFamily<
 
 export const CoreInventorySelector = selector<InventoryJSON>({
   key: "CoreInventorySelector",
-  get: async () => {
+  get: async ({ get }) => {
+    get(iventoryInvalidationAtom)
     const response = await fetch(
       "https://joshcampbell191.github.io/openfpga-cores-inventory/api/v1/analogue-pocket/cores.json"
     )
