@@ -3,6 +3,7 @@
     windows_subsystem = "windows"
 )]
 
+use checks::check_if_folder_looks_like_pocket;
 use futures_locks::RwLock;
 use reqwest::StatusCode;
 use std::fs::{self};
@@ -11,16 +12,22 @@ use std::io::{Cursor, Write};
 use std::path::PathBuf;
 use tauri::api::dialog;
 
+mod checks;
+
 struct PocketSyncState(RwLock<PathBuf>);
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command(async)]
-async fn open_pocket(state: tauri::State<'_, PocketSyncState>) -> Result<String, ()> {
+async fn open_pocket(state: tauri::State<'_, PocketSyncState>) -> Result<Option<String>, ()> {
     if let Some(pocket_path) = dialog::blocking::FileDialogBuilder::new().pick_folder() {
+        if !check_if_folder_looks_like_pocket(&pocket_path) {
+            return Ok(None);
+        }
+
         let mut path_state = state.0.write().await;
         *path_state = pocket_path;
 
-        Ok(format!("path: {:?}", &path_state))
+        Ok(Some(format!("path: {:?}", &path_state)))
     } else {
         Err(())
     }
@@ -71,6 +78,11 @@ async fn list_files(
 ) -> Result<Vec<String>, ()> {
     let pocket_path = state.0.read().await;
     let dir_path = pocket_path.join(path);
+
+    if !dir_path.exists() {
+        return Ok(vec![]);
+    }
+
     let paths = fs::read_dir(dir_path).unwrap();
 
     Ok(paths

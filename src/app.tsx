@@ -4,7 +4,7 @@ import "./app.css"
 import { useRecoilState } from "recoil"
 import { pocketPathAtom } from "./recoil/atoms"
 import { Layout } from "./components/layout"
-import React, { Suspense } from "react"
+import React, { Suspense, useCallback, useState } from "react"
 
 const Pocket = React.lazy(() =>
   import("./components/three/pocket").then((m) => ({ default: m.Pocket }))
@@ -12,10 +12,12 @@ const Pocket = React.lazy(() =>
 
 export const App = () => {
   const [pocketPath, setPocketPath] = useRecoilState(pocketPathAtom)
+  const [attempts, setAttempts] = useState(0)
 
-  async function openPocket() {
-    setPocketPath(await invoke("open_pocket"))
-  }
+  const openPocket = useCallback(async () => {
+    setPocketPath(await invoke<string | null>("open_pocket"))
+    setAttempts((a) => a + 1)
+  }, [setPocketPath, setAttempts])
 
   if (pocketPath) {
     return <Layout />
@@ -28,6 +30,12 @@ export const App = () => {
       <Suspense fallback={<div style={{ flexGrow: 1 }}></div>}>
         <Pocket spin />
       </Suspense>
+
+      {attempts > 0 && (
+        <h3>
+          {"That folder doesn't look like the Pocket's file system. Try again"}
+        </h3>
+      )}
 
       <div className="row">
         <button type="button" onClick={() => openPocket()}>
