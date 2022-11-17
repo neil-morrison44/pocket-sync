@@ -44,7 +44,6 @@ export const RandomScreenshotScreen = ({
 }
 
 const ScreenshotScreen = ({ name }: { name: string }) => {
-  const textureRef = useRef<THREE.Texture>(null)
   const [texture, setTexture] = useState<THREE.Texture | null>(null)
 
   const loadImageFile = useRecoilCallback(
@@ -68,16 +67,16 @@ const ScreenshotScreen = ({ name }: { name: string }) => {
         const newTexture = new Texture()
         newTexture.image = image
         newTexture.needsUpdate = true
+        newTexture.anisotropy = 4
         setTexture(newTexture)
       }
     })()
-  }, [name, textureRef])
+  }, [name])
 
   return (
     <meshBasicMaterial
       attach="material"
       map={texture || undefined}
-      color={texture ? undefined : "green"}
     ></meshBasicMaterial>
   )
 }

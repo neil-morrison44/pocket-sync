@@ -4,7 +4,11 @@ import "./app.css"
 import { useRecoilState } from "recoil"
 import { pocketPathAtom } from "./recoil/atoms"
 import { Layout } from "./components/layout"
-import { Pocket } from "./components/three/pocket"
+import React, { Suspense } from "react"
+
+const Pocket = React.lazy(() =>
+  import("./components/three/pocket").then((m) => ({ default: m.Pocket }))
+)
 
 export const App = () => {
   const [pocketPath, setPocketPath] = useRecoilState(pocketPathAtom)
@@ -21,7 +25,9 @@ export const App = () => {
     <div className="container">
       <h1>Pocket Sync</h1>
 
-      <Pocket spin />
+      <Suspense fallback={<div style={{ flexGrow: 1 }}></div>}>
+        <Pocket spin />
+      </Suspense>
 
       <div className="row">
         <button type="button" onClick={() => openPocket()}>

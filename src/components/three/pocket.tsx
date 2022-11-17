@@ -8,26 +8,23 @@ import "./index.css"
 
 type PocketProps = {
   spin?: boolean
-  show?: "screenshots" | "static"
-  colour?: "black" | "white"
   screenMaterial?: ReactNode
 }
 
-const BLACK_COLOUR = "rgb(0,0,0)"
-const WHITE_COLOUR = "rgb(220,220,220)"
+const BLACK_COLOUR = "rgb(5,5,5)"
+const WHITE_COLOUR = "rgb(90,90,90)"
 
-export const Pocket = ({
-  spin = false,
-  show = "static",
-  colour = "black",
-  screenMaterial,
-}: PocketProps) => {
+export const Pocket = ({ spin = false, screenMaterial }: PocketProps) => {
   return (
-    <Canvas shadows className="three-pocket">
+    <Canvas
+      shadows
+      className="three-pocket"
+      camera={{ fov: 50, position: [0, 0, 4] }}
+    >
       <ambientLight />
-      <pointLight position={[10, 10, 10]} intensity={4} />
-      <directionalLight position={[10, 10, 10]} intensity={5} castShadow />
-      <directionalLight position={[5, 0, 5]} intensity={3} castShadow />
+      <pointLight position={[10, 10, 10]} intensity={1} />
+      <directionalLight position={[10, 10, 10]} intensity={1} castShadow />
+      <directionalLight position={[5, 0, 5]} intensity={1} castShadow />
 
       <directionalLight position={[-10, -10, 5]} intensity={1} castShadow />
       <Body spin={spin} screenMaterial={screenMaterial} />
@@ -196,7 +193,9 @@ const Material = () => {
       attach="material"
       roughness={0.95}
       transmission={0}
-      clearcoat={0}
+      metalness={0.2}
+      clearcoat={0.4}
+      clearcoatRoughness={0.8}
       ior={1.25}
       color={colour == "black" ? BLACK_COLOUR : WHITE_COLOUR}
     />
