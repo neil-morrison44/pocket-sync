@@ -11,7 +11,7 @@ type PocketProps = {
   screenMaterial?: ReactNode
 }
 
-const BLACK_COLOUR = "rgb(5,5,5)"
+const BLACK_COLOUR = "rgb(1,1,1)"
 const WHITE_COLOUR = "rgb(90,90,90)"
 
 export const Pocket = ({ spin = false, screenMaterial }: PocketProps) => {
@@ -19,14 +19,14 @@ export const Pocket = ({ spin = false, screenMaterial }: PocketProps) => {
     <Canvas
       shadows
       className="three-pocket"
-      camera={{ fov: 50, position: [0, 0, 4] }}
+      camera={{ fov: 50, position: [0, 0, 42] }}
     >
-      <ambientLight />
-      <pointLight position={[10, 10, 10]} intensity={1} />
-      <directionalLight position={[10, 10, 10]} intensity={1} castShadow />
-      <directionalLight position={[5, 0, 5]} intensity={1} castShadow />
+      <ambientLight intensity={1.25} />
+      <pointLight position={[20, 10, 20]} intensity={3} />
+      <directionalLight position={[0, 100, 0]} intensity={5} castShadow />
+      <directionalLight position={[80, 0, 80]} intensity={1.1} castShadow />
 
-      <directionalLight position={[-10, -10, 5]} intensity={1} castShadow />
+      <directionalLight position={[-100, -100, 50]} intensity={1.1} />
       <Body spin={spin} screenMaterial={screenMaterial} />
       {/* <OrbitControls maxDistance={4} minDistance={3} enablePan={false} /> */}
       {/* <Stats /> */}
@@ -49,7 +49,7 @@ const Body = ({
   return (
     <group
       ref={groupRef}
-      rotation={[0, 0, -0.2]}
+      rotation={[0, 1, -0.2]}
       // onClick={() =>
       //   changeColour((col) => {
       //     if (col === "black") return "white"
@@ -58,8 +58,8 @@ const Body = ({
       // }
     >
       <RoundedBox
-        args={[0.86 * 2, 1.49 * 2, 0.11 * 2]}
-        radius={0.1}
+        args={[0.86 * 20, 1.49 * 20, 0.11 * 20]}
+        radius={1}
         receiveShadow
       >
         <Material />
@@ -67,9 +67,9 @@ const Body = ({
       <RoundedBox
         castShadow
         receiveShadow
-        args={[0.86 * 2, 1.49 * 1.25, 0.22 * 2]}
-        radius={0.1}
-        position={[0, -1.1 / 2, -0.12]}
+        args={[0.86 * 20, 1.49 * 12.5, 0.22 * 20]}
+        radius={1}
+        position={[0, -11 / 2, -1.2]}
       >
         <Material />
       </RoundedBox>
@@ -78,32 +78,15 @@ const Body = ({
       <DPAD />
       <BottomButtons />
 
-      <mesh position={[0, 0.75, 0.111]}>
-        <planeGeometry attach="geometry" args={[160 / 130, 140 / 130]} />
-        {screenMaterial || (
-          <meshPhongMaterial attach="material" color="green" />
-        )}
-      </mesh>
+      <Screen screenMaterial={screenMaterial} />
 
-      <mesh position={[0, 0.75, 0.12]}>
-        <planeGeometry attach="geometry" args={[160 / 100, 140 / 100]} />
-        <meshPhysicalMaterial
-          thickness={0}
-          roughness={0}
-          transmission={1}
-          color="white"
-          clearcoat={1}
-          clearcoatRoughness={0.1}
-        />
-      </mesh>
-
-      <mesh position={[-0.82, 1.2, 0.111]}>
+      <mesh position={[-8.2, 12, 1.11]}>
         <RoundedBox
           castShadow
           receiveShadow
-          args={[0.15, 0.3, 0.1]}
-          radius={0.05}
-          position={[0, -1.1 / 2, -0.12]}
+          args={[1.5, 3, 1]}
+          radius={0.5}
+          position={[0, -11 / 2, -1]}
         >
           <meshBasicMaterial attach="material" color="rgb(88, 144, 80)" />
         </RoundedBox>
@@ -112,7 +95,41 @@ const Body = ({
   )
 }
 
-const BUTTON_GAP = 0.125 as const
+const Screen = ({ screenMaterial }: PocketProps) => {
+  const colour = useRecoilValue(PocketModelColourAtom)
+  return (
+    <>
+      {/* colour */}
+      <mesh position={[0, 7.5, 1.11]}>
+        <planeGeometry attach="geometry" args={[16, 14]} />
+        <meshLambertMaterial color={colour === "black" ? "black" : "white"} />
+      </mesh>
+
+      {/* LCD */}
+      <mesh position={[0, 7.5, 1.12]}>
+        <planeGeometry attach="geometry" args={[160 / 13, 140 / 13]} />
+        {screenMaterial || (
+          <meshPhongMaterial attach="material" color="green" />
+        )}
+      </mesh>
+      {/* Glass */}
+      <mesh position={[0, 7.5, 1.13]}>
+        <planeGeometry attach="geometry" args={[160 / 10, 140 / 10]} />
+        <meshPhysicalMaterial
+          thickness={0}
+          roughness={0}
+          transmission={1}
+          color="white"
+          ior={1.46}
+          clearcoat={1}
+          clearcoatRoughness={0.1}
+        />
+      </mesh>
+    </>
+  )
+}
+
+const BUTTON_GAP = 1.25 as const
 
 const Buttons = () => {
   const positions = [
@@ -124,14 +141,14 @@ const Buttons = () => {
 
   return (
     <group
-      position={[0.4, -0.3, 0.125]}
+      position={[4, -3, 1.25]}
       rotation={[Math.PI / 2, Math.PI / 4, 0]}
       castShadow
       receiveShadow
     >
       {positions.map((p, index) => (
         <mesh position={p} key={index} castShadow receiveShadow>
-          <cylinderGeometry attach="geometry" args={[0.09, 0.09, 0.1, 16]} />
+          <cylinderGeometry attach="geometry" args={[0.9, 0.9, 1, 16]} />
           <Material />
         </mesh>
       ))}
@@ -148,14 +165,14 @@ const BottomButtons = () => {
 
   return (
     <group
-      position={[0, -1, 0.125]}
+      position={[0, -10, 1.25]}
       rotation={[Math.PI / 2, Math.PI / 4, 0]}
       castShadow
       receiveShadow
     >
       {positions.map((p, index) => (
         <mesh position={p} key={index} castShadow receiveShadow>
-          <cylinderGeometry attach="geometry" args={[0.05, 0.05, 0.05, 16]} />
+          <cylinderGeometry attach="geometry" args={[0.5, 0.5, 0.5, 16]} />
           <Material />
         </mesh>
       ))}
@@ -165,13 +182,13 @@ const BottomButtons = () => {
 
 const DPAD = () => {
   const args = [
-    [BUTTON_GAP, 0.1, BUTTON_GAP * 3.5],
-    [BUTTON_GAP * 3.5, 0.1, BUTTON_GAP],
+    [BUTTON_GAP, 1, BUTTON_GAP * 3.5],
+    [BUTTON_GAP * 3.5, 1, BUTTON_GAP],
   ] as const
 
   return (
     <group
-      position={[-0.4, -0.3, 0.125]}
+      position={[-4, -3, 1.25]}
       rotation={[Math.PI / 2, 0, 0]}
       castShadow
       receiveShadow
@@ -191,12 +208,7 @@ const Material = () => {
   return (
     <meshPhysicalMaterial
       attach="material"
-      roughness={0.95}
-      transmission={0}
-      metalness={0.2}
-      clearcoat={0.4}
-      clearcoatRoughness={0.8}
-      ior={1.25}
+      ior={1.46}
       color={colour == "black" ? BLACK_COLOUR : WHITE_COLOUR}
     />
   )
