@@ -1,6 +1,6 @@
 import React, { ReactElement, useCallback, useMemo } from "react"
 import { useRecoilValue } from "recoil"
-import { SingleScreenshotSelectorFamily } from "../../recoil/selectors"
+import { SingleScreenshotSelectorFamily } from "../../recoil/screenshots/selectors"
 
 type ScreenshotProps = {
   fileName: string

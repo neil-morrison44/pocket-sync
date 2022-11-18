@@ -1,6 +1,6 @@
 import React, { Suspense, useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
-import { screenshotsListSelector } from "../../recoil/selectors"
+import { screenshotsListSelector } from "../../recoil/screenshots/selectors"
 import { Screenshot } from "./item"
 
 import "./index.css"

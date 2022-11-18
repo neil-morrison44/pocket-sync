@@ -1,9 +1,7 @@
 import { useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
-import {
-  SingleScreenshotSelectorFamily,
-  VideoJSONSelectorFamily,
-} from "../../../recoil/selectors"
+import { SingleScreenshotSelectorFamily } from "../../../recoil/screenshots/selectors"
+import { VideoJSONSelectorFamily } from "../../../recoil/screenshots/selectors"
 
 const POCKET_WIDTH = 1600
 const POCKET_HEIGHT = 1440

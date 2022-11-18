@@ -3,7 +3,7 @@ import { useRecoilCallback, useRecoilValue } from "recoil"
 import {
   screenshotsListSelector,
   SingleScreenshotSelectorFamily,
-} from "../../recoil/selectors"
+} from "../../recoil/screenshots/selectors"
 import { useLoader } from "@react-three/fiber"
 import { TextureLoader, Texture } from "three"
 import { useScreenshot } from "../screenshots/hooks/useScreenshot"

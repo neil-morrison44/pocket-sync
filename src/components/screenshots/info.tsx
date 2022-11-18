@@ -1,9 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
-import {
-  SingleScreenshotSelectorFamily,
-  VideoJSONSelectorFamily,
-} from "../../recoil/selectors"
+import { SingleScreenshotSelectorFamily } from "../../recoil/screenshots/selectors"
+import { VideoJSONSelectorFamily } from "../../recoil/screenshots/selectors"
 import "./info.css"
 
 import { useSaveFile } from "../../hooks/saveFile"
