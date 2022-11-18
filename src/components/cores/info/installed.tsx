@@ -3,9 +3,11 @@ import { useRecoilValue } from "recoil"
 import {
   CoreAuthorImageSelectorFamily,
   CoreInfoSelectorFamily,
+} from "../../../recoil/selectors"
+import {
   CoreInventorySelector,
   DownloadURLSelectorFamily,
-} from "../../../recoil/selectors"
+} from "../../../recoil/inventory/selectors"
 import { Controls } from "../../controls"
 import { Link } from "../../link"
 
@@ -48,6 +50,11 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
           {
             type: "button",
             text: "Uninstall",
+            onClick: () => uninstall(coreName),
+          },
+          {
+            type: "button",
+            text: "Load Required Files",
             onClick: () => uninstall(coreName),
           },
           downloadUrl && {

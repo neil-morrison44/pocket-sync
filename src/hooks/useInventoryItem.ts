@@ -1,5 +1,5 @@
 import { useRecoilValue } from "recoil"
-import { CoreInventorySelector } from "../recoil/selectors"
+import { CoreInventorySelector } from "../recoil/inventory/selectors"
 
 export const useInventoryItem = (coreName: string) => {
   const coreInventory = useRecoilValue(CoreInventorySelector)

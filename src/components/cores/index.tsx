@@ -2,16 +2,13 @@ import { Suspense, useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
 import { useCategoryLookup } from "../../hooks/useCategoryLookup"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
-import {
-  CateogryListselector,
-  CoreInventorySelector,
-  coresListSelector,
-} from "../../recoil/selectors"
+import { CateogryListselector } from "../../recoil/inventory/selectors"
+import { CoreInventorySelector } from "../../recoil/inventory/selectors"
+import { coresListSelector } from "../../recoil/selectors"
 import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
 import { CoreInfo } from "./info"
-import { InstalledCoreInfo } from "./info/installed"
 import { CoreItem } from "./item"
 
 export const Cores = () => {

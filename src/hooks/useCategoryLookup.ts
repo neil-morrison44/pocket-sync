@@ -1,5 +1,5 @@
 import { useRecoilCallback } from "recoil"
-import { CoreInventorySelector } from "../recoil/selectors"
+import { CoreInventorySelector } from "../recoil/inventory/selectors"
 
 export const useCategoryLookup = () => {
   // might change this to query the filesystem instead but that'll

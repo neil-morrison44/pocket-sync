@@ -28,4 +28,6 @@
   padding-right: 15px;
   box-sizing: border-box;
   background-color: var(--light-colour);
+  display: flex;
+  align-items: center;
 }

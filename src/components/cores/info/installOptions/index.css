@@ -32,6 +32,8 @@
   overflow: auto;
   background-color: var(--info-colour);
   border-radius: 10px;
+  box-sizing: border-box;
+  padding: 10px;
 }
 
 .install-options__controls {

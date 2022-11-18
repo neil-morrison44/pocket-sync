@@ -1,9 +1,7 @@
 import { Suspense, useMemo } from "react"
 import { useRecoilValue } from "recoil"
-import {
-  AppVersionSelector,
-  GithubReleasesSelectorFamily,
-} from "../../recoil/selectors"
+import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
+import { AppVersionSelector } from "../../recoil/selectors"
 import { Link } from "../link"
 import { Pocket } from "../three/pocket"
 import { RandomScreenshotScreen } from "../three/randomScreenshotScreen"

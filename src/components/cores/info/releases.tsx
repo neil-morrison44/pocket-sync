@@ -1,11 +1,10 @@
 import { useRecoilValue } from "recoil"
-import { useInventoryItem } from "../../../hooks/useInventoryItem"
-import { GithubReleasesSelectorFamily } from "../../../recoil/selectors"
 import { InventoryItem } from "../../../types"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { useState } from "react"
 import { Link } from "../../link"
+import { GithubReleasesSelectorFamily } from "../../../recoil/github/selectors"
 
 import "./releases.css"
 
