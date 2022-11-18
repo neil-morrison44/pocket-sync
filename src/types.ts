@@ -128,3 +128,8 @@ export type GithubRelease = {
     size: 1024
   }[]
 }
+
+export type InstallDetails = {
+  success: boolean
+  files: { path: string; exists: boolean }[]
+}

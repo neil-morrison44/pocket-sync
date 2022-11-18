@@ -5,6 +5,7 @@ import { useInventoryItem } from "../../../hooks/useInventoryItem"
 import { DownloadURLSelectorFamily } from "../../../recoil/selectors"
 import { Controls } from "../../controls"
 import { Link } from "../../link"
+import { InstallOptions } from "./installOptions"
 import { Releases } from "./releases"
 
 type NotInstalledCoreInfoProps = {
@@ -24,10 +25,12 @@ export const NotInstalledCoreInfo = ({
   }, [inventoryItem])
 
   const download_url = useRecoilValue(DownloadURLSelectorFamily(coreName))
-  const installCore = useInstallCore()
+  const { installCore, installDetails } = useInstallCore()
 
   return (
     <div className="core-info">
+      {installDetails && <InstallOptions details={installDetails} />}
+
       <Controls
         controls={[
           {

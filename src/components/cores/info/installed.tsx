@@ -19,6 +19,7 @@ import { useInstallCore } from "../../../hooks/useInstallCore"
 import { ReactNode, Suspense } from "react"
 import { CorePlatformInfo } from "./platform"
 import { Loader } from "../../loader"
+import { InstallOptions } from "./installOptions"
 
 type CoreInfoProps = {
   coreName: string
@@ -29,7 +30,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
   const authorImageSrc = useRecoilValue(CoreAuthorImageSelectorFamily(coreName))
   const uninstall = useUninstallCore()
-  const install = useInstallCore()
+  const { installCore, installDetails } = useInstallCore()
   const inventoryItem = useInventoryItem(coreName)
   const downloadUrl = useRecoilValue(DownloadURLSelectorFamily(coreName))
 
@@ -50,10 +51,12 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
           downloadUrl && {
             type: "button",
             text: "Update",
-            onClick: () => install(coreName, downloadUrl),
+            onClick: () => installCore(coreName, downloadUrl),
           },
         ]}
       />
+
+      {installDetails && <InstallOptions details={installDetails} />}
 
       <h3 className="core-info__title">{coreInfo.core.metadata.shortname}</h3>
       {coreInfo.core.metadata.platform_ids.map((platformId) => (

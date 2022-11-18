@@ -21,6 +21,8 @@ zip = "0.6.3"
 reqwest = "0.11.12"
 futures = "0.3.25"
 futures-locks = "0.7.0"
+tokio = "1.21.2"
+tempdir = "0.3.7"
 
 [features]
 # by default Tauri runs in production mode

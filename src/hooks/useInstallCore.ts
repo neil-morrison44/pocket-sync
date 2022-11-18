@@ -1,25 +1,48 @@
 import { invoke } from "@tauri-apps/api/tauri"
-import { useCallback } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useSetRecoilState } from "recoil"
 import { fileSystemInvalidationAtom } from "../recoil/atoms"
 import { emit, listen } from "@tauri-apps/api/event"
+import { InstallDetails } from "../types"
 
 // emits the `click` event with the object payload
 
 export const useInstallCore = () => {
   const updateFSInvalidationAtom = useSetRecoilState(fileSystemInvalidationAtom)
+  const [installDetails, setInstallDetails] = useState<InstallDetails | null>(
+    null
+  )
 
-  return useCallback(async (coreName: string, zipUrl: string) => {
-    emit("install-core", {
-      coreName,
-      zipUrl,
-    })
+  useEffect(() => {
+    const unlisten = listen<InstallDetails>(
+      "install-details",
+      ({ payload }) => {
+        setInstallDetails(payload)
+      }
+    )
 
-    const status = await invoke<string>("install_core", {
-      coreName,
-      zipUrl,
-    })
-
-    if (status === "200") updateFSInvalidationAtom(Date.now())
+    return () => {
+      unlisten.then((l) => l())
+    }
   }, [])
+
+  useEffect(() => {
+    const unlisten = listen<InstallDetails>("core-installed", ({ payload }) => {
+      setInstallDetails(null)
+      updateFSInvalidationAtom(Date.now())
+    })
+
+    return () => {
+      unlisten.then((l) => l())
+    }
+  }, [])
+
+  const installCore = useCallback(async (coreName: string, zipUrl: string) => {
+    emit("install-core", {
+      core_name: coreName,
+      zip_url: zipUrl,
+    })
+  }, [])
+
+  return { installCore, installDetails }
 }

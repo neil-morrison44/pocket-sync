@@ -5,16 +5,15 @@
 
 use checks::check_if_folder_looks_like_pocket;
 use futures_locks::RwLock;
+use install_core::start_zip_thread;
 use reqwest::StatusCode;
 use std::fs::{self};
 use std::io::Read;
 use std::io::{Cursor, Write};
 use std::path::PathBuf;
-use std::thread;
 use tauri::api::dialog;
-use tauri::{App, Manager};
-
 mod checks;
+mod install_core;
 
 struct PocketSyncState(RwLock<PathBuf>);
 
@@ -166,18 +165,4 @@ fn main() {
         .setup(|app| start_zip_thread(&app))
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-}
-
-fn start_zip_thread(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
-    let app_handle = app.handle();
-
-    thread::spawn(move || {
-        let main_window = app_handle.get_window("main").unwrap();
-
-        main_window.listen("install-core", |event| {
-            println!("got window event-name with payload {:?}", event.payload());
-        })
-    });
-
-    Ok(())
 }

@@ -232,13 +232,15 @@ export const DownloadURLSelectorFamily = selectorFamily<string | null, string>({
       )
 
       if (zips.length === 1) return zips[0].browser_download_url
-
+      console.log("more than one zip")
       const coreZip = githubReleaseList[0].assets.find(({ name }) => {
         // hopefully this doesn't get used much
         const [_, core] = coreName.split(".")
         const simpleCore = core.replace(/[^\x00-\x7F]/g, "").toLowerCase()
         const simpleName = name.replace(/[^\x00-\x7F]/g, "").toLowerCase()
-        return name.endsWith(".zip") && simpleName.includes(simpleCore)
+
+        const regex = new RegExp(`[^a-zA-Z0-9]${simpleCore}[^a-zA-Z0-9]`)
+        return name.endsWith(".zip") && regex.test(simpleName)
       })
 
       if (!coreZip) return null

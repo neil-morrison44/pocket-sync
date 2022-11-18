@@ -1,0 +1,57 @@
+.install-options__wrapper{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.8);
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.install-options{
+  width: calc(100vw - 100px);
+  height: calc(100vh - 100px);
+  background-color: var(--background-colour);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
+  padding: 20px;
+  gap: 10px;
+}
+
+.install-options__paths{
+  flex-grow: 1;
+  overflow: auto;
+  background-color: var(--info-colour);
+  border-radius: 10px;
+}
+
+.install-options__controls {
+  display: flex;
+  justify-content: space-around;
+}
+
+.install-options__tree-node{
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.install-options__tree-node-info{
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.install-options__progress{
+  width: 100%;
+  accent-color: unset;
+}
