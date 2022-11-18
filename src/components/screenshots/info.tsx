@@ -23,10 +23,7 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfo) => {
   if (screenshot === null) throw new Error(`Null file ${fileName}`)
 
   const videoJson = useRecoilValue(
-    VideoJSONSelectorFamily({
-      authorName: screenshot.author,
-      coreName: screenshot.core,
-    })
+    VideoJSONSelectorFamily(`${screenshot.author}.${screenshot.core}`)
   )
 
   const image = useMemo(() => {

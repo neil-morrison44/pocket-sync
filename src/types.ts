@@ -22,6 +22,34 @@ export type VideoJSON = {
   }
 }
 
+export type DataJSON = {
+  data: {
+    magic: "APF_VER_1"
+    data_slots: DataSlotJSON[]
+  }
+}
+
+export type InstanceDataJSON = {
+  instance: {
+    data_path?: string
+    data_slots: DataSlotJSON[]
+  }
+}
+
+type DataSlotJSON = {
+  required?: boolean
+  parameters: number | string
+  extensions?: string[]
+  filename?: string
+}
+
+export type RequiredFileInfo = {
+  filename: string
+  path: string
+  exists: boolean
+  type: "core" | "instance"
+}
+
 export type ContentView =
   | "Pocket Sync"
   | "Games"
@@ -90,6 +118,9 @@ export type InventoryItem = {
   }
   release?: InventoryItemRelease
   prerelease?: InventoryItemRelease
+  sponsor?: {
+    [k: string]: string
+  }
 }
 
 type InventoryItemRelease = {

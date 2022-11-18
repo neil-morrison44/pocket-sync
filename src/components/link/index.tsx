@@ -14,7 +14,7 @@ export const Link = ({ children, className, href }: LinkProps) => {
     <span
       className={`link ${className}`}
       onClick={() => {
-        if (href) open(href)
+        if (href) open(window.encodeURI(href))
       }}
     >
       {children}

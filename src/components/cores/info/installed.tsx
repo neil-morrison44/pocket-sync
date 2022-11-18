@@ -20,6 +20,8 @@ import { ReactNode, Suspense } from "react"
 import { CorePlatformInfo } from "./platform"
 import { Loader } from "../../loader"
 import { InstallOptions } from "./installOptions"
+import { SponsorLinks } from "./sponsorLinks"
+import { RequiredFiles } from "./requiredFiles"
 
 type CoreInfoProps = {
   coreName: string
@@ -70,35 +72,52 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
       <section className="core-info__info">
         <p>{coreInfo.core.metadata.description}</p>
 
-        <div className="core-info__info-row">
-          <strong>{"Version:"}</strong>
-          <Version coreName={coreName} />
-        </div>
-
-        <div className="core-info__info-row">
-          <strong>{"Author:"}</strong>
-          <div className="core-info__author-tag">
-            <img src={authorImageSrc} />
-            {coreInfo.core.metadata.author}
-          </div>
-        </div>
-
-        {coreInfo.core.metadata.url && (
+        <div className="core-info__info-grid">
           <div className="core-info__info-row">
-            <strong>{"URL:"}</strong>
-
-            <Link href={coreInfo.core.metadata.url}>
-              {coreInfo.core.metadata.url}
-            </Link>
+            <strong>{"Version:"}</strong>
+            <Version coreName={coreName} />
           </div>
-        )}
-        {coreInfo.core.metadata.date_release && (
+
           <div className="core-info__info-row">
-            <strong>{"Release Date:"}</strong>
-
-            {coreInfo.core.metadata.date_release}
+            <strong>{"Author:"}</strong>
+            <div className="core-info__author-tag">
+              <img src={authorImageSrc} />
+              {coreInfo.core.metadata.author}
+            </div>
           </div>
-        )}
+
+          {inventoryItem?.sponsor && (
+            <div className="core-info__info-row core-info__info-row--right">
+              <strong>{"Sponsor:"}</strong>
+              <SponsorLinks links={inventoryItem.sponsor} />
+            </div>
+          )}
+
+          {coreInfo.core.metadata.url && (
+            <div className="core-info__info-row">
+              <strong>{"URL:"}</strong>
+
+              <Link href={coreInfo.core.metadata.url}>
+                {coreInfo.core.metadata.url}
+              </Link>
+            </div>
+          )}
+
+          <RequiredFiles
+            coreName={coreName}
+            // this should probably be a category === arcade check or something
+            // depends how people end up using instance jsons
+            ignoreInstance={coreName === "Mazamars312.NeoGeo"}
+          />
+
+          {coreInfo.core.metadata.date_release && (
+            <div className="core-info__info-row">
+              <strong>{"Release Date:"}</strong>
+
+              {coreInfo.core.metadata.date_release}
+            </div>
+          )}
+        </div>
 
         <div className="core-info__info-row">
           <strong>{"Supports:"}</strong>

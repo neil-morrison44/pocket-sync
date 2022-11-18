@@ -28,6 +28,17 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  grid-column: 1;
+}
+
+.core-info__info-row--right{
+  grid-column: 2;
+}
+
+.core-info__info-grid{
+  display: grid;
+  gap: inherit;
+  grid-template-columns: 1fr min-content;
 }
 
 .core-info__author-tag{

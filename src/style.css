@@ -10,6 +10,7 @@
   --info-colour: #111;
   --light-colour: #555;
   --green-colour: rgb(88, 144, 80);
+  --red-colour: rgb(200, 80, 88);
   background-color: var(--background-colour);
 
   font-synthesis: none;

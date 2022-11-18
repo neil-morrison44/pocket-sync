@@ -6,12 +6,12 @@
 use checks::check_if_folder_looks_like_pocket;
 use futures_locks::RwLock;
 use install_core::start_zip_thread;
-use reqwest::StatusCode;
 use std::fs::{self};
 use std::io::Read;
-use std::io::{Cursor, Write};
+use std::io::Write;
 use std::path::PathBuf;
 use tauri::api::dialog;
+use walkdir::{DirEntry, WalkDir};
 mod checks;
 mod install_core;
 
@@ -58,8 +58,19 @@ async fn read_text_file(
 ) -> Result<String, ()> {
     let pocket_path = state.0.read().await;
     let path = pocket_path.join(path);
+    println!("reading text file: {:?}", &path);
     let video_json = fs::read_to_string(path).unwrap();
     Ok(video_json)
+}
+
+#[tauri::command(async)]
+async fn file_exists(state: tauri::State<'_, PocketSyncState>, path: &str) -> Result<bool, ()> {
+    let pocket_path = state.0.read().await;
+    let path = pocket_path.join(path);
+
+    println!("checking if file exists @{:?}", &path);
+
+    Ok(path.exists())
 }
 
 #[tauri::command(async)]
@@ -95,28 +106,37 @@ async fn list_files(
         .collect())
 }
 
-#[tauri::command]
-async fn install_core(
-    core_name: &str,
-    zip_url: &str,
+#[tauri::command(async)]
+async fn walkdir_list_files(
+    path: &str,
+    extension: &str,
     state: tauri::State<'_, PocketSyncState>,
-) -> Result<String, ()> {
-    // could add funcionality here to limit zip files to _just_ the Cores/Assets/Platforms
-    // folders we want to allow them to change
-    // or prevent them from changing existing platform images etc
-    let response = reqwest::get(zip_url).await.unwrap();
+) -> Result<Vec<String>, ()> {
     let pocket_path = state.0.read().await;
+    let dir_path = pocket_path.join(path);
 
-    match response.status() {
-        StatusCode::OK => {
-            let zip_file = response.bytes().await.unwrap();
-            let cursor = Cursor::new(zip_file);
-            let mut archive = zip::ZipArchive::new(cursor).unwrap();
-            archive.extract(pocket_path.as_path()).unwrap();
-            Ok(String::from("200"))
-        }
-        s => Ok(String::from(s.as_str())),
+    if !dir_path.exists() {
+        return Ok(vec![]);
     }
+
+    fn is_hidden(entry: &DirEntry) -> bool {
+        entry
+            .file_name()
+            .to_str()
+            .map(|s| s.starts_with("."))
+            .unwrap_or(false)
+    }
+
+    let walker = WalkDir::new(&dir_path).into_iter();
+    let dir_path_str = &dir_path.to_str().unwrap();
+    Ok(walker
+        .filter_entry(|e| !is_hidden(e))
+        .into_iter()
+        .filter_map(|x| x.ok())
+        .map(|e| String::from(e.path().to_str().unwrap()))
+        .filter(|s| s.ends_with(extension))
+        .map(|s| s.replace(dir_path_str, ""))
+        .collect())
 }
 
 #[tauri::command(async)]
@@ -156,11 +176,12 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             open_pocket,
             list_files,
+            walkdir_list_files,
             read_binary_file,
             read_text_file,
             save_file,
-            install_core,
-            uninstall_core
+            uninstall_core,
+            file_exists
         ])
         .setup(|app| start_zip_thread(&app))
         .run(tauri::generate_context!())
