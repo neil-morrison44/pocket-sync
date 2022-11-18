@@ -13,6 +13,19 @@ export const InstallOptions = ({ details }: InstallOptionsProps) => {
     details.files.map(({ path }) => path)
   )
 
+  const toggleFile = useCallback(
+    (path: string) => {
+      setAllowedFiles((f) => {
+        if (f.includes(path)) {
+          return f.filter((p) => p !== path)
+        } else {
+          return [...f, path]
+        }
+      })
+    },
+    [setAllowedFiles]
+  )
+
   const [progress, setProgress] = useState<{
     max: number
     value: number
@@ -36,7 +49,7 @@ export const InstallOptions = ({ details }: InstallOptionsProps) => {
       paths: allowedFiles,
       allow: true,
     })
-  }, [])
+  }, [allowedFiles])
 
   const cancel = useCallback(() => {
     emit("install-confirmation", {
@@ -82,7 +95,12 @@ export const InstallOptions = ({ details }: InstallOptionsProps) => {
         {!progress && (
           <div className="install-options__paths">
             {tree.map((node) => (
-              <TreeNode node={node} allowed={allowedFiles} />
+              <TreeNode
+                node={node}
+                allowed={allowedFiles}
+                defaultExpanded
+                toggleFile={toggleFile}
+              />
             ))}
           </div>
         )}
@@ -120,21 +138,51 @@ type FileTreeNode = {
 const TreeNode = ({
   node,
   allowed,
+  defaultExpanded = false,
+  toggleFile,
 }: {
   node: FileTreeNode
+  defaultExpanded?: boolean
   allowed: string[]
+  toggleFile: (path: string) => void
 }) => {
+  const [expanded, setExpanded] = useState(defaultExpanded)
+
   return (
     <div className="install-options__tree-node">
       <div className="install-options__tree-node-info">
-        <input type="checkbox" checked={allowed.includes(node.full)}></input>
-        {node.name}
-        {node.is_dir ? "/" : ""}
+        {!node.is_dir && (
+          <input
+            type="checkbox"
+            checked={allowed.includes(node.full)}
+            onChange={() => toggleFile(node.full)}
+          ></input>
+        )}
+        <div
+          className="install-options__tree-node-name"
+          onClick={() => setExpanded((e) => !e)}
+        >
+          {node.is_dir && (
+            <div
+              className={`install-options__tree-arrow install-options__tree-arrow--${
+                expanded ? "expanded" : "collapsed"
+              }`}
+            ></div>
+          )}
+          {node.name}
+          {node.is_dir ? "/" : ""}
+        </div>
       </div>
 
-      {node.children.map((n) => (
-        <TreeNode node={n} key={n.full} allowed={allowed} />
-      ))}
+      {expanded &&
+        node.children.map((n) => (
+          <TreeNode
+            node={n}
+            key={n.full}
+            allowed={allowed}
+            toggleFile={toggleFile}
+          />
+        ))}
     </div>
   )
 }

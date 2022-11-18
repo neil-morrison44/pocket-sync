@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { Suspense, useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import {
   AppVersionSelector,
@@ -39,7 +39,16 @@ export const About = () => {
           >{`Update Available! ${selfReleases[0].tag_name}`}</Link>
         )}
 
-        <Pocket spin screenMaterial={<RandomScreenshotScreen />} />
+        <Pocket
+          spin
+          screenMaterial={
+            <Suspense
+              fallback={<meshPhongMaterial attach="material" color="green" />}
+            >
+              <RandomScreenshotScreen />
+            </Suspense>
+          }
+        />
       </div>
 
       <div className="about__info">

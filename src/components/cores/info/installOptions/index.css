@@ -55,3 +55,22 @@
   width: 100%;
   accent-color: unset;
 }
+
+.install-options__tree-node-name{
+  display: flex;
+  gap: inherit;
+  cursor: pointer;
+  align-items: center;
+}
+
+.install-options__tree-arrow{
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+}
+
+.install-options__tree-arrow--collapsed {
+  transform: rotate(-90deg);
+}

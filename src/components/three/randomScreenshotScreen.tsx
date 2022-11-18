@@ -36,11 +36,7 @@ export const RandomScreenshotScreen = ({
   if (screenshotList.length === 0)
     return <meshPhongMaterial attach="material" color="green" />
 
-  return (
-    <Suspense fallback={<meshPhongMaterial attach="material" color="green" />}>
-      <ScreenshotScreen name={screenshotName} />
-    </Suspense>
-  )
+  return <ScreenshotScreen name={screenshotName} />
 }
 
 const ScreenshotScreen = ({ name }: { name: string }) => {
