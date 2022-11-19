@@ -2,6 +2,7 @@ import React, { Suspense, useState } from "react"
 import { ContentView } from "../../types"
 import { About } from "../about"
 import { Cores } from "../cores"
+import { Disconnections } from "../disconnections"
 import { Loader } from "../loader"
 import { Screenshots } from "../screenshots"
 import { Settings } from "../settings"
@@ -20,6 +21,7 @@ export const Layout = () => {
 
   return (
     <div className="layout">
+      <Disconnections />
       <div className="layout__sidebar-menu">
         {views.map((v) => (
           <div

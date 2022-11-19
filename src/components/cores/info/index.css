@@ -38,7 +38,7 @@
 .core-info__info-grid{
   display: grid;
   gap: inherit;
-  grid-template-columns: 1fr min-content;
+  grid-template-columns: 1fr auto;
 }
 
 .core-info__author-tag{

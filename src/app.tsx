@@ -15,8 +15,13 @@ export const App = () => {
   const [attempts, setAttempts] = useState(0)
 
   const openPocket = useCallback(async () => {
-    setPocketPath(await invoke<string | null>("open_pocket"))
-    setAttempts((a) => a + 1)
+    const result = await invoke<string | null>("open_pocket")
+    setPocketPath(result)
+    if (result === null) {
+      setAttempts((a) => a + 1)
+    } else {
+      setAttempts(0)
+    }
   }, [setPocketPath, setAttempts])
 
   if (pocketPath) {

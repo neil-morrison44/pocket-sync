@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use checks::check_if_folder_looks_like_pocket;
+use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
 use futures_locks::RwLock;
 use install_core::start_zip_thread;
 use serde::{Deserialize, Serialize};
@@ -13,7 +13,7 @@ use std::io::Read;
 use std::io::Write;
 use std::path::PathBuf;
 use tauri::api::dialog;
-use tauri::Window;
+use tauri::{App, Window};
 use walkdir::{DirEntry, WalkDir};
 mod checks;
 mod install_core;
@@ -259,9 +259,16 @@ fn main() {
             install_archive_files,
             file_exists
         ])
-        .setup(|app| start_zip_thread(&app))
+        .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+fn start_threads(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
+    println!("starting threads?");
+    start_connection_thread(&app).unwrap();
+    start_zip_thread(&app).unwrap();
+    Ok(())
 }
 
 #[derive(Serialize, Deserialize)]
