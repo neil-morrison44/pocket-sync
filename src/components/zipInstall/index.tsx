@@ -1,0 +1,68 @@
+import { listen } from "@tauri-apps/api/event"
+import { useEffect, useState } from "react"
+import { Modal } from "../modal"
+import {
+  useAllowedFiles,
+  useListenForZipInstall,
+  useTree,
+  useZipInstallButtons,
+} from "./hooks"
+import { TreeNode } from "./treeNode"
+import { InstallZipEventPayload } from "./types"
+
+export const ZipInstall = () => {
+  const { installState } = useListenForZipInstall()
+
+  if (!installState) return null
+  return <ZipInstallInner {...installState} />
+}
+
+export const ZipInstallInner = ({
+  files,
+  progress,
+  title,
+}: InstallZipEventPayload) => {
+  const tree = useTree(files)
+  const { allowedFiles, toggleFile } = useAllowedFiles(files)
+  const { confirm, cancel } = useZipInstallButtons(allowedFiles)
+
+  if (progress) {
+    return (
+      <Modal>
+        <h2>{title}</h2>
+        <>
+          <h1>{`${((progress.value / progress.max) * 100).toFixed(0)}%`}</h1>
+          <progress
+            className="install-options__progress"
+            value={progress.value}
+            max={progress.max}
+          />
+        </>
+      </Modal>
+    )
+  }
+
+  return (
+    <Modal>
+      <h2>{title}</h2>
+      <div className="install-options__paths">
+        {tree &&
+          allowedFiles &&
+          tree.map((node) => (
+            <TreeNode
+              key={node.full}
+              node={node}
+              allowed={allowedFiles}
+              defaultExpanded
+              toggleFile={toggleFile}
+            />
+          ))}
+      </div>
+
+      <div className="install-options__controls">
+        <button onClick={cancel}>Cancel</button>
+        <button onClick={confirm}>Confirm</button>
+      </div>
+    </Modal>
+  )
+}

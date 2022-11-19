@@ -6,6 +6,7 @@ import { Games } from "../games"
 import { Loader } from "../loader"
 import { Screenshots } from "../screenshots"
 import { Settings } from "../settings"
+import { ZipInstall } from "../zipInstall"
 import "./index.css"
 
 export const Layout = () => {
@@ -22,6 +23,7 @@ export const Layout = () => {
   return (
     <div className="layout">
       <Disconnections />
+      <ZipInstall />
       <div className="layout__sidebar-menu">
         {views.map((v) => (
           <div

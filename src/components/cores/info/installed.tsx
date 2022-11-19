@@ -75,7 +75,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
         />
       )}
 
-      {installDetails && <InstallOptions details={installDetails} />}
+      {/* {installDetails && <InstallOptions details={installDetails} />} */}
 
       <h3 className="core-info__title">{coreInfo.core.metadata.shortname}</h3>
       {coreInfo.core.metadata.platform_ids.map((platformId) => (
