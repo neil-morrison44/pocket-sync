@@ -187,6 +187,16 @@ async fn install_archive_files(
 
     let mut failed_already = HashSet::new();
 
+    window
+        .emit(
+            "file-progress",
+            FileProgressPayload {
+                value: 0,
+                max: file_count,
+            },
+        )
+        .unwrap();
+
     for (index, file) in files.into_iter().enumerate() {
         let full_url = format!("{}/{}", archive_url, file.filename);
 
