@@ -2166,6 +2166,7 @@ dependencies = [
 name = "pocket-sync"
 version = "0.0.0"
 dependencies = [
+ "bytes",
  "futures",
  "futures-locks",
  "reqwest",
