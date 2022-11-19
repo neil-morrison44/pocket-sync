@@ -4,6 +4,7 @@ import { About } from "../about"
 import { Cores } from "../cores"
 import { Loader } from "../loader"
 import { Screenshots } from "../screenshots"
+import { Settings } from "../settings"
 import "./index.css"
 
 export const Layout = () => {
@@ -13,6 +14,7 @@ export const Layout = () => {
     "Cores",
     "Screenshots",
     "Saves",
+    "Settings",
   ]
   const [viewName, setViewName] = useState<ContentView>("Pocket Sync")
 
@@ -36,6 +38,7 @@ export const Layout = () => {
           {viewName === "Screenshots" && <Screenshots />}
           {viewName === "Cores" && <Cores />}
           {viewName === "Pocket Sync" && <About />}
+          {viewName === "Settings" && <Settings />}
         </Suspense>
       </div>
     </div>

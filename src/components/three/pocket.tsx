@@ -5,6 +5,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil"
 import { PocketModelColourAtom } from "../../recoil/atoms"
 
 import "./index.css"
+import { PocketSyncConfigSelector } from "../../recoil/selectors"
 
 type PocketProps = {
   spin?: boolean
@@ -39,7 +40,6 @@ const Body = ({
   screenMaterial,
 }: Pick<PocketProps, "spin" | "screenMaterial">) => {
   const groupRef = useRef<THREE.Group>(null)
-  const changeColour = useSetRecoilState(PocketModelColourAtom)
   useFrame((_, delta) => {
     if (groupRef.current && spin) {
       groupRef.current.rotateY(-0.6 * delta)
@@ -47,16 +47,7 @@ const Body = ({
   })
 
   return (
-    <group
-      ref={groupRef}
-      rotation={[0, 1, -0.2]}
-      // onClick={() =>
-      //   changeColour((col) => {
-      //     if (col === "black") return "white"
-      //     return "black"
-      //   })
-      // }
-    >
+    <group ref={groupRef} rotation={[0, 1, -0.2]}>
       <RoundedBox
         args={[0.86 * 20, 1.49 * 20, 0.11 * 20]}
         radius={1}
@@ -96,13 +87,13 @@ const Body = ({
 }
 
 const Screen = ({ screenMaterial }: PocketProps) => {
-  const colour = useRecoilValue(PocketModelColourAtom)
+  const { colour } = useRecoilValue(PocketSyncConfigSelector)
   return (
     <>
       {/* colour */}
       <mesh position={[0, 7.5, 1.11]}>
         <planeGeometry attach="geometry" args={[16, 14]} />
-        <meshLambertMaterial color={colour === "black" ? "black" : "white"} />
+        <meshPhongMaterial color={colour === "black" ? "black" : "white"} />
       </mesh>
 
       {/* LCD */}
@@ -204,7 +195,7 @@ const DPAD = () => {
 }
 
 const Material = () => {
-  const colour = useRecoilValue(PocketModelColourAtom)
+  const { colour } = useRecoilValue(PocketSyncConfigSelector)
   return (
     <meshPhysicalMaterial
       attach="material"

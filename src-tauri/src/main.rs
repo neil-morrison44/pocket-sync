@@ -6,11 +6,13 @@
 use checks::check_if_folder_looks_like_pocket;
 use futures_locks::RwLock;
 use install_core::start_zip_thread;
+use serde::{Deserialize, Serialize};
 use std::fs::{self};
 use std::io::Read;
 use std::io::Write;
 use std::path::PathBuf;
 use tauri::api::dialog;
+use tauri::Window;
 use walkdir::{DirEntry, WalkDir};
 mod checks;
 mod install_core;
@@ -28,7 +30,7 @@ async fn open_pocket(state: tauri::State<'_, PocketSyncState>) -> Result<Option<
         let mut path_state = state.0.write().await;
         *path_state = pocket_path;
 
-        Ok(Some(format!("path: {:?}", &path_state)))
+        Ok(Some(String::from(path_state.to_str().unwrap())))
     } else {
         Err(())
     }
@@ -76,6 +78,7 @@ async fn file_exists(state: tauri::State<'_, PocketSyncState>, path: &str) -> Re
 #[tauri::command(async)]
 fn save_file(path: &str, buffer: Vec<u8>) -> Result<bool, ()> {
     let file_path = PathBuf::from(path);
+    println!("Saving file {:?}", &file_path);
     let mut file = fs::File::create(file_path).unwrap();
 
     file.write_all(&buffer).unwrap();
@@ -144,7 +147,7 @@ async fn uninstall_core(
     core_name: &str,
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<bool, ()> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.write().await;
     let core_path = pocket_path.join("Cores").join(core_name);
     println!("I will remove {:?}", &core_path);
     if core_path.exists() && core_path.is_dir() {
@@ -170,6 +173,64 @@ async fn uninstall_core(
     Ok(true)
 }
 
+#[tauri::command(async)]
+async fn install_archive_files(
+    files: Vec<DownloadFile>,
+    archive_url: &str,
+    state: tauri::State<'_, PocketSyncState>,
+    window: Window,
+) -> Result<bool, ()> {
+    println!("installing archive files");
+    let pocket_path = state.0.write().await;
+    let file_count = files.len();
+    for (index, file) in files.into_iter().enumerate() {
+        let full_url = format!("{}/{}", archive_url, file.filename);
+
+        println!("Downloading from {full_url}");
+
+        let response = reqwest::get(&full_url).await;
+
+        match response {
+            Err(e) => {
+                println!("Error downloading from {full_url}: ({e})");
+            }
+            Ok(r) => {
+                if r.status() != 200 {
+                    println!("Unable to find {full_url}, skipping");
+                } else {
+                    let new_file_path = pocket_path.join(file.path).join(file.filename);
+                    if let Ok(mut dest) = fs::File::create(&new_file_path) {
+                        if let Ok(content) = r.bytes().await {
+                            let mut content_cusror = std::io::Cursor::new(content);
+                            if let Ok(_success) = std::io::copy(&mut content_cusror, &mut dest) {
+                                println!("Saved {full_url} to {:?}", &new_file_path.as_os_str());
+                            } else {
+                                println!("Copy error!");
+                            }
+                        } else {
+                            println!("Bytes error!");
+                        }
+                    } else {
+                        println!("Create error! {:?}", &new_file_path);
+                    }
+                }
+            }
+        }
+
+        window
+            .emit(
+                "file-progress",
+                FileProgressPayload {
+                    value: index + 1,
+                    max: file_count,
+                },
+            )
+            .unwrap();
+    }
+
+    Ok(true)
+}
+
 fn main() {
     tauri::Builder::default()
         .manage(PocketSyncState(Default::default()))
@@ -181,9 +242,22 @@ fn main() {
             read_text_file,
             save_file,
             uninstall_core,
+            install_archive_files,
             file_exists
         ])
         .setup(|app| start_zip_thread(&app))
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+#[derive(Serialize, Deserialize)]
+struct DownloadFile {
+    filename: String,
+    path: String,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+struct FileProgressPayload {
+    value: usize,
+    max: usize,
 }

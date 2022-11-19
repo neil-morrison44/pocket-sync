@@ -56,6 +56,7 @@ export type ContentView =
   | "Cores"
   | "Screenshots"
   | "Saves"
+  | "Settings"
 
 export type PlatformId = string
 export type Category = string
@@ -163,4 +164,10 @@ export type GithubRelease = {
 export type InstallDetails = {
   success: boolean
   files: { path: string; exists: boolean }[]
+}
+
+export type PocketSyncConfig = {
+  version: string
+  colour: "white" | "black"
+  archive_url: string | null
 }

@@ -1,12 +1,10 @@
-import React, { Suspense, useEffect, useMemo, useRef, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { useRecoilCallback, useRecoilValue } from "recoil"
 import {
   screenshotsListSelector,
   SingleScreenshotSelectorFamily,
 } from "../../recoil/screenshots/selectors"
-import { useLoader } from "@react-three/fiber"
-import { TextureLoader, Texture } from "three"
-import { useScreenshot } from "../screenshots/hooks/useScreenshot"
+import { Texture } from "three"
 
 type RandomScreenshotScreenProps = {
   interval?: number

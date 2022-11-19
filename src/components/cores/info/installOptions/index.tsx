@@ -1,6 +1,7 @@
 import { emit, listen } from "@tauri-apps/api/event"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { InstallDetails } from "../../../../types"
+import { Modal } from "../../../modal"
 
 import "./index.css"
 
@@ -89,41 +90,39 @@ export const InstallOptions = ({ details }: InstallOptionsProps) => {
   }, [details.files])
 
   return (
-    <div className="install-options__wrapper">
-      <div className="install-options">
-        <h2>{"Install Core"}</h2>
-        {!progress && (
-          <div className="install-options__paths">
-            {tree.map((node) => (
-              <TreeNode
-                node={node}
-                allowed={allowedFiles}
-                defaultExpanded
-                toggleFile={toggleFile}
-              />
-            ))}
-          </div>
-        )}
-
-        {progress && (
-          <>
-            <h1>{`${((progress.value / progress.max) * 100).toFixed(0)}%`}</h1>
-            <progress
-              className="install-options__progress"
-              value={progress.value}
-              max={progress.max}
+    <Modal>
+      <h2>{"Install Core"}</h2>
+      {!progress && (
+        <div className="install-options__paths">
+          {tree.map((node) => (
+            <TreeNode
+              node={node}
+              allowed={allowedFiles}
+              defaultExpanded
+              toggleFile={toggleFile}
             />
-          </>
-        )}
+          ))}
+        </div>
+      )}
 
-        {!progress && (
-          <div className="install-options__controls">
-            <button onClick={cancel}>Cancel</button>
-            <button onClick={confirm}>Confirm</button>
-          </div>
-        )}
-      </div>
-    </div>
+      {progress && (
+        <>
+          <h1>{`${((progress.value / progress.max) * 100).toFixed(0)}%`}</h1>
+          <progress
+            className="install-options__progress"
+            value={progress.value}
+            max={progress.max}
+          />
+        </>
+      )}
+
+      {!progress && (
+        <div className="install-options__controls">
+          <button onClick={cancel}>Cancel</button>
+          <button onClick={confirm}>Confirm</button>
+        </div>
+      )}
+    </Modal>
   )
 }
 

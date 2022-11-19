@@ -6,11 +6,16 @@ import {
   InstanceDataJSON,
   PlatformId,
   PlatformInfoJSON,
+  PocketSyncConfig,
   RequiredFileInfo,
   Screenshot,
 } from "../types"
 import { renderBinImage } from "../components/utils/renderBinImage"
-import { fileSystemInvalidationAtom } from "./atoms"
+import {
+  configInvalidationAtom,
+  fileSystemInvalidationAtom,
+  pocketPathAtom,
+} from "./atoms"
 import { getVersion } from "@tauri-apps/api/app"
 import { decodeDataParams } from "../components/utils/decodeDataParams"
 
@@ -106,18 +111,18 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                       console.log(decodeDataParams(parameters))
 
                       const path = decodeDataParams(parameters).coreSpecific
-                        ? `Assets/${platform_id}/${coreName}`
-                        : `Assets/${platform_id}/common`
-
-                      const fullPath = dataPath
-                        ? `${path}/${dataPath}/${filename}`
-                        : `${path}/${filename}`
+                        ? `Assets/${platform_id}/${coreName}${
+                            dataPath ? `/${dataPath}` : ""
+                          }`
+                        : `Assets/${platform_id}/common${
+                            dataPath ? `/${dataPath}` : ""
+                          }`
 
                       return {
                         filename: filename as string,
-                        path: fullPath,
+                        path,
                         exists: await invoke<boolean>("file_exists", {
-                          path: fullPath,
+                          path: `${path}/${filename}`,
                         }),
                         type: "instance",
                       } as RequiredFileInfo
@@ -227,4 +232,45 @@ export const PlatformInfoSelectorFamily = selectorFamily<
 export const AppVersionSelector = selector<string>({
   key: "AppVersionSelector",
   get: async () => await getVersion(),
+})
+
+export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
+  key: "PocketSyncConfigSelector",
+  get: async ({ get }) => {
+    get(configInvalidationAtom)
+    const pocketPath = get(pocketPathAtom)
+
+    if (!pocketPath) {
+      return {
+        version: get(AppVersionSelector),
+        colour: Math.random() > 0.5 ? "white" : "black",
+        archive_url: null,
+      }
+    }
+
+    const exists = await invoke<boolean>("file_exists", {
+      path: "pocket-sync.json",
+    })
+
+    if (!exists) {
+      const defaultConfig = {
+        version: get(AppVersionSelector),
+        colour: "black",
+        archive_url: null,
+      } as PocketSyncConfig
+
+      const encoder = new TextEncoder()
+      await invoke<boolean>("save_file", {
+        path: `${pocketPath}/pocket-sync.json`,
+        buffer: Array.prototype.slice.call(
+          encoder.encode(JSON.stringify(defaultConfig, null, 2))
+        ),
+      })
+    }
+
+    const response = await invoke<string>("read_text_file", {
+      path: "pocket-sync.json",
+    })
+    return JSON.parse(response) as PocketSyncConfig
+  },
 })

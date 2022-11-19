@@ -1,0 +1,17 @@
+.settings{
+  padding: 10px;
+}
+
+.settings__ramble{
+  margin: 0;
+  padding: 0;
+  white-space: pre-wrap;
+
+}
+
+
+.settings__text-input{
+
+  font-size: 1.125rem;
+  width: 80%;
+}

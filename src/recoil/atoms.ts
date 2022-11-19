@@ -19,3 +19,8 @@ export const iventoryInvalidationAtom = atom<number>({
   key: "iventoryInvalidationAtom",
   default: Date.now(),
 })
+
+export const configInvalidationAtom = atom<number>({
+  key: "configInvalidationAtom",
+  default: Date.now(),
+})

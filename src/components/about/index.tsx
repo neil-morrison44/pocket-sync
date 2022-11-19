@@ -1,7 +1,10 @@
 import { Suspense, useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
-import { AppVersionSelector } from "../../recoil/selectors"
+import {
+  AppVersionSelector,
+  PocketSyncConfigSelector,
+} from "../../recoil/selectors"
 import { Link } from "../link"
 import { Pocket } from "../three/pocket"
 import { RandomScreenshotScreen } from "../three/randomScreenshotScreen"
@@ -9,6 +12,10 @@ import { RandomScreenshotScreen } from "../three/randomScreenshotScreen"
 import "./index.css"
 
 export const About = () => {
+  const pocketSyncConfig = useRecoilValue(PocketSyncConfigSelector)
+
+  console.log({ pocketSyncConfig })
+
   const selfReleases = useRecoilValue(
     GithubReleasesSelectorFamily({
       owner: "neil-morrison44",

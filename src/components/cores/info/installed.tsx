@@ -18,12 +18,13 @@ import { Releases } from "./releases"
 import { Version } from "../version"
 import { useUninstallCore } from "../../../hooks/useUninstallCore"
 import { useInstallCore } from "../../../hooks/useInstallCore"
-import { ReactNode, Suspense } from "react"
+import { ReactNode, Suspense, useState } from "react"
 import { CorePlatformInfo } from "./platform"
 import { Loader } from "../../loader"
 import { InstallOptions } from "./installOptions"
 import { SponsorLinks } from "./sponsorLinks"
 import { RequiredFiles } from "./requiredFiles"
+import { LoadRequiredFiles } from "./loadRequiredFiles"
 
 type CoreInfoProps = {
   coreName: string
@@ -37,6 +38,8 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   const { installCore, installDetails } = useInstallCore()
   const inventoryItem = useInventoryItem(coreName)
   const downloadUrl = useRecoilValue(DownloadURLSelectorFamily(coreName))
+
+  const [requiredFilesOpen, setRequiredFilesOpen] = useState(false)
 
   return (
     <div className="core-info">
@@ -54,8 +57,8 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
           },
           {
             type: "button",
-            text: "Load Required Files",
-            onClick: () => uninstall(coreName),
+            text: "Required Files",
+            onClick: () => setRequiredFilesOpen(true),
           },
           downloadUrl && {
             type: "button",
@@ -64,6 +67,13 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
           },
         ]}
       />
+
+      {requiredFilesOpen && (
+        <LoadRequiredFiles
+          coreName={coreName}
+          onClose={() => setRequiredFilesOpen(false)}
+        />
+      )}
 
       {installDetails && <InstallOptions details={installDetails} />}
 

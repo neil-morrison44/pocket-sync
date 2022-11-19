@@ -1,0 +1,37 @@
+.load-required-files{
+  width: max-content;
+  height: max-content;
+  max-height: 80vh;
+}
+
+.load-required-files__files {
+  background-color: var(--info-colour);
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 10px;
+  overflow: auto;
+}
+
+
+.load-required-files__row{
+  display: flex;
+
+  align-items: center;
+  gap: 0.5em;
+
+  & > pre {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+.load-required-files__row--exists{
+  opacity: 0.5;
+}
+
+.load-required-files__buttons{
+  display: flex;
+  justify-content: space-between;
+}
