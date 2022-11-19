@@ -19,6 +19,8 @@
   padding: 20px;
   font-size: 1.5rem;
   cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
 
   &:hover{
     background-color: var(--hover-colour);

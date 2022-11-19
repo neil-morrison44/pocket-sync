@@ -51,14 +51,6 @@ export type RequiredFileInfo = {
   type: "core" | "instance"
 }
 
-export type ContentView =
-  | "Pocket Sync"
-  | "Games"
-  | "Cores"
-  | "Screenshots"
-  | "Saves"
-  | "Settings"
-
 export type PlatformId = string
 export type Category = string
 export type AuthorName = string

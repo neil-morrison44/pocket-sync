@@ -1,7 +1,11 @@
 import { selector, selectorFamily } from "recoil"
-import { invoke } from "@tauri-apps/api/tauri"
 import { Screenshot, VideoJSON } from "../../types"
 import { fileSystemInvalidationAtom } from "../atoms"
+import {
+  invokeListFiles,
+  invokeReadBinaryFile,
+  invokeReadTextFile,
+} from "../../utils/invokes"
 
 export const VideoJSONSelectorFamily = selectorFamily<VideoJSON, string>({
   key: "VideoJSONSelectorFamily",
@@ -9,10 +13,7 @@ export const VideoJSONSelectorFamily = selectorFamily<VideoJSON, string>({
     (coreName) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-      const jsonText = await invoke<string>("read_text_file", {
-        path: `Cores/${coreName}/video.json`,
-      })
-
+      const jsonText = await invokeReadTextFile(`Cores/${coreName}/video.json`)
       return JSON.parse(jsonText) as VideoJSON
     },
 })
@@ -21,9 +22,7 @@ export const screenshotsListSelector = selector<string[]>({
   key: "screenshotsListSelector",
   get: async ({ get }) => {
     get(fileSystemInvalidationAtom)
-    return await invoke<string[]>("list_files", {
-      path: "Memories/Screenshots",
-    })
+    return await invokeListFiles("Memories/Screenshots")
   },
 })
 
@@ -37,9 +36,9 @@ export const SingleScreenshotSelectorFamily = selectorFamily<
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
 
-      const data = await invoke<number[]>("read_binary_file", {
-        path: `Memories/Screenshots/${fileName}`,
-      })
+      const data = await invokeReadBinaryFile(
+        `Memories/Screenshots/${fileName}`
+      )
       const buf = new Uint8Array(data)
       const file = new File([buf], fileName, { type: "image/png" })
       const metadataBuffer = buf.slice(buf.length - 528)

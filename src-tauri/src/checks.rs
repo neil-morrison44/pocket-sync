@@ -33,8 +33,6 @@ pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
 }
 
 pub fn start_connection_thread(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
-    print!("spawning disconnection thread");
-
     let app_handle = app.handle();
 
     thread::spawn(move || {

@@ -1,5 +1,4 @@
 import { selector, selectorFamily } from "recoil"
-import { invoke } from "@tauri-apps/api/tauri"
 import {
   CoreInfoJSON,
   DataJSON,
@@ -8,16 +7,23 @@ import {
   PlatformInfoJSON,
   PocketSyncConfig,
   RequiredFileInfo,
-  Screenshot,
 } from "../types"
-import { renderBinImage } from "../components/utils/renderBinImage"
+import { renderBinImage } from "../utils/renderBinImage"
 import {
   configInvalidationAtom,
   fileSystemInvalidationAtom,
   pocketPathAtom,
 } from "./atoms"
 import { getVersion } from "@tauri-apps/api/app"
-import { decodeDataParams } from "../components/utils/decodeDataParams"
+import { decodeDataParams } from "../utils/decodeDataParams"
+import {
+  invokeFileExists,
+  invokeListFiles,
+  invokeReadBinaryFile,
+  invokeReadTextFile,
+  invokeSaveFile,
+  invokeWalkDirListFiles,
+} from "../utils/invokes"
 
 export const DataJSONSelectorFamily = selectorFamily<DataJSON, string>({
   key: "DataJSONSelectorFamily",
@@ -25,10 +31,7 @@ export const DataJSONSelectorFamily = selectorFamily<DataJSON, string>({
     (coreName) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-      const jsonText = await invoke<string>("read_text_file", {
-        path: `Cores/${coreName}/data.json`,
-      })
-
+      const jsonText = await invokeReadTextFile(`Cores/${coreName}/data.json`)
       return JSON.parse(jsonText) as DataJSON
     },
 })
@@ -65,9 +68,7 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
           return {
             filename: filename as string,
             path,
-            exists: await invoke<boolean>("file_exists", {
-              path: `${path}/${filename}`,
-            }),
+            exists: await invokeFileExists(`${path}/${filename}`),
             type: "core",
           } as RequiredFileInfo
         })
@@ -92,25 +93,17 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
               ? `Assets/${platform_id}/${coreName}/`
               : `Assets/${platform_id}/common/`
 
-            const files = await invoke<string[]>("walkdir_list_files", {
-              path,
-              extension: ".json",
-            })
+            const files = await invokeWalkDirListFiles(path, [".json"])
 
             return await Promise.all(
               files.map(async (f) => {
-                const response = await invoke<string>("read_text_file", {
-                  path: `${path}/${f}`,
-                })
-
+                const response = await invokeReadTextFile(`${path}/${f}`)
                 const instanceFile = JSON.parse(response) as InstanceDataJSON
                 const dataPath = instanceFile.instance.data_path
 
                 return await Promise.all(
                   instanceFile.instance.data_slots.map(
                     async ({ filename, parameters }) => {
-                      console.log(decodeDataParams(parameters))
-
                       const path = decodeDataParams(parameters).coreSpecific
                         ? `Assets/${platform_id}/${coreName}${
                             dataPath ? `/${dataPath}` : ""
@@ -122,9 +115,7 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                       return {
                         filename: filename as string,
                         path,
-                        exists: await invoke<boolean>("file_exists", {
-                          path: `${path}/${filename}`,
-                        }),
+                        exists: await invokeFileExists(`${path}/${filename}`),
                         type: "instance",
                       } as RequiredFileInfo
                     }
@@ -143,7 +134,7 @@ export const coresListSelector = selector<string[]>({
   key: "coresListSelector",
   get: async ({ get }) => {
     get(fileSystemInvalidationAtom)
-    return await invoke<string[]>("list_files", { path: "Cores" })
+    return await invokeListFiles("Cores")
   },
 })
 
@@ -153,10 +144,7 @@ export const CoreInfoSelectorFamily = selectorFamily<CoreInfoJSON, string>({
     (coreName: string) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-      const response = await invoke<string>("read_text_file", {
-        path: `Cores/${coreName}/core.json`,
-      })
-
+      const response = await invokeReadTextFile(`Cores/${coreName}/core.json`)
       return JSON.parse(response) as CoreInfoJSON
     },
 })
@@ -167,10 +155,7 @@ export const CoreAuthorImageSelectorFamily = selectorFamily<string, string>({
     (coreName: string) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-      const response = await invoke<Uint8Array>("read_binary_file", {
-        path: `Cores/${coreName}/icon.bin`,
-      })
-
+      const response = await invokeReadBinaryFile(`Cores/${coreName}/icon.bin`)
       return await new Promise<string>((resolve) => {
         // not supported in safari
         if (window.requestIdleCallback) {
@@ -193,9 +178,9 @@ export const PlatformImageSelectorFamily = selectorFamily<string, PlatformId>({
     (platformId: PlatformId) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-      const response = await invoke<Uint8Array>("read_binary_file", {
-        path: `Platforms/_images/${platformId}.bin`,
-      })
+      const response = await invokeReadBinaryFile(
+        `Platforms/_images/${platformId}.bin`
+      )
 
       return await new Promise<string>((resolve) => {
         // not supported in safari
@@ -213,6 +198,14 @@ export const PlatformImageSelectorFamily = selectorFamily<string, PlatformId>({
     },
 })
 
+export const platformsListSelector = selector<PlatformId[]>({
+  key: "platformsListSelector",
+  get: async ({ get }) => {
+    get(fileSystemInvalidationAtom)
+    return await invokeListFiles("Platforms")
+  },
+})
+
 export const PlatformInfoSelectorFamily = selectorFamily<
   PlatformInfoJSON,
   PlatformId
@@ -222,10 +215,7 @@ export const PlatformInfoSelectorFamily = selectorFamily<
     (platformId: PlatformId) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-      const response = await invoke<string>("read_text_file", {
-        path: `Platforms/${platformId}.json`,
-      })
-
+      const response = await invokeReadTextFile(`Platforms/${platformId}.json`)
       return JSON.parse(response) as PlatformInfoJSON
     },
 })
@@ -249,10 +239,7 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
       }
     }
 
-    const exists = await invoke<boolean>("file_exists", {
-      path: "pocket-sync.json",
-    })
-
+    const exists = await invokeFileExists("pocket-sync.json")
     if (!exists) {
       const defaultConfig = {
         version: get(AppVersionSelector),
@@ -261,17 +248,14 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
       } as PocketSyncConfig
 
       const encoder = new TextEncoder()
-      await invoke<boolean>("save_file", {
-        path: `${pocketPath}/pocket-sync.json`,
-        buffer: Array.prototype.slice.call(
-          encoder.encode(JSON.stringify(defaultConfig, null, 2))
-        ),
-      })
+
+      await invokeSaveFile(
+        `${pocketPath}/pocket-sync.json`,
+        encoder.encode(JSON.stringify(defaultConfig, null, 2))
+      )
     }
 
-    const response = await invoke<string>("read_text_file", {
-      path: "pocket-sync.json",
-    })
+    const response = await invokeReadTextFile("pocket-sync.json")
     return JSON.parse(response) as PocketSyncConfig
   },
 })

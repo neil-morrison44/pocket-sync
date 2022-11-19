@@ -1,23 +1,23 @@
 import React, { Suspense, useState } from "react"
-import { ContentView } from "../../types"
 import { About } from "../about"
 import { Cores } from "../cores"
 import { Disconnections } from "../disconnections"
+import { Games } from "../games"
 import { Loader } from "../loader"
 import { Screenshots } from "../screenshots"
 import { Settings } from "../settings"
 import "./index.css"
 
 export const Layout = () => {
-  const views: ContentView[] = [
+  const views = [
     "Pocket Sync",
     "Games",
     "Cores",
     "Screenshots",
     "Saves",
     "Settings",
-  ]
-  const [viewName, setViewName] = useState<ContentView>("Pocket Sync")
+  ] as const
+  const [viewName, setViewName] = useState<typeof views[number]>("Pocket Sync")
 
   return (
     <div className="layout">
@@ -41,6 +41,7 @@ export const Layout = () => {
           {viewName === "Cores" && <Cores />}
           {viewName === "Pocket Sync" && <About />}
           {viewName === "Settings" && <Settings />}
+          {viewName === "Games" && <Games />}
         </Suspense>
       </div>
     </div>

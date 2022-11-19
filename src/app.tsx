@@ -1,10 +1,10 @@
-import { invoke } from "@tauri-apps/api/tauri"
 import "./font.css"
 import "./app.css"
 import { useRecoilState } from "recoil"
 import { pocketPathAtom } from "./recoil/atoms"
 import { Layout } from "./components/layout"
 import React, { Suspense, useCallback, useState } from "react"
+import { invokeOpenPocket } from "./utils/invokes"
 
 const Pocket = React.lazy(() =>
   import("./components/three/pocket").then((m) => ({ default: m.Pocket }))
@@ -14,8 +14,8 @@ export const App = () => {
   const [pocketPath, setPocketPath] = useRecoilState(pocketPathAtom)
   const [attempts, setAttempts] = useState(0)
 
-  const openPocket = useCallback(async () => {
-    const result = await invoke<string | null>("open_pocket")
+  const onOpenPocket = useCallback(async () => {
+    const result = await invokeOpenPocket()
     setPocketPath(result)
     if (result === null) {
       setAttempts((a) => a + 1)
@@ -43,7 +43,7 @@ export const App = () => {
       )}
 
       <div className="row">
-        <button type="button" onClick={() => openPocket()}>
+        <button type="button" onClick={() => onOpenPocket()}>
           Connect to Pocket
         </button>
       </div>

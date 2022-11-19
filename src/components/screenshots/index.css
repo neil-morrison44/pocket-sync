@@ -1,3 +1,21 @@
+.screenshots--none{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 3rem;
+  padding: 20px;
+  box-sizing: border-box;
+
+  font-family: "Analogue";
+  font-smooth: never;
+  -webkit-font-smoothing : none;
+  text-align: center;
+  line-height: 45px;
+}
+
+
 .screenshots__item{
   overflow: hidden;
   position: relative;

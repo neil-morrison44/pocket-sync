@@ -1,9 +1,9 @@
 import { save } from "@tauri-apps/api/dialog"
 import { useCallback } from "react"
-import { invoke } from "@tauri-apps/api/tauri"
+import { invokeSaveFile } from "../utils/invokes"
 
 export const useSaveFile = () => {
-  const saveFile = useCallback(async (name: string, file: File | string) => {
+  const onSaveFile = useCallback(async (name: string, file: File | string) => {
     const filePath = await save({
       title: "Save screenshot",
       filters: [
@@ -15,14 +15,13 @@ export const useSaveFile = () => {
       defaultPath: name,
     })
 
+    if (!filePath) return
+
     const buffer = await fileToBuffer(file)
-    await invoke<boolean>("save_file", {
-      path: filePath,
-      buffer: Array.prototype.slice.call(new Uint8Array(buffer)),
-    })
+    await invokeSaveFile(filePath, new Uint8Array(buffer))
   }, [])
 
-  return saveFile
+  return onSaveFile
 }
 
 const fileToBuffer = async (file: File | string) => {

@@ -31,6 +31,14 @@ export const Screenshots = () => {
     )
   }
 
+  if (sortedScreenshots.length === 0) {
+    return (
+      <div className="screenshots screenshots--none">
+        <p>Once you take some screenshots they'll appear here</p>
+      </div>
+    )
+  }
+
   return (
     <Grid className="screenshots">
       {sortedScreenshots.map((fileName) => (

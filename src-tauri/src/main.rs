@@ -70,20 +70,16 @@ async fn read_text_file(
 async fn file_exists(state: tauri::State<'_, PocketSyncState>, path: &str) -> Result<bool, ()> {
     let pocket_path = state.0.read().await;
     let path = pocket_path.join(path);
-
-    println!("checking if file exists @{:?}", &path);
-
+    // println!("checking if file exists @{:?}", &path);
     Ok(path.exists())
 }
 
 #[tauri::command(async)]
 fn save_file(path: &str, buffer: Vec<u8>) -> Result<bool, ()> {
     let file_path = PathBuf::from(path);
-    println!("Saving file {:?}", &file_path);
+    // println!("Saving file {:?}", &file_path);
     let mut file = fs::File::create(file_path).unwrap();
-
     file.write_all(&buffer).unwrap();
-
     Ok(true)
 }
 
@@ -113,7 +109,7 @@ async fn list_files(
 #[tauri::command(async)]
 async fn walkdir_list_files(
     path: &str,
-    extension: &str,
+    extensions: Vec<&str>,
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<Vec<String>, ()> {
     let pocket_path = state.0.read().await;
@@ -138,7 +134,7 @@ async fn walkdir_list_files(
         .into_iter()
         .filter_map(|x| x.ok())
         .map(|e| String::from(e.path().to_str().unwrap()))
-        .filter(|s| s.ends_with(extension))
+        .filter(|s| extensions.iter().any(|e| s.ends_with(e)))
         .map(|s| s.replace(dir_path_str, ""))
         .collect())
 }
@@ -150,7 +146,7 @@ async fn uninstall_core(
 ) -> Result<bool, ()> {
     let pocket_path = state.0.write().await;
     let core_path = pocket_path.join("Cores").join(core_name);
-    println!("I will remove {:?}", &core_path);
+    // println!("I will remove {:?}", &core_path);
     if core_path.exists() && core_path.is_dir() {
         // not sure why this doesn't work
         // fs::remove_dir_all(core_path).unwrap();
@@ -158,7 +154,7 @@ async fn uninstall_core(
         if let Ok(entries) = std::fs::read_dir(&core_path) {
             for entry in entries {
                 let path = entry.unwrap().path();
-                println!("{:?}", path);
+                // println!("{:?}", path);
 
                 if path.exists() {
                     std::fs::remove_file(path).unwrap();
@@ -265,7 +261,6 @@ fn main() {
 }
 
 fn start_threads(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
-    println!("starting threads?");
     start_connection_thread(&app).unwrap();
     start_zip_thread(&app).unwrap();
     Ok(())

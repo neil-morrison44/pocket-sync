@@ -38,7 +38,6 @@ struct CoreProgress {
 }
 
 pub fn start_zip_thread(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
-    println!("Starting zip thread!");
     let app_handle = app.handle();
 
     thread::spawn(move || {
