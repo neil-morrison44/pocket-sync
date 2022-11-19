@@ -93,7 +93,7 @@ export const InstallOptions = ({ details }: InstallOptionsProps) => {
     <Modal>
       <h2>{"Install Core"}</h2>
       {!progress && (
-        <div className="install-options__paths">
+        <div className="zip-install__paths">
           {tree.map((node) => (
             <TreeNode
               node={node}
@@ -109,7 +109,7 @@ export const InstallOptions = ({ details }: InstallOptionsProps) => {
         <>
           <h1>{`${((progress.value / progress.max) * 100).toFixed(0)}%`}</h1>
           <progress
-            className="install-options__progress"
+            className="zip-install__progress"
             value={progress.value}
             max={progress.max}
           />
@@ -117,7 +117,7 @@ export const InstallOptions = ({ details }: InstallOptionsProps) => {
       )}
 
       {!progress && (
-        <div className="install-options__controls">
+        <div className="zip-install__controls">
           <button onClick={cancel}>Cancel</button>
           <button onClick={confirm}>Confirm</button>
         </div>
@@ -148,8 +148,8 @@ const TreeNode = ({
   const [expanded, setExpanded] = useState(defaultExpanded)
 
   return (
-    <div className="install-options__tree-node">
-      <div className="install-options__tree-node-info">
+    <div className="zip-install__tree-node">
+      <div className="zip-install__tree-node-info">
         {!node.is_dir && (
           <input
             type="checkbox"
@@ -158,12 +158,12 @@ const TreeNode = ({
           ></input>
         )}
         <div
-          className="install-options__tree-node-name"
+          className="zip-install__tree-node-name"
           onClick={() => setExpanded((e) => !e)}
         >
           {node.is_dir && (
             <div
-              className={`install-options__tree-arrow install-options__tree-arrow--${
+              className={`zip-install__tree-arrow zip-install__tree-arrow--${
                 expanded ? "expanded" : "collapsed"
               }`}
             ></div>

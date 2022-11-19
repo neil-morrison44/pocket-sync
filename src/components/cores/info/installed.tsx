@@ -21,7 +21,6 @@ import { useInstallCore } from "../../../hooks/useInstallCore"
 import { ReactNode, Suspense, useState } from "react"
 import { CorePlatformInfo } from "./platform"
 import { Loader } from "../../loader"
-import { InstallOptions } from "./installOptions"
 import { SponsorLinks } from "./sponsorLinks"
 import { RequiredFiles } from "./requiredFiles"
 import { LoadRequiredFiles } from "./loadRequiredFiles"
@@ -35,7 +34,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
   const authorImageSrc = useRecoilValue(CoreAuthorImageSelectorFamily(coreName))
   const uninstall = useUninstallCore()
-  const { installCore, installDetails } = useInstallCore()
+  const { installCore } = useInstallCore()
   const inventoryItem = useInventoryItem(coreName)
   const downloadUrl = useRecoilValue(DownloadURLSelectorFamily(coreName))
 
@@ -74,8 +73,6 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
           onClose={() => setRequiredFilesOpen(false)}
         />
       )}
-
-      {/* {installDetails && <InstallOptions details={installDetails} />} */}
 
       <h3 className="core-info__title">{coreInfo.core.metadata.shortname}</h3>
       {coreInfo.core.metadata.platform_ids.map((platformId) => (

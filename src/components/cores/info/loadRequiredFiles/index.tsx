@@ -30,7 +30,7 @@ export const LoadRequiredFiles = ({
         <>
           <h1>{`${((progress.value / progress.max) * 100).toFixed(0)}%`}</h1>
           <progress
-            className="install-options__progress"
+            className="zip-install__progress"
             value={progress.value}
             max={progress.max}
           />

@@ -1,12 +1,6 @@
-use futures::stream::Zip;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
-use std::{
-    fs,
-    io::{Bytes, Cursor},
-    path::PathBuf,
-    thread,
-};
+use std::{fs, io::Cursor, path::PathBuf, thread};
 use tauri::{App, Manager, Window};
 use tempdir::TempDir;
 use zip::ZipArchive;
@@ -17,12 +11,6 @@ use crate::PocketSyncState;
 struct InstallInfo {
     core_name: String,
     zip_url: String,
-}
-
-#[derive(Serialize, Deserialize, Clone)]
-struct InstallDetails {
-    success: bool,
-    files: Option<Vec<PathStatus>>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -55,6 +43,11 @@ struct ZipInstallProgress {
     value: usize,
 }
 
+struct Titles {
+    title: String,
+    installing_title: String,
+}
+
 pub fn start_zip_thread(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
     let app_handle = app.handle();
 
@@ -84,7 +77,10 @@ pub fn start_zip_thread(app: &App) -> Result<(), Box<(dyn std::error::Error + 's
 
                             start_zip_install_flow(
                                 archive,
-                                String::from("Install Core"),
+                                Titles {
+                                    title: String::from("Install Core"),
+                                    installing_title: (String::from("Installing Core...")),
+                                },
                                 pocket_path.clone(),
                                 &main_window_b,
                             )
@@ -92,14 +88,10 @@ pub fn start_zip_thread(app: &App) -> Result<(), Box<(dyn std::error::Error + 's
                             .unwrap();
                         }
                         _s => {
-                            main_window_b
-                                .emit(
-                                    "install-zip-finished",
-                                    ZipInstallFinishedPayload {
-                                        error: Some(String::from("Unable to download ZIP")),
-                                    },
-                                )
-                                .unwrap();
+                            emit_finished(
+                                Some(String::from("Unable to download ZIP")),
+                                &main_window_b,
+                            );
                         }
                     }
                 });
@@ -115,7 +107,7 @@ fn emit_progress(
     files: Option<Vec<PathStatus>>,
     progress: Option<ZipInstallProgress>,
     window: &Window,
-) {
+) -> () {
     window
         .emit(
             "install-zip-event",
@@ -128,14 +120,20 @@ fn emit_progress(
         .unwrap();
 }
 
+fn emit_finished(error: Option<String>, window: &Window) -> () {
+    window
+        .emit("install-zip-finished", ZipInstallFinishedPayload { error })
+        .unwrap();
+}
+
 async fn start_zip_install_flow(
     mut archive: ZipArchive<impl std::io::Read + std::io::Seek + std::marker::Send + 'static>,
-    title: String,
+    titles: Titles,
     pocket_path: PathBuf,
     window: &Window,
 ) -> Result<(), ()> {
     emit_progress(
-        "Install Core",
+        &titles.title,
         Some(get_file_names(&archive, &pocket_path)),
         None,
         &window,
@@ -148,11 +146,21 @@ async fn start_zip_install_flow(
             serde_json::from_str(event.payload().unwrap()).unwrap();
 
         if !install_confirm.allow {
-            main_window_c.emit("core-installed", ()).unwrap();
+            emit_finished(None, &main_window_c);
             return ();
         }
 
-        let tmp_dir = TempDir::new(&title).unwrap();
+        emit_progress(
+            &titles.installing_title,
+            None,
+            Some(ZipInstallProgress {
+                value: 0,
+                max: install_confirm.paths.len(),
+            }),
+            &main_window_c,
+        );
+
+        let tmp_dir = TempDir::new("zip_install_tmp").unwrap();
         let tmp_path = tmp_dir.into_path();
         archive.extract(&tmp_path).unwrap();
 
@@ -172,8 +180,8 @@ async fn start_zip_install_flow(
             }
 
             emit_progress(
-                "Installing Core...",
-                Some(get_file_names(&archive, &pocket_path)),
+                &titles.installing_title,
+                None,
                 Some(ZipInstallProgress {
                     value: index + 1,
                     max: install_confirm.paths.len(),
@@ -181,12 +189,7 @@ async fn start_zip_install_flow(
                 &main_window_c,
             );
         }
-        main_window_c
-            .emit(
-                "install-zip-finished",
-                ZipInstallFinishedPayload { error: None },
-            )
-            .unwrap();
+        emit_finished(None, &main_window_c);
     });
 
     Ok(())

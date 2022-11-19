@@ -15,8 +15,8 @@ export const TreeNode = ({
   const [expanded, setExpanded] = useState(defaultExpanded)
 
   return (
-    <div className="install-options__tree-node">
-      <div className="install-options__tree-node-info">
+    <div className="zip-install__tree-node">
+      <div className="zip-install__tree-node-info">
         {!node.is_dir && (
           <input
             type="checkbox"
@@ -25,12 +25,12 @@ export const TreeNode = ({
           ></input>
         )}
         <div
-          className="install-options__tree-node-name"
+          className="zip-install__tree-node-name"
           onClick={() => setExpanded((e) => !e)}
         >
           {node.is_dir && (
             <div
-              className={`install-options__tree-arrow install-options__tree-arrow--${
+              className={`zip-install__tree-arrow zip-install__tree-arrow--${
                 expanded ? "expanded" : "collapsed"
               }`}
             ></div>

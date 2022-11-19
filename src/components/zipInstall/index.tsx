@@ -1,5 +1,3 @@
-import { listen } from "@tauri-apps/api/event"
-import { useEffect, useState } from "react"
 import { Modal } from "../modal"
 import {
   useAllowedFiles,
@@ -9,6 +7,8 @@ import {
 } from "./hooks"
 import { TreeNode } from "./treeNode"
 import { InstallZipEventPayload } from "./types"
+
+import "./index.css"
 
 export const ZipInstall = () => {
   const { installState } = useListenForZipInstall()
@@ -33,7 +33,7 @@ export const ZipInstallInner = ({
         <>
           <h1>{`${((progress.value / progress.max) * 100).toFixed(0)}%`}</h1>
           <progress
-            className="install-options__progress"
+            className="zip-install__progress"
             value={progress.value}
             max={progress.max}
           />
@@ -45,7 +45,8 @@ export const ZipInstallInner = ({
   return (
     <Modal>
       <h2>{title}</h2>
-      <div className="install-options__paths">
+      <div className="zip-install__paths">
+        {!tree && <p>{`Scanning files...`}</p>}
         {tree &&
           allowedFiles &&
           tree.map((node) => (
@@ -59,7 +60,7 @@ export const ZipInstallInner = ({
           ))}
       </div>
 
-      <div className="install-options__controls">
+      <div className="zip-install__controls">
         <button onClick={cancel}>Cancel</button>
         <button onClick={confirm}>Confirm</button>
       </div>
