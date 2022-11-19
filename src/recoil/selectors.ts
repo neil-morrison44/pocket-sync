@@ -46,9 +46,10 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
       const [platform_id] = coreJSON.core.metadata.platform_ids
 
       const requiredCoreFiles = dataJSON.data.data_slots.filter(
-        ({ required, filename }) => {
+        ({ name, required, filename }) => {
           return (
-            required &&
+            // not sure why some bioses aren't required
+            (required || name?.toLowerCase().includes("bios")) &&
             filename &&
             coreJSON.core.metadata.platform_ids.length === 1
           )

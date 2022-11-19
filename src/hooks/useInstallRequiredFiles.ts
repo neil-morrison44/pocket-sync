@@ -20,7 +20,6 @@ export const useInstallRequiredFiles = (closeModal: () => void) => {
       "file-progress",
       ({ payload }) => {
         setProgress(payload)
-        console.log({ payload })
         if (payload.max === payload.value) {
           invalidateFS(Date.now())
           closeModal()
@@ -35,7 +34,6 @@ export const useInstallRequiredFiles = (closeModal: () => void) => {
 
   const installRequiredFiles = useCallback(
     async (files: RequiredFileInfo[]) => {
-      console.log("installing files?")
       if (!archive_url)
         throw new Error("Attempt to download without an `archive_url` set")
 

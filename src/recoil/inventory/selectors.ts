@@ -1,6 +1,6 @@
 import { selector, selectorFamily } from "recoil"
 import { Category, InventoryJSON } from "../../types"
-import { iventoryInvalidationAtom } from "../atoms"
+import { inventoryInvalidationAtom } from "../atoms"
 import { GithubReleasesSelectorFamily } from "../github/selectors"
 
 export const DownloadURLSelectorFamily = selectorFamily<string | null, string>({
@@ -45,7 +45,7 @@ export const DownloadURLSelectorFamily = selectorFamily<string | null, string>({
 export const CoreInventorySelector = selector<InventoryJSON>({
   key: "CoreInventorySelector",
   get: async ({ get }) => {
-    get(iventoryInvalidationAtom)
+    get(inventoryInvalidationAtom)
     const response = await fetch(
       "https://joshcampbell191.github.io/openfpga-cores-inventory/api/v1/analogue-pocket/cores.json"
     )

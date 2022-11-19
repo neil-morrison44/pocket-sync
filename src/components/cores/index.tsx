@@ -1,7 +1,11 @@
 import { Suspense, useMemo, useState } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilCallback, useRecoilValue } from "recoil"
 import { useCategoryLookup } from "../../hooks/useCategoryLookup"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
+import {
+  fileSystemInvalidationAtom,
+  inventoryInvalidationAtom,
+} from "../../recoil/atoms"
 import { CateogryListselector } from "../../recoil/inventory/selectors"
 import { CoreInventorySelector } from "../../recoil/inventory/selectors"
 import { coresListSelector } from "../../recoil/selectors"
@@ -19,6 +23,11 @@ export const Cores = () => {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [filterCategory, setFilterCategory] = useState<string>("All")
   const lookupCategory = useCategoryLookup()
+
+  const refresh = useRecoilCallback(({ set }) => () => {
+    set(inventoryInvalidationAtom, Date.now())
+    set(fileSystemInvalidationAtom, Date.now())
+  })
 
   const notInstalledCores = useMemo(() => {
     return coreInventory.data
@@ -80,6 +89,11 @@ export const Cores = () => {
             text: "Search",
             value: searchQuery,
             onChange: (v) => setSearchQuery(v),
+          },
+          {
+            type: "button",
+            text: "Refresh",
+            onClick: refresh,
           },
           {
             type: "select",

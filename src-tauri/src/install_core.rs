@@ -48,13 +48,13 @@ pub fn start_zip_thread(app: &App) -> Result<(), Box<(dyn std::error::Error + 's
             tokio::task::block_in_place(|| {
                 tauri::async_runtime::block_on(async {
                     let state: tauri::State<PocketSyncState> = app_handle.state();
-                    let pocket_path = state.0.write().await;
+                    let pocket_path = state.0.read().await;
 
                     let install: InstallInfo =
                         serde_json::from_str(event.payload().unwrap()).unwrap();
                     let response = reqwest::get(install.zip_url).await.unwrap();
 
-                    dbg!(&response);
+                    // dbg!(&response);
 
                     match response.status() {
                         StatusCode::OK => {
@@ -95,7 +95,7 @@ pub fn start_zip_thread(app: &App) -> Result<(), Box<(dyn std::error::Error + 's
                                         continue;
                                     }
 
-                                    println!("copy from {:?} to {:?}", &source, &destination);
+                                    // println!("copy from {:?} to {:?}", &source, &destination);
 
                                     fs::create_dir_all(destination.parent().unwrap()).unwrap();
                                     if !source.is_dir() {
@@ -144,7 +144,6 @@ fn get_file_names(
         .into_iter()
         .map(|f| {
             let path = pocket_path.join(f);
-            println!("{:?}", &path);
             PathStatus {
                 exists: path.exists(),
                 path: String::from(f),

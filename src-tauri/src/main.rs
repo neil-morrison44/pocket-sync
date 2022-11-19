@@ -7,6 +7,7 @@ use checks::check_if_folder_looks_like_pocket;
 use futures_locks::RwLock;
 use install_core::start_zip_thread;
 use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 use std::fs::{self};
 use std::io::Read;
 use std::io::Write;
@@ -181,37 +182,40 @@ async fn install_archive_files(
     window: Window,
 ) -> Result<bool, ()> {
     println!("installing archive files");
-    let pocket_path = state.0.write().await;
+    let pocket_path = state.0.read().await;
     let file_count = files.len();
+
+    let mut failed_already = HashSet::new();
+
     for (index, file) in files.into_iter().enumerate() {
         let full_url = format!("{}/{}", archive_url, file.filename);
 
-        println!("Downloading from {full_url}");
+        // println!("Downloading from {full_url}");
 
-        let response = reqwest::get(&full_url).await;
+        if !failed_already.contains(&file.filename) {
+            let response = reqwest::get(&full_url).await;
 
-        match response {
-            Err(e) => {
-                println!("Error downloading from {full_url}: ({e})");
-            }
-            Ok(r) => {
-                if r.status() != 200 {
-                    println!("Unable to find {full_url}, skipping");
-                } else {
-                    let new_file_path = pocket_path.join(file.path).join(file.filename);
-                    if let Ok(mut dest) = fs::File::create(&new_file_path) {
-                        if let Ok(content) = r.bytes().await {
-                            let mut content_cusror = std::io::Cursor::new(content);
-                            if let Ok(_success) = std::io::copy(&mut content_cusror, &mut dest) {
-                                println!("Saved {full_url} to {:?}", &new_file_path.as_os_str());
-                            } else {
-                                println!("Copy error!");
-                            }
-                        } else {
-                            println!("Bytes error!");
-                        }
+            match response {
+                Err(e) => {
+                    println!("Error downloading from {full_url}: ({e})");
+                    failed_already.insert(file.filename);
+                }
+                Ok(r) => {
+                    if r.status() != 200 {
+                        println!("Unable to find {full_url}, skipping");
+                        failed_already.insert(file.filename);
                     } else {
-                        println!("Create error! {:?}", &new_file_path);
+                        let folder = pocket_path.join(file.path);
+
+                        if !folder.exists() {
+                            fs::create_dir_all(&folder).unwrap();
+                        }
+
+                        let new_file_path = folder.join(file.filename);
+                        let mut dest = fs::File::create(&new_file_path).unwrap();
+                        let content = r.bytes().await.unwrap();
+                        let mut content_cusror = std::io::Cursor::new(content);
+                        std::io::copy(&mut content_cusror, &mut dest).unwrap();
                     }
                 }
             }
