@@ -7,15 +7,12 @@ import {
 } from "../../recoil/selectors"
 import { Link } from "../link"
 import { Pocket } from "../three/pocket"
+import { ProgressScreen } from "../three/progressScreen"
 import { RandomScreenshotScreen } from "../three/randomScreenshotScreen"
 
 import "./index.css"
 
 export const About = () => {
-  const pocketSyncConfig = useRecoilValue(PocketSyncConfigSelector)
-
-  console.log({ pocketSyncConfig })
-
   const selfReleases = useRecoilValue(
     GithubReleasesSelectorFamily({
       owner: "neil-morrison44",
@@ -45,7 +42,7 @@ export const About = () => {
         )}
 
         <Pocket
-          spin
+          move="back-and-forth"
           screenMaterial={
             <Suspense
               fallback={<meshPhongMaterial attach="material" color="green" />}

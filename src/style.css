@@ -79,6 +79,7 @@ h2 {
   font-smooth: never;
   -webkit-font-smoothing : none;
   padding: 0 10px;
+  margin-bottom: 15px;
 }
 
 button {

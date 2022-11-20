@@ -33,7 +33,7 @@ export const App = () => {
       <h1>Pocket Sync</h1>
 
       <Suspense fallback={<div style={{ flexGrow: 1 }}></div>}>
-        <Pocket spin />
+        <Pocket move="spin" />
       </Suspense>
 
       {attempts > 0 && (

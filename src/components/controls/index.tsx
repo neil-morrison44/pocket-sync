@@ -44,6 +44,7 @@ export const Controls = ({ controls }: ControlProps) => {
             return (
               <div className="controls__item controls__item--search">
                 <input
+                  key={control.text}
                   className="controls__search-input"
                   placeholder={control.text}
                   type="search"

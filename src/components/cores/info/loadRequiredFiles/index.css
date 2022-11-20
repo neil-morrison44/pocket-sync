@@ -2,6 +2,9 @@
   width: max-content;
   height: max-content;
   max-height: 80vh;
+
+  min-width: 50vw;
+  min-height: 50vw;
 }
 
 .load-required-files__files {
@@ -12,6 +15,8 @@
   gap: 10px;
   border-radius: 10px;
   overflow: auto;
+
+
 }
 
 

@@ -8,14 +8,14 @@ import "./index.css"
 import { PocketSyncConfigSelector } from "../../recoil/selectors"
 
 type PocketProps = {
-  spin?: boolean
+  move?: "none" | "spin" | "back-and-forth"
   screenMaterial?: ReactNode
 }
 
 const BLACK_COLOUR = "rgb(1,1,1)"
 const WHITE_COLOUR = "rgb(90,90,90)"
 
-export const Pocket = ({ spin = false, screenMaterial }: PocketProps) => {
+export const Pocket = ({ move = "none", screenMaterial }: PocketProps) => {
   return (
     <Canvas
       shadows
@@ -28,7 +28,7 @@ export const Pocket = ({ spin = false, screenMaterial }: PocketProps) => {
       <directionalLight position={[80, 0, 80]} intensity={1.1} castShadow />
 
       <directionalLight position={[-100, -100, 50]} intensity={1.1} />
-      <Body spin={spin} screenMaterial={screenMaterial} />
+      <Body move={move} screenMaterial={screenMaterial} />
       {/* <OrbitControls maxDistance={4} minDistance={3} enablePan={false} /> */}
       {/* <Stats /> */}
     </Canvas>
@@ -36,18 +36,34 @@ export const Pocket = ({ spin = false, screenMaterial }: PocketProps) => {
 }
 
 const Body = ({
-  spin,
+  move,
   screenMaterial,
-}: Pick<PocketProps, "spin" | "screenMaterial">) => {
+}: Pick<PocketProps, "move" | "screenMaterial">) => {
   const groupRef = useRef<THREE.Group>(null)
+  const speedRef = useRef<number>(-1)
   useFrame((_, delta) => {
-    if (groupRef.current && spin) {
-      groupRef.current.rotateY(-0.6 * delta)
+    if (groupRef.current && speedRef.current) {
+      const speed = speedRef.current
+      switch (move) {
+        case "spin":
+          groupRef.current.rotateY(-0.6 * speed * delta)
+          break
+        case "back-and-forth":
+          groupRef.current.rotateY(-0.6 * speed * delta)
+          if (groupRef.current.rotation.y > 0.4) {
+            speedRef.current = 0.2
+          } else if (groupRef.current.rotation.y < -0.4) {
+            speedRef.current = -0.2
+          }
+          break
+        default:
+          break
+      }
     }
   })
 
   return (
-    <group ref={groupRef} rotation={[0, 1, -0.2]}>
+    <group ref={groupRef} rotation={[0, move === "spin" ? 1 : 0, -0.2]}>
       <RoundedBox
         args={[0.86 * 20, 1.49 * 20, 0.11 * 20]}
         radius={1}
@@ -140,7 +156,7 @@ const Buttons = () => {
       {positions.map((p, index) => (
         <mesh position={p} key={index} castShadow receiveShadow>
           <cylinderGeometry attach="geometry" args={[0.9, 0.9, 1, 16]} />
-          <Material />
+          <Material isButton />
         </mesh>
       ))}
     </group>
@@ -164,7 +180,7 @@ const BottomButtons = () => {
       {positions.map((p, index) => (
         <mesh position={p} key={index} castShadow receiveShadow>
           <cylinderGeometry attach="geometry" args={[0.5, 0.5, 0.5, 16]} />
-          <Material />
+          <Material isButton />
         </mesh>
       ))}
     </group>
@@ -187,20 +203,22 @@ const DPAD = () => {
       {args.map((a, index) => (
         <mesh key={index} castShadow receiveShadow>
           <boxGeometry args={a} />
-          <Material />
+          <Material isButton />
         </mesh>
       ))}
     </group>
   )
 }
 
-const Material = () => {
+const Material = ({ isButton = false }: { isButton?: boolean }) => {
   const { colour } = useRecoilValue(PocketSyncConfigSelector)
   return (
     <meshPhysicalMaterial
       attach="material"
-      ior={1.46}
+      ior={isButton ? 1.4 : 1.46}
       color={colour == "black" ? BLACK_COLOUR : WHITE_COLOUR}
+      clearcoat={isButton ? 0.2 : undefined}
+      clearcoatRoughness={isButton ? 0.8 : undefined}
     />
   )
 }

@@ -5,6 +5,7 @@ import {
   RequiredFileInfoSelectorFamily,
 } from "../../../../recoil/selectors"
 import { Modal } from "../../../modal"
+import { Progress } from "../../../progress"
 
 import "./index.css"
 
@@ -19,23 +20,13 @@ export const LoadRequiredFiles = ({
 }: LoadRequiredFilesProps) => {
   const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
   const pocketSyncConfig = useRecoilValue(PocketSyncConfigSelector)
-
   const { installRequiredFiles, progress } = useInstallRequiredFiles(onClose)
 
   return (
     <Modal className="load-required-files">
       <h2>{"Required Files"}</h2>
 
-      {progress && (
-        <>
-          <h1>{`${((progress.value / progress.max) * 100).toFixed(0)}%`}</h1>
-          <progress
-            className="zip-install__progress"
-            value={progress.value}
-            max={progress.max}
-          />
-        </>
-      )}
+      {progress && <Progress value={progress.value} max={progress.max} />}
 
       {!progress && (
         <>

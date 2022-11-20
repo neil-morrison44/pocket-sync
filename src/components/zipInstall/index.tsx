@@ -7,7 +7,7 @@ import {
 } from "./hooks"
 import { TreeNode } from "./treeNode"
 import { InstallZipEventPayload } from "./types"
-
+import { Progress } from "../progress"
 import "./index.css"
 
 export const ZipInstall = () => {
@@ -30,14 +30,7 @@ export const ZipInstallInner = ({
     return (
       <Modal>
         <h2>{title}</h2>
-        <>
-          <h1>{`${((progress.value / progress.max) * 100).toFixed(0)}%`}</h1>
-          <progress
-            className="zip-install__progress"
-            value={progress.value}
-            max={progress.max}
-          />
-        </>
+        <Progress value={progress.value} max={progress.max} />
       </Modal>
     )
   }

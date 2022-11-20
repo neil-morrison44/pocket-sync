@@ -45,7 +45,7 @@ async fn read_binary_file(
     let pocket_path = state.0.read().await;
     let path = pocket_path.join(path);
 
-    let mut f = fs::File::open(&path).expect("no file found");
+    let mut f = fs::File::open(&path).expect(&format!("no file found: {:?}", path));
     let metadata = fs::metadata(&path).expect("unable to read metadata");
     let mut buffer = vec![0; metadata.len() as usize];
 
