@@ -1,10 +1,8 @@
-on:
-  workflow_dispatch:
-  release:
-    types: [created]
+name: "test-on-pr"
+on: [pull_request]
 
 jobs:
-  build-tauri:
+  test-tauri:
     strategy:
       fail-fast: false
       matrix:
@@ -28,15 +26,6 @@ jobs:
           sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
       - name: install app dependencies and build it
         run: npm i && npm run build
-
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.3.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          releaseId: ${{ steps.get_release.outputs.id }}
