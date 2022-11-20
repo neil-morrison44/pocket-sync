@@ -11,9 +11,18 @@ type SavesItemProps = {
 export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
   const saveZip = useBuildSaveZip()
 
-  const saveZipList = useRecoilValue(
+  const { files, exists } = useRecoilValue(
     BackupZipsSelectorFamily(config.backup_location)
   )
+
+  if (!exists) {
+    return (
+      <div className="saves__item saves__item--not-found">
+        <div className="saves__item-path">{config.backup_location}</div>
+        <div className="saves__info">{"Not found"}</div>
+      </div>
+    )
+  }
 
   return (
     <div className="saves__item">
@@ -25,14 +34,14 @@ export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
       </div>
       <div className="saves__item-path">{config.backup_location}</div>
       <div className="saves__info">
-        <div>{`Backups: ${saveZipList.length}`}</div>
-        {saveZipList.length > 0 && (
+        <div>{`Backups: ${files.length}`}</div>
+        {files.length > 0 && (
           <>
             <div>{`Last Backup: ${new Date(
-              (saveZipList.at(-1)?.last_modified || 0) * 1000
+              (files.at(-1)?.last_modified || 0) * 1000
             ).toLocaleString()}`}</div>
             <div>{`Oldest Backup: ${new Date(
-              (saveZipList.at(0)?.last_modified || 0) * 1000
+              (files.at(0)?.last_modified || 0) * 1000
             ).toLocaleString()}`}</div>
           </>
         )}

@@ -44,8 +44,18 @@
     "a d c";
 }
 
+.saves__item--not-found{
+  cursor: unset;
+}
+
 .saves__item-path {
   grid-area: b;
+
+  word-break: break-all;
+}
+
+.saves__info{
+  grid-area: d;
 }
 
 .saves__item-sync-button {

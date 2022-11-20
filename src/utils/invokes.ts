@@ -50,11 +50,16 @@ export const invokeBackupSaves = async (
 ) => invoke<boolean>("backup_saves", { savePaths, zipPath, maxCount })
 
 export const invokeListBackupSaves = async (backupPath: string) => {
-  console.log({ backupPath })
-  const backups = await invoke<SaveBackupPathTime[]>("list_backup_saves", {
+  const { files, exists } = await invoke<{
+    files: SaveBackupPathTime[]
+    exists: boolean
+  }>("list_backup_saves", {
     backupPath,
   })
-  return [...backups].sort((a, b) => a.last_modified - b.last_modified)
+  return {
+    files: [...files].sort((a, b) => a.last_modified - b.last_modified),
+    exists,
+  }
 }
 
 export const invokeListSavesInZip = async (zipPath: string) => {

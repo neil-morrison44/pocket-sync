@@ -258,13 +258,21 @@ async fn backup_saves(
 }
 
 #[tauri::command(async)]
-async fn list_backup_saves(backup_path: &str) -> Result<Vec<SaveZipFile>, ()> {
+async fn list_backup_saves(backup_path: &str) -> Result<BackupSavesResponse, ()> {
     let path = PathBuf::from(backup_path);
     if !path.exists() {
-        return Ok(vec![]);
+        return Ok(BackupSavesResponse {
+            files: vec![],
+            exists: false,
+        });
     }
 
-    read_save_zip_list(&path)
+    let files = read_save_zip_list(&path).unwrap();
+
+    Ok(BackupSavesResponse {
+        files,
+        exists: true,
+    })
 }
 
 #[tauri::command(async)]
@@ -329,4 +337,10 @@ struct DownloadFile {
 struct FileProgressPayload {
     value: usize,
     max: usize,
+}
+
+#[derive(Serialize, Deserialize)]
+struct BackupSavesResponse {
+    files: Vec<SaveZipFile>,
+    exists: bool,
 }

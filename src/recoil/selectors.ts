@@ -289,7 +289,7 @@ export const AllSavesSelector = selector<string[]>({
 })
 
 export const BackupZipsSelectorFamily = selectorFamily<
-  SaveBackupPathTime[],
+  { files: SaveBackupPathTime[]; exists: boolean },
   string
 >({
   key: "BackupZipsSelectorFamily",
@@ -321,8 +321,8 @@ export const AllBackupZipsFilesSelectorFamily = selectorFamily<
   get:
     (backupPath) =>
     async ({ get }) => {
-      const zips = get(BackupZipsSelectorFamily(backupPath))
-      return zips.map((zip) => ({
+      const { files } = get(BackupZipsSelectorFamily(backupPath))
+      return files.map((zip) => ({
         zip,
         files: get(
           SaveZipFilesListSelectorFamily(`${backupPath}/${zip.filename}`)
