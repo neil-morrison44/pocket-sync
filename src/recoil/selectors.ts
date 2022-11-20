@@ -259,3 +259,17 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
     return JSON.parse(response) as PocketSyncConfig
   },
 })
+
+export const FileCountSelectorFamily = selectorFamily<
+  number,
+  { path: string; extensions: string[] }
+>({
+  key: "FileCountSelectorFamily",
+  get:
+    ({ path, extensions }) =>
+    async ({ get }) => {
+      get(fileSystemInvalidationAtom)
+      const files = await invokeWalkDirListFiles(path, extensions)
+      return files.length
+    },
+})

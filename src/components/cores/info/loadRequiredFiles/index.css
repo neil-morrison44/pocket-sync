@@ -15,10 +15,7 @@
   gap: 10px;
   border-radius: 10px;
   overflow: auto;
-
-
 }
-
 
 .load-required-files__row{
   display: flex;
