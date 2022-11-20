@@ -17,7 +17,6 @@ export const Saves = () => {
 
   const updateConfig = useUpdateConfig()
   const { saves } = useRecoilValue(PocketSyncConfigSelector)
-  const syncAll = useCallback(() => {}, [])
   const addBackupLocation = useCallback(async () => {
     const directory = await open({
       directory: true,
@@ -47,11 +46,6 @@ export const Saves = () => {
     <div className="saves">
       <Controls
         controls={[
-          {
-            type: "button",
-            text: "Sync All",
-            onClick: syncAll,
-          },
           {
             type: "button",
             text: "Add backup location",

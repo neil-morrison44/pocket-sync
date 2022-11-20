@@ -16,34 +16,39 @@ export const Settings = () => {
   return (
     <div className="settings">
       <h2>{"Settings"}</h2>
+      <div className="settings__items">
+        <div className="settings__row">
+          <h3 className="settings__row-title">{"Pocket Colour:"}</h3>
 
-      <div className="settings__row">
-        <h3 className="settings__row-title">{"Pocket Colour:"}</h3>
+          <select
+            value={config.colour}
+            onChange={({ target }) =>
+              updateConfig("colour", target.value as "black" | "white")
+            }
+          >
+            <option value="black">{"Black"}</option>
+            <option value="white">{"White"}</option>
+          </select>
+        </div>
 
-        <select
-          value={config.colour}
-          onChange={({ target }) =>
-            updateConfig("colour", target.value as "black" | "white")
-          }
-        >
-          <option value="black">{"Black"}</option>
-          <option value="white">{"White"}</option>
-        </select>
-      </div>
-
-      <div className="settings__row">
-        <h3 className="settings__row-title">{"ROM & BIOS archive:"}</h3>
-        <div className="settings__ramble">{ARCHIVE_URL_TEXT}</div>
-        <pre>{"https://archive.org/download/openFPGA-Files"}</pre>
-        <input
-          type="text"
-          className="settings__text-input"
-          value={archiveUrlInput}
-          onChange={({ target }) => setArchiveUrl(target.value)}
-        />
-        <button onClick={() => updateConfig("archive_url", archiveUrlInput)}>
-          {"Save"}
-        </button>
+        <div className="settings__row">
+          <h3 className="settings__row-title">{"ROM & BIOS archive:"}</h3>
+          <div className="settings__ramble">{ARCHIVE_URL_TEXT}</div>
+          <pre>{"https://archive.org/download/openFPGA-Files"}</pre>
+          <div className="settings__text-input-and-save">
+            <input
+              type="text"
+              className="settings__text-input"
+              value={archiveUrlInput}
+              onChange={({ target }) => setArchiveUrl(target.value)}
+            />
+            <button
+              onClick={() => updateConfig("archive_url", archiveUrlInput)}
+            >
+              {"Save"}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )

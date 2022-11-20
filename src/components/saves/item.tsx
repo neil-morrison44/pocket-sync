@@ -21,7 +21,7 @@ export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
         className="saves__item-sync-button"
         onClick={() => saveZip(config.backup_location, config.backup_count)}
       >
-        {"SYNC"}
+        {"Backup Now"}
       </div>
       <div className="saves__item-path">{config.backup_location}</div>
       <div className="saves__info">
@@ -39,7 +39,7 @@ export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
       </div>
 
       <div className="saves__item-restore-button" onClick={onClickRestore}>
-        {"RESTORE"}
+        {"View Saves"}
       </div>
     </div>
   )

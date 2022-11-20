@@ -108,7 +108,7 @@ export const Cores = () => {
       <h2>{`Installed (${sortedList.length})`}</h2>
       <Grid>
         {sortedList.map((core) => (
-          <Suspense fallback={<Loader />} key={core}>
+          <Suspense fallback={<Loader title={core} />} key={core}>
             <CoreItem
               coreName={core}
               onClick={() => {

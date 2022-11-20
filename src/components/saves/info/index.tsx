@@ -80,6 +80,14 @@ export const SaveInfo = ({
         ]}
       ></Controls>
 
+      <Tip>
+        {"This save backup system won't be as good as I'd like until "}
+        <Link href={"https://github.com/zip-rs/zip/issues/331"}>
+          {"this issue"}
+        </Link>
+        {" is fixed"}
+      </Tip>
+
       <div className="saves__info-save-files">
         {Object.entries(filteredSaves).map(([savefile, versions]) => {
           return (
@@ -92,14 +100,6 @@ export const SaveInfo = ({
           )
         })}
       </div>
-
-      <Tip>
-        {"This save backup system won't be as good as I'd like until "}
-        <Link href={"https://github.com/zip-rs/zip/issues/331"}>
-          {"this issue"}
-        </Link>
-        {" is fixed"}
-      </Tip>
     </div>
   )
 }

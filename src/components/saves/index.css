@@ -50,10 +50,47 @@
 
 .saves__item-sync-button {
   grid-area: a;
+  text-align: center;
+
+  background-color: var(--green-colour);
+  padding: 10px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+
+  &:hover{
+    transform: scale(1.05);
+  }
+
 }
 
 .saves__item-restore-button {
   grid-area: c;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1.25rem;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 40px;
+
+    border-right: 2px solid white;
+    border-top: 2px solid white;
+    flex-grow: 0;
+    flex-shrink: 0;
+    transform: rotate(45deg);
+  }
+
+  &:hover{
+    transform: scale(1.1);
+  }
 }
 
 
