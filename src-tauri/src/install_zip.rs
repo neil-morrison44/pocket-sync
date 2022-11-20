@@ -1,7 +1,7 @@
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use std::{fs, io::Cursor, path::PathBuf, thread};
-use tauri::{App, Manager, Window};
+use tauri::{App, FileDropEvent, Manager, Window};
 use tempdir::TempDir;
 use zip::ZipArchive;
 
@@ -50,10 +50,55 @@ struct Titles {
 
 pub fn start_zip_thread(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
     let app_handle = app.handle();
+    let app_handle_b = app.handle();
 
     thread::spawn(move || {
         let main_window = app_handle.get_window("main").unwrap();
         let main_window_b = app_handle.get_window("main").unwrap();
+        let main_window_c = app_handle.get_window("main").unwrap();
+
+        main_window.on_window_event(move |event| {
+            if let tauri::WindowEvent::FileDrop(e) = event {
+                if let tauri::FileDropEvent::Dropped(paths) = e {
+                    tokio::task::block_in_place(|| {
+                        tauri::async_runtime::block_on(async {
+                            let state: tauri::State<PocketSyncState> = app_handle_b.state();
+                            let pocket_path = state.0.read().await;
+
+                            if !pocket_path.exists() || paths.len() != 1 {
+                                return;
+                            }
+
+                            for path in paths {
+                                if !path
+                                    .file_name()
+                                    .and_then(|f| f.to_str())
+                                    .unwrap()
+                                    .ends_with(".zip")
+                                {
+                                    continue;
+                                }
+                                let zip_file = fs::read(path).unwrap();
+                                let cursor = Cursor::new(zip_file);
+                                let archive = zip::ZipArchive::new(cursor).unwrap();
+
+                                start_zip_install_flow(
+                                    archive,
+                                    Titles {
+                                        title: String::from("Install Zip"),
+                                        installing_title: (String::from("Installing Zip...")),
+                                    },
+                                    pocket_path.clone(),
+                                    &main_window_c,
+                                )
+                                .await
+                                .unwrap();
+                            }
+                        })
+                    });
+                }
+            }
+        });
 
         main_window.listen("install-core", move |event| {
             emit_progress("Install Core", None, None, &main_window_b);
