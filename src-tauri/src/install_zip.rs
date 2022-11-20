@@ -1,7 +1,7 @@
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use std::{fs, io::Cursor, path::PathBuf, thread};
-use tauri::{App, FileDropEvent, Manager, Window};
+use tauri::{App, Manager, Window};
 use tempdir::TempDir;
 use zip::ZipArchive;
 

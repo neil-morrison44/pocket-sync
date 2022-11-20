@@ -163,4 +163,16 @@ export type PocketSyncConfig = {
   version: string
   colour: "white" | "black"
   archive_url: string | null
+  saves: SaveConfig[]
+}
+
+export type SaveConfig = {
+  type: "zip"
+  backup_location: string
+  backup_count: number
+}
+
+export type SaveBackupPathTime = {
+  filename: string
+  last_modified: number
 }

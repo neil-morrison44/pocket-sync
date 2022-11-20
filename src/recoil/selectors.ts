@@ -7,6 +7,7 @@ import {
   PlatformInfoJSON,
   PocketSyncConfig,
   RequiredFileInfo,
+  SaveBackupPathTime,
 } from "../types"
 import { renderBinImage } from "../utils/renderBinImage"
 import {
@@ -18,7 +19,9 @@ import { getVersion } from "@tauri-apps/api/app"
 import { decodeDataParams } from "../utils/decodeDataParams"
 import {
   invokeFileExists,
+  invokeListBackupSaves,
   invokeListFiles,
+  invokeListSavesInZip,
   invokeReadBinaryFile,
   invokeReadTextFile,
   invokeSaveFile,
@@ -236,7 +239,8 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
         version: get(AppVersionSelector),
         colour: Math.random() > 0.5 ? "white" : "black",
         archive_url: null,
-      }
+        saves: [],
+      } as PocketSyncConfig
     }
 
     const exists = await invokeFileExists("pocket-sync.json")
@@ -245,6 +249,7 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
         version: get(AppVersionSelector),
         colour: "black",
         archive_url: null,
+        saves: [],
       } as PocketSyncConfig
 
       const encoder = new TextEncoder()
@@ -271,5 +276,57 @@ export const FileCountSelectorFamily = selectorFamily<
       get(fileSystemInvalidationAtom)
       const files = await invokeWalkDirListFiles(path, extensions)
       return files.length
+    },
+})
+
+export const AllSavesSelector = selector<string[]>({
+  key: "AllSavesSelector",
+  get: async ({ get }) => {
+    get(fileSystemInvalidationAtom)
+    const saves = await invokeWalkDirListFiles(`Saves`, [".sav"])
+    return saves.map((f) => f.replace(/^\//g, ""))
+  },
+})
+
+export const BackupZipsSelectorFamily = selectorFamily<
+  SaveBackupPathTime[],
+  string
+>({
+  key: "BackupZipsSelectorFamily",
+  get:
+    (backupPath) =>
+    async ({ get }) => {
+      get(fileSystemInvalidationAtom)
+      const backups = await invokeListBackupSaves(backupPath)
+      return backups
+    },
+})
+
+export const SaveZipFilesListSelectorFamily = selectorFamily<
+  SaveBackupPathTime[],
+  string
+>({
+  key: "SaveZipFilesListSelectorFamily",
+  get: (zipPath) => async () => {
+    const backups = await invokeListSavesInZip(zipPath)
+    return backups
+  },
+})
+
+export const AllBackupZipsFilesSelectorFamily = selectorFamily<
+  { zip: SaveBackupPathTime; files: SaveBackupPathTime[] }[],
+  string
+>({
+  key: "AllBackupZipsFilesSelectorFamily",
+  get:
+    (backupPath) =>
+    async ({ get }) => {
+      const zips = get(BackupZipsSelectorFamily(backupPath))
+      return zips.map((zip) => ({
+        zip,
+        files: get(
+          SaveZipFilesListSelectorFamily(`${backupPath}/${zip.filename}`)
+        ),
+      }))
     },
 })

@@ -40,7 +40,7 @@ const Body = ({
   screenMaterial,
 }: Pick<PocketProps, "move" | "screenMaterial">) => {
   const groupRef = useRef<THREE.Group>(null)
-  const speedRef = useRef<number>(-1)
+  const speedRef = useRef<number>(1)
   useFrame((_, delta) => {
     if (groupRef.current && speedRef.current) {
       const speed = speedRef.current

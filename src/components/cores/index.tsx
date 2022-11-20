@@ -12,6 +12,7 @@ import { coresListSelector } from "../../recoil/selectors"
 import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
+import { Tip } from "../tip"
 import { CoreInfo } from "./info"
 import { CoreItem } from "./item"
 
@@ -136,6 +137,12 @@ export const Cores = () => {
           </Suspense>
         ))}
       </Grid>
+
+      <Tip>
+        {
+          "You can also install cores (or anything else in a zip) by dragging the .zip into this window"
+        }
+      </Tip>
     </div>
   )
 }

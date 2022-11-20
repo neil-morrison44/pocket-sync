@@ -22,7 +22,7 @@ export const useUpdateConfig = () => {
         encoder.encode(JSON.stringify(newConfig, null, 2))
       )
 
-      invalidateConfigSelector(Date.now())
+      setTimeout(() => invalidateConfigSelector(Date.now()), 500)
     },
     [currentConfig]
   )

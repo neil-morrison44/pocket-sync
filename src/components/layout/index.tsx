@@ -4,6 +4,7 @@ import { Cores } from "../cores"
 import { Disconnections } from "../disconnections"
 import { Games } from "../games"
 import { Loader } from "../loader"
+import { Saves } from "../saves"
 import { Screenshots } from "../screenshots"
 import { Settings } from "../settings"
 import { ZipInstall } from "../zipInstall"
@@ -44,6 +45,7 @@ export const Layout = () => {
           {viewName === "Pocket Sync" && <About />}
           {viewName === "Settings" && <Settings />}
           {viewName === "Games" && <Games />}
+          {viewName === "Saves" && <Saves />}
         </Suspense>
       </div>
     </div>

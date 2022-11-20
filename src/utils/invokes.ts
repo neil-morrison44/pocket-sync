@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api"
+import { SaveBackupPathTime } from "../types"
 
 export const invokeOpenPocket = async () => invoke<string | null>("open_pocket")
 
@@ -41,3 +42,21 @@ export const invokeUninstallCore = async (coreName: string) =>
   invoke<boolean>("uninstall_core", {
     coreName,
   })
+
+export const invokeBackupSaves = async (
+  savePaths: string[],
+  zipPath: string,
+  maxCount: number
+) => invoke<boolean>("backup_saves", { savePaths, zipPath, maxCount })
+
+export const invokeListBackupSaves = async (backupPath: string) => {
+  console.log({ backupPath })
+  const backups = await invoke<SaveBackupPathTime[]>("list_backup_saves", {
+    backupPath,
+  })
+  return [...backups].sort((a, b) => a.last_modified - b.last_modified)
+}
+
+export const invokeListSavesInZip = async (zipPath: string) => {
+  return invoke<SaveBackupPathTime[]>("list_saves_in_zip", { zipPath })
+}

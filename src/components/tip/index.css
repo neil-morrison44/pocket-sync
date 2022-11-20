@@ -1,0 +1,23 @@
+.tip{
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 20px 10px;
+  justify-content: center;
+  align-items: center;
+
+
+  &::before {
+    content: "i";
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+    border-radius: 50%;
+
+    aspect-ratio: 1 / 1;
+    border: 1px solid white;
+    width: 1.1em;
+    height: 1.1em;
+  }
+}

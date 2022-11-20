@@ -6,6 +6,7 @@
 use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
 use futures_locks::RwLock;
 use install_zip::start_zip_thread;
+use saves_zip::{build_save_zip, read_save_zip_list, read_saves_in_zip, SaveZipFile};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::fs::{self};
@@ -17,7 +18,7 @@ use tauri::{App, Window};
 use walkdir::{DirEntry, WalkDir};
 mod checks;
 mod install_zip;
-
+mod saves_zip;
 struct PocketSyncState(RwLock<PathBuf>);
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -177,7 +178,7 @@ async fn install_archive_files(
     state: tauri::State<'_, PocketSyncState>,
     window: Window,
 ) -> Result<bool, ()> {
-    println!("installing archive files");
+    // println!("installing archive files");
     let pocket_path = state.0.read().await;
     let file_count = files.len();
 
@@ -241,6 +242,39 @@ async fn install_archive_files(
     Ok(true)
 }
 
+#[tauri::command(async)]
+async fn backup_saves(
+    save_paths: Vec<&str>,
+    zip_path: &str,
+    max_count: usize,
+    state: tauri::State<'_, PocketSyncState>,
+) -> Result<bool, ()> {
+    let pocket_path = state.0.read().await;
+    build_save_zip(&pocket_path, save_paths, zip_path, max_count).unwrap();
+
+    Ok(true)
+}
+
+#[tauri::command(async)]
+async fn list_backup_saves(backup_path: &str) -> Result<Vec<SaveZipFile>, ()> {
+    let path = PathBuf::from(backup_path);
+    if !path.exists() {
+        return Ok(vec![]);
+    }
+
+    read_save_zip_list(&path)
+}
+
+#[tauri::command(async)]
+async fn list_saves_in_zip(zip_path: &str) -> Result<Vec<SaveZipFile>, ()> {
+    let path = PathBuf::from(zip_path);
+    if !path.exists() {
+        return Ok(vec![]);
+    }
+
+    read_saves_in_zip(&path)
+}
+
 fn main() {
     tauri::Builder::default()
         .manage(PocketSyncState(Default::default()))
@@ -253,7 +287,10 @@ fn main() {
             save_file,
             uninstall_core,
             install_archive_files,
-            file_exists
+            file_exists,
+            backup_saves,
+            list_backup_saves,
+            list_saves_in_zip
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())
