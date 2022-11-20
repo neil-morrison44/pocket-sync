@@ -202,6 +202,7 @@ const DPAD = () => {
     >
       {args.map((a, index) => (
         <mesh key={index} castShadow receiveShadow>
+          {/* @ts-ignore */}
           <boxGeometry args={a} />
           <Material isButton />
         </mesh>

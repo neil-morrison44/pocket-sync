@@ -160,7 +160,7 @@ export const CoreAuthorImageSelectorFamily = selectorFamily<string, string>({
       get(fileSystemInvalidationAtom)
       const response = await invokeReadBinaryFile(`Cores/${coreName}/icon.bin`)
       return await new Promise<string>((resolve) => {
-        // not supported in safari
+        // @ts-ignore not supported in safari
         if (window.requestIdleCallback) {
           requestIdleCallback(
             () => {
@@ -186,7 +186,7 @@ export const PlatformImageSelectorFamily = selectorFamily<string, PlatformId>({
       )
 
       return await new Promise<string>((resolve) => {
-        // not supported in safari
+        // @ts-ignore not supported in safari
         if (window.requestIdleCallback) {
           requestIdleCallback(
             () => {
