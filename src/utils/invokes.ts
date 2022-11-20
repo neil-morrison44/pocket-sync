@@ -60,3 +60,7 @@ export const invokeListBackupSaves = async (backupPath: string) => {
 export const invokeListSavesInZip = async (zipPath: string) => {
   return invoke<SaveBackupPathTime[]>("list_saves_in_zip", { zipPath })
 }
+
+export const invokeRestoreZip = async (zipPath: string, filePath: string) => {
+  return invoke<null>("restore_save", { zipPath, filePath })
+}

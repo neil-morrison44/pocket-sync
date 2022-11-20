@@ -33,8 +33,12 @@ pub fn restore_save_from_zip(zip_path: &PathBuf, file_path: &str, pocket_path: &
     let tmp_path = tmp_dir.into_path();
     archive.extract(&tmp_path).unwrap();
 
-    let src_file_path = tmp_path.join(file_path);
-    let dest_file_path = pocket_path.join("Saves").join(file_path);
+    let src_file_path = tmp_path.join(remove_leading_slash(file_path));
+    let dest_file_path = pocket_path
+        .join("Saves")
+        .join(remove_leading_slash(file_path));
+
+    // println!("from {:?} to {:?}", src_file_path, dest_file_path);
 
     fs::create_dir_all(dest_file_path.parent().unwrap()).unwrap();
     fs::copy(&src_file_path, &dest_file_path).unwrap();
@@ -151,4 +155,14 @@ pub fn build_save_zip(
         fs::remove_file(last_file_path).unwrap();
     }
     Ok(())
+}
+
+fn remove_leading_slash(value: &str) -> &str {
+    if !value.starts_with("/") {
+        return value;
+    }
+
+    let mut chars = value.chars();
+    chars.next();
+    chars.as_str()
 }

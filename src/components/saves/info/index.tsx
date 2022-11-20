@@ -1,8 +1,9 @@
 import { save } from "@tauri-apps/api/dialog"
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
 import { AllBackupZipsFilesSelectorFamily } from "../../../recoil/selectors"
 import { SaveBackupPathTime } from "../../../types"
+import { invokeRestoreZip } from "../../../utils/invokes"
 import { Controls } from "../../controls"
 import { Link } from "../../link"
 import { Tip } from "../../tip"
@@ -84,6 +85,7 @@ export const SaveInfo = ({
           return (
             <SaveVersions
               key={savefile}
+              backupPath={backupPath}
               savefile={savefile}
               versions={versions}
             />
@@ -103,13 +105,23 @@ export const SaveInfo = ({
 }
 
 const SaveVersions = ({
+  backupPath,
   savefile,
   versions,
 }: {
+  backupPath: string
   savefile: string
   versions: { zip: SaveBackupPathTime; last_modified: number }[]
 }) => {
   const [isOpen, setIsOpen] = useState(true)
+
+  const restore = useCallback(
+    async (zip: string) => {
+      const zipPath = `${backupPath}/${zip}`
+      await invokeRestoreZip(zipPath, savefile)
+    },
+    [backupPath, savefile]
+  )
 
   return (
     <div className="saves__info-save-file">
@@ -120,7 +132,13 @@ const SaveVersions = ({
       {isOpen && (
         <div className="saves__info-save-file-versions">
           {versions.map(({ zip }) => (
-            <div key={zip.filename} className="saves__info-save-file-version">
+            <div
+              key={zip.filename}
+              className="saves__info-save-file-version"
+              onClick={() => {
+                restore(zip.filename)
+              }}
+            >
               {new Date(zip.last_modified * 1000).toLocaleString()}
             </div>
           ))}

@@ -36,7 +36,6 @@ pub fn start_connection_thread(app: &App) -> Result<(), Box<(dyn std::error::Err
     let app_handle = app.handle();
 
     thread::spawn(move || {
-        println!("thread started?");
         let main_window = app_handle.get_window("main").unwrap();
         let mut was_connected: bool = false;
         loop {
