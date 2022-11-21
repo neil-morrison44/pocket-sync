@@ -11,11 +11,6 @@ Features:
 - Backup save files
 - Quick links to open game file folders
 
-## Philosophy
-
-- What this purposely _isn't_ is a way to install 100 Cores in 20 seconds without really knowing what any of them are
-- I'll not be adding any sort of "Install All" button to the UI, instead it's a slower process of choosing what cores you're interested in & seeing them, including links to support whoever put the time into getting the core onto the Pocket, in more detail.
-
 ## Installation
 
 - Download the installer for your platform from [The Latest Release](https://github.com/neil-morrison44/pocket-sync/releases/latest)
@@ -23,6 +18,11 @@ Features:
 - The SD card will need to have been initialised by the Pocket to get recognised
 - Plug in your Pocket / put in the SD card, click "Connect to Pocket", select the root folder (the one with Assets & Cores & Saves etc in it) and go
 - It'll slap a `pocket_sync.json` file on to your pocket to hold config on first run
+
+## Philosophy
+
+- What this purposely _isn't_ is a way to install 100 Cores in 20 seconds without really knowing what any of them are
+- I'll not be adding any sort of "Install All" button to the UI, instead it's a slower process of choosing what cores you're interested in & seeing them, including links to support whoever put the time into getting the core onto the Pocket, in more detail.
 
 ## Roadmap
 
