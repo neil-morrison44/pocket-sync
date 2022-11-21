@@ -6,6 +6,7 @@ import {
 } from "../../../../recoil/selectors"
 import { Modal } from "../../../modal"
 import { Progress } from "../../../progress"
+import { Tip } from "../../../tip"
 
 import "./index.css"
 
@@ -47,11 +48,11 @@ export const LoadRequiredFiles = ({
           </div>
 
           {!pocketSyncConfig.archive_url && (
-            <p>
+            <Tip>
               {
-                "Please view the `Settings` pane for more options with required files"
+                "Please view the Settings pane for more options with required files"
               }
-            </p>
+            </Tip>
           )}
           <div className="load-required-files__buttons">
             <button onClick={onClose}>{"Cancel"}</button>

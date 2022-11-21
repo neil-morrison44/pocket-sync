@@ -2,6 +2,7 @@ import { emit, listen } from "@tauri-apps/api/event"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useSetRecoilState } from "recoil"
 import { fileSystemInvalidationAtom } from "../../recoil/atoms"
+import { filterKnownBadFiles } from "../../utils/filterFiles"
 import { FileTreeNode, InstallZipEventPayload } from "./types"
 
 export const useListenForZipInstall = () => {
@@ -75,7 +76,8 @@ export const useAllowedFiles = (files: InstallZipEventPayload["files"]) => {
 
   useEffect(() => {
     setAllowedFiles((f) => {
-      if (f === null && files) return files.map(({ path }) => path)
+      if (f === null && files)
+        return filterKnownBadFiles(files.map(({ path }) => path))
       return f
     })
   }, [files])
