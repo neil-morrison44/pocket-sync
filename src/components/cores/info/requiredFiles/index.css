@@ -1,0 +1,10 @@
+.required-files{
+  white-space: nowrap;
+  background-color: var(--light-colour);
+  padding: 0 5px;
+  border-radius: 5px;
+}
+
+.required-files--missing {
+  background-color: var(--red-colour);
+}

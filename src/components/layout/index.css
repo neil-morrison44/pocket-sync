@@ -1,0 +1,40 @@
+.layout{
+  display: flex;
+  align-items: flex-start;
+}
+
+.layout__sidebar-menu{
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0px;
+  height: 100vh;
+  background-color: var(--light-colour);
+  flex-basis: max-content;
+  flex-shrink: 0;
+  z-index: 100;
+}
+
+.layout__sidebar-menu-item{
+  padding: 20px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+
+  &:hover{
+    background-color: var(--hover-colour);
+  }
+}
+
+.layout__sidebar-menu-item--active{
+  background-color: var(--background-colour);
+}
+
+.layout__sidebar-menu-item--disabled{
+  cursor: unset;
+}
+
+.layout__content {
+  flex-grow: 1;
+}

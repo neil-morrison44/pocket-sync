@@ -1,0 +1,9 @@
+.sponsor-links{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sponsor-links__link{
+  word-break: break-all;
+}

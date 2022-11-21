@@ -1,0 +1,22 @@
+.grid {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: repeat(2, minmax(100px, 1fr));
+  gap: 15px;
+  padding: 10px;
+  align-items: stretch;
+  justify-items: stretch;
+  grid-template-rows: repeat(auto-fill, minmax(100px, 1fr));
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(3, minmax(100px, 1fr));
+  }
+
+  @media (min-width: 860px) {
+    grid-template-columns: repeat(4, minmax(100px, 1fr));
+  }
+
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(5, minmax(100px, 1fr));
+  }
+}

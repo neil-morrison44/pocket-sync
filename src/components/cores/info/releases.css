@@ -1,0 +1,48 @@
+.releases__title{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+
+.releases__body{
+  border-left: 2px solid white;
+  padding-left: 10px;
+  box-sizing: border-box;
+  margin-left: 10px;
+}
+
+
+.releases__body--collapsed {
+  max-height: 110px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+
+  &::after{
+    content: "";
+    position: absolute;
+    display: block;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+
+    background: linear-gradient(transparent, var(--info-colour));
+  }
+
+  & * {
+    pointer-events: none;
+  }
+}
+
+.releases__more-button{
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: 10px;
+  &:hover{
+    text-decoration: underline;
+  }
+}

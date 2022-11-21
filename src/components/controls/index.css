@@ -1,0 +1,65 @@
+.controls{
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.125rem;
+  background-color: var(--info-colour);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.controls__item{
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  accent-color: white;
+
+  &:hover{
+    background-color: var(--hover-colour);
+  }
+}
+
+
+.controls__item--back::before{
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  aspect-ratio: 1 / 1;
+  border: 1px solid white;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  transform: rotate(-45deg);
+  margin-right: 5px;
+}
+
+.controls__item--checkbox{
+  display: flex;
+  gap: 0.2em;
+  align-items: center;
+}
+
+
+.controls__search-input{
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 2px 10px;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  width: 200px;
+  transition: border-color 0.25s;
+}
+
+.controls__item--select{
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-size: 1.125rem;
+
+  & > select {
+    font-size: 1.125rem;
+  }
+}

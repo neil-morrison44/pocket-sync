@@ -1,0 +1,12 @@
+.version {
+  display: flex;
+  gap: 5px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.version__update{
+  background-color: var(--green-colour);
+  padding: 0px 10px;
+  border-radius: 10px;
+}
