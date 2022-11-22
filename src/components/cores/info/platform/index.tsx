@@ -6,7 +6,7 @@ import { Link } from "../../../link"
 
 import "./index.css"
 
-const HARD_TO_FIND_THINGS = ["Genesis", "Dominos", "Green Beret"]
+const HARD_TO_FIND_THINGS = ["Asteroids", "Genesis", "Dominos", "Green Beret"]
 
 type CorePlatformInfoProps = {
   platformId: PlatformId
