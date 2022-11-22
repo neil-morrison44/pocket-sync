@@ -23,6 +23,7 @@ Features:
 
 - What this purposely _isn't_ is a way to install 100 Cores in 20 seconds without really knowing what any of them are
 - I'll not be adding any sort of "Install All" button to the UI, instead it's a slower process of choosing what cores you're interested in & seeing them, including links to support whoever put the time into getting the core onto the Pocket, in more detail.
+- I'll not be supporting customising the `video.json` files (e.g. to add "Full Screen" modes), since I think this should be up to the core authors / users advanced enough to edit their own JSON (and deal with it if they break things). The app'll always allow you to opt out of any incoming `video.json` file though & if Analogue introduces a way to customise the video out without conflicting with the core author's files then I'll support it.
 
 ## Roadmap
 
@@ -30,7 +31,7 @@ Features:
 
 - Installing / Checking for firmware updates
 - Hopefully get the saves backups working how I'd planned
-- Support for adding custom images from PNGs etc
+- Support for adding custom images from PNGs, editing platform data, etc
 
 ### Longer term
 
