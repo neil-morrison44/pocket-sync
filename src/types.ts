@@ -113,7 +113,7 @@ export type InventoryItem = {
   release?: InventoryItemRelease
   prerelease?: InventoryItemRelease
   sponsor?: {
-    [k: string]: string
+    [k: string]: [string]
   }
 }
 
