@@ -14,7 +14,7 @@ Features:
 ## Installation
 
 - Download the installer for your platform from [The Latest Release](https://github.com/neil-morrison44/pocket-sync/releases/latest)
-- Note you'll need to click through to allow the application on Windows & allow the application from within the Security pane in Settings on MacOS since I can't be bothered setting up (& paying yearly for) the signing process
+- Note you'll need to click through to allow the application on Windows & right click to allow the application on MacOS since I can't be bothered setting up (& paying yearly for) the signing process
 - The SD card will need to have been initialised by the Pocket to get recognised
 - Plug in your Pocket / put in the SD card, click "Connect to Pocket", select the root folder (the one with Assets & Cores & Saves etc in it) and go
 - It'll slap a `pocket_sync.json` file on to your pocket to hold config on first run

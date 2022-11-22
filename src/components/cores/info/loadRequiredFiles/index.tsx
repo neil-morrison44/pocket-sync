@@ -50,7 +50,7 @@ export const LoadRequiredFiles = ({
           {!pocketSyncConfig.archive_url && (
             <Tip>
               {
-                "Please view the Settings pane for more options with required files"
+                "Please view the Settings section for more options with required files"
               }
             </Tip>
           )}
