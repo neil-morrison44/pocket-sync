@@ -265,17 +265,17 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
   },
 })
 
-export const FileCountSelectorFamily = selectorFamily<
-  number,
+export const WalkDirSelectorFamily = selectorFamily<
+  string[],
   { path: string; extensions: string[] }
 >({
-  key: "FileCountSelectorFamily",
+  key: "WalkDirSelectorFamily",
   get:
     ({ path, extensions }) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
       const files = await invokeWalkDirListFiles(path, extensions)
-      return files.length
+      return files
     },
 })
 

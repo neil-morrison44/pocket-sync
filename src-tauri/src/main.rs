@@ -136,8 +136,9 @@ async fn walkdir_list_files(
         .filter_entry(|e| !is_hidden(e))
         .into_iter()
         .filter_map(|x| x.ok())
+        .filter(|e| e.path().is_file())
         .map(|e| String::from(e.path().to_str().unwrap()))
-        .filter(|s| extensions.iter().any(|e| s.ends_with(e)))
+        .filter(|s| extensions.len() == 0 || extensions.iter().any(|e| s.ends_with(e)))
         .map(|s| s.replace(dir_path_str, ""))
         .collect())
 }
@@ -298,6 +299,17 @@ async fn restore_save(
     Ok(())
 }
 
+#[tauri::command(async)]
+async fn create_folder_if_missing(path: &str) -> Result<bool, ()> {
+    let folder_path = PathBuf::from(path);
+    if !folder_path.exists() {
+        fs::create_dir_all(path).unwrap();
+        return Ok(true);
+    }
+
+    Ok(false)
+}
+
 fn main() {
     tauri::Builder::default()
         .manage(PocketSyncState(Default::default()))
@@ -314,7 +326,8 @@ fn main() {
             backup_saves,
             list_backup_saves,
             list_saves_in_zip,
-            restore_save
+            restore_save,
+            create_folder_if_missing
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())

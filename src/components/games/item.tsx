@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { pocketPathAtom } from "../../recoil/atoms"
 import {
@@ -6,9 +6,11 @@ import {
   DataJSONSelectorFamily,
 } from "../../recoil/selectors"
 import { decodeDataParams } from "../../utils/decodeDataParams"
+import { invokeCreateFolderIfMissing } from "../../utils/invokes"
 import { PlatformImage } from "../cores/platformImage"
 import { Link } from "../link"
 import { GameCount } from "./gameCount"
+import { open } from "@tauri-apps/api/shell"
 
 export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
   const info = useRecoilValue(CoreInfoSelectorFamily(coreName))
@@ -35,14 +37,21 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
     )
   }, [romsSlot, platformIds])
 
-  if (paths.length === 0) return null
+  const onOpenFolder = useCallback(async (path: string) => {
+    await invokeCreateFolderIfMissing(path)
+    open(path)
+  }, [])
 
-  console.log({ paths })
+  if (paths.length === 0) return null
 
   return (
     <>
       {info.core.metadata.platform_ids.map((platformId, index) => (
-        <Link href={paths[index]} key={platformId}>
+        <div
+          className="cores__item"
+          onClick={() => onOpenFolder(paths[index])}
+          key={platformId}
+        >
           <PlatformImage
             className="cores__platform-image"
             platformId={platformId}
@@ -52,10 +61,11 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
             {coreName}
             <GameCount
               platformId={platformId}
+              coreName={coreName}
               extensions={romsSlot?.extensions || []}
             />
           </div>
-        </Link>
+        </div>
       ))}
     </>
   )

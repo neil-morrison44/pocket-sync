@@ -69,3 +69,7 @@ export const invokeListSavesInZip = async (zipPath: string) => {
 export const invokeRestoreZip = async (zipPath: string, filePath: string) => {
   return invoke<null>("restore_save", { zipPath, filePath })
 }
+
+export const invokeCreateFolderIfMissing = async (path: string) => {
+  return invoke<boolean>("create_folder_if_missing", { path })
+}
