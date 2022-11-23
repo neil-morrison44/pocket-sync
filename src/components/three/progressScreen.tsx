@@ -31,7 +31,6 @@ export const ProgressScreen = ({
     context.fillRect(0, 0, canvas.width, canvas.height)
 
     context.fillStyle = DARK_GREEN
-    console.log({ value, max })
     context.fillRect(0, 0, canvas.width * (value / max), canvas.height)
 
     context.fillStyle = LIGHTEST_GREEN
