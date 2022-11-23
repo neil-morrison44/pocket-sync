@@ -2,7 +2,6 @@ import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import {
   DataJSONSelectorFamily,
-  FileCountSelectorFamily,
   WalkDirSelectorFamily,
 } from "../../recoil/selectors"
 
