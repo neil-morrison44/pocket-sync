@@ -30,7 +30,6 @@ export const GameCount = ({
     const nonNamedFiles = files.filter(
       (f) => !namedFiles.some((nf) => f.endsWith(nf))
     )
-    console.log({ files, namedFiles, nonNamedFiles })
     return nonNamedFiles.length
   }, [files, data, extensions])
 
