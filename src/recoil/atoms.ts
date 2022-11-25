@@ -24,3 +24,8 @@ export const configInvalidationAtom = atom<number>({
   key: "configInvalidationAtom",
   default: Date.now(),
 })
+
+export const saveFileInvalidationAtom = atom<number>({
+  key: "saveFileInvalidationAtom",
+  default: Date.now(),
+})

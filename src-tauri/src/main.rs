@@ -7,7 +7,8 @@ use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
 use futures_locks::RwLock;
 use install_zip::start_zip_thread;
 use saves_zip::{
-    build_save_zip, read_save_zip_list, read_saves_in_zip, restore_save_from_zip, SaveZipFile,
+    build_save_zip, read_save_zip_list, read_saves_in_folder, read_saves_in_zip,
+    restore_save_from_zip, SaveZipFile,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
@@ -287,6 +288,15 @@ async fn list_saves_in_zip(zip_path: &str) -> Result<Vec<SaveZipFile>, ()> {
 }
 
 #[tauri::command(async)]
+async fn list_saves_on_pocket(
+    state: tauri::State<'_, PocketSyncState>,
+) -> Result<Vec<SaveZipFile>, ()> {
+    let pocket_path = state.0.read().await;
+    let saves_path = pocket_path.join("Saves");
+    read_saves_in_folder(&saves_path)
+}
+
+#[tauri::command(async)]
 async fn restore_save(
     zip_path: &str,
     file_path: &str,
@@ -326,6 +336,7 @@ fn main() {
             backup_saves,
             list_backup_saves,
             list_saves_in_zip,
+            list_saves_on_pocket,
             restore_save,
             create_folder_if_missing
         ])

@@ -7,13 +7,14 @@ import {
   PlatformInfoJSON,
   PocketSyncConfig,
   RequiredFileInfo,
-  SaveBackupPathTime,
+  SaveZipFile,
 } from "../types"
 import { renderBinImage } from "../utils/renderBinImage"
 import {
   configInvalidationAtom,
   fileSystemInvalidationAtom,
   pocketPathAtom,
+  saveFileInvalidationAtom,
 } from "./atoms"
 import { getVersion } from "@tauri-apps/api/app"
 import { decodeDataParams } from "../utils/decodeDataParams"
@@ -22,6 +23,7 @@ import {
   invokeListBackupSaves,
   invokeListFiles,
   invokeListSavesInZip,
+  invokeListSavesOnPocket,
   invokeReadBinaryFile,
   invokeReadTextFile,
   invokeSaveFile,
@@ -289,7 +291,7 @@ export const AllSavesSelector = selector<string[]>({
 })
 
 export const BackupZipsSelectorFamily = selectorFamily<
-  { files: SaveBackupPathTime[]; exists: boolean },
+  { files: SaveZipFile[]; exists: boolean },
   string
 >({
   key: "BackupZipsSelectorFamily",
@@ -303,7 +305,7 @@ export const BackupZipsSelectorFamily = selectorFamily<
 })
 
 export const SaveZipFilesListSelectorFamily = selectorFamily<
-  SaveBackupPathTime[],
+  SaveZipFile[],
   string
 >({
   key: "SaveZipFilesListSelectorFamily",
@@ -313,8 +315,17 @@ export const SaveZipFilesListSelectorFamily = selectorFamily<
   },
 })
 
+export const pocketSavesFilesListSelector = selector<SaveZipFile[]>({
+  key: "pocketSavesFilesListSelector",
+  get: async ({ get }) => {
+    get(saveFileInvalidationAtom)
+    const savesList = await invokeListSavesOnPocket()
+    return savesList
+  },
+})
+
 export const AllBackupZipsFilesSelectorFamily = selectorFamily<
-  { zip: SaveBackupPathTime; files: SaveBackupPathTime[] }[],
+  { zip: SaveZipFile; files: SaveZipFile[] }[],
   string
 >({
   key: "AllBackupZipsFilesSelectorFamily",
@@ -322,6 +333,7 @@ export const AllBackupZipsFilesSelectorFamily = selectorFamily<
     (backupPath) =>
     async ({ get }) => {
       const { files } = get(BackupZipsSelectorFamily(backupPath))
+      console.log({ files })
       return files.map((zip) => ({
         zip,
         files: get(

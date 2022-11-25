@@ -1,8 +1,11 @@
+use data_encoding::HEXUPPER;
+use ring::digest::{Context, Digest, SHA256};
 use serde::{Deserialize, Serialize};
 use std::{
     cmp::{Ord, Ordering},
+    error,
     fs::{self, File},
-    io::{Cursor, Read, Write},
+    io::{BufReader, Cursor, Read, Write},
     path::{Path, PathBuf},
     time::SystemTime,
 };
@@ -13,6 +16,7 @@ use zip::{write::FileOptions, DateTime};
 #[derive(Eq, PartialEq, PartialOrd, Serialize, Deserialize)]
 pub struct SaveZipFile {
     last_modified: u32,
+    hash: String,
     filename: String,
 }
 
@@ -53,19 +57,29 @@ pub fn read_saves_in_zip(zip_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
     let tmp_path = tmp_dir.into_path();
     archive.extract(&tmp_path).unwrap();
 
-    let walker = WalkDir::new(&tmp_path).into_iter();
-    let dir_path_str = &tmp_path.to_str().unwrap();
+    read_saves_in_folder(&tmp_path)
+}
+
+pub fn read_saves_in_folder(folder_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
+    let walker = WalkDir::new(&folder_path).into_iter();
+    let dir_path_str = &folder_path.to_str().unwrap();
     Ok(walker
         .into_iter()
         .filter_map(|x| x.ok())
+        .filter(|e| e.path().is_file())
         .map(|e| {
             let file_path = e.path();
             let metadata = file_path.metadata().unwrap();
             let last_modified = time::OffsetDateTime::from(metadata.created().unwrap());
 
+            let input = File::open(file_path).unwrap();
+            let reader = BufReader::new(input);
+            let digest = sha256_digest(reader).unwrap();
+
             SaveZipFile {
                 filename: String::from(e.path().to_str().unwrap()).replace(dir_path_str, ""),
                 last_modified: last_modified.unix_timestamp().try_into().unwrap(),
+                hash: HEXUPPER.encode(&digest.as_ref()),
             }
         })
         .collect())
@@ -87,9 +101,14 @@ pub fn read_save_zip_list(dir_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
             let metadata = file_path.metadata().unwrap();
             let last_modified = time::OffsetDateTime::from(metadata.modified().unwrap());
 
+            let input = File::open(file_path).unwrap();
+            let reader = BufReader::new(input);
+            let digest = sha256_digest(reader).unwrap();
+
             SaveZipFile {
                 filename,
                 last_modified: last_modified.unix_timestamp().try_into().unwrap(),
+                hash: HEXUPPER.encode(&digest.as_ref()),
             }
         })
         .collect())
@@ -165,4 +184,19 @@ fn remove_leading_slash(value: &str) -> &str {
     let mut chars = value.chars();
     chars.next();
     chars.as_str()
+}
+
+fn sha256_digest<R: Read>(mut reader: R) -> Result<Digest, Box<dyn error::Error>> {
+    let mut context = Context::new(&SHA256);
+    let mut buffer = [0; 1024];
+
+    loop {
+        let count = reader.read(&mut buffer)?;
+        if count == 0 {
+            break;
+        }
+        context.update(&buffer[..count]);
+    }
+
+    Ok(context.finish())
 }

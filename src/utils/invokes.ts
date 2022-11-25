@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api"
-import { SaveBackupPathTime } from "../types"
+import { SaveZipFile } from "../types"
 
 export const invokeOpenPocket = async () => invoke<string | null>("open_pocket")
 
@@ -51,7 +51,7 @@ export const invokeBackupSaves = async (
 
 export const invokeListBackupSaves = async (backupPath: string) => {
   const { files, exists } = await invoke<{
-    files: SaveBackupPathTime[]
+    files: SaveZipFile[]
     exists: boolean
   }>("list_backup_saves", {
     backupPath,
@@ -63,7 +63,11 @@ export const invokeListBackupSaves = async (backupPath: string) => {
 }
 
 export const invokeListSavesInZip = async (zipPath: string) => {
-  return invoke<SaveBackupPathTime[]>("list_saves_in_zip", { zipPath })
+  return invoke<SaveZipFile[]>("list_saves_in_zip", { zipPath })
+}
+
+export const invokeListSavesOnPocket = async () => {
+  return invoke<SaveZipFile[]>("list_saves_on_pocket", {})
 }
 
 export const invokeRestoreZip = async (zipPath: string, filePath: string) => {
