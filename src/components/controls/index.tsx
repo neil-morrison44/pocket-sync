@@ -98,7 +98,7 @@ export const Controls = ({ controls }: ControlProps) => {
             )
           case "checkbox":
             return (
-              <label className="controls__item controls__item-checkbox">
+              <label className="controls__item controls__item--checkbox">
                 {control.text}
                 <input
                   type="checkbox"

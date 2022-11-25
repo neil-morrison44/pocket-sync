@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from "react"
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil"
+import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
   AllBackupZipsFilesSelectorFamily,
   PlatformInfoSelectorFamily,
@@ -31,6 +31,7 @@ export const SaveInfo = ({
   const zipFilesInfo = useRecoilValue(
     AllBackupZipsFilesSelectorFamily(backupPath)
   )
+  const [hideOnlyCurrent, setHideOnlyCurrent] = useState(true)
 
   const pocketSaves = useRecoilValue(pocketSavesFilesListSelector)
   const { popScroll, pushScroll } = useSaveScroll()
@@ -41,11 +42,7 @@ export const SaveInfo = ({
 
   const perSaveFormat = useMemo(() => {
     const perSave: {
-      [filename: string]: {
-        zip: SaveZipFile
-        last_modified: number
-        hash: string
-      }[]
+      [filename: string]: SaveVersion[]
     } = {}
 
     zipFilesInfo.forEach(({ zip, files }) => {
@@ -54,19 +51,20 @@ export const SaveInfo = ({
         .forEach(({ filename, last_modified, hash }) => {
           const existing = perSave[filename]
           if (existing) {
-            if (
-              !existing.find(({ hash: stored_hash }) => hash === stored_hash)
-            ) {
-              existing.push({ zip, last_modified, hash })
-            }
+            existing.push({ zip, last_modified, hash })
           } else {
             perSave[filename] = [{ zip, last_modified, hash }]
           }
         })
     })
 
-    return perSave
-  }, [zipFilesInfo])
+    return Object.fromEntries(
+      Object.entries(perSave).filter(([_, files]) => {
+        const uniqueFiles = Array.from(new Set(files.map((f) => f.hash)))
+        return !hideOnlyCurrent || uniqueFiles.length > 1
+      })
+    )
+  }, [zipFilesInfo, hideOnlyCurrent])
 
   const filteredSaves = useMemo(
     () =>
@@ -131,6 +129,12 @@ export const SaveInfo = ({
             onClick: onBack,
           },
           {
+            type: "checkbox",
+            checked: hideOnlyCurrent,
+            text: "Hide Unchanged",
+            onChange: (v) => setHideOnlyCurrent(v),
+          },
+          {
             type: "search",
             text: "Search",
             value: searchQuery,
@@ -141,6 +145,24 @@ export const SaveInfo = ({
         ]}
       ></Controls>
 
+      <div className="saves__info-save-files-timestamps" style={gridStyling}>
+        {zipFilesInfo.map(({ zip }) => {
+          const date = new Date(zip.last_modified * 1000)
+          return (
+            <div
+              className="saves__info-timestamp"
+              key={zip.last_modified}
+              style={{
+                gridArea: getAreaName(zip.last_modified),
+              }}
+            >
+              <div>{date.toLocaleDateString()}</div>
+              <div>{date.toLocaleTimeString()}</div>
+            </div>
+          )
+        })}
+      </div>
+
       <div className="saves__info-save-files-background" style={gridStyling}>
         {zipFilesInfo.map(({ zip }) => (
           <div
@@ -149,9 +171,7 @@ export const SaveInfo = ({
             style={{
               gridArea: getAreaName(zip.last_modified),
             }}
-          >
-            word
-          </div>
+          ></div>
         ))}
       </div>
 
@@ -197,37 +217,65 @@ const SaveVersions = ({
   currentHash?: string
   gridStyling: CSSProperties
   onSelect: (zip: string, filename: string) => void
-  versions: { zip: SaveZipFile; last_modified: number; hash: string }[]
-}) => (
-  <div className="saves__info-save-file">
-    <div>{`${savefile}`}</div>
-    <div className="saves__info-save-file-versions" style={gridStyling}>
-      {versions.map(({ zip, hash }) => (
-        <div
-          key={zip.filename}
-          className="saves__info-save-file-version"
-          onClick={() => onSelect(zip.filename, savefile)}
-          style={{
-            gridArea: getAreaName(zip.last_modified),
-          }}
-        >
-          <div>{currentHash === hash ? "Current" : "Other"}</div>
-        </div>
-      ))}
-    </div>
-  </div>
-)
+  versions: SaveVersion[]
+}) => {
+  const currentTimestamp =
+    versions.find(({ hash }) => hash === currentHash)?.zip.last_modified || 0
 
-const getAreaName = (timestamp: number): string =>
-  timestamp
-    .toString(16)
-    .replaceAll("0", "zero")
-    .replaceAll("1", "one")
-    .replaceAll("2", "two")
-    .replaceAll("3", "three")
-    .replaceAll("4", "four")
-    .replaceAll("5", "five")
-    .replaceAll("6", "six")
-    .replaceAll("7", "seven")
-    .replaceAll("8", "eight")
-    .replaceAll("9", "nine")
+  return (
+    <div className="saves__info-save-file">
+      <div className="saves__info-save-file-path">{`${savefile}`}</div>
+      <div className="saves__info-save-file-versions" style={gridStyling}>
+        {versions
+          .filter(
+            ({ hash }, index) =>
+              versions.findIndex(({ hash: h }) => h === hash) === index
+          )
+          .map(({ zip, hash }, index) => {
+            const isCurrent = currentHash === hash
+            const lastVersionWithHash = getEndOfSave(index, versions)
+
+            const text = isCurrent
+              ? "Current"
+              : zip.last_modified < currentTimestamp
+              ? "Older"
+              : "Newer"
+
+            return (
+              <div
+                key={zip.filename}
+                className={`saves__info-save-file-version saves__info-save-file-version--${
+                  isCurrent ? "current" : "other"
+                }`}
+                onClick={
+                  isCurrent ? undefined : () => onSelect(zip.filename, savefile)
+                }
+                style={{
+                  gridColumnStart: getAreaName(zip.last_modified),
+                  gridColumnEnd: getAreaName(
+                    lastVersionWithHash.zip.last_modified
+                  ),
+                }}
+              >
+                <div>{text}</div>
+              </div>
+            )
+          })}
+      </div>
+    </div>
+  )
+}
+
+type SaveVersion = { zip: SaveZipFile; last_modified: number; hash: string }
+
+const getEndOfSave = (index: number, versions: SaveVersion[]) => {
+  let currentIndex = index
+  const hash = versions[index].hash
+  while (versions[currentIndex + 1]?.hash === hash) {
+    currentIndex += 1
+  }
+
+  return versions[currentIndex]
+}
+
+const getAreaName = (timestamp: number): string => `c${timestamp.toString(16)}`

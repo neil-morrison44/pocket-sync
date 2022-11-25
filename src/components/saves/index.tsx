@@ -30,7 +30,7 @@ export const Saves = () => {
       {
         type: "zip",
         backup_location: directory as string,
-        backup_count: 10,
+        backup_count: 6,
       },
     ])
   }, [saves])
