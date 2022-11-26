@@ -1,5 +1,5 @@
 import { useRecoilValue } from "recoil"
-import { BackupZipsSelectorFamily } from "../../recoil/selectors"
+import { BackupZipsSelectorFamily } from "../../recoil/saves/selectors"
 import { SaveConfig } from "../../types"
 import { useBuildSaveZip } from "./hooks/useBuildsaveZip"
 
@@ -9,7 +9,7 @@ type SavesItemProps = {
 }
 
 export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
-  const saveZip = useBuildSaveZip()
+  const { backup, backupInProgress } = useBuildSaveZip()
 
   const { files, exists } = useRecoilValue(
     BackupZipsSelectorFamily(config.backup_location)
@@ -27,8 +27,14 @@ export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
   return (
     <div className="saves__item">
       <div
-        className="saves__item-sync-button"
-        onClick={() => saveZip(config.backup_location, config.backup_count)}
+        className={`saves__item-sync-button saves__item-sync-button--${
+          backupInProgress ? "in-progress" : "standby"
+        }`}
+        onClick={
+          backupInProgress
+            ? undefined
+            : () => backup(config.backup_location, config.backup_count)
+        }
       >
         {"Backup Now"}
       </div>

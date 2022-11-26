@@ -172,7 +172,8 @@ export type SaveConfig = {
   backup_count: number
 }
 
-export type SaveBackupPathTime = {
+export type SaveZipFile = {
   filename: string
   last_modified: number
+  hash: string
 }

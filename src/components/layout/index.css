@@ -21,6 +21,7 @@
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
+  border-bottom: 1px solid black;
 
   &:hover{
     background-color: var(--hover-colour);
