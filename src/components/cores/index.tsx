@@ -12,9 +12,10 @@ import { coresListSelector } from "../../recoil/selectors"
 import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
+import { SearchContextProvider } from "../search/context"
 import { Tip } from "../tip"
 import { CoreInfo } from "./info"
-import { CoreItem } from "./item"
+import { CoreItem, NotInstalledCoreItem } from "./item"
 
 export const Cores = () => {
   const [selectedCore, setSelectedCore] = useState<string | null>(null)
@@ -40,10 +41,7 @@ export const Cores = () => {
         if (prerelease?.platform.category === filterCategory) return true
         return false
       })
-      .filter((core) =>
-        core.identifier.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-  }, [searchQuery, filterCategory, coresList, coreInventory])
+  }, [filterCategory, coresList, coreInventory])
 
   const sortedList = useMemo(
     () =>
@@ -60,11 +58,8 @@ export const Cores = () => {
         .filter((core) => {
           if (filterCategory === "All") return true
           return lookupCategory(core) === filterCategory
-        })
-        .filter((core) =>
-          core.toLowerCase().includes(searchQuery.toLowerCase())
-        ),
-    [searchQuery, filterCategory, coresList]
+        }),
+    [filterCategory, coresList]
   )
 
   const categoryList = useRecoilValue(CateogryListselector)
@@ -106,37 +101,36 @@ export const Cores = () => {
         ]}
       />
       <h2>{`Installed (${sortedList.length})`}</h2>
-      <Grid>
-        {sortedList.map((core) => (
-          <Suspense fallback={<Loader title={core} />} key={core}>
-            <CoreItem
-              coreName={core}
-              onClick={() => {
-                pushScroll()
-                setSelectedCore(core)
-              }}
-            />
-          </Suspense>
-        ))}
-      </Grid>
+      <SearchContextProvider query={searchQuery}>
+        <Grid>
+          {sortedList.map((core) => (
+            <Suspense fallback={<Loader title={core} />} key={core}>
+              <CoreItem
+                coreName={core}
+                onClick={() => {
+                  pushScroll()
+                  setSelectedCore(core)
+                }}
+              />
+            </Suspense>
+          ))}
+        </Grid>
 
-      <h2>{`Available (${notInstalledCores.length})`}</h2>
-      <Grid>
-        {notInstalledCores.map(({ identifier: core, platform }) => (
-          <Suspense fallback={<Loader />} key={core}>
-            <div
-              className="cores__item cores__item--not-installed"
-              onClick={() => {
-                pushScroll()
-                setSelectedCore(core)
-              }}
-            >
-              <div>{platform}</div>
-              <div className="cores__not-installed-item-id">{core}</div>
-            </div>
-          </Suspense>
-        ))}
-      </Grid>
+        <h2>{`Available (${notInstalledCores.length})`}</h2>
+        <Grid>
+          {notInstalledCores.map((item) => (
+            <Suspense fallback={<Loader />} key={item.identifier}>
+              <NotInstalledCoreItem
+                inventoryItem={item}
+                onClick={() => {
+                  pushScroll()
+                  setSelectedCore(item.identifier)
+                }}
+              />
+            </Suspense>
+          ))}
+        </Grid>
+      </SearchContextProvider>
 
       <Tip>
         {

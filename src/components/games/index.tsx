@@ -11,6 +11,7 @@ import { coresListSelector } from "../../recoil/selectors"
 import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
+import { SearchContextProvider } from "../search/context"
 import { CoreFolderItem } from "./item"
 
 export const Games = () => {
@@ -39,11 +40,8 @@ export const Games = () => {
         .filter((core) => {
           if (filterCategory === "All") return true
           return lookupCategory(core) === filterCategory
-        })
-        .filter((core) =>
-          core.toLowerCase().includes(searchQuery.toLowerCase())
-        ),
-    [searchQuery, filterCategory, coresList]
+        }),
+    [filterCategory, coresList]
   )
 
   const categoryList = useRecoilValue(CateogryListselector)
@@ -72,13 +70,15 @@ export const Games = () => {
           },
         ]}
       />
-      <Grid>
-        {sortedList.map((core) => (
-          <Suspense fallback={<Loader />} key={core}>
-            <CoreFolderItem coreName={core} />
-          </Suspense>
-        ))}
-      </Grid>
+      <SearchContextProvider query={searchQuery}>
+        <Grid>
+          {sortedList.map((core) => (
+            <Suspense fallback={<Loader />} key={core}>
+              <CoreFolderItem coreName={core} />
+            </Suspense>
+          ))}
+        </Grid>
+      </SearchContextProvider>
     </div>
   )
 }
