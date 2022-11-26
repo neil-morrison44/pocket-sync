@@ -24,6 +24,7 @@ import { Loader } from "../../loader"
 import { SponsorLinks } from "./sponsorLinks"
 import { RequiredFiles } from "./requiredFiles"
 import { LoadRequiredFiles } from "./loadRequiredFiles"
+import { ErrorBoundary } from "../../errorBoundary"
 
 type CoreInfoProps = {
   coreName: string
@@ -103,7 +104,9 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
           {inventoryItem?.sponsor && (
             <div className="core-info__info-row core-info__info-row--right">
               <strong>{"Sponsor:"}</strong>
-              <SponsorLinks links={inventoryItem.sponsor} />
+              <ErrorBoundary>
+                <SponsorLinks links={inventoryItem.sponsor} />
+              </ErrorBoundary>
             </div>
           )}
 

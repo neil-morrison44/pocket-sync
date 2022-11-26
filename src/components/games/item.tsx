@@ -4,6 +4,7 @@ import { pocketPathAtom } from "../../recoil/atoms"
 import {
   CoreInfoSelectorFamily,
   DataJSONSelectorFamily,
+  PlatformInfoSelectorFamily,
 } from "../../recoil/selectors"
 import { decodeDataParams } from "../../utils/decodeDataParams"
 import { invokeCreateFolderIfMissing } from "../../utils/invokes"
@@ -11,6 +12,7 @@ import { PlatformImage } from "../cores/platformImage"
 import { Link } from "../link"
 import { GameCount } from "./gameCount"
 import { open } from "@tauri-apps/api/shell"
+import { SearchContextSelfHidingConsumer } from "../search/context"
 
 export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
   const info = useRecoilValue(CoreInfoSelectorFamily(coreName))
@@ -26,6 +28,9 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
   )
 
   const platformIds = useMemo(() => info.core.metadata.platform_ids, [info])
+  const { platform } = useRecoilValue(
+    PlatformInfoSelectorFamily(info.core.metadata.platform_ids[0])
+  )
 
   const paths = useMemo(() => {
     if (!romsSlot || !platformIds) return []
@@ -45,7 +50,14 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
   if (paths.length === 0) return null
 
   return (
-    <>
+    <SearchContextSelfHidingConsumer
+      fields={[
+        coreName,
+        platform.manufacturer,
+        platform.name,
+        platform.category || "",
+      ]}
+    >
       {info.core.metadata.platform_ids.map((platformId, index) => (
         <div
           className="cores__item"
@@ -67,6 +79,6 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
           </div>
         </div>
       ))}
-    </>
+    </SearchContextSelfHidingConsumer>
   )
 }

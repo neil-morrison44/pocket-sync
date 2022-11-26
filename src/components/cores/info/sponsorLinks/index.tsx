@@ -13,13 +13,15 @@ export const SponsorLinks = ({ links }: SponsorLinkProps) => {
 
   return (
     <div className="sponsor-links">
-      {sponsorTypes.flatMap((sponsorKey) =>
-        links[sponsorKey].map((link) => (
+      {sponsorTypes.flatMap((sponsorKey) => {
+        const l = links[sponsorKey]
+        const linksArray = Array.isArray(l) ? l : [l]
+        return linksArray.map((link) => (
           <Link className="sponsor-links__link" key={link} href={link}>
             {link}
           </Link>
         ))
-      )}
+      })}
     </div>
   )
 }

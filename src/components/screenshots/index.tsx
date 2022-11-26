@@ -8,9 +8,12 @@ import { Loader } from "../loader"
 import { ScreenshotInfo } from "./info"
 import { Grid } from "../grid"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
+import { Controls } from "../controls"
+import { SearchContextProvider } from "../search/context"
 
 export const Screenshots = () => {
   const [selected, setSelected] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
   const screenshots = useRecoilValue(screenshotsListSelector)
 
   const { pushScroll, popScroll } = useSaveScroll()
@@ -40,21 +43,37 @@ export const Screenshots = () => {
   }
 
   return (
-    <Grid className="screenshots">
-      {sortedScreenshots.map((fileName) => (
-        <Suspense
-          fallback={<Loader className="screenshots__loading-item" />}
-          key={fileName}
-        >
-          <Screenshot
-            fileName={fileName}
-            onClick={() => {
-              pushScroll()
-              setSelected(fileName)
-            }}
-          />
-        </Suspense>
-      ))}
-    </Grid>
+    <>
+      <Controls
+        controls={[
+          {
+            type: "search",
+            text: "Search",
+            value: searchQuery,
+            onChange: (v) => {
+              setSearchQuery(v)
+            },
+          },
+        ]}
+      />
+      <SearchContextProvider query={searchQuery}>
+        <Grid className="screenshots">
+          {sortedScreenshots.map((fileName) => (
+            <Suspense
+              fallback={<Loader className="screenshots__loading-item" />}
+              key={fileName}
+            >
+              <Screenshot
+                fileName={fileName}
+                onClick={() => {
+                  pushScroll()
+                  setSelected(fileName)
+                }}
+              />
+            </Suspense>
+          ))}
+        </Grid>
+      </SearchContextProvider>
+    </>
   )
 }

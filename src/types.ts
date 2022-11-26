@@ -58,7 +58,7 @@ export type Semver = `${number}.${number}.${number}`
 
 export type PlatformInfoJSON = {
   platform: {
-    category: Category
+    category?: Category
     name: string
     year: number
     manufacturer: string
@@ -113,7 +113,7 @@ export type InventoryItem = {
   release?: InventoryItemRelease
   prerelease?: InventoryItemRelease
   sponsor?: {
-    [k: string]: [string]
+    [k: string]: [string] | string
   }
 }
 
