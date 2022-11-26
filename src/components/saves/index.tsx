@@ -8,8 +8,6 @@ import { open } from "@tauri-apps/api/dialog"
 import "./index.css"
 import { SavesItem } from "./item"
 import { SaveInfo } from "./info"
-import { Link } from "../link"
-import { Tip } from "../tip"
 
 export const Saves = () => {
   const [selectedSaveBackup, setSelectedSavebackup] = useState<number | null>(

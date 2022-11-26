@@ -7,11 +7,11 @@ import {
   useState,
 } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
+import { PlatformInfoSelectorFamily } from "../../../recoil/selectors"
 import {
   AllBackupZipsFilesSelectorFamily,
-  PlatformInfoSelectorFamily,
   pocketSavesFilesListSelector,
-} from "../../../recoil/selectors"
+} from "../../../recoil/saves/selectors"
 import { PlatformId, SaveZipFile } from "../../../types"
 import { invokeRestoreZip } from "../../../utils/invokes"
 import { Controls } from "../../controls"
@@ -226,41 +226,41 @@ const SaveVersions = ({
     <div className="saves__info-save-file">
       <div className="saves__info-save-file-path">{`${savefile}`}</div>
       <div className="saves__info-save-file-versions" style={gridStyling}>
-        {versions
-          .filter(
-            ({ hash }, index) =>
-              versions.findIndex(({ hash: h }) => h === hash) === index
+        {versions.map(({ zip, hash }, index) => {
+          // skip ones we've already drawn the box for
+          if (versions.findIndex(({ hash: h }) => h === hash) !== index) {
+            return null
+          }
+
+          const isCurrent = currentHash === hash
+          const lastVersionWithHash = getEndOfSave(index, versions)
+
+          const text = isCurrent
+            ? "Current"
+            : zip.last_modified < currentTimestamp
+            ? "Older"
+            : "Newer"
+
+          return (
+            <div
+              key={zip.filename}
+              className={`saves__info-save-file-version saves__info-save-file-version--${
+                isCurrent ? "current" : "other"
+              }`}
+              onClick={
+                isCurrent ? undefined : () => onSelect(zip.filename, savefile)
+              }
+              style={{
+                gridColumnStart: getAreaName(zip.last_modified),
+                gridColumnEnd: getAreaName(
+                  lastVersionWithHash.zip.last_modified
+                ),
+              }}
+            >
+              <div>{text}</div>
+            </div>
           )
-          .map(({ zip, hash }, index) => {
-            const isCurrent = currentHash === hash
-            const lastVersionWithHash = getEndOfSave(index, versions)
-
-            const text = isCurrent
-              ? "Current"
-              : zip.last_modified < currentTimestamp
-              ? "Older"
-              : "Newer"
-
-            return (
-              <div
-                key={zip.filename}
-                className={`saves__info-save-file-version saves__info-save-file-version--${
-                  isCurrent ? "current" : "other"
-                }`}
-                onClick={
-                  isCurrent ? undefined : () => onSelect(zip.filename, savefile)
-                }
-                style={{
-                  gridColumnStart: getAreaName(zip.last_modified),
-                  gridColumnEnd: getAreaName(
-                    lastVersionWithHash.zip.last_modified
-                  ),
-                }}
-              >
-                <div>{text}</div>
-              </div>
-            )
-          })}
+        })}
       </div>
     </div>
   )
