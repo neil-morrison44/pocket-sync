@@ -220,7 +220,8 @@ const SaveVersions = ({
   versions: SaveVersion[]
 }) => {
   const currentTimestamp =
-    versions.find(({ hash }) => hash === currentHash)?.zip.last_modified || 0
+    versions.find(({ hash }) => hash === currentHash)?.zip.last_modified ||
+    Infinity
 
   return (
     <div className="saves__info-save-file">
