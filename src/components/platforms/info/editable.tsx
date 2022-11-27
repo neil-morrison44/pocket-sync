@@ -44,7 +44,7 @@ export const Editable = ({
           className="platforms__edit-button"
           onClick={() => setEditMode(true)}
         >
-          Edit
+          {"Edit"}
         </div>
       </div>
     )
@@ -73,7 +73,7 @@ export const Editable = ({
             setEditMode(false)
           }}
         >
-          Save
+          {"Save"}
         </button>
         <button onClick={() => setEditMode(false)}>Cancel</button>
       </div>
@@ -95,7 +95,7 @@ export const Editable = ({
             setEditMode(false)
           }}
         >
-          Save
+          {"Save"}
         </button>
         <button onClick={() => setEditMode(false)}>Cancel</button>
       </div>

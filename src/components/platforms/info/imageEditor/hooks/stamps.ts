@@ -89,10 +89,15 @@ export const renderStamps = (
       context.rotate(rotate * (Math.PI / 180))
       context.translate(-(width / 2 + x), -(height / 2 + y))
 
+      const xPos = width / 2 + x - (image.width / 2) * scale
+      const yPos = height / 2 + y - (image.height / 2) * scale
+
+      // the image is 1px less wide than it should be and I don't know why
+
       context.drawImage(
         i.image,
-        width / 2 + x - (image.width / 2) * scale,
-        height / 2 + y - (image.height / 2) * scale,
+        Math.floor(xPos),
+        Math.floor(yPos),
         image.width * scale,
         image.height * scale
       )

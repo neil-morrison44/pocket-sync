@@ -6,6 +6,7 @@ import {
   allCategoriesSelector,
 } from "../../../recoil/platforms/selectors"
 import { PlatformId } from "../../../types"
+import { PLATFORM_IMAGE } from "../../../values"
 import { Controls } from "../../controls"
 import { useUpdatePlatformValue } from "../hooks/useUpdatePlatform"
 import { Editable } from "./editable"
@@ -44,8 +45,8 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
       {imageEditorOpen && (
         <ImageEditor
           path={`Platforms/_images/${id}.bin`}
-          width={520}
-          height={165}
+          width={PLATFORM_IMAGE.WIDTH}
+          height={PLATFORM_IMAGE.HEIGHT}
           onClose={() => setImageEditorOpen(false)}
         />
       )}

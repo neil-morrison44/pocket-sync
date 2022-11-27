@@ -6,6 +6,7 @@ import {
   invokeReadTextFile,
 } from "../../utils/invokes"
 import { renderBinImage } from "../../utils/renderBinImage"
+import { PLATFORM_IMAGE } from "../../values"
 import { fileSystemInvalidationAtom } from "../atoms"
 import { ImageBinSrcSelectorFamily } from "../selectors"
 
@@ -42,8 +43,8 @@ export const PlatformImageSelectorFamily = selectorFamily<string, PlatformId>({
       get(
         ImageBinSrcSelectorFamily({
           path: `Platforms/_images/${platformId}.bin`,
-          width: 521,
-          height: 165,
+          width: PLATFORM_IMAGE.WIDTH,
+          height: PLATFORM_IMAGE.HEIGHT,
         })
       ),
 })

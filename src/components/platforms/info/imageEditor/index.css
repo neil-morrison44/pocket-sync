@@ -6,9 +6,6 @@
   grid-template-rows: min-content 1fr min-content;
 }
 
-
-
-
 .image-editor__close-button{
   cursor: pointer;
   &:hover{
@@ -44,7 +41,6 @@
   overflow: auto;
   flex-direction: column;
 }
-
 
 .image-editor__stamp{
   display: flex;
@@ -100,7 +96,6 @@
     flex-grow: 1;
   }
 }
-
 
 .image-editor__layer-move-button{
   display: flex;
