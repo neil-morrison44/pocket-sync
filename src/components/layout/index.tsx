@@ -4,6 +4,7 @@ import { Cores } from "../cores"
 import { Disconnections } from "../disconnections"
 import { Games } from "../games"
 import { Loader } from "../loader"
+import { Platforms } from "../platforms"
 import { Saves } from "../saves"
 import { Screenshots } from "../screenshots"
 import { Settings } from "../settings"
@@ -17,6 +18,7 @@ export const Layout = () => {
     "Cores",
     "Screenshots",
     "Saves",
+    "Platforms",
     "Settings",
   ] as const
   const [viewName, setViewName] = useState<typeof views[number]>("Pocket Sync")
@@ -46,6 +48,7 @@ export const Layout = () => {
           {viewName === "Settings" && <Settings />}
           {viewName === "Games" && <Games />}
           {viewName === "Saves" && <Saves />}
+          {viewName === "Platforms" && <Platforms />}
         </Suspense>
       </div>
     </div>

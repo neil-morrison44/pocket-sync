@@ -2,8 +2,9 @@ import { useRecoilValue } from "recoil"
 import {
   CoreAuthorImageSelectorFamily,
   CoreInfoSelectorFamily,
-  PlatformInfoSelectorFamily,
 } from "../../recoil/selectors"
+
+import { PlatformInfoSelectorFamily } from "../../recoil/platforms/selectors"
 import { PlatformImage } from "./platformImage"
 
 import "./index.css"

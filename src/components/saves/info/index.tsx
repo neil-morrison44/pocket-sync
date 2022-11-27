@@ -7,7 +7,7 @@ import {
   useState,
 } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
-import { PlatformInfoSelectorFamily } from "../../../recoil/selectors"
+import { PlatformInfoSelectorFamily } from "../../../recoil/platforms/selectors"
 import {
   AllBackupZipsFilesSelectorFamily,
   pocketSavesFilesListSelector,

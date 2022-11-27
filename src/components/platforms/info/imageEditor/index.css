@@ -1,0 +1,129 @@
+.image-editor{
+  display: grid;
+  grid-template-areas: "p c" "a c" "b b";
+
+  grid-template-columns: min-content 1fr;
+  grid-template-rows: min-content 1fr min-content;
+}
+
+.image-editor__close-button{
+  cursor: pointer;
+  &:hover{
+    font-weight: bold;
+  }
+}
+
+.image-editor__preview-canvas{
+  grid-area: p;
+  flex-grow: 0;
+  flex-basis: 0;
+  align-self: center;
+}
+
+.image-editor__range{
+  width: 80px;
+}
+
+.image-editor__stamps-etc{
+  grid-area: c;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.image-editor__stamps{
+  gap: 10px;
+  align-self: flex-start;
+  align-self: stretch;
+  display: flex;
+  overflow: auto;
+  flex-direction: column;
+}
+
+.image-editor__stamp{
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 10px;
+  padding: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  cursor: pointer;
+  border-radius: 10px;
+  background-color: var(--hover-colour);
+  box-sizing: border-box;
+  border: 1px solid transparent;
+}
+
+.image-editor__stamp--selected{
+  background-color: var(--light-colour);
+  border: 1px solid #396cd8;
+}
+
+.image-editor__stamp-image{
+  width: 25px;
+  flex-shrink: 1;
+  max-width: 100px;
+  height: auto;
+  flex-grow: 1;
+}
+
+.image-editor__stamp-controls{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: space-between;
+  flex-basis: 20px;
+  flex-shrink: 1;
+  flex-grow: 0;
+
+  &:empty{
+    display: none;
+  }
+}
+
+.image-editor__bottom-buttons {
+  grid-area: b;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  justify-content: space-evenly;
+  align-items: stretch;
+
+  & > * {
+    flex-grow: 1;
+  }
+}
+
+.image-editor__layer-move-button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:after{
+    --size: 12px;
+    content: "";
+    display: block;
+    width: var(--size);
+    height: var(--size);
+    aspect-ratio: 1 / 1;
+    border: 2px solid white;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    box-sizing: border-box;
+    transform: rotate(var(--rotate));
+  }
+}
+
+.image-editor__layer-move-button--up{
+  &:after{
+    --rotate: 45deg;
+  }
+}
+
+.image-editor__layer-move-button--down{
+  &:after{
+    --rotate: 225deg;
+  }
+}

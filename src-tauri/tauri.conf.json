@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "Pocket Sync",
-    "version": "1.1.0"
+    "version": "1.2.0"
   },
   "tauri": {
     "allowlist": {
@@ -15,7 +15,7 @@
     },
     "bundle": {
       "active": true,
-      "category": "DeveloperTool",
+      "category": "Utility",
       "copyright": "",
       "deb": {
         "depends": []
