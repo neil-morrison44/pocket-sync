@@ -51,7 +51,14 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
       )}
 
       <div>
-        <img onClick={() => setImageEditorOpen(true)} src={platformImage} />
+        <div className="platform__image-editable">
+          <img
+            className="core-info__image"
+            onClick={() => setImageEditorOpen(true)}
+            src={platformImage}
+          />
+          <div className="platform__image-edit">Edit</div>
+        </div>
         <div className="cores__info-blurb">
           <Editable
             initialValue={platform.name}

@@ -1,5 +1,12 @@
 
 
+.image-editor__close-button{
+  cursor: pointer;
+  &:hover{
+    font-weight: bold;
+  }
+}
+
 .image-editor__preview-canvas{
   flex-grow: 0;
   flex-basis: 0;

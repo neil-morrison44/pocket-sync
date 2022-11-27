@@ -211,7 +211,9 @@ export const ImageEditor = ({
 
   return (
     <Modal>
-      <div onClick={onClose}>X</div>
+      <div className="image-editor__close-button" onClick={onClose}>
+        X
+      </div>
       <canvas
         className="image-editor__preview-canvas"
         width={width}
@@ -257,8 +259,8 @@ export const ImageEditor = ({
                 {"Rotate"}
                 <input
                   type="range"
-                  max={360}
-                  min={0}
+                  max={180}
+                  min={-180}
                   value={stamp.rotate}
                   onChange={({ target }) =>
                     updateImageStampValues(stamp, {
