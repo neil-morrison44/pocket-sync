@@ -42,9 +42,11 @@ export const Controls = ({ controls }: ControlProps) => {
         switch (control.type) {
           case "search":
             return (
-              <div className="controls__item controls__item--search">
+              <div
+                className="controls__item controls__item--search"
+                key={control.text}
+              >
                 <input
-                  key={control.text}
                   className="controls__search-input"
                   placeholder={control.text}
                   type="search"
