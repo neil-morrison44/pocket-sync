@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
-import { PlatformInfoSelectorFamily } from "../../../../recoil/selectors"
+import { PlatformInfoSelectorFamily } from "../../../../recoil/platforms/selectors"
 import { PlatformId } from "../../../../types"
 import { Link } from "../../../link"
 

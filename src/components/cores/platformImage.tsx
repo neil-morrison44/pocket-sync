@@ -1,5 +1,5 @@
 import { useRecoilValue } from "recoil"
-import { PlatformImageSelectorFamily } from "../../recoil/selectors"
+import { PlatformImageSelectorFamily } from "../../recoil/platforms/selectors"
 import { PlatformId } from "../../types"
 
 type PlatformImageProps = {

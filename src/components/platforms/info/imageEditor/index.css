@@ -1,0 +1,39 @@
+
+
+.image-editor__preview-canvas{
+  flex-grow: 0;
+  flex-basis: 0;
+  align-self: center;
+}
+
+.image-editor__stamps{
+  gap: 10px;
+  align-self: flex-start;
+  align-self: stretch;
+  display: flex;
+  overflow: auto;
+  flex-direction: column;
+}
+
+
+.image-editor__stamp{
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px;
+}
+
+.image-editor__stamp--selected{
+  background-color: var(--light-colour);
+}
+
+.image-editor__stamp-image{
+  width: 125px;
+}
+.image-editor__stamp-controls{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: space-between;
+
+}

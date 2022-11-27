@@ -4,8 +4,8 @@ import { pocketPathAtom } from "../../recoil/atoms"
 import {
   CoreInfoSelectorFamily,
   DataJSONSelectorFamily,
-  PlatformInfoSelectorFamily,
 } from "../../recoil/selectors"
+
 import { decodeDataParams } from "../../utils/decodeDataParams"
 import { invokeCreateFolderIfMissing } from "../../utils/invokes"
 import { PlatformImage } from "../cores/platformImage"
@@ -13,6 +13,8 @@ import { Link } from "../link"
 import { GameCount } from "./gameCount"
 import { open } from "@tauri-apps/api/shell"
 import { SearchContextSelfHidingConsumer } from "../search/context"
+import { o } from "@tauri-apps/api/dialog-15855a2f"
+import { PlatformInfoSelectorFamily } from "../../recoil/platforms/selectors"
 
 export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
   const info = useRecoilValue(CoreInfoSelectorFamily(coreName))

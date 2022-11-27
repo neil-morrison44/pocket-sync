@@ -172,54 +172,6 @@ export const CoreAuthorImageSelectorFamily = selectorFamily<string, string>({
     },
 })
 
-export const PlatformImageSelectorFamily = selectorFamily<string, PlatformId>({
-  key: "PlatformImageSelectorFamily",
-  get:
-    (platformId: PlatformId) =>
-    async ({ get }) => {
-      get(fileSystemInvalidationAtom)
-      const response = await invokeReadBinaryFile(
-        `Platforms/_images/${platformId}.bin`
-      )
-
-      return await new Promise<string>((resolve) => {
-        // @ts-ignore not supported in safari
-        if (window.requestIdleCallback) {
-          requestIdleCallback(
-            () => {
-              resolve(renderBinImage(response, 521, 165, true))
-            },
-            { timeout: 1000 }
-          )
-        } else {
-          resolve(renderBinImage(response, 521, 165, true))
-        }
-      })
-    },
-})
-
-export const platformsListSelector = selector<PlatformId[]>({
-  key: "platformsListSelector",
-  get: async ({ get }) => {
-    get(fileSystemInvalidationAtom)
-    return await invokeListFiles("Platforms")
-  },
-})
-
-export const PlatformInfoSelectorFamily = selectorFamily<
-  PlatformInfoJSON,
-  PlatformId
->({
-  key: "PlatformInfoSelectorFamily",
-  get:
-    (platformId: PlatformId) =>
-    async ({ get }) => {
-      get(fileSystemInvalidationAtom)
-      const response = await invokeReadTextFile(`Platforms/${platformId}.json`)
-      return JSON.parse(response) as PlatformInfoJSON
-    },
-})
-
 export const AppVersionSelector = selector<string>({
   key: "AppVersionSelector",
   get: async () => await getVersion(),
@@ -273,5 +225,33 @@ export const WalkDirSelectorFamily = selectorFamily<
       get(fileSystemInvalidationAtom)
       const files = await invokeWalkDirListFiles(path, extensions)
       return files
+    },
+})
+
+export const ImageBinSrcSelectorFamily = selectorFamily<
+  string,
+  { path: string; width: number; height: number }
+>({
+  key: "ImageBinSrcSelectorFamily",
+  get:
+    ({ path, width, height }) =>
+    async ({ get }) => {
+      console.log({ path, width, height })
+      get(fileSystemInvalidationAtom)
+      const response = await invokeReadBinaryFile(path)
+
+      return await new Promise<string>((resolve) => {
+        // @ts-ignore not supported in safari
+        if (window.requestIdleCallback) {
+          requestIdleCallback(
+            () => {
+              resolve(renderBinImage(response, width, height, true))
+            },
+            { timeout: 1000 }
+          )
+        } else {
+          resolve(renderBinImage(response, width, height, true))
+        }
+      })
     },
 })
