@@ -236,8 +236,18 @@ export const ImageBinSrcSelectorFamily = selectorFamily<
   get:
     ({ path, width, height }) =>
     async ({ get }) => {
-      console.log({ path, width, height })
       get(fileSystemInvalidationAtom)
+
+      const exists = await invokeFileExists(path)
+
+      if (!exists) {
+        // https://www.analogue.co/developer/docs/platform-metadata#platform-image
+        // A platform _may_ have a graphic associated with it.
+
+        const emptyBuffer = new Uint8Array(width * height * 2)
+        return renderBinImage(emptyBuffer, width, height, true)
+      }
+
       const response = await invokeReadBinaryFile(path)
 
       return await new Promise<string>((resolve) => {
