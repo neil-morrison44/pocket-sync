@@ -1,12 +1,9 @@
 import { useCallback, useRef, useState } from "react"
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import { useRecoilValue } from "recoil"
 import { ImageBinSrcSelectorFamily } from "../../../../recoil/selectors"
 import { Modal } from "../../../modal"
 import { invokeSaveFile } from "../../../../utils/invokes"
-import {
-  fileSystemInvalidationAtom,
-  pocketPathAtom,
-} from "../../../../recoil/atoms"
+import { pocketPathAtom } from "../../../../recoil/atoms"
 import { ImageInfo } from "./types"
 import {
   renderStamps,
@@ -18,6 +15,7 @@ import {
 } from "./hooks/stamps"
 
 import "./index.css"
+import { useInvalidateFileSystem } from "../../../../hooks/invalidation"
 
 type ImageEditorProps = {
   onClose: () => void
@@ -36,7 +34,7 @@ export const ImageEditor = ({
     ImageBinSrcSelectorFamily({ path, width, height })
   )
   const pocketPath = useRecoilValue(pocketPathAtom)
-  const invalidateFS = useSetRecoilState(fileSystemInvalidationAtom)
+  const invalidateFS = useInvalidateFileSystem()
   const [selectedStampIndex, setSelectedStampIndex] = useState(0)
   const [imageStamps, setImageStamps] = useState<ImageInfo[]>([])
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -70,7 +68,7 @@ export const ImageEditor = ({
     }
 
     await invokeSaveFile(`${pocketPath}/${path}`, buffer)
-    invalidateFS(Date.now())
+    invalidateFS()
     onClose()
   }, [width, height])
 

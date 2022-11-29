@@ -6,6 +6,7 @@ import {
   invokeReadBinaryFile,
   invokeReadTextFile,
 } from "../../utils/invokes"
+import { getBinaryMetadata } from "../../utils/getBinaryMetadata"
 
 export const VideoJSONSelectorFamily = selectorFamily<VideoJSON, string>({
   key: "VideoJSONSelectorFamily",
@@ -41,37 +42,13 @@ export const SingleScreenshotSelectorFamily = selectorFamily<
       )
       const buf = new Uint8Array(data)
       const file = new File([buf], fileName, { type: "image/png" })
-      const metadataBuffer = buf.slice(buf.length - 528)
-
-      let utf8decoder = new TextDecoder()
-      // The unpacking here might not be right if there's unused ranges
-
-      let authorName = utf8decoder
-        .decode(metadataBuffer.slice(0, 16 * 2))
-        .replaceAll("\u0000", "")
-
-      let coreName = utf8decoder
-        .decode(metadataBuffer.slice(16 * 2, 16 * 4))
-        .trim()
-        .replaceAll("\u0000", "")
-
-      let gameName = utf8decoder
-        .decode(metadataBuffer.slice(16 * 6, 16 * 20))
-        .trim()
-        .replaceAll("\u0000", "")
-
-      let platformName = utf8decoder
-        .decode(metadataBuffer.slice(metadataBuffer.length - 16 * 10))
-        .replaceAll("\u0000", "")
+      const metadata = getBinaryMetadata(buf, true)
 
       return {
-        file_name: fileName,
         file,
-        game: gameName,
-        platform: platformName,
+        file_name: fileName,
         timestamp: new Date(file.lastModified),
-        author: authorName,
-        core: coreName,
+        ...metadata,
       }
     },
 })

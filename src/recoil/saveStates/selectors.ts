@@ -1,4 +1,6 @@
 import { selector, selectorFamily } from "recoil"
+import { decodeThumbnail } from "../../utils/decodeSaveStateThumbnail"
+import { getBinaryMetadata } from "../../utils/getBinaryMetadata"
 import {
   invokeReadBinaryFile,
   invokeWalkDirListFiles,
@@ -23,3 +25,28 @@ export const SaveStateBinarySelectorFamily = selectorFamily<Uint8Array, string>(
     },
   }
 )
+
+export const SaveStateImageSelectorFamily = selectorFamily<string, string>({
+  key: "SaveStateImageSelectorFamily",
+  get:
+    (path) =>
+    async ({ get }) => {
+      const binary = get(SaveStateBinarySelectorFamily(path))
+      const imageSrc = decodeThumbnail(binary)
+      return imageSrc
+    },
+})
+
+export const SaveStateMetadataSelectorFamily = selectorFamily<
+  { author: string; core: string; game: string; platform: string },
+  string
+>({
+  key: "SaveStateMetadataSelectorFamily",
+  get:
+    (path) =>
+    async ({ get }) => {
+      const binary = get(SaveStateBinarySelectorFamily(path))
+      const metadata = getBinaryMetadata(binary)
+      return metadata
+    },
+})

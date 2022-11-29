@@ -320,6 +320,21 @@ async fn create_folder_if_missing(path: &str) -> Result<bool, ()> {
     Ok(false)
 }
 
+#[tauri::command(async)]
+async fn delete_files(
+    paths: Vec<&str>,
+    state: tauri::State<'_, PocketSyncState>,
+) -> Result<bool, ()> {
+    let pocket_path = state.0.read().await;
+    for path in paths {
+        let file_path = pocket_path.join(path);
+        if file_path.exists() {
+            fs::remove_file(file_path).unwrap()
+        }
+    }
+    Ok(true)
+}
+
 fn main() {
     tauri::Builder::default()
         .manage(PocketSyncState(Default::default()))
@@ -338,7 +353,8 @@ fn main() {
             list_saves_in_zip,
             list_saves_on_pocket,
             restore_save,
-            create_folder_if_missing
+            create_folder_if_missing,
+            delete_files
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())

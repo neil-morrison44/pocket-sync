@@ -79,3 +79,7 @@ export const invokeRestoreZip = async (zipPath: string, filePath: string) => {
 export const invokeCreateFolderIfMissing = async (path: string) => {
   return invoke<boolean>("create_folder_if_missing", { path })
 }
+
+export const invokeDeleteFiles = async (paths: string[]) => {
+  return invoke<boolean>("delete_files", { paths })
+}
