@@ -12,7 +12,7 @@ Features:
 - Export corrected & upscalled screenshots
 - Backup & restore save files
 - Quick links to open game file folders
-- 
+- Browse & manage (bulk delete) save states
 
 ## Installation
 
