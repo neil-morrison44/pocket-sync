@@ -13,10 +13,12 @@ export const invokeReadTextFile = async (path: string) =>
     path,
   })
 
-export const invokeReadBinaryFile = async (path: string) =>
-  invoke<Uint8Array>("read_binary_file", {
+export const invokeReadBinaryFile = async (path: string) => {
+  const file = await invoke<number[]>("read_binary_file", {
     path,
   })
+  return new Uint8Array(file)
+}
 
 export const invokeWalkDirListFiles = async (
   path: string,
@@ -76,4 +78,8 @@ export const invokeRestoreZip = async (zipPath: string, filePath: string) => {
 
 export const invokeCreateFolderIfMissing = async (path: string) => {
   return invoke<boolean>("create_folder_if_missing", { path })
+}
+
+export const invokeDeleteFiles = async (paths: string[]) => {
+  return invoke<boolean>("delete_files", { paths })
 }

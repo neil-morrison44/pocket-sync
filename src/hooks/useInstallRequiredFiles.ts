@@ -1,14 +1,14 @@
 import { invoke } from "@tauri-apps/api"
 import { listen } from "@tauri-apps/api/event"
 import { useCallback, useEffect, useState } from "react"
-import { useRecoilValue, useSetRecoilState } from "recoil"
-import { fileSystemInvalidationAtom } from "../recoil/atoms"
+import { useRecoilValue } from "recoil"
 import { PocketSyncConfigSelector } from "../recoil/selectors"
 import { RequiredFileInfo } from "../types"
+import { useInvalidateFileSystem } from "./invalidation"
 
 export const useInstallRequiredFiles = (closeModal: () => void) => {
   const { archive_url } = useRecoilValue(PocketSyncConfigSelector)
-  const invalidateFS = useSetRecoilState(fileSystemInvalidationAtom)
+  const invalidateFS = useInvalidateFileSystem()
 
   const [progress, setProgress] = useState<{
     value: number
@@ -21,7 +21,7 @@ export const useInstallRequiredFiles = (closeModal: () => void) => {
       ({ payload }) => {
         setProgress(payload)
         if (payload.max === payload.value) {
-          invalidateFS(Date.now())
+          invalidateFS()
           closeModal()
         }
       }

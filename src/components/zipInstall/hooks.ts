@@ -1,7 +1,6 @@
 import { emit, listen } from "@tauri-apps/api/event"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { useSetRecoilState } from "recoil"
-import { fileSystemInvalidationAtom } from "../../recoil/atoms"
+import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { filterKnownBadFiles } from "../../utils/filterFiles"
 import { FileTreeNode, InstallZipEventPayload } from "./types"
 
@@ -9,7 +8,7 @@ export const useListenForZipInstall = () => {
   const [installState, setInstallState] =
     useState<null | InstallZipEventPayload>(null)
 
-  const updateFSInvalidationAtom = useSetRecoilState(fileSystemInvalidationAtom)
+  const invalidateFS = useInvalidateFileSystem()
 
   useEffect(() => {
     const unlisten = listen<InstallZipEventPayload>(
@@ -26,7 +25,7 @@ export const useListenForZipInstall = () => {
       "install-zip-finished",
       ({ payload }) => {
         setInstallState(null)
-        updateFSInvalidationAtom(Date.now())
+        invalidateFS()
       }
     )
     return () => {

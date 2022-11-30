@@ -6,6 +6,7 @@ import { Games } from "../games"
 import { Loader } from "../loader"
 import { Platforms } from "../platforms"
 import { Saves } from "../saves"
+import { SaveStates } from "../saveStates"
 import { Screenshots } from "../screenshots"
 import { Settings } from "../settings"
 import { ZipInstall } from "../zipInstall"
@@ -18,6 +19,7 @@ export const Layout = () => {
     "Cores",
     "Screenshots",
     "Saves",
+    "Save States",
     "Platforms",
     "Settings",
   ] as const
@@ -48,6 +50,7 @@ export const Layout = () => {
           {viewName === "Settings" && <Settings />}
           {viewName === "Games" && <Games />}
           {viewName === "Saves" && <Saves />}
+          {viewName === "Save States" && <SaveStates />}
           {viewName === "Platforms" && <Platforms />}
         </Suspense>
       </div>
