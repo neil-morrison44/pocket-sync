@@ -2,14 +2,17 @@
 
 A Windows / Mac / Linux GUI to do _stuff_ with the Analogue Pocket.
 
-![The Cores List](./readme_images/cores_list.png)
+<img alt="The Core List" src="./readme_images/cores_list.png" width="50%"/><img alt="SNES core details" src="./readme_images/core_detail.png" width="50%"/>
+<img alt="Editing a platform" src="./readme_images/platform_editing.png" width="50%"/><img alt="Browsing Save States" src="./readme_images/save_states.png" width="50%"/><img alt="Exporting a screenshot" src="./readme_images/screenshot_detail.png" width="50%"/>
+
 
 Features:
 
 - Browse & install cores
 - Export corrected & upscalled screenshots
-- Backup save files
+- Backup & restore save files
 - Quick links to open game file folders
+- 
 
 ## Installation
 
@@ -22,8 +25,10 @@ Features:
 ## Philosophy
 
 - What this purposely _isn't_ is a way to install 100 Cores in 20 seconds without really knowing what any of them are
-- I'll not be adding any sort of "Install All" button to the UI, instead it's a slower process of choosing what cores you're interested in & seeing them, including links to support whoever put the time into getting the core onto the Pocket, in more detail. Also, with the number of cores coming from github now you'll run into rate limiting if you try and pull them all down at once.
+- I'll not be adding any sort of "Install All" button to the UI, instead it's a slower process of choosing what cores you're interested in & seeing them, including links to support whoever put the time into getting the core onto the Pocket, in more detail. Also, with the number of cores coming from github now you'll run into rate limiting if you try and pull them all down at once. _(If you really want to just download every core at once I'd recommend the [mattpannella](https://github.com/mattpannella/pocket-updater-utility) / [RetroDriven](https://github.com/RetroDriven/Pocket_Updater) updaters for this over this one)_
 - I'll not be supporting customising the `video.json` files (e.g. to add "Full Screen" modes), since I think this should be up to the core authors / users advanced enough to edit their own JSON (and deal with it if they break things). The app'll always allow you to opt out of any incoming `video.json` file though & if Analogue introduces a way to customise the video out without conflicting with the core author's files then I'll support it.
+
+https://user-images.githubusercontent.com/2095051/204883337-f0e34a44-5ea4-47a4-9bd4-0865c287b58b.mov
 
 ## Roadmap
 
@@ -36,7 +41,7 @@ Features:
 
 ### Soon
 
-- Installing / Checking for firmware updates
+- Installing / Checking for firmware updates (might wait for the real release of 1.1 for this)
 
 ### Longer term
 
