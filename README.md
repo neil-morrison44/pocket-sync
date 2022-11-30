@@ -32,11 +32,11 @@ Features:
 - Hopefully get the saves backups working how I'd planned (close enough)
 - Support for adding custom images from PNGs, editing platform data, etc
 - Improve Search
+- Save State management (search, bulk delete etc)
 
 ### Soon
 
 - Installing / Checking for firmware updates
-- Save State management (search, bulk delete etc)
 
 ### Longer term
 
