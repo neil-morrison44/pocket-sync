@@ -3,8 +3,6 @@ import {
   CoreInfoJSON,
   DataJSON,
   InstanceDataJSON,
-  PlatformId,
-  PlatformInfoJSON,
   PocketSyncConfig,
   RequiredFileInfo,
 } from "../types"

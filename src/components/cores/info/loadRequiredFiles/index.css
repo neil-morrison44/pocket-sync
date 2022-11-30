@@ -1,8 +1,7 @@
-.load-required-files{
+.load-required-files {
   width: max-content;
   height: max-content;
   max-height: 80vh;
-
   min-width: 50vw;
   min-height: 50vw;
 }
@@ -17,9 +16,8 @@
   overflow: auto;
 }
 
-.load-required-files__row{
+.load-required-files__row {
   display: flex;
-
   align-items: center;
   gap: 0.5em;
 
@@ -29,11 +27,11 @@
   }
 }
 
-.load-required-files__row--exists{
+.load-required-files__row--exists {
   opacity: 0.5;
 }
 
-.load-required-files__buttons{
+.load-required-files__buttons {
   display: flex;
   justify-content: space-between;
   gap: 20px;

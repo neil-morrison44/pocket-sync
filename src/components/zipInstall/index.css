@@ -1,4 +1,4 @@
-.zip-install__paths{
+.zip-install__paths {
   flex-grow: 1;
   overflow: auto;
   background-color: var(--info-colour);
@@ -12,31 +12,31 @@
   justify-content: space-around;
 }
 
-.zip-install__tree-node{
+.zip-install__tree-node {
   margin-left: 20px;
   display: flex;
   flex-direction: column;
 }
 
-.zip-install__tree-node-info{
+.zip-install__tree-node-info {
   display: flex;
   gap: 5px;
   align-items: center;
 }
 
-.zip-install__progress{
+.zip-install__progress {
   width: 100%;
   accent-color: unset;
 }
 
-.zip-install__tree-node-name{
+.zip-install__tree-node-name {
   display: flex;
   gap: inherit;
   cursor: pointer;
   align-items: center;
 }
 
-.zip-install__tree-arrow{
+.zip-install__tree-arrow {
   display: inline-block;
   width: 12px;
   height: 12px;

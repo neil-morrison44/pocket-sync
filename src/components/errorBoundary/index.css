@@ -1,0 +1,12 @@
+.error-boundary {
+  padding: 20px;
+}
+
+.error-boundary__message {
+  white-space: pre-wrap;
+  color: var(--red-colour);
+}
+
+.error-boundary__stack {
+  white-space: pre-wrap;
+}

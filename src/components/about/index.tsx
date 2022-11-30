@@ -5,6 +5,7 @@ import {
   AppVersionSelector,
   PocketSyncConfigSelector,
 } from "../../recoil/selectors"
+import { ErrorBoundary } from "../errorBoundary"
 import { Link } from "../link"
 import { Pocket } from "../three/pocket"
 import { ProgressScreen } from "../three/progressScreen"
@@ -40,17 +41,18 @@ export const About = () => {
             className="about__update-link"
           >{`Update Available! ${selfReleases[0].tag_name}`}</Link>
         )}
-
-        <Pocket
-          move="back-and-forth"
-          screenMaterial={
-            <Suspense
-              fallback={<meshPhongMaterial attach="material" color="green" />}
-            >
-              <RandomScreenshotScreen />
-            </Suspense>
-          }
-        />
+        <ErrorBoundary>
+          <Pocket
+            move="back-and-forth"
+            screenMaterial={
+              <Suspense
+                fallback={<meshPhongMaterial attach="material" color="green" />}
+              >
+                <RandomScreenshotScreen />
+              </Suspense>
+            }
+          />
+        </ErrorBoundary>
       </div>
 
       <div className="about__info">

@@ -3,21 +3,21 @@
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
-
   color: #f6f6f6;
+
   --background-colour: #2f2f2f;
   --hover-colour: #222;
   --info-colour: #111;
   --light-colour: #555;
-  --green-colour: rgb(88, 144, 80);
-  --red-colour: rgb(200, 80, 88);
-  background-color: var(--background-colour);
+  --green-colour: rgb(88 144 80);
+  --red-colour: rgb(200 80 88);
 
+  background-color: var(--background-colour);
   font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   accent-color: white;
 }
 
@@ -66,18 +66,18 @@ a:hover {
 
 h1 {
   text-align: center;
-  font-family: "Analogue";
+  font-family: Analogue;
   font-size: 4rem;
   font-smooth: never;
-  -webkit-font-smoothing : none;
+  -webkit-font-smoothing: none;
 }
 
 h2 {
   text-align: left;
-  font-family: "Analogue";
+  font-family: Analogue;
   font-size: 3rem;
   font-smooth: never;
-  -webkit-font-smoothing : none;
+  -webkit-font-smoothing: none;
   padding: 0 10px;
   margin-bottom: 15px;
 }
@@ -89,10 +89,10 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  color: #ffffff;
+  color: #fff;
   background-color: #0f0f0f98;
   transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 2px rgb(0 0 0 / 20%);
 }
 
 button {

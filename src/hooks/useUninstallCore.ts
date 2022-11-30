@@ -1,11 +1,10 @@
 import { useCallback } from "react"
-import { useSetRecoilState } from "recoil"
-import { fileSystemInvalidationAtom } from "../recoil/atoms"
 import { ask } from "@tauri-apps/api/dialog"
 import { invokeUninstallCore } from "../utils/invokes"
+import { useInvalidateFileSystem } from "./invalidation"
 
 export const useUninstallCore = () => {
-  const updateFSInvalidationAtom = useSetRecoilState(fileSystemInvalidationAtom)
+  const invalidateFileSystem = useInvalidateFileSystem()
 
   return useCallback(async (coreName: string) => {
     const sure = await ask(
@@ -19,7 +18,7 @@ export const useUninstallCore = () => {
 
     if (success) {
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      updateFSInvalidationAtom(Date.now())
+      invalidateFileSystem()
     }
   }, [])
 }

@@ -1,25 +1,26 @@
-.settings{
+.settings {
   padding: 10px;
 }
 
-.settings__items{
+.settings__items {
   padding: 20px;
 }
 
-.settings__ramble{
+.settings__ramble {
   margin: 0;
   padding: 0;
   white-space: pre-wrap;
 }
 
-.settings__row{
-  & input, & select {
+.settings__row {
+  & input,
+  & select {
     font-size: 1.4rem;
     width: 80%;
   }
 }
 
-.settings__text-input-and-save{
+.settings__text-input-and-save {
   display: flex;
   gap: 10px;
 }

@@ -1,8 +1,7 @@
 import { Canvas, useFrame } from "@react-three/fiber"
-import { OrbitControls, Stats, RoundedBox } from "@react-three/drei"
+import { RoundedBox } from "@react-three/drei"
 import { ReactNode, useRef } from "react"
-import { useRecoilValue, useSetRecoilState } from "recoil"
-import { PocketModelColourAtom } from "../../recoil/atoms"
+import { useRecoilValue } from "recoil"
 
 import "./index.css"
 import { PocketSyncConfigSelector } from "../../recoil/selectors"
