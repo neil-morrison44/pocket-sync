@@ -1,13 +1,12 @@
 import { listen } from "@tauri-apps/api/event"
 import { useEffect } from "react"
 import { useSetRecoilState } from "recoil"
-import { fileSystemInvalidationAtom, pocketPathAtom } from "../../recoil/atoms"
+import { useInvalidateFileSystem } from "../../hooks/invalidation"
+import { pocketPathAtom } from "../../recoil/atoms"
 
 export const Disconnections = () => {
   const setPocketPath = useSetRecoilState(pocketPathAtom)
-  const setFileSystemInvalidation = useSetRecoilState(
-    fileSystemInvalidationAtom
-  )
+  const invalidateFileSystem = useInvalidateFileSystem()
 
   useEffect(() => {
     const unlisten = listen<{ connected: boolean }>(
@@ -16,7 +15,7 @@ export const Disconnections = () => {
         if (!payload.connected) {
           setPocketPath(null)
           setTimeout(() => {
-            setFileSystemInvalidation(Date.now())
+            invalidateFileSystem()
           }, 50)
         }
       }

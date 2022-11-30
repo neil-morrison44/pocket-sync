@@ -2,6 +2,7 @@ import React, { Suspense, useState } from "react"
 import { About } from "../about"
 import { Cores } from "../cores"
 import { Disconnections } from "../disconnections"
+import { ErrorBoundary } from "../errorBoundary"
 import { Games } from "../games"
 import { Loader } from "../loader"
 import { Platforms } from "../platforms"
@@ -43,16 +44,18 @@ export const Layout = () => {
         ))}
       </div>
       <div className="layout__content">
-        <Suspense fallback={<Loader fullHeight />}>
-          {viewName === "Screenshots" && <Screenshots />}
-          {viewName === "Cores" && <Cores />}
-          {viewName === "Pocket Sync" && <About />}
-          {viewName === "Settings" && <Settings />}
-          {viewName === "Games" && <Games />}
-          {viewName === "Saves" && <Saves />}
-          {viewName === "Save States" && <SaveStates />}
-          {viewName === "Platforms" && <Platforms />}
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<Loader fullHeight />}>
+            {viewName === "Screenshots" && <Screenshots />}
+            {viewName === "Cores" && <Cores />}
+            {viewName === "Pocket Sync" && <About />}
+            {viewName === "Settings" && <Settings />}
+            {viewName === "Games" && <Games />}
+            {viewName === "Saves" && <Saves />}
+            {viewName === "Save States" && <SaveStates />}
+            {viewName === "Platforms" && <Platforms />}
+          </Suspense>
+        </ErrorBoundary>
       </div>
     </div>
   )

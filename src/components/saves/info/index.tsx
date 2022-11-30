@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from "react"
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import { useRecoilValue } from "recoil"
 import { PlatformInfoSelectorFamily } from "../../../recoil/platforms/selectors"
 import {
   AllBackupZipsFilesSelectorFamily,
@@ -18,6 +18,7 @@ import { Controls } from "../../controls"
 import { ask } from "@tauri-apps/api/dialog"
 import { saveFileInvalidationAtom } from "../../../recoil/atoms"
 import { useSaveScroll } from "../../../hooks/useSaveScroll"
+import { useInvalidateSaveFiles } from "../../../hooks/invalidation"
 
 export const SaveInfo = ({
   backupPath,
@@ -26,7 +27,7 @@ export const SaveInfo = ({
   backupPath: string
   onBack: () => void
 }) => {
-  const invalidateSaveFileList = useSetRecoilState(saveFileInvalidationAtom)
+  const invalidateSaveFileList = useInvalidateSaveFiles()
   const [searchQuery, setSearchQuery] = useState("")
   const zipFilesInfo = useRecoilValue(
     AllBackupZipsFilesSelectorFamily(backupPath)
@@ -100,7 +101,7 @@ export const SaveInfo = ({
       if (yes) {
         await invokeRestoreZip(zipPath, savefile)
         pushScroll()
-        invalidateSaveFileList(Date.now())
+        invalidateSaveFileList()
       }
     },
     [backupPath, invalidateSaveFileList, pushScroll]

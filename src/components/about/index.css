@@ -7,8 +7,7 @@
   text-align: center;
 }
 
-
-.about__update-link{
+.about__update-link {
   font-size: 2rem;
   background-color: var(--green-colour);
   padding: 20px;
@@ -16,11 +15,12 @@
   white-space: nowrap;
 }
 
-.about__top{
+.about__top {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+
   /* width: 100%; */
   width: max-content;
   text-align: center;
@@ -28,13 +28,13 @@
   gap: 10px;
 }
 
-.about__info{
+.about__info {
   background-color: var(--info-colour);
   width: 100%;
   max-height: fit-content;
   flex-grow: 1;
   justify-self: flex-end;
   text-align: left;
-  padding: 0px 20px;
+  padding: 0 20px;
   box-sizing: border-box;
 }
