@@ -1,5 +1,5 @@
+use std::error;
 use std::path::PathBuf;
-use std::{error, fs};
 use walkdir::WalkDir;
 
 pub fn find_dotfiles(root: &PathBuf) -> Result<Vec<String>, Box<dyn error::Error>> {

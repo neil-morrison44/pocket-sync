@@ -1,5 +1,6 @@
 import React, { Suspense, useState } from "react"
 import { About } from "../about"
+import { AutoRefresh } from "../autoRefresh"
 import { Cores } from "../cores"
 import { Disconnections } from "../disconnections"
 import { ErrorBoundary } from "../errorBoundary"
@@ -30,6 +31,7 @@ export const Layout = () => {
     <div className="layout">
       <Disconnections />
       <ZipInstall />
+      <AutoRefresh />
       <div className="layout__sidebar-menu">
         {views.map((v) => (
           <div
