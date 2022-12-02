@@ -120,6 +120,7 @@ export type InventoryItem = {
 type InventoryItemRelease = {
   tag_name: Semver | string
   release_date: string
+  version: Semver | string
   platform: {
     category: string
     name: string

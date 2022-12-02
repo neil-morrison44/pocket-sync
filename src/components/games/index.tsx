@@ -1,4 +1,4 @@
-import { Suspense, useMemo, useState } from "react"
+import { Suspense, useCallback, useMemo, useState } from "react"
 import { useRecoilCallback, useRecoilValue } from "recoil"
 import { useCategoryLookup } from "../../hooks/useCategoryLookup"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
@@ -12,12 +12,16 @@ import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
 import { SearchContextProvider } from "../search/context"
+import { CleanFilesModal } from "./cleanFiles"
 import { CoreFolderItem } from "./item"
 
 export const Games = () => {
   const coresList = useRecoilValue(coresListSelector)
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [filterCategory, setFilterCategory] = useState<string>("All")
+
+  const [cleanFilesOpen, setCleanFilesOpen] = useState(false)
+
   const lookupCategory = useCategoryLookup()
 
   const refresh = useRecoilCallback(({ set }) => () => {
@@ -48,6 +52,10 @@ export const Games = () => {
 
   return (
     <div>
+      {cleanFilesOpen && (
+        <CleanFilesModal onClose={() => setCleanFilesOpen(false)} />
+      )}
+
       <Controls
         controls={[
           {
@@ -55,6 +63,11 @@ export const Games = () => {
             text: "Search",
             value: searchQuery,
             onChange: (v) => setSearchQuery(v),
+          },
+          {
+            type: "button",
+            text: "Clean Files",
+            onClick: () => setCleanFilesOpen(true),
           },
           {
             type: "button",

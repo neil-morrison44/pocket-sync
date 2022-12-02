@@ -132,7 +132,8 @@ export const ImageEditor = ({
                 </div>
 
                 <div className="image-editor__stamp-controls">
-                  <button
+                  <div
+                    className="image-editor__stamp-control"
                     onClick={() => {
                       setImageStamps((stamps) =>
                         stamps.filter((s) => s !== stamp)
@@ -140,8 +141,9 @@ export const ImageEditor = ({
                     }}
                   >
                     {"Remove"}
-                  </button>
-                  <button
+                  </div>
+                  <div
+                    className="image-editor__stamp-control"
                     onClick={() =>
                       updateImageStampValues(stamp, {
                         y: 0,
@@ -152,20 +154,20 @@ export const ImageEditor = ({
                     }
                   >
                     {"Reset"}
-                  </button>
+                  </div>
                 </div>
                 <div className="image-editor__stamp-controls">
                   {index !== 0 && (
-                    <button
+                    <div
                       className="image-editor__layer-move-button image-editor__layer-move-button--up"
                       onClick={() => moveStamp(stamp, -1)}
-                    ></button>
+                    ></div>
                   )}
                   {index !== imageStamps.length - 1 && (
-                    <button
+                    <div
                       className="image-editor__layer-move-button image-editor__layer-move-button--down"
                       onClick={() => moveStamp(stamp, 1)}
-                    ></button>
+                    ></div>
                   )}
                 </div>
               </div>

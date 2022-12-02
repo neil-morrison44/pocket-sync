@@ -83,3 +83,7 @@ export const invokeCreateFolderIfMissing = async (path: string) => {
 export const invokeDeleteFiles = async (paths: string[]) => {
   return invoke<boolean>("delete_files", { paths })
 }
+
+export const invokeFindCleanableFiles = async (path: string) => {
+  return invoke<string[]>("find_cleanable_files", { path })
+}

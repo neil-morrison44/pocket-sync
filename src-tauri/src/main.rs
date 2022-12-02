@@ -4,6 +4,7 @@
 )]
 
 use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
+use clean_fs::find_dotfiles;
 use futures_locks::RwLock;
 use install_zip::start_zip_thread;
 use saves_zip::{
@@ -20,6 +21,7 @@ use tauri::api::dialog;
 use tauri::{App, Window};
 use walkdir::{DirEntry, WalkDir};
 mod checks;
+mod clean_fs;
 mod install_zip;
 mod saves_zip;
 struct PocketSyncState(RwLock<PathBuf>);
@@ -335,6 +337,18 @@ async fn delete_files(
     Ok(true)
 }
 
+#[tauri::command(async)]
+async fn find_cleanable_files(
+    path: &str,
+    state: tauri::State<'_, PocketSyncState>,
+) -> Result<Vec<String>, String> {
+    let pocket_path = state.0.read().await;
+    let root_path = pocket_path.join(path);
+    let files = find_dotfiles(&root_path).unwrap();
+
+    Ok(files)
+}
+
 fn main() {
     tauri::Builder::default()
         .manage(PocketSyncState(Default::default()))
@@ -354,7 +368,8 @@ fn main() {
             list_saves_on_pocket,
             restore_save,
             create_folder_if_missing,
-            delete_files
+            delete_files,
+            find_cleanable_files
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())

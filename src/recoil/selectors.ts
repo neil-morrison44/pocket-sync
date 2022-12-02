@@ -16,6 +16,7 @@ import { getVersion } from "@tauri-apps/api/app"
 import { decodeDataParams } from "../utils/decodeDataParams"
 import {
   invokeFileExists,
+  invokeFindCleanableFiles,
   invokeListFiles,
   invokeReadBinaryFile,
   invokeReadTextFile,
@@ -261,5 +262,16 @@ export const ImageBinSrcSelectorFamily = selectorFamily<
           resolve(renderBinImage(response, width, height, true))
         }
       })
+    },
+})
+
+export const CleanableFilesSelectorFamily = selectorFamily<string[], string>({
+  key: "CleanableFilesSelectorFamily",
+  get:
+    (path) =>
+    async ({ get }) => {
+      get(fileSystemInvalidationAtom)
+      const files = await invokeFindCleanableFiles(path)
+      return files
     },
 })
