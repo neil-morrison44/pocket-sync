@@ -1,30 +1,30 @@
-.image-editor{
+.image-editor {
   display: grid;
   grid-template-areas: "p c" "a c" "b b";
-
   grid-template-columns: min-content 1fr;
   grid-template-rows: min-content 1fr min-content;
 }
 
-.image-editor__close-button{
+.image-editor__close-button {
   cursor: pointer;
-  &:hover{
+
+  &:hover {
     font-weight: bold;
   }
 }
 
-.image-editor__preview-canvas{
+.image-editor__preview-canvas {
   grid-area: p;
   flex-grow: 0;
   flex-basis: 0;
   align-self: center;
 }
 
-.image-editor__range{
-  width: 80px;
+.image-editor__range {
+  width: clamp(80px, 10vw, 200px);
 }
 
-.image-editor__stamps-etc{
+.image-editor__stamps-etc {
   grid-area: c;
   overflow: hidden;
   display: flex;
@@ -33,7 +33,7 @@
   justify-content: space-between;
 }
 
-.image-editor__stamps{
+.image-editor__stamps {
   gap: 10px;
   align-self: flex-start;
   align-self: stretch;
@@ -42,7 +42,7 @@
   flex-direction: column;
 }
 
-.image-editor__stamp{
+.image-editor__stamp {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -57,12 +57,12 @@
   border: 1px solid transparent;
 }
 
-.image-editor__stamp--selected{
+.image-editor__stamp--selected {
   background-color: var(--light-colour);
   border: 1px solid #396cd8;
 }
 
-.image-editor__stamp-image{
+.image-editor__stamp-image {
   width: 25px;
   flex-shrink: 1;
   max-width: 100px;
@@ -70,7 +70,7 @@
   flex-grow: 1;
 }
 
-.image-editor__stamp-controls{
+.image-editor__stamp-controls {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -79,8 +79,16 @@
   flex-shrink: 1;
   flex-grow: 0;
 
-  &:empty{
+  &:empty {
     display: none;
+  }
+}
+
+.image-editor__stamp-control {
+  text-align: center;
+
+  &:hover {
+    text-decoration: underline;
   }
 }
 
@@ -97,12 +105,14 @@
   }
 }
 
-.image-editor__layer-move-button{
+.image-editor__layer-move-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  &:after{
+
+  &::after {
     --size: 12px;
+
     content: "";
     display: block;
     width: var(--size);
@@ -116,14 +126,14 @@
   }
 }
 
-.image-editor__layer-move-button--up{
-  &:after{
+.image-editor__layer-move-button--up {
+  &::after {
     --rotate: 45deg;
   }
 }
 
-.image-editor__layer-move-button--down{
-  &:after{
+.image-editor__layer-move-button--down {
+  &::after {
     --rotate: 225deg;
   }
 }

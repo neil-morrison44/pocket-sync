@@ -1,0 +1,22 @@
+.clean-files {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.clean-files__list {
+  border-radius: 5px;
+  padding: 20px;
+  background-color: var(--info-colour);
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.clean-files_button-loader {
+  height: 30px;
+  background-color: transparent;
+
+  &::before {
+    width: 40px;
+  }
+}

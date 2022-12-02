@@ -1,0 +1,30 @@
+name: Discord Announce
+on:
+  workflow_run:
+    workflows: [Release]
+    types:
+      - completed
+
+jobs:
+  on-success:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v3
+
+      - name: "Discord Notification"
+        run: |
+          curl \
+          -H "Content-Type: application/json" \
+          -d '{
+              "username": "monkeymad2",
+              "content": "New Pocket Sync release!",
+              "embeds": [{
+                  "color": 5804112,
+                  "fields": [
+                      { "name": "Link", "value": "[Click Me](https://github.com/neil-morrison44/pocket-sync/releases/latest", "inline": true }
+                  ]
+              }]
+              }' \
+          ${{ secrets.FPGAMING_DISCORD_WEBHOOK }}

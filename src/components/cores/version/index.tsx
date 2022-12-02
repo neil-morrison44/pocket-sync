@@ -21,14 +21,14 @@ export const Version = ({ coreName }: VersionProps) => {
 
     if (!inventoryCore?.release) return null
 
-    const { tag_name } = inventoryCore.release
+    const { version } = inventoryCore.release
     const metadataVersion = coreInfo.core.metadata.version
 
-    if (tag_name !== metadataVersion) {
-      if (tag_name.includes(metadataVersion)) {
+    if (version !== metadataVersion) {
+      if (version.includes(metadataVersion)) {
         return null
       }
-      return inventoryCore.release.tag_name
+      return inventoryCore.release.version
     }
 
     return null

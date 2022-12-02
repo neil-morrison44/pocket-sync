@@ -1,5 +1,3 @@
-
-
 .platforms__editable {
   display: flex;
   align-items: center;
@@ -10,30 +8,30 @@
   & input {
     font-size: 1.5rem;
     flex-grow: 1;
-    width:1px;
+    width: 1px;
   }
 }
 
-.platforms__editable--pre-edit{
+.platforms__editable--pre-edit {
   background-color: transparent;
 
-  &:hover{
-    & .platforms__edit-button{
+  &:hover {
+    & .platforms__edit-button {
       opacity: 1;
     }
   }
 }
 
-.platforms__edit-button{
+.platforms__edit-button {
   opacity: 0;
   cursor: pointer;
 
-  &:hover{
+  &:hover {
     text-decoration: underline;
   }
 }
 
-.platform__image-editable{
+.platform__image-editable {
   position: relative;
   cursor: pointer;
 
@@ -42,7 +40,7 @@
   }
 }
 
-.platform__image-edit{
+.platform__image-edit {
   opacity: 0;
   position: absolute;
   bottom: 10px;
@@ -50,4 +48,5 @@
   background-color: var(--info-colour);
   font-size: 2rem;
   padding: 10px;
+  pointer-events: none;
 }

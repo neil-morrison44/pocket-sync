@@ -113,7 +113,7 @@ export const SaveInfo = ({
     )
 
     return {
-      gap: "10px",
+      gap: "5px",
       display: "grid",
       gridTemplateAreas: `'${timestamps.join(" ")}'`,
       gridTemplateColumns: `${timestamps.map(() => "1fr").join(" ")}`,
@@ -157,8 +157,12 @@ export const SaveInfo = ({
                 gridArea: getAreaName(zip.last_modified),
               }}
             >
-              <div>{date.toLocaleDateString()}</div>
-              <div>{date.toLocaleTimeString()}</div>
+              <div>{date.toLocaleDateString().replace(/\/\d{4}$/, "")}</div>
+              <div>
+                {date
+                  .toLocaleTimeString()
+                  .replace(/(\d{2}\:\d{2})\:\d{2}/, "$1")}
+              </div>
             </div>
           )
         })}
