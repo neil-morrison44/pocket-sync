@@ -11,6 +11,7 @@ import { SearchContextProvider } from "../search/context"
 import { confirm } from "@tauri-apps/api/dialog"
 import { invokeDeleteFiles } from "../../utils/invokes"
 import { useInvalidateFileSystem } from "../../hooks/invalidation"
+import { AuthorTag } from "../cores/info/authorTag"
 
 export const SaveStates = () => {
   const invalidateFS = useInvalidateFileSystem()
@@ -77,11 +78,10 @@ export const SaveStates = () => {
               },
         ]}
       />
-      <div>
+      <div className="save-states__list">
         <SearchContextProvider query={searchQuery}>
-          {Object.entries(groupByCore).map(([coreName, saveStates]) => (
+          {Object.entries(groupByCore).map(([coreName, saveStates], index) => (
             <Fragment key={coreName}>
-              <CoreNameHeader coreName={coreName} count={saveStates.length} />
               <div className="save-states__items">
                 {saveStates.map((p) => (
                   <Suspense fallback={<Loader />} key={p}>
@@ -98,6 +98,11 @@ export const SaveStates = () => {
                   </Suspense>
                 ))}
               </div>
+              <CoreNameHeader
+                coreName={coreName}
+                count={saveStates.length}
+                zIndex={Object.values(groupByCore).length - index}
+              />
             </Fragment>
           ))}
         </SearchContextProvider>
@@ -109,16 +114,18 @@ export const SaveStates = () => {
 const CoreNameHeader = ({
   coreName,
   count,
+  zIndex,
 }: {
   coreName: string
   count: number
+  zIndex: number
 }) => {
   const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
 
   return (
-    <div className="save-states__core-header">
-      {`${coreInfo.core.metadata.shortname}`}
-
+    <div className="save-states__core-header" style={{ zIndex }}>
+      <AuthorTag coreName={coreName} />
+      <b>{`${coreInfo.core.metadata.shortname}`}</b>
       <div className="save-states__core-header-count">{`( ${count} / 128 )`}</div>
     </div>
   )
