@@ -14,8 +14,12 @@
   flex-wrap: wrap;
 }
 
-.save-states__items:empty + .save-states__core-header {
+.save-states__items:empty {
   display: none;
+
+  & + .save-states__core-header {
+    display: none;
+  }
 }
 
 .save-states__core-header {
