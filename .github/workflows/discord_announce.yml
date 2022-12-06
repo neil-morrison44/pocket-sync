@@ -18,12 +18,13 @@ jobs:
           curl \
           -H "Content-Type: application/json" \
           -d '{
-              "username": "monkeymad2",
+              "username": "Pocket Sync",
+              "avatar_url": "https://https://raw.githubusercontent.com/neil-morrison44/pocket-sync/main/src-tauri/icons/Square310x310Logo.png",
               "content": "New Pocket Sync release!",
               "embeds": [{
                   "color": 5804112,
                   "fields": [
-                      { "name": "Link", "value": "[Click Me](https://github.com/neil-morrison44/pocket-sync/releases/latest", "inline": true }
+                      { "name": "Link", "value": "[Click Me](https://github.com/neil-morrison44/pocket-sync/releases/latest)", "inline": true }
                   ]
               }]
               }' \
