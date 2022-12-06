@@ -1,28 +1,44 @@
-.save-states{
+.save-states {
   --controls-height: 55px;
 }
 
+.save-states__list {
+  display: flex;
+  flex-direction: column-reverse;
+}
 
-.save-states__items{
+.save-states__items {
   display: flex;
   gap: 8px;
   padding: 10px;
   flex-wrap: wrap;
 }
 
-.save-states__core-header{
-  background-color: var(--hover-colour);
-  padding: 10px 20px;
+.save-states__items:empty {
+  display: none;
 
-  position: sticky;
-  top: var(--controls-height);
-
-  display: flex;
-  justify-content: space-between;
+  & + .save-states__core-header {
+    display: none;
+  }
 }
 
-.save-states__item{
+.save-states__core-header {
+  background-color: var(--hover-colour);
+  padding: 10px 20px;
+  position: sticky;
+  top: var(--controls-height);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.save-states__core-header-count {
+  margin-left: auto;
+}
+
+.save-states__item {
   --flex-size: 50%;
+
   display: flex;
   align-items: center;
   background-color: var(--info-colour);
@@ -33,7 +49,7 @@
   cursor: pointer;
   border: 2px solid transparent;
 
-  &:hover{
+  &:hover {
     transform: scale(1.05);
   }
 
@@ -54,17 +70,17 @@
   border-color: #396cd8;
 }
 
-.save-states__item-info{
+.save-states__item-info {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.save-states__item-name{
+.save-states__item-name {
   font-weight: bold;
 }
 
-.save-states__item-image{
+.save-states__item-image {
   flex-shrink: 0;
   width: 123px;
   height: auto;

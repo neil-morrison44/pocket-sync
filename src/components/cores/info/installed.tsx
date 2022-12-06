@@ -25,6 +25,7 @@ import { SponsorLinks } from "./sponsorLinks"
 import { RequiredFiles } from "./requiredFiles"
 import { LoadRequiredFiles } from "./loadRequiredFiles"
 import { ErrorBoundary } from "../../errorBoundary"
+import { AuthorTag } from "./authorTag"
 
 type CoreInfoProps = {
   coreName: string
@@ -33,7 +34,6 @@ type CoreInfoProps = {
 
 export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
-  const authorImageSrc = useRecoilValue(CoreAuthorImageSelectorFamily(coreName))
   const uninstall = useUninstallCore()
   const { installCore } = useInstallCore()
   const inventoryItem = useInventoryItem(coreName)
@@ -95,10 +95,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
 
           <div className="core-info__info-row">
             <strong>{"Author:"}</strong>
-            <div className="core-info__author-tag">
-              <img src={authorImageSrc} />
-              {coreInfo.core.metadata.author}
-            </div>
+            <AuthorTag coreName={coreName} />
           </div>
 
           {inventoryItem?.sponsor && (
