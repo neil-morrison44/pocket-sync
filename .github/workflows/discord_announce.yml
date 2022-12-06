@@ -19,7 +19,7 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{
               "username": "Pocket Sync",
-              "avatar_url": "https://https://raw.githubusercontent.com/neil-morrison44/pocket-sync/main/src-tauri/icons/Square310x310Logo.png",
+              "avatar_url": "https://raw.githubusercontent.com/neil-morrison44/pocket-sync/main/src-tauri/icons/Square310x310Logo.png",
               "content": "New Pocket Sync release!",
               "embeds": [{
                   "color": 5804112,
