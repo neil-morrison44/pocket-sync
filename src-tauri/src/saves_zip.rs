@@ -176,14 +176,19 @@ pub fn build_save_zip(
     Ok(())
 }
 
-fn remove_leading_slash(value: &str) -> &str {
-    if !value.starts_with("/") {
-        return value;
+fn remove_leading_slash(value: &str) -> String {
+    let mut result = String::new();
+    let mut chars = value.chars();
+
+    while let Some(c) = chars.next() {
+        if !(c == '/' || c == '\\') {
+            result.push(c);
+            break;
+        }
     }
 
-    let mut chars = value.chars();
-    chars.next();
-    chars.as_str()
+    result.push_str(chars.as_str());
+    result
 }
 
 fn sha256_digest<R: Read>(mut reader: R) -> Result<Digest, Box<dyn error::Error>> {

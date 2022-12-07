@@ -22,7 +22,7 @@ export const SaveStates = () => {
   const groupByCore = useMemo(
     () =>
       allSaveStates.reduce((g, p) => {
-        const coreName = p.substring(0, p.indexOf("/"))
+        const coreName = p.substring(0, p.indexOf("/")) || "Native"
 
         const existing = g[coreName]
         if (existing) {
@@ -84,7 +84,10 @@ export const SaveStates = () => {
             <Fragment key={coreName}>
               <div className="save-states__items">
                 {saveStates.map((p) => (
-                  <Suspense fallback={<Loader />} key={p}>
+                  <Suspense
+                    fallback={<Loader className="save-states__item" />}
+                    key={p}
+                  >
                     <SaveStateItem
                       path={p}
                       selected={selectedStates.includes(p)}
@@ -98,11 +101,21 @@ export const SaveStates = () => {
                   </Suspense>
                 ))}
               </div>
-              <CoreNameHeader
-                coreName={coreName}
-                count={saveStates.length}
-                zIndex={Object.values(groupByCore).length - index}
-              />
+              {coreName === "Native" && (
+                <CartridgeHeader
+                  count={saveStates.length}
+                  zIndex={Object.values(groupByCore).length - index}
+                />
+              )}
+              {coreName !== "Native" && (
+                <Suspense fallback={<Loader />}>
+                  <CoreNameHeader
+                    coreName={coreName}
+                    count={saveStates.length}
+                    zIndex={Object.values(groupByCore).length - index}
+                  />
+                </Suspense>
+              )}
             </Fragment>
           ))}
         </SearchContextProvider>
@@ -110,6 +123,19 @@ export const SaveStates = () => {
     </div>
   )
 }
+
+const CartridgeHeader = ({
+  count,
+  zIndex,
+}: {
+  count: number
+  zIndex: number
+}) => (
+  <div className="save-states__core-header" style={{ zIndex }}>
+    <b>{"Cartridge"}</b>
+    <div className="save-states__core-header-count">{`( ${count} / 128 )`}</div>
+  </div>
+)
 
 const CoreNameHeader = ({
   coreName,

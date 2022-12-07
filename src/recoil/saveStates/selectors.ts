@@ -1,6 +1,9 @@
 import { selector, selectorFamily } from "recoil"
 import { decodeThumbnail } from "../../utils/decodeSaveStateThumbnail"
-import { getBinaryMetadata } from "../../utils/getBinaryMetadata"
+import {
+  getBinaryMetadata,
+  getCartridgeBinaryMetadata,
+} from "../../utils/getBinaryMetadata"
 import {
   invokeReadBinaryFile,
   invokeWalkDirListFiles,
@@ -46,7 +49,9 @@ export const SaveStateMetadataSelectorFamily = selectorFamily<
     (path) =>
     async ({ get }) => {
       const binary = get(SaveStateBinarySelectorFamily(path))
-      const metadata = getBinaryMetadata(binary)
+      const metadata = !path.includes("/")
+        ? getCartridgeBinaryMetadata(binary, false)
+        : getBinaryMetadata(binary)
       return metadata
     },
 })
