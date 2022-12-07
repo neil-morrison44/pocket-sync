@@ -2,6 +2,7 @@ import { selector, selectorFamily } from "recoil"
 import { Screenshot, VideoJSON } from "../../types"
 import { fileSystemInvalidationAtom } from "../atoms"
 import {
+  invokeFileExists,
   invokeListFiles,
   invokeReadBinaryFile,
   invokeReadTextFile,
@@ -14,6 +15,14 @@ export const VideoJSONSelectorFamily = selectorFamily<VideoJSON, string>({
     (coreName) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
+      const exists = await invokeFileExists(`Cores/${coreName}/video.json`)
+      if (!exists)
+        return {
+          video: {
+            scaler_modes: [],
+            magic: "APF_VER_1",
+          },
+        }
       const jsonText = await invokeReadTextFile(`Cores/${coreName}/video.json`)
       return JSON.parse(jsonText) as VideoJSON
     },

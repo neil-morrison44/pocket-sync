@@ -138,7 +138,8 @@ pub fn build_save_zip(
 
     let mut buffer = Vec::new();
     for name in save_paths {
-        let path = saves_path.join(name);
+        let safe_name = remove_leading_slash(name);
+        let path = saves_path.join(&safe_name);
         let metadata = path.metadata().unwrap();
         let last_modified = time::OffsetDateTime::from(metadata.modified().unwrap());
 
@@ -155,13 +156,13 @@ pub fn build_save_zip(
         );
 
         if path.is_file() {
-            zip.start_file(name, file_options).unwrap();
+            zip.start_file(&safe_name, file_options).unwrap();
             let mut f = File::open(path).unwrap();
             f.read_to_end(&mut buffer).unwrap();
             zip.write_all(&*buffer).unwrap();
             buffer.clear();
         } else {
-            zip.add_directory(name, options).unwrap();
+            zip.add_directory(&safe_name, options).unwrap();
         }
     }
     zip.finish().unwrap();
@@ -176,14 +177,19 @@ pub fn build_save_zip(
     Ok(())
 }
 
-fn remove_leading_slash(value: &str) -> &str {
-    if !value.starts_with("/") {
-        return value;
+fn remove_leading_slash(value: &str) -> String {
+    let mut result = String::new();
+    let mut chars = value.chars();
+
+    while let Some(c) = chars.next() {
+        if !(c == '/' || c == '\\') {
+            result.push(c);
+            break;
+        }
     }
 
-    let mut chars = value.chars();
-    chars.next();
-    chars.as_str()
+    result.push_str(chars.as_str());
+    result
 }
 
 fn sha256_digest<R: Read>(mut reader: R) -> Result<Digest, Box<dyn error::Error>> {

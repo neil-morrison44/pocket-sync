@@ -78,6 +78,7 @@
 
 .save-states__item-name {
   font-weight: bold;
+  overflow-wrap: break-word;
 }
 
 .save-states__item-image {

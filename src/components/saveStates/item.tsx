@@ -26,6 +26,7 @@ export const SaveStateItem = ({
 
   const gameName = useMemo(() => {
     const { game } = metadata
+    if (!game.includes(".")) return game
     const filetypeIndex = game.lastIndexOf(".")
     return game.substring(0, filetypeIndex)
   }, [metadata.game])
@@ -58,7 +59,7 @@ export const SaveStateItem = ({
 
 const useSaveStateDate = (path: string) => {
   return useMemo(() => {
-    const dateRegex = /\/(?<year>\d{8})_(?<time>\d{6})_/g
+    const dateRegex = /\/?(?<year>\d{8})_(?<time>\d{6})_/g
     const match = dateRegex.exec(path)
     if (!match?.groups) return null
 
