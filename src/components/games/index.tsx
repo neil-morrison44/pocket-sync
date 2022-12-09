@@ -86,7 +86,7 @@ export const Games = () => {
       <SearchContextProvider query={searchQuery}>
         <Grid>
           {sortedList.map((core) => (
-            <Suspense fallback={<Loader />} key={core}>
+            <Suspense fallback={<Loader height={130} />} key={core}>
               <CoreFolderItem coreName={core} />
             </Suspense>
           ))}

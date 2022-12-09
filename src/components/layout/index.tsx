@@ -1,4 +1,10 @@
-import React, { Suspense, useEffect, useRef, useState } from "react"
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 import { About } from "../about"
 import { AutoRefresh } from "../autoRefresh"
 import { Cores } from "../cores"
@@ -27,23 +33,28 @@ export const Layout = () => {
   ] as const
   const [viewName, setViewName] = useState<typeof views[number]>("Pocket Sync")
 
+  const changeView = useCallback(
+    (viewName: typeof views[number]) => {
+      setViewName(viewName)
+      window.scrollTo({ top: 0 })
+    },
+    [setViewName]
+  )
+
   const sidebarRef = useRef<HTMLDivElement>(null)
   const layoutRef = useRef<HTMLDivElement>(null)
-
 
   useEffect(() => {
     const sidebar = sidebarRef.current
     if (!sidebar) return
 
-    const {width} = sidebar.getBoundingClientRect()
+    const { width } = sidebar.getBoundingClientRect()
 
     const layout = layoutRef.current
     if (!layout) return
 
     layout.style.setProperty("--sidebar-width", `${width}px`)
-
   }, [])
-
 
   return (
     <div className="layout" ref={layoutRef}>
@@ -57,7 +68,7 @@ export const Layout = () => {
               viewName === v ? "layout__sidebar-menu-item--active" : ""
             }`}
             key={v}
-            onClick={() => setViewName(v)}
+            onClick={() => changeView(v)}
           >
             {v}
           </div>
