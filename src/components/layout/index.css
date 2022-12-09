@@ -1,7 +1,6 @@
 .layout {
   display: flex;
   align-items: flex-start;
-  width: 100vw;
   max-width: 100vw;
   position: relative;
 }
