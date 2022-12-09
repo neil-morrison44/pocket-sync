@@ -3,6 +3,7 @@
   background-color: var(--light-colour);
   padding: 0 5px;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 .required-files--missing {

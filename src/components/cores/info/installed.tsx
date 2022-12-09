@@ -3,6 +3,7 @@ import { useRecoilValue } from "recoil"
 import {
   CoreAuthorImageSelectorFamily,
   CoreInfoSelectorFamily,
+  RequiredFileInfoSelectorFamily,
 } from "../../../recoil/selectors"
 import {
   CoreInventorySelector,
@@ -33,6 +34,7 @@ type CoreInfoProps = {
 }
 
 export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
+  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
   const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
   const uninstall = useUninstallCore()
   const { installCore } = useInstallCore()
@@ -55,11 +57,13 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             text: "Uninstall",
             onClick: () => uninstall(coreName),
           },
-          {
-            type: "button",
-            text: "Required Files",
-            onClick: () => setRequiredFilesOpen(true),
-          },
+          requiredFiles.length > 0
+            ? {
+                type: "button",
+                text: "Required Files",
+                onClick: () => setRequiredFilesOpen(true),
+              }
+            : null,
           downloadUrl && {
             type: "button",
             text: "Update",
@@ -122,6 +126,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             // this should probably be a category === arcade check or something
             // depends how people end up using instance jsons
             ignoreInstance={coreName === "Mazamars312.NeoGeo"}
+            onClick={() => setRequiredFilesOpen(true)}
           />
 
           {coreInfo.core.metadata.date_release && (

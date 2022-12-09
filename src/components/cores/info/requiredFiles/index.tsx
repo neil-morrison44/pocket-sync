@@ -7,11 +7,13 @@ import "./index.css"
 type RequiredFilesProps = {
   coreName: string
   ignoreInstance?: boolean
+  onClick?: () => void
 }
 
 export const RequiredFiles = ({
   coreName,
   ignoreInstance,
+  onClick,
 }: RequiredFilesProps) => {
   const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
 
@@ -40,6 +42,7 @@ export const RequiredFiles = ({
         className={`required-files required-files--${
           full ? "full" : "missing"
         }`}
+        onClick={onClick}
       >{`${foundFiles.length} / ${filteredRequiredFiles.length} Files`}</div>
     </div>
   )
