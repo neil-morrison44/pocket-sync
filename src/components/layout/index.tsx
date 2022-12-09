@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from "react"
+import React, { Suspense, useEffect, useRef, useState } from "react"
 import { About } from "../about"
 import { AutoRefresh } from "../autoRefresh"
 import { Cores } from "../cores"
@@ -27,12 +27,30 @@ export const Layout = () => {
   ] as const
   const [viewName, setViewName] = useState<typeof views[number]>("Pocket Sync")
 
+  const sidebarRef = useRef<HTMLDivElement>(null)
+  const layoutRef = useRef<HTMLDivElement>(null)
+
+
+  useEffect(() => {
+    const sidebar = sidebarRef.current
+    if (!sidebar) return
+
+    const {width} = sidebar.getBoundingClientRect()
+
+    const layout = layoutRef.current
+    if (!layout) return
+
+    layout.style.setProperty("--sidebar-width", `${width}px`)
+
+  }, [])
+
+
   return (
-    <div className="layout">
+    <div className="layout" ref={layoutRef}>
       <Disconnections />
       <ZipInstall />
       <AutoRefresh />
-      <div className="layout__sidebar-menu">
+      <div className="layout__sidebar-menu" ref={sidebarRef}>
         {views.map((v) => (
           <div
             className={`layout__sidebar-menu-item ${

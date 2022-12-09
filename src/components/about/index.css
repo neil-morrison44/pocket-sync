@@ -5,6 +5,9 @@
   justify-content: space-between;
   height: 100vh;
   text-align: center;
+  overflow: hidden;
+  width: calc(100vw - var(--sidebar-width));
+  flex-shrink: 1;
 }
 
 .about__update-link {
@@ -20,19 +23,14 @@
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-
-  /* width: 100%; */
-  width: max-content;
-  text-align: center;
-  align-items: center;
   gap: 10px;
+  width: 100%;
 }
 
 .about__info {
   background-color: var(--info-colour);
   width: 100%;
   max-height: fit-content;
-  flex-grow: 1;
   justify-self: flex-end;
   text-align: left;
   padding: 0 20px;

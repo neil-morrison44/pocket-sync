@@ -12,6 +12,7 @@ import { confirm } from "@tauri-apps/api/dialog"
 import { invokeDeleteFiles } from "../../utils/invokes"
 import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { AuthorTag } from "../cores/info/authorTag"
+import { splitAsPath } from "../../utils/splitAsPath"
 
 export const SaveStates = () => {
   const invalidateFS = useInvalidateFileSystem()
@@ -22,7 +23,10 @@ export const SaveStates = () => {
   const groupByCore = useMemo(
     () =>
       allSaveStates.reduce((g, p) => {
-        const coreName = p.substring(0, p.indexOf("/")) || "Native"
+        const pathSplit = splitAsPath(p)
+        const coreName = pathSplit.length > 1 ? pathSplit[0] : "Native"
+
+        console.log({coreName, pathSplit})
 
         const existing = g[coreName]
         if (existing) {

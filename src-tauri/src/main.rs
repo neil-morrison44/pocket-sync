@@ -67,9 +67,9 @@ async fn read_text_file(
 ) -> Result<String, ()> {
     let pocket_path = state.0.read().await;
     let path = pocket_path.join(path);
-    // println!("reading text file: {:?}", &path);
-    let video_json = fs::read_to_string(path).unwrap();
-    Ok(video_json)
+    //println!("reading text file: {:?}", &path);
+    let file_contents = fs::read_to_string(path).unwrap();
+    Ok(file_contents)
 }
 
 #[tauri::command(async)]
