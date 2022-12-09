@@ -5,11 +5,18 @@ type LoaderProps = {
   className?: string
   fullHeight?: boolean
   title?: string
+  height?: number
 }
 
-export const Loader = ({ className, fullHeight, title = "" }: LoaderProps) => (
+export const Loader = ({
+  className,
+  fullHeight,
+  height,
+  title = "",
+}: LoaderProps) => (
   <div
     className={`loader ${className || ""} ${fullHeight ? "loader--full" : ""}`}
     title={title}
+    style={{ height: height ? `${height}px` : undefined }}
   ></div>
 )

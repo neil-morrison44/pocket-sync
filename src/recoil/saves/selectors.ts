@@ -60,7 +60,6 @@ export const AllBackupZipsFilesSelectorFamily = selectorFamily<
     (backupPath) =>
     async ({ get }) => {
       const { files } = get(BackupZipsSelectorFamily(backupPath))
-      console.log({ files })
       return files.map((zip) => ({
         zip,
         files: get(

@@ -26,8 +26,6 @@ export const SaveStates = () => {
         const pathSplit = splitAsPath(p)
         const coreName = pathSplit.length > 1 ? pathSplit[0] : "Native"
 
-        console.log({coreName, pathSplit})
-
         const existing = g[coreName]
         if (existing) {
           existing.push(p)

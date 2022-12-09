@@ -104,7 +104,10 @@ export const Cores = () => {
       <SearchContextProvider query={searchQuery}>
         <Grid>
           {sortedList.map((core) => (
-            <Suspense fallback={<Loader title={core} />} key={core}>
+            <Suspense
+              fallback={<Loader title={core} height={160} />}
+              key={core}
+            >
               <CoreItem
                 coreName={core}
                 onClick={() => {

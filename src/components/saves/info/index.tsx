@@ -83,7 +83,6 @@ export const SaveInfo = ({
     const groups: { platform: PlatformId; saves: typeof filteredSaves }[] = []
 
     Object.entries(filteredSaves).forEach(([key, value]) => {
-      console.log({key, value})
       const [platformId] = splitAsPath(key)
       const existing = groups.find(({ platform }) => platformId === platform)
 
