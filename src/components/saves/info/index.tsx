@@ -19,6 +19,7 @@ import { ask } from "@tauri-apps/api/dialog"
 import { saveFileInvalidationAtom } from "../../../recoil/atoms"
 import { useSaveScroll } from "../../../hooks/useSaveScroll"
 import { useInvalidateSaveFiles } from "../../../hooks/invalidation"
+import { splitAsPath } from "../../../utils/splitAsPath"
 
 export const SaveInfo = ({
   backupPath,
@@ -82,7 +83,8 @@ export const SaveInfo = ({
     const groups: { platform: PlatformId; saves: typeof filteredSaves }[] = []
 
     Object.entries(filteredSaves).forEach(([key, value]) => {
-      const [_, platformId] = key.split("/")
+      console.log({key, value})
+      const [platformId] = splitAsPath(key)
       const existing = groups.find(({ platform }) => platformId === platform)
 
       if (existing) {
