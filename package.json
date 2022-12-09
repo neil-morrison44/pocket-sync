@@ -1,7 +1,7 @@
 {
   "name": "pocket-sync",
   "private": true,
-  "version": "1.4.3",
+  "version": "1.5.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@react-three/drei": "^9.40.0",
+    "@react-three/drei": "^9.46.4",
     "@react-three/fiber": "^8.9.1",
     "@tauri-apps/api": "^1.2.0",
     "@types/three": "^0.146.0",
@@ -18,22 +18,22 @@
     "fast-fuzzy": "^1.12.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-markdown": "^8.0.3",
+    "react-markdown": "^8.0.4",
     "recoil": "^0.7.6",
     "remark-gfm": "^3.0.1",
     "three": "^0.146.0"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.2.1",
+    "@tauri-apps/cli": "^1.2.2",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
     "@vitejs/plugin-react": "^2.2.0",
     "postcss-nesting": "^10.2.0",
-    "stylelint": "^14.15.0",
+    "stylelint": "^14.16.0",
     "stylelint-config-standard": "^29.0.0",
-    "typescript": "^4.9.3",
-    "vite": "^3.2.4"
+    "typescript": "^4.9.4",
+    "vite": "^4.0.0"
   },
   "prettier": {
     "trailingComma": "es5",
