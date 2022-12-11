@@ -2,6 +2,7 @@ import { selector, selectorFamily } from "recoil"
 import { Category, InventoryJSON } from "../../types"
 import { inventoryInvalidationAtom } from "../atoms"
 import { GithubReleasesSelectorFamily } from "../github/selectors"
+import { allCategoriesSelector } from "../platforms/selectors"
 
 export const DownloadURLSelectorFamily = selectorFamily<string | null, string>({
   key: "DownloadURLSelectorFamily",
@@ -53,19 +54,21 @@ export const CoreInventorySelector = selector<InventoryJSON>({
   },
 })
 
-export const CateogryListselector = selector<Category[]>({
+export const cateogryListselector = selector<Category[]>({
   key: "CateogryListselector",
   get: ({ get }) => {
     const inventory = get(CoreInventorySelector)
+    const deviceCategories = get(allCategoriesSelector)
 
-    const cateogrySet = new Set(
-      inventory.data.map(({ release, prerelease }) => {
+    const cateogrySet = new Set([
+      ...inventory.data.flatMap(({ release, prerelease }) => {
         const releaseDetails = release ?? prerelease
-        if (!releaseDetails) return "Uncategorized"
+        if (!releaseDetails) return []
         const { platform } = releaseDetails
-        return platform.category ?? "Uncategorized"
-      })
-    )
+        return platform.category ? [platform.category] : []
+      }),
+      ...deviceCategories,
+    ])
 
     return ["All", ...Array.from(cateogrySet)]
   },

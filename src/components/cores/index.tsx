@@ -1,12 +1,11 @@
 import { Suspense, useMemo, useState } from "react"
 import { useRecoilCallback, useRecoilValue } from "recoil"
-import { useCategoryLookup } from "../../hooks/useCategoryLookup"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import {
   fileSystemInvalidationAtom,
   inventoryInvalidationAtom,
 } from "../../recoil/atoms"
-import { CateogryListselector } from "../../recoil/inventory/selectors"
+import { cateogryListselector } from "../../recoil/inventory/selectors"
 import { CoreInventorySelector } from "../../recoil/inventory/selectors"
 import { coresListSelector } from "../../recoil/selectors"
 import { Controls } from "../controls"
@@ -23,46 +22,37 @@ export const Cores = () => {
   const coreInventory = useRecoilValue(CoreInventorySelector)
   const { pushScroll, popScroll } = useSaveScroll()
   const [searchQuery, setSearchQuery] = useState<string>("")
+  const [onlyUpdates, setOnlyUpdates] = useState(false)
   const [filterCategory, setFilterCategory] = useState<string>("All")
-  const lookupCategory = useCategoryLookup()
 
   const refresh = useRecoilCallback(({ set }) => () => {
     set(inventoryInvalidationAtom, Date.now())
     set(fileSystemInvalidationAtom, Date.now())
   })
 
-  const notInstalledCores = useMemo(() => {
-    return coreInventory.data
-      .filter(({ identifier }) => !coresList.includes(identifier))
-      .filter(({ release, prerelease }) => {
-        if (filterCategory === "All") return true
-
-        if (release?.platform.category === filterCategory) return true
-        if (prerelease?.platform.category === filterCategory) return true
-        return false
-      })
-  }, [filterCategory, coresList, coreInventory])
+  const notInstalledCores = useMemo(
+    () =>
+      coreInventory.data.filter(
+        ({ identifier }) => !coresList.includes(identifier)
+      ),
+    [filterCategory, coresList, coreInventory]
+  )
 
   const sortedList = useMemo(
     () =>
-      [...coresList]
-        .sort((a, b) => {
-          const [authorA, coreA] = a.split(".")
-          const switchedA = `${coreA}.${authorA}`
+      [...coresList].sort((a, b) => {
+        const [authorA, coreA] = a.split(".")
+        const switchedA = `${coreA}.${authorA}`
 
-          const [authorB, coreB] = b.split(".")
-          const switchedB = `${coreB}.${authorB}`
+        const [authorB, coreB] = b.split(".")
+        const switchedB = `${coreB}.${authorB}`
 
-          return switchedA.localeCompare(switchedB)
-        })
-        .filter((core) => {
-          if (filterCategory === "All") return true
-          return lookupCategory(core) === filterCategory
-        }),
+        return switchedA.localeCompare(switchedB)
+      }),
     [filterCategory, coresList]
   )
 
-  const categoryList = useRecoilValue(CateogryListselector)
+  const categoryList = useRecoilValue(cateogryListselector)
 
   if (selectedCore) {
     return (
@@ -92,6 +82,12 @@ export const Cores = () => {
             onClick: refresh,
           },
           {
+            type: "checkbox",
+            text: "Updates",
+            checked: onlyUpdates,
+            onChange: (checked) => setOnlyUpdates(checked),
+          },
+          {
             type: "select",
             options: categoryList,
             selected: filterCategory,
@@ -101,7 +97,10 @@ export const Cores = () => {
         ]}
       />
       <h2>{`Installed (${sortedList.length})`}</h2>
-      <SearchContextProvider query={searchQuery}>
+      <SearchContextProvider
+        query={searchQuery}
+        other={{ onlyUpdates, category: filterCategory }}
+      >
         <Grid>
           {sortedList.map((core) => (
             <Suspense
