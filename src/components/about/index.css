@@ -13,9 +13,11 @@
 .about__update-link {
   font-size: 2rem;
   background-color: var(--green-colour);
-  padding: 20px;
+  padding: 20px 40px;
   border-radius: 25px;
   white-space: nowrap;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .about__top {
