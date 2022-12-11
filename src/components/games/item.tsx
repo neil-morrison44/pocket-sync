@@ -56,6 +56,10 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
         platform.name,
         platform.category || "",
       ]}
+      otherFn={({ category }) => {
+        if (category === "All") return true
+        return category === platform.category
+      }}
     >
       {info.core.metadata.platform_ids.map((platformId, index) => (
         <div

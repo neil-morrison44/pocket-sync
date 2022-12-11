@@ -28,14 +28,6 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
 
   const canUpdate = useUpdateAvailable(coreName)
 
-  const otherFn = useCallback(
-    ({ onlyUpdates }: { onlyUpdates?: boolean }) => {
-      if (!onlyUpdates) return true
-      return canUpdate !== null
-    },
-    [canUpdate]
-  )
-
   return (
     <SearchContextSelfHidingConsumer
       fields={[
@@ -46,7 +38,14 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
         platform.category || "",
         `${platform.year}`,
       ]}
-      otherFn={otherFn}
+      otherFn={({ onlyUpdates, category }) => {
+        if (category !== "All") {
+          if (platform.category !== category) return false
+        }
+
+        if (!onlyUpdates) return true
+        return canUpdate !== null
+      }}
     >
       <div className="cores__item" role="button" onClick={onClick}>
         {core.metadata.platform_ids.map((platformId) => (
@@ -88,6 +87,11 @@ export const NotInstalledCoreItem = ({
   return (
     <SearchContextSelfHidingConsumer
       fields={[platform, identifier, inventoryItem.repository?.owner || ""]}
+      otherFn={({ category }) => {
+        if (category === "All") return true
+        const aRelease = inventoryItem?.release || inventoryItem?.prerelease
+        return category === aRelease?.platform.category
+      }}
     >
       <div className="cores__item cores__item--not-installed" onClick={onClick}>
         <div>{platform}</div>

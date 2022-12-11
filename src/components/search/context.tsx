@@ -3,6 +3,7 @@ import { fuzzy } from "fast-fuzzy"
 
 export type Other = {
   onlyUpdates?: boolean
+  category?: string
 }
 
 export const SearchContext = React.createContext<{

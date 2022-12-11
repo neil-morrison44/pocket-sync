@@ -1,12 +1,10 @@
-import { Suspense, useCallback, useMemo, useState } from "react"
+import { Suspense, useMemo, useState } from "react"
 import { useRecoilCallback, useRecoilValue } from "recoil"
-import { useCategoryLookup } from "../../hooks/useCategoryLookup"
-import { useSaveScroll } from "../../hooks/useSaveScroll"
 import {
   fileSystemInvalidationAtom,
   inventoryInvalidationAtom,
 } from "../../recoil/atoms"
-import { CateogryListselector } from "../../recoil/inventory/selectors"
+import { cateogryListselector } from "../../recoil/inventory/selectors"
 import { coresListSelector } from "../../recoil/selectors"
 import { Controls } from "../controls"
 import { Grid } from "../grid"
@@ -19,10 +17,7 @@ export const Games = () => {
   const coresList = useRecoilValue(coresListSelector)
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [filterCategory, setFilterCategory] = useState<string>("All")
-
   const [cleanFilesOpen, setCleanFilesOpen] = useState(false)
-
-  const lookupCategory = useCategoryLookup()
 
   const refresh = useRecoilCallback(({ set }) => () => {
     set(inventoryInvalidationAtom, Date.now())
@@ -31,24 +26,19 @@ export const Games = () => {
 
   const sortedList = useMemo(
     () =>
-      [...coresList]
-        .sort((a, b) => {
-          const [authorA, coreA] = a.split(".")
-          const switchedA = `${coreA}.${authorA}`
+      [...coresList].sort((a, b) => {
+        const [authorA, coreA] = a.split(".")
+        const switchedA = `${coreA}.${authorA}`
 
-          const [authorB, coreB] = b.split(".")
-          const switchedB = `${coreB}.${authorB}`
+        const [authorB, coreB] = b.split(".")
+        const switchedB = `${coreB}.${authorB}`
 
-          return switchedA.localeCompare(switchedB)
-        })
-        .filter((core) => {
-          if (filterCategory === "All") return true
-          return lookupCategory(core) === filterCategory
-        }),
+        return switchedA.localeCompare(switchedB)
+      }),
     [filterCategory, coresList]
   )
 
-  const categoryList = useRecoilValue(CateogryListselector)
+  const categoryList = useRecoilValue(cateogryListselector)
 
   return (
     <div>
@@ -83,7 +73,10 @@ export const Games = () => {
           },
         ]}
       />
-      <SearchContextProvider query={searchQuery}>
+      <SearchContextProvider
+        query={searchQuery}
+        other={{ category: filterCategory }}
+      >
         <Grid>
           {sortedList.map((core) => (
             <Suspense fallback={<Loader height={130} />} key={core}>
