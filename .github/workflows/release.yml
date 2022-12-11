@@ -57,7 +57,7 @@ jobs:
                   "color": 5804112,
                   "fields": [
                       { "name": "Version", "value": "${{ github.event.release.tag_name }}", "inline": true },
-                      { "name": "Link", "value": "[Click Me](https://github.com/neil-morrison44/pocket-sync/releases/tag/${{ github.event.release.tag_name }})", "inline": true },
+                      { "name": "Link", "value": "[Click Me](https://github.com/neil-morrison44/pocket-sync/releases/tag/${{ github.event.release.tag_name }})", "inline": true }
                   ]
               }]
               }' \
