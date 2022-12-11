@@ -11,6 +11,8 @@ import "./index.css"
 import { Version } from "./version"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { InventoryItem } from "../../types"
+import { useUpdateAvailable } from "../../hooks/useUpdateAvailable"
+import { useCallback } from "react"
 
 type CoreItemProps = {
   coreName: string
@@ -24,6 +26,16 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
     PlatformInfoSelectorFamily(core.metadata.platform_ids[0])
   )
 
+  const canUpdate = useUpdateAvailable(coreName)
+
+  const otherFn = useCallback(
+    ({ onlyUpdates }: { onlyUpdates?: boolean }) => {
+      if (!onlyUpdates) return true
+      return canUpdate !== null
+    },
+    [canUpdate]
+  )
+
   return (
     <SearchContextSelfHidingConsumer
       fields={[
@@ -34,6 +46,7 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
         platform.category || "",
         `${platform.year}`,
       ]}
+      otherFn={otherFn}
     >
       <div className="cores__item" role="button" onClick={onClick}>
         {core.metadata.platform_ids.map((platformId) => (

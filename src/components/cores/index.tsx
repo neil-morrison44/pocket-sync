@@ -23,6 +23,7 @@ export const Cores = () => {
   const coreInventory = useRecoilValue(CoreInventorySelector)
   const { pushScroll, popScroll } = useSaveScroll()
   const [searchQuery, setSearchQuery] = useState<string>("")
+  const [onlyUpdates, setOnlyUpdates] = useState(false)
   const [filterCategory, setFilterCategory] = useState<string>("All")
   const lookupCategory = useCategoryLookup()
 
@@ -92,6 +93,12 @@ export const Cores = () => {
             onClick: refresh,
           },
           {
+            type: "checkbox",
+            text: "Updates",
+            checked: onlyUpdates,
+            onChange: (checked) => setOnlyUpdates(checked),
+          },
+          {
             type: "select",
             options: categoryList,
             selected: filterCategory,
@@ -101,7 +108,7 @@ export const Cores = () => {
         ]}
       />
       <h2>{`Installed (${sortedList.length})`}</h2>
-      <SearchContextProvider query={searchQuery}>
+      <SearchContextProvider query={searchQuery} other={{ onlyUpdates }}>
         <Grid>
           {sortedList.map((core) => (
             <Suspense

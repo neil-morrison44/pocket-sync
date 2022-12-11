@@ -4,6 +4,7 @@ import { CoreInfoSelectorFamily } from "../../../recoil/selectors"
 import { CoreInventorySelector } from "../../../recoil/inventory/selectors"
 
 import "./index.css"
+import { useUpdateAvailable } from "../../../hooks/useUpdateAvailable"
 
 type VersionProps = {
   coreName: string
@@ -11,28 +12,7 @@ type VersionProps = {
 
 export const Version = ({ coreName }: VersionProps) => {
   const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
-  const coreInventory = useRecoilValue(CoreInventorySelector)
-
-  const updateAvailable = useMemo<string | null>(() => {
-    // this isn't very good yet
-    const inventoryCore = coreInventory.data.find(
-      ({ identifier }) => identifier === coreName
-    )
-
-    if (!inventoryCore?.release) return null
-
-    const { version } = inventoryCore.release
-    const metadataVersion = coreInfo.core.metadata.version
-
-    if (version !== metadataVersion) {
-      if (version.includes(metadataVersion)) {
-        return null
-      }
-      return inventoryCore.release.version
-    }
-
-    return null
-  }, [coreInfo.core.metadata.version, coreInventory])
+  const updateAvailable = useUpdateAvailable(coreName)
 
   return (
     <div className="version">
