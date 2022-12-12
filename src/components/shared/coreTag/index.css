@@ -1,0 +1,10 @@
+.core-tag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--hover-colour);
+  }
+}

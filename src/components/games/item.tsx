@@ -20,9 +20,9 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
 
   const romsSlot = useMemo(
     () =>
-      data.data.data_slots
-        .filter(({ required, extensions }) => required && extensions)
-        .at(0),
+      data.data.data_slots.filter(
+        ({ required, extensions }) => required && extensions
+      )[0],
     [data]
   )
 

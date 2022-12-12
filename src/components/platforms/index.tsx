@@ -1,5 +1,5 @@
 import { Suspense, useMemo, useState } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue } from "recoil"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import { platformsListSelector } from "../../recoil/platforms/selectors"
 import { PlatformId } from "../../types"
@@ -11,14 +11,15 @@ import { PlatformInfo } from "./info"
 import { PlatformItem } from "./item"
 
 import "./index.css"
+import { selectedSubviewSelector } from "../../recoil/view/selectors"
 
 export const Platforms = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const platformIds = useRecoilValue(platformsListSelector)
   const { pushScroll, popScroll } = useSaveScroll()
 
-  const [selectedPlatform, setSelectedPlatform] = useState<PlatformId | null>(
-    null
+  const [selectedPlatform, setSelectedPlatform] = useRecoilState(
+    selectedSubviewSelector
   )
 
   const sortedPlatformIds = useMemo(

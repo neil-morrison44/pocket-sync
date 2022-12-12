@@ -2,7 +2,7 @@ import { useRecoilValue } from "recoil"
 import {
   CoreInfoSelectorFamily,
   CoreAuthorImageSelectorFamily,
-} from "../../../../recoil/selectors"
+} from "../../../recoil/selectors"
 
 export const AuthorTag = ({ coreName }: { coreName: string }) => {
   const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))

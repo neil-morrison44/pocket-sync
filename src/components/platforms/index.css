@@ -50,3 +50,14 @@
   padding: 10px;
   pointer-events: none;
 }
+
+.platform-info__cores-title {
+  padding: 0 10px;
+}
+
+.platform-info__cores-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 20px;
+}

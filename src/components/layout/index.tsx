@@ -5,6 +5,8 @@ import React, {
   useRef,
   useState,
 } from "react"
+import { useRecoilState } from "recoil"
+import { currentViewAtom, VIEWS_LIST } from "../../recoil/view/atoms"
 import { About } from "../about"
 import { AutoRefresh } from "../autoRefresh"
 import { Cores } from "../cores"
@@ -21,24 +23,14 @@ import { ZipInstall } from "../zipInstall"
 import "./index.css"
 
 export const Layout = () => {
-  const views = [
-    "Pocket Sync",
-    "Games",
-    "Cores",
-    "Screenshots",
-    "Saves",
-    "Save States",
-    "Platforms",
-    "Settings",
-  ] as const
-  const [viewName, setViewName] = useState<typeof views[number]>("Pocket Sync")
+  const [viewAndSubview, setViewAndSubview] = useRecoilState(currentViewAtom)
 
   const changeView = useCallback(
-    (viewName: typeof views[number]) => {
-      setViewName(viewName)
+    (viewName: typeof VIEWS_LIST[number]) => {
+      setViewAndSubview({ view: viewName, selected: null })
       window.scrollTo({ top: 0 })
     },
-    [setViewName]
+    [setViewAndSubview]
   )
 
   const sidebarRef = useRef<HTMLDivElement>(null)
@@ -56,16 +48,18 @@ export const Layout = () => {
     layout.style.setProperty("--sidebar-width", `${width}px`)
   }, [])
 
+  const { view } = viewAndSubview
+
   return (
     <div className="layout" ref={layoutRef}>
       <Disconnections />
       <ZipInstall />
       <AutoRefresh />
       <div className="layout__sidebar-menu" ref={sidebarRef}>
-        {views.map((v) => (
+        {VIEWS_LIST.map((v) => (
           <div
             className={`layout__sidebar-menu-item ${
-              viewName === v ? "layout__sidebar-menu-item--active" : ""
+              view === v ? "layout__sidebar-menu-item--active" : ""
             }`}
             key={v}
             onClick={() => changeView(v)}
@@ -77,14 +71,14 @@ export const Layout = () => {
       <div className="layout__content">
         <ErrorBoundary>
           <Suspense fallback={<Loader fullHeight />}>
-            {viewName === "Screenshots" && <Screenshots />}
-            {viewName === "Cores" && <Cores />}
-            {viewName === "Pocket Sync" && <About />}
-            {viewName === "Settings" && <Settings />}
-            {viewName === "Games" && <Games />}
-            {viewName === "Saves" && <Saves />}
-            {viewName === "Save States" && <SaveStates />}
-            {viewName === "Platforms" && <Platforms />}
+            {view === "Screenshots" && <Screenshots />}
+            {view === "Cores" && <Cores />}
+            {view === "Pocket Sync" && <About />}
+            {view === "Settings" && <Settings />}
+            {view === "Games" && <Games />}
+            {view === "Saves" && <Saves />}
+            {view === "Save States" && <SaveStates />}
+            {view === "Platforms" && <Platforms />}
           </Suspense>
         </ErrorBoundary>
       </div>
