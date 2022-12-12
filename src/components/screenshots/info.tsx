@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react"
+import React, { Suspense, useCallback, useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
 import { SingleScreenshotSelectorFamily } from "../../recoil/screenshots/selectors"
 import { VideoJSONSelectorFamily } from "../../recoil/screenshots/selectors"
@@ -6,6 +6,8 @@ import "./info.css"
 
 import { useSaveFile } from "../../hooks/saveFile"
 import { Controls } from "../controls"
+import { CoreTag } from "../shared/coreTag"
+import { Loader } from "../loader"
 
 type ScreenshotInfo = {
   fileName: string
@@ -110,7 +112,12 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfo) => {
 
       <div className="screenshot-info__info">
         <div>{screenshot.game}</div>
-        <div>{screenshot.platform}</div>
+        {screenshot.platform && <div>{`Platform: ${screenshot.platform}`}</div>}
+        {screenshot.core && screenshot.author && (
+          <Suspense fallback={<Loader />}>
+            <CoreTag coreName={`${screenshot.author}.${screenshot.core}`} />
+          </Suspense>
+        )}
         <div>{screenshot.file_name}</div>
       </div>
     </div>
