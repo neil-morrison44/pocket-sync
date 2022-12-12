@@ -1,14 +1,13 @@
 import { selector, selectorFamily } from "recoil"
 import { PlatformId, PlatformInfoJSON } from "../../types"
-import {
-  invokeListFiles,
-  invokeReadBinaryFile,
-  invokeReadTextFile,
-} from "../../utils/invokes"
-import { renderBinImage } from "../../utils/renderBinImage"
+import { invokeListFiles, invokeReadTextFile } from "../../utils/invokes"
 import { PLATFORM_IMAGE } from "../../values"
 import { fileSystemInvalidationAtom } from "../atoms"
-import { ImageBinSrcSelectorFamily } from "../selectors"
+import {
+  CoreInfoSelectorFamily,
+  coresListSelector,
+  ImageBinSrcSelectorFamily,
+} from "../selectors"
 
 export const platformsListSelector = selector<PlatformId[]>({
   key: "platformsListSelector",
@@ -19,6 +18,28 @@ export const platformsListSelector = selector<PlatformId[]>({
       .filter((s) => s.endsWith(".json"))
       .map((s) => s.replace(".json", ""))
   },
+})
+
+export const CoresForPlatformSelectorFamily = selectorFamily<
+  string[],
+  PlatformId
+>({
+  key: "CoresForPlatformSelectorFamily",
+  get:
+    (platformId: PlatformId) =>
+    ({ get }) => {
+      const coresList = get(coresListSelector)
+      const results = []
+      for (const coreId of coresList) {
+        const coreData = get(CoreInfoSelectorFamily(coreId))
+
+        if (coreData.core.metadata.platform_ids.includes(platformId)) {
+          results.push(coreId)
+        }
+      }
+
+      return results
+    },
 })
 
 export const PlatformInfoSelectorFamily = selectorFamily<

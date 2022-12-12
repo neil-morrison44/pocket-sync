@@ -44,10 +44,10 @@ export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
         {files.length > 0 && (
           <>
             <div>{`Last Backup: ${new Date(
-              (files.at(-1)?.last_modified || 0) * 1000
+              (files[files.length - 1]?.last_modified || 0) * 1000
             ).toLocaleString()}`}</div>
             <div>{`Oldest Backup: ${new Date(
-              (files.at(0)?.last_modified || 0) * 1000
+              (files[0]?.last_modified || 0) * 1000
             ).toLocaleString()}`}</div>
           </>
         )}

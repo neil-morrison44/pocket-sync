@@ -1,5 +1,5 @@
 import { Suspense, useMemo, useState } from "react"
-import { useRecoilCallback, useRecoilValue } from "recoil"
+import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import {
   fileSystemInvalidationAtom,
@@ -8,6 +8,7 @@ import {
 import { cateogryListselector } from "../../recoil/inventory/selectors"
 import { CoreInventorySelector } from "../../recoil/inventory/selectors"
 import { coresListSelector } from "../../recoil/selectors"
+import { selectedSubviewSelector } from "../../recoil/view/selectors"
 import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
@@ -17,7 +18,9 @@ import { CoreInfo } from "./info"
 import { CoreItem, NotInstalledCoreItem } from "./item"
 
 export const Cores = () => {
-  const [selectedCore, setSelectedCore] = useState<string | null>(null)
+  const [selectedCore, setSelectedCore] = useRecoilState(
+    selectedSubviewSelector
+  )
   const coresList = useRecoilValue(coresListSelector)
   const coreInventory = useRecoilValue(CoreInventorySelector)
   const { pushScroll, popScroll } = useSaveScroll()

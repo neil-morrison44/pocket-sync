@@ -58,6 +58,7 @@
   gap: 5px;
   align-items: center;
   font-size: 1.125rem;
+  flex-wrap: wrap;
 
   & > select {
     font-size: 1.125rem;

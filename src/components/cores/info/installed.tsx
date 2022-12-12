@@ -26,7 +26,7 @@ import { SponsorLinks } from "./sponsorLinks"
 import { RequiredFiles } from "./requiredFiles"
 import { LoadRequiredFiles } from "./loadRequiredFiles"
 import { ErrorBoundary } from "../../errorBoundary"
-import { AuthorTag } from "./authorTag"
+import { AuthorTag } from "../../shared/authorTag"
 
 type CoreInfoProps = {
   coreName: string

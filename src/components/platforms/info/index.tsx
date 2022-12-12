@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { Suspense, useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
 import {
   PlatformInfoSelectorFamily,
@@ -8,7 +8,9 @@ import {
 import { PlatformId } from "../../../types"
 import { PLATFORM_IMAGE } from "../../../values"
 import { Controls } from "../../controls"
+import { Loader } from "../../loader"
 import { useUpdatePlatformValue } from "../hooks/useUpdatePlatform"
+import { CoresForPlatform } from "./coresForPlatform"
 import { Editable } from "./editable"
 import { ImageEditor } from "./imageEditor"
 
@@ -85,6 +87,13 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
             type="number"
             onSave={(v) => updateValue("year", v)}
           />
+        </div>
+
+        <div>
+          <h3 className="platform-info__cores-title">Cores: </h3>
+          <Suspense fallback={<Loader />}>
+            <CoresForPlatform platformId={id} />
+          </Suspense>
         </div>
       </div>
     </div>

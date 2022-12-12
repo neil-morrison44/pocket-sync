@@ -1,5 +1,5 @@
 import React, { Suspense, useMemo, useState } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue } from "recoil"
 import { screenshotsListSelector } from "../../recoil/screenshots/selectors"
 import { Screenshot } from "./item"
 
@@ -10,9 +10,10 @@ import { Grid } from "../grid"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import { Controls } from "../controls"
 import { SearchContextProvider } from "../search/context"
+import { selectedSubviewSelector } from "../../recoil/view/selectors"
 
 export const Screenshots = () => {
-  const [selected, setSelected] = useState<string | null>(null)
+  const [selected, setSelected] = useRecoilState(selectedSubviewSelector)
   const [searchQuery, setSearchQuery] = useState("")
   const screenshots = useRecoilValue(screenshotsListSelector)
 

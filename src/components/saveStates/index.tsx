@@ -11,8 +11,9 @@ import { SearchContextProvider } from "../search/context"
 import { confirm } from "@tauri-apps/api/dialog"
 import { invokeDeleteFiles } from "../../utils/invokes"
 import { useInvalidateFileSystem } from "../../hooks/invalidation"
-import { AuthorTag } from "../cores/info/authorTag"
+import { AuthorTag } from "../shared/authorTag"
 import { splitAsPath } from "../../utils/splitAsPath"
+import { CoreTag } from "../shared/coreTag"
 
 export const SaveStates = () => {
   const invalidateFS = useInvalidateFileSystem()
@@ -148,12 +149,9 @@ const CoreNameHeader = ({
   count: number
   zIndex: number
 }) => {
-  const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
-
   return (
     <div className="save-states__core-header" style={{ zIndex }}>
-      <AuthorTag coreName={coreName} />
-      <b>{`${coreInfo.core.metadata.shortname}`}</b>
+      <CoreTag coreName={coreName} />
       <div className="save-states__core-header-count">{`( ${count} / 128 )`}</div>
     </div>
   )

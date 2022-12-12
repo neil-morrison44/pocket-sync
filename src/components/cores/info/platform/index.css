@@ -23,6 +23,14 @@
   font-size: 1.25rem;
 }
 
+.cores__platform-info-edit {
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
 .cores__platform-info-cateogry {
   border-right: 1px solid white;
   padding-right: 15px;
