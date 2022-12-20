@@ -27,6 +27,7 @@ import { RequiredFiles } from "./requiredFiles"
 import { LoadRequiredFiles } from "./loadRequiredFiles"
 import { ErrorBoundary } from "../../errorBoundary"
 import { AuthorTag } from "../../shared/authorTag"
+import { CoreInputs } from "./coreInputs"
 
 type CoreInfoProps = {
   coreName: string
@@ -42,6 +43,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   const downloadUrl = useRecoilValue(DownloadURLSelectorFamily(coreName))
 
   const [requiredFilesOpen, setRequiredFilesOpen] = useState(false)
+  const [inputsOpen, setInputsOpen] = useState(false)
 
   return (
     <div className="core-info">
@@ -76,6 +78,14 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
         <LoadRequiredFiles
           coreName={coreName}
           onClose={() => setRequiredFilesOpen(false)}
+        />
+      )}
+
+      {inputsOpen && (
+        <CoreInputs
+          coreName={coreName}
+          onClose={() => setInputsOpen(false)}
+          platformId={coreInfo.core.metadata.platform_ids[0]}
         />
       )}
 
@@ -177,6 +187,16 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             </div>
           </Suspense>
         </div>
+        <div className="core-info__info-row">
+          <strong>{"Inputs:"}</strong>
+          <button
+            style={{ backgroundColor: "var(--hover-colour)" }}
+            onClick={() => setInputsOpen(true)}
+          >
+            View Core Inputs
+          </button>
+        </div>
+
         {inventoryItem && inventoryItem.repository.platform === "github" && (
           <Releases inventoryItem={inventoryItem} />
         )}

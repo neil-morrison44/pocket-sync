@@ -87,7 +87,7 @@ export const Editable = ({
           type="number"
           list={uuid}
           value={localValue}
-          onChange={({ target }) => setLocalValue(target.value)}
+          onChange={({ target }) => setLocalValue(parseInt(target.value))}
         />
         <button
           onClick={() => {
