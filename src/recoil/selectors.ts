@@ -2,6 +2,7 @@ import { selector, selectorFamily } from "recoil"
 import {
   CoreInfoJSON,
   DataJSON,
+  InputJSON,
   InstanceDataJSON,
   PocketSyncConfig,
   RequiredFileInfo,
@@ -145,6 +146,17 @@ export const CoreInfoSelectorFamily = selectorFamily<CoreInfoJSON, string>({
       get(fileSystemInvalidationAtom)
       const response = await invokeReadTextFile(`Cores/${coreName}/core.json`)
       return JSON.parse(response) as CoreInfoJSON
+    },
+})
+
+export const CoreInputSelectorFamily = selectorFamily<InputJSON, string>({
+  key: "CoreInputSelectorFamily",
+  get:
+    (coreName: string) =>
+    async ({ get }) => {
+      get(fileSystemInvalidationAtom)
+      const response = await invokeReadTextFile(`Cores/${coreName}/input.json`)
+      return JSON.parse(response) as InputJSON
     },
 })
 

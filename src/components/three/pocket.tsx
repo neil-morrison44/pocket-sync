@@ -9,12 +9,17 @@ import { PocketSyncConfigSelector } from "../../recoil/selectors"
 type PocketProps = {
   move?: "none" | "spin" | "back-and-forth"
   screenMaterial?: ReactNode
+  children?: ReactNode
 }
 
 const BLACK_COLOUR = "rgb(1,1,1)"
 const WHITE_COLOUR = "rgb(90,90,90)"
 
-export const Pocket = ({ move = "none", screenMaterial }: PocketProps) => {
+export const Pocket = ({
+  move = "none",
+  screenMaterial,
+  children,
+}: PocketProps) => {
   return (
     <Canvas
       shadows
@@ -30,6 +35,8 @@ export const Pocket = ({ move = "none", screenMaterial }: PocketProps) => {
       <Body move={move} screenMaterial={screenMaterial} />
       {/* <OrbitControls maxDistance={4} minDistance={3} enablePan={false} /> */}
       {/* <Stats /> */}
+
+      {children && children}
     </Canvas>
   )
 }

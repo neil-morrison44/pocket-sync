@@ -98,6 +98,30 @@ export type CoreInfoJSON = {
   }
 }
 
+export type InputKey =
+  | "pad_btn_a"
+  | "pad_btn_b"
+  | "pad_btn_x"
+  | "pad_btn_y"
+  | "pad_trig_l"
+  | "pad_trig_r"
+  | "pad_btn_start"
+  | "pad_btn_select"
+
+export type InputJSON = {
+  input: {
+    magic: "APF_VER_1"
+    controllers?: {
+      type: "default"
+      mappings: {
+        id: number | string
+        name: string
+        key: InputKey
+      }[]
+    }[]
+  }
+}
+
 export type InventoryJSON = {
   data: InventoryItem[]
 }
