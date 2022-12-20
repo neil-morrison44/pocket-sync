@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import React, { useLayoutEffect, useMemo, useRef } from "react"
+import React, { ReactNode, useLayoutEffect, useMemo, useRef } from "react"
 import { Html } from "@react-three/drei"
 import { useRecoilValue } from "recoil"
 import { PocketModelColourAtom } from "../../../recoil/atoms"
@@ -26,6 +26,7 @@ export const LabeledLine = ({ start, end, children }: LabeledLineProps) => {
   }, [start, end])
   return (
     <>
+      {/* @ts-ignore this isn't an SVG line */}
       <line ref={ref} raycast={() => false}>
         <bufferGeometry />
         <lineBasicMaterial color={inversePocketColour} linewidth={5} />
