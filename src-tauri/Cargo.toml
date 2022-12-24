@@ -28,6 +28,7 @@ bytes = "1.2.1"
 time = "0.3.17"
 ring = "0.16.20"
 data-encoding = "2.3.2"
+faccess = "0.2.4"
 
 [features]
 # by default Tauri runs in production mode

@@ -1,14 +1,9 @@
-import { platform } from "os"
 import { useRecoilValue } from "recoil"
 import {
-  CoreAuthorImageSelectorFamily,
   CoreInfoSelectorFamily,
   RequiredFileInfoSelectorFamily,
 } from "../../../recoil/selectors"
-import {
-  CoreInventorySelector,
-  DownloadURLSelectorFamily,
-} from "../../../recoil/inventory/selectors"
+import { DownloadURLSelectorFamily } from "../../../recoil/inventory/selectors"
 import { Controls } from "../../controls"
 import { Link } from "../../link"
 
@@ -28,6 +23,7 @@ import { LoadRequiredFiles } from "./loadRequiredFiles"
 import { ErrorBoundary } from "../../errorBoundary"
 import { AuthorTag } from "../../shared/authorTag"
 import { CoreInputs } from "./coreInputs"
+import { CoreSettings } from "./coreSettings"
 
 type CoreInfoProps = {
   coreName: string
@@ -44,6 +40,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
 
   const [requiredFilesOpen, setRequiredFilesOpen] = useState(false)
   const [inputsOpen, setInputsOpen] = useState(false)
+  const [coreSettingsOpen, setCoreSettingsOpen] = useState(false)
 
   return (
     <div className="core-info">
@@ -86,6 +83,13 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
           coreName={coreName}
           onClose={() => setInputsOpen(false)}
           platformId={coreInfo.core.metadata.platform_ids[0]}
+        />
+      )}
+
+      {coreSettingsOpen && (
+        <CoreSettings
+          coreName={coreName}
+          onClose={() => setCoreSettingsOpen(false)}
         />
       )}
 
@@ -187,13 +191,18 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             </div>
           </Suspense>
         </div>
-        <div className="core-info__info-row">
-          <strong>{"Inputs:"}</strong>
+        <div className="core-info__info-row core-info__info-row--stretch">
           <button
-            style={{ backgroundColor: "var(--hover-colour)" }}
+            style={{ backgroundColor: "var(--light-colour)" }}
             onClick={() => setInputsOpen(true)}
           >
-            View Core Inputs
+            Inputs
+          </button>
+          <button
+            style={{ backgroundColor: "var(--light-colour)" }}
+            onClick={() => setCoreSettingsOpen(true)}
+          >
+            Settings
           </button>
         </div>
 

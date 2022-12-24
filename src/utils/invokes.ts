@@ -87,3 +87,9 @@ export const invokeDeleteFiles = async (paths: string[]) => {
 export const invokeFindCleanableFiles = async (path: string) => {
   return invoke<string[]>("find_cleanable_files", { path })
 }
+
+export const invokeSettingsFolderReadonlyCheck = async () => {
+  const val = invoke<boolean>("settings_folder_readonly")
+  console.log({ val })
+  return invoke<boolean>("settings_folder_readonly")
+}
