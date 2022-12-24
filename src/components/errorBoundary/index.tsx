@@ -31,6 +31,11 @@ export class ErrorBoundary extends Component<
     console.error("Uncaught error:", error, errorInfo)
   }
 
+  clearError() {
+    console.log("clear error?")
+    this.setState({ hasError: false, error: null })
+  }
+
   public render() {
     if (this.state.hasError) {
       return (
@@ -49,6 +54,10 @@ export class ErrorBoundary extends Component<
             {this.state.error?.message}
           </div>
           <div className="error-boundary__stack">{this.state.error?.stack}</div>
+
+          <button style={{ width: "100%" }} onClick={() => this.clearError()}>
+            Retry
+          </button>
         </div>
       )
     }

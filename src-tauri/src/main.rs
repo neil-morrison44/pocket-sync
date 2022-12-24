@@ -362,6 +362,7 @@ async fn settings_folder_readonly(
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_window_state::Builder::default().build())
         .manage(PocketSyncState(Default::default()))
         .invoke_handler(tauri::generate_handler![
             open_pocket,

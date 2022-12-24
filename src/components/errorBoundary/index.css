@@ -1,5 +1,9 @@
 .error-boundary {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  box-sizing: border-box;
 }
 
 .error-boundary__message {
@@ -9,4 +13,6 @@
 
 .error-boundary__stack {
   white-space: pre-wrap;
+  flex-grow: 1;
+  overflow: auto;
 }
