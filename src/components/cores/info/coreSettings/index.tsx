@@ -217,7 +217,8 @@ export const CoreSettings = ({
               return null
 
             default:
-              return <div key={v.id}>{JSON.stringify(v, null, 2)}</div>
+              const text = JSON.stringify(v, null, 2)
+              return <div key={text}>{text}</div>
           }
         })}
       </div>
