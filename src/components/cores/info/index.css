@@ -30,6 +30,17 @@
   grid-column: 1;
 }
 
+.core-info__info-row--stretch {
+  grid-column: 1 / 2;
+  display: flex;
+  justify-content: space-between;
+  gap: inherit;
+
+  & * {
+    flex-grow: 1;
+  }
+}
+
 .core-info__info-row--right {
   grid-column: 2;
 }

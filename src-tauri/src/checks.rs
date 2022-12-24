@@ -1,13 +1,18 @@
+use faccess::PathExt;
+use serde::{Deserialize, Serialize};
 use std::{
     path::PathBuf,
     thread::{self, sleep},
     time::Duration,
 };
-
-use serde::{Deserialize, Serialize};
 use tauri::{App, Manager};
 
 use crate::PocketSyncState;
+
+pub fn check_if_settings_is_read_only(path: &PathBuf) -> bool {
+    let settings_folder = path.join("Settings");
+    !settings_folder.writable()
+}
 
 pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
     let json_path = path.join("Analogue_Pocket.json");
@@ -15,19 +20,14 @@ pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
     if !json_path.exists() {
         return false;
     }
-
     let assets_path = path.join("Assets");
-
     if !assets_path.exists() {
         return false;
     }
-
     let cores_path = path.join("Cores");
-
     if !cores_path.exists() {
         return false;
     }
-
     // yeah, looks enough like a Pocket
     return true;
 }

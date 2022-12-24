@@ -3,7 +3,9 @@
     windows_subsystem = "windows"
 )]
 
-use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
+use checks::{
+    check_if_folder_looks_like_pocket, check_if_settings_is_read_only, start_connection_thread,
+};
 use clean_fs::find_dotfiles;
 use futures_locks::RwLock;
 use install_zip::start_zip_thread;
@@ -84,6 +86,7 @@ async fn file_exists(state: tauri::State<'_, PocketSyncState>, path: &str) -> Re
 fn save_file(path: &str, buffer: Vec<u8>) -> Result<bool, ()> {
     let file_path = PathBuf::from(path);
     // println!("Saving file {:?}", &file_path);
+    fs::create_dir_all(file_path.parent().unwrap()).unwrap();
     let mut file = fs::File::create(file_path).unwrap();
     file.write_all(&buffer).unwrap();
     Ok(true)
@@ -349,6 +352,14 @@ async fn find_cleanable_files(
     Ok(files)
 }
 
+#[tauri::command(async)]
+async fn settings_folder_readonly(
+    state: tauri::State<'_, PocketSyncState>,
+) -> Result<bool, String> {
+    let pocket_path = state.0.read().await;
+    Ok(check_if_settings_is_read_only(&pocket_path))
+}
+
 fn main() {
     tauri::Builder::default()
         .manage(PocketSyncState(Default::default()))
@@ -369,7 +380,8 @@ fn main() {
             restore_save,
             create_folder_if_missing,
             delete_files,
-            find_cleanable_files
+            find_cleanable_files,
+            settings_folder_readonly
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())

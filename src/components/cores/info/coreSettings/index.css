@@ -1,0 +1,39 @@
+.core-settings {
+  display: flex;
+}
+
+.core-settings__settings {
+  flex-grow: 1;
+  overflow: auto;
+  display: flex;
+  gap: 15px;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.core-settings__variable {
+  display: flex;
+  align-items: center;
+  font-size: 1.25em;
+
+  & label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+  }
+
+  & select {
+    font-size: inherit;
+  }
+}
+
+.core-settings__variable--non-persist {
+  opacity: 0.8;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.core-settings__variable-name {
+  margin-right: 10px;
+}
