@@ -1,9 +1,6 @@
 import { Suspense, useMemo, useState } from "react"
 import { useRecoilCallback, useRecoilValue } from "recoil"
-import {
-  fileSystemInvalidationAtom,
-  inventoryInvalidationAtom,
-} from "../../recoil/atoms"
+import { fileSystemInvalidationAtom } from "../../recoil/atoms"
 import { cateogryListselector } from "../../recoil/inventory/selectors"
 import { coresListSelector } from "../../recoil/selectors"
 import { Controls } from "../controls"
@@ -20,7 +17,6 @@ export const Games = () => {
   const [cleanFilesOpen, setCleanFilesOpen] = useState(false)
 
   const refresh = useRecoilCallback(({ set }) => () => {
-    set(inventoryInvalidationAtom, Date.now())
     set(fileSystemInvalidationAtom, Date.now())
   })
 

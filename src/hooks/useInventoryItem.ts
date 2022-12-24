@@ -1,8 +1,8 @@
 import { useRecoilValue } from "recoil"
-import { CoreInventorySelector } from "../recoil/inventory/selectors"
+import { coreInventoryAtom } from "../recoil/inventory/atoms"
 
 export const useInventoryItem = (coreName: string) => {
-  const coreInventory = useRecoilValue(CoreInventorySelector)
+  const coreInventory = useRecoilValue(coreInventoryAtom)
   const inventoryItem = coreInventory.data.find(
     ({ identifier }) => identifier === coreName
   )

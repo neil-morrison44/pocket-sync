@@ -1,15 +1,15 @@
 import { selector, selectorFamily } from "recoil"
-import { Category, InventoryJSON } from "../../types"
-import { inventoryInvalidationAtom } from "../atoms"
+import { Category } from "../../types"
 import { GithubReleasesSelectorFamily } from "../github/selectors"
 import { allCategoriesSelector } from "../platforms/selectors"
+import { coreInventoryAtom } from "./atoms"
 
 export const DownloadURLSelectorFamily = selectorFamily<string | null, string>({
   key: "DownloadURLSelectorFamily",
   get:
     (coreName: string) =>
     async ({ get }) => {
-      const inventory = get(CoreInventorySelector)
+      const inventory = get(coreInventoryAtom)
       const inventoryItem = inventory.data.find(
         ({ identifier }) => coreName === identifier
       )
@@ -43,21 +43,10 @@ export const DownloadURLSelectorFamily = selectorFamily<string | null, string>({
     },
 })
 
-export const CoreInventorySelector = selector<InventoryJSON>({
-  key: "CoreInventorySelector",
-  get: async ({ get }) => {
-    get(inventoryInvalidationAtom)
-    const response = await fetch(
-      "https://joshcampbell191.github.io/openfpga-cores-inventory/api/v1/analogue-pocket/cores.json"
-    )
-    return await response.json()
-  },
-})
-
 export const cateogryListselector = selector<Category[]>({
   key: "CateogryListselector",
   get: ({ get }) => {
-    const inventory = get(CoreInventorySelector)
+    const inventory = get(coreInventoryAtom)
     const deviceCategories = get(allCategoriesSelector)
 
     const cateogrySet = new Set([

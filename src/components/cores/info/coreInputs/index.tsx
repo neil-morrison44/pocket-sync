@@ -14,13 +14,13 @@ const KEY_LINES: {
   [k in InputKey]: { start: THREE.Vector3Tuple; end: THREE.Vector3Tuple }
 } = {
   pad_btn_a: { start: [5, -4, 1.75], end: [15, -5, 10] },
-  pad_btn_b: { start: [3, -5.5, 1.75], end: [15, -8, 10] },
-  pad_btn_x: { start: [3.5, -2.1, 1.75], end: [15, -2, 10] },
+  pad_btn_b: { start: [3, -5.5, 1.75], end: [12, -8, 10] },
+  pad_btn_x: { start: [3.5, -2.1, 1.75], end: [12, -2, 10] },
   pad_btn_y: { start: [1.55, -3.25, 1.75], end: [-15, 0, 10] },
   pad_trig_l: { start: [-7.5, 5, -1.5], end: [-15, 8, 0] },
   pad_trig_r: { start: [9, 2, -1.5], end: [15, 5, 0] },
-  pad_btn_start: { start: [-0.25, -10.25, 1.5], end: [15, -11, 10] },
-  pad_btn_select: { start: [-3.8, -9.5, 1.5], end: [-15, -10, 10] },
+  pad_btn_start: { start: [-0.25, -10.25, 1.5], end: [8, -11, 10] },
+  pad_btn_select: { start: [-3.8, -9.5, 1.5], end: [-8, -10, 10] },
 }
 
 export const CoreInputs = ({

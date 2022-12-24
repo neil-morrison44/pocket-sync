@@ -1,11 +1,11 @@
 import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
-import { CoreInventorySelector } from "../recoil/inventory/selectors"
+import { coreInventoryAtom } from "../recoil/inventory/atoms"
 import { CoreInfoSelectorFamily } from "../recoil/selectors"
 
 export const useUpdateAvailable = (coreName: string) => {
   const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
-  const coreInventory = useRecoilValue(CoreInventorySelector)
+  const coreInventory = useRecoilValue(coreInventoryAtom)
 
   return useMemo<string | null>(() => {
     const inventoryCore = coreInventory.data.find(

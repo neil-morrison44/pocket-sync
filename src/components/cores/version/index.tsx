@@ -1,7 +1,6 @@
 import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { CoreInfoSelectorFamily } from "../../../recoil/selectors"
-import { CoreInventorySelector } from "../../../recoil/inventory/selectors"
 
 import "./index.css"
 import { useUpdateAvailable } from "../../../hooks/useUpdateAvailable"

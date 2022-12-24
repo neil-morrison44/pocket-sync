@@ -5,7 +5,6 @@ A Windows / Mac / Linux GUI to do _stuff_ with the Analogue Pocket.
 <img alt="The Core List" src="./readme_images/cores_list.png" width="50%"/><img alt="SNES core details" src="./readme_images/core_detail.png" width="50%"/>
 <img alt="Editing a platform" src="./readme_images/platform_editing.png" width="50%"/><img alt="Browsing Save States" src="./readme_images/save_states.png" width="50%"/><img alt="Exporting a screenshot" src="./readme_images/screenshot_detail.png" width="50%"/>
 
-
 Features:
 
 - Browse & install cores
@@ -57,5 +56,5 @@ Nah, I'm alright - you should donate to the folks porting / building cores over 
 
 ## Thanks to
 
-- [The OpenFPGA Cores Inventory supplies a bunch of the data used in the app](https://github.com/joshcampbell191/openfpga-cores-inventory)
+- [The OpenFPGA Cores Inventory supplies a bunch of the data used in the app](https://github.com/openfpga-cores-inventory)
 - [This recreation of the Analogue OS font](https://github.com/AbFarid/analogue-os-font)
