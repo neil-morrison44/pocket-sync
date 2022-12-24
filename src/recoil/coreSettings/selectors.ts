@@ -25,29 +25,9 @@ export const CoreInteractFileSelectorFamily = selectorFamily<
     },
 })
 
-export const CorePersistInteractFileSectorFamily = selectorFamily<
-  InteractPersistJSON,
-  string
->({
-  key: "CorePersistInteractFileSectorFamily",
-  get:
-    (coreName) =>
-    async ({ get }) => {
-      get(fileSystemInvalidationAtom)
-      const fileName = `Settings/${coreName}/Interact/interact_persist.json`
-      const exists = await invokeFileExists(fileName)
-
-      if (!exists) return EMPTY_PERSIST
-
-      const response = await invokeReadTextFile(fileName)
-      return JSON.parse(response) as InteractPersistJSON
-    },
-})
-
 export const settingsFolderReadonlySelector = selector<boolean>({
   key: "settingsFolderReadonlySelector",
   get: async () => {
-    console.log(await invokeSettingsFolderReadonlyCheck())
     return await invokeSettingsFolderReadonlyCheck()
   },
 })

@@ -14,15 +14,9 @@ export const CorePersistInteractFileAtomFamily = atomFamily<
 >({
   key: "CorePersistInteractFileAtomFamily",
   default: async (coreName) => {
-    const fileName = `Settings/${coreName}/Interact/interact_persist.json`
+    const fileName = `Settings/${coreName}/Interact/_core/interact_persist.json`
     const exists = await invokeFileExists(fileName)
-    if (!exists) {
-      const otherFileName = `Settings/${coreName}/Interact/_core/interact_persist.json`
-      const exists = await invokeFileExists(otherFileName)
-      if (!exists) return EMPTY_PERSIST
-      const response = await invokeReadTextFile(otherFileName)
-      return JSON.parse(response) as InteractPersistJSON
-    }
+    if (!exists) return EMPTY_PERSIST
     const response = await invokeReadTextFile(fileName)
     return JSON.parse(response) as InteractPersistJSON
   },
@@ -34,7 +28,7 @@ export const CorePersistInteractFileAtomFamily = atomFamily<
         if (isReadyOnly) return
         const encoder = new TextEncoder()
         await invokeSaveFile(
-          `${pocketPath}/Settings/${coreName}/Interact/interact_persist.json`,
+          `${pocketPath}/Settings/${coreName}/Interact/_core/interact_persist.json`,
           encoder.encode(JSON.stringify(newValue, null, 2))
         )
       })

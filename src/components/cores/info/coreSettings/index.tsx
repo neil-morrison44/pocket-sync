@@ -114,6 +114,13 @@ export const CoreSettings = ({
 
           switch (v.type) {
             case "list":
+              const selectedIndex = persistedValue?.val || v.defaultval || 0
+              const valueOfSelected =
+                v.options[
+                  typeof selectedIndex === "number"
+                    ? selectedIndex
+                    : parseInt(selectedIndex)
+                ].value
               return (
                 <div className={varClassName} key={v.id}>
                   <label>
@@ -121,14 +128,20 @@ export const CoreSettings = ({
                       {v.name}
                     </span>
                     <select
-                      value={persistedValue?.val || v.defaultval}
+                      value={valueOfSelected}
                       onChange={({ target }) => {
                         if (!v.persist) return
-                        updateValue(v.id, v.type, target.value)
+                        updateValue(
+                          v.id,
+                          v.type,
+                          parseInt(
+                            target.selectedOptions[0].dataset.index || "0"
+                          )
+                        )
                       }}
                     >
-                      {v.options.map(({ name, value }) => (
-                        <option value={value} key={value}>
+                      {v.options.map(({ name, value }, index) => (
+                        <option value={value} key={value} data-index={index}>
                           {name}
                         </option>
                       ))}
