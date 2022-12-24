@@ -1,12 +1,9 @@
 import { Suspense, useMemo, useState } from "react"
 import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
-import {
-  fileSystemInvalidationAtom,
-  inventoryInvalidationAtom,
-} from "../../recoil/atoms"
+import { fileSystemInvalidationAtom } from "../../recoil/atoms"
+import { coreInventoryAtom } from "../../recoil/inventory/atoms"
 import { cateogryListselector } from "../../recoil/inventory/selectors"
-import { CoreInventorySelector } from "../../recoil/inventory/selectors"
 import { coresListSelector } from "../../recoil/selectors"
 import { selectedSubviewSelector } from "../../recoil/view/selectors"
 import { Controls } from "../controls"
@@ -22,14 +19,13 @@ export const Cores = () => {
     selectedSubviewSelector
   )
   const coresList = useRecoilValue(coresListSelector)
-  const coreInventory = useRecoilValue(CoreInventorySelector)
+  const coreInventory = useRecoilValue(coreInventoryAtom)
   const { pushScroll, popScroll } = useSaveScroll()
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [onlyUpdates, setOnlyUpdates] = useState(false)
   const [filterCategory, setFilterCategory] = useState<string>("All")
 
   const refresh = useRecoilCallback(({ set }) => () => {
-    set(inventoryInvalidationAtom, Date.now())
     set(fileSystemInvalidationAtom, Date.now())
   })
 

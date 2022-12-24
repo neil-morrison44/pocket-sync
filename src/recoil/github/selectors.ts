@@ -1,6 +1,6 @@
 import { GithubRelease } from "../../types"
 import { selectorFamily } from "recoil"
-import { inventoryInvalidationAtom } from "../atoms"
+import { coreInventoryAtom } from "../inventory/atoms"
 
 export const GithubReleasesSelectorFamily = selectorFamily<
   GithubRelease[],
@@ -10,7 +10,7 @@ export const GithubReleasesSelectorFamily = selectorFamily<
   get:
     ({ owner, repo }) =>
     async ({ get }) => {
-      get(inventoryInvalidationAtom)
+      get(coreInventoryAtom)
       const response = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/releases`
       )

@@ -144,7 +144,6 @@ export const CoreInfoSelectorFamily = selectorFamily<CoreInfoJSON, string>({
     (coreName: string) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-      console.log(`getting info for ${coreName}`)
       const response = await invokeReadTextFile(`Cores/${coreName}/core.json`)
       return JSON.parse(response) as CoreInfoJSON
     },

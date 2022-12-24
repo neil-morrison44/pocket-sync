@@ -60,12 +60,8 @@ export const About = () => {
 
         <ul>
           <li>
-            <Link
-              href={
-                "https://github.com/joshcampbell191/openfpga-cores-inventory"
-              }
-            >
-              {"https://github.com/joshcampbell191/openfpga-cores-inventory"}
+            <Link href={"https://github.com/openfpga-cores-inventory"}>
+              {"https://github.com/openfpga-cores-inventory"}
             </Link>
           </li>
 

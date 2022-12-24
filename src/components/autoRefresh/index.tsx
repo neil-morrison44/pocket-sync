@@ -1,18 +1,22 @@
 import { useEffect } from "react"
-import { useInvalidateInventory } from "../../hooks/invalidation"
+import { useSetRecoilState } from "recoil"
+import { coreInventoryAtom } from "../../recoil/inventory/atoms"
 
-const INTERVAL_MINS = 15
+const INTERVAL_MINS = 10
 
 export const AutoRefresh = () => {
-  const invalidateInventory = useInvalidateInventory()
+  const setInventoryAtom = useSetRecoilState(coreInventoryAtom)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      invalidateInventory()
+    const interval = setInterval(async () => {
+      const response = await fetch(
+        "https://openfpga-cores-inventory.github.io/analogue-pocket/api/v1/cores.json"
+      )
+      setInventoryAtom(await response.json())
     }, INTERVAL_MINS * 60 * 1000)
 
     return () => clearInterval(interval)
-  }, [invalidateInventory])
+  }, [setInventoryAtom])
 
   return null
 }
