@@ -37,9 +37,14 @@ https://user-images.githubusercontent.com/2095051/204883337-f0e34a44-5ea4-47a4-9
 - Support for adding custom images from PNGs, editing platform data, etc
 - Improve Search
 - Save State management (search, bulk delete etc)
+- Input viewer
+- Core settings
 
 ### Soon
 
+- Input viewer supporting game specific inputs
+- Settings supporting game specific settings
+- Screenshot bulk delete / save
 - Installing / Checking for firmware updates (might wait for the real release of 1.1 for this)
 
 ### Longer term
