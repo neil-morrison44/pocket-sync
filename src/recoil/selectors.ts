@@ -24,6 +24,7 @@ import {
   invokeSaveFile,
   invokeWalkDirListFiles,
 } from "../utils/invokes"
+import { AUTHOUR_IMAGE } from "../values"
 
 export const DataJSONSelectorFamily = selectorFamily<DataJSON, string>({
   key: "DataJSONSelectorFamily",
@@ -166,7 +167,22 @@ export const CoreAuthorImageSelectorFamily = selectorFamily<string, string>({
     (coreName: string) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-      const response = await invokeReadBinaryFile(`Cores/${coreName}/icon.bin`)
+
+      const path = `Cores/${coreName}/icon.bin`
+      const width = AUTHOUR_IMAGE.WIDTH
+      const height = AUTHOUR_IMAGE.HEIGHT
+
+      const exists = await invokeFileExists(path)
+
+      if (!exists) {
+        // https://www.analogue.co/developer/docs/platform-metadata#platform-image
+        // A platform _may_ have a graphic associated with it.
+
+        const emptyBuffer = new Uint8Array(width * height * 2)
+        return renderBinImage(emptyBuffer, width, height, true)
+      }
+
+      const response = await invokeReadBinaryFile(path)
       return await new Promise<string>((resolve) => {
         // @ts-ignore not supported in safari
         if (window.requestIdleCallback) {
