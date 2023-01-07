@@ -5,11 +5,13 @@ import { SearchContextSelfHidingConsumer } from "../search/context"
 
 type ScreenshotProps = {
   fileName: string
+  selected: boolean
   onClick: () => void
 }
 
 export const Screenshot = ({
   fileName,
+  selected,
   onClick,
 }: ScreenshotProps): ReactElement => {
   const screenshot = useRecoilValue(SingleScreenshotSelectorFamily(fileName))
@@ -21,7 +23,13 @@ export const Screenshot = ({
     <SearchContextSelfHidingConsumer
       fields={[screenshot.game, screenshot.platform]}
     >
-      <div className="screenshots__item" role="button" onClick={onClick}>
+      <div
+        className={`screenshots__item screenshots__item--${
+          selected ? "selected" : "not-selected"
+        }`}
+        role="button"
+        onClick={onClick}
+      >
         <img className="screenshots__item-image" src={blob} />
 
         <div className="screenshots__item-info">
