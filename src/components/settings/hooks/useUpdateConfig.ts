@@ -14,9 +14,14 @@ export const useUpdateConfig = () => {
   return useCallback(
     async <T extends keyof PocketSyncConfig>(
       key: T,
-      value: PocketSyncConfig[T]
+      value:
+        | PocketSyncConfig[T]
+        | ((current: PocketSyncConfig[T]) => PocketSyncConfig[T])
     ) => {
-      const newConfig = { ...currentConfig, [key]: value } as PocketSyncConfig
+      const newConfig = {
+        ...currentConfig,
+        [key]: typeof value == "function" ? value(currentConfig[key]) : value,
+      } as PocketSyncConfig
       const encoder = new TextEncoder()
       await invokeSaveFile(
         `${pocketPath}/pocket-sync.json`,

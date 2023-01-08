@@ -1,7 +1,10 @@
+import { confirm } from "@tauri-apps/api/dialog"
+import { useCallback } from "react"
 import { useRecoilValue } from "recoil"
+import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { BackupZipsSelectorFamily } from "../../recoil/saves/selectors"
 import { SaveConfig } from "../../types"
-import { useBuildSaveZip } from "./hooks/useBuildsaveZip"
+import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 
 type SavesItemProps = {
   config: SaveConfig
@@ -9,11 +12,26 @@ type SavesItemProps = {
 }
 
 export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
-  const { backup, backupInProgress } = useBuildSaveZip()
-
   const { files, exists } = useRecoilValue(
     BackupZipsSelectorFamily(config.backup_location)
   )
+
+  const invalidateFS = useInvalidateFileSystem()
+
+  const updateConfig = useUpdateConfig()
+
+  const remove = useCallback(async () => {
+    const shouldDelete = await confirm(
+      "Are you sure you want to remove this backup location?"
+    )
+    if (!shouldDelete) return
+
+    await updateConfig("saves", (currentSaves) =>
+      currentSaves.filter((s) => s !== config)
+    )
+
+    invalidateFS()
+  }, [])
 
   if (!exists) {
     return (
@@ -26,18 +44,6 @@ export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
 
   return (
     <div className="saves__item">
-      <div
-        className={`saves__item-sync-button saves__item-sync-button--${
-          backupInProgress ? "in-progress" : "standby"
-        }`}
-        onClick={
-          backupInProgress
-            ? undefined
-            : () => backup(config.backup_location, config.backup_count)
-        }
-      >
-        {"Backup Now"}
-      </div>
       <div className="saves__item-path">{config.backup_location}</div>
       <div className="saves__info">
         <div>{`Backups: ${files.length}`}</div>
@@ -51,6 +57,10 @@ export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
             ).toLocaleString()}`}</div>
           </>
         )}
+      </div>
+
+      <div className="saves__item-remove-button" onClick={remove}>
+        {"Remove Location"}
       </div>
 
       <div className="saves__item-restore-button" onClick={onClickRestore}>

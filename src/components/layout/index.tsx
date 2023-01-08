@@ -16,6 +16,7 @@ import { Games } from "../games"
 import { Loader } from "../loader"
 import { Platforms } from "../platforms"
 import { Saves } from "../saves"
+import { AutoBackup } from "../saves/autobackup"
 import { SaveStates } from "../saveStates"
 import { Screenshots } from "../screenshots"
 import { Settings } from "../settings"
@@ -55,6 +56,9 @@ export const Layout = () => {
       <Disconnections />
       <ZipInstall />
       <AutoRefresh />
+      <Suspense>
+        <AutoBackup />
+      </Suspense>
       <div className="layout__sidebar-menu" ref={sidebarRef}>
         {VIEWS_LIST.map((v) => (
           <div
