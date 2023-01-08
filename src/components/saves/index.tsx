@@ -8,29 +8,38 @@ import { open } from "@tauri-apps/api/dialog"
 import "./index.css"
 import { SavesItem } from "./item"
 import { SaveInfo } from "./info"
+import { AllSavesSelector } from "../../recoil/saves/selectors"
+import { invokeBackupSaves } from "../../utils/invokes"
+import { SaveConfig } from "../../types"
 
 export const Saves = () => {
   const [selectedSaveBackup, setSelectedSavebackup] = useState<number | null>(
     null
   )
-
+  const allSaves = useRecoilValue(AllSavesSelector)
   const updateConfig = useUpdateConfig()
   const { saves } = useRecoilValue(PocketSyncConfigSelector)
   const addBackupLocation = useCallback(async () => {
     const directory = await open({
       directory: true,
+      multiple: false,
     })
 
     if (!directory) return
 
-    updateConfig("saves", [
-      ...saves,
-      {
-        type: "zip",
-        backup_location: directory as string,
-        backup_count: 6,
-      },
-    ])
+    const newSaveLocation = {
+      type: "zip",
+      backup_location: directory as string,
+      backup_count: 6,
+    } satisfies SaveConfig
+
+    await updateConfig("saves", [...saves, newSaveLocation])
+
+    await invokeBackupSaves(
+      allSaves,
+      newSaveLocation.backup_location,
+      newSaveLocation.backup_count
+    )
   }, [saves])
 
   if (selectedSaveBackup !== null)
