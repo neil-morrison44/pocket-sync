@@ -38,18 +38,24 @@ export class ErrorBoundary extends Component<
 
   public render() {
     if (this.state.hasError) {
+      const shouldShowReportTip = !this.state.error?.message.includes(
+        "GitHub rate limit reached"
+      )
+
       return (
         <div className="error-boundary">
           <h1>Error</h1>
-          <Tip>
-            <Link
-              href={"https://github.com/neil-morrison44/pocket-sync/issues"}
-            >
-              {
-                "You can report this via GitHub include the text below & whatever you just did"
-              }
-            </Link>
-          </Tip>
+          {shouldShowReportTip && (
+            <Tip>
+              <Link
+                href={"https://github.com/neil-morrison44/pocket-sync/issues"}
+              >
+                {
+                  "You can report this via GitHub include the text below & whatever you just did"
+                }
+              </Link>
+            </Tip>
+          )}
           <div className="error-boundary__message">
             {this.state.error?.message}
           </div>

@@ -40,6 +40,11 @@ export const invokeFileExists = async (path: string) =>
     path,
   })
 
+export const invokeSHA1Hash = async (path: string) =>
+  invoke<string>("file_sha1_hash", {
+    path,
+  })
+
 export const invokeUninstallCore = async (coreName: string) =>
   invoke<boolean>("uninstall_core", {
     coreName,

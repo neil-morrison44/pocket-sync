@@ -8,6 +8,7 @@ use checks::{
 };
 use clean_fs::find_dotfiles;
 use futures_locks::RwLock;
+use hashes::sha1_for_file;
 use install_zip::start_zip_thread;
 use saves_zip::{
     build_save_zip, read_save_zip_list, read_saves_in_folder, read_saves_in_zip,
@@ -24,6 +25,7 @@ use tauri::{App, Window};
 use walkdir::{DirEntry, WalkDir};
 mod checks;
 mod clean_fs;
+mod hashes;
 mod install_zip;
 mod saves_zip;
 struct PocketSyncState(RwLock<PathBuf>);
@@ -360,6 +362,25 @@ async fn settings_folder_readonly(
     Ok(check_if_settings_is_read_only(&pocket_path))
 }
 
+#[tauri::command(async)]
+async fn file_sha1_hash(
+    state: tauri::State<'_, PocketSyncState>,
+    path: &str,
+) -> Result<String, ()> {
+    let pocket_path = state.0.read().await;
+    let path = pocket_path.join(path);
+
+    if !path.exists() {
+        return Ok(String::from(""));
+    }
+
+    if let Ok(hash) = sha1_for_file(&path) {
+        return Ok(hash);
+    } else {
+        return Ok(String::from(""));
+    }
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -382,7 +403,8 @@ fn main() {
             create_folder_if_missing,
             delete_files,
             find_cleanable_files,
-            settings_folder_readonly
+            settings_folder_readonly,
+            file_sha1_hash
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())

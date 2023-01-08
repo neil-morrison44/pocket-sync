@@ -2,7 +2,7 @@
   width: max-content;
   height: max-content;
   max-height: 80vh;
-  min-width: 50vw;
+  min-width: 66vw;
   min-height: 50vw;
 }
 
@@ -11,7 +11,7 @@
   padding: 10px 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
   border-radius: 10px;
   overflow: auto;
 }
@@ -19,7 +19,9 @@
 .load-required-files__row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.5em;
+  border-bottom: 1px solid rgb(255 255 255 / 25%);
 
   & > pre {
     margin-top: 0;
@@ -28,7 +30,11 @@
 }
 
 .load-required-files__row--exists {
-  opacity: 0.5;
+  opacity: 0.75;
+}
+
+.load-required-files__row_name {
+  flex-basis: 110px;
 }
 
 .load-required-files__buttons {

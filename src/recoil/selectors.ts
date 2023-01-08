@@ -22,6 +22,7 @@ import {
   invokeReadBinaryFile,
   invokeReadTextFile,
   invokeSaveFile,
+  invokeSHA1Hash,
   invokeWalkDirListFiles,
 } from "../utils/invokes"
 import { AUTHOUR_IMAGE } from "../values"
@@ -70,8 +71,9 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
             filename: filename as string,
             path,
             exists: await invokeFileExists(`${path}/${filename}`),
+            sha1: await invokeSHA1Hash(`${path}/${filename}`),
             type: "core",
-          } as RequiredFileInfo
+          } satisfies RequiredFileInfo
         })
       )
 
@@ -117,8 +119,9 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                         filename: filename as string,
                         path,
                         exists: await invokeFileExists(`${path}/${filename}`),
+                        sha1: await invokeSHA1Hash(`${path}/${filename}`),
                         type: "instance",
-                      } as RequiredFileInfo
+                      } satisfies RequiredFileInfo
                     }
                   )
                 )
@@ -216,7 +219,7 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
         colour: Math.random() > 0.5 ? "white" : "black",
         archive_url: null,
         saves: [],
-      } as PocketSyncConfig
+      } satisfies PocketSyncConfig
     }
 
     const exists = await invokeFileExists("pocket-sync.json")
@@ -226,7 +229,7 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
         colour: "black",
         archive_url: null,
         saves: [],
-      } as PocketSyncConfig
+      } satisfies PocketSyncConfig
 
       const encoder = new TextEncoder()
 
