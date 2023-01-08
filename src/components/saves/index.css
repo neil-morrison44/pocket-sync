@@ -33,15 +33,12 @@
   padding: var(--padding);
   border-radius: 15px;
   background-color: var(--info-colour);
-  cursor: pointer;
   display: grid;
   gap: var(--padding);
-  grid-template-columns: min-content 1fr min-content;
   align-items: center;
-  justify-content: center;
   grid-template-areas:
-    "a b c"
-    "a d c";
+    "b r c"
+    "d r c";
 }
 
 .saves__item--not-found {
@@ -57,50 +54,13 @@
   grid-area: d;
 }
 
-.saves__item-sync-button {
-  grid-area: a;
-  text-align: center;
-  background-color: var(--green-colour);
-  padding: 10px;
-  aspect-ratio: 1 / 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
+.saves__item-remove-button {
+  grid-area: r;
+  cursor: pointer;
+  color: var(--red-colour);
 
   &:hover {
-    transform: scale(1.05);
-  }
-}
-
-.saves__item-sync-button--in-progress {
-  color: var(--green-colour);
-  background-color: var(--info-colour);
-  cursor: unset;
-  position: relative;
-
-  &::after {
-    content: "";
-    width: 100%;
-    height: 100%;
-    display: block;
-    position: absolute;
-    top: -2px;
-    left: 0;
-    border-radius: 50px;
-    border-top: 2px solid white;
-    border-bottom: 2px solid white;
-    animation: 2s linear spin infinite;
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
+    text-decoration: underline;
   }
 }
 
@@ -112,6 +72,7 @@
   align-items: center;
   text-align: center;
   font-size: 1.25rem;
+  cursor: pointer;
 
   &::after {
     content: "";

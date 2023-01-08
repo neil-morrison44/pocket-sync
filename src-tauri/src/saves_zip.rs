@@ -1,5 +1,4 @@
 use data_encoding::HEXUPPER;
-use ring::digest::{Context, Digest, SHA256};
 use serde::{Deserialize, Serialize};
 use std::{
     cmp::{Ord, Ordering},
@@ -13,7 +12,9 @@ use tempdir::TempDir;
 use walkdir::WalkDir;
 use zip::{write::FileOptions, DateTime};
 
-#[derive(Eq, PartialEq, PartialOrd, Serialize, Deserialize)]
+use crate::hashes::sha256_digest;
+
+#[derive(Eq, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
 pub struct SaveZipFile {
     last_modified: u32,
     hash: String,
@@ -167,13 +168,29 @@ pub fn build_save_zip(
     }
     zip.finish().unwrap();
 
-    let files = read_save_zip_list(&PathBuf::from(zip_path)).unwrap();
+    prune_zips(&zip_path, max_count).unwrap();
+    Ok(())
+}
 
-    if files.len() > max_count {
-        let oldest_file = files.iter().min().unwrap();
-        let last_file_path = zip_path.join(&oldest_file.filename);
-        fs::remove_file(last_file_path).unwrap();
+fn prune_zips(zip_path: &Path, max_count: usize) -> Result<(), Box<dyn error::Error>> {
+    let mut files = read_save_zip_list(&PathBuf::from(zip_path)).unwrap();
+    files.sort();
+    let last_two: Vec<&SaveZipFile> = files.iter().rev().take(2).collect();
+    if last_two.len() == 2 {
+        if last_two[0].hash == last_two[1].hash {
+            let newest_file_path = zip_path.join(&last_two[1].filename);
+            fs::remove_file(newest_file_path)?;
+        }
     }
+
+    let files = read_save_zip_list(&PathBuf::from(zip_path)).unwrap();
+    if files.len() > max_count {
+        if let Some(oldest_file) = files.iter().min() {
+            let last_file_path = zip_path.join(&oldest_file.filename);
+            fs::remove_file(last_file_path)?;
+        }
+    }
+
     Ok(())
 }
 
@@ -190,19 +207,4 @@ fn remove_leading_slash(value: &str) -> String {
 
     result.push_str(chars.as_str());
     result
-}
-
-fn sha256_digest<R: Read>(mut reader: R) -> Result<Digest, Box<dyn error::Error>> {
-    let mut context = Context::new(&SHA256);
-    let mut buffer = [0; 1024];
-
-    loop {
-        let count = reader.read(&mut buffer)?;
-        if count == 0 {
-            break;
-        }
-        context.update(&buffer[..count]);
-    }
-
-    Ok(context.finish())
 }
