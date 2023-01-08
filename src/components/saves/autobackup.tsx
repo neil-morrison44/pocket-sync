@@ -15,7 +15,8 @@ export const AutoBackup = () => {
     ;(async () => {
       for (const save of saves) {
         const exists = await invokeFileExists(save.backup_location)
-        if (!exists) return
+        console.log({exists})
+        if (!exists) continue
         await invokeBackupSaves(
           allSaves,
           save.backup_location,
