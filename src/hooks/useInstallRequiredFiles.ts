@@ -6,7 +6,7 @@ import { PocketSyncConfigSelector } from "../recoil/selectors"
 import { RequiredFileInfo } from "../types"
 import { useInvalidateFileSystem } from "./invalidation"
 
-export const useInstallRequiredFiles = (closeModal: () => void) => {
+export const useInstallRequiredFiles = () => {
   const { archive_url } = useRecoilValue(PocketSyncConfigSelector)
   const invalidateFS = useInvalidateFileSystem()
 
@@ -22,7 +22,7 @@ export const useInstallRequiredFiles = (closeModal: () => void) => {
         setProgress(payload)
         if (payload.max === payload.value) {
           invalidateFS()
-          closeModal()
+          setProgress(null)
         }
       }
     )

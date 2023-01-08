@@ -49,6 +49,8 @@ export type RequiredFileInfo = {
   path: string
   exists: boolean
   type: "core" | "instance"
+  sha1: string
+  status?: "ok" | "wrong" | "downloadable" | "not-in-archive"
 }
 
 export type PlatformId = string
@@ -201,4 +203,12 @@ export type SaveZipFile = {
   filename: string
   last_modified: number
   hash: string
+}
+
+export type ArchiveFileMetadata = {
+  name: string
+  size: string
+  md5: string
+  crc32: string
+  sha1: string
 }

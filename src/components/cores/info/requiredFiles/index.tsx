@@ -24,12 +24,15 @@ export const RequiredFiles = ({
   }, [requiredFiles])
 
   const foundFiles = useMemo(
-    () => filteredRequiredFiles.filter(({ exists }) => exists),
+    () =>
+      filteredRequiredFiles.filter(
+        ({ exists, status }) => exists && status !== "wrong"
+      ),
     [filteredRequiredFiles]
   )
 
   const full = useMemo(
-    () => filteredRequiredFiles.every(({ exists }) => exists),
+    () => foundFiles.length === filteredRequiredFiles.length,
     [filteredRequiredFiles]
   )
 
