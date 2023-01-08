@@ -9,7 +9,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-20.04, windows-latest]
+        include:
+          - platform: macos-latest
+            target: universal-apple-darwin
+          - platform: ubuntu-20.04
+            target: x86_64-unknown-linux-gnu
+          - platform: windows-latest
+            target: x86_64-pc-windows-msvc
+          - platform: windows-latest
+            target: aarch64-pc-windows-msvc
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -27,6 +35,14 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
+      - name: install Rust target (macOS)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          rustup target add aarch64-apple-darwin 
+          rustup target add x86_64-apple-darwin
+      - name: install Rust target (Windows, Linux)
+        if: matrix.platform != 'macos-latest'
+        run: rustup target add ${{ matrix.target }}
       - name: install app dependencies and build it
         run: npm i && npm run build
 
@@ -41,6 +57,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           releaseId: ${{ steps.get_release.outputs.id }}
+          args: --target ${{ matrix.target }}
   accounce:
     needs: ["build-tauri"]
     runs-on: "ubuntu-latest"
