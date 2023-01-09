@@ -1,5 +1,9 @@
 # pocket-sync
 
+> "And fan-created apps let you load up a microSD card quickly and effortlessly."
+
+<p align="right"> <a href="https://www.wired.com/review/analogue-pocket/#:~:text=And%C2%A0fan%2Dcreated%20apps%20let%20you%20load%20up%20a%20microSD%20card%20quickly%20and%20effortlessly">wired.com - Review: Analogue Pocket</a> </p>
+
 A Windows / Mac / Linux GUI to do _stuff_ with the Analogue Pocket.
 
 <img alt="The Core List" src="./readme_images/cores_list.png" width="50%"/><img alt="SNES core details" src="./readme_images/core_detail.png" width="50%"/>
@@ -7,7 +11,7 @@ A Windows / Mac / Linux GUI to do _stuff_ with the Analogue Pocket.
 
 Features:
 
-- Browse & install cores
+- Browse, configure, & install cores
 - Export corrected & upscalled screenshots
 - Backup & restore save files
 - Quick links to open game file folders
@@ -39,17 +43,17 @@ https://user-images.githubusercontent.com/2095051/204883337-f0e34a44-5ea4-47a4-9
 - Save State management (search, bulk delete etc)
 - Input viewer
 - Core settings
+- Screenshot bulk delete / save
+- Autobackup saves on connection (if there's changes)
 
 ### Soon
 
 - Input viewer supporting game specific inputs
 - Settings supporting game specific settings
-- Screenshot bulk delete / save
 - Installing / Checking for firmware updates (might wait for the real release of 1.1 for this)
 
 ### Longer term
 
-- Autobackup on connection
 - Library viewing / editing once that's rolled out
 - Add back MiSTer save file sync (don't really want to touch it if there's a chance I'll clopper MiSTer files with a bunch of incompatiable Genesis saves)
 
