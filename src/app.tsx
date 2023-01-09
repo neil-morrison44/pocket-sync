@@ -5,6 +5,7 @@ import { pocketPathAtom } from "./recoil/atoms"
 import { Layout } from "./components/layout"
 import React, { Suspense, useCallback, useState } from "react"
 import { invokeOpenPocket } from "./utils/invokes"
+import { Tip } from "./components/tip"
 
 const Pocket = React.lazy(() =>
   import("./components/three/pocket").then((m) => ({ default: m.Pocket }))
@@ -37,9 +38,11 @@ export const App = () => {
       </Suspense>
 
       {attempts > 0 && (
-        <h3>
-          {"That folder doesn't look like the Pocket's file system. Try again"}
-        </h3>
+        <Tip>
+          {
+            "That folder doesn't look like the Pocket's file system. The SD card must be initialised by the Pocket at least once."
+          }
+        </Tip>
       )}
 
       <div className="row">
