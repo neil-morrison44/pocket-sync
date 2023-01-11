@@ -36,7 +36,7 @@ jobs:
       - name: install Rust target (macOS)
         if: matrix.platform == 'macos-latest'
         run: |
-          rustup target add aarch64-apple-darwin 
+          rustup target add aarch64-apple-darwin
           rustup target add x86_64-apple-darwin
       - name: install Rust target (Windows, Linux)
         if: matrix.platform != 'macos-latest'
@@ -72,7 +72,7 @@ jobs:
                   "color": 5804112,
                   "fields": [
                       { "name": "Version", "value": "${{ github.event.release.tag_name }}", "inline": true },
-                      { "name": "Link", "value": "[Click Me](https://github.com/neil-morrison44/pocket-sync/releases/tag/${{ github.event.release.tag_name }})", "inline": true }
+                      { "name": "Release", "value": "[Click Me](https://github.com/neil-morrison44/pocket-sync/releases/tag/${{ github.event.release.tag_name }})", "inline": true }
                   ]
               }]
               }' \
