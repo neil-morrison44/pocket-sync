@@ -3,9 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use checks::{
-    check_if_folder_looks_like_pocket, check_if_settings_is_read_only, start_connection_thread,
-};
+use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
 use clean_fs::find_dotfiles;
 use futures_locks::RwLock;
 use hashes::sha1_for_file;
@@ -355,14 +353,6 @@ async fn find_cleanable_files(
 }
 
 #[tauri::command(async)]
-async fn settings_folder_readonly(
-    state: tauri::State<'_, PocketSyncState>,
-) -> Result<bool, String> {
-    let pocket_path = state.0.read().await;
-    Ok(check_if_settings_is_read_only(&pocket_path))
-}
-
-#[tauri::command(async)]
 async fn file_sha1_hash(
     state: tauri::State<'_, PocketSyncState>,
     path: &str,
@@ -403,7 +393,6 @@ fn main() {
             create_folder_if_missing,
             delete_files,
             find_cleanable_files,
-            settings_folder_readonly,
             file_sha1_hash
         ])
         .setup(|app| start_threads(&app))

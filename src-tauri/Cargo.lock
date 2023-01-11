@@ -609,17 +609,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "faccess"
-version = "0.2.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59ae66425802d6a903e268ae1a08b8c38ba143520f227a205edf4e9c7e3e26d5"
-dependencies = [
- "bitflags",
- "libc",
- "winapi",
-]
-
-[[package]]
 name = "fastrand"
 version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2067,7 +2056,6 @@ version = "0.0.0"
 dependencies = [
  "bytes",
  "data-encoding",
- "faccess",
  "futures",
  "futures-locks",
  "reqwest",
