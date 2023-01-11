@@ -6,29 +6,34 @@ import {
   invokeSaveFile,
 } from "../../utils/invokes"
 import { pocketPathAtom } from "../atoms"
-import { settingsFolderReadonlySelector } from "./selectors"
 
-export const CorePersistInteractFileAtomFamily = atomFamily<
+export const PersistInteractFileAtomFamily = atomFamily<
   InteractPersistJSON,
-  string
+  { coreName: string; filePath: "core" | string }
 >({
-  key: "CorePersistInteractFileAtomFamily",
-  default: async (coreName) => {
-    const fileName = `Settings/${coreName}/Interact/_core/interact_persist.json`
+  key: "PersistInteractFileAtomFamily",
+  default: async ({ coreName, filePath }) => {
+    const fileName =
+      filePath === "core"
+        ? `Settings/${coreName}/Interact/_core/interact_persist.json`
+        : `/Settings/${coreName}/Interact/${filePath}`
     const exists = await invokeFileExists(fileName)
     if (!exists) return EMPTY_PERSIST
     const response = await invokeReadTextFile(fileName)
     return JSON.parse(response) as InteractPersistJSON
   },
-  effects: (coreName) => [
+  effects: ({ coreName, filePath }) => [
     ({ onSet, getPromise }) => {
+      const fileName =
+        filePath === "core"
+          ? `Settings/${coreName}/Interact/_core/interact_persist.json`
+          : `Settings/${coreName}/Interact/${filePath}`
+
       onSet(async (newValue) => {
         const pocketPath = await getPromise(pocketPathAtom)
-        const isReadyOnly = await getPromise(settingsFolderReadonlySelector)
-        if (isReadyOnly) return
         const encoder = new TextEncoder()
         await invokeSaveFile(
-          `${pocketPath}/Settings/${coreName}/Interact/_core/interact_persist.json`,
+          `${pocketPath}/${fileName}`,
           encoder.encode(JSON.stringify(newValue, null, 2))
         )
       })

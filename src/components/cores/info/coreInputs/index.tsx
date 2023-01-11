@@ -89,6 +89,7 @@ export const CoreInputs = ({
         <select
           style={{ fontSize: "2rem" }}
           onChange={({ target }) => setChosenInput(target.value)}
+          value={chosenInput}
         >
           <option value={"core"}>{"Core"}</option>
           {presetInputList.map((fileName) => (

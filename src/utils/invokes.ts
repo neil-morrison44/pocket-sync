@@ -23,11 +23,14 @@ export const invokeReadBinaryFile = async (path: string) => {
 export const invokeWalkDirListFiles = async (
   path: string,
   extensions: string[]
-) =>
-  invoke<string[]>("walkdir_list_files", {
+) => {
+  const files = await invoke<string[]>("walkdir_list_files", {
     path,
     extensions,
   })
+  files.sort((a, b) => a.localeCompare(b))
+  return files
+}
 
 export const invokeSaveFile = async (path: string, buffer: Uint8Array) =>
   invoke<boolean>("save_file", {
@@ -91,8 +94,4 @@ export const invokeDeleteFiles = async (paths: string[]) => {
 
 export const invokeFindCleanableFiles = async (path: string) => {
   return invoke<string[]>("find_cleanable_files", { path })
-}
-
-export const invokeSettingsFolderReadonlyCheck = async () => {
-  return invoke<boolean>("settings_folder_readonly")
 }

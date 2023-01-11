@@ -1,10 +1,11 @@
-import { useCallback } from "react"
+import { Loader } from "@react-three/drei"
+import { Suspense, useCallback, useState } from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
-import { CorePersistInteractFileAtomFamily } from "../../../../recoil/coreSettings/atoms"
+import { PersistInteractFileAtomFamily } from "../../../../recoil/coreSettings/atoms"
 import {
-  CoreInteractFileSelectorFamily,
   EMPTY_PERSIST,
-  settingsFolderReadonlySelector,
+  ListPresetInteractSelectorFamily,
+  PresetInteractFileSelectorFamily,
 } from "../../../../recoil/coreSettings/selectors"
 import { InteractPersistJSON } from "../../../../types/interact"
 import {
@@ -12,6 +13,7 @@ import {
   numberTo16bitSignedHex,
 } from "../../../../utils/hexStrings"
 import { Modal } from "../../../modal"
+import { Tip } from "../../../tip"
 
 import "./index.css"
 
@@ -22,10 +24,52 @@ export const CoreSettings = ({
   coreName: string
   onClose: () => void
 }) => {
-  const interactJSON = useRecoilValue(CoreInteractFileSelectorFamily(coreName))
-  const isReadOnly = useRecoilValue(settingsFolderReadonlySelector)
+  const interactFileList = useRecoilValue(
+    ListPresetInteractSelectorFamily(coreName)
+  )
+  const [chosenInteractFile, setChosenInteractFile] = useState("core")
+
+  return (
+    <Modal className="core-settings">
+      {interactFileList.length > 0 && (
+        <select
+          style={{ fontSize: "2rem" }}
+          onChange={({ target }) => setChosenInteractFile(target.value)}
+          value={chosenInteractFile}
+        >
+          <option value={"core"}>{"Core"}</option>
+          {interactFileList.map((fileName) => (
+            <option key={fileName} value={fileName}>
+              {fileName}
+            </option>
+          ))}
+        </select>
+      )}
+      <Suspense fallback={<Loader />}>
+        <InteractSettings
+          coreName={coreName}
+          filePath={chosenInteractFile}
+          onClose={onClose}
+        />
+      </Suspense>
+    </Modal>
+  )
+}
+
+const InteractSettings = ({
+  coreName,
+  filePath,
+  onClose,
+}: {
+  coreName: string
+  filePath: "core" | string
+  onClose: () => void
+}) => {
+  const interactJSON = useRecoilValue(
+    PresetInteractFileSelectorFamily({ coreName, filePath })
+  )
   const [persistJSON, setPersistJSON] = useRecoilState(
-    CorePersistInteractFileAtomFamily(coreName)
+    PersistInteractFileAtomFamily({ coreName, filePath })
   )
 
   const updateValue = useCallback(
@@ -35,7 +79,6 @@ export const CoreSettings = ({
       val: string | number
     ) => {
       setPersistJSON((current): InteractPersistJSON => {
-        if (isReadOnly) return current
         const clonedVariables = [...current.interact_persist.variables]
         const newVariables = [
           ...clonedVariables.filter(({ id: oid }) => id !== oid),
@@ -50,7 +93,7 @@ export const CoreSettings = ({
         }
       })
     },
-    [setPersistJSON, isReadOnly]
+    [setPersistJSON]
   )
 
   const updateRadioButton = useCallback(
@@ -74,7 +117,6 @@ export const CoreSettings = ({
         .map(({ id }) => id)
 
       setPersistJSON((current): InteractPersistJSON => {
-        if (isReadOnly) return current
         const clonedVariables = [...current.interact_persist.variables]
         const newVariables = [
           ...clonedVariables.filter(
@@ -94,12 +136,14 @@ export const CoreSettings = ({
         }
       })
     },
-    [setPersistJSON, isReadOnly]
+    [setPersistJSON]
   )
 
   return (
-    <Modal className="core-settings">
-      {isReadOnly && <h3>The `Settings` folder is Read Only</h3>}
+    <>
+      {interactJSON.interact.variables.length === 0 && (
+        <Tip>{"No settings found!"}</Tip>
+      )}
 
       <div className="core-settings__settings">
         {interactJSON.interact.variables.map((v) => {
@@ -114,7 +158,7 @@ export const CoreSettings = ({
 
           switch (v.type) {
             case "list":
-              const selectedIndex = persistedValue?.val || v.defaultval || 0
+              const selectedIndex = persistedValue?.val ?? v.defaultval ?? 0
               const valueOfSelected =
                 v.options[
                   typeof selectedIndex === "number"
@@ -157,7 +201,7 @@ export const CoreSettings = ({
                       {v.name}
                     </span>
                     <input
-                      checked={Boolean(persistedValue?.val || v.defaultval)}
+                      checked={Boolean(persistedValue?.val ?? v.defaultval)}
                       onChange={({ target }) => {
                         if (!v.persist) return
                         updateValue(v.id, v.type, target.checked ? 1 : 0)
@@ -168,7 +212,7 @@ export const CoreSettings = ({
                 </div>
               )
             case "slider_u32":
-              const rawValue = persistedValue?.val || v.defaultval || 0
+              const rawValue = persistedValue?.val ?? v.defaultval ?? 0
 
               const value =
                 typeof rawValue === "string"
@@ -204,7 +248,7 @@ export const CoreSettings = ({
               )
 
             case "radio":
-              const isChecked = Boolean(persistedValue?.val || v.defaultval)
+              const isChecked = Boolean(persistedValue?.val ?? v.defaultval)
               // console.log({ isChecked })
               return (
                 <div className={varClassName} key={v.id}>
@@ -235,18 +279,10 @@ export const CoreSettings = ({
           }
         })}
       </div>
-      <button
-        style={{
-          opacity: isReadOnly ? 0.1 : 1,
-          pointerEvents: isReadOnly ? "none" : undefined,
-        }}
-        onClick={() => setPersistJSON(EMPTY_PERSIST)}
-      >
-        Reset All
-      </button>
+      <button onClick={() => setPersistJSON(EMPTY_PERSIST)}>Reset All</button>
       <button className="core-settings__close-button" onClick={onClose}>
         Close
       </button>
-    </Modal>
+    </>
   )
 }

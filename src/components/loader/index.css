@@ -7,24 +7,23 @@
   justify-content: center;
 }
 
-.loader--full{
+.loader--full {
   height: 100vh;
 }
 
-.loader::before{
+.loader::before {
   content: "";
   display: block;
   border: 2px solid white;
   border-radius: 50%;
-  border-left-color: transparent;
+  border-top-color: transparent;
   width: 25%;
   aspect-ratio: 1 / 1;
-
   animation: spin 2s infinite linear;
   will-change: transform;
 }
 
 @keyframes spin {
-  from {transform:rotate(0deg);}
-  to {transform:rotate(360deg);}
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

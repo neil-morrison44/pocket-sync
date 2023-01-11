@@ -1,4 +1,3 @@
-use faccess::PathExt;
 use serde::{Deserialize, Serialize};
 use std::{
     path::PathBuf,
@@ -8,11 +7,6 @@ use std::{
 use tauri::{App, Manager};
 
 use crate::PocketSyncState;
-
-pub fn check_if_settings_is_read_only(path: &PathBuf) -> bool {
-    let settings_folder = path.join("Settings");
-    !settings_folder.writable()
-}
 
 pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
     let json_path = path.join("Analogue_Pocket.json");
