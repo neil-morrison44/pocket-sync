@@ -1,14 +1,18 @@
 import { OrbitControls } from "@react-three/drei"
-import { Suspense, useEffect, useMemo, useRef, useState } from "react"
+import { Suspense, useEffect, useMemo, useState } from "react"
+import { ReactElement } from "react-markdown/lib/react-markdown"
 import { useRecoilValue } from "recoil"
-import { MeshPhongMaterial, Texture } from "three"
+import { Texture } from "three"
+import {
+  CoreInputSelectorFamily,
+  ListPresetInputsSelectorFamily,
+  PresetInputSelectorFamily,
+} from "../../../../recoil/input/selectors"
 import { PlatformImageSelectorFamily } from "../../../../recoil/platforms/selectors"
-import { CoreInputSelectorFamily } from "../../../../recoil/selectors"
 import { InputKey } from "../../../../types"
 import { Modal } from "../../../modal"
 import { LabeledLine } from "../../../three/labeledLine"
 import { Pocket } from "../../../three/pocket"
-import { RandomScreenshotScreen } from "../../../three/randomScreenshotScreen"
 
 const KEY_LINES: {
   [k in InputKey]: { start: THREE.Vector3Tuple; end: THREE.Vector3Tuple }
@@ -32,9 +36,13 @@ export const CoreInputs = ({
   onClose: () => void
   platformId: string
 }) => {
-  const coreInput = useRecoilValue(CoreInputSelectorFamily(coreName))
   const platformImage = useRecoilValue(PlatformImageSelectorFamily(platformId))
 
+  const presetInputList = useRecoilValue(
+    ListPresetInputsSelectorFamily(coreName)
+  )
+
+  const [chosenInput, setChosenInput] = useState("core")
   const [screenTexture, setScreenTexture] = useState<Texture | undefined>()
 
   useEffect(() => {
@@ -75,16 +83,22 @@ export const CoreInputs = ({
     }
   }, [platformImage])
 
-  const inputMappings = useMemo(() => {
-    const defaultController = coreInput.input.controllers?.find(
-      ({ type }) => type === "default"
-    )
-    if (!defaultController) return []
-    return defaultController.mappings
-  }, [coreInput])
-
   return (
     <Modal>
+      {presetInputList.length > 0 && (
+        <select
+          style={{ fontSize: "2rem" }}
+          onChange={({ target }) => setChosenInput(target.value)}
+        >
+          <option value={"core"}>{"Core"}</option>
+          {presetInputList.map((fileName) => (
+            <option key={fileName} value={fileName}>
+              {fileName}
+            </option>
+          ))}
+        </select>
+      )}
+
       <Pocket
         screenMaterial={
           <meshBasicMaterial
@@ -95,14 +109,52 @@ export const CoreInputs = ({
       >
         <OrbitControls maxDistance={42} minDistance={42} enablePan={false} />
 
-        {inputMappings.map((mapping) => (
-          <LabeledLine key={mapping.key} {...KEY_LINES[mapping.key]}>
-            {mapping.name}
-          </LabeledLine>
-        ))}
+        <Suspense fallback={null}>
+          <GetInputFile coreName={coreName} filePath={chosenInput}>
+            {(inputMappings) => (
+              <>
+                {inputMappings.map((mapping) => (
+                  <LabeledLine key={mapping.key} {...KEY_LINES[mapping.key]}>
+                    {mapping.name}
+                  </LabeledLine>
+                ))}
+              </>
+            )}
+          </GetInputFile>
+        </Suspense>
       </Pocket>
 
       <button onClick={onClose}>Close</button>
     </Modal>
   )
+}
+
+const GetInputFile = ({
+  coreName,
+  filePath,
+  children,
+}: {
+  coreName: string
+  filePath: "core" | string
+  children: (
+    inputMappings: {
+      id: string | number
+      name: string
+      key: InputKey
+    }[]
+  ) => ReactElement
+}) => {
+  const presetInput = useRecoilValue(
+    PresetInputSelectorFamily({ coreName, filePath })
+  )
+
+  const inputMappings = useMemo(() => {
+    const defaultController = presetInput.input.controllers?.find(
+      ({ type }) => type === "default"
+    )
+    if (!defaultController) return []
+    return defaultController.mappings
+  }, [presetInput])
+
+  return children(inputMappings)
 }
