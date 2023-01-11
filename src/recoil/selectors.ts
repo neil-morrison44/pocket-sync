@@ -153,17 +153,6 @@ export const CoreInfoSelectorFamily = selectorFamily<CoreInfoJSON, string>({
     },
 })
 
-export const CoreInputSelectorFamily = selectorFamily<InputJSON, string>({
-  key: "CoreInputSelectorFamily",
-  get:
-    (coreName: string) =>
-    async ({ get }) => {
-      get(fileSystemInvalidationAtom)
-      const response = await invokeReadTextFile(`Cores/${coreName}/input.json`)
-      return JSON.parse(response) as InputJSON
-    },
-})
-
 export const CoreAuthorImageSelectorFamily = selectorFamily<string, string>({
   key: "CoreAuthorImageSelectorFamily",
   get:
