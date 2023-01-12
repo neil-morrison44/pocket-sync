@@ -45,15 +45,16 @@ https://user-images.githubusercontent.com/2095051/204883337-f0e34a44-5ea4-47a4-9
 - Core settings
 - Screenshot bulk delete / save
 - Autobackup saves on connection (if there's changes)
+- Input viewer supporting game specific inputs
+- Settings supporting game specific settings
 
 ### Soon
 
-- Input viewer supporting game specific inputs
-- Settings supporting game specific settings
 - Installing / Checking for firmware updates (might wait for the real release of 1.1 for this)
 
 ### Longer term
 
+- List new cores / updates since the last Pocket was connected (with, optional, notifications)
 - Library viewing / editing once that's rolled out
 - Add back MiSTer save file sync (don't really want to touch it if there's a chance I'll clopper MiSTer files with a bunch of incompatiable Genesis saves)
 
