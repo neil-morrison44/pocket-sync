@@ -25,7 +25,7 @@ import {
   invokeSHA1Hash,
   invokeWalkDirListFiles,
 } from "../utils/invokes"
-import { AUTHOUR_IMAGE } from "../values"
+import { AUTHOUR_IMAGE, IGNORE_INSTANCE_JSON_LIST } from "../values"
 
 export const DataJSONSelectorFamily = selectorFamily<DataJSON, string>({
   key: "DataJSONSelectorFamily",
@@ -63,9 +63,9 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
 
       const fileInfo = await Promise.all(
         requiredCoreFiles.map(async ({ filename, parameters }) => {
-          const path = decodeDataParams(parameters).coreSpecific
-            ? `Assets/${platform_id}/${coreName}`
-            : `Assets/${platform_id}/common`
+          const path = `Assets/${platform_id}/${
+            decodeDataParams(parameters).coreSpecific ? coreName : "common"
+          }`
 
           return {
             filename: filename as string,
@@ -76,6 +76,10 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
           } satisfies RequiredFileInfo
         })
       )
+
+      if (IGNORE_INSTANCE_JSON_LIST.includes(coreName)) {
+        return [...fileInfo]
+      }
 
       const instanceFileInfo = await Promise.all(
         dataJSON.data.data_slots
@@ -92,9 +96,9 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
               console.log("is a single filename")
             }
 
-            const path = decodeDataParams(parameters).coreSpecific
-              ? `Assets/${platform_id}/${coreName}/`
-              : `Assets/${platform_id}/common/`
+            const path = `Assets/${platform_id}/${
+              decodeDataParams(parameters).coreSpecific ? coreName : "common"
+            }/`
 
             const files = await invokeWalkDirListFiles(path, [".json"])
 
@@ -107,13 +111,11 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                 return await Promise.all(
                   instanceFile.instance.data_slots.map(
                     async ({ filename, parameters }) => {
-                      const path = decodeDataParams(parameters).coreSpecific
-                        ? `Assets/${platform_id}/${coreName}${
-                            dataPath ? `/${dataPath}` : ""
-                          }`
-                        : `Assets/${platform_id}/common${
-                            dataPath ? `/${dataPath}` : ""
-                          }`
+                      const path = `Assets/${platform_id}/${
+                        decodeDataParams(parameters).coreSpecific
+                          ? coreName
+                          : "common"
+                      }${dataPath ? `/${dataPath}` : ""}`
 
                       return {
                         filename: filename as string,

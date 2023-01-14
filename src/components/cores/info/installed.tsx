@@ -137,9 +137,6 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
 
           <RequiredFiles
             coreName={coreName}
-            // this should probably be a category === arcade check or something
-            // depends how people end up using instance jsons
-            ignoreInstance={coreName === "Mazamars312.NeoGeo"}
             onClick={() => setRequiredFilesOpen(true)}
           />
 

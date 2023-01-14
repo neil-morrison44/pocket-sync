@@ -10,33 +10,23 @@ type RequiredFilesProps = {
   onClick?: () => void
 }
 
-export const RequiredFiles = ({
-  coreName,
-  ignoreInstance,
-  onClick,
-}: RequiredFilesProps) => {
+export const RequiredFiles = ({ coreName, onClick }: RequiredFilesProps) => {
   const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
-
-  const filteredRequiredFiles = useMemo(() => {
-    if (!ignoreInstance) return requiredFiles
-
-    return requiredFiles.filter(({ type }) => type !== "instance")
-  }, [requiredFiles])
 
   const foundFiles = useMemo(
     () =>
-      filteredRequiredFiles.filter(
+      requiredFiles.filter(
         ({ exists, status }) => exists && status !== "wrong"
       ),
-    [filteredRequiredFiles]
+    [requiredFiles]
   )
 
   const full = useMemo(
-    () => foundFiles.length === filteredRequiredFiles.length,
-    [filteredRequiredFiles]
+    () => foundFiles.length === requiredFiles.length,
+    [requiredFiles]
   )
 
-  if (filteredRequiredFiles.length === 0) return null
+  if (requiredFiles.length === 0) return null
 
   return (
     <div className="core-info__info-row">
@@ -46,7 +36,7 @@ export const RequiredFiles = ({
           full ? "full" : "missing"
         }`}
         onClick={onClick}
-      >{`${foundFiles.length} / ${filteredRequiredFiles.length} Files`}</div>
+      >{`${foundFiles.length} / ${requiredFiles.length} Files`}</div>
     </div>
   )
 }
