@@ -7,6 +7,9 @@
   align-items: stretch;
   justify-items: stretch;
   grid-template-rows: repeat(auto-fill, minmax(100px, 1fr));
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-user-select: none;
+  user-select: none;
 
   @media (min-width: 640px) {
     grid-template-columns: repeat(3, minmax(100px, 1fr));

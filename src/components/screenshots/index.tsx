@@ -1,4 +1,10 @@
-import React, { Suspense, useCallback, useMemo, useState } from "react"
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { screenshotsListSelector } from "../../recoil/screenshots/selectors"
 import { Screenshot } from "./item"
@@ -42,15 +48,50 @@ export const Screenshots = () => {
     return [...screenshots].sort((a, b) => b.localeCompare(a))
   }, [screenshots])
 
+  const changeSelectedImage = useCallback(
+    (change: number) => {
+      if (selected === null) return
+      const selectedIndex = sortedScreenshots.findIndex((s) => s === selected)
+      let newIndex = selectedIndex + change
+      if (newIndex < 0) newIndex = sortedScreenshots.length - 1
+      if (newIndex >= sortedScreenshots.length) newIndex = 0
+
+      setSelected(sortedScreenshots[newIndex])
+    },
+    [setSelected, selected, sortedScreenshots]
+  )
+
+  useEffect(() => {
+    const listener = ({ key }: KeyboardEvent) => {
+      if (key === "ArrowLeft") {
+        changeSelectedImage(-1)
+      } else if (key === "ArrowRight") {
+        changeSelectedImage(+1)
+      }
+    }
+    document.addEventListener("keydown", listener)
+    return () => document.removeEventListener("keydown", listener)
+  }, [changeSelectedImage])
+
   if (selected) {
     return (
-      <ScreenshotInfo
-        fileName={selected}
-        onBack={() => {
-          setSelected(null)
-          popScroll()
-        }}
-      />
+      <>
+        <div
+          className="screenshots__button screenshots__button--previous"
+          onClick={() => changeSelectedImage(-1)}
+        ></div>
+        <div
+          className="screenshots__button screenshots__button--next"
+          onClick={() => changeSelectedImage(-1)}
+        ></div>
+        <ScreenshotInfo
+          fileName={selected}
+          onBack={() => {
+            setSelected(null)
+            popScroll()
+          }}
+        />
+      </>
     )
   }
 
