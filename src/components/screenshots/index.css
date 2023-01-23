@@ -52,10 +52,12 @@
 
 .screenshots__button--previous {
   left: 0;
+  padding-left: 5px;
 }
 
 .screenshots__button--next {
   right: 0;
+  padding-right: 5px;
 
   &::before {
     transform: rotate(135deg);
