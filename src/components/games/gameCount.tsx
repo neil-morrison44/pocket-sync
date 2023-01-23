@@ -32,5 +32,7 @@ export const GameCount = ({
     return nonNamedFiles.length
   }, [files, data, extensions])
 
-  return <div>{`${count.toLocaleString()} Games`}</div>
+  return (
+    <div>{`${count.toLocaleString()} ${count === 1 ? "Game" : "Games"}`}</div>
+  )
 }

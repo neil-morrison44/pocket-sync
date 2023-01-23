@@ -73,12 +73,14 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
             key={platformId}
           />
           <div className="cores__info-blurb">
-            {coreName}
+            <b>{coreName}</b>
             <GameCount
               platformId={platformId}
               coreName={coreName}
               extensions={romsSlot?.extensions || []}
             />
+
+            {`${(romsSlot?.extensions || []).map((e) => `.${e}`).join(", ")}`}
           </div>
         </div>
       ))}
