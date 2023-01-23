@@ -14,6 +14,54 @@
   line-height: 45px;
 }
 
+.screenshots__button {
+  position: absolute;
+  background-color: var(--light-colour);
+  z-index: 1000;
+  top: 50%;
+  width: 30px;
+  height: 100px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.2;
+  user-select: none;
+
+  &:hover {
+    opacity: 0.75;
+  }
+
+  &:active {
+    opacity: 1;
+  }
+
+  &::before {
+    content: "";
+    display: block;
+    width: 10px;
+    height: 10px;
+    aspect-ratio: 1 / 1;
+    border: 2px solid white;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    transform: rotate(-45deg);
+  }
+}
+
+.screenshots__button--previous {
+  left: 0;
+}
+
+.screenshots__button--next {
+  right: 0;
+
+  &::before {
+    transform: rotate(135deg);
+  }
+}
+
 .screenshots__item {
   overflow: hidden;
   position: relative;

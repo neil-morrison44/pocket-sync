@@ -15,6 +15,10 @@
   flex-basis: max-content;
   flex-shrink: 0;
   z-index: 100;
+
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .layout__sidebar-menu-item {
@@ -39,4 +43,5 @@
 
 .layout__content {
   flex-grow: 1;
+  position: relative;
 }

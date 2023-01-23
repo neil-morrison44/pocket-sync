@@ -16,6 +16,9 @@
   padding: 10px 20px;
   accent-color: white;
   text-align: center;
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-user-select: none;
+  user-select: none;
 
   &:hover {
     background-color: var(--hover-colour);

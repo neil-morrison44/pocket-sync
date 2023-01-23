@@ -1,4 +1,10 @@
-import React, { Suspense, useCallback, useMemo, useState } from "react"
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import { useRecoilValue } from "recoil"
 import { SingleScreenshotSelectorFamily } from "../../recoil/screenshots/selectors"
 import { VideoJSONSelectorFamily } from "../../recoil/screenshots/selectors"
@@ -15,41 +21,41 @@ type ScreenshotInfo = {
   onBack: () => void
 }
 
-const POCKET_WIDTH = 1600
-const POCKET_HEIGHT = 1440
-
 export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfo) => {
   const [imageMode, setImageMode] = useState<"raw" | "upscaled">("upscaled")
   const screenshot = useRecoilValue(SingleScreenshotSelectorFamily(fileName))
   if (screenshot === null) throw new Error(`Null file ${fileName}`)
-
   const videoJson = useRecoilValue(
     VideoJSONSelectorFamily(`${screenshot.author}.${screenshot.core}`)
   )
-
-  const image = useMemo(() => {
-    const image = new Image()
-    image.src = URL.createObjectURL(screenshot.file)
-    image.onload = () => setImageLoaded(true)
-    return image
-  }, [screenshot.file])
-
-  const [imageLoaded, setImageLoaded] = useState(false)
-
   const upscaler = useUpscaler()
+  const [imageSrc, setImageSrc] = useState<string | null>(null)
 
-  const imageSrc = useMemo(() => {
+  useEffect(() => {
+    let cancelled = false
     switch (imageMode) {
       case "raw":
-        return URL.createObjectURL(screenshot.file)
+        setImageSrc(URL.createObjectURL(screenshot.file))
+        break
       case "upscaled":
-        return upscaler(videoJson, image)
+        const image = new Image()
+        image.src = URL.createObjectURL(screenshot.file)
+        image.onload = () => {
+          if (cancelled) return
+          setImageSrc(upscaler(videoJson, image))
+        }
+        break
     }
-  }, [imageMode, imageLoaded])
+
+    return () => {
+      cancelled = true
+    }
+  }, [screenshot.file, imageMode])
 
   const saveFile = useSaveFile()
 
   const openShareSheet = useCallback(async () => {
+    if (!imageSrc) return
     const file = await fetch(imageSrc)
       .then((res) => res.arrayBuffer())
       .then(
@@ -71,7 +77,10 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfo) => {
           {
             type: "button",
             text: "Save",
-            onClick: () => saveFile(screenshot.file_name, imageSrc),
+            onClick: () => {
+              if (!imageSrc) return
+              saveFile(screenshot.file_name, imageSrc)
+            },
           },
           { type: "button", text: "Share", onClick: openShareSheet },
           {
@@ -83,7 +92,10 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfo) => {
           },
         ]}
       />
-      <img className="screenshot-info__raw-image" src={imageSrc}></img>
+      <img
+        className="screenshot-info__raw-image"
+        src={imageSrc || undefined}
+      ></img>
 
       <div className="screenshot-info__info">
         <div>{screenshot.game}</div>
