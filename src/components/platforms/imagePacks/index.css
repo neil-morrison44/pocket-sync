@@ -1,0 +1,62 @@
+.image-packs{
+
+}
+
+.image-packs__content {
+  flex-grow: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.image-packs__packs {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  gap: inherit;
+  overflow-x: auto;
+  height: max-content;
+}
+
+.image-packs__buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-items: stretch;
+  align-items: stretch;
+  gap: 20px;
+}
+
+.image-packs__column {
+  width: 250px;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-rows: 1fr;
+  height: max-content;
+}
+
+.image-packs__column-name {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--light-colour);
+  font-size: 1.25rem;
+  height: 50px;
+  overflow: hidden;
+}
+
+.image-packs__item {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  align-items: stretch;
+}
+
+.image-packs__image {
+  width: 100%;
+}

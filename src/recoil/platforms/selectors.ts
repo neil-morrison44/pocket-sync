@@ -8,6 +8,9 @@ import {
   coresListSelector,
   ImageBinSrcSelectorFamily,
 } from "../selectors"
+import * as zip from "@zip.js/zip.js"
+import { renderBinImage } from "../../utils/renderBinImage"
+import { getClient, ResponseType } from "@tauri-apps/api/http"
 
 export const platformsListSelector = selector<PlatformId[]>({
   key: "platformsListSelector",
@@ -85,4 +88,93 @@ export const allCategoriesSelector = selector<string[]>({
       )
     ).filter((c) => Boolean(c)) as string[]
   },
+})
+
+export const ImagePackBlobSelectorFamily = selectorFamily<
+  Blob | null,
+  { owner: string; repository: string; variant?: string }
+>({
+  key: "ImagePackFileSelectorFamily",
+  get:
+    ({ owner, repository, variant }) =>
+    async () => {
+      const latestRelease = (await (
+        await fetch(
+          `https://api.github.com/repos/${owner}/${repository}/releases/latest`
+        )
+      ).json()) as { assets: [{ name: string; browser_download_url: string }] }
+
+      console.log({ latestRelease })
+
+      const downloadURL = latestRelease.assets.find(({ name }) => {
+        if (!name.endsWith(".zip")) return false
+        if (variant) return name.includes(variant)
+        return true
+      })
+
+      if (!downloadURL) return null
+
+      const httpClient = await getClient()
+
+      const fileResponse = await httpClient.get<number[]>(
+        downloadURL.browser_download_url,
+        {
+          timeout: 60,
+          responseType: ResponseType.Binary,
+        }
+      )
+
+      console.log({ fileResponse })
+
+      const fileBlob = new Blob([new Uint8Array(fileResponse.data)], {
+        type: "application/zip",
+      })
+
+      return fileBlob
+    },
+})
+
+export const ImagePackImageSelectorFamily = selectorFamily<
+  { imageSrc: string; file: Blob } | null,
+  {
+    owner: string
+    repository: string
+    variant?: string
+    platformId: PlatformId
+  }
+>({
+  key: "ImagePackImageSelectorFamily",
+  get:
+    ({ owner, repository, variant, platformId }) =>
+    async ({ get }) => {
+      const zipBlob = get(
+        ImagePackBlobSelectorFamily({ owner, repository, variant })
+      )
+
+      if (!zipBlob) return null
+
+      const entries = await new zip.ZipReader(
+        new zip.BlobReader(zipBlob)
+      ).getEntries({})
+      console.log({ entries })
+
+      const platformImageEntry = entries.find((e) =>
+        e.filename.endsWith(`Platforms/_images/${platformId}.bin`)
+      )
+      console.log({ platformImageEntry })
+
+      if (!platformImageEntry) return null
+
+      const data = await platformImageEntry.getData(new zip.BlobWriter(), {})
+
+      return {
+        imageSrc: renderBinImage(
+          new Uint8Array(await data.arrayBuffer()),
+          PLATFORM_IMAGE.WIDTH,
+          PLATFORM_IMAGE.HEIGHT,
+          true
+        ),
+        file: data,
+      }
+    },
 })

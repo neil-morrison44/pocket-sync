@@ -12,6 +12,8 @@ import { PlatformItem } from "./item"
 
 import "./index.css"
 import { selectedSubviewSelector } from "../../recoil/view/selectors"
+import { Modal } from "../modal"
+import { ImagePacks } from "./imagePacks"
 
 export const Platforms = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -26,6 +28,8 @@ export const Platforms = () => {
     () => [...platformIds].sort((a, b) => a.localeCompare(b)),
     [platformIds]
   )
+
+  const [imagePacksOpen, setImagePacksOpen] = useState(false)
 
   if (selectedPlatform)
     return (
@@ -48,8 +52,18 @@ export const Platforms = () => {
             value: searchQuery,
             onChange: (v) => setSearchQuery(v),
           },
+          {
+            type: "button",
+            text: "Image Packs",
+            onClick: () => setImagePacksOpen(true),
+          },
         ]}
       />
+
+      {imagePacksOpen && (
+        <ImagePacks onClose={() => setImagePacksOpen(false)} />
+      )}
+
       <SearchContextProvider query={searchQuery}>
         <Grid>
           {sortedPlatformIds.map((id) => (
