@@ -3,6 +3,7 @@ import { Link } from "../link"
 import { Tip } from "../tip"
 
 import "./index.css"
+import { ViewDebug } from "./viewDebug"
 
 type ErrorBoundaryProps = {
   children?: ReactNode
@@ -56,6 +57,8 @@ export class ErrorBoundary extends Component<
               </Link>
             </Tip>
           )}
+          <ViewDebug />
+
           <div className="error-boundary__message">
             {this.state.error?.message}
           </div>
