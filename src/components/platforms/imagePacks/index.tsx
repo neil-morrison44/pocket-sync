@@ -5,6 +5,7 @@ import {
 } from "../../../recoil/platforms/selectors"
 import { PlatformId } from "../../../types"
 import { PlatformImage } from "../../cores/platformImage"
+import { Link } from "../../link"
 import { Modal } from "../../modal"
 
 import "./index.css"
@@ -48,7 +49,7 @@ const HARDCODED_PACKS = [
     repository: "Analogue-Pocket-Custom-Platform-Art",
     variant: "USA",
   },
-] as const
+]
 
 export const ImagePacks = ({ onClose }: ImagePacksProps) => {
   const platformIds = useRecoilValue(platformsListSelector)
@@ -56,7 +57,10 @@ export const ImagePacks = ({ onClose }: ImagePacksProps) => {
   return (
     <Modal className="image-packs">
       <div className="image-packs__content">
-        <div className="image-packs__column">
+        <div
+          className="image-packs__column"
+          style={{ position: "sticky", left: 0, zIndex: 10000 }}
+        >
           <div className="image-packs__column-name">{"Current"}</div>
           {platformIds.map((pId) => (
             <div className="image-packs__item">
@@ -66,16 +70,23 @@ export const ImagePacks = ({ onClose }: ImagePacksProps) => {
           ))}
         </div>
 
-        <div className="image-packs__packs">
-          {HARDCODED_PACKS.map((pack) => (
-            <div className="image-packs__column">
-              <div className="image-packs__column-name">{`${pack.owner} - ${pack.repository}`}</div>
-              {platformIds.map((pId) => (
-                <PackColumnItem {...pack} platformId={pId} />
-              ))}
+        {HARDCODED_PACKS.map((pack) => (
+          <div className="image-packs__column">
+            <div className="image-packs__column-name">
+              <Link
+                href={`https://github.com/${pack.owner}/${pack.repository}`}
+              >
+                <b>{pack.owner}</b>
+                <div title={pack.repository}>{pack.repository}</div>
+                {pack.variant && <small>{pack.variant}</small>}
+              </Link>
             </div>
-          ))}
-        </div>
+
+            {platformIds.map((pId) => (
+              <PackColumnItem {...pack} platformId={pId} />
+            ))}
+          </div>
+        ))}
       </div>
 
       <div className="image-packs__buttons">
@@ -103,7 +114,8 @@ const PackColumnItem = ({
     ImagePackImageSelectorFamily({ owner, repository, variant, platformId })
   )
 
-  if (!imagePackImage) return <div className="image-packs__item"></div>
+  if (!imagePackImage)
+    return <div className="image-packs__item image-packs__item--missing"></div>
 
   return (
     <div className="image-packs__item">
