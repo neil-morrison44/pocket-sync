@@ -104,8 +104,6 @@ export const ImagePackBlobSelectorFamily = selectorFamily<
         )
       ).json()) as { assets: [{ name: string; browser_download_url: string }] }
 
-      console.log({ latestRelease })
-
       const downloadURL = latestRelease.assets.find(({ name }) => {
         if (!name.endsWith(".zip")) return false
         if (variant) return name.includes(variant)
@@ -123,8 +121,6 @@ export const ImagePackBlobSelectorFamily = selectorFamily<
           responseType: ResponseType.Binary,
         }
       )
-
-      console.log({ fileResponse })
 
       const fileBlob = new Blob([new Uint8Array(fileResponse.data)], {
         type: "application/zip",
@@ -156,12 +152,10 @@ export const ImagePackImageSelectorFamily = selectorFamily<
       const entries = await new zip.ZipReader(
         new zip.BlobReader(zipBlob)
       ).getEntries({})
-      console.log({ entries })
 
       const platformImageEntry = entries.find((e) =>
         e.filename.endsWith(`Platforms/_images/${platformId}.bin`)
       )
-      console.log({ platformImageEntry })
 
       if (!platformImageEntry) return null
 

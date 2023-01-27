@@ -65,11 +65,31 @@
   flex-direction: column;
   justify-content: stretch;
   align-items: stretch;
+  box-sizing: border-box;
+  cursor: pointer;
+  position: relative;
+}
+
+.image-packs__item--selected {
+  background-color: rgb(57 108 215 / 25%);
+}
+
+.image-packs__item--selected::after {
+  content: "";
+  min-width: 20px;
+  aspect-ratio: 1 / 1;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: var(--selection-colour);
+  border-radius: 15px;
+  font-size: 0.75rem;
 }
 
 .image-packs__item--missing {
   background-color: var(--light-colour);
   opacity: 0.2;
+  cursor: unset;
 }
 
 .image-packs__image {

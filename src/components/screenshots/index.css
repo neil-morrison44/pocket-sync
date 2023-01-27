@@ -74,7 +74,7 @@
 }
 
 .screenshots__item--selected {
-  border-color: #396cd8;
+  border-color: var(--selection-colour);
 }
 
 .screenshots__item-image {

@@ -67,7 +67,7 @@
 }
 
 .save-states__item--selected {
-  border-color: #396cd8;
+  border-color: var(--selection-colour);
 }
 
 .save-states__item-info {
