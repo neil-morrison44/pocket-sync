@@ -10,6 +10,7 @@ import { PLATFORM_IMAGE } from "../../../values"
 import { Controls } from "../../controls"
 import { Loader } from "../../loader"
 import { useUpdatePlatformValue } from "../hooks/useUpdatePlatform"
+import { ImagePacks } from "../imagePacks"
 import { CoresForPlatform } from "./coresForPlatform"
 import { Editable } from "./editable"
 import { ImageEditor } from "./imageEditor"
@@ -30,6 +31,7 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
   )
 
   const cats = useRecoilValue(allCategoriesSelector)
+  const [imagePacksOpen, setImagePacksOpen] = useState(false)
   const updateValue = useUpdatePlatformValue(id)
 
   return (
@@ -41,8 +43,20 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
             text: "Back to list",
             onClick: onBack,
           },
+          {
+            type: "button",
+            text: "Image Packs",
+            onClick: () => setImagePacksOpen(true),
+          },
         ]}
       />
+
+      {imagePacksOpen && (
+        <ImagePacks
+          onClose={() => setImagePacksOpen(false)}
+          singlePlatformId={id}
+        />
+      )}
 
       {imageEditorOpen && (
         <ImageEditor

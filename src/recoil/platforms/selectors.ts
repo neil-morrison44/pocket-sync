@@ -1,5 +1,5 @@
 import { selector, selectorFamily } from "recoil"
-import { PlatformId, PlatformInfoJSON } from "../../types"
+import { ImagePack, PlatformId, PlatformInfoJSON } from "../../types"
 import { invokeListFiles, invokeReadTextFile } from "../../utils/invokes"
 import { PLATFORM_IMAGE } from "../../values"
 import { fileSystemInvalidationAtom } from "../atoms"
@@ -90,9 +90,25 @@ export const allCategoriesSelector = selector<string[]>({
   },
 })
 
+export const imagePackListSelector = selector<ImagePack[]>({
+  key: "imagePackListSelector",
+  get: async () => {
+    try {
+      // TODO: see about getting this moved to the inventory org
+      const response = await fetch(
+        "https://raw.githubusercontent.com/mattpannella/pocket-updater-utility/main/image_packs.json"
+      )
+
+      return await response.json()
+    } catch (e) {
+      return []
+    }
+  },
+})
+
 export const ImagePackBlobSelectorFamily = selectorFamily<
   Blob | null,
-  { owner: string; repository: string; variant?: string }
+  ImagePack
 >({
   key: "ImagePackFileSelectorFamily",
   get:
@@ -132,10 +148,7 @@ export const ImagePackBlobSelectorFamily = selectorFamily<
 
 export const ImagePackImageSelectorFamily = selectorFamily<
   { imageSrc: string; file: Blob } | null,
-  {
-    owner: string
-    repository: string
-    variant?: string
+  ImagePack & {
     platformId: PlatformId
   }
 >({

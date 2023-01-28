@@ -212,3 +212,9 @@ export type ArchiveFileMetadata = {
   crc32: string
   sha1: string
 }
+
+export type ImagePack = {
+  owner: string
+  repository: string
+  variant?: string
+}

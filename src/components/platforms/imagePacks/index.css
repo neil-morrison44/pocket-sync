@@ -34,6 +34,12 @@
   scroll-snap-align: start;
 }
 
+.image-packs__column--current {
+  position: sticky;
+  left: 0;
+  z-index: 10000;
+}
+
 .image-packs__column-name {
   position: sticky;
   top: 0;

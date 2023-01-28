@@ -2,7 +2,6 @@ import { Suspense, useMemo, useState } from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import { platformsListSelector } from "../../recoil/platforms/selectors"
-import { PlatformId } from "../../types"
 import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
@@ -12,7 +11,6 @@ import { PlatformItem } from "./item"
 
 import "./index.css"
 import { selectedSubviewSelector } from "../../recoil/view/selectors"
-import { Modal } from "../modal"
 import { ImagePacks } from "./imagePacks"
 
 export const Platforms = () => {
