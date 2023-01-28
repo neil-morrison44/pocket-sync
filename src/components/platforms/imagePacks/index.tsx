@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { Suspense, useMemo, useState } from "react"
 import { useRecoilCallback, useRecoilValue } from "recoil"
 import { useInvalidateFileSystem } from "../../../hooks/invalidation"
 import { pocketPathAtom } from "../../../recoil/atoms"
@@ -99,8 +99,9 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
             </div>
 
             {platformIds.map((pId) => (
+              <Suspense key={`${pId}-${pack.owner}-${pack.repository}-${pack.variant}`}>
               <PackColumnItem
-                key={`${pId}-${pack.owner}-${pack.repository}-${pack.variant}`}
+                
                 {...pack}
                 platformId={pId}
                 onClick={() => setSelections((s) => ({ ...s, [pId]: pack }))}
@@ -108,6 +109,7 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
                   JSON.stringify(selections[pId]) === JSON.stringify(pack)
                 }
               />
+              </Suspense>
             ))}
           </div>
         ))}
