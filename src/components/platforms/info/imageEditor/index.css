@@ -59,7 +59,7 @@
 
 .image-editor__stamp--selected {
   background-color: var(--light-colour);
-  border: 1px solid #396cd8;
+  border: 1px solid var(--selection-colour);
 }
 
 .image-editor__stamp-image {

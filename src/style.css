@@ -11,6 +11,7 @@
   --light-colour: #555;
   --green-colour: rgb(88 144 80);
   --red-colour: rgb(200 80 88);
+  --selection-colour: #396cd8;
 
   background-color: var(--background-colour);
   font-synthesis: none;
@@ -100,7 +101,7 @@ button {
 }
 
 button:hover {
-  border-color: #396cd8;
+  border-color: var(--selection-colour);
 }
 
 input,

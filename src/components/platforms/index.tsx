@@ -2,7 +2,6 @@ import { Suspense, useMemo, useState } from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import { platformsListSelector } from "../../recoil/platforms/selectors"
-import { PlatformId } from "../../types"
 import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
@@ -12,6 +11,7 @@ import { PlatformItem } from "./item"
 
 import "./index.css"
 import { selectedSubviewSelector } from "../../recoil/view/selectors"
+import { ImagePacks } from "./imagePacks"
 
 export const Platforms = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -26,6 +26,8 @@ export const Platforms = () => {
     () => [...platformIds].sort((a, b) => a.localeCompare(b)),
     [platformIds]
   )
+
+  const [imagePacksOpen, setImagePacksOpen] = useState(false)
 
   if (selectedPlatform)
     return (
@@ -48,8 +50,18 @@ export const Platforms = () => {
             value: searchQuery,
             onChange: (v) => setSearchQuery(v),
           },
+          {
+            type: "button",
+            text: "Image Packs",
+            onClick: () => setImagePacksOpen(true),
+          },
         ]}
       />
+
+      {imagePacksOpen && (
+        <ImagePacks onClose={() => setImagePacksOpen(false)} />
+      )}
+
       <SearchContextProvider query={searchQuery}>
         <Grid>
           {sortedPlatformIds.map((id) => (
