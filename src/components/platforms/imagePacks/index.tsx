@@ -11,6 +11,7 @@ import { ImagePack, PlatformId } from "../../../types"
 import { invokeSaveFile } from "../../../utils/invokes"
 import { PlatformImage } from "../../cores/platformImage"
 import { Link } from "../../link"
+import { Loader } from "../../loader"
 import { Modal } from "../../modal"
 
 import "./index.css"
@@ -99,16 +100,22 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
             </div>
 
             {platformIds.map((pId) => (
-              <Suspense key={`${pId}-${pack.owner}-${pack.repository}-${pack.variant}`}>
-              <PackColumnItem
-                
-                {...pack}
-                platformId={pId}
-                onClick={() => setSelections((s) => ({ ...s, [pId]: pack }))}
-                isSelected={
-                  JSON.stringify(selections[pId]) === JSON.stringify(pack)
+              <Suspense
+                key={`${pId}-${pack.owner}-${pack.repository}-${pack.variant}`}
+                fallback={
+                  <div className="image-packs__item image-packs__item--missing">
+                    <Loader />
+                  </div>
                 }
-              />
+              >
+                <PackColumnItem
+                  {...pack}
+                  platformId={pId}
+                  onClick={() => setSelections((s) => ({ ...s, [pId]: pack }))}
+                  isSelected={
+                    JSON.stringify(selections[pId]) === JSON.stringify(pack)
+                  }
+                />
               </Suspense>
             ))}
           </div>
