@@ -61,6 +61,10 @@ https://user-images.githubusercontent.com/2095051/204883337-f0e34a44-5ea4-47a4-9
 
 ## FAQs
 
+### Anything about files from the archive
+
+I have no involvement in managing the files on the archive, try the FPGA Gaming discord.
+
 ### Why doesn't this work on _older MacOS version_?
 
 The tool I use to make this [tauri](https://www.tauri.app) only supports back to 10.13, so anything before then probably won't even open -- also Apple don't keep the default browser in old OSes up to date (Windows does for a while via service packs & in Linux you can do what you want) so I can only really support / can test on the last 2 major versions, sorry.
@@ -69,6 +73,12 @@ The tool I use to make this [tauri](https://www.tauri.app) only supports back to
 
 Pocket Sync only shows what's available in the inventory which is _currently_ limited to cores released via the github releases system. Other updaters have workarounds for other cores but I've chosen not to since it won't be too long before the inventory supports other release mechanisms.
 Until then you can install cores by dragging & dropping the .zip onto any running Pocket Sync window and it'll install as if you've downloaded it.
+
+### OpenFPGA Validator
+
+I've put together this https://github.com/neil-morrison44/openfpga-validator which can be run by core devs by doing `npx openfpga-validator@latest check <path_to_zip>`.
+
+It _should_ catch places where any files in the core differ from what's specified on https://www.analogue.co/developer/docs/overview as well as make some warnings / recommendations for things which aren't specified in the Analogue docs but will trip up updaters.
 
 ### Donations?
 
