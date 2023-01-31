@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "Pocket Sync",
-    "version": "2.3.0"
+    "version": "2.4.0"
   },
   "tauri": {
     "allowlist": {
@@ -22,6 +22,9 @@
         "all": true
       },
       "os": {
+        "all": true
+      },
+      "path": {
         "all": true
       },
       "shell": {
@@ -65,7 +68,12 @@
       "csp": null
     },
     "updater": {
-      "active": false
+      "active": true,
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVEQzEwQTA4MUMwQTk0OEEKUldTS2xBb2NDQXJCN1VXbjJHZVZhTkpvcDJTTHcxRXFRd3F4S2dMcS9yc1NJZ2xxbFMvZFJWUS8K",
+      "endpoints": [
+        "https://github.com/neil-morrison44/pocket-sync/releases/latest/download/latest.json"
+      ]
     },
     "windows": [
       {

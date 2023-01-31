@@ -6,6 +6,8 @@ on:
 
 jobs:
   build-tauri:
+    env:
+      TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
     strategy:
       fail-fast: false
       matrix:

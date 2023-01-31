@@ -1,0 +1,37 @@
+.instance-json {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.instance-json__list {
+  border-radius: 5px;
+  padding: 20px;
+  background-color: var(--info-colour);
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.instance-json__item {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.instance-json__bin-count {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.instance-json__bin-count--warning {
+  color: var(--red-colour);
+}
+
+.instance-json_button-loader {
+  height: 30px;
+  background-color: transparent;
+
+  &::before {
+    width: 40px;
+  }
+}
