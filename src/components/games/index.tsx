@@ -16,7 +16,7 @@ export const Games = () => {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [filterCategory, setFilterCategory] = useState<string>("All")
   const [cleanFilesOpen, setCleanFilesOpen] = useState(false)
-  const [binAndCueOpen, setBinAndCueOpen] = useState(false)
+  const [instanceJsonOpen, setInstanceJsonOpen] = useState(false)
 
   const refresh = useRecoilCallback(({ set }) => () => {
     set(fileSystemInvalidationAtom, Date.now())
@@ -44,8 +44,8 @@ export const Games = () => {
         <CleanFilesModal onClose={() => setCleanFilesOpen(false)} />
       )}
 
-      {binAndCueOpen && (
-        <InstanceJson onClose={() => setBinAndCueOpen(false)} />
+      {instanceJsonOpen && (
+        <InstanceJson onClose={() => setInstanceJsonOpen(false)} />
       )}
 
       <Controls
@@ -64,7 +64,7 @@ export const Games = () => {
           {
             type: "button",
             text: "Instance JSON",
-            onClick: () => setBinAndCueOpen(true),
+            onClick: () => setInstanceJsonOpen(true),
           },
           {
             type: "button",
