@@ -7,6 +7,7 @@ import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
 import { SearchContextProvider } from "../search/context"
+import { BinCueJsonModal } from "./binCueJson"
 import { CleanFilesModal } from "./cleanFiles"
 import { CoreFolderItem } from "./item"
 
@@ -15,6 +16,7 @@ export const Games = () => {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [filterCategory, setFilterCategory] = useState<string>("All")
   const [cleanFilesOpen, setCleanFilesOpen] = useState(false)
+  const [binAndCueOpen, setBinAndCueOpen] = useState(false)
 
   const refresh = useRecoilCallback(({ set }) => () => {
     set(fileSystemInvalidationAtom, Date.now())
@@ -42,6 +44,10 @@ export const Games = () => {
         <CleanFilesModal onClose={() => setCleanFilesOpen(false)} />
       )}
 
+      {binAndCueOpen && (
+        <BinCueJsonModal onClose={() => setBinAndCueOpen(false)} />
+      )}
+
       <Controls
         controls={[
           {
@@ -54,6 +60,11 @@ export const Games = () => {
             type: "button",
             text: "Clean Files",
             onClick: () => setCleanFilesOpen(true),
+          },
+          {
+            type: "button",
+            text: "BIN&CUE Files",
+            onClick: () => setBinAndCueOpen(true),
           },
           {
             type: "button",

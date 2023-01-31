@@ -1,0 +1,37 @@
+.bin-and-cue-files {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.bin-and-cue-files__list {
+  border-radius: 5px;
+  padding: 20px;
+  background-color: var(--info-colour);
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.bin-and-cue-files__item {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.bin-and-cue-files__bin-count {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.bin-and-cue-files__bin-count--warning {
+  color: var(--red-colour);
+}
+
+.bin-and-cue-files_button-loader {
+  height: 30px;
+  background-color: transparent;
+
+  &::before {
+    width: 40px;
+  }
+}
