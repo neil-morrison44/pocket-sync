@@ -19,7 +19,7 @@ type BinCueJsonModalProp = {
 
 const MAX_BIN_FILES = 31
 
-export const BinCueJsonModal = ({ onClose }: BinCueJsonModalProp) => {
+export const InstanceJson = ({ onClose }: BinCueJsonModalProp) => {
   const cueFiles = useRecoilValue(cueFilesSelector)
   const [buildInProgress, setBuildInProgress] = useState(false)
   const invalidateFileSystem = useInvalidateFileSystem()
@@ -33,10 +33,6 @@ export const BinCueJsonModal = ({ onClose }: BinCueJsonModalProp) => {
 
         for await (const cueFile of cueFiles) {
           const filename = await path.basename(cueFile)
-          const folderPath = await path.join(
-            "Assets",
-            await path.dirname(cueFile)
-          )
           const binFiles = await snapshot.getPromise(
             BinFilesForCueFileSelectorFamily(cueFile)
           )
@@ -54,14 +50,6 @@ export const BinCueJsonModal = ({ onClose }: BinCueJsonModalProp) => {
             ...rawPathParts.slice(rawPathParts.indexOf("common") + 1)
           )
 
-          console.log({
-            filename,
-            folderPath,
-            binFiles,
-            binFileDataSlots,
-            data_path,
-          })
-
           const interactJSON = {
             instance: {
               magic: "APF_VER_1",
@@ -75,16 +63,11 @@ export const BinCueJsonModal = ({ onClose }: BinCueJsonModalProp) => {
             },
           }
 
-          // TODO: replace with finding the cores for the platforms
-          // & putting in the right place dependant on the Paramters bitmap on the json entry in data.json
           const jsonPath = await path.join(
             pocketPath || "",
             "Assets",
             cueFile.replace("cue", "json")
           )
-
-          console.log({ jsonPath, interactJSON })
-          console.log(jsonPath)
 
           const encoder = new TextEncoder()
           await invokeSaveFile(
@@ -94,14 +77,15 @@ export const BinCueJsonModal = ({ onClose }: BinCueJsonModalProp) => {
         }
 
         setBuildInProgress(false)
+        invalidateFileSystem()
       },
-    [setBuildInProgress]
+    [setBuildInProgress, invalidateFileSystem]
   )
 
   return (
-    <Modal className="bin-and-cue-files">
-      <h2>Build JSON files for .cue & .bin files</h2>
-      <div className="bin-and-cue-files__list">
+    <Modal className="instance-json">
+      <h2>Build Instance JSON files</h2>
+      <div className="instance-json__list">
         {cueFiles.map((f) => (
           <CueFileInfo key={f} path={f}></CueFileInfo>
         ))}
@@ -109,7 +93,7 @@ export const BinCueJsonModal = ({ onClose }: BinCueJsonModalProp) => {
 
       {buildInProgress && (
         <button>
-          <Loader className="bin-and-cue-files_button-loader" />
+          <Loader className="instance-json_button-loader" />
         </button>
       )}
       {!buildInProgress && (
@@ -127,11 +111,11 @@ const CueFileInfo = ({ path }: { path: string }) => {
   const warning = binFiles.length > MAX_BIN_FILES
 
   return (
-    <div className="bin-and-cue-files__item">
+    <div className="instance-json__item">
       <div>{path}</div>
       <div
-        className={`bin-and-cue-files__bin-count ${
-          warning ? "bin-and-cue-files__bin-count--warning" : ""
+        className={`instance-json__bin-count ${
+          warning ? "instance-json__bin-count--warning" : ""
         }`}
       >{`(${binFiles.length} bin files)`}</div>
     </div>

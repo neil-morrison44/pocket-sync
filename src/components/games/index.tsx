@@ -7,7 +7,7 @@ import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
 import { SearchContextProvider } from "../search/context"
-import { BinCueJsonModal } from "./binCueJson"
+import { InstanceJson } from "./instanceJson"
 import { CleanFilesModal } from "./cleanFiles"
 import { CoreFolderItem } from "./item"
 
@@ -45,7 +45,7 @@ export const Games = () => {
       )}
 
       {binAndCueOpen && (
-        <BinCueJsonModal onClose={() => setBinAndCueOpen(false)} />
+        <InstanceJson onClose={() => setBinAndCueOpen(false)} />
       )}
 
       <Controls
@@ -63,7 +63,7 @@ export const Games = () => {
           },
           {
             type: "button",
-            text: "BIN&CUE Files",
+            text: "Instance JSON",
             onClick: () => setBinAndCueOpen(true),
           },
           {

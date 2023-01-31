@@ -1,10 +1,10 @@
-.bin-and-cue-files {
+.instance-json {
   display: flex;
   gap: 10px;
   justify-content: space-between;
 }
 
-.bin-and-cue-files__list {
+.instance-json__list {
   border-radius: 5px;
   padding: 20px;
   background-color: var(--info-colour);
@@ -12,22 +12,22 @@
   overflow: auto;
 }
 
-.bin-and-cue-files__item {
+.instance-json__item {
   display: flex;
   justify-content: space-between;
   gap: 10px;
 }
 
-.bin-and-cue-files__bin-count {
+.instance-json__bin-count {
   font-weight: bold;
   white-space: nowrap;
 }
 
-.bin-and-cue-files__bin-count--warning {
+.instance-json__bin-count--warning {
   color: var(--red-colour);
 }
 
-.bin-and-cue-files_button-loader {
+.instance-json_button-loader {
   height: 30px;
   background-color: transparent;
 
