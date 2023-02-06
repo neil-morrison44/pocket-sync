@@ -371,6 +371,48 @@ async fn file_sha1_hash(
     }
 }
 
+#[tauri::command]
+async fn list_instance_packageable_cores(
+    state: tauri::State<'_, PocketSyncState>,
+) -> Result<Vec<String>, ()> {
+    let pocket_path = state.0.read().await;
+    Ok(instance_packager::find_cores_with_package_json(&pocket_path).unwrap())
+}
+
+#[tauri::command]
+async fn run_packager_for_core(
+    state: tauri::State<'_, PocketSyncState>,
+    core_name: &str,
+    window: Window,
+) -> Result<(), ()> {
+    let pocket_path = state.0.read().await;
+
+    let emit_event = |file_name, success, message| {
+        window
+            .emit(
+                "instance-packager-event-payload",
+                InstancePackageEventPayload {
+                    file_name: String::from(file_name),
+                    success: success,
+                    message: message,
+                },
+            )
+            .unwrap()
+    };
+
+    Ok(instance_packager::build_jsons_for_core(
+        &pocket_path,
+        core_name,
+        |file_name| {
+            emit_event(String::from(file_name), true, None);
+        },
+        |file_name, message| {
+            emit_event(String::from(file_name), false, Some(String::from(message)));
+        },
+    )
+    .unwrap())
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -393,7 +435,9 @@ fn main() {
             create_folder_if_missing,
             delete_files,
             find_cleanable_files,
-            file_sha1_hash
+            file_sha1_hash,
+            list_instance_packageable_cores,
+            run_packager_for_core
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())
@@ -422,4 +466,11 @@ struct FileProgressPayload {
 struct BackupSavesResponse {
     files: Vec<SaveZipFile>,
     exists: bool,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+struct InstancePackageEventPayload {
+    file_name: String,
+    success: bool,
+    message: Option<String>,
 }

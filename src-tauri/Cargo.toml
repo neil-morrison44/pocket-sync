@@ -29,6 +29,7 @@ time = "0.3.17"
 ring = "0.16.20"
 data-encoding = "2.3.2"
 tauri-plugin-window-state = "0.1.0"
+openfpga-instance-packager = { git = "https://github.com/neil-morrison44/openfpga-instance-packager", tag = "v0.2.1" }
 
 [features]
 # by default Tauri runs in production mode

@@ -5,14 +5,22 @@ import { AuthorTag } from "../authorTag"
 
 import "./index.css"
 
-export const CoreTag = ({ coreName }: { coreName: string }) => {
+export const CoreTag = ({
+  coreName,
+  onClick,
+}: {
+  coreName: string
+  onClick?: () => void
+}) => {
   const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
   const viewCore = useSetRecoilState(currentViewAtom)
 
   return (
     <div
       className="core-tag"
-      onClick={() => viewCore({ view: "Cores", selected: coreName })}
+      onClick={() =>
+        onClick ? onClick() : viewCore({ view: "Cores", selected: coreName })
+      }
     >
       <AuthorTag coreName={coreName} />
       <b>{`${coreInfo.core.metadata.shortname}`}</b>
