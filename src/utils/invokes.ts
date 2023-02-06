@@ -95,3 +95,11 @@ export const invokeDeleteFiles = async (paths: string[]) => {
 export const invokeFindCleanableFiles = async (path: string) => {
   return invoke<string[]>("find_cleanable_files", { path })
 }
+
+export const invokeListInstancePackageableCores = async () => {
+  return invoke<string[]>("list_instance_packageable_cores")
+}
+
+export const invokeRunPackagerForCore = async (coreName: string) => {
+  return invoke<null>("run_packager_for_core", { coreName })
+}

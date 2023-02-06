@@ -11,4 +11,5 @@ export const AUTHOUR_IMAGE = {
 export const IGNORE_INSTANCE_JSON_LIST = [
   "Mazamars312.NeoGeo",
   "Mazamars312.NeoGeo_Overdrive",
+  "Mazamars312.PC Engine CD",
 ]
