@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "Pocket Sync",
-    "version": "2.5.0"
+    "version": "2.6.0"
   },
   "tauri": {
     "allowlist": {
@@ -53,7 +53,8 @@
         "exceptionDomain": "",
         "frameworks": [],
         "providerShortName": null,
-        "signingIdentity": null
+        "signingIdentity": null,
+        "minimumSystemVersion": "11"
       },
       "resources": [],
       "shortDescription": "",

@@ -42,6 +42,7 @@ type DataSlotJSON = {
   parameters: number | string
   extensions?: string[]
   filename?: string
+  alternate_filenames?: string[]
 }
 
 export type RequiredFileInfo = {

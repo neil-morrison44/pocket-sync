@@ -1857,8 +1857,8 @@ dependencies = [
 
 [[package]]
 name = "openfpga-instance-packager"
-version = "0.2.1"
-source = "git+https://github.com/neil-morrison44/openfpga-instance-packager?tag=v0.2.1#7c69ee69c2d5cc447afbedb645c1cf114bad939d"
+version = "0.3.0"
+source = "git+https://github.com/neil-morrison44/openfpga-instance-packager?tag=v0.3.0#f2141745a55060d1f60414bca9fc3af4ef830f91"
 dependencies = [
  "clap",
  "glob",

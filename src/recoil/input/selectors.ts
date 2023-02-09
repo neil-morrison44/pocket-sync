@@ -1,6 +1,7 @@
 import { selectorFamily } from "recoil"
 import { InputJSON } from "../../types"
-import { invokeReadTextFile, invokeWalkDirListFiles } from "../../utils/invokes"
+import { invokeWalkDirListFiles } from "../../utils/invokes"
+import { readJSONFile } from "../../utils/readJSONFile"
 import { fileSystemInvalidationAtom } from "../atoms"
 
 export const CoreInputSelectorFamily = selectorFamily<InputJSON, string>({
@@ -9,8 +10,7 @@ export const CoreInputSelectorFamily = selectorFamily<InputJSON, string>({
     (coreName: string) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-      const response = await invokeReadTextFile(`Cores/${coreName}/input.json`)
-      return JSON.parse(response) as InputJSON
+      return readJSONFile<InputJSON>(`Cores/${coreName}/input.json`)
     },
 })
 
@@ -38,9 +38,6 @@ export const PresetInputSelectorFamily = selectorFamily<
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
       if (filePath === "core") return get(CoreInputSelectorFamily(coreName))
-      const response = await invokeReadTextFile(
-        `Presets/${coreName}/Input/${filePath}`
-      )
-      return JSON.parse(response) as InputJSON
+      return readJSONFile<InputJSON>(`Presets/${coreName}/Input/${filePath}`)
     },
 })

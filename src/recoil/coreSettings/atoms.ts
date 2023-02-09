@@ -1,10 +1,7 @@
 import { atomFamily } from "recoil"
 import { InteractPersistJSON } from "../../types/interact"
-import {
-  invokeFileExists,
-  invokeReadTextFile,
-  invokeSaveFile,
-} from "../../utils/invokes"
+import { invokeFileExists, invokeSaveFile } from "../../utils/invokes"
+import { readJSONFile } from "../../utils/readJSONFile"
 import { pocketPathAtom } from "../atoms"
 
 export const PersistInteractFileAtomFamily = atomFamily<
@@ -19,8 +16,7 @@ export const PersistInteractFileAtomFamily = atomFamily<
         : `/Settings/${coreName}/Interact/${filePath}`
     const exists = await invokeFileExists(fileName)
     if (!exists) return EMPTY_PERSIST
-    const response = await invokeReadTextFile(fileName)
-    return JSON.parse(response) as InteractPersistJSON
+    return readJSONFile<InteractPersistJSON>(fileName)
   },
   effects: ({ coreName, filePath }) => [
     ({ onSet, getPromise }) => {

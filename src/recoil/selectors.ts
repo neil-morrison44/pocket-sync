@@ -20,12 +20,12 @@ import {
   invokeFindCleanableFiles,
   invokeListFiles,
   invokeReadBinaryFile,
-  invokeReadTextFile,
   invokeSaveFile,
   invokeSHA1Hash,
   invokeWalkDirListFiles,
 } from "../utils/invokes"
 import { AUTHOUR_IMAGE, IGNORE_INSTANCE_JSON_LIST } from "../values"
+import { readJSONFile } from "../utils/readJSONFile"
 
 export const DataJSONSelectorFamily = selectorFamily<DataJSON, string>({
   key: "DataJSONSelectorFamily",
@@ -33,8 +33,7 @@ export const DataJSONSelectorFamily = selectorFamily<DataJSON, string>({
     (coreName) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-      const jsonText = await invokeReadTextFile(`Cores/${coreName}/data.json`)
-      return JSON.parse(jsonText) as DataJSON
+      return readJSONFile<DataJSON>(`Cores/${coreName}/data.json`)
     },
 })
 
@@ -61,21 +60,29 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
         }
       )
 
-      const fileInfo = await Promise.all(
-        requiredCoreFiles.map(async ({ filename, parameters }) => {
-          const path = `Assets/${platform_id}/${
-            decodeDataParams(parameters).coreSpecific ? coreName : "common"
-          }`
-
-          return {
-            filename: filename as string,
-            path,
-            exists: await invokeFileExists(`${path}/${filename}`),
-            sha1: await invokeSHA1Hash(`${path}/${filename}`),
-            type: "core",
-          } satisfies RequiredFileInfo
-        })
-      )
+      const fileInfo = (
+        await Promise.all(
+          requiredCoreFiles.map(
+            async ({ filename, alternate_filenames, parameters }) => {
+              const path = `Assets/${platform_id}/${
+                decodeDataParams(parameters).coreSpecific ? coreName : "common"
+              }`
+              return Promise.all(
+                [filename, ...(alternate_filenames || [])].map(
+                  async (filename) =>
+                    ({
+                      filename: filename as string,
+                      path,
+                      exists: await invokeFileExists(`${path}/${filename}`),
+                      sha1: await invokeSHA1Hash(`${path}/${filename}`),
+                      type: "core",
+                    } satisfies RequiredFileInfo)
+                )
+              )
+            }
+          )
+        )
+      ).flat()
 
       if (IGNORE_INSTANCE_JSON_LIST.includes(coreName)) {
         return [...fileInfo]
@@ -104,8 +111,10 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
 
             return await Promise.all(
               files.map(async (f) => {
-                const response = await invokeReadTextFile(`${path}/${f}`)
-                const instanceFile = JSON.parse(response) as InstanceDataJSON
+                const instanceFile = await readJSONFile<InstanceDataJSON>(
+                  `${path}/${f}`
+                )
+
                 const dataPath = instanceFile.instance.data_path
 
                 return await Promise.all(
@@ -150,8 +159,7 @@ export const CoreInfoSelectorFamily = selectorFamily<CoreInfoJSON, string>({
     (coreName: string) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-      const response = await invokeReadTextFile(`Cores/${coreName}/core.json`)
-      return JSON.parse(response) as CoreInfoJSON
+      return readJSONFile<CoreInfoJSON>(`Cores/${coreName}/core.json`)
     },
 })
 
@@ -230,8 +238,7 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
       )
     }
 
-    const response = await invokeReadTextFile("pocket-sync.json")
-    return JSON.parse(response) as PocketSyncConfig
+    return readJSONFile<PocketSyncConfig>("pocket-sync.json")
   },
 })
 

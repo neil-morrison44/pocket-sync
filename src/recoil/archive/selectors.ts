@@ -43,11 +43,11 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
               status = "wrong"
             }
           } else {
-            if (metadata) {
-              status = "downloadable"
-            } else {
-              status = "not-in-archive"
-            }
+            status = "downloadable"
+          }
+
+          if (!metadata) {
+            status = "not-in-archive"
           }
 
           return { ...r, status }
