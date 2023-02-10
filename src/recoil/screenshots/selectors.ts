@@ -5,9 +5,9 @@ import {
   invokeFileExists,
   invokeListFiles,
   invokeReadBinaryFile,
-  invokeReadTextFile,
 } from "../../utils/invokes"
 import { getBinaryMetadata } from "../../utils/getBinaryMetadata"
+import { readJSONFile } from "../../utils/readJSONFile"
 
 export const VideoJSONSelectorFamily = selectorFamily<VideoJSON, string>({
   key: "VideoJSONSelectorFamily",
@@ -23,8 +23,8 @@ export const VideoJSONSelectorFamily = selectorFamily<VideoJSON, string>({
             magic: "APF_VER_1",
           },
         }
-      const jsonText = await invokeReadTextFile(`Cores/${coreName}/video.json`)
-      return JSON.parse(jsonText) as VideoJSON
+
+      return readJSONFile<VideoJSON>(`Cores/${coreName}/video.json`)
     },
 })
 

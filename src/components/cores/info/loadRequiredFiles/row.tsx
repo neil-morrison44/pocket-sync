@@ -17,7 +17,6 @@ export const RequiredFileRow = ({
   info,
   hasArchiveLink,
 }: RequiredFileRowProps) => {
-  console.log({ hasArchiveLink })
   return (
     <div
       key={info.path + info.filename}

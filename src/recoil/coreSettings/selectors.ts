@@ -1,6 +1,7 @@
 import { selectorFamily } from "recoil"
 import { InteractJSON, InteractPersistJSON } from "../../types/interact"
-import { invokeReadTextFile, invokeWalkDirListFiles } from "../../utils/invokes"
+import { invokeWalkDirListFiles } from "../../utils/invokes"
+import { readJSONFile } from "../../utils/readJSONFile"
 import { fileSystemInvalidationAtom } from "../atoms"
 
 export const CoreInteractFileSelectorFamily = selectorFamily<
@@ -12,11 +13,7 @@ export const CoreInteractFileSelectorFamily = selectorFamily<
     (coreName) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-      const response = await invokeReadTextFile(
-        `Cores/${coreName}/interact.json`
-      )
-
-      return JSON.parse(response) as InteractJSON
+      return readJSONFile<InteractJSON>(`Cores/${coreName}/interact.json`)
     },
 })
 
@@ -58,10 +55,8 @@ export const PresetInteractFileSelectorFamily = selectorFamily<
       if (filePath === "core")
         return get(CoreInteractFileSelectorFamily(coreName))
 
-      const response = await invokeReadTextFile(
+      return readJSONFile<InteractJSON>(
         `Presets/${coreName}/Interact/${filePath}`
       )
-
-      return JSON.parse(response) as InteractJSON
     },
 })

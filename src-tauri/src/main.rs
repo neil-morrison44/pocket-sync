@@ -403,6 +403,7 @@ async fn run_packager_for_core(
     Ok(instance_packager::build_jsons_for_core(
         &pocket_path,
         core_name,
+        true,
         |file_name| {
             emit_event(String::from(file_name), true, None);
         },

@@ -1,6 +1,6 @@
 import { selector, selectorFamily } from "recoil"
 import { ImagePack, PlatformId, PlatformInfoJSON } from "../../types"
-import { invokeListFiles, invokeReadTextFile } from "../../utils/invokes"
+import { invokeListFiles } from "../../utils/invokes"
 import { PLATFORM_IMAGE } from "../../values"
 import { fileSystemInvalidationAtom } from "../atoms"
 import {
@@ -11,6 +11,8 @@ import {
 import * as zip from "@zip.js/zip.js"
 import { renderBinImage } from "../../utils/renderBinImage"
 import { getClient, ResponseType } from "@tauri-apps/api/http"
+import { readJSONFile } from "../../utils/readJSONFile"
+import { http } from "@tauri-apps/api"
 
 export const platformsListSelector = selector<PlatformId[]>({
   key: "platformsListSelector",
@@ -54,8 +56,7 @@ export const PlatformInfoSelectorFamily = selectorFamily<
     (platformId: PlatformId) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-      const response = await invokeReadTextFile(`Platforms/${platformId}.json`)
-      return JSON.parse(response) as PlatformInfoJSON
+      return readJSONFile<PlatformInfoJSON>(`Platforms/${platformId}.json`)
     },
 })
 
@@ -94,12 +95,17 @@ export const imagePackListSelector = selector<ImagePack[]>({
   key: "imagePackListSelector",
   get: async () => {
     try {
+      const httpClient = await getClient()
       // TODO: see about getting this moved to the inventory org
-      const response = await fetch(
-        "https://raw.githubusercontent.com/mattpannella/pocket-updater-utility/main/image_packs.json"
+      const response = await httpClient.get<ImagePack[]>(
+        "https://raw.githubusercontent.com/mattpannella/pocket-updater-utility/main/image_packs.json",
+        {
+          timeout: 30,
+          responseType: ResponseType.JSON,
+        }
       )
 
-      return await response.json()
+      return response.data
     } catch (e) {
       return []
     }

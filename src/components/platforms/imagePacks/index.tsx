@@ -30,13 +30,11 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
   }, [allPlatformIds, singlePlatformId])
 
   const imagePacks = useRecoilValue(imagePackListSelector)
-
   const [selections, setSelections] = useState<
     Record<PlatformId, ImagePack | undefined>
   >({})
 
   const changeCount = Object.values(selections).filter(Boolean).length
-
   const invalidateFS = useInvalidateFileSystem()
 
   const applyChanges = useRecoilCallback(
