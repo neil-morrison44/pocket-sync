@@ -7,13 +7,17 @@
   },
   "package": {
     "productName": "Pocket Sync",
-    "version": "2.6.0"
+    "version": "2.6.1"
   },
   "tauri": {
     "allowlist": {
       "http": {
         "request": true,
-        "scope": ["https://github.com/*", "https://api.github.com/*"]
+        "scope": [
+          "https://github.com/*",
+          "https://api.github.com/*",
+          "https://raw.githubusercontent.com/*"
+        ]
       },
       "fs": {
         "readFile": true
