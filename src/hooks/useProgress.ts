@@ -10,12 +10,31 @@ export const useProgress = (onEnd?: () => void) => {
 
   const [inProgress, setInProgress] = useState(false)
   const [percent, setPercent] = useState(0)
+  const [startTime, setStartTime] = useState(0)
+
+  const remainingTime = useMemo(() => {
+    const currentTime = Date.now()
+    const elapsedTimeMs = currentTime - startTime
+
+    const estimatedTotalTimeMs = elapsedTimeMs / (percent / 100)
+    const remainingTimeMs = estimatedTotalTimeMs - elapsedTimeMs
+    const remainingTimeSec = Math.round(remainingTimeMs / 1000)
+
+    const hours = Math.floor(remainingTimeSec / 3600)
+    const minutes = Math.floor((remainingTimeSec % 3600) / 60)
+    const seconds = remainingTimeSec % 60
+
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+  }, [startTime, percent])
 
   useEffect(() => {
     const unlisten = listen<ProgressPayload>("progress-start-event", () => {
       setMessageLog([])
       setInProgress(true)
       setPercent(0)
+      setStartTime(Date.now())
     })
     return () => {
       unlisten.then((l) => l())
@@ -45,7 +64,7 @@ export const useProgress = (onEnd?: () => void) => {
     }
   }, [onEnd])
 
-  return { messageLog, lastMessage, inProgress, percent }
+  return { messageLog, lastMessage, inProgress, percent, remainingTime }
 }
 
 type ProgressPayload = {

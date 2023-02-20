@@ -10,9 +10,11 @@ export const useInstallRequiredFiles = () => {
   const { archive_url } = useRecoilValue(PocketSyncConfigSelector)
   const invalidateFS = useInvalidateFileSystem()
 
-  const { percent, inProgress, lastMessage } = useProgress(() => {
-    invalidateFS()
-  })
+  const { percent, inProgress, lastMessage, remainingTime } = useProgress(
+    () => {
+      invalidateFS()
+    }
+  )
 
   const installRequiredFiles = useCallback(
     async (files: RequiredFileInfo[]) => {
@@ -27,5 +29,11 @@ export const useInstallRequiredFiles = () => {
     [archive_url]
   )
 
-  return { installRequiredFiles, percent, inProgress, lastMessage }
+  return {
+    installRequiredFiles,
+    percent,
+    inProgress,
+    lastMessage,
+    remainingTime,
+  }
 }

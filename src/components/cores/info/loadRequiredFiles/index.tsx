@@ -23,8 +23,13 @@ export const LoadRequiredFiles = ({
     RequiredFilesWithStatusSelectorFamily(coreName)
   )
   const pocketSyncConfig = useRecoilValue(PocketSyncConfigSelector)
-  const { installRequiredFiles, percent, inProgress, lastMessage } =
-    useInstallRequiredFiles()
+  const {
+    installRequiredFiles,
+    percent,
+    inProgress,
+    lastMessage,
+    remainingTime,
+  } = useInstallRequiredFiles()
 
   const hasArchiveLink = useMemo(
     () =>
@@ -37,7 +42,13 @@ export const LoadRequiredFiles = ({
     <Modal className="load-required-files">
       <h2>{"Required Files"}</h2>
 
-      {inProgress && <Progress percent={percent} message={lastMessage} />}
+      {inProgress && (
+        <Progress
+          percent={percent}
+          message={lastMessage}
+          remainingTime={remainingTime}
+        />
+      )}
 
       {!inProgress && (
         <>

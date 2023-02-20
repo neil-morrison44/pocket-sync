@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue, useRecoilValueLoadable } from "recoil"
 import {
   CoreInfoSelectorFamily,
   RequiredFileInfoSelectorFamily,
@@ -31,7 +31,9 @@ type CoreInfoProps = {
 }
 
 export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
-  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
+  const requiredFilesLoadable = useRecoilValueLoadable(
+    RequiredFileInfoSelectorFamily(coreName)
+  )
   const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
   const uninstall = useUninstallCore()
   const { installCore } = useInstallCore()
@@ -56,7 +58,8 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             text: "Uninstall",
             onClick: () => uninstall(coreName),
           },
-          requiredFiles.length > 0
+          requiredFilesLoadable.state === "hasValue" &&
+          requiredFilesLoadable.getValue().length > 0
             ? {
                 type: "button",
                 text: "Required Files",
@@ -135,10 +138,19 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             </div>
           )}
 
-          <RequiredFiles
-            coreName={coreName}
-            onClick={() => setRequiredFilesOpen(true)}
-          />
+          <Suspense
+            fallback={
+              <div className="core-info__info-row">
+                <strong>{"Required Files:"}</strong>
+                Please wait, checking files...
+              </div>
+            }
+          >
+            <RequiredFiles
+              coreName={coreName}
+              onClick={() => setRequiredFilesOpen(true)}
+            />
+          </Suspense>
 
           {coreInfo.core.metadata.date_release && (
             <div className="core-info__info-row">
