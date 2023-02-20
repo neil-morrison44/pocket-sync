@@ -1,19 +1,8 @@
-import { path } from "@tauri-apps/api"
 import { listen } from "@tauri-apps/api/event"
 import { useEffect, useState } from "react"
-import { useRecoilCallback, useRecoilValue } from "recoil"
-import { useInvalidateFileSystem } from "../../../hooks/invalidation"
-import { pocketPathAtom } from "../../../recoil/atoms"
-import {
-  BinFilesForCueFileSelectorFamily,
-  cueFilesSelector,
-  instancePackagerCoresListSelector,
-} from "../../../recoil/games/selectors"
-import {
-  invokeRunPackagerForCore,
-  invokeSaveFile,
-} from "../../../utils/invokes"
-import { Loader } from "../../loader"
+import { useRecoilValue } from "recoil"
+import { instancePackagerCoresListSelector } from "../../../recoil/games/selectors"
+import { invokeRunPackagerForCore } from "../../../utils/invokes"
 import { Modal } from "../../modal"
 import { CoreTag } from "../../shared/coreTag"
 

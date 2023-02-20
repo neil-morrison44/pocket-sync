@@ -30,7 +30,7 @@ export const ZipInstallInner = ({
     return (
       <Modal>
         <h2>{title}</h2>
-        <Progress value={progress.value} max={progress.max} />
+        <Progress percent={(progress.value / progress.max) * 100} />
       </Modal>
     )
   }

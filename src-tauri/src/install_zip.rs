@@ -234,6 +234,7 @@ async fn start_zip_install_flow(
                 &main_window_c,
             );
         }
+
         emit_finished(None, &main_window_c);
     });
 

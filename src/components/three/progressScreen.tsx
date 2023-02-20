@@ -4,6 +4,7 @@ import { NearestFilter, Texture } from "three"
 type ProgressScreenProps = {
   value: number
   max: number
+  message?: string | null
 }
 
 const SCALE = 4
@@ -16,6 +17,7 @@ const LIGHTEST_GREEN = "#9bbc0f"
 export const ProgressScreen = ({
   value = 33,
   max = 100,
+  message,
 }: ProgressScreenProps) => {
   const [texture, setTexture] = useState<THREE.Texture | null>(null)
 
@@ -40,6 +42,16 @@ export const ProgressScreen = ({
     context.textBaseline = "middle"
     context.fillText(text, canvas.width / 2, canvas.height / 2)
 
+    if (message) {
+      let fontSize = 40
+      do {
+        context.font = `${fontSize * SCALE}px Analogue`
+        fontSize--
+      } while (context.measureText(message).width > canvas.width * 0.8)
+      context.fillStyle = LIGHT_GREEN
+      context.fillText(message, canvas.width / 2, canvas.height * 0.9)
+    }
+
     canvas.toBlob((b) => {
       if (!b) return
       const image = new Image()
@@ -54,7 +66,7 @@ export const ProgressScreen = ({
         setTexture(newTexture)
       }
     })
-  }, [value, max])
+  }, [value, max, message])
 
   return (
     <meshBasicMaterial
