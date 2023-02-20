@@ -11,10 +11,6 @@ export const useListenForZipInstall = () => {
 
   const invalidateFS = useInvalidateFileSystem()
 
-  // const {inProgress} = useProgress(() => {
-  //   invalidateFS()
-  // })
-
   useEffect(() => {
     const unlisten = listen<InstallZipEventPayload>(
       "install-zip-event",
