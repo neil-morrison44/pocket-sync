@@ -25,6 +25,7 @@ mod checks;
 mod clean_fs;
 mod hashes;
 mod install_zip;
+mod progress;
 mod saves_zip;
 struct PocketSyncState(RwLock<PathBuf>);
 
@@ -187,26 +188,15 @@ async fn install_archive_files(
     state: tauri::State<'_, PocketSyncState>,
     window: Window,
 ) -> Result<bool, ()> {
-    // println!("installing archive files");
     let pocket_path = state.0.read().await;
     let file_count = files.len();
 
     let mut failed_already = HashSet::new();
+    let mut progress = progress::ProgressEmitter::start(file_count, &window);
 
-    window
-        .emit(
-            "file-progress",
-            FileProgressPayload {
-                value: 0,
-                max: file_count,
-            },
-        )
-        .unwrap();
-
-    for (index, file) in files.into_iter().enumerate() {
+    for file in files {
         let full_url = format!("{}/{}", archive_url, file.filename);
-
-        // println!("Downloading from {full_url}");
+        progress.emit_progress(&file.filename);
 
         if !failed_already.contains(&file.filename) {
             let response = reqwest::get(&full_url).await;
@@ -227,7 +217,7 @@ async fn install_archive_files(
                             fs::create_dir_all(&folder).unwrap();
                         }
 
-                        let new_file_path = folder.join(file.filename);
+                        let new_file_path = folder.join(&file.filename);
                         let mut dest = fs::File::create(&new_file_path).unwrap();
                         let content = r.bytes().await.unwrap();
                         let mut content_cusror = std::io::Cursor::new(content);
@@ -236,17 +226,9 @@ async fn install_archive_files(
                 }
             }
         }
-
-        window
-            .emit(
-                "file-progress",
-                FileProgressPayload {
-                    value: index + 1,
-                    max: file_count,
-                },
-            )
-            .unwrap();
     }
+
+    progress.end();
 
     Ok(true)
 }

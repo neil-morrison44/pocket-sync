@@ -1,36 +1,20 @@
 import { invoke } from "@tauri-apps/api"
-import { listen } from "@tauri-apps/api/event"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 import { useRecoilValue } from "recoil"
 import { PocketSyncConfigSelector } from "../recoil/selectors"
 import { RequiredFileInfo } from "../types"
 import { useInvalidateFileSystem } from "./invalidation"
+import { useProgress } from "./useProgress"
 
 export const useInstallRequiredFiles = () => {
   const { archive_url } = useRecoilValue(PocketSyncConfigSelector)
   const invalidateFS = useInvalidateFileSystem()
 
-  const [progress, setProgress] = useState<{
-    value: number
-    max: number
-  } | null>(null)
-
-  useEffect(() => {
-    const unlisten = listen<{ max: number; value: number }>(
-      "file-progress",
-      ({ payload }) => {
-        setProgress(payload)
-        if (payload.max === payload.value) {
-          invalidateFS()
-          setProgress(null)
-        }
-      }
-    )
-
-    return () => {
-      unlisten.then((l) => l())
+  const { percent, inProgress, lastMessage, remainingTime } = useProgress(
+    () => {
+      invalidateFS()
     }
-  }, [])
+  )
 
   const installRequiredFiles = useCallback(
     async (files: RequiredFileInfo[]) => {
@@ -45,5 +29,11 @@ export const useInstallRequiredFiles = () => {
     [archive_url]
   )
 
-  return { installRequiredFiles, progress }
+  return {
+    installRequiredFiles,
+    percent,
+    inProgress,
+    lastMessage,
+    remainingTime,
+  }
 }
