@@ -168,9 +168,10 @@ export const ImagePackImageSelectorFamily = selectorFamily<
 
       if (!zipBlob) return null
 
-      const entries = await new zip.ZipReader(
-        new zip.BlobReader(zipBlob)
-      ).getEntries({})
+      const abortController = new AbortController()
+      const entries = await new zip.ZipReader(new zip.BlobReader(zipBlob), {
+        signal: abortController.signal,
+      }).getEntries({})
 
       const platformImageEntry = entries.find((e) =>
         e.filename.endsWith(`Platforms/_images/${platformId}.bin`)
