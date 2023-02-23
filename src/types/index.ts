@@ -131,23 +131,18 @@ export type InventoryJSON = {
 
 export type InventoryItem = {
   identifier: string
-  platform: PlatformId
+  platform_id: PlatformId
   repository: {
     platform: "github" | string
     owner: string
     name: string
   }
-  release?: InventoryItemRelease
-  prerelease?: InventoryItemRelease
+  release_date: string
+  download_url: string
+  version: Semver | string
   sponsor?: {
     [k: string]: [string] | string
   }
-}
-
-type InventoryItemRelease = {
-  tag_name: Semver | string
-  release_date: string
-  version: Semver | string
   platform: {
     category: string
     name: string

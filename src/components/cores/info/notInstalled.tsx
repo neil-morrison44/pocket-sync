@@ -4,8 +4,10 @@ import { useInstallCore } from "../../../hooks/useInstallCore"
 import { useInventoryItem } from "../../../hooks/useInventoryItem"
 import { DownloadURLSelectorFamily } from "../../../recoil/inventory/selectors"
 import { Controls } from "../../controls"
+import { ErrorBoundary } from "../../errorBoundary"
 import { Link } from "../../link"
 import { Releases } from "./releases"
+import { SponsorLinks } from "./sponsorLinks"
 
 type NotInstalledCoreInfoProps = {
   onBack: () => void
@@ -49,19 +51,39 @@ export const NotInstalledCoreInfo = ({
 
       {inventoryItem && (
         <>
-          <h3 className="core-info__title">{inventoryItem.platform}</h3>
+          <h3 className="core-info__title">{inventoryItem.platform_id}</h3>
           <div className="core-info__info">
-            <div className="core-info__info-row">
-              {inventoryItem.identifier}
-            </div>
-
-            {url && (
+            <div className="core-info__info-grid">
               <div className="core-info__info-row">
-                <strong>{"URL:"}</strong>
-                <Link href={url}>{url}</Link>
+                {inventoryItem.identifier}
               </div>
-            )}
 
+              {url && (
+                <div className="core-info__info-row">
+                  <strong>{"URL:"}</strong>
+                  <Link href={url}>{url}</Link>
+                </div>
+              )}
+
+              {inventoryItem?.sponsor && (
+                <div className="core-info__info-row core-info__info-row--right">
+                  <strong>{"Sponsor:"}</strong>
+                  <ErrorBoundary>
+                    <SponsorLinks links={inventoryItem.sponsor} />
+                  </ErrorBoundary>
+                </div>
+              )}
+
+              <div className="core-info__info-row">
+                <strong>{"Version:"}</strong>
+                {inventoryItem.version}
+              </div>
+
+              <div className="core-info__info-row">
+                <strong>{"Release Date:"}</strong>
+                {inventoryItem.release_date}
+              </div>
+            </div>
             {inventoryItem.repository.platform === "github" && (
               <Releases inventoryItem={inventoryItem} />
             )}
