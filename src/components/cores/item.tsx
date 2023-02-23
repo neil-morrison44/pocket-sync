@@ -82,19 +82,18 @@ export const NotInstalledCoreItem = ({
   inventoryItem,
   onClick,
 }: NotInstalledCoreItemProps) => {
-  const { platform, identifier } = inventoryItem
+  const { platform_id, identifier, platform } = inventoryItem
 
   return (
     <SearchContextSelfHidingConsumer
-      fields={[platform, identifier, inventoryItem.repository?.owner || ""]}
+      fields={[platform_id, identifier, inventoryItem.repository?.owner || ""]}
       otherFn={({ category }) => {
         if (category === "All") return true
-        const aRelease = inventoryItem?.release || inventoryItem?.prerelease
-        return category === aRelease?.platform.category
+        return category === platform.category
       }}
     >
       <div className="cores__item cores__item--not-installed" onClick={onClick}>
-        <div>{platform}</div>
+        <div>{platform_id}</div>
         <div className="cores__not-installed-item-id">{identifier}</div>
       </div>
     </SearchContextSelfHidingConsumer>
