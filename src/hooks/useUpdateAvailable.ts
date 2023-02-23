@@ -12,16 +12,16 @@ export const useUpdateAvailable = (coreName: string) => {
       ({ identifier }) => identifier === coreName
     )
 
-    if (!inventoryCore?.release) return null
+    if (!inventoryCore?.version) return null
 
-    const { version } = inventoryCore.release
+    const { version } = inventoryCore
     const metadataVersion = coreInfo.core.metadata.version
 
     if (version !== metadataVersion) {
       if (version.includes(metadataVersion)) {
         return null
       }
-      return inventoryCore.release.version
+      return version
     }
 
     return null
