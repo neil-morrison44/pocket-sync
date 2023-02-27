@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useRecoilValue } from "recoil"
 import { PocketSyncConfigSelector } from "../../recoil/selectors"
+import { Link } from "../link"
 import { useUpdateConfig } from "./hooks/useUpdateConfig"
 
 import "./index.css"
@@ -49,6 +50,24 @@ export const Settings = () => {
             </button>
           </div>
         </div>
+      </div>
+
+      <div className="settings__info">
+        <h3>Thanks to:</h3>
+
+        <ul>
+          <li>
+            <Link href={"https://github.com/openfpga-cores-inventory"}>
+              {"https://github.com/openfpga-cores-inventory"}
+            </Link>
+          </li>
+
+          <li>
+            <Link href={"https://github.com/AbFarid/analogue-os-font"}>
+              {"https://github.com/AbFarid/analogue-os-font"}
+            </Link>
+          </li>
+        </ul>
       </div>
     </div>
   )

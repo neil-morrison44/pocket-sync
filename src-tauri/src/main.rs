@@ -25,6 +25,7 @@ mod checks;
 mod clean_fs;
 mod hashes;
 mod install_zip;
+mod news_feed;
 mod progress;
 mod saves_zip;
 struct PocketSyncState(RwLock<PathBuf>);
@@ -396,6 +397,12 @@ async fn run_packager_for_core(
     .unwrap())
 }
 
+#[tauri::command(async)]
+async fn get_news_feed() -> Result<Vec<news_feed::FeedItem>, String> {
+    let feed = news_feed::get_feed_json().await;
+    Ok(feed)
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -420,7 +427,8 @@ fn main() {
             find_cleanable_files,
             file_sha1_hash,
             list_instance_packageable_cores,
-            run_packager_for_core
+            run_packager_for_core,
+            get_news_feed
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())

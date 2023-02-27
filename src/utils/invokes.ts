@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api"
-import { SaveZipFile } from "../types"
+import { RawFeedItem, SaveZipFile } from "../types"
 
 export const invokeOpenPocket = async () => invoke<string | null>("open_pocket")
 
@@ -102,4 +102,8 @@ export const invokeListInstancePackageableCores = async () => {
 
 export const invokeRunPackagerForCore = async (coreName: string) => {
   return invoke<null>("run_packager_for_core", { coreName })
+}
+
+export const invokeGetNewsFeed = async () => {
+  return invoke<RawFeedItem[]>("get_news_feed")
 }

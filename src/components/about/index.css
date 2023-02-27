@@ -29,12 +29,6 @@
   width: 100%;
 }
 
-.about__info {
-  background-color: var(--info-colour);
+.about__news {
   width: 100%;
-  max-height: fit-content;
-  justify-self: flex-end;
-  text-align: left;
-  padding: 0 20px;
-  box-sizing: border-box;
 }

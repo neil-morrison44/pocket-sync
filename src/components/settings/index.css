@@ -24,3 +24,16 @@
   display: flex;
   gap: 10px;
 }
+
+.settings__info {
+  background-color: var(--info-colour);
+  width: calc(100% + 20px);
+  max-height: fit-content;
+  justify-self: flex-end;
+  text-align: left;
+  padding: 0 20px;
+  box-sizing: border-box;
+  margin-left: -10px;
+  position: fixed;
+  bottom: 0;
+}
