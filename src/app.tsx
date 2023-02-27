@@ -6,6 +6,7 @@ import { Layout } from "./components/layout"
 import React, { Suspense, useCallback, useState } from "react"
 import { invokeOpenPocket } from "./utils/invokes"
 import { Tip } from "./components/tip"
+import { NewsFeed } from "./components/newsFeed"
 
 const Pocket = React.lazy(() =>
   import("./components/three/pocket").then((m) => ({ default: m.Pocket }))
@@ -50,6 +51,7 @@ export const App = () => {
           Connect to Pocket
         </button>
       </div>
+      <NewsFeed />
     </div>
   )
 }

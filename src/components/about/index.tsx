@@ -7,6 +7,7 @@ import {
 } from "../../recoil/selectors"
 import { ErrorBoundary } from "../errorBoundary"
 import { Link } from "../link"
+import { NewsFeed } from "../newsFeed"
 import { Pocket } from "../three/pocket"
 import { ProgressScreen } from "../three/progressScreen"
 import { RandomScreenshotScreen } from "../three/randomScreenshotScreen"
@@ -55,22 +56,8 @@ export const About = () => {
         </ErrorBoundary>
       </div>
 
-      <div className="about__info">
-        <h3>Thanks to:</h3>
-
-        <ul>
-          <li>
-            <Link href={"https://github.com/openfpga-cores-inventory"}>
-              {"https://github.com/openfpga-cores-inventory"}
-            </Link>
-          </li>
-
-          <li>
-            <Link href={"https://github.com/AbFarid/analogue-os-font"}>
-              {"https://github.com/AbFarid/analogue-os-font"}
-            </Link>
-          </li>
-        </ul>
+      <div className="about__news">
+        <NewsFeed deepLinks />
       </div>
     </div>
   )

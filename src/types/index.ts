@@ -214,3 +214,20 @@ export type ImagePack = {
   repository: string
   variant?: string
 }
+
+export type RawFeedItem = {
+  title: string
+  link: string
+  published: number
+  content: string
+  categories: ["feed", AuthorName, string, "new" | "update"]
+}
+
+export type FeedItem = {
+  type: "new" | "update"
+  coreName: string
+  published: Date
+  content: string
+  title: string
+  link: string
+}
