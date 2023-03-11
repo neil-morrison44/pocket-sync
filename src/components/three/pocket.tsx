@@ -1,10 +1,19 @@
 import { Canvas, useFrame } from "@react-three/fiber"
-import { RoundedBox } from "@react-three/drei"
+import { Environment, RoundedBox, useHelper } from "@react-three/drei"
 import { ReactNode, useRef } from "react"
 import { useRecoilValue } from "recoil"
 
 import "./index.css"
+
+import envMap from "./kloofendal_48d_partly_cloudy_puresky_1k.hdr"
+
 import { PocketSyncConfigSelector } from "../../recoil/selectors"
+import {
+  DirectionalLight,
+  DirectionalLightHelper,
+  PointLight,
+  PointLightHelper,
+} from "three"
 
 type PocketProps = {
   move?: "none" | "spin" | "back-and-forth"
@@ -26,18 +35,26 @@ export const Pocket = ({
       className="three-pocket"
       camera={{ fov: 50, position: [0, 0, 42] }}
     >
-      <ambientLight intensity={1.25} />
-      <pointLight position={[20, 10, 20]} intensity={3} />
-      <directionalLight position={[0, 100, 0]} intensity={5} castShadow />
-      <directionalLight position={[80, 0, 80]} intensity={1.1} castShadow />
-
-      <directionalLight position={[-100, -100, 50]} intensity={1.1} />
+      <Environment files={envMap} />
+      <Lights />
       <Body move={move} screenMaterial={screenMaterial} />
       {/* <OrbitControls maxDistance={4} minDistance={3} enablePan={false} /> */}
       {/* <Stats /> */}
 
       {children && children}
     </Canvas>
+  )
+}
+
+const Lights = () => {
+  const { colour } = useRecoilValue(PocketSyncConfigSelector)
+  return (
+    <>
+      <ambientLight intensity={colour === "black" ? 2 : 1} />
+      <directionalLight position={[0, 200, 0]} intensity={10} />
+      <pointLight position={[20, 10, 20]} intensity={3} castShadow />
+      <pointLight position={[10, 20, 10]} intensity={2} castShadow />
+    </>
   )
 }
 
@@ -129,13 +146,13 @@ const Screen = ({ screenMaterial }: PocketProps) => {
       <mesh position={[0, 7.5, 1.13]}>
         <planeGeometry attach="geometry" args={[160 / 10, 140 / 10]} />
         <meshPhysicalMaterial
-          thickness={0}
+          thickness={0.1}
           roughness={0}
-          transmission={1}
+          transmission={0.99999}
           color="white"
           ior={1.46}
-          clearcoat={1}
-          clearcoatRoughness={0.1}
+          clearcoat={0.1}
+          clearcoatRoughness={1}
         />
       </mesh>
     </>
@@ -224,7 +241,7 @@ const Material = ({ isButton = false }: { isButton?: boolean }) => {
       attach="material"
       ior={isButton ? 1.4 : 1.46}
       color={colour == "black" ? BLACK_COLOUR : WHITE_COLOUR}
-      clearcoat={isButton ? 0.2 : undefined}
+      clearcoat={isButton ? 0.3 : 0}
       clearcoatRoughness={isButton ? 0.8 : undefined}
     />
   )

@@ -67,6 +67,16 @@ export const Settings = () => {
               {"https://github.com/AbFarid/analogue-os-font"}
             </Link>
           </li>
+
+          <li>
+            <Link
+              href={
+                "https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky"
+              }
+            >
+              {"3D Pocket reflection map from Poly Haven"}
+            </Link>
+          </li>
         </ul>
       </div>
     </div>
