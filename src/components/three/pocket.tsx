@@ -1,19 +1,11 @@
 import { Canvas, useFrame } from "@react-three/fiber"
-import { Environment, RoundedBox, useHelper } from "@react-three/drei"
+import { Environment, RoundedBox } from "@react-three/drei"
 import { ReactNode, useRef } from "react"
 import { useRecoilValue } from "recoil"
+import envMap from "./kloofendal_48d_partly_cloudy_puresky_1k.hdr"
+import { PocketSyncConfigSelector } from "../../recoil/selectors"
 
 import "./index.css"
-
-import envMap from "./kloofendal_48d_partly_cloudy_puresky_1k.hdr"
-
-import { PocketSyncConfigSelector } from "../../recoil/selectors"
-import {
-  DirectionalLight,
-  DirectionalLightHelper,
-  PointLight,
-  PointLightHelper,
-} from "three"
 
 type PocketProps = {
   move?: "none" | "spin" | "back-and-forth"
