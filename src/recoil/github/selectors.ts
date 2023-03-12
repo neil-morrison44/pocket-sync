@@ -4,13 +4,14 @@ import { coreInventoryAtom } from "../inventory/atoms"
 
 export const GithubReleasesSelectorFamily = selectorFamily<
   GithubRelease[],
-  { owner: string; repo: string }
+  { owner: string; repo: string; latest?: string }
 >({
   key: "GithubReleasesSelectorFamily",
   get:
-    ({ owner, repo }) =>
+    ({ owner, repo, latest }) =>
     async ({ get }) => {
-      get(coreInventoryAtom)
+      if (!latest) get(coreInventoryAtom)
+
       const response = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/releases`
       )

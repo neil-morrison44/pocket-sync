@@ -1,6 +1,5 @@
 import { selector, selectorFamily } from "recoil"
 import { Category } from "../../types"
-import { GithubReleasesSelectorFamily } from "../github/selectors"
 import { allCategoriesSelector } from "../platforms/selectors"
 import { coreInventoryAtom } from "./atoms"
 
