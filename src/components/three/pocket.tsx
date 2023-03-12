@@ -6,6 +6,7 @@ import envMap from "./kloofendal_48d_partly_cloudy_puresky_1k.hdr"
 import { PocketSyncConfigSelector } from "../../recoil/selectors"
 
 import "./index.css"
+import { DoubleSide, Group, MathUtils, Mesh } from "three"
 
 type PocketProps = {
   move?: "none" | "spin" | "back-and-forth"
@@ -99,6 +100,7 @@ const Body = ({
       <Buttons />
       <DPAD />
       <BottomButtons />
+      <ShoulderButtons />
 
       <Screen screenMaterial={screenMaterial} />
 
@@ -140,11 +142,13 @@ const Screen = ({ screenMaterial }: PocketProps) => {
         <meshPhysicalMaterial
           thickness={0.1}
           roughness={0}
-          transmission={0.99999}
+          transmission={1}
           color="white"
           ior={1.46}
           clearcoat={0.1}
           clearcoatRoughness={1}
+          opacity={0.4}
+          transparent
         />
       </mesh>
     </>
@@ -161,6 +165,34 @@ const Buttons = () => {
     [BUTTON_GAP, 0, -BUTTON_GAP],
   ] as const
 
+  const refs = [
+    useRef<Mesh>(null),
+    useRef<Mesh>(null),
+    useRef<Mesh>(null),
+    useRef<Mesh>(null),
+  ]
+  const hoverButtonRef = useRef<keyof typeof refs | null>(null)
+
+  useFrame(() => {
+    refs.forEach((buttonRef, index) => {
+      if (buttonRef.current) {
+        if (hoverButtonRef.current === index) {
+          buttonRef.current.position.y = MathUtils.lerp(
+            buttonRef.current.position.y,
+            -0.5,
+            0.25
+          )
+        } else {
+          buttonRef.current.position.y = MathUtils.lerp(
+            buttonRef.current.position.y,
+            0,
+            0.25
+          )
+        }
+      }
+    })
+  })
+
   return (
     <group
       position={[4, -3, 1.25]}
@@ -169,7 +201,15 @@ const Buttons = () => {
       receiveShadow
     >
       {positions.map((p, index) => (
-        <mesh position={p} key={index} castShadow receiveShadow>
+        <mesh
+          ref={refs[index]}
+          position={p}
+          key={index}
+          castShadow
+          receiveShadow
+          onPointerEnter={() => (hoverButtonRef.current = index)}
+          onPointerLeave={() => (hoverButtonRef.current = null)}
+        >
           <cylinderGeometry attach="geometry" args={[0.9, 0.9, 1, 16]} />
           <Material isButton />
         </mesh>
@@ -185,6 +225,29 @@ const BottomButtons = () => {
     [-BUTTON_GAP, 0, -BUTTON_GAP],
   ] as const
 
+  const refs = [useRef<Mesh>(null), useRef<Mesh>(null), useRef<Mesh>(null)]
+  const hoverButtonRef = useRef<keyof typeof refs | null>(null)
+
+  useFrame(() => {
+    refs.forEach((buttonRef, index) => {
+      if (buttonRef.current) {
+        if (hoverButtonRef.current === index) {
+          buttonRef.current.position.y = MathUtils.lerp(
+            buttonRef.current.position.y,
+            -0.25,
+            0.25
+          )
+        } else {
+          buttonRef.current.position.y = MathUtils.lerp(
+            buttonRef.current.position.y,
+            0,
+            0.25
+          )
+        }
+      }
+    })
+  })
+
   return (
     <group
       position={[0, -10, 1.25]}
@@ -193,7 +256,15 @@ const BottomButtons = () => {
       receiveShadow
     >
       {positions.map((p, index) => (
-        <mesh position={p} key={index} castShadow receiveShadow>
+        <mesh
+          position={p}
+          key={index}
+          ref={refs[index]}
+          onPointerEnter={() => (hoverButtonRef.current = index)}
+          onPointerLeave={() => (hoverButtonRef.current = null)}
+          castShadow
+          receiveShadow
+        >
           <cylinderGeometry attach="geometry" args={[0.5, 0.5, 0.5, 16]} />
           <Material isButton />
         </mesh>
@@ -208,21 +279,139 @@ const DPAD = () => {
     [BUTTON_GAP * 3.5, 1, BUTTON_GAP],
   ] as const
 
+  const hoverRef = useRef<boolean>(false)
+  const angleRef = useRef<number>(0)
+  const groupRef = useRef<Group>(null)
+
+  useFrame(() => {
+    if (groupRef.current && hoverRef.current) {
+      groupRef.current.rotation.z = MathUtils.lerp(
+        groupRef.current.rotation.z,
+        Math.cos(angleRef.current - Math.PI) / 5,
+        0.25
+      )
+      groupRef.current.rotation.x = MathUtils.lerp(
+        groupRef.current.rotation.x,
+        Math.sin(angleRef.current) / 5,
+        0.25
+      )
+    }
+  })
+
   return (
     <group
+      onPointerEnter={() => (hoverRef.current = true)}
+      onPointerLeave={() => {
+        hoverRef.current = false
+        groupRef.current?.rotation.set(0, 0, 0)
+      }}
       position={[-4, -3, 1.25]}
       rotation={[Math.PI / 2, 0, 0]}
       castShadow
       receiveShadow
     >
-      {args.map((a, index) => (
-        <mesh key={index} castShadow receiveShadow>
-          {/* @ts-ignore */}
-          <boxGeometry args={a} />
-          <Material isButton />
-        </mesh>
-      ))}
+      <mesh
+        position={[0, 0, 0]}
+        rotation={[Math.PI / 2, 0, 0]}
+        scale={[6, 6, 6]}
+        onPointerMove={(e) => {
+          if (!e.uv) return
+          const { x, y } = e.uv
+          angleRef.current = Math.atan2(y - 0.5, x - 0.5)
+        }}
+      >
+        <planeBufferGeometry />
+        <meshBasicMaterial opacity={0} transparent side={DoubleSide} />
+      </mesh>
+      <group ref={groupRef}>
+        {args.map((a, index) => (
+          <mesh key={index} castShadow receiveShadow>
+            {/* @ts-ignore */}
+            <boxGeometry args={a} />
+            <Material isButton />
+          </mesh>
+        ))}
+      </group>
     </group>
+  )
+}
+
+const ShoulderButtons = () => {
+  const leftButtonRef = useRef<Mesh>(null)
+  const leftButtonHoverRef = useRef(false)
+
+  const rightButtonRef = useRef<Mesh>(null)
+  const rightButtonHoverRef = useRef(false)
+
+  useFrame(() => {
+    if (leftButtonRef.current) {
+      if (leftButtonHoverRef.current) {
+        leftButtonRef.current.position.y = MathUtils.lerp(
+          leftButtonRef.current.position.y,
+          3.25,
+          0.25
+        )
+      } else {
+        leftButtonRef.current.position.y = MathUtils.lerp(
+          leftButtonRef.current.position.y,
+          3.5,
+          0.25
+        )
+      }
+    }
+
+    if (rightButtonRef.current) {
+      if (rightButtonHoverRef.current) {
+        rightButtonRef.current.position.y = MathUtils.lerp(
+          rightButtonRef.current.position.y,
+          3.25,
+          0.25
+        )
+      } else {
+        rightButtonRef.current.position.y = MathUtils.lerp(
+          rightButtonRef.current.position.y,
+          3.5,
+          0.25
+        )
+      }
+    }
+  })
+
+  return (
+    <>
+      <mesh
+        position={[-7.4, 3.5, -2]}
+        ref={leftButtonRef}
+        onPointerEnter={() => (leftButtonHoverRef.current = true)}
+        onPointerLeave={() => (leftButtonHoverRef.current = false)}
+      >
+        <RoundedBox
+          castShadow
+          receiveShadow
+          args={[3, 1.5, 2.5]}
+          radius={0.5}
+          position={[0, 0, 0]}
+        >
+          <Material isButton />
+        </RoundedBox>
+      </mesh>
+      <mesh
+        position={[7.4, 3.5, -2]}
+        ref={rightButtonRef}
+        onPointerEnter={() => (rightButtonHoverRef.current = true)}
+        onPointerLeave={() => (rightButtonHoverRef.current = false)}
+      >
+        <RoundedBox
+          castShadow
+          receiveShadow
+          args={[3, 1.5, 2.5]}
+          radius={0.5}
+          position={[0, 0, 0]}
+        >
+          <Material isButton />
+        </RoundedBox>
+      </mesh>
+    </>
   )
 }
 
