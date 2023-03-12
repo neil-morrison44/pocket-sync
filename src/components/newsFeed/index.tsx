@@ -38,7 +38,7 @@ export const NewsFeed = ({ deepLinks = false }: NewsFeedProps) => {
         {items.map((i) => {
           return (
             <div
-              key={i.title}
+              key={`${i.title}-${i.published.toTimeString()}`}
               className={`news-feed__item news-feed__item--${
                 i.type
               } news-feed__item--${deepLinks ? "link" : "not-link"}`}

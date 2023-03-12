@@ -1,7 +1,6 @@
 import { useEffect } from "react"
 import { useSetRecoilState } from "recoil"
 import { coreInventoryAtom } from "../../recoil/inventory/atoms"
-import { newsFeedUpdateAtom } from "../../recoil/newsFeed/atoms"
 
 const INTERVAL_MINS = 10
 
