@@ -1,5 +1,6 @@
 import { Suspense, useMemo } from "react"
 import { useRecoilValue } from "recoil"
+import { useRecoilSmoothUpdatesFirstSuspend } from "../../hooks/recoilSmoothUpdates"
 import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
 import { AppVersionSelector } from "../../recoil/selectors"
 import { ErrorBoundary } from "../errorBoundary"
@@ -11,7 +12,7 @@ import { RandomScreenshotScreen } from "../three/randomScreenshotScreen"
 import "./index.css"
 
 export const About = () => {
-  const selfReleases = useRecoilValue(
+  const selfReleases = useRecoilSmoothUpdatesFirstSuspend(
     GithubReleasesSelectorFamily({
       owner: "neil-morrison44",
       repo: "pocket-sync",
