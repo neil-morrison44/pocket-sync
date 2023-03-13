@@ -15,11 +15,11 @@ use saves_zip::{
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::fs::{self};
-use std::io::Read;
 use std::io::Write;
 use std::path::PathBuf;
 use tauri::api::dialog;
 use tauri::{App, Window};
+use tokio::io::AsyncReadExt;
 use walkdir::{DirEntry, WalkDir};
 mod checks;
 mod clean_fs;
@@ -55,11 +55,14 @@ async fn read_binary_file(
     let pocket_path = state.0.read().await;
     let path = pocket_path.join(path);
 
-    let mut f = fs::File::open(&path).expect(&format!("no file found: {:?}", path));
-    let metadata = fs::metadata(&path).expect("unable to read metadata");
-    let mut buffer = vec![0; metadata.len() as usize];
+    let mut f = tokio::fs::File::open(&path)
+        .await
+        .expect(&format!("no file found: {:?}", path));
 
-    f.read(&mut buffer).expect("buffer overflow");
+    let mut buffer = vec![];
+    f.read_to_end(&mut buffer)
+        .await
+        .expect(&format!("failed to read file: {:?}", path));
 
     Ok(buffer)
 }
@@ -71,8 +74,14 @@ async fn read_text_file(
 ) -> Result<String, ()> {
     let pocket_path = state.0.read().await;
     let path = pocket_path.join(path);
-    // println!("reading text file: {:?}", &path);
-    let file_contents = fs::read_to_string(path).unwrap();
+    let mut f = tokio::fs::File::open(&path)
+        .await
+        .expect(&format!("no file found: {:?}", path));
+
+    let mut file_contents = String::new();
+    f.read_to_string(&mut file_contents)
+        .await
+        .expect(&format!("failed to read file: {:?}", path));
     Ok(file_contents)
 }
 
