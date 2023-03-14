@@ -1,6 +1,6 @@
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
-use std::{fs, io::Cursor, path::PathBuf, thread};
+use std::{fs, io::Cursor, path::PathBuf, sync::Arc, thread};
 use tauri::{App, Manager, Window};
 use tempdir::TempDir;
 use zip::ZipArchive;
@@ -49,99 +49,101 @@ struct Titles {
 }
 
 pub fn start_zip_thread(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
-    let app_handle = app.handle();
-    let app_handle_b = app.handle();
-
+    let app_handle = Arc::new(app.handle());
     thread::spawn(move || {
         let main_window = app_handle.get_window("main").unwrap();
-        let main_window_b = app_handle.get_window("main").unwrap();
-        let main_window_c = app_handle.get_window("main").unwrap();
+        {
+            let app_handle = app_handle.clone();
+            main_window.on_window_event(move |event| {
+                if let tauri::WindowEvent::FileDrop(e) = event {
+                    if let tauri::FileDropEvent::Dropped(paths) = e {
+                        tokio::task::block_in_place(|| {
+                            tauri::async_runtime::block_on(async {
+                                let state: tauri::State<PocketSyncState> = app_handle.state();
+                                let pocket_path = state.0.read().await;
+                                let window = app_handle.get_window("main").unwrap();
 
-        main_window.on_window_event(move |event| {
-            if let tauri::WindowEvent::FileDrop(e) = event {
-                if let tauri::FileDropEvent::Dropped(paths) = e {
-                    tokio::task::block_in_place(|| {
-                        tauri::async_runtime::block_on(async {
-                            let state: tauri::State<PocketSyncState> = app_handle_b.state();
-                            let pocket_path = state.0.read().await;
-
-                            if !pocket_path.exists() || paths.len() != 1 {
-                                return;
-                            }
-
-                            for path in paths {
-                                if !path
-                                    .file_name()
-                                    .and_then(|f| f.to_str())
-                                    .unwrap()
-                                    .ends_with(".zip")
-                                {
-                                    continue;
+                                if !pocket_path.exists() || paths.len() != 1 {
+                                    return;
                                 }
-                                let zip_file = fs::read(path).unwrap();
+
+                                for path in paths {
+                                    if !path
+                                        .file_name()
+                                        .and_then(|f| f.to_str())
+                                        .unwrap()
+                                        .ends_with(".zip")
+                                    {
+                                        continue;
+                                    }
+                                    let zip_file = fs::read(path).unwrap();
+                                    let cursor = Cursor::new(zip_file);
+                                    let archive = zip::ZipArchive::new(cursor).unwrap();
+
+                                    start_zip_install_flow(
+                                        archive,
+                                        Titles {
+                                            title: String::from("Install Zip"),
+                                            installing_title: (String::from("Installing Zip...")),
+                                        },
+                                        pocket_path.clone(),
+                                        &window,
+                                    )
+                                    .await
+                                    .unwrap();
+                                }
+                            })
+                        });
+                    }
+                }
+            });
+        }
+        {
+            let app_handle = app_handle.clone();
+            main_window.listen("install-core", move |event| {
+                let window = app_handle.get_window("main").unwrap();
+                emit_progress("Install Core", None, None, &window);
+
+                tokio::task::block_in_place(|| {
+                    tauri::async_runtime::block_on(async {
+                        let state: tauri::State<PocketSyncState> = app_handle.state();
+                        let pocket_path = state.0.read().await;
+
+                        let install: InstallInfo =
+                            serde_json::from_str(event.payload().unwrap()).unwrap();
+                        let response = reqwest::get(install.zip_url).await.unwrap();
+
+                        // dbg!(&response);
+
+                        match response.status() {
+                            StatusCode::OK => {
+                                let zip_file = response.bytes().await.unwrap();
                                 let cursor = Cursor::new(zip_file);
                                 let archive = zip::ZipArchive::new(cursor).unwrap();
 
                                 start_zip_install_flow(
                                     archive,
                                     Titles {
-                                        title: String::from("Install Zip"),
-                                        installing_title: (String::from("Installing Zip...")),
+                                        title: String::from("Install Core"),
+                                        installing_title: (String::from("Installing Core...")),
                                     },
                                     pocket_path.clone(),
-                                    &main_window_c,
+                                    &window,
                                 )
                                 .await
                                 .unwrap();
                             }
-                        })
+                            _s => {
+                                emit_finished(
+                                    Some(String::from("Unable to download ZIP")),
+                                    &window,
+                                );
+                            }
+                        }
                     });
-                }
-            }
-        });
-
-        main_window.listen("install-core", move |event| {
-            emit_progress("Install Core", None, None, &main_window_b);
-
-            tokio::task::block_in_place(|| {
-                tauri::async_runtime::block_on(async {
-                    let state: tauri::State<PocketSyncState> = app_handle.state();
-                    let pocket_path = state.0.read().await;
-
-                    let install: InstallInfo =
-                        serde_json::from_str(event.payload().unwrap()).unwrap();
-                    let response = reqwest::get(install.zip_url).await.unwrap();
-
-                    // dbg!(&response);
-
-                    match response.status() {
-                        StatusCode::OK => {
-                            let zip_file = response.bytes().await.unwrap();
-                            let cursor = Cursor::new(zip_file);
-                            let archive = zip::ZipArchive::new(cursor).unwrap();
-
-                            start_zip_install_flow(
-                                archive,
-                                Titles {
-                                    title: String::from("Install Core"),
-                                    installing_title: (String::from("Installing Core...")),
-                                },
-                                pocket_path.clone(),
-                                &main_window_b,
-                            )
-                            .await
-                            .unwrap();
-                        }
-                        _s => {
-                            emit_finished(
-                                Some(String::from("Unable to download ZIP")),
-                                &main_window_b,
-                            );
-                        }
-                    }
-                });
+                })
             })
-        })
+        }
     });
 
     Ok(())
@@ -184,14 +186,14 @@ async fn start_zip_install_flow(
         &window,
     );
 
-    let main_window_c = window.clone();
+    let main_window = window.clone();
 
     window.once("install-confirmation", move |event| {
         let install_confirm: InstallConfirmation =
             serde_json::from_str(event.payload().unwrap()).unwrap();
 
         if !install_confirm.allow {
-            emit_finished(None, &main_window_c);
+            emit_finished(None, &main_window);
             return ();
         }
 
@@ -202,7 +204,7 @@ async fn start_zip_install_flow(
                 value: 0,
                 max: install_confirm.paths.len(),
             }),
-            &main_window_c,
+            &main_window,
         );
 
         let tmp_dir = TempDir::new("zip_install_tmp").unwrap();
@@ -231,11 +233,11 @@ async fn start_zip_install_flow(
                     value: index + 1,
                     max: install_confirm.paths.len(),
                 }),
-                &main_window_c,
+                &main_window,
             );
         }
 
-        emit_finished(None, &main_window_c);
+        emit_finished(None, &main_window);
     });
 
     Ok(())
