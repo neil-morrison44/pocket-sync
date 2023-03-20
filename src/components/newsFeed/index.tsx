@@ -1,6 +1,7 @@
 import { useEffect } from "react"
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import { useSetRecoilState } from "recoil"
 import { useRecoilSmoothUpdates } from "../../hooks/recoilSmoothUpdates"
+import { useYScrollAsXScroll } from "../../hooks/useYScrollAsXScroll"
 import { newsFeedUpdateAtom } from "../../recoil/newsFeed/atoms"
 import { newsFeedSelector } from "../../recoil/newsFeed/selectors"
 import { currentViewAtom } from "../../recoil/view/atoms"
@@ -26,6 +27,8 @@ export const NewsFeed = ({ deepLinks = false }: NewsFeedProps) => {
     return () => clearInterval(interval)
   })
 
+  const listRef = useYScrollAsXScroll()
+
   return (
     <div className="news-feed">
       <div className="news-feed__title">
@@ -34,7 +37,7 @@ export const NewsFeed = ({ deepLinks = false }: NewsFeedProps) => {
           OpenFPGA Cores Inventory
         </Link>
       </div>
-      <div className="news-feed__list">
+      <div className="news-feed__list" ref={listRef}>
         {items.map((i) => {
           return (
             <div
