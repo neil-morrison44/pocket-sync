@@ -8,6 +8,11 @@
   padding: 10px;
 }
 
+.news-feed__title-last-updated{
+  opacity: 0.6;
+  float: right;
+}
+
 .news-feed__list {
   display: flex;
   overflow: auto;

@@ -1,5 +1,4 @@
-import { useEffect } from "react"
-import { useSetRecoilState } from "recoil"
+import { useRecoilValue, useSetRecoilState } from "recoil"
 import { useRecoilSmoothUpdates } from "../../hooks/recoilSmoothUpdates"
 import { useYScrollAsXScroll } from "../../hooks/useYScrollAsXScroll"
 import { newsFeedUpdateAtom } from "../../recoil/newsFeed/atoms"
@@ -8,25 +7,16 @@ import { currentViewAtom } from "../../recoil/view/atoms"
 import { Link } from "../link"
 
 import "./index.css"
+import { TimeAgo } from "./timeAgo"
 
 type NewsFeedProps = {
   deepLinks?: boolean
 }
 
-const INTERVAL_MINS = 5
-
 export const NewsFeed = ({ deepLinks = false }: NewsFeedProps) => {
   const items = useRecoilSmoothUpdates(newsFeedSelector, [])
   const viewCore = useSetRecoilState(currentViewAtom)
-  const setNewsFeedUpdateAtom = useSetRecoilState(newsFeedUpdateAtom)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setNewsFeedUpdateAtom(Math.random())
-    }, INTERVAL_MINS * 60 * 1000)
-    return () => clearInterval(interval)
-  })
-
+  const newsfeedLastUpdate = useRecoilValue(newsFeedUpdateAtom)
   const listRef = useYScrollAsXScroll()
 
   return (
@@ -36,6 +26,10 @@ export const NewsFeed = ({ deepLinks = false }: NewsFeedProps) => {
         <Link href="https://openfpga-cores-inventory.github.io/analogue-pocket/">
           OpenFPGA Cores Inventory
         </Link>
+        <span className="news-feed__title-last-updated">
+          {` last updated `}
+          <TimeAgo since={newsfeedLastUpdate} />
+        </span>
       </div>
       <div className="news-feed__list" ref={listRef}>
         {items.map((i) => {
