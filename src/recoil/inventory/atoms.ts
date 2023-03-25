@@ -1,7 +1,7 @@
 import { atom } from "recoil"
 import { InventoryJSON } from "../../types"
 
-const INTERVAL_MINS = 0.1
+const INTERVAL_MINS = 10
 
 const INVENTORY_API =
   "https://openfpga-cores-inventory.github.io/analogue-pocket/api/v2/cores.json"
