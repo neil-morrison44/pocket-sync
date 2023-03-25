@@ -2,7 +2,10 @@ import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { useInstallRequiredFiles } from "../../../../hooks/useInstallRequiredFiles"
 import { RequiredFilesWithStatusSelectorFamily } from "../../../../recoil/archive/selectors"
-import { PocketSyncConfigSelector } from "../../../../recoil/selectors"
+import {
+  PocketSyncConfigSelector,
+  skipAlternateAssetsSelector,
+} from "../../../../recoil/config/selectors"
 import { Modal } from "../../../modal"
 import { Progress } from "../../../progress"
 import { Tip } from "../../../tip"
@@ -30,6 +33,8 @@ export const LoadRequiredFiles = ({
     lastMessage,
     remainingTime,
   } = useInstallRequiredFiles()
+
+  const skipAlternateAssets = useRecoilValue(skipAlternateAssetsSelector)
 
   const hasArchiveLink = useMemo(
     () =>
@@ -69,6 +74,13 @@ export const LoadRequiredFiles = ({
               }
             </Tip>
           )}
+
+          {skipAlternateAssets && (
+            <div className="load-required-files__skip-notice">
+              {"(Alternative files skipped)"}
+            </div>
+          )}
+
           <div className="load-required-files__buttons">
             <button onClick={onClose}>{"Close"}</button>
 

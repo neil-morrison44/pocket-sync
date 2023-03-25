@@ -2,8 +2,7 @@ import * as THREE from "three"
 import React, { ReactNode, useLayoutEffect, useMemo, useRef } from "react"
 import { Html } from "@react-three/drei"
 import { useRecoilValue } from "recoil"
-import { PocketModelColourAtom } from "../../../recoil/atoms"
-import { PocketSyncConfigSelector } from "../../../recoil/selectors"
+import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
 
 type LabeledLineProps = {
   start: THREE.Vector3Tuple

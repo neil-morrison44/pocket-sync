@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api"
 import { useCallback, useState } from "react"
 import { useRecoilValue } from "recoil"
-import { PocketSyncConfigSelector } from "../recoil/selectors"
+import { PocketSyncConfigSelector } from "../recoil/config/selectors"
 import { RequiredFileInfo } from "../types"
 import { useInvalidateFileSystem } from "./invalidation"
 import { useProgress } from "./useProgress"

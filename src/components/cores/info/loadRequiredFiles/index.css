@@ -42,3 +42,9 @@
   justify-content: space-between;
   gap: 20px;
 }
+
+.load-required-files__skip-notice{
+  text-align: right;
+  opacity: 0.6;
+  font-size: 0.87rem;
+}

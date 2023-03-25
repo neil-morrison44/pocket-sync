@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useRecoilValue } from "recoil"
 import { AllSavesSelector } from "../../recoil/saves/selectors"
-import { PocketSyncConfigSelector } from "../../recoil/selectors"
+import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { invokeBackupSaves, invokeFileExists } from "../../utils/invokes"
 
 export const AutoBackup = () => {
