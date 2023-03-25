@@ -320,7 +320,7 @@ const DPAD = () => {
           angleRef.current = Math.atan2(y - 0.5, x - 0.5)
         }}
       >
-        <planeBufferGeometry />
+        <planeGeometry />
         <meshBasicMaterial opacity={0} transparent side={DoubleSide} />
       </mesh>
       <group ref={groupRef}>

@@ -1,5 +1,11 @@
 import { Suspense, useMemo, useState } from "react"
-import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil"
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from "recoil"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import { fileSystemInvalidationAtom } from "../../recoil/atoms"
 import { coreInventoryAtom } from "../../recoil/inventory/atoms"
@@ -19,7 +25,7 @@ export const Cores = () => {
     selectedSubviewSelector
   )
   const coresList = useRecoilValue(coresListSelector)
-  const coreInventory = useRecoilValue(coreInventoryAtom)
+  const [coreInventory, setCoreInventory] = useRecoilState(coreInventoryAtom)
   const { pushScroll, popScroll } = useSaveScroll()
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [onlyUpdates, setOnlyUpdates] = useState(false)
@@ -27,6 +33,8 @@ export const Cores = () => {
 
   const refresh = useRecoilCallback(({ set }) => () => {
     set(fileSystemInvalidationAtom, Date.now())
+    // useResetRecoilState doesn't seem to trigger the atom effect, so do it this way
+    setCoreInventory({ data: [] })
   })
 
   const notInstalledCores = useMemo(

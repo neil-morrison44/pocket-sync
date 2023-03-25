@@ -9,13 +9,26 @@ const INVENTORY_API =
 export const coreInventoryAtom = atom<InventoryJSON>({
   key: "coreInventoryAtom",
   default: (async () => {
-    const response = await fetch(INVENTORY_API)
+    const response = await fetch(INVENTORY_API + `?cache_bust=${Date.now()}`)
     return (await response.json()) as InventoryJSON
   })(),
   effects: [
+    ({ onSet, setSelf }) => {
+      onSet(async (_a, _b, isReset) => {
+        // isReset should work here but it doesn't seem to
+        // so instead do this for any outside set
+        const response = await fetch(
+          INVENTORY_API + `?cache_bust=${Date.now()}`
+        )
+        const newJson: InventoryJSON = await response.json()
+        setSelf(newJson)
+      })
+    },
     ({ setSelf }) => {
       setInterval(async () => {
-        const response = await fetch(INVENTORY_API)
+        const response = await fetch(
+          INVENTORY_API + `?cache_bust=${Date.now()}`
+        )
         const newJson: InventoryJSON = await response.json()
         setSelf(newJson)
       }, INTERVAL_MINS * 60 * 1000)
