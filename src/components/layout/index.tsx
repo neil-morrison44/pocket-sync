@@ -8,7 +8,6 @@ import React, {
 import { useRecoilState } from "recoil"
 import { currentViewAtom, VIEWS_LIST } from "../../recoil/view/atoms"
 import { About } from "../about"
-import { AutoRefresh } from "../autoRefresh"
 import { Cores } from "../cores"
 import { Disconnections } from "../disconnections"
 import { ErrorBoundary } from "../errorBoundary"
@@ -55,7 +54,6 @@ export const Layout = () => {
     <div className="layout" ref={layoutRef}>
       <Disconnections />
       <ZipInstall />
-      <AutoRefresh />
       <Suspense>
         <AutoBackup />
       </Suspense>
