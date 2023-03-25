@@ -1,6 +1,7 @@
 use bytes::Buf;
 use feed_rs::parser;
 use serde::{Deserialize, Serialize};
+use std::time::SystemTime;
 
 #[derive(Serialize, Deserialize)]
 pub struct FeedItem {
@@ -12,8 +13,15 @@ pub struct FeedItem {
 }
 
 pub async fn get_feed_json() -> Vec<FeedItem> {
-    let feed_url = "https://openfpga-cores-inventory.github.io/analogue-pocket/feed.xml";
-    let response = reqwest::get(feed_url).await;
+    let now = SystemTime::now()
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .unwrap()
+        .as_millis();
+
+    let feed_url = format!(
+        "https://openfpga-cores-inventory.github.io/analogue-pocket/feed.xml?cache_bust={now}"
+    );
+    let response = reqwest::get(&feed_url).await;
 
     match response {
         Err(e) => {
