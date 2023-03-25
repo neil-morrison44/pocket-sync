@@ -2,7 +2,7 @@ import { useCallback } from "react"
 import { useRecoilValue } from "recoil"
 import { useInvalidateConfig } from "../../../hooks/invalidation"
 import { pocketPathAtom } from "../../../recoil/atoms"
-import { PocketSyncConfigSelector } from "../../../recoil/selectors"
+import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
 import { PocketSyncConfig } from "../../../types"
 import { invokeSaveFile } from "../../../utils/invokes"
 

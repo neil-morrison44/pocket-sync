@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react"
 import { useRecoilValue } from "recoil"
-import { PocketSyncConfigSelector } from "../../recoil/selectors"
+import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { Controls } from "../controls"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { open } from "@tauri-apps/api/dialog"

@@ -1,6 +1,9 @@
 import { useState } from "react"
 import { useRecoilValue } from "recoil"
-import { PocketSyncConfigSelector } from "../../recoil/selectors"
+import {
+  PocketSyncConfigSelector,
+  skipAlternateAssetsSelector,
+} from "../../recoil/config/selectors"
 import { Link } from "../link"
 import { useUpdateConfig } from "./hooks/useUpdateConfig"
 
@@ -12,6 +15,7 @@ If you are comfortable with this, copy the following url into the input and hit 
 export const Settings = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
   const [archiveUrlInput, setArchiveUrl] = useState(config.archive_url || "")
+  const skipAlternateAssets = useRecoilValue(skipAlternateAssetsSelector)
   const updateConfig = useUpdateConfig()
 
   return (
@@ -49,6 +53,29 @@ export const Settings = () => {
               {"Save"}
             </button>
           </div>
+        </div>
+
+        <div className="settings__row">
+          <h3 className="settings__row-title">{"Skip Alternate Assets"}</h3>
+          <div className="settings__ramble">
+            This setting will skip processing json files under the
+            `_alternatives` folder, meaning you'll just get the "main" titles
+            for the cores which sort their JSON files this way.
+          </div>
+          <div className="settings__ramble">
+            <b>Warning:</b> turning this off will mean that installing Required
+            Files takes <b>much</b> longer.
+          </div>
+          <label className="settings__checkbox">
+            Skip Alternate Assets{" "}
+            <input
+              type="checkbox"
+              checked={skipAlternateAssets}
+              onChange={({ target }) =>
+                updateConfig("skipAlternateAssets", target.checked)
+              }
+            />
+          </label>
         </div>
       </div>
 

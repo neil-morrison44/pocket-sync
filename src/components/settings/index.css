@@ -10,14 +10,21 @@
   margin: 0;
   padding: 0;
   white-space: pre-wrap;
+  margin-bottom: 15px;
 }
 
 .settings__row {
-  & input,
+  margin-bottom: 40px;
+
+  & input[type="text"],
   & select {
     font-size: 1.4rem;
     width: 80%;
   }
+}
+
+.settings__row-title{
+  border-bottom: solid grey 1px;
 }
 
 .settings__text-input-and-save {
@@ -36,4 +43,20 @@
   margin-left: -10px;
   position: fixed;
   bottom: 0;
+}
+
+.settings__checkbox{
+  font-size: 1.25rem;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid grey;
+  border-radius: 5px;
+  justify-content: space-between;
+  padding: 10px;
+  width: 80%;
+
+  & input {
+    transform: scale(1.2, 1.2);
+  }
 }

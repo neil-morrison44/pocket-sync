@@ -1,9 +1,7 @@
 import { selector, selectorFamily } from "recoil"
 import { ArchiveFileMetadata, RequiredFileInfo } from "../../types"
-import {
-  PocketSyncConfigSelector,
-  RequiredFileInfoSelectorFamily,
-} from "../selectors"
+import { RequiredFileInfoSelectorFamily } from "../selectors"
+import { PocketSyncConfigSelector } from "../config/selectors"
 
 export const archiveMetadataSelector = selector<ArchiveFileMetadata[]>({
   key: "archiveMetadataSelector",

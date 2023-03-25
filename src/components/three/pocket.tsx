@@ -3,7 +3,7 @@ import { Environment, RoundedBox } from "@react-three/drei"
 import { ReactNode, useRef } from "react"
 import { useRecoilValue } from "recoil"
 import envMap from "./kloofendal_48d_partly_cloudy_puresky_1k.hdr"
-import { PocketSyncConfigSelector } from "../../recoil/selectors"
+import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 
 import "./index.css"
 import { DoubleSide, Group, MathUtils, Mesh } from "three"

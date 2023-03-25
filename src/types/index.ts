@@ -187,6 +187,7 @@ export type PocketSyncConfig = {
   colour: "white" | "black"
   archive_url: string | null
   saves: SaveConfig[]
+  skipAlternateAssets?: boolean
 }
 
 export type SaveConfig = {

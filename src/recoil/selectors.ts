@@ -26,6 +26,7 @@ import {
 } from "../utils/invokes"
 import { AUTHOUR_IMAGE, IGNORE_INSTANCE_JSON_LIST } from "../values"
 import { readJSONFile } from "../utils/readJSONFile"
+import { skipAlternateAssetsSelector } from "./config/selectors"
 
 export const DataJSONSelectorFamily = selectorFamily<DataJSON, string>({
   key: "DataJSONSelectorFamily",
@@ -107,7 +108,10 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
               decodeDataParams(parameters).coreSpecific ? coreName : "common"
             }/`
 
-            const files = await invokeWalkDirListFiles(path, [".json"])
+            let files = await invokeWalkDirListFiles(path, [".json"])
+
+            if (get(skipAlternateAssetsSelector))
+              files = files.filter((path) => !path.includes("_alternatives"))
 
             return await Promise.all(
               files.map(async (f) => {
@@ -204,42 +208,6 @@ export const CoreAuthorImageSelectorFamily = selectorFamily<string, string>({
 export const AppVersionSelector = selector<string>({
   key: "AppVersionSelector",
   get: async () => await getVersion(),
-})
-
-export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
-  key: "PocketSyncConfigSelector",
-  get: async ({ get }) => {
-    get(configInvalidationAtom)
-    const pocketPath = get(pocketPathAtom)
-
-    if (!pocketPath) {
-      return {
-        version: get(AppVersionSelector),
-        colour: Math.random() > 0.5 ? "white" : "black",
-        archive_url: null,
-        saves: [],
-      } satisfies PocketSyncConfig
-    }
-
-    const exists = await invokeFileExists("pocket-sync.json")
-    if (!exists) {
-      const defaultConfig = {
-        version: get(AppVersionSelector),
-        colour: "black",
-        archive_url: null,
-        saves: [],
-      } satisfies PocketSyncConfig
-
-      const encoder = new TextEncoder()
-
-      await invokeSaveFile(
-        `${pocketPath}/pocket-sync.json`,
-        encoder.encode(JSON.stringify(defaultConfig, null, 2))
-      )
-    }
-
-    return readJSONFile<PocketSyncConfig>("pocket-sync.json")
-  },
 })
 
 export const WalkDirSelectorFamily = selectorFamily<
