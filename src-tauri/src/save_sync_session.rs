@@ -1,3 +1,4 @@
+use futures::future::join;
 use mister_saves_sync::{MiSTerSaveSync, SaveSyncer};
 use serde::{Deserialize, Serialize};
 use std::{error::Error, path::PathBuf, sync::Arc, thread};
@@ -48,7 +49,9 @@ pub async fn start_mister_save_sync_session(window: Window) -> Result<(), Box<dy
             let window = window.clone();
             task::spawn(async move {
                 while let Some(msg) = log_rx.recv().await {
-                    window.emit("mister-save-sync-log", PlainMessage(msg));
+                    window
+                        .emit("mister-save-sync-log", PlainMessage(msg))
+                        .unwrap();
                 }
             })
         };
@@ -65,30 +68,26 @@ pub async fn start_mister_save_sync_session(window: Window) -> Result<(), Box<dy
                 let (outbound_message_tx, mut outbound_message_rx) = mpsc::channel(100);
                 let outbound_message_tx: Arc<_> = outbound_message_tx.into();
 
-                {
-                    let window = window.clone();
-                    task::spawn(async move {
-                        while let Some(msg) = message_rx.recv().await {
-                            match msg {
-                                IncomingMessage::Find(pocket_save_info) => {
-                                    find_mister_save(
-                                        &outbound_message_tx,
-                                        &mister_syncer,
-                                        &pocket_save_info,
-                                        &log_tx,
-                                    )
-                                    .await;
-                                }
-                                IncomingMessage::PocketToMiSTer(transfer) => {
-                                    dbg!(transfer);
-                                }
-                                IncomingMessage::MiSTerToPocket(transfer) => {
-                                    dbg!(transfer);
-                                }
+                task::spawn(async move {
+                    while let Some(msg) = message_rx.recv().await {
+                        match msg {
+                            IncomingMessage::Find(pocket_save_info) => {
+                                find_mister_save(
+                                    &outbound_message_tx,
+                                    &mister_syncer,
+                                    &pocket_save_info,
+                                    &log_tx,
+                                );
+                            }
+                            IncomingMessage::PocketToMiSTer(transfer) => {
+                                dbg!(transfer);
+                            }
+                            IncomingMessage::MiSTerToPocket(transfer) => {
+                                dbg!(transfer);
                             }
                         }
-                    });
-                }
+                    }
+                });
 
                 {
                     let window = window.clone();
@@ -144,6 +143,8 @@ pub async fn start_mister_save_sync_session(window: Window) -> Result<(), Box<dy
                 }
             })
         };
+
+        join(log_receiver_task, processing_task);
     });
     return Ok(());
 }
