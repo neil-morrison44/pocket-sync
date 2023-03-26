@@ -107,3 +107,11 @@ export const invokeRunPackagerForCore = async (coreName: string) => {
 export const invokeGetNewsFeed = async () => {
   return invoke<RawFeedItem[]>("get_news_feed")
 }
+
+export const invokeBeginMisterSaveSyncSession = async (
+  host: string,
+  user: string,
+  password: string
+) => {
+  return invoke<boolean>("begin_mister_sync_session", { host, user, password })
+}

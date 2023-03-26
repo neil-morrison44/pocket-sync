@@ -8,6 +8,7 @@ use clean_fs::find_dotfiles;
 use futures_locks::RwLock;
 use hashes::sha1_for_file;
 use install_zip::start_zip_thread;
+use save_sync_session::start_mister_save_sync_session;
 use saves_zip::{
     build_save_zip, read_save_zip_list, read_saves_in_folder, read_saves_in_zip,
     restore_save_from_zip, SaveZipFile,
@@ -413,6 +414,19 @@ async fn get_news_feed() -> Result<Vec<news_feed::FeedItem>, String> {
     Ok(feed)
 }
 
+#[tauri::command(async)]
+async fn begin_mister_sync_session(
+    host: &str,
+    user: &str,
+    password: &str,
+    window: tauri::Window,
+) -> Result<bool, String> {
+    match start_mister_save_sync_session(host, user, password, window).await {
+        Ok(success) => return Ok(success),
+        Err(err) => return Err(err.to_string()),
+    }
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -438,7 +452,8 @@ fn main() {
             file_sha1_hash,
             list_instance_packageable_cores,
             run_packager_for_core,
-            get_news_feed
+            get_news_feed,
+            begin_mister_sync_session
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())

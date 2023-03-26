@@ -1,7 +1,9 @@
 mod save_sync;
 use async_trait::async_trait;
+use chrono::Duration;
 use std::{
     io::{Cursor, Read},
+    net::ToSocketAddrs,
     path::PathBuf,
     sync::Arc,
 };
@@ -33,24 +35,48 @@ impl SaveSyncer for MiSTerSaveSync {
         log_channel: &Sender<String>,
     ) -> Result<bool, Box<dyn std::error::Error + Send + Sync>> {
         log_channel
-            .send(String::from(format!("Connecting to {}:21", self.host)))
+            .send(format!("Connecting to {}:21...", self.host).into())
             .await?;
 
-        match suppaftp::FtpStream::connect(format!("{}:21", self.host)) {
-            Ok(mut ftp_stream) => {
-                if let Ok(_) = ftp_stream.login(self.user.as_str(), self.password.as_str()) {
-                    self.ftp_stream = Mutex::new(Some(ftp_stream));
-                    return Ok(true);
+        match format!("{}:21", self.host).to_socket_addrs() {
+            Err(err) => {
+                log_channel
+                    .send(format!("Error: {}", err.to_string()))
+                    .await?;
+                return Ok(false);
+            }
+            Ok(socketAddrs) => {
+                if let Some(address) = socketAddrs.last() {
+                    match suppaftp::FtpStream::connect_timeout(
+                        address,
+                        std::time::Duration::from_secs(10),
+                    ) {
+                        Ok(mut ftp_stream) => {
+                            if let Ok(_) =
+                                ftp_stream.login(self.user.as_str(), self.password.as_str())
+                            {
+                                self.ftp_stream = Mutex::new(Some(ftp_stream));
+                                log_channel.send(format!("Connected!").into()).await?;
+                                return Ok(true);
+                            } else {
+                                log_channel
+                                    .send(format!("Failed to connect").into())
+                                    .await?;
+
+                                return Ok(false);
+                            }
+                        }
+                        Err(ftp_error) => {
+                            let error_string = ftp_error.to_string();
+                            log_channel
+                                .send(String::from(format!("Error: {}", error_string)))
+                                .await?;
+                            return Ok(false);
+                        }
+                    }
                 } else {
                     return Ok(false);
                 }
-            }
-            Err(ftp_error) => {
-                let error_string = ftp_error.to_string();
-                log_channel
-                    .send(String::from(format!("Error: {}", error_string)))
-                    .await?;
-                return Ok(false);
             }
         }
     }
