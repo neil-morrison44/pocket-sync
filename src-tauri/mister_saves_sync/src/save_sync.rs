@@ -6,14 +6,14 @@ use tokio::sync::Mutex;
 pub trait SaveSyncer {
     async fn connect(
         &mut self,
-        log_channel: tokio::sync::mpsc::Sender<String>,
+        log_channel: &tokio::sync::mpsc::Sender<String>,
     ) -> Result<bool, Box<dyn std::error::Error>>;
 
     async fn find_save_for(
         &self,
         platform: &str,
         game: &str,
-        log_channel: tokio::sync::mpsc::Sender<String>,
+        log_channel: &tokio::sync::mpsc::Sender<String>,
     ) -> Result<Option<PathBuf>, Box<dyn std::error::Error>>;
 
     async fn read_save(&self, path: &PathBuf) -> Result<Box<dyn Read>, Box<dyn std::error::Error>>;

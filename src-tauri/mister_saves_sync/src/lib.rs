@@ -26,21 +26,11 @@ impl MiSTerSaveSync {
     }
 }
 
-// impl Drop for MiSTerSaveSync {
-//     fn drop(&mut self) {
-//         if let Some(mut ftp_stream) = self.ftp_stream {
-//             if let Ok(mut ftp_stream) = ftp_stream.write().await {
-//                 ftp_stream.quit().unwrap();
-//             }
-//         }
-//     }
-// }
-
 #[async_trait]
 impl SaveSyncer for MiSTerSaveSync {
     async fn connect(
         &mut self,
-        log_channel: Sender<String>,
+        log_channel: &Sender<String>,
     ) -> Result<bool, Box<dyn std::error::Error>> {
         log_channel
             .send(String::from(format!("Connecting to {}:21", self.host)))
@@ -69,7 +59,7 @@ impl SaveSyncer for MiSTerSaveSync {
         &self,
         platform: &str,
         game: &str,
-        log_channel: Sender<String>,
+        log_channel: &Sender<String>,
     ) -> Result<Option<PathBuf>, Box<dyn std::error::Error>> {
         let mut guard = self.ftp_stream.lock().await;
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
@@ -130,7 +120,6 @@ impl SaveSyncer for MiSTerSaveSync {
         let mut file_buf = vec![];
         file.read_to_end(&mut file_buf)?;
 
-        // create a cursor that wraps the file buffer
         let mut cursor = Cursor::new(&mut file_buf);
 
         ftp_stream.put_file(
