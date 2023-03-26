@@ -118,11 +118,13 @@ pub async fn start_mister_save_sync_session(
             {
                 let window = window.clone();
                 task::spawn(async move {
+                    println!("waiting on outbound messages");
                     while let Some(msg) = outbound_message_rx.recv().await {
                         match msg {
                             OutboundMessage::FoundSave(mister_save_info) => {
+                                dbg!(&mister_save_info);
                                 window
-                                    .emit("mister-save-found-save", mister_save_info)
+                                    .emit("mister-save-sync-found-save", mister_save_info)
                                     .unwrap();
                             }
                         }
@@ -137,9 +139,14 @@ pub async fn start_mister_save_sync_session(
                     if let Some(payload) = event.payload() {
                         let pocket_save_info: PocketSaveInfo =
                             serde_json::from_str(payload).unwrap();
-                        message_tx
-                            .blocking_send(IncomingMessage::Find(pocket_save_info))
-                            .unwrap();
+                        {
+                            let message_tx = message_tx.clone();
+                            std::thread::spawn(move || {
+                                message_tx
+                                    .blocking_send(IncomingMessage::Find(pocket_save_info))
+                                    .unwrap();
+                            });
+                        }
                     }
                 });
             }
@@ -149,9 +156,14 @@ pub async fn start_mister_save_sync_session(
                 window.listen("mister-save-sync-move-save-to-pocket", move |event| {
                     if let Some(payload) = event.payload() {
                         let transfer_info: Transfer = serde_json::from_str(payload).unwrap();
-                        message_tx
-                            .blocking_send(IncomingMessage::MiSTerToPocket(transfer_info))
-                            .unwrap();
+                        {
+                            let message_tx = message_tx.clone();
+                            std::thread::spawn(move || {
+                                message_tx
+                                    .blocking_send(IncomingMessage::MiSTerToPocket(transfer_info))
+                                    .unwrap();
+                            });
+                        }
                     }
                 });
             }
@@ -185,15 +197,17 @@ async fn find_mister_save(
         .find_save_for(&pocket_save_info.platform, &pocket_save_info.file, log_tx)
         .await
     {
-        if let Ok(timestamp) = mister_syncer.read_timestamp(&found_save_path).await {
-            outbound_channel
-                .send(OutboundMessage::FoundSave(MiSTerSaveInfo {
-                    path: Some(found_save_path),
-                    timestamp: Some(timestamp),
-                    equal: false,
-                }))
-                .await?;
-        }
+        dbg!(&found_save_path);
+
+        let timestamp = mister_syncer.read_timestamp(&found_save_path).await?;
+
+        outbound_channel
+            .send(OutboundMessage::FoundSave(MiSTerSaveInfo {
+                path: Some(found_save_path),
+                timestamp: Some(timestamp),
+                equal: false,
+            }))
+            .await?;
     }
     Ok(())
 }

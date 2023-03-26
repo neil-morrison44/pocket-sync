@@ -17,7 +17,11 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
   const [connected, setConnected] = useState(false)
   const [connecting, setConnecting] = useState(false)
   const [selectedSave, setSelectedSave] = useState<string | null>(null)
-  const [creds, setCreds] = useState({ host: "", user: "root", password: "1" })
+  const [creds, setCreds] = useState({
+    host: "mister.home.neil.today",
+    user: "root",
+    password: "1",
+  })
 
   const connect = useCallback(async () => {
     setConnecting(true)
@@ -102,7 +106,11 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
     return { platform, file }
   }, [path])
 
-  const [misterSaveInfo, setMisterSaveInfo] = useState<null | any>(null)
+  const [misterSaveInfo, setMisterSaveInfo] = useState<null | {
+    equal: boolean
+    timestamp: number
+    path: string
+  }>(null)
 
   useEffect(() => {
     if (!info) return
@@ -111,12 +119,14 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
   }, [info])
 
   useEffect(() => {
-    const unlisten = listen<string>(
-      "mister-save-sync-found-save",
-      ({ payload }) => {
-        console.log({ payload })
-      }
-    )
+    const unlisten = listen<{
+      equal: boolean
+      timestamp: number
+      path: string
+    }>("mister-save-sync-found-save", ({ payload }) => {
+      console.log({ payload })
+      setMisterSaveInfo(payload)
+    })
     return () => {
       unlisten.then((l) => l())
     }
@@ -134,7 +144,14 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
         <div>{platform}</div>
       </div>
       <div>Equals</div>
-      <div>MiSTer</div>
+      <div>
+        MiSTer
+        <div>{misterSaveInfo?.path}</div>
+        <div>
+          {misterSaveInfo?.timestamp &&
+            new Date(misterSaveInfo.timestamp).toLocaleString()}
+        </div>
+      </div>
     </div>
   )
 }

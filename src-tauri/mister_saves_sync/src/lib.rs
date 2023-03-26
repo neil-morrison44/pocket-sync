@@ -1,20 +1,18 @@
 mod save_sync;
 use async_trait::async_trait;
-use chrono::Duration;
-use std::{
-    io::{Cursor, Read},
-    net::ToSocketAddrs,
-    path::PathBuf,
-    sync::Arc,
-};
-use tokio::sync::{mpsc::Sender, Mutex};
+use std::io::Cursor;
+use std::net::ToSocketAddrs;
+use std::{io::Read, path::PathBuf, sync::Arc};
+use tokio::io::{AsyncRead, AsyncReadExt};
+use tokio::sync::mpsc::Sender;
+use tokio::sync::Mutex;
 
 pub use save_sync::SaveSyncer;
 pub struct MiSTerSaveSync {
     host: String,
     user: Arc<String>,
     password: Arc<String>,
-    ftp_stream: Mutex<Option<suppaftp::FtpStream>>,
+    ftp_stream: Mutex<Option<suppaftp::AsyncFtpStream>>,
 }
 
 impl MiSTerSaveSync {
@@ -47,13 +45,16 @@ impl SaveSyncer for MiSTerSaveSync {
             }
             Ok(socketAddrs) => {
                 if let Some(address) = socketAddrs.last() {
-                    match suppaftp::FtpStream::connect_timeout(
+                    match suppaftp::AsyncFtpStream::connect_timeout(
                         address,
                         std::time::Duration::from_secs(10),
-                    ) {
+                    )
+                    .await
+                    {
                         Ok(mut ftp_stream) => {
-                            if let Ok(_) =
-                                ftp_stream.login(self.user.as_str(), self.password.as_str())
+                            if let Ok(_) = ftp_stream
+                                .login(self.user.as_str(), self.password.as_str())
+                                .await
                             {
                                 self.ftp_stream = Mutex::new(Some(ftp_stream));
                                 log_channel.send(format!("Connected!").into()).await?;
@@ -87,23 +88,35 @@ impl SaveSyncer for MiSTerSaveSync {
         game: &str,
         log_channel: &Sender<String>,
     ) -> Result<Option<PathBuf>, Box<dyn std::error::Error + Send + Sync>> {
+        println!("finding save for {} on {}", game, platform);
         let mut guard = self.ftp_stream.lock().await;
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 
         if let Some(mister_system) = pocket_platform_to_mister_system(platform) {
-            ftp_stream.cwd(format!("/media/fat/saves/{}", mister_system))?;
+            let system_path = format!("/media/fat/saves/{}", mister_system);
+            ftp_stream.cwd(&system_path).await?;
 
-            let system_saves = ftp_stream.nlst(None)?;
+            let system_saves = ftp_stream.nlst(None).await?;
             let system_saves: Vec<_> = system_saves.into_iter().map(|s| PathBuf::from(s)).collect();
 
             let game_path = PathBuf::from(game);
             let expected_save_file_name = game_path.file_stem();
 
+            dbg!(&system_saves);
             if let Some(found_save) = system_saves
                 .into_iter()
                 .find(|p| p.file_stem() == expected_save_file_name)
             {
-                return Ok(Some(found_save));
+                log_channel
+                    .send(
+                        format!(
+                            "Found a MiSTer save for {:?} on {mister_system}",
+                            expected_save_file_name.unwrap(),
+                        )
+                        .into(),
+                    )
+                    .await?;
+                return Ok(Some(PathBuf::from(&system_path).join(found_save)));
             } else {
                 log_channel
                     .send(String::from(format!(
@@ -130,10 +143,18 @@ impl SaveSyncer for MiSTerSaveSync {
         let mut guard = self.ftp_stream.lock().await;
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 
-        ftp_stream.cwd(path.parent().unwrap().to_str().unwrap())?;
-        let file_name = path.file_name().and_then(|f| f.to_str()).unwrap();
-        let save_file = ftp_stream.retr_as_buffer(file_name)?;
-        return Ok(Box::new(save_file));
+        // ftp_stream
+        //     .cwd(path.parent().unwrap().to_str().unwrap())
+        //     .await?;
+        // let file_name = path.file_name().and_then(|f| f.to_str()).unwrap();
+        // let save_file = ftp_stream.retr_as_buffer(file_name).await?;
+
+        // let mut buf = Vec::new();
+        // ftp_stream.retr(file_name, |stream| {
+        //     stream.read_to_end(&mut buf);
+        // });
+        todo!();
+        // return Ok(Box::new(save_file));
     }
 
     async fn write_save(
@@ -144,17 +165,25 @@ impl SaveSyncer for MiSTerSaveSync {
         let mut guard = self.ftp_stream.lock().await;
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 
-        ftp_stream.cwd(path.parent().unwrap().to_str().unwrap())?;
+        ftp_stream
+            .cwd(path.parent().unwrap().to_str().unwrap())
+            .await?;
+
+        ftp_stream.transfer_type(suppaftp::types::FileType::Binary);
         let mut file = file.lock().await;
-        let mut file_buf = vec![];
-        file.read_to_end(&mut file_buf)?;
+        // let mut file_buf = vec![];
+        // file.read_to_end(&mut file_buf)?;
 
-        let mut cursor = Cursor::new(&mut file_buf);
+        // let mut cursor = Cursor::new(&mut file_buf);
 
-        ftp_stream.put_file(
-            path.file_name().and_then(|f| f.to_str()).unwrap(),
-            &mut cursor,
-        )?;
+        // ftp_stream
+        //     .put_file(
+        //         path.file_name().and_then(|f| f.to_str()).unwrap(),
+        //         &mut cursor,
+        //     )
+        //     .await?;
+
+        todo!();
 
         return Ok(());
     }
@@ -163,13 +192,19 @@ impl SaveSyncer for MiSTerSaveSync {
         &self,
         path: &PathBuf,
     ) -> Result<u64, Box<dyn std::error::Error + Send + Sync>> {
+        println!("waiting for stream lock");
         let mut guard = self.ftp_stream.lock().await;
+        println!("granted stream lock");
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 
-        ftp_stream.cwd(path.parent().unwrap().to_str().unwrap())?;
+        let parent_path = path.parent().unwrap().to_str().unwrap();
+        dbg!(parent_path);
+        ftp_stream.cwd(parent_path).await?;
         let file_name = path.file_name().and_then(|f| f.to_str()).unwrap();
-        let modtime = ftp_stream.mdtm(&file_name)?;
+        println!("{file_name}");
+        let modtime = ftp_stream.mdtm(&file_name).await?;
 
+        println!("returning file time");
         return Ok(modtime.timestamp_millis() as u64);
     }
 }
