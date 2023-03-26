@@ -72,12 +72,23 @@ pub async fn start_mister_save_sync_session(window: Window) -> Result<(), Box<dy
                     while let Some(msg) = message_rx.recv().await {
                         match msg {
                             IncomingMessage::Find(pocket_save_info) => {
-                                find_mister_save(
+                                let result = find_mister_save(
                                     &outbound_message_tx,
                                     &mister_syncer,
                                     &pocket_save_info,
                                     &log_tx,
-                                );
+                                )
+                                .await;
+
+                                match result {
+                                    Ok(_) => {}
+                                    Err(err) => {
+                                        log_tx
+                                            .send(format!("Error: {}", err.to_string()))
+                                            .await
+                                            .unwrap();
+                                    }
+                                }
                             }
                             IncomingMessage::PocketToMiSTer(transfer) => {
                                 dbg!(transfer);
@@ -154,7 +165,7 @@ async fn find_mister_save(
     mister_syncer: &MiSTerSaveSync,
     pocket_save_info: &PocketSaveInfo,
     log_tx: &mpsc::Sender<String>,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<(), Box<dyn Error + Send + Sync>> {
     if let Ok(Some(found_save_path)) = mister_syncer
         .find_save_for(&pocket_save_info.platform, &pocket_save_info.game, log_tx)
         .await

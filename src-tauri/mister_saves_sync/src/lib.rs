@@ -31,7 +31,7 @@ impl SaveSyncer for MiSTerSaveSync {
     async fn connect(
         &mut self,
         log_channel: &Sender<String>,
-    ) -> Result<bool, Box<dyn std::error::Error>> {
+    ) -> Result<bool, Box<dyn std::error::Error + Send + Sync>> {
         log_channel
             .send(String::from(format!("Connecting to {}:21", self.host)))
             .await?;
@@ -60,7 +60,7 @@ impl SaveSyncer for MiSTerSaveSync {
         platform: &str,
         game: &str,
         log_channel: &Sender<String>,
-    ) -> Result<Option<PathBuf>, Box<dyn std::error::Error>> {
+    ) -> Result<Option<PathBuf>, Box<dyn std::error::Error + Send + Sync>> {
         let mut guard = self.ftp_stream.lock().await;
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 
@@ -97,7 +97,10 @@ impl SaveSyncer for MiSTerSaveSync {
         }
     }
 
-    async fn read_save(&self, path: &PathBuf) -> Result<Box<dyn Read>, Box<dyn std::error::Error>> {
+    async fn read_save(
+        &self,
+        path: &PathBuf,
+    ) -> Result<Box<dyn Read>, Box<dyn std::error::Error + Send + Sync>> {
         let mut guard = self.ftp_stream.lock().await;
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 
@@ -111,7 +114,7 @@ impl SaveSyncer for MiSTerSaveSync {
         &self,
         path: &PathBuf,
         file: Box<Mutex<dyn Read + Send>>,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         let mut guard = self.ftp_stream.lock().await;
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 
@@ -130,7 +133,10 @@ impl SaveSyncer for MiSTerSaveSync {
         return Ok(());
     }
 
-    async fn read_timestamp(&self, path: &PathBuf) -> Result<u64, Box<dyn std::error::Error>> {
+    async fn read_timestamp(
+        &self,
+        path: &PathBuf,
+    ) -> Result<u64, Box<dyn std::error::Error + Send + Sync>> {
         let mut guard = self.ftp_stream.lock().await;
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 

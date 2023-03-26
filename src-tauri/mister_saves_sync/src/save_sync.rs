@@ -7,20 +7,28 @@ pub trait SaveSyncer {
     async fn connect(
         &mut self,
         log_channel: &tokio::sync::mpsc::Sender<String>,
-    ) -> Result<bool, Box<dyn std::error::Error>>;
+    ) -> Result<bool, Box<dyn std::error::Error + Send + Sync>>;
 
     async fn find_save_for(
         &self,
         platform: &str,
         game: &str,
         log_channel: &tokio::sync::mpsc::Sender<String>,
-    ) -> Result<Option<PathBuf>, Box<dyn std::error::Error>>;
+    ) -> Result<Option<PathBuf>, Box<dyn std::error::Error + Send + Sync>>;
 
-    async fn read_save(&self, path: &PathBuf) -> Result<Box<dyn Read>, Box<dyn std::error::Error>>;
+    async fn read_save(
+        &self,
+        path: &PathBuf,
+    ) -> Result<Box<dyn Read>, Box<dyn std::error::Error + Send + Sync>>;
+
     async fn write_save(
         &self,
         path: &PathBuf,
         file: Box<Mutex<dyn Read + Send>>,
-    ) -> Result<(), Box<dyn std::error::Error>>;
-    async fn read_timestamp(&self, path: &PathBuf) -> Result<u64, Box<dyn std::error::Error>>;
+    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
+
+    async fn read_timestamp(
+        &self,
+        path: &PathBuf,
+    ) -> Result<u64, Box<dyn std::error::Error + Send + Sync>>;
 }
