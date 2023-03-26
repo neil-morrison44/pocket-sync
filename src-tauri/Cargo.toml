@@ -31,6 +31,7 @@ data-encoding = "2.3.2"
 tauri-plugin-window-state = "0.1.0"
 openfpga-instance-packager = { git = "https://github.com/neil-morrison44/openfpga-instance-packager", tag = "v0.3.1" }
 feed-rs = "1.3.0"
+mister_saves_sync = { path = "./mister_saves_sync" }
 
 [features]
 # by default Tauri runs in production mode

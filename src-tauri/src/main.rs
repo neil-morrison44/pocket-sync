@@ -27,6 +27,7 @@ mod hashes;
 mod install_zip;
 mod news_feed;
 mod progress;
+mod save_sync_session;
 mod saves_zip;
 struct PocketSyncState(RwLock<PathBuf>);
 
