@@ -3,6 +3,7 @@ use async_trait::async_trait;
 use std::io::Cursor;
 use std::net::ToSocketAddrs;
 use std::{io::Read, path::PathBuf, sync::Arc};
+use tokio::io::AsyncBufReadExt;
 use tokio::io::{AsyncRead, AsyncReadExt};
 use tokio::sync::mpsc::Sender;
 use tokio::sync::Mutex;
@@ -169,21 +170,21 @@ impl SaveSyncer for MiSTerSaveSync {
             .cwd(path.parent().unwrap().to_str().unwrap())
             .await?;
 
-        ftp_stream.transfer_type(suppaftp::types::FileType::Binary);
+        ftp_stream
+            .transfer_type(suppaftp::types::FileType::Binary)
+            .await?;
+
         let mut file = file.lock().await;
-        // let mut file_buf = vec![];
-        // file.read_to_end(&mut file_buf)?;
+        let mut file_buf = vec![];
+        file.read_to_end(&mut file_buf)?;
+        let mut cursor = futures::io::Cursor::new(&mut file_buf);
 
-        // let mut cursor = Cursor::new(&mut file_buf);
-
-        // ftp_stream
-        //     .put_file(
-        //         path.file_name().and_then(|f| f.to_str()).unwrap(),
-        //         &mut cursor,
-        //     )
-        //     .await?;
-
-        todo!();
+        ftp_stream
+            .put_file(
+                path.file_name().and_then(|f| f.to_str()).unwrap(),
+                &mut cursor,
+            )
+            .await?;
 
         return Ok(());
     }
