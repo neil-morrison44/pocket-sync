@@ -1,6 +1,7 @@
 import { emit, listen } from "@tauri-apps/api/event"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
+import { useBEM } from "../../../hooks/useBEM"
 import { AllSavesSelector } from "../../../recoil/saves/selectors"
 import { invokeBeginMisterSaveSyncSession } from "../../../utils/invokes"
 import { splitAsPath } from "../../../utils/splitAsPath"
@@ -8,6 +9,7 @@ import { Controls } from "../../controls"
 import { Loader } from "../../loader"
 
 import "./index.css"
+import { MiSTerSaveInfoSelectorFamily } from "./recoil/selectors"
 
 type MisterSyncProps = {
   onClose: () => void
@@ -34,6 +36,12 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
     setConnected(c)
   }, [creds])
 
+  useEffect(() => {
+    return () => {
+      if (connected) emit("mister-save-sync-end")
+    }
+  }, [connected])
+
   return (
     <div className="mister-sync">
       <Controls
@@ -45,8 +53,9 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
           },
         ]}
       />
-
-      <SaveStatus key={selectedSave} path={selectedSave || undefined} />
+      <Suspense>
+        <SaveStatus key={selectedSave} path={selectedSave || undefined} />
+      </Suspense>
       <div className="mister-sync__content">
         {connected && <SavesList onSelect={setSelectedSave} />}
         {connecting && <Loader />}
@@ -97,54 +106,65 @@ type SaveStatusProps = {
 }
 
 const SaveStatus = ({ path }: SaveStatusProps) => {
-  const info = useMemo(() => {
-    if (!path) return null
+  const [equalityStatus, setEqualityStatus] = useState<
+    "equals" | "unequal" | "to-pocket" | "to-mister"
+  >("equals")
+
+  const [platform, file] = useMemo(() => {
+    if (!path) return []
     const split = splitAsPath(path)
     const platform = split.at(0)
     const file = split.at(-1)
 
-    return { platform, file }
+    return [platform, file]
   }, [path])
 
-  const [misterSaveInfo, setMisterSaveInfo] = useState<null | {
-    equal: boolean
-    timestamp: number
-    path: string
-  }>(null)
+  const misterSaveInfo = useRecoilValue(
+    MiSTerSaveInfoSelectorFamily({ platform, file })
+  )
 
   useEffect(() => {
-    if (!info) return
-    const { platform, file } = info
-    emit("mister-save-sync-find-save", { file, platform })
-  }, [info])
+    const t = window.setInterval(() => {
+      setEqualityStatus(Math.random() > 0.5 ? "to-pocket" : "to-mister")
+    }, 4000)
 
-  useEffect(() => {
-    const unlisten = listen<{
-      equal: boolean
-      timestamp: number
-      path: string
-    }>("mister-save-sync-found-save", ({ payload }) => {
-      console.log({ payload })
-      setMisterSaveInfo(payload)
-    })
     return () => {
-      unlisten.then((l) => l())
+      window.clearInterval(t)
     }
-  }, [])
+  })
 
-  if (!info) return null
+  const toPocketClassName = useBEM({
+    block: "mister-sync",
+    element: "status-to-pocket",
+    modifiers: {
+      equals: equalityStatus === "equals",
+      progress: equalityStatus === "to-pocket",
+    },
+  })
 
-  const { platform, file } = info
+  const toMisterClassName = useBEM({
+    block: "mister-sync",
+    element: "status-to-mister",
+    modifiers: {
+      equals: equalityStatus === "equals",
+      progress: equalityStatus === "to-mister",
+    },
+  })
+
+  if (!platform || !file) return null
 
   return (
     <div className="mister-sync__status">
-      <div>
+      <div className="mister-sync__pocket">
         Pocket
         <div>{file}</div>
         <div>{platform}</div>
       </div>
-      <div>Equals</div>
-      <div>
+      <div className="mister-sync__status-equals">
+        <div className={toPocketClassName}></div>
+        <div className={toMisterClassName}></div>
+      </div>
+      <div className="mister-sync__mister">
         MiSTer
         <div>{misterSaveInfo?.path}</div>
         <div>
@@ -161,6 +181,7 @@ const ChannelLog = () => {
 
   useEffect(() => {
     const unlisten = listen<string>("mister-save-sync-log", ({ payload }) => {
+      console.log({ payload })
       setLogMessages((log) => [payload, ...log])
     })
     return () => {

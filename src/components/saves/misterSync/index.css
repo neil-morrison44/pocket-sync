@@ -41,13 +41,13 @@
 
 .mister-sync__status{
   background-color: var(--info-colour);
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  justify-content: center;
+  display: flex;
+  justify-content: space-around;
   text-align: center;
   flex-basis: 20vh;
   flex-shrink: 0;
   align-items: center;
+  gap: 15px;
 }
 
 
@@ -74,4 +74,74 @@
 
 .mister-sync__saves-list-item{
   cursor: pointer;
+}
+
+
+.mister-sync__status-equals{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.mister-sync__status-to-pocket, .mister-sync__status-to-mister{
+  width: 100px;
+  height: 30px;
+  transition: clip-path 0.2s;
+  background: var(--colour);
+  cursor: pointer;
+  position: relative;
+  animation: none 1s linear infinite;
+
+
+  &:hover::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: rgb(255 255 255 / 50%);
+  }
+}
+
+.mister-sync__status-to-pocket{
+  --colour: var(--green-colour);
+
+  animation-direction: reverse;
+  clip-path: polygon(30% 50%, 100% 50%, 100% 100%, 0 100%, 30% 0);
+}
+
+.mister-sync__status-to-pocket--equals {
+  clip-path: polygon(20% 50%, 100% 50%, 100% 100%, 0 100%, 0 50%);
+}
+
+.mister-sync__status-to-mister{
+  --colour: var(--selection-colour);
+
+  animation-direction: forward;
+  clip-path: polygon(0 0, 100% 0, 65% 100%, 65% 50%, 0 50%);
+}
+
+.mister-sync__status-to-mister--equals {
+  clip-path: polygon(0 0, 100% 0, 100% 50%, 80% 50%, 0 50%);
+}
+
+.mister-sync__status-to-pocket--progress, .mister-sync__status-to-mister--progress {
+  background: var(--colour) linear-gradient(90deg, var(--colour) 0%, #fff4 42%, var(--colour) 100%);
+  background-size: 20px 20px;
+  animation-name: background-progess;
+}
+
+@keyframes background-progess {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 20px 0;
+  }
+}
+
+.mister-sync__pocket, .mister-sync__mister{
+  flex-grow: 0;
+  flex-basis: 33vw;
+  overflow: hidden;
 }

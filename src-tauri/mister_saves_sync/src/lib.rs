@@ -83,6 +83,16 @@ impl SaveSyncer for MiSTerSaveSync {
         }
     }
 
+    async fn disconnect(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+        let mut guard = self.ftp_stream.lock().await;
+        let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
+
+        match ftp_stream.quit().await {
+            Err(err) => return Err(err.into()),
+            Ok(_) => return Ok(()),
+        }
+    }
+
     async fn find_save_for(
         &self,
         platform: &str,
@@ -95,8 +105,8 @@ impl SaveSyncer for MiSTerSaveSync {
 
         if let Some(mister_system) = pocket_platform_to_mister_system(platform) {
             let system_path = format!("/media/fat/saves/{}", mister_system);
+            dbg!(&system_path);
             ftp_stream.cwd(&system_path).await?;
-
             let system_saves = ftp_stream.nlst(None).await?;
             let system_saves: Vec<_> = system_saves.into_iter().map(|s| PathBuf::from(s)).collect();
 
@@ -224,6 +234,7 @@ fn pocket_platform_to_mister_system(platform: &str) -> Option<String> {
         "snes" => Some("SNES"),
         "supervision" => Some("SuperVision"),
         "pce" => Some("TGFX16"),
+        "poke_mini" => Some("PokemonMini"),
         _ => None,
     })
     .and_then(|s| Some(String::from(s)))

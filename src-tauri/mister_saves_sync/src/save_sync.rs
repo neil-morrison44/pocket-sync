@@ -9,6 +9,8 @@ pub trait SaveSyncer {
         log_channel: &tokio::sync::mpsc::Sender<String>,
     ) -> Result<bool, Box<dyn std::error::Error + Send + Sync>>;
 
+    async fn disconnect(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
+
     async fn find_save_for(
         &self,
         platform: &str,
