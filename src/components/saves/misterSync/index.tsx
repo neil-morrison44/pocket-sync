@@ -31,6 +31,8 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
   const [connected, setConnected] = useState(false)
   const [connecting, setConnecting] = useState(false)
   const [selectedSave, setSelectedSave] = useState<string | null>(null)
+
+  const [query, setQuery] = useState("")
   const [creds, setCreds] = useState({
     host: "mister.home.neil.today",
     user: "root",
@@ -75,13 +77,19 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
             text: "Add backup location",
             onClick: onClose,
           },
+          connected && {
+            type: "search",
+            text: "Search Saves",
+            value: query,
+            onChange: (val) => setQuery(val),
+          },
         ]}
       />
       <Suspense fallback={<div className="mister-sync__status" />}>
         {selectedSave && <SaveStatus key={selectedSave} path={selectedSave} />}
       </Suspense>
       <div className="mister-sync__content">
-        {connected && <SavesList onSelect={setSelectedSave} />}
+        {connected && <SavesList onSelect={setSelectedSave} query={query} />}
         {connecting && <Loader />}
         {!connected && !connecting && (
           <div className="mister-sync__login">
@@ -234,11 +242,11 @@ const ChannelLog = () => {
 
 type SavesListProps = {
   onSelect: (save: string) => void
+  query: string
 }
 
-const SavesList = ({ onSelect }: SavesListProps) => {
+const SavesList = ({ onSelect, query }: SavesListProps) => {
   const allSaves = useRecoilValue(AllSavesSelector)
-  const [query, setQuery] = useState("")
 
   const filteredSaves = useMemo(() => {
     if (query.length === 0) return allSaves
@@ -259,18 +267,6 @@ const SavesList = ({ onSelect }: SavesListProps) => {
 
   return (
     <div className="mister-sync__saves-list">
-      <div className="mister-sync__saves-list-search">
-        <input
-          className="controls__search-input"
-          placeholder="Search"
-          type="search"
-          value={query}
-          onChange={({ target }) => setQuery(target.value)}
-          autoComplete="off"
-          spellCheck="false"
-        ></input>
-      </div>
-
       {Object.entries(savesByPlatform).map(([platformId, saves]) => (
         <Fragment key={platformId}>
           <PlatformLabel id={platformId} />

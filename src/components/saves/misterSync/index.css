@@ -64,16 +64,8 @@
   height: 100%;
   overflow: auto;
 
-  --controls-height: 59px;
+  --controls-height: 0px;
   --labels-height: 0px;
-}
-
-.mister-sync__saves-list-search{
-  background-color: var(--hover-colour);
-  position: sticky;
-  top: 0;
-  width: calc(100% - 20px);
-  padding: 10px;
 }
 
 .mister-sync__saves-list-group{
