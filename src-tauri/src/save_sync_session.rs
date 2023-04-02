@@ -1,8 +1,8 @@
-use futures::{future::join, AsyncReadExt};
 use mister_saves_sync::{MiSTerSaveSync, SaveSyncer};
 use serde::{Deserialize, Serialize};
-use std::{error::Error, io::Read, path::PathBuf, pin::Pin, sync::Arc};
+use std::{error::Error, io::Read, path::PathBuf, sync::Arc};
 use tauri::Window;
+use tokio::io::AsyncWriteExt;
 use tokio::{
     sync::{broadcast, mpsc},
     task,
@@ -42,6 +42,7 @@ enum IncomingMessage {
 #[derive(Debug, Clone)]
 enum OutboundMessage {
     FoundSave(MiSTerSaveInfo),
+    MovedSave(Transfer),
 }
 
 pub async fn start_mister_save_sync_session(
@@ -92,7 +93,6 @@ pub async fn start_mister_save_sync_session(
                     while let Ok(msg) = message_rx.recv().await {
                         match msg {
                             IncomingMessage::Find(pocket_save_info) => {
-                                println!("find mister save");
                                 let result = find_mister_save(
                                     &outbound_message_tx,
                                     &mister_syncer,
@@ -112,7 +112,6 @@ pub async fn start_mister_save_sync_session(
                                 }
                             }
                             IncomingMessage::PocketToMiSTer(transfer) => {
-                                dbg!(&transfer);
                                 let mut file = std::fs::File::open(&transfer.from).unwrap();
 
                                 let mut buf = Vec::new();
@@ -130,6 +129,9 @@ pub async fn start_mister_save_sync_session(
                                             ))
                                             .await
                                             .unwrap();
+                                        outbound_message_tx
+                                            .send(OutboundMessage::MovedSave(transfer))
+                                            .unwrap();
                                     }
                                     Err(err) => {
                                         log_tx
@@ -140,7 +142,40 @@ pub async fn start_mister_save_sync_session(
                                 }
                             }
                             IncomingMessage::MiSTerToPocket(transfer) => {
-                                dbg!(transfer);
+                                dbg!(&transfer);
+                                match mister_syncer.read_save(&transfer.from).await {
+                                    Ok(mut mister_file) => {
+                                        let mut buf = Vec::new();
+                                        mister_file.read_to_end(&mut buf).unwrap();
+
+                                        match tokio::fs::write(&transfer.to, buf).await {
+                                            Ok(_) => {
+                                                log_tx
+                                                    .send(format!(
+                                                        "Moved {:?} MiSTer -> {:?} Pocket",
+                                                        &transfer.from, &transfer.to
+                                                    ))
+                                                    .await
+                                                    .unwrap();
+                                                outbound_message_tx
+                                                    .send(OutboundMessage::MovedSave(transfer))
+                                                    .unwrap();
+                                            }
+                                            Err(err) => {
+                                                log_tx
+                                                    .send(format!("Error: {}", err.to_string()))
+                                                    .await
+                                                    .unwrap();
+                                            }
+                                        }
+                                    }
+                                    Err(err) => {
+                                        log_tx
+                                            .send(format!("Error: {}", err.to_string()))
+                                            .await
+                                            .unwrap();
+                                    }
+                                }
                             }
                             IncomingMessage::HeartBeat => {
                                 mister_syncer.heartbeat().await;
@@ -166,10 +201,15 @@ pub async fn start_mister_save_sync_session(
                                 Ok(msg) => {
                                     match msg {
                                         OutboundMessage::FoundSave(mister_save_info) => {
-                                            dbg!(&mister_save_info);
+
                                             window
                                                 .emit("mister-save-sync-found-save", mister_save_info)
                                                 .unwrap();
+                                        },
+                                        OutboundMessage::MovedSave(transfer) => {
+                                            window
+                                            .emit("mister-save-sync-moved-save", transfer)
+                                            .unwrap();
                                         }
                                       }
                                 },

@@ -23,7 +23,7 @@ pub trait SaveSyncer {
     async fn read_save(
         &self,
         path: &PathBuf,
-    ) -> Result<Box<dyn Read>, Box<dyn std::error::Error + Send + Sync>>;
+    ) -> Result<Box<dyn Read + Send>, Box<dyn std::error::Error + Send + Sync>>;
 
     async fn write_save(
         &self,

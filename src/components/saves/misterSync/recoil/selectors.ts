@@ -1,6 +1,7 @@
 import { emit, listen, once } from "@tauri-apps/api/event"
 import { selectorFamily } from "recoil"
 import { invokeFileMetadata } from "../../../../utils/invokes"
+import { SavesInvalidationAtom } from "./atoms"
 
 type MiSTerSaveInfo = {
   crc32: number
@@ -19,7 +20,8 @@ export const MiSTerSaveInfoSelectorFamily = selectorFamily<
   key: "MiSTerSaveInfoSelectorFamily",
   get:
     ({ platform, file }) =>
-    async () => {
+    async ({ get }) => {
+      get(SavesInvalidationAtom)
       if (!platform || !file) return null
 
       emit("mister-save-sync-find-save", { file, platform })
@@ -49,7 +51,8 @@ export const FileMetadataSelectorFamily = selectorFamily<
   key: "FileMetadataSelectorFamily",
   get:
     ({ filePath }) =>
-    async () => {
+    async ({ get }) => {
+      get(SavesInvalidationAtom)
       const info = await invokeFileMetadata(`Saves/${filePath}`)
       return info
     },

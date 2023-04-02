@@ -160,7 +160,7 @@ impl SaveSyncer for MiSTerSaveSync {
     async fn read_save(
         &self,
         path: &PathBuf,
-    ) -> Result<Box<dyn Read>, Box<dyn std::error::Error + Send + Sync>> {
+    ) -> Result<Box<dyn Read + Send>, Box<dyn std::error::Error + Send + Sync>> {
         let mut guard = self.ftp_stream.lock().await;
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 
