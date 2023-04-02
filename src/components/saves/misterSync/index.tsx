@@ -23,6 +23,7 @@ import {
   MiSTerSaveInfoSelectorFamily,
 } from "./recoil/selectors"
 import { Tip } from "../../tip"
+import { pocketPathAtom } from "../../../recoil/atoms"
 
 type MisterSyncProps = {
   onClose: () => void
@@ -167,6 +168,8 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
     FileMetadataSelectorFamily({ filePath: path })
   )
 
+  const pocketPath = useRecoilValue(pocketPathAtom)
+
   useEffect(() => {
     if (misterSaveInfo?.crc32 === pocketSaveInfo.crc32) {
       setEqualityStatus("equals")
@@ -178,8 +181,25 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
   const moveSave = useCallback(
     (to: "pocket" | "mister") => {
       setEqualityStatus(`to-${to}`)
+
+      switch (to) {
+        case "mister": {
+          emit("mister-save-sync-move-save-to-mister", {
+            from: `${pocketPath}/Saves/${path}`,
+            to: misterSaveInfo?.path || "",
+          })
+          break
+        }
+        case "pocket": {
+          emit("mister-save-sync-move-save-to-pocket", {
+            to: `${pocketPath}/Saves/${path}`,
+            from: misterSaveInfo?.path || "",
+          })
+          break
+        }
+      }
     },
-    [misterSaveInfo, pocketSaveInfo]
+    [path, misterSaveInfo, pocketSaveInfo]
   )
 
   const toPocketClassName = useBEM({
@@ -225,6 +245,7 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
           {misterSaveInfo?.timestamp &&
             new Date(misterSaveInfo.timestamp).toLocaleString()}
         </div>
+        <div>{misterSaveInfo?.crc32.toString(16)}</div>
       </div>
     </div>
   )

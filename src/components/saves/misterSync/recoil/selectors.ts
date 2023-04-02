@@ -28,8 +28,6 @@ export const MiSTerSaveInfoSelectorFamily = selectorFamily<
         const listener = listen<MiSTerSaveInfo>(
           "mister-save-sync-found-save",
           ({ payload }) => {
-            console.log({ payload })
-            payload.crc32 = 0
             const { pocket_save } = payload
             if (
               pocket_save.platform === platform &&

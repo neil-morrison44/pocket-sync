@@ -441,7 +441,6 @@ async fn get_file_metadata(
         let full_path = full_path.clone();
         tokio::task::spawn_blocking(move || {
             let mut hasher = crc32fast::Hasher::new();
-            dbg!(&full_path);
             let mut file = std::fs::File::open(full_path).unwrap();
             let chunk_size = 0x4000;
 

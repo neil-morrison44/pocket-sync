@@ -28,7 +28,7 @@ pub trait SaveSyncer {
     async fn write_save(
         &self,
         path: &PathBuf,
-        file: Box<Mutex<dyn Read + Send>>,
+        file: Box<dyn Read + Send>,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
     async fn read_timestamp(

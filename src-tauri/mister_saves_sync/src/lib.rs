@@ -1,9 +1,8 @@
 mod save_sync;
 use async_trait::async_trait;
-use futures::io::{AsyncReadExt, ReadToEnd};
+use futures::io::AsyncReadExt;
 use std::io::Cursor;
 use std::net::ToSocketAddrs;
-use std::pin::Pin;
 use std::{io::Read, path::PathBuf, sync::Arc};
 use tokio::sync::mpsc::Sender;
 use tokio::sync::Mutex;
@@ -170,21 +169,20 @@ impl SaveSyncer for MiSTerSaveSync {
             .await?;
         let file_name = path.file_name().and_then(|f| f.to_str()).unwrap();
 
-        // let mut buffer = Vec::new();
-        // let read_result = ftp_stream
-        //     .retr(file_name, |stream| Ok(stream.read_to_end(&mut buffer)))
-        //     .await;
+        let mut buffer: Vec<u8> = Vec::new();
+        if let Ok(mut reader) = ftp_stream.retr_as_stream(file_name).await {
+            reader.read_to_end(&mut buffer).await?;
+            ftp_stream.finalize_retr_stream(reader).await?;
+        }
 
-        // let cursor = Cursor::new(buffer);
-        // Ok(Box::new(cursor))
-
-        todo!()
+        let cursor = Cursor::new(buffer);
+        Ok(Box::new(cursor))
     }
 
     async fn write_save(
         &self,
         path: &PathBuf,
-        file: Box<Mutex<dyn Read + Send>>,
+        mut file: Box<dyn Read + Send>,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         let mut guard = self.ftp_stream.lock().await;
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
@@ -197,7 +195,6 @@ impl SaveSyncer for MiSTerSaveSync {
             .transfer_type(suppaftp::types::FileType::Binary)
             .await?;
 
-        let mut file = file.lock().await;
         let mut file_buf = vec![];
         file.read_to_end(&mut file_buf)?;
         let mut cursor = futures::io::Cursor::new(&mut file_buf);

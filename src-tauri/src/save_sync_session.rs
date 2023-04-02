@@ -1,7 +1,7 @@
-use futures::future::join;
+use futures::{future::join, AsyncReadExt};
 use mister_saves_sync::{MiSTerSaveSync, SaveSyncer};
 use serde::{Deserialize, Serialize};
-use std::{error::Error, path::PathBuf, sync::Arc};
+use std::{error::Error, io::Read, path::PathBuf, pin::Pin, sync::Arc};
 use tauri::Window;
 use tokio::{
     sync::{broadcast, mpsc},
@@ -15,8 +15,8 @@ struct PlainMessage(String);
 struct MiSTerSaveInfo {
     path: Option<PathBuf>,
     timestamp: Option<u64>,
-    equal: bool,
     pocket_save: PocketSaveInfo,
+    crc32: u32,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -112,7 +112,32 @@ pub async fn start_mister_save_sync_session(
                                 }
                             }
                             IncomingMessage::PocketToMiSTer(transfer) => {
-                                dbg!(transfer);
+                                dbg!(&transfer);
+                                let mut file = std::fs::File::open(&transfer.from).unwrap();
+
+                                let mut buf = Vec::new();
+                                file.by_ref().read_to_end(&mut buf).unwrap();
+
+                                let cursor = std::io::Cursor::new(buf);
+                                let boxed_cursor = Box::new(cursor);
+
+                                match mister_syncer.write_save(&transfer.to, boxed_cursor).await {
+                                    Ok(_) => {
+                                        log_tx
+                                            .send(format!(
+                                                "Moved {:?} Pocket -> {:?} MiSTer",
+                                                &transfer.from, &transfer.to
+                                            ))
+                                            .await
+                                            .unwrap();
+                                    }
+                                    Err(err) => {
+                                        log_tx
+                                            .send(format!("Error: {}", err.to_string()))
+                                            .await
+                                            .unwrap();
+                                    }
+                                }
                             }
                             IncomingMessage::MiSTerToPocket(transfer) => {
                                 dbg!(transfer);
@@ -251,12 +276,24 @@ async fn find_mister_save(
     {
         dbg!(&found_save_path);
         let timestamp = mister_syncer.read_timestamp(&found_save_path).await?;
+        let file = mister_syncer.read_save(&found_save_path).await?;
+        let crc32 = mister_save_crc32(file);
+
         outbound_channel.send(OutboundMessage::FoundSave(MiSTerSaveInfo {
             path: Some(found_save_path),
             timestamp: Some(timestamp),
-            equal: false,
             pocket_save: pocket_save_info.clone(),
+            crc32,
         }))?;
     }
     Ok(())
+}
+
+fn mister_save_crc32(mut file: Box<dyn std::io::Read>) -> u32 {
+    // this should probably be more async
+    // the file should be fully in memory at this point though so it should be fine
+    let mut buffer: Vec<u8> = Vec::new();
+    file.read_to_end(&mut buffer).unwrap();
+    let checksum = crc32fast::hash(&buffer);
+    checksum
 }
