@@ -150,9 +150,9 @@ type SaveStatusProps = {
 }
 
 const SaveStatus = ({ path }: SaveStatusProps) => {
-  const [equalityStatus, setEqualityStatus] = useState<
-    "equals" | "unequal" | "to-pocket" | "to-mister"
-  >("equals")
+  const [equalityStatus, setEqualityStatus] = useState<"equals" | "unequal">(
+    "equals"
+  )
 
   const [platform, file] = useMemo(() => {
     const split = splitAsPath(path)
@@ -180,8 +180,6 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
 
   const moveSave = useCallback(
     (to: "pocket" | "mister") => {
-      setEqualityStatus(`to-${to}`)
-
       switch (to) {
         case "mister": {
           emit("mister-save-sync-move-save-to-mister", {
@@ -207,7 +205,6 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
     element: "status-to-pocket",
     modifiers: {
       equals: equalityStatus === "equals",
-      progress: equalityStatus === "to-pocket",
     },
   })
 
@@ -216,7 +213,6 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
     element: "status-to-mister",
     modifiers: {
       equals: equalityStatus === "equals",
-      progress: equalityStatus === "to-mister",
     },
   })
 
