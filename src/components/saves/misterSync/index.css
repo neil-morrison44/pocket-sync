@@ -7,15 +7,6 @@
   gap: 10px;
 }
 
-
-/* --background-colour: #2f2f2f;
---hover-colour: #222;
---info-colour: #111;
---light-colour: #555;
---green-colour: rgb(88 144 80);
---red-colour: rgb(200 80 88);
---selection-colour: #396cd8; */
-
 .mister-sync__login{
   display: flex;
   flex-direction: column;
@@ -65,7 +56,24 @@
 
 .mister-sync__content{
   flex-grow: 1;
+  overflow: hidden;
+}
+
+.mister-sync__saves-list{
+  position: relative;
+  height: 100%;
   overflow: auto;
+
+  --controls-height: 59px;
+  --labels-height: 0px;
+}
+
+.mister-sync__saves-list-search{
+  background-color: var(--hover-colour);
+  position: sticky;
+  top: 0;
+  width: calc(100% - 20px);
+  padding: 10px;
 }
 
 .mister-sync__saves-list-group{

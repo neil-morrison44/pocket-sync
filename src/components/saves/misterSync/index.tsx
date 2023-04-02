@@ -1,5 +1,12 @@
 import { emit, listen } from "@tauri-apps/api/event"
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react"
+import {
+  Fragment,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import { useRecoilValue } from "recoil"
 import { useBEM } from "../../../hooks/useBEM"
 import { AllSavesSelector } from "../../../recoil/saves/selectors"
@@ -8,6 +15,7 @@ import { splitAsPath } from "../../../utils/splitAsPath"
 import { Controls } from "../../controls"
 import { Loader } from "../../loader"
 import { PlatformLabel } from "../info/platformLabel"
+import { search } from "fast-fuzzy"
 
 import "./index.css"
 import {
@@ -129,27 +137,30 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
     const split = splitAsPath(path)
     const platform = split.at(0)
     const file = split.at(-1)
-
     return [platform, file]
   }, [path])
 
   const misterSaveInfo = useRecoilValue(
     MiSTerSaveInfoSelectorFamily({ platform, file })
   )
-
   const pocketSaveInfo = useRecoilValue(
     FileMetadataSelectorFamily({ filePath: path })
   )
 
   useEffect(() => {
-    const t = window.setInterval(() => {
-      setEqualityStatus(Math.random() > 0.5 ? "to-pocket" : "to-mister")
-    }, 4000)
-
-    return () => {
-      window.clearInterval(t)
+    if (misterSaveInfo?.crc32 === pocketSaveInfo.crc32) {
+      setEqualityStatus("equals")
+    } else {
+      setEqualityStatus("unequal")
     }
-  })
+  }, [misterSaveInfo, pocketSaveInfo])
+
+  const moveSave = useCallback(
+    (to: "pocket" | "mister") => {
+      setEqualityStatus(`to-${to}`)
+    },
+    [misterSaveInfo, pocketSaveInfo]
+  )
 
   const toPocketClassName = useBEM({
     block: "mister-sync",
@@ -178,8 +189,14 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
         <div>{pocketSaveInfo.crc32.toString(16)}</div>
       </div>
       <div className="mister-sync__status-equals">
-        <div className={toPocketClassName}></div>
-        <div className={toMisterClassName}></div>
+        <div
+          className={toPocketClassName}
+          onClick={() => moveSave("pocket")}
+        ></div>
+        <div
+          className={toMisterClassName}
+          onClick={() => moveSave("mister")}
+        ></div>
       </div>
       <div className="mister-sync__mister">
         <strong>MiSTer</strong>
@@ -221,23 +238,41 @@ type SavesListProps = {
 
 const SavesList = ({ onSelect }: SavesListProps) => {
   const allSaves = useRecoilValue(AllSavesSelector)
+  const [query, setQuery] = useState("")
+
+  const filteredSaves = useMemo(() => {
+    if (query.length === 0) return allSaves
+    return search(query, allSaves)
+  }, [allSaves, query])
 
   const savesByPlatform = useMemo(() => {
-    return allSaves.reduce((acc, curr) => {
+    return filteredSaves.reduce((acc, curr) => {
       const split = splitAsPath(curr)
       const platform = split.at(0) || "unknown"
       if (!acc[platform]) acc[platform] = []
       acc[platform].push(curr)
       return acc
     }, {} as Record<string, string[]>)
-  }, [allSaves])
+  }, [filteredSaves])
 
   console.log({ savesByPlatform })
 
   return (
     <div className="mister-sync__saves-list">
+      <div className="mister-sync__saves-list-search">
+        <input
+          className="controls__search-input"
+          placeholder="Search"
+          type="search"
+          value={query}
+          onChange={({ target }) => setQuery(target.value)}
+          autoComplete="off"
+          spellCheck="false"
+        ></input>
+      </div>
+
       {Object.entries(savesByPlatform).map(([platformId, saves]) => (
-        <div key={platformId}>
+        <Fragment key={platformId}>
           <PlatformLabel id={platformId} />
           <div className="mister-sync__saves-list-group">
             {saves.map((s) => (
@@ -250,7 +285,7 @@ const SavesList = ({ onSelect }: SavesListProps) => {
               </div>
             ))}
           </div>
-        </div>
+        </Fragment>
       ))}
     </div>
   )

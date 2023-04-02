@@ -3,7 +3,7 @@ import { selectorFamily } from "recoil"
 import { invokeFileMetadata } from "../../../../utils/invokes"
 
 type MiSTerSaveInfo = {
-  equal: boolean
+  crc32: number
   timestamp: number
   path: string
   pocket_save: {
@@ -29,6 +29,7 @@ export const MiSTerSaveInfoSelectorFamily = selectorFamily<
           "mister-save-sync-found-save",
           ({ payload }) => {
             console.log({ payload })
+            payload.crc32 = 0
             const { pocket_save } = payload
             if (
               pocket_save.platform === platform &&
