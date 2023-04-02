@@ -22,6 +22,7 @@ import {
   FileMetadataSelectorFamily,
   MiSTerSaveInfoSelectorFamily,
 } from "./recoil/selectors"
+import { Tip } from "../../tip"
 
 type MisterSyncProps = {
   onClose: () => void
@@ -92,39 +93,50 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
         {connected && <SavesList onSelect={setSelectedSave} query={query} />}
         {connecting && <Loader />}
         {!connected && !connecting && (
-          <div className="mister-sync__login">
-            <label>
-              Host / IP Address:
-              <input
-                type="text"
-                value={creds.host}
-                onChange={({ target }) =>
-                  setCreds((c) => ({ ...c, host: target.value }))
-                }
-              />
-            </label>
-            <label>
-              Username:
-              <input
-                type="text"
-                value={creds.user}
-                onChange={({ target }) =>
-                  setCreds((c) => ({ ...c, user: target.value }))
-                }
-              />
-            </label>
-            <label>
-              Password:
-              <input
-                type="text"
-                value={creds.password}
-                onChange={({ target }) =>
-                  setCreds((c) => ({ ...c, password: target.value }))
-                }
-              />
-            </label>
-            <button onClick={connect}>{"Connect"}</button>
-          </div>
+          <>
+            <div className="mister-sync__login">
+              <label>
+                Host / IP Address:
+                <input
+                  type="text"
+                  value={creds.host}
+                  onChange={({ target }) =>
+                    setCreds((c) => ({ ...c, host: target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Username:
+                <input
+                  type="text"
+                  value={creds.user}
+                  onChange={({ target }) =>
+                    setCreds((c) => ({ ...c, user: target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Password:
+                <input
+                  type="text"
+                  value={creds.password}
+                  onChange={({ target }) =>
+                    setCreds((c) => ({ ...c, password: target.value }))
+                  }
+                />
+              </label>
+              <button onClick={connect}>{"Connect"}</button>
+            </div>
+            <Tip>The MiSTer's FTP must be turned on</Tip>
+            <Tip>
+              Make sure the save is compatible between Pocket & MiSTer before
+              transfer
+            </Tip>
+            <Tip>
+              The Game must be named exactly the same on the Pocket and the
+              MiSTer for the save to be found
+            </Tip>
+          </>
         )}
       </div>
       <ChannelLog />
