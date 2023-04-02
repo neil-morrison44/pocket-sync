@@ -115,3 +115,14 @@ export const invokeBeginMisterSaveSyncSession = async (
 ) => {
   return invoke<boolean>("begin_mister_sync_session", { host, user, password })
 }
+
+export const invokeFileMetadata = async (filePath: string) => {
+  const metadata = await invoke<{ timestamp_secs: number; crc32: number }>(
+    "get_file_metadata",
+    {
+      filePath,
+    }
+  )
+  console.log({ metadata })
+  return { timestamp: metadata.timestamp_secs * 1000, crc32: metadata.crc32 }
+}

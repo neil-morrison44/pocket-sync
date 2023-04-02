@@ -11,6 +11,8 @@ pub trait SaveSyncer {
 
     async fn disconnect(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
+    async fn heartbeat(&mut self) -> Result<bool, Box<dyn std::error::Error + Send + Sync>>;
+
     async fn find_save_for(
         &self,
         platform: &str,

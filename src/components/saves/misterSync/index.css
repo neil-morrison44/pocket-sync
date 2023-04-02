@@ -68,12 +68,20 @@
   overflow: auto;
 }
 
-.mister-sync__saves-list{
+.mister-sync__saves-list-group{
   padding: 10px;
 }
 
 .mister-sync__saves-list-item{
   cursor: pointer;
+  border-bottom: 1px solid rgb(255 255 255 / 20%);
+  margin-bottom: 5px;
+  padding: 5px;
+
+  &:hover{
+    background-color: rgb(255 255 255 / 10%);
+    border-bottom: 1px solid rgb(255 255 255 / 80%);
+  }
 }
 
 

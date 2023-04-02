@@ -7,9 +7,13 @@ import { invokeBeginMisterSaveSyncSession } from "../../../utils/invokes"
 import { splitAsPath } from "../../../utils/splitAsPath"
 import { Controls } from "../../controls"
 import { Loader } from "../../loader"
+import { PlatformLabel } from "../info/platformLabel"
 
 import "./index.css"
-import { MiSTerSaveInfoSelectorFamily } from "./recoil/selectors"
+import {
+  FileMetadataSelectorFamily,
+  MiSTerSaveInfoSelectorFamily,
+} from "./recoil/selectors"
 
 type MisterSyncProps = {
   onClose: () => void
@@ -37,6 +41,18 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
   }, [creds])
 
   useEffect(() => {
+    if (connected) {
+      const i = window.setInterval(() => {
+        emit("mister-save-sync-heartbeat")
+      }, 10 * 1000)
+
+      return () => {
+        clearInterval(i)
+      }
+    }
+  }, [connected])
+
+  useEffect(() => {
     return () => {
       if (connected) emit("mister-save-sync-end")
     }
@@ -53,8 +69,8 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
           },
         ]}
       />
-      <Suspense>
-        <SaveStatus key={selectedSave} path={selectedSave || undefined} />
+      <Suspense fallback={<div className="mister-sync__status" />}>
+        {selectedSave && <SaveStatus key={selectedSave} path={selectedSave} />}
       </Suspense>
       <div className="mister-sync__content">
         {connected && <SavesList onSelect={setSelectedSave} />}
@@ -95,14 +111,13 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
           </div>
         )}
       </div>
-      {/* list of saves */}
       <ChannelLog />
     </div>
   )
 }
 
 type SaveStatusProps = {
-  path?: string
+  path: string
 }
 
 const SaveStatus = ({ path }: SaveStatusProps) => {
@@ -111,7 +126,6 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
   >("equals")
 
   const [platform, file] = useMemo(() => {
-    if (!path) return []
     const split = splitAsPath(path)
     const platform = split.at(0)
     const file = split.at(-1)
@@ -121,6 +135,10 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
 
   const misterSaveInfo = useRecoilValue(
     MiSTerSaveInfoSelectorFamily({ platform, file })
+  )
+
+  const pocketSaveInfo = useRecoilValue(
+    FileMetadataSelectorFamily({ filePath: path })
   )
 
   useEffect(() => {
@@ -151,22 +169,21 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
     },
   })
 
-  if (!platform || !file) return null
-
   return (
     <div className="mister-sync__status">
       <div className="mister-sync__pocket">
-        Pocket
-        <div>{file}</div>
-        <div>{platform}</div>
+        <strong>Pocket</strong>
+        <div>{path}</div>
+        <div>{new Date(pocketSaveInfo.timestamp).toLocaleString()}</div>
+        <div>{pocketSaveInfo.crc32.toString(16)}</div>
       </div>
       <div className="mister-sync__status-equals">
         <div className={toPocketClassName}></div>
         <div className={toMisterClassName}></div>
       </div>
       <div className="mister-sync__mister">
-        MiSTer
-        <div>{misterSaveInfo?.path}</div>
+        <strong>MiSTer</strong>
+        <div>{misterSaveInfo?.path.replace("/media/fat/saves/", "")}</div>
         <div>
           {misterSaveInfo?.timestamp &&
             new Date(misterSaveInfo.timestamp).toLocaleString()}
@@ -205,15 +222,34 @@ type SavesListProps = {
 const SavesList = ({ onSelect }: SavesListProps) => {
   const allSaves = useRecoilValue(AllSavesSelector)
 
+  const savesByPlatform = useMemo(() => {
+    return allSaves.reduce((acc, curr) => {
+      const split = splitAsPath(curr)
+      const platform = split.at(0) || "unknown"
+      if (!acc[platform]) acc[platform] = []
+      acc[platform].push(curr)
+      return acc
+    }, {} as Record<string, string[]>)
+  }, [allSaves])
+
+  console.log({ savesByPlatform })
+
   return (
     <div className="mister-sync__saves-list">
-      {allSaves.map((s) => (
-        <div
-          className="mister-sync__saves-list-item"
-          key={s}
-          onClick={() => onSelect(s)}
-        >
-          {s}
+      {Object.entries(savesByPlatform).map(([platformId, saves]) => (
+        <div key={platformId}>
+          <PlatformLabel id={platformId} />
+          <div className="mister-sync__saves-list-group">
+            {saves.map((s) => (
+              <div
+                className="mister-sync__saves-list-item"
+                key={s}
+                onClick={() => onSelect(s)}
+              >
+                {s}
+              </div>
+            ))}
+          </div>
         </div>
       ))}
     </div>

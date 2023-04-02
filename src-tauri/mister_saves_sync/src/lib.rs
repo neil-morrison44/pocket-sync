@@ -1,10 +1,10 @@
 mod save_sync;
 use async_trait::async_trait;
+use futures::io::{AsyncReadExt, ReadToEnd};
 use std::io::Cursor;
 use std::net::ToSocketAddrs;
+use std::pin::Pin;
 use std::{io::Read, path::PathBuf, sync::Arc};
-use tokio::io::AsyncBufReadExt;
-use tokio::io::{AsyncRead, AsyncReadExt};
 use tokio::sync::mpsc::Sender;
 use tokio::sync::Mutex;
 
@@ -44,8 +44,8 @@ impl SaveSyncer for MiSTerSaveSync {
                     .await?;
                 return Ok(false);
             }
-            Ok(socketAddrs) => {
-                if let Some(address) = socketAddrs.last() {
+            Ok(socket_addrs) => {
+                if let Some(address) = socket_addrs.last() {
                     match suppaftp::AsyncFtpStream::connect_timeout(
                         address,
                         std::time::Duration::from_secs(10),
@@ -93,6 +93,16 @@ impl SaveSyncer for MiSTerSaveSync {
         }
     }
 
+    async fn heartbeat(&mut self) -> Result<bool, Box<dyn std::error::Error + Send + Sync>> {
+        let mut guard = self.ftp_stream.lock().await;
+        let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
+
+        match ftp_stream.noop().await {
+            Ok(_) => Ok(true),
+            Err(_) => Ok(false),
+        }
+    }
+
     async fn find_save_for(
         &self,
         platform: &str,
@@ -107,6 +117,7 @@ impl SaveSyncer for MiSTerSaveSync {
             let system_path = format!("/media/fat/saves/{}", mister_system);
             dbg!(&system_path);
             ftp_stream.cwd(&system_path).await?;
+            dbg!("cwd ran?");
             let system_saves = ftp_stream.nlst(None).await?;
             let system_saves: Vec<_> = system_saves.into_iter().map(|s| PathBuf::from(s)).collect();
 
@@ -154,18 +165,20 @@ impl SaveSyncer for MiSTerSaveSync {
         let mut guard = self.ftp_stream.lock().await;
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 
-        // ftp_stream
-        //     .cwd(path.parent().unwrap().to_str().unwrap())
-        //     .await?;
-        // let file_name = path.file_name().and_then(|f| f.to_str()).unwrap();
-        // let save_file = ftp_stream.retr_as_buffer(file_name).await?;
+        ftp_stream
+            .cwd(path.parent().unwrap().to_str().unwrap())
+            .await?;
+        let file_name = path.file_name().and_then(|f| f.to_str()).unwrap();
 
-        // let mut buf = Vec::new();
-        // ftp_stream.retr(file_name, |stream| {
-        //     stream.read_to_end(&mut buf);
-        // });
-        todo!();
-        // return Ok(Box::new(save_file));
+        // let mut buffer = Vec::new();
+        // let read_result = ftp_stream
+        //     .retr(file_name, |stream| Ok(stream.read_to_end(&mut buffer)))
+        //     .await;
+
+        // let cursor = Cursor::new(buffer);
+        // Ok(Box::new(cursor))
+
+        todo!()
     }
 
     async fn write_save(

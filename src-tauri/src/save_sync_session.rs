@@ -16,6 +16,7 @@ struct MiSTerSaveInfo {
     path: Option<PathBuf>,
     timestamp: Option<u64>,
     equal: bool,
+    pocket_save: PocketSaveInfo,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -35,6 +36,7 @@ enum IncomingMessage {
     Find(PocketSaveInfo),
     PocketToMiSTer(Transfer),
     MiSTerToPocket(Transfer),
+    HeartBeat,
 }
 
 #[derive(Debug, Clone)]
@@ -49,7 +51,7 @@ pub async fn start_mister_save_sync_session(
     window: Window,
 ) -> Result<bool, Box<dyn Error>> {
     let (log_tx, mut log_rx) = tokio::sync::mpsc::channel(100);
-    let (kill_tx, kill_rx) = tokio::sync::broadcast::channel(1);
+    let (kill_tx, _kill_rx) = tokio::sync::broadcast::channel(1);
 
     let log_tx: Arc<_> = log_tx.into();
     let window: Arc<_> = window.into();
@@ -63,7 +65,7 @@ pub async fn start_mister_save_sync_session(
     let mut mister_syncer = MiSTerSaveSync::new(&host, &user, &password);
     let connected = mister_syncer.connect(&log_tx).await.unwrap();
 
-    let log_receiver_task = {
+    {
         let window = window.clone();
         task::spawn(async move {
             while let Some(msg) = log_rx.recv().await {
@@ -74,7 +76,7 @@ pub async fn start_mister_save_sync_session(
         })
     };
 
-    let processing_task = {
+    {
         let window = window.clone();
         let kill_tx = kill_tx.clone();
         task::spawn(async move {
@@ -115,6 +117,9 @@ pub async fn start_mister_save_sync_session(
                             IncomingMessage::MiSTerToPocket(transfer) => {
                                 dbg!(transfer);
                             }
+                            IncomingMessage::HeartBeat => {
+                                mister_syncer.heartbeat().await;
+                            }
                         }
                     }
                 });
@@ -131,13 +136,21 @@ pub async fn start_mister_save_sync_session(
                             break;
                           }
                           msg = outbound_message_rx.recv() => {
-                            match msg.unwrap() {
-                              OutboundMessage::FoundSave(mister_save_info) => {
-                                  dbg!(&mister_save_info);
-                                  window
-                                      .emit("mister-save-sync-found-save", mister_save_info)
-                                      .unwrap();
-                              }
+                            dbg!(&msg);
+                            match msg {
+                                Ok(msg) => {
+                                    match msg {
+                                        OutboundMessage::FoundSave(mister_save_info) => {
+                                            dbg!(&mister_save_info);
+                                            window
+                                                .emit("mister-save-sync-found-save", mister_save_info)
+                                                .unwrap();
+                                        }
+                                      }
+                                },
+                                Err(_) => {
+                                    break;
+                                }
                             }
                           }
                         }
@@ -193,6 +206,15 @@ pub async fn start_mister_save_sync_session(
                     }
                 })
             };
+
+            let heartbeat_listener = {
+                let message_tx = message_tx.clone();
+                let window = window.clone();
+                window.listen("mister-save-sync-heartbeat", move |_| {
+                    message_tx.send(IncomingMessage::HeartBeat).unwrap();
+                })
+            };
+
             {
                 let mut kill_rx = kill_tx.subscribe();
                 task::spawn(async move {
@@ -200,6 +222,7 @@ pub async fn start_mister_save_sync_session(
                     window.unlisten(find_save_listener);
                     window.unlisten(save_to_pocket_listener);
                     window.unlisten(save_to_mister_listener);
+                    window.unlisten(heartbeat_listener);
                 })
             }
         })
@@ -232,6 +255,7 @@ async fn find_mister_save(
             path: Some(found_save_path),
             timestamp: Some(timestamp),
             equal: false,
+            pocket_save: pocket_save_info.clone(),
         }))?;
     }
     Ok(())

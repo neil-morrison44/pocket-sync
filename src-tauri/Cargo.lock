@@ -2575,6 +2575,7 @@ name = "pocket-sync"
 version = "0.0.0"
 dependencies = [
  "bytes",
+ "crc32fast",
  "data-encoding",
  "feed-rs",
  "futures",
