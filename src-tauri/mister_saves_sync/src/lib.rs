@@ -114,16 +114,11 @@ impl SaveSyncer for MiSTerSaveSync {
 
         if let Some(mister_system) = pocket_platform_to_mister_system(platform) {
             let system_path = format!("/media/fat/saves/{}", mister_system);
-            dbg!(&system_path);
             ftp_stream.cwd(&system_path).await?;
-            dbg!("cwd ran?");
             let system_saves = ftp_stream.nlst(None).await?;
             let system_saves: Vec<_> = system_saves.into_iter().map(|s| PathBuf::from(s)).collect();
-
             let game_path = PathBuf::from(game);
             let expected_save_file_name = game_path.file_stem();
-
-            dbg!(&system_saves);
             if let Some(found_save) = system_saves
                 .into_iter()
                 .find(|p| p.file_stem() == expected_save_file_name)
@@ -219,7 +214,6 @@ impl SaveSyncer for MiSTerSaveSync {
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 
         let parent_path = path.parent().unwrap().to_str().unwrap();
-        dbg!(parent_path);
         ftp_stream.cwd(parent_path).await?;
         let file_name = path.file_name().and_then(|f| f.to_str()).unwrap();
         println!("{file_name}");

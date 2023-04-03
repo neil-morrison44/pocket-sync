@@ -142,7 +142,6 @@ pub async fn start_mister_save_sync_session(
                                 }
                             }
                             IncomingMessage::MiSTerToPocket(transfer) => {
-                                dbg!(&transfer);
                                 match mister_syncer.read_save(&transfer.from).await {
                                     Ok(mut mister_file) => {
                                         let mut buf = Vec::new();
@@ -196,7 +195,6 @@ pub async fn start_mister_save_sync_session(
                             break;
                           }
                           msg = outbound_message_rx.recv() => {
-                            dbg!(&msg);
                             match msg {
                                 Ok(msg) => {
                                     match msg {
@@ -314,7 +312,6 @@ async fn find_mister_save(
         .find_save_for(&pocket_save_info.platform, &pocket_save_info.file, log_tx)
         .await
     {
-        dbg!(&found_save_path);
         let timestamp = mister_syncer.read_timestamp(&found_save_path).await?;
         let file = mister_syncer.read_save(&found_save_path).await?;
         let crc32 = mister_save_crc32(file);
