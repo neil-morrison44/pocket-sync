@@ -36,47 +36,64 @@ impl SaveSyncer for MiSTerSaveSync {
             .send(format!("Connecting to {}:21...", self.host).into())
             .await?;
 
-        match format!("{}:21", self.host).to_socket_addrs() {
+        let address = {
+            let host = self.host.clone();
+            tokio::task::spawn_blocking(move || match format!("{}:21", host).to_socket_addrs() {
+                Err(err) => {
+                    return Err(err);
+                }
+                Ok(socket_addrs) => {
+                    if let Some(address) = socket_addrs.last() {
+                        return Ok(address);
+                    } else {
+                        return Err(std::io::Error::new(
+                            std::io::ErrorKind::Other,
+                            "No addresses found",
+                        ));
+                    }
+                }
+            })
+            .await
+            .unwrap()
+        };
+
+        match address {
             Err(err) => {
                 log_channel
                     .send(format!("Error: {}", err.to_string()))
                     .await?;
                 return Ok(false);
             }
-            Ok(socket_addrs) => {
-                if let Some(address) = socket_addrs.last() {
-                    match suppaftp::AsyncFtpStream::connect_timeout(
-                        address,
-                        std::time::Duration::from_secs(10),
-                    )
-                    .await
-                    {
-                        Ok(mut ftp_stream) => {
-                            if let Ok(_) = ftp_stream
-                                .login(self.user.as_str(), self.password.as_str())
-                                .await
-                            {
-                                self.ftp_stream = Mutex::new(Some(ftp_stream));
-                                log_channel.send(format!("Connected!").into()).await?;
-                                return Ok(true);
-                            } else {
-                                log_channel
-                                    .send(format!("Failed to connect").into())
-                                    .await?;
-
-                                return Ok(false);
-                            }
-                        }
-                        Err(ftp_error) => {
-                            let error_string = ftp_error.to_string();
+            Ok(address) => {
+                match suppaftp::AsyncFtpStream::connect_timeout(
+                    address,
+                    std::time::Duration::from_secs(10),
+                )
+                .await
+                {
+                    Ok(mut ftp_stream) => {
+                        if let Ok(_) = ftp_stream
+                            .login(self.user.as_str(), self.password.as_str())
+                            .await
+                        {
+                            self.ftp_stream = Mutex::new(Some(ftp_stream));
+                            log_channel.send(format!("Connected!").into()).await?;
+                            return Ok(true);
+                        } else {
                             log_channel
-                                .send(String::from(format!("Error: {}", error_string)))
+                                .send(format!("Failed to connect").into())
                                 .await?;
+
                             return Ok(false);
                         }
                     }
-                } else {
-                    return Ok(false);
+                    Err(ftp_error) => {
+                        let error_string = ftp_error.to_string();
+                        log_channel
+                            .send(String::from(format!("Error: {}", error_string)))
+                            .await?;
+                        return Ok(false);
+                    }
                 }
             }
         }
