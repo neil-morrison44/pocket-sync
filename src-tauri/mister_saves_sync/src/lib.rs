@@ -1,7 +1,6 @@
 mod save_sync;
 use async_trait::async_trait;
 use futures::io::AsyncReadExt;
-use std::fmt::format;
 use std::io::Cursor;
 use std::net::ToSocketAddrs;
 use std::{io::Read, path::PathBuf, sync::Arc};

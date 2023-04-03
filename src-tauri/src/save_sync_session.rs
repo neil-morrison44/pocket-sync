@@ -2,7 +2,6 @@ use mister_saves_sync::{FoundSave, MiSTerSaveSync, SaveSyncer};
 use serde::{Deserialize, Serialize};
 use std::{error::Error, io::Read, path::PathBuf, sync::Arc};
 use tauri::Window;
-use tokio::io::AsyncWriteExt;
 use tokio::{
     sync::{broadcast, mpsc},
     task,
@@ -167,26 +166,16 @@ pub async fn start_mister_save_sync_session(
                 task::spawn(async move {
                     loop {
                         tokio::select! {
-                          _ = kill_rx.recv() => {
-                            println!("killing OutboundMessage sender");
-                            break;
-                          }
+                          _ = kill_rx.recv() => { break; }
                           msg = outbound_message_rx.recv() => {
                             match msg {
-                                Ok(msg) => {
-                                    match msg {
-                                        OutboundMessage::FoundSave(mister_save_info) => {
-
-                                            window
-                                                .emit("mister-save-sync-found-save", mister_save_info)
-                                                .unwrap();
-                                        },
-                                        OutboundMessage::MovedSave(transfer) => {
+                                Ok(OutboundMessage::FoundSave(mister_save_info)) => {
+                                    window.emit("mister-save-sync-found-save", mister_save_info).unwrap();
+                                },
+                                Ok(OutboundMessage::MovedSave(transfer)) => {
                                             window
                                             .emit("mister-save-sync-moved-save", transfer)
                                             .unwrap();
-                                        }
-                                      }
                                 },
                                 Err(_) => {
                                     break;
@@ -205,14 +194,9 @@ pub async fn start_mister_save_sync_session(
                     if let Some(payload) = event.payload() {
                         let pocket_save_info: PocketSaveInfo =
                             serde_json::from_str(payload).unwrap();
-                        {
-                            let message_tx = message_tx.clone();
-                            std::thread::spawn(move || {
-                                message_tx
-                                    .send(IncomingMessage::Find(pocket_save_info))
-                                    .unwrap();
-                            });
-                        }
+                        message_tx
+                            .send(IncomingMessage::Find(pocket_save_info))
+                            .unwrap();
                     }
                 })
             };
@@ -223,14 +207,9 @@ pub async fn start_mister_save_sync_session(
                 window.listen("mister-save-sync-move-save-to-pocket", move |event| {
                     if let Some(payload) = event.payload() {
                         let transfer_info: Transfer = serde_json::from_str(payload).unwrap();
-                        {
-                            let message_tx = message_tx.clone();
-                            std::thread::spawn(move || {
-                                message_tx
-                                    .send(IncomingMessage::MiSTerToPocket(transfer_info))
-                                    .unwrap();
-                            });
-                        }
+                        message_tx
+                            .send(IncomingMessage::MiSTerToPocket(transfer_info))
+                            .unwrap();
                     }
                 })
             };

@@ -14,7 +14,6 @@ use saves_zip::{
     restore_save_from_zip, SaveZipFile,
 };
 use serde::{Deserialize, Serialize};
-use std::borrow::Borrow;
 use std::collections::HashSet;
 use std::fs::{self};
 use std::io::{Read, Write};
