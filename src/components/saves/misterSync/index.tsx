@@ -7,7 +7,7 @@ import {
   useMemo,
   useState,
 } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue } from "recoil"
 import { useBEM } from "../../../hooks/useBEM"
 import { AllSavesSelector } from "../../../recoil/saves/selectors"
 import { invokeBeginMisterSaveSyncSession } from "../../../utils/invokes"
@@ -24,6 +24,7 @@ import {
 } from "./recoil/selectors"
 import { Tip } from "../../tip"
 import { pocketPathAtom } from "../../../recoil/atoms"
+import { MiSTerCredsAtom } from "./recoil/atoms"
 
 type MisterSyncProps = {
   onClose: () => void
@@ -35,11 +36,7 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
   const [selectedSave, setSelectedSave] = useState<string | null>(null)
 
   const [query, setQuery] = useState("")
-  const [creds, setCreds] = useState({
-    host: "mister.home.neil.today",
-    user: "root",
-    password: "1",
-  })
+  const [creds, setCreds] = useRecoilState(MiSTerCredsAtom)
 
   const connect = useCallback(async () => {
     setConnecting(true)

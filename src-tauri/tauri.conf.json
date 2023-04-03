@@ -20,7 +20,10 @@
         ]
       },
       "fs": {
-        "readFile": true
+        "readFile": true,
+        "exists": true,
+        "writeFile": true,
+        "scope": ["$APPLOCALDATA/*"]
       },
       "dialog": {
         "all": true
