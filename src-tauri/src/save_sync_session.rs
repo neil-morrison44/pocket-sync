@@ -100,45 +100,28 @@ pub async fn start_mister_save_sync_session(
                                     &log_tx,
                                 )
                                 .await;
-
-                                match result {
-                                    Ok(_) => {}
-                                    Err(err) => {
-                                        log_tx
-                                            .send(format!("Error: {}", err.to_string()))
-                                            .await
-                                            .unwrap();
-                                    }
+                                if let Err(err) = result {
+                                    log_tx.send(format!("Error: {}", err)).await.unwrap();
                                 }
                             }
                             IncomingMessage::PocketToMiSTer(transfer) => {
-                                let mut file = std::fs::File::open(&transfer.from).unwrap();
-
-                                let mut buf = Vec::new();
-                                file.by_ref().read_to_end(&mut buf).unwrap();
-
-                                let cursor = std::io::Cursor::new(buf);
-                                let boxed_cursor = Box::new(cursor);
-
-                                match mister_syncer.write_save(&transfer.to, boxed_cursor).await {
-                                    Ok(_) => {
-                                        log_tx
-                                            .send(format!(
-                                                "Copied {:?} Pocket -> {:?} MiSTer",
-                                                &transfer.from, &transfer.to
-                                            ))
-                                            .await
-                                            .unwrap();
-                                        outbound_message_tx
-                                            .send(OutboundMessage::MovedSave(transfer))
-                                            .unwrap();
-                                    }
-                                    Err(err) => {
-                                        log_tx
-                                            .send(format!("Error: {}", err.to_string()))
-                                            .await
-                                            .unwrap();
-                                    }
+                                let buf = tokio::fs::read(&transfer.from).await.unwrap();
+                                if let Err(err) = mister_syncer
+                                    .write_save(&transfer.to, Box::new(std::io::Cursor::new(buf)))
+                                    .await
+                                {
+                                    log_tx.send(format!("Error: {}", err)).await.unwrap();
+                                } else {
+                                    log_tx
+                                        .send(format!(
+                                            "Copied {:?} Pocket -> {:?} MiSTer",
+                                            &transfer.from, &transfer.to
+                                        ))
+                                        .await
+                                        .unwrap();
+                                    outbound_message_tx
+                                        .send(OutboundMessage::MovedSave(transfer))
+                                        .unwrap();
                                 }
                             }
                             IncomingMessage::MiSTerToPocket(transfer) => {
@@ -146,39 +129,33 @@ pub async fn start_mister_save_sync_session(
                                     Ok(mut mister_file) => {
                                         let mut buf = Vec::new();
                                         mister_file.read_to_end(&mut buf).unwrap();
-
-                                        match tokio::fs::write(&transfer.to, buf).await {
-                                            Ok(_) => {
-                                                log_tx
-                                                    .send(format!(
-                                                        "Copied {:?} MiSTer -> {:?} Pocket",
-                                                        &transfer.from, &transfer.to
-                                                    ))
-                                                    .await
-                                                    .unwrap();
-                                                outbound_message_tx
-                                                    .send(OutboundMessage::MovedSave(transfer))
-                                                    .unwrap();
-                                            }
-                                            Err(err) => {
-                                                log_tx
-                                                    .send(format!("Error: {}", err.to_string()))
-                                                    .await
-                                                    .unwrap();
-                                            }
+                                        if let Err(err) = tokio::fs::write(&transfer.to, buf).await
+                                        {
+                                            log_tx.send(format!("Error: {}", err)).await.unwrap();
+                                        } else {
+                                            log_tx
+                                                .send(format!(
+                                                    "Copied {:?} MiSTer -> {:?} Pocket",
+                                                    &transfer.from, &transfer.to
+                                                ))
+                                                .await
+                                                .unwrap();
+                                            outbound_message_tx
+                                                .send(OutboundMessage::MovedSave(transfer))
+                                                .unwrap();
                                         }
                                     }
                                     Err(err) => {
-                                        log_tx
-                                            .send(format!("Error: {}", err.to_string()))
-                                            .await
-                                            .unwrap();
+                                        log_tx.send(format!("Error: {}", err)).await.unwrap();
                                     }
                                 }
                             }
-                            IncomingMessage::HeartBeat => {
-                                mister_syncer.heartbeat().await;
-                            }
+                            IncomingMessage::HeartBeat => match mister_syncer.heartbeat().await {
+                                Err(err) => {
+                                    log_tx.send(format!("Error: {}", err)).await.unwrap();
+                                }
+                                _ => {}
+                            },
                         }
                     }
                 });
