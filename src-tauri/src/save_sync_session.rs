@@ -1,4 +1,4 @@
-use mister_saves_sync::{MiSTerSaveSync, SaveSyncer};
+use mister_saves_sync::{FoundSave, MiSTerSaveSync, SaveSyncer};
 use serde::{Deserialize, Serialize};
 use std::{error::Error, io::Read, path::PathBuf, sync::Arc};
 use tauri::Window;
@@ -16,7 +16,7 @@ struct MiSTerSaveInfo {
     path: Option<PathBuf>,
     timestamp: Option<u64>,
     pocket_save: PocketSaveInfo,
-    crc32: u32,
+    crc32: Option<u32>,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -308,20 +308,44 @@ async fn find_mister_save(
     pocket_save_info: &PocketSaveInfo,
     log_tx: &mpsc::Sender<String>,
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
-    if let Ok(Some(found_save_path)) = mister_syncer
+    match mister_syncer
         .find_save_for(&pocket_save_info.platform, &pocket_save_info.file, log_tx)
         .await
     {
-        let timestamp = mister_syncer.read_timestamp(&found_save_path).await?;
-        let file = mister_syncer.read_save(&found_save_path).await?;
-        let crc32 = mister_save_crc32(file);
+        Err(err) => {
+            log_tx
+                .send(format!("Error: {}", err.to_string()))
+                .await
+                .unwrap();
+        }
+        Ok(FoundSave::Found(found_save_path)) => {
+            let timestamp = mister_syncer.read_timestamp(&found_save_path).await?;
+            let file = mister_syncer.read_save(&found_save_path).await?;
+            let crc32 = mister_save_crc32(file);
 
-        outbound_channel.send(OutboundMessage::FoundSave(MiSTerSaveInfo {
-            path: Some(found_save_path),
-            timestamp: Some(timestamp),
-            pocket_save: pocket_save_info.clone(),
-            crc32,
-        }))?;
+            outbound_channel.send(OutboundMessage::FoundSave(MiSTerSaveInfo {
+                path: Some(found_save_path),
+                timestamp: Some(timestamp),
+                pocket_save: pocket_save_info.clone(),
+                crc32: Some(crc32),
+            }))?;
+        }
+        Ok(FoundSave::NotFound(guessed_save_path)) => {
+            outbound_channel.send(OutboundMessage::FoundSave(MiSTerSaveInfo {
+                path: Some(guessed_save_path),
+                timestamp: None,
+                pocket_save: pocket_save_info.clone(),
+                crc32: None,
+            }))?;
+        }
+        Ok(FoundSave::NotSupported) => {
+            outbound_channel.send(OutboundMessage::FoundSave(MiSTerSaveInfo {
+                path: None,
+                timestamp: None,
+                pocket_save: pocket_save_info.clone(),
+                crc32: None,
+            }))?;
+        }
     }
     Ok(())
 }

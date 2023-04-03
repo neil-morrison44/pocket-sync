@@ -219,26 +219,47 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
         <strong>Pocket</strong>
         <div>{path}</div>
         <div>{new Date(pocketSaveInfo.timestamp).toLocaleString()}</div>
-        <div>{pocketSaveInfo.crc32.toString(16)}</div>
+        <div className="mister-sync__crc">
+          {pocketSaveInfo.crc32.toString(16)}
+        </div>
       </div>
       <div className="mister-sync__status-equals">
-        <div
-          className={toPocketClassName}
-          onClick={() => moveSave("pocket")}
-        ></div>
-        <div
-          className={toMisterClassName}
-          onClick={() => moveSave("mister")}
-        ></div>
+        {misterSaveInfo?.path && (
+          <>
+            {misterSaveInfo?.crc32 && (
+              <div
+                className={toPocketClassName}
+                onClick={() => moveSave("pocket")}
+              ></div>
+            )}
+            <div
+              className={toMisterClassName}
+              onClick={() => moveSave("mister")}
+            ></div>
+          </>
+        )}
       </div>
+
       <div className="mister-sync__mister">
-        <strong>MiSTer</strong>
-        <div>{misterSaveInfo?.path.replace("/media/fat/saves/", "")}</div>
-        <div>
-          {misterSaveInfo?.timestamp &&
-            new Date(misterSaveInfo.timestamp).toLocaleString()}
-        </div>
-        <div>{misterSaveInfo?.crc32.toString(16)}</div>
+        {misterSaveInfo?.path && (
+          <>
+            <strong>MiSTer</strong>
+            <div>{misterSaveInfo?.path.replace("/media/fat/saves/", "")}</div>
+            <div>
+              {misterSaveInfo?.timestamp &&
+                new Date(misterSaveInfo.timestamp).toLocaleString()}
+            </div>
+            <div className="mister-sync__crc">
+              {misterSaveInfo?.crc32?.toString(16) || "Not Found"}
+            </div>
+          </>
+        )}
+        {!misterSaveInfo?.path && (
+          <>
+            <div>{`${platform} is not supported`}</div>
+            <div>{"(open a Github issue if it should be)"}</div>
+          </>
+        )}
       </div>
     </div>
   )
@@ -249,7 +270,6 @@ const ChannelLog = () => {
 
   useEffect(() => {
     const unlisten = listen<string>("mister-save-sync-log", ({ payload }) => {
-      console.log({ payload })
       setLogMessages((log) => [payload, ...log])
     })
     return () => {
@@ -288,8 +308,6 @@ const SavesList = ({ onSelect, query }: SavesListProps) => {
       return acc
     }, {} as Record<string, string[]>)
   }, [filteredSaves])
-
-  console.log({ savesByPlatform })
 
   return (
     <div className="mister-sync__saves-list">

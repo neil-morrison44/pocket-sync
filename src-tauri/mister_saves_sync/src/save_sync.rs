@@ -1,6 +1,11 @@
 use async_trait::async_trait;
 use std::{io::Read, path::PathBuf};
-use tokio::sync::Mutex;
+
+pub enum FoundSave {
+    Found(PathBuf),
+    NotFound(PathBuf),
+    NotSupported,
+}
 
 #[async_trait]
 pub trait SaveSyncer {
@@ -18,7 +23,7 @@ pub trait SaveSyncer {
         platform: &str,
         game: &str,
         log_channel: &tokio::sync::mpsc::Sender<String>,
-    ) -> Result<Option<PathBuf>, Box<dyn std::error::Error + Send + Sync>>;
+    ) -> Result<FoundSave, Box<dyn std::error::Error + Send + Sync>>;
 
     async fn read_save(
         &self,

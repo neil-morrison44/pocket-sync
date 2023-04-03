@@ -1,13 +1,14 @@
 mod save_sync;
 use async_trait::async_trait;
 use futures::io::AsyncReadExt;
+use std::fmt::format;
 use std::io::Cursor;
 use std::net::ToSocketAddrs;
 use std::{io::Read, path::PathBuf, sync::Arc};
 use tokio::sync::mpsc::Sender;
 use tokio::sync::Mutex;
 
-pub use save_sync::SaveSyncer;
+pub use save_sync::{FoundSave, SaveSyncer};
 pub struct MiSTerSaveSync {
     host: String,
     user: Arc<String>,
@@ -106,48 +107,39 @@ impl SaveSyncer for MiSTerSaveSync {
         platform: &str,
         game: &str,
         log_channel: &Sender<String>,
-    ) -> Result<Option<PathBuf>, Box<dyn std::error::Error + Send + Sync>> {
-        println!("finding save for {} on {}", game, platform);
+    ) -> Result<FoundSave, Box<dyn std::error::Error + Send + Sync>> {
         let mut guard = self.ftp_stream.lock().await;
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 
-        if let Some(mister_system) = pocket_platform_to_mister_system(platform) {
-            let system_path = format!("/media/fat/saves/{}", mister_system);
-            ftp_stream.cwd(&system_path).await?;
-            let system_saves = ftp_stream.nlst(None).await?;
-            let system_saves: Vec<_> = system_saves.into_iter().map(|s| PathBuf::from(s)).collect();
-            let game_path = PathBuf::from(game);
-            let expected_save_file_name = game_path.file_stem();
-            if let Some(found_save) = system_saves
-                .into_iter()
-                .find(|p| p.file_stem() == expected_save_file_name)
-            {
+        match pocket_platform_to_mister_system(platform) {
+            None => {
                 log_channel
-                    .send(
-                        format!(
-                            "Found a MiSTer save for {:?} on {mister_system}",
-                            expected_save_file_name.unwrap(),
-                        )
-                        .into(),
-                    )
-                    .await?;
-                return Ok(Some(PathBuf::from(&system_path).join(found_save)));
-            } else {
-                log_channel
-                    .send(String::from(format!(
-                        "Unable to find a MiSTer save for {platform}/{game}",
-                    )))
-                    .await?;
-
-                return Ok(None);
+                    .send(format!(
+                        "Unable to find MiSTer system for \"{}\"",
+                        &platform
+                    ))
+                    .await
+                    .unwrap();
+                return Ok(FoundSave::NotSupported);
             }
-        } else {
-            log_channel
-                .send(String::from(format!(
-                    "Unable to find a MiSTer system for {platform}"
-                )))
-                .await?;
-            return Ok(None);
+            Some(mister_system) => {
+                let system_path = format!("/media/fat/saves/{}", mister_system);
+                let system_saves = ftp_stream.nlst(Some(&system_path)).await?;
+                let system_saves: Vec<_> =
+                    system_saves.into_iter().map(|s| PathBuf::from(s)).collect();
+                let game_path = PathBuf::from(game);
+                let expected_save_file_name = game_path.file_stem();
+
+                match system_saves
+                    .into_iter()
+                    .find(|p| p.file_stem() == expected_save_file_name)
+                {
+                    Some(found_save) => Ok(FoundSave::Found(
+                        PathBuf::from(&system_path).join(found_save),
+                    )),
+                    None => Ok(FoundSave::NotFound(PathBuf::from(&system_path).join(&game))),
+                }
+            }
         }
     }
 
@@ -162,6 +154,10 @@ impl SaveSyncer for MiSTerSaveSync {
             .cwd(path.parent().unwrap().to_str().unwrap())
             .await?;
         let file_name = path.file_name().and_then(|f| f.to_str()).unwrap();
+
+        ftp_stream
+            .transfer_type(suppaftp::types::FileType::Binary)
+            .await?;
 
         let mut buffer: Vec<u8> = Vec::new();
         if let Ok(mut reader) = ftp_stream.retr_as_stream(file_name).await {
@@ -207,38 +203,31 @@ impl SaveSyncer for MiSTerSaveSync {
         &self,
         path: &PathBuf,
     ) -> Result<u64, Box<dyn std::error::Error + Send + Sync>> {
-        println!("waiting for stream lock");
         let mut guard = self.ftp_stream.lock().await;
-        println!("granted stream lock");
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 
         let parent_path = path.parent().unwrap().to_str().unwrap();
         ftp_stream.cwd(parent_path).await?;
         let file_name = path.file_name().and_then(|f| f.to_str()).unwrap();
-        println!("{file_name}");
         let modtime = ftp_stream.mdtm(&file_name).await?;
-
-        println!("returning file time");
         return Ok(modtime.timestamp_millis() as u64);
     }
 }
 
 fn pocket_platform_to_mister_system(platform: &str) -> Option<String> {
-    (match platform {
-        "gb" => Some("GAMEBOY"),
-        "gbc" => Some("GAMEBOY"),
-        "gba" => Some("GBA"),
-        "gg" => Some("SMS"),
-        "arduboy" => Some("Arduboy"),
-        "genesis" => Some("Genesis"),
-        "sms" => Some("SMS"),
-        "ng" => Some("NEOGEO"),
-        "nes" => Some("NES"),
-        "snes" => Some("SNES"),
-        "supervision" => Some("SuperVision"),
-        "pce" => Some("TGFX16"),
-        "poke_mini" => Some("PokemonMini"),
-        _ => None,
+    Some(match platform {
+        "gb" | "gbc" => "GAMEBOY",
+        "gba" => "GBA",
+        "gg" | "sms" => "SMS",
+        "arduboy" => "Arduboy",
+        "genesis" => "Genesis",
+        "ng" => "NEOGEO",
+        "nes" => "NES",
+        "snes" => "SNES",
+        "supervision" => "SuperVision",
+        "pce" => "TGFX16",
+        "poke_mini" => "PokemonMini",
+        _ => return None,
     })
-    .and_then(|s| Some(String::from(s)))
+    .map(String::from)
 }

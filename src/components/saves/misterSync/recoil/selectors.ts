@@ -4,9 +4,9 @@ import { invokeFileMetadata } from "../../../../utils/invokes"
 import { SavesInvalidationAtom } from "./atoms"
 
 type MiSTerSaveInfo = {
-  crc32: number
-  timestamp: number
-  path: string
+  crc32?: number
+  timestamp?: number
+  path?: string
   pocket_save: {
     file: string
     platform: string
