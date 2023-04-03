@@ -124,7 +124,7 @@ pub async fn start_mister_save_sync_session(
                                     Ok(_) => {
                                         log_tx
                                             .send(format!(
-                                                "Moved {:?} Pocket -> {:?} MiSTer",
+                                                "Copied {:?} Pocket -> {:?} MiSTer",
                                                 &transfer.from, &transfer.to
                                             ))
                                             .await
@@ -151,7 +151,7 @@ pub async fn start_mister_save_sync_session(
                                             Ok(_) => {
                                                 log_tx
                                                     .send(format!(
-                                                        "Moved {:?} MiSTer -> {:?} Pocket",
+                                                        "Copied {:?} MiSTer -> {:?} Pocket",
                                                         &transfer.from, &transfer.to
                                                     ))
                                                     .await
