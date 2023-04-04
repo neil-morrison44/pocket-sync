@@ -47,17 +47,18 @@ https://user-images.githubusercontent.com/2095051/204883337-f0e34a44-5ea4-47a4-9
 - Autobackup saves on connection (if there's changes)
 - Input viewer supporting game specific inputs
 - Settings supporting game specific settings
+- Image packs
+- Manual MiSTer save file sync
 
 ### Soon
 
-- Image packs (once I've fully worked out a decent way to pick them vs the origional images & keep them even when installing an update)
 - Installing / Checking for firmware updates (might wait for the real release of 1.1 for this)
 
 ### Longer term
 
 - List new cores / updates since the last Pocket was connected (with, optional, notifications)
 - Library viewing / editing once that's rolled out
-- Add back MiSTer save file sync (don't really want to touch it if there's a chance I'll clopper MiSTer files with a bunch of incompatiable Genesis saves)
+- OpenFPGA video filter features (format dependent)
 
 ## FAQs
 
