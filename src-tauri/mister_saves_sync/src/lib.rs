@@ -216,16 +216,20 @@ impl SaveSyncer for MiSTerSaveSync {
 fn pocket_platform_to_mister_system(platform: &str) -> Option<String> {
     Some(match platform {
         "gb" | "gbc" => "GAMEBOY",
-        "gba" => "GBA",
         "gg" | "sms" => "SMS",
+        "pce" => "TGFX16",
+        "pcecd" => "TGFX16-CD",
+        "gba" => "GBA",
+        "sg1000" => "SG1000",
         "arduboy" => "Arduboy",
         "genesis" => "Genesis",
         "ng" => "NEOGEO",
         "nes" => "NES",
         "snes" => "SNES",
         "supervision" => "SuperVision",
-        "pce" => "TGFX16",
         "poke_mini" => "PokemonMini",
+        "wonderswan" => "WonderSwan",
+        "gamate" => "Gamate",
         _ => return None,
     })
     .map(String::from)
