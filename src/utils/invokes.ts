@@ -107,3 +107,22 @@ export const invokeRunPackagerForCore = async (coreName: string) => {
 export const invokeGetNewsFeed = async () => {
   return invoke<RawFeedItem[]>("get_news_feed")
 }
+
+export const invokeBeginMisterSaveSyncSession = async (
+  host: string,
+  user: string,
+  password: string
+) => {
+  return invoke<boolean>("begin_mister_sync_session", { host, user, password })
+}
+
+export const invokeFileMetadata = async (filePath: string) => {
+  const metadata = await invoke<{ timestamp_secs: number; crc32: number }>(
+    "get_file_metadata",
+    {
+      filePath,
+    }
+  )
+  console.log({ metadata })
+  return { timestamp: metadata.timestamp_secs * 1000, crc32: metadata.crc32 }
+}

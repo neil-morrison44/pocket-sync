@@ -11,6 +11,7 @@ import { SaveInfo } from "./info"
 import { AllSavesSelector } from "../../recoil/saves/selectors"
 import { invokeBackupSaves } from "../../utils/invokes"
 import { SaveConfig } from "../../types"
+import { MisterSync } from "./misterSync"
 
 export const Saves = () => {
   const [selectedSaveBackup, setSelectedSavebackup] = useState<number | null>(
@@ -19,6 +20,9 @@ export const Saves = () => {
   const allSaves = useRecoilValue(AllSavesSelector)
   const updateConfig = useUpdateConfig()
   const { saves } = useRecoilValue(PocketSyncConfigSelector)
+
+  const [misterSync, setMisterSync] = useState(false)
+
   const addBackupLocation = useCallback(async () => {
     const directory = await open({
       directory: true,
@@ -50,6 +54,8 @@ export const Saves = () => {
       />
     )
 
+  if (misterSync) return <MisterSync onClose={() => setMisterSync(false)} />
+
   return (
     <div className="saves">
       <Controls
@@ -58,6 +64,11 @@ export const Saves = () => {
             type: "button",
             text: "Add backup location",
             onClick: addBackupLocation,
+          },
+          {
+            type: "button",
+            text: "MiSTer Sync",
+            onClick: () => setMisterSync(true),
           },
         ]}
       />

@@ -7,7 +7,6 @@ import {
   useState,
 } from "react"
 import { useRecoilValue } from "recoil"
-import { PlatformInfoSelectorFamily } from "../../../recoil/platforms/selectors"
 import {
   AllBackupZipsFilesSelectorFamily,
   pocketSavesFilesListSelector,
@@ -20,6 +19,7 @@ import { saveFileInvalidationAtom } from "../../../recoil/atoms"
 import { useSaveScroll } from "../../../hooks/useSaveScroll"
 import { useInvalidateSaveFiles } from "../../../hooks/invalidation"
 import { splitAsPath } from "../../../utils/splitAsPath"
+import { PlatformLabel } from "./platformLabel"
 
 export const SaveInfo = ({
   backupPath,
@@ -204,11 +204,6 @@ export const SaveInfo = ({
       ))}
     </div>
   )
-}
-
-const PlatformLabel = ({ id }: { id: PlatformId }) => {
-  const { platform } = useRecoilValue(PlatformInfoSelectorFamily(id))
-  return <div className="saves__info-save-files-platform">{platform.name}</div>
 }
 
 const SaveVersions = ({

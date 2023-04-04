@@ -31,7 +31,7 @@ type Control = {
 )
 
 type ControlProps = {
-  controls: (Control | null | undefined | "")[]
+  controls: (Control | null | undefined | false | "")[]
 }
 
 export const Controls = ({ controls }: ControlProps) => {

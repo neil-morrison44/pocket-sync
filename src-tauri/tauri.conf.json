@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "Pocket Sync",
-    "version": "2.9.0"
+    "version": "3.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -20,7 +20,10 @@
         ]
       },
       "fs": {
-        "readFile": true
+        "readFile": true,
+        "exists": true,
+        "writeFile": true,
+        "scope": ["$APPLOCALDATA/*"]
       },
       "dialog": {
         "all": true

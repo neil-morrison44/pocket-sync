@@ -8,6 +8,7 @@ use clean_fs::find_dotfiles;
 use futures_locks::RwLock;
 use hashes::sha1_for_file;
 use install_zip::start_zip_thread;
+use save_sync_session::start_mister_save_sync_session;
 use saves_zip::{
     build_save_zip, read_save_zip_list, read_saves_in_folder, read_saves_in_zip,
     restore_save_from_zip, SaveZipFile,
@@ -15,8 +16,9 @@ use saves_zip::{
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::fs::{self};
-use std::io::Write;
+use std::io::{Read, Write};
 use std::path::PathBuf;
+use std::time::SystemTime;
 use tauri::api::dialog;
 use tauri::{App, Window};
 use tokio::io::AsyncReadExt;
@@ -27,6 +29,7 @@ mod hashes;
 mod install_zip;
 mod news_feed;
 mod progress;
+mod save_sync_session;
 mod saves_zip;
 struct PocketSyncState(RwLock<PathBuf>);
 
@@ -412,6 +415,72 @@ async fn get_news_feed() -> Result<Vec<news_feed::FeedItem>, String> {
     Ok(feed)
 }
 
+#[tauri::command(async)]
+async fn begin_mister_sync_session(
+    host: &str,
+    user: &str,
+    password: &str,
+    window: tauri::Window,
+) -> Result<bool, String> {
+    match start_mister_save_sync_session(host, user, password, window).await {
+        Ok(success) => return Ok(success),
+        Err(err) => return Err(err.to_string()),
+    }
+}
+
+#[tauri::command(async)]
+async fn get_file_metadata(
+    state: tauri::State<'_, PocketSyncState>,
+    file_path: &str,
+) -> Result<FileMetadata, String> {
+    let pocket_path = state.0.read().await;
+    let full_path = pocket_path.join(file_path);
+
+    let handle = {
+        let full_path = full_path.clone();
+        tokio::task::spawn_blocking(move || {
+            let mut hasher = crc32fast::Hasher::new();
+            let mut file = std::fs::File::open(full_path).unwrap();
+            let chunk_size = 0x4000;
+
+            loop {
+                let mut chunk = Vec::with_capacity(chunk_size);
+                if let Ok(n) = std::io::Read::by_ref(&mut file)
+                    .take(chunk_size as u64)
+                    .read_to_end(&mut chunk)
+                {
+                    if n == 0 {
+                        break;
+                    }
+                    hasher.update(&chunk);
+                    if n < chunk_size {
+                        break;
+                    }
+                }
+            }
+
+            let checksum = hasher.finalize();
+            checksum
+        })
+    };
+
+    let crc32 = handle.await.map_err(|err| err.to_string())?;
+
+    let metadata = fs::metadata(full_path)
+        .and_then(|m| m.modified())
+        .map_err(|err| err.to_string())?;
+
+    let timestamp = metadata
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .and_then(|d| Ok(d.as_secs()))
+        .map_err(|err| err.to_string())?;
+
+    Ok(FileMetadata {
+        timestamp_secs: timestamp,
+        crc32,
+    })
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -437,7 +506,9 @@ fn main() {
             file_sha1_hash,
             list_instance_packageable_cores,
             run_packager_for_core,
-            get_news_feed
+            get_news_feed,
+            begin_mister_sync_session,
+            get_file_metadata
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())
@@ -473,4 +544,10 @@ struct InstancePackageEventPayload {
     file_name: String,
     success: bool,
     message: Option<String>,
+}
+
+#[derive(Serialize, Deserialize)]
+struct FileMetadata {
+    timestamp_secs: u64,
+    crc32: u32,
 }
