@@ -2,26 +2,19 @@ import { selector, selectorFamily } from "recoil"
 import {
   CoreInfoJSON,
   DataJSON,
-  InputJSON,
   InstanceDataJSON,
-  PocketSyncConfig,
   RequiredFileInfo,
 } from "../types"
 import { renderBinImage } from "../utils/renderBinImage"
-import {
-  configInvalidationAtom,
-  fileSystemInvalidationAtom,
-  pocketPathAtom,
-} from "./atoms"
+import { fileSystemInvalidationAtom } from "./atoms"
 import { getVersion } from "@tauri-apps/api/app"
 import { decodeDataParams } from "../utils/decodeDataParams"
 import {
   invokeFileExists,
+  invokeFileMetadata,
   invokeFindCleanableFiles,
   invokeListFiles,
   invokeReadBinaryFile,
-  invokeSaveFile,
-  invokeSHA1Hash,
   invokeWalkDirListFiles,
 } from "../utils/invokes"
 import { AUTHOUR_IMAGE, IGNORE_INSTANCE_JSON_LIST } from "../values"
@@ -35,6 +28,32 @@ export const DataJSONSelectorFamily = selectorFamily<DataJSON, string>({
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
       return readJSONFile<DataJSON>(`Cores/${coreName}/data.json`)
+    },
+})
+
+const SingleRequiredFileInfo = selectorFamily<
+  RequiredFileInfo,
+  { filename: string | undefined; path: string; type: "core" | "instance" }
+>({
+  key: "SingleRequiredFileInfo",
+  get:
+    ({ filename, path, type }) =>
+    async (get) => {
+      if (!filename) throw new Error("Attempting to find empty file")
+
+      const fullPath = `${path}/${filename}`
+      const exists = await invokeFileExists(fullPath)
+      const crc32 = exists
+        ? (await invokeFileMetadata(fullPath)).crc32
+        : undefined
+
+      return {
+        filename,
+        path,
+        exists,
+        crc32,
+        type,
+      }
     },
 })
 
@@ -68,16 +87,13 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
               const path = `Assets/${platform_id}/${
                 decodeDataParams(parameters).coreSpecific ? coreName : "common"
               }`
+
               return Promise.all(
                 [filename, ...(alternate_filenames || [])].map(
                   async (filename) =>
-                    ({
-                      filename: filename as string,
-                      path,
-                      exists: await invokeFileExists(`${path}/${filename}`),
-                      sha1: await invokeSHA1Hash(`${path}/${filename}`),
-                      type: "core",
-                    } satisfies RequiredFileInfo)
+                    get(
+                      SingleRequiredFileInfo({ filename, path, type: "core" })
+                    )
                 )
               )
             }
@@ -130,13 +146,13 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                           : "common"
                       }${dataPath ? `/${dataPath}` : ""}`
 
-                      return {
-                        filename: filename as string,
-                        path,
-                        exists: await invokeFileExists(`${path}/${filename}`),
-                        sha1: await invokeSHA1Hash(`${path}/${filename}`),
-                        type: "instance",
-                      } satisfies RequiredFileInfo
+                      return get(
+                        SingleRequiredFileInfo({
+                          filename,
+                          path,
+                          type: "instance",
+                        })
+                      )
                     }
                   )
                 )

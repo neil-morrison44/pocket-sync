@@ -1,11 +1,5 @@
-use data_encoding::HEXLOWER;
-use ring::digest::{Context, Digest, SHA1_FOR_LEGACY_USE_ONLY, SHA256};
-use std::{
-    error,
-    fs::File,
-    io::{BufReader, Read},
-    path::PathBuf,
-};
+use ring::digest::{Context, Digest, SHA256};
+use std::{error, io::Read, path::PathBuf};
 
 pub fn sha256_digest<R: Read>(mut reader: R) -> Result<Digest, Box<dyn error::Error>> {
     let mut context = Context::new(&SHA256);
@@ -22,25 +16,36 @@ pub fn sha256_digest<R: Read>(mut reader: R) -> Result<Digest, Box<dyn error::Er
     Ok(context.finish())
 }
 
-pub fn sha1_digest<R: Read>(mut reader: R) -> Result<Digest, Box<dyn error::Error>> {
-    let mut context = Context::new(&SHA1_FOR_LEGACY_USE_ONLY);
-    let mut buffer = [0; 1024];
+pub async fn crc32_for_file(file_path: &PathBuf) -> Result<u32, Box<dyn error::Error>> {
+    let handle = {
+        let full_path = file_path.clone();
+        tokio::task::spawn_blocking(move || {
+            let mut hasher = crc32fast::Hasher::new();
+            let mut file = std::fs::File::open(full_path).unwrap();
+            let chunk_size = 0x4000;
 
-    loop {
-        let count = reader.read(&mut buffer)?;
-        if count == 0 {
-            break;
-        }
-        context.update(&buffer[..count]);
-    }
+            loop {
+                let mut chunk = Vec::with_capacity(chunk_size);
+                if let Ok(n) = std::io::Read::by_ref(&mut file)
+                    .take(chunk_size as u64)
+                    .read_to_end(&mut chunk)
+                {
+                    if n == 0 {
+                        break;
+                    }
+                    hasher.update(&chunk);
+                    if n < chunk_size {
+                        break;
+                    }
+                }
+            }
 
-    Ok(context.finish())
-}
+            let checksum = hasher.finalize();
+            checksum
+        })
+    };
 
-pub fn sha1_for_file(file_path: &PathBuf) -> Result<String, Box<dyn error::Error>> {
-    let input = File::open(file_path)?;
-    let reader = BufReader::new(input);
-    let digest = sha1_digest(reader)?;
+    let crc32 = handle.await.map_err(|err| err.to_string())?;
 
-    Ok(HEXLOWER.encode(&digest.as_ref()))
+    Ok(crc32)
 }

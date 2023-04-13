@@ -26,7 +26,6 @@ export const RequiredFileRow = ({
     >
       <div className="load-required-files__row_name">{info.filename}</div>
       <div>{info.path}</div>
-      <div>{info.exists}</div>
       {hasArchiveLink && <div>{STATUS_TEXT[info.status || "unknown"]}</div>}
     </div>
   )

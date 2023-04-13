@@ -50,7 +50,7 @@ export type RequiredFileInfo = {
   path: string
   exists: boolean
   type: "core" | "instance"
-  sha1: string
+  crc32?: number
   status?: "ok" | "wrong" | "downloadable" | "not-in-archive"
 }
 

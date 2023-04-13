@@ -35,7 +35,8 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
           )
           let status: RequiredFileInfo["status"]
           if (r.exists) {
-            if (metadata?.sha1 === r.sha1) {
+            const crc32 = parseInt(metadata?.crc32 || "0", 16)
+            if (crc32 === r.crc32) {
               status = "ok"
             } else {
               status = "wrong"

@@ -6,7 +6,7 @@
 use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
 use clean_fs::find_dotfiles;
 use futures_locks::RwLock;
-use hashes::sha1_for_file;
+use hashes::crc32_for_file;
 use install_zip::start_zip_thread;
 use save_sync_session::start_mister_save_sync_session;
 use saves_zip::{
@@ -16,7 +16,7 @@ use saves_zip::{
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::fs::{self};
-use std::io::{Read, Write};
+use std::io::Write;
 use std::path::PathBuf;
 use std::time::SystemTime;
 use tauri::api::dialog;
@@ -347,25 +347,6 @@ async fn find_cleanable_files(
     Ok(files)
 }
 
-#[tauri::command(async)]
-async fn file_sha1_hash(
-    state: tauri::State<'_, PocketSyncState>,
-    path: &str,
-) -> Result<String, ()> {
-    let pocket_path = state.0.read().await;
-    let path = pocket_path.join(path);
-
-    if !path.exists() {
-        return Ok(String::from(""));
-    }
-
-    if let Ok(hash) = sha1_for_file(&path) {
-        return Ok(hash);
-    } else {
-        return Ok(String::from(""));
-    }
-}
-
 #[tauri::command]
 async fn list_instance_packageable_cores(
     state: tauri::State<'_, PocketSyncState>,
@@ -436,35 +417,9 @@ async fn get_file_metadata(
     let pocket_path = state.0.read().await;
     let full_path = pocket_path.join(file_path);
 
-    let handle = {
-        let full_path = full_path.clone();
-        tokio::task::spawn_blocking(move || {
-            let mut hasher = crc32fast::Hasher::new();
-            let mut file = std::fs::File::open(full_path).unwrap();
-            let chunk_size = 0x4000;
-
-            loop {
-                let mut chunk = Vec::with_capacity(chunk_size);
-                if let Ok(n) = std::io::Read::by_ref(&mut file)
-                    .take(chunk_size as u64)
-                    .read_to_end(&mut chunk)
-                {
-                    if n == 0 {
-                        break;
-                    }
-                    hasher.update(&chunk);
-                    if n < chunk_size {
-                        break;
-                    }
-                }
-            }
-
-            let checksum = hasher.finalize();
-            checksum
-        })
-    };
-
-    let crc32 = handle.await.map_err(|err| err.to_string())?;
+    let crc32 = crc32_for_file(&full_path)
+        .await
+        .map_err(|err| err.to_string())?;
 
     let metadata = fs::metadata(full_path)
         .and_then(|m| m.modified())
@@ -503,7 +458,6 @@ fn main() {
             create_folder_if_missing,
             delete_files,
             find_cleanable_files,
-            file_sha1_hash,
             list_instance_packageable_cores,
             run_packager_for_core,
             get_news_feed,
