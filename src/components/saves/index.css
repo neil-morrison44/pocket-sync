@@ -36,6 +36,7 @@
   display: grid;
   gap: var(--padding);
   align-items: center;
+  grid-template-columns: 1fr max-content max-content;
   grid-template-areas:
     "b r c"
     "d r c";
