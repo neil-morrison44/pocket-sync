@@ -217,8 +217,7 @@ fn pocket_platform_to_mister_system(platform: &str) -> Option<String> {
     Some(match platform {
         "gb" | "gbc" => "GAMEBOY",
         "gg" | "sms" => "SMS",
-        "pce" => "TGFX16",
-        "pcecd" => "TGFX16-CD",
+        "pce" | "pcecd" => "TGFX16",
         "gba" => "GBA",
         "sg1000" => "SG1000",
         "arduboy" => "Arduboy",
