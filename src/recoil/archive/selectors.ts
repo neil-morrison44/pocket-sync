@@ -1,13 +1,14 @@
 import { selector, selectorFamily } from "recoil"
 import { ArchiveFileMetadata, RequiredFileInfo } from "../../types"
-import { RequiredFileInfoSelectorFamily } from "../selectors"
 import { PocketSyncConfigSelector } from "../config/selectors"
+import { RequiredFileInfoSelectorFamily } from "../requiredFiles/selectors"
 
 export const archiveMetadataSelector = selector<ArchiveFileMetadata[]>({
   key: "archiveMetadataSelector",
   get: async ({ get }) => {
     const config = get(PocketSyncConfigSelector)
     if (!config.archive_url) return []
+    // TODO: Support different archive sites
     const url = config.archive_url.replace("download", "metadata")
     const { files } = (await (await fetch(url)).json()) as {
       files: ArchiveFileMetadata[]
@@ -35,7 +36,8 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
           )
           let status: RequiredFileInfo["status"]
           if (r.exists) {
-            if (metadata?.sha1 === r.sha1) {
+            const crc32 = parseInt(metadata?.crc32 || "0", 16)
+            if (crc32 === r.crc32) {
               status = "ok"
             } else {
               status = "wrong"

@@ -27,14 +27,23 @@
     margin-top: 0;
     margin-bottom: 0;
   }
+
+  & > * {
+    flex-basis: calc(100% / 3);
+    text-align: center;
+  }
+
+  & > *:first-child {
+    text-align: left;
+  }
+
+  & > *:last-child {
+    text-align: right;
+  }
 }
 
 .load-required-files__row--exists {
   opacity: 0.75;
-}
-
-.load-required-files__row_name {
-  flex-basis: 110px;
 }
 
 .load-required-files__buttons {

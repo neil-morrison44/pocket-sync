@@ -13,6 +13,14 @@ import { Tip } from "../../../tip"
 import "./index.css"
 import { RequiredFileRow } from "./row"
 
+const STATUS_SORT_ORDER = [
+  "wrong",
+  "downloadable",
+  "ok",
+  "not-in-archive",
+  undefined,
+]
+
 type LoadRequiredFilesProps = {
   coreName: string
   onClose: () => void
@@ -43,6 +51,17 @@ export const LoadRequiredFiles = ({
     [pocketSyncConfig]
   )
 
+  const sortedRequiredFiles = useMemo(() => {
+    return [...requiredFiles].sort((a, b) => {
+      if (a.status === b.status) return a.filename.localeCompare(b.filename)
+
+      return (
+        STATUS_SORT_ORDER.indexOf(a.status) -
+        STATUS_SORT_ORDER.indexOf(b.status)
+      )
+    })
+  }, [requiredFiles])
+
   return (
     <Modal className="load-required-files">
       <h2>{"Required Files"}</h2>
@@ -58,7 +77,7 @@ export const LoadRequiredFiles = ({
       {!inProgress && (
         <>
           <div className="load-required-files__files">
-            {requiredFiles.map((r) => (
+            {sortedRequiredFiles.map((r) => (
               <RequiredFileRow
                 info={r}
                 key={`${r.path}/${r.filename}`}

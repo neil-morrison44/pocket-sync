@@ -1,7 +1,6 @@
 import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
-import { RequiredFileInfoSelectorFamily } from "../../../../recoil/selectors"
-
+import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles/selectors"
 import "./index.css"
 
 type RequiredFilesProps = {

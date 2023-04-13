@@ -35,6 +35,8 @@ export const SaveInfo = ({
   )
   const [hideOnlyCurrent, setHideOnlyCurrent] = useState(true)
 
+  console.log({ zipFilesInfo })
+
   const pocketSaves = useRecoilValue(pocketSavesFilesListSelector)
   const { popScroll, pushScroll } = useSaveScroll()
 
@@ -50,19 +52,19 @@ export const SaveInfo = ({
     zipFilesInfo.forEach(({ zip, files }) => {
       files
         .filter((f) => f.filename.endsWith(".sav"))
-        .forEach(({ filename, last_modified, hash }) => {
+        .forEach(({ filename, last_modified, crc32 }) => {
           const existing = perSave[filename]
           if (existing) {
-            existing.push({ zip, last_modified, hash })
+            existing.push({ zip, last_modified, crc32 })
           } else {
-            perSave[filename] = [{ zip, last_modified, hash }]
+            perSave[filename] = [{ zip, last_modified, crc32 }]
           }
         })
     })
 
     return Object.fromEntries(
       Object.entries(perSave).filter(([_, files]) => {
-        const uniqueFiles = Array.from(new Set(files.map((f) => f.hash)))
+        const uniqueFiles = Array.from(new Set(files.map((f) => f.crc32)))
         return !hideOnlyCurrent || uniqueFiles.length > 1
       })
     )
@@ -195,7 +197,7 @@ export const SaveInfo = ({
                 onSelect={restore}
                 currentHash={
                   pocketSaves.find(({ filename }) => filename === savefile)
-                    ?.hash
+                    ?.crc32
                 }
               />
             ))}
@@ -215,26 +217,26 @@ const SaveVersions = ({
 }: {
   backupPath: string
   savefile: string
-  currentHash?: string
+  currentHash?: number
   gridStyling: CSSProperties
   onSelect: (zip: string, filename: string) => void
   versions: SaveVersion[]
 }) => {
   const currentTimestamp =
-    versions.find(({ hash }) => hash === currentHash)?.zip.last_modified ||
+    versions.find(({ crc32 }) => crc32 === currentHash)?.zip.last_modified ||
     Infinity
 
   return (
     <div className="saves__info-save-file">
       <div className="saves__info-save-file-path">{`${savefile}`}</div>
       <div className="saves__info-save-file-versions" style={gridStyling}>
-        {versions.map(({ zip, hash }, index) => {
+        {versions.map(({ zip, crc32 }, index) => {
           // skip ones we've already drawn the box for
-          if (versions.findIndex(({ hash: h }) => h === hash) !== index) {
+          if (versions.findIndex(({ crc32: h }) => h === crc32) !== index) {
             return null
           }
 
-          const isCurrent = currentHash === hash
+          const isCurrent = currentHash === crc32
           const lastVersionWithHash = getEndOfSave(index, versions)
 
           const text = isCurrent
@@ -268,12 +270,12 @@ const SaveVersions = ({
   )
 }
 
-type SaveVersion = { zip: SaveZipFile; last_modified: number; hash: string }
+type SaveVersion = { zip: SaveZipFile; last_modified: number; crc32: number }
 
 const getEndOfSave = (index: number, versions: SaveVersion[]) => {
   let currentIndex = index
-  const hash = versions[index].hash
-  while (versions[currentIndex + 1]?.hash === hash) {
+  const crc32 = versions[index].crc32
+  while (versions[currentIndex + 1]?.crc32 === crc32) {
     currentIndex += 1
   }
 

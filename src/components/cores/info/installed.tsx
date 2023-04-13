@@ -1,8 +1,5 @@
 import { useRecoilValue, useRecoilValueLoadable } from "recoil"
-import {
-  CoreInfoSelectorFamily,
-  RequiredFileInfoSelectorFamily,
-} from "../../../recoil/selectors"
+import { CoreInfoSelectorFamily } from "../../../recoil/selectors"
 import { DownloadURLSelectorFamily } from "../../../recoil/inventory/selectors"
 import { Controls } from "../../controls"
 import { Link } from "../../link"
@@ -24,6 +21,7 @@ import { ErrorBoundary } from "../../errorBoundary"
 import { AuthorTag } from "../../shared/authorTag"
 import { CoreInputs } from "./coreInputs"
 import { CoreSettings } from "./coreSettings"
+import { RequiredFileInfoSelectorFamily } from "../../../recoil/requiredFiles/selectors"
 
 type CoreInfoProps = {
   coreName: string

@@ -2,26 +2,19 @@ import { selector, selectorFamily } from "recoil"
 import {
   CoreInfoJSON,
   DataJSON,
-  InputJSON,
   InstanceDataJSON,
-  PocketSyncConfig,
   RequiredFileInfo,
 } from "../types"
 import { renderBinImage } from "../utils/renderBinImage"
-import {
-  configInvalidationAtom,
-  fileSystemInvalidationAtom,
-  pocketPathAtom,
-} from "./atoms"
+import { fileSystemInvalidationAtom } from "./atoms"
 import { getVersion } from "@tauri-apps/api/app"
 import { decodeDataParams } from "../utils/decodeDataParams"
 import {
   invokeFileExists,
+  invokeFileMetadata,
   invokeFindCleanableFiles,
   invokeListFiles,
   invokeReadBinaryFile,
-  invokeSaveFile,
-  invokeSHA1Hash,
   invokeWalkDirListFiles,
 } from "../utils/invokes"
 import { AUTHOUR_IMAGE, IGNORE_INSTANCE_JSON_LIST } from "../values"
@@ -35,117 +28,6 @@ export const DataJSONSelectorFamily = selectorFamily<DataJSON, string>({
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
       return readJSONFile<DataJSON>(`Cores/${coreName}/data.json`)
-    },
-})
-
-export const RequiredFileInfoSelectorFamily = selectorFamily<
-  RequiredFileInfo[],
-  string
->({
-  key: "DataJSONSelectorFamily",
-  get:
-    (coreName) =>
-    async ({ get }) => {
-      const dataJSON = get(DataJSONSelectorFamily(coreName))
-      const coreJSON = get(CoreInfoSelectorFamily(coreName))
-      const [platform_id] = coreJSON.core.metadata.platform_ids
-
-      const requiredCoreFiles = dataJSON.data.data_slots.filter(
-        ({ name, required, filename }) => {
-          return (
-            // not sure why some bioses aren't required
-            (required || name?.toLowerCase().includes("bios")) &&
-            filename &&
-            coreJSON.core.metadata.platform_ids.length === 1
-          )
-        }
-      )
-
-      const fileInfo = (
-        await Promise.all(
-          requiredCoreFiles.map(
-            async ({ filename, alternate_filenames, parameters }) => {
-              const path = `Assets/${platform_id}/${
-                decodeDataParams(parameters).coreSpecific ? coreName : "common"
-              }`
-              return Promise.all(
-                [filename, ...(alternate_filenames || [])].map(
-                  async (filename) =>
-                    ({
-                      filename: filename as string,
-                      path,
-                      exists: await invokeFileExists(`${path}/${filename}`),
-                      sha1: await invokeSHA1Hash(`${path}/${filename}`),
-                      type: "core",
-                    } satisfies RequiredFileInfo)
-                )
-              )
-            }
-          )
-        )
-      ).flat()
-
-      if (IGNORE_INSTANCE_JSON_LIST.includes(coreName)) {
-        return [...fileInfo]
-      }
-
-      const instanceFileInfo = await Promise.all(
-        dataJSON.data.data_slots
-          .filter(({ required, parameters }) => {
-            return (
-              required &&
-              decodeDataParams(parameters).instanceJSON &&
-              coreJSON.core.metadata.platform_ids.length === 1
-            )
-          })
-          .map(async ({ filename, parameters }) => {
-            if (filename) {
-              // can't handle this yet
-              console.log("is a single filename")
-            }
-
-            const path = `Assets/${platform_id}/${
-              decodeDataParams(parameters).coreSpecific ? coreName : "common"
-            }/`
-
-            let files = await invokeWalkDirListFiles(path, [".json"])
-
-            if (get(skipAlternateAssetsSelector))
-              files = files.filter((path) => !path.includes("_alternatives"))
-
-            return await Promise.all(
-              files.map(async (f) => {
-                const instanceFile = await readJSONFile<InstanceDataJSON>(
-                  `${path}/${f}`
-                )
-
-                const dataPath = instanceFile.instance.data_path
-
-                return await Promise.all(
-                  instanceFile.instance.data_slots.map(
-                    async ({ filename, parameters }) => {
-                      const path = `Assets/${platform_id}/${
-                        decodeDataParams(parameters).coreSpecific
-                          ? coreName
-                          : "common"
-                      }${dataPath ? `/${dataPath}` : ""}`
-
-                      return {
-                        filename: filename as string,
-                        path,
-                        exists: await invokeFileExists(`${path}/${filename}`),
-                        sha1: await invokeSHA1Hash(`${path}/${filename}`),
-                        type: "instance",
-                      } satisfies RequiredFileInfo
-                    }
-                  )
-                )
-              })
-            )
-          })
-      )
-
-      return [...fileInfo, ...instanceFileInfo.flat(3)]
     },
 })
 

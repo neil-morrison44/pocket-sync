@@ -1,10 +1,10 @@
-use data_encoding::HEXUPPER;
+use futures::future::join_all;
 use serde::{Deserialize, Serialize};
 use std::{
     cmp::{Ord, Ordering},
     error,
     fs::{self, File},
-    io::{BufReader, Cursor, Read, Write},
+    io::{Cursor, Read, Write},
     path::{Path, PathBuf},
     time::SystemTime,
 };
@@ -12,12 +12,12 @@ use tempdir::TempDir;
 use walkdir::WalkDir;
 use zip::{write::FileOptions, DateTime};
 
-use crate::hashes::sha256_digest;
+use crate::hashes::crc32_for_file;
 
 #[derive(Eq, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
 pub struct SaveZipFile {
     last_modified: u32,
-    hash: String,
+    crc32: u32,
     filename: String,
 }
 
@@ -43,13 +43,13 @@ pub fn restore_save_from_zip(zip_path: &PathBuf, file_path: &str, pocket_path: &
         .join("Saves")
         .join(remove_leading_slash(file_path));
 
-    // println!("from {:?} to {:?}", src_file_path, dest_file_path);
+    println!("from {:?} to {:?}", src_file_path, dest_file_path);
 
     fs::create_dir_all(dest_file_path.parent().unwrap()).unwrap();
     fs::copy(&src_file_path, &dest_file_path).unwrap();
 }
 
-pub fn read_saves_in_zip(zip_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
+pub async fn read_saves_in_zip(zip_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
     let zip_file = fs::read(zip_path).unwrap();
     let cursor = Cursor::new(zip_file);
     let mut archive = zip::ZipArchive::new(cursor).unwrap();
@@ -58,64 +58,64 @@ pub fn read_saves_in_zip(zip_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
     let tmp_path = tmp_dir.into_path();
     archive.extract(&tmp_path).unwrap();
 
-    read_saves_in_folder(&tmp_path)
+    read_saves_in_folder(&tmp_path).await
 }
 
-pub fn read_saves_in_folder(folder_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
+pub async fn read_saves_in_folder(folder_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
     let walker = WalkDir::new(&folder_path).into_iter();
     let dir_path_str = &folder_path.to_str().unwrap();
-    Ok(walker
-        .into_iter()
-        .filter_map(|x| x.ok())
-        .filter(|e| e.path().is_file())
-        .map(|e| {
-            let file_path = e.path();
-            let metadata = file_path.metadata().unwrap();
-            let last_modified = time::OffsetDateTime::from(metadata.created().unwrap());
+    Ok(join_all(
+        walker
+            .into_iter()
+            .filter_map(|x| x.ok())
+            .filter(|e| e.path().is_file())
+            .map(|e| async move {
+                let file_path = e.path();
+                let metadata = file_path.metadata().unwrap();
+                let last_modified = time::OffsetDateTime::from(metadata.created().unwrap());
 
-            let input = File::open(file_path).unwrap();
-            let reader = BufReader::new(input);
-            let digest = sha256_digest(reader).unwrap();
+                let crc32 = crc32_for_file(&file_path.into()).await.unwrap();
 
-            SaveZipFile {
-                filename: String::from(e.path().to_str().unwrap()).replace(dir_path_str, ""),
-                last_modified: last_modified.unix_timestamp().try_into().unwrap(),
-                hash: HEXUPPER.encode(&digest.as_ref()),
-            }
-        })
-        .collect())
+                SaveZipFile {
+                    filename: String::from(e.path().to_str().unwrap()).replace(dir_path_str, ""),
+                    last_modified: last_modified.unix_timestamp().try_into().unwrap(),
+                    crc32,
+                }
+            }),
+    )
+    .await)
 }
 
-pub fn read_save_zip_list(dir_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
+pub async fn read_save_zip_list(dir_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
     if !dir_path.exists() {
         return Ok(vec![]);
     }
     let paths = fs::read_dir(dir_path).unwrap();
-    Ok(paths
-        .into_iter()
-        .filter(Result::is_ok)
-        .map(|p| p.unwrap())
-        .map(|p| p.file_name().into_string().unwrap())
-        .filter(|s| s.starts_with(FILE_PREFIX))
-        .map(|filename| {
-            let file_path = dir_path.join(&filename);
-            let metadata = file_path.metadata().unwrap();
-            let last_modified = time::OffsetDateTime::from(metadata.modified().unwrap());
+    Ok(join_all(
+        paths
+            .into_iter()
+            .filter(Result::is_ok)
+            .map(|p| p.unwrap())
+            .map(|p| p.file_name().into_string().unwrap())
+            .filter(|s| s.starts_with(FILE_PREFIX))
+            .map(|filename| async {
+                let file_path = dir_path.join(&filename);
+                let metadata = file_path.metadata().unwrap();
+                let last_modified = time::OffsetDateTime::from(metadata.modified().unwrap());
 
-            let input = File::open(file_path).unwrap();
-            let reader = BufReader::new(input);
-            let digest = sha256_digest(reader).unwrap();
+                let crc32 = crc32_for_file(&file_path.into()).await.unwrap();
 
-            SaveZipFile {
-                filename,
-                last_modified: last_modified.unix_timestamp().try_into().unwrap(),
-                hash: HEXUPPER.encode(&digest.as_ref()),
-            }
-        })
-        .collect())
+                SaveZipFile {
+                    filename,
+                    last_modified: last_modified.unix_timestamp().try_into().unwrap(),
+                    crc32,
+                }
+            }),
+    )
+    .await)
 }
 
-pub fn build_save_zip(
+pub async fn build_save_zip(
     pocket_path: &PathBuf,
     save_paths: Vec<&str>,
     dir_path: &str,
@@ -168,22 +168,22 @@ pub fn build_save_zip(
     }
     zip.finish().unwrap();
 
-    prune_zips(&zip_path, max_count).unwrap();
+    prune_zips(&zip_path, max_count).await.unwrap();
     Ok(())
 }
 
-fn prune_zips(zip_path: &Path, max_count: usize) -> Result<(), Box<dyn error::Error>> {
-    let mut files = read_save_zip_list(&PathBuf::from(zip_path)).unwrap();
+async fn prune_zips(zip_path: &Path, max_count: usize) -> Result<(), Box<dyn error::Error>> {
+    let mut files = read_save_zip_list(&PathBuf::from(zip_path)).await.unwrap();
     files.sort();
     let last_two: Vec<&SaveZipFile> = files.iter().rev().take(2).collect();
     if last_two.len() == 2 {
-        if last_two[0].hash == last_two[1].hash {
+        if last_two[0].crc32 == last_two[1].crc32 {
             let newest_file_path = zip_path.join(&last_two[1].filename);
             fs::remove_file(newest_file_path)?;
         }
     }
 
-    let files = read_save_zip_list(&PathBuf::from(zip_path)).unwrap();
+    let files = read_save_zip_list(&PathBuf::from(zip_path)).await.unwrap();
     if files.len() > max_count {
         if let Some(oldest_file) = files.iter().min() {
             let last_file_path = zip_path.join(&oldest_file.filename);
