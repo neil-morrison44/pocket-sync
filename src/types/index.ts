@@ -199,7 +199,7 @@ export type SaveConfig = {
 export type SaveZipFile = {
   filename: string
   last_modified: number
-  hash: string
+  crc32: number
 }
 
 export type ArchiveFileMetadata = {

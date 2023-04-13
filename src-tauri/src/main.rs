@@ -254,7 +254,9 @@ async fn backup_saves(
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<bool, ()> {
     let pocket_path = state.0.read().await;
-    build_save_zip(&pocket_path, save_paths, zip_path, max_count).unwrap();
+    build_save_zip(&pocket_path, save_paths, zip_path, max_count)
+        .await
+        .unwrap();
 
     Ok(true)
 }
@@ -269,7 +271,7 @@ async fn list_backup_saves(backup_path: &str) -> Result<BackupSavesResponse, ()>
         });
     }
 
-    let files = read_save_zip_list(&path).unwrap();
+    let files = read_save_zip_list(&path).await.unwrap();
 
     Ok(BackupSavesResponse {
         files,
@@ -284,7 +286,7 @@ async fn list_saves_in_zip(zip_path: &str) -> Result<Vec<SaveZipFile>, ()> {
         return Ok(vec![]);
     }
 
-    read_saves_in_zip(&path)
+    read_saves_in_zip(&path).await
 }
 
 #[tauri::command(async)]
@@ -293,7 +295,7 @@ async fn list_saves_on_pocket(
 ) -> Result<Vec<SaveZipFile>, ()> {
     let pocket_path = state.0.read().await;
     let saves_path = pocket_path.join("Saves");
-    read_saves_in_folder(&saves_path)
+    read_saves_in_folder(&saves_path).await
 }
 
 #[tauri::command(async)]

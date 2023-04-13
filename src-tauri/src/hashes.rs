@@ -1,20 +1,4 @@
-use ring::digest::{Context, Digest, SHA256};
 use std::{error, io::Read, path::PathBuf};
-
-pub fn sha256_digest<R: Read>(mut reader: R) -> Result<Digest, Box<dyn error::Error>> {
-    let mut context = Context::new(&SHA256);
-    let mut buffer = [0; 1024];
-
-    loop {
-        let count = reader.read(&mut buffer)?;
-        if count == 0 {
-            break;
-        }
-        context.update(&buffer[..count]);
-    }
-
-    Ok(context.finish())
-}
 
 pub async fn crc32_for_file(file_path: &PathBuf) -> Result<u32, Box<dyn error::Error>> {
     let handle = {
