@@ -109,8 +109,11 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
 
             let files = await invokeWalkDirListFiles(path, [".json"])
 
+            console.log({ files })
+            console.log(get(skipAlternateAssetsSelector))
             if (get(skipAlternateAssetsSelector))
               files = files.filter((path) => !path.includes("_alternatives"))
+            console.log({ files })
 
             return await Promise.all(
               files.map(async (f) => {

@@ -177,8 +177,7 @@ export const ImagePackImageSelectorFamily = selectorFamily<
         e.filename.endsWith(`Platforms/_images/${platformId}.bin`)
       )
 
-      if (!platformImageEntry) return null
-
+      if (!platformImageEntry || !platformImageEntry.getData) return null
       const data = await platformImageEntry.getData(new zip.BlobWriter(), {})
 
       return {

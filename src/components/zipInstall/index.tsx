@@ -24,7 +24,8 @@ export const ZipInstallInner = ({
 }: InstallZipEventPayload) => {
   const tree = useTree(files)
   const { allowedFiles, toggleFile } = useAllowedFiles(files)
-  const { confirm, cancel } = useZipInstallButtons(allowedFiles)
+  const { confirm, cancel, handleMovedFiles, setHandleMovedFiles } =
+    useZipInstallButtons(allowedFiles)
 
   if (progress) {
     return (
@@ -55,6 +56,17 @@ export const ZipInstallInner = ({
 
       <div className="zip-install__controls">
         <button onClick={cancel}>Cancel</button>
+        <label
+          className="zip-install__control-checkbox"
+          title="Handles cases where files have moved, e.g. JSON files are now in `_alternatives`"
+        >
+          <input
+            type="checkbox"
+            checked={handleMovedFiles}
+            onChange={({ target }) => setHandleMovedFiles(target.checked)}
+          />
+          Remove duplicate existing files
+        </label>
         <button onClick={confirm}>Confirm</button>
       </div>
     </Modal>

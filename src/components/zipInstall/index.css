@@ -10,6 +10,14 @@
 .zip-install__controls {
   display: flex;
   justify-content: space-around;
+  align-items: center;
+}
+
+.zip-install__control-checkbox{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 1rem;
 }
 
 .zip-install__tree-node {
