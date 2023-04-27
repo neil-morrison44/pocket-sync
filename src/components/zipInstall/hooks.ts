@@ -101,19 +101,23 @@ export const useAllowedFiles = (files: InstallZipEventPayload["files"]) => {
 }
 
 export const useZipInstallButtons = (allowedFiles: string[] | null) => {
+  const [handleMovedFiles, setHandleMovedFiles] = useState(true)
+
   const confirm = useCallback(() => {
     emit("install-confirmation", {
       paths: allowedFiles,
+      handle_moved_files: handleMovedFiles,
       allow: true,
     })
-  }, [allowedFiles])
+  }, [allowedFiles, handleMovedFiles])
 
   const cancel = useCallback(() => {
     emit("install-confirmation", {
       paths: [],
+      handle_moved_files: false,
       allow: false,
     })
   }, [])
 
-  return { confirm, cancel }
+  return { confirm, cancel, handleMovedFiles, setHandleMovedFiles }
 }

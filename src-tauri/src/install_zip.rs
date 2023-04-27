@@ -1,8 +1,15 @@
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
-use std::{fs, io::Cursor, path::PathBuf, sync::Arc, thread};
+use std::{
+    fs,
+    io::Cursor,
+    path::{Path, PathBuf},
+    sync::Arc,
+    thread,
+};
 use tauri::{App, Manager, Window};
 use tempdir::TempDir;
+use walkdir::WalkDir;
 use zip::ZipArchive;
 
 use crate::PocketSyncState;
@@ -22,6 +29,7 @@ struct PathStatus {
 #[derive(Serialize, Deserialize, Clone)]
 struct InstallConfirmation {
     paths: Vec<PathBuf>,
+    handle_moved_files: bool,
     allow: bool,
 }
 
@@ -55,46 +63,44 @@ pub fn start_zip_thread(app: &App) -> Result<(), Box<(dyn std::error::Error + 's
         {
             let app_handle = app_handle.clone();
             main_window.on_window_event(move |event| {
-                if let tauri::WindowEvent::FileDrop(e) = event {
-                    if let tauri::FileDropEvent::Dropped(paths) = e {
-                        tokio::task::block_in_place(|| {
-                            tauri::async_runtime::block_on(async {
-                                let state: tauri::State<PocketSyncState> = app_handle.state();
-                                let pocket_path = state.0.read().await;
-                                let window = app_handle.get_window("main").unwrap();
+                if let tauri::WindowEvent::FileDrop(tauri::FileDropEvent::Dropped(paths)) = event {
+                    tokio::task::block_in_place(|| {
+                        tauri::async_runtime::block_on(async {
+                            let state: tauri::State<PocketSyncState> = app_handle.state();
+                            let pocket_path = state.0.read().await;
+                            let window = app_handle.get_window("main").unwrap();
 
-                                if !pocket_path.exists() || paths.len() != 1 {
-                                    return;
+                            if !pocket_path.exists() || paths.len() != 1 {
+                                return;
+                            }
+
+                            for path in paths {
+                                if !path
+                                    .file_name()
+                                    .and_then(|f| f.to_str())
+                                    .unwrap()
+                                    .ends_with(".zip")
+                                {
+                                    continue;
                                 }
+                                let zip_file = fs::read(path).unwrap();
+                                let cursor = Cursor::new(zip_file);
+                                let archive = zip::ZipArchive::new(cursor).unwrap();
 
-                                for path in paths {
-                                    if !path
-                                        .file_name()
-                                        .and_then(|f| f.to_str())
-                                        .unwrap()
-                                        .ends_with(".zip")
-                                    {
-                                        continue;
-                                    }
-                                    let zip_file = fs::read(path).unwrap();
-                                    let cursor = Cursor::new(zip_file);
-                                    let archive = zip::ZipArchive::new(cursor).unwrap();
-
-                                    start_zip_install_flow(
-                                        archive,
-                                        Titles {
-                                            title: String::from("Install Zip"),
-                                            installing_title: (String::from("Installing Zip...")),
-                                        },
-                                        pocket_path.clone(),
-                                        &window,
-                                    )
-                                    .await
-                                    .unwrap();
-                                }
-                            })
-                        });
-                    }
+                                start_zip_install_flow(
+                                    archive,
+                                    Titles {
+                                        title: String::from("Install Zip"),
+                                        installing_title: (String::from("Installing Zip...")),
+                                    },
+                                    pocket_path.clone(),
+                                    &window,
+                                )
+                                .await
+                                .unwrap();
+                            }
+                        })
+                    });
                 }
             });
         }
@@ -211,6 +217,38 @@ async fn start_zip_install_flow(
         let tmp_path = tmp_dir.into_path();
         archive.extract(&tmp_path).unwrap();
 
+        if install_confirm.handle_moved_files || true {
+            for path in install_confirm.paths.iter() {
+                let destination = pocket_path.join(&path);
+                let source = tmp_path.join(&path);
+
+                if !source.is_file() {
+                    continue;
+                }
+
+                let file_name = path.file_name();
+                let root = destination.ancestors().find(|p| {
+                    matches!(
+                        p.parent()
+                            .and_then(|par| par.file_name())
+                            .and_then(|f| f.to_str()),
+                        Some("Assets" | "Cores" | "Input" | "Interact")
+                    )
+                });
+
+                if let (Some(root), Some(file_name)) = (root, file_name.and_then(|f| f.to_str())) {
+                    let matching_files = find_matching_files(root, file_name);
+                    for file in matching_files {
+                        if file != destination {
+                            if let Err(err) = fs::remove_file(file) {
+                                println!("File Moving error {}", err);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         for (index, path) in install_confirm.paths.iter().enumerate() {
             let destination = pocket_path.join(&path);
             let source = tmp_path.join(&path);
@@ -257,5 +295,14 @@ fn get_file_names(
                 path: String::from(f),
             }
         })
+        .collect()
+}
+
+fn find_matching_files(root_path: &Path, file_name: &str) -> Vec<PathBuf> {
+    WalkDir::new(root_path)
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .filter(|entry| entry.file_name().to_str() == Some(file_name))
+        .map(|entry| entry.into_path())
         .collect()
 }
