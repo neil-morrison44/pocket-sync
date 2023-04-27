@@ -9,7 +9,6 @@ import {
 export function syncToAppLocalDataEffect<T>(filename: string): AtomEffect<T> {
   return ({ trigger, onSet, setSelf }) => {
     onSet(async (newValue) => {
-      console.log(`onSet ${newValue}`)
       const text = JSON.stringify(newValue)
       await writeTextFile(`${filename}.json`, text, {
         dir: BaseDirectory.AppLocalData,
