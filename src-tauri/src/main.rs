@@ -37,17 +37,24 @@ struct PocketSyncState(RwLock<PathBuf>);
 #[tauri::command(async)]
 async fn open_pocket(state: tauri::State<'_, PocketSyncState>) -> Result<Option<String>, ()> {
     if let Some(pocket_path) = dialog::blocking::FileDialogBuilder::new().pick_folder() {
-        if !check_if_folder_looks_like_pocket(&pocket_path) {
-            return Ok(None);
-        }
-
-        let mut path_state = state.0.write().await;
-        *path_state = pocket_path;
-
-        Ok(Some(String::from(path_state.to_str().unwrap())))
+        open_pocket_folder(state, &pocket_path.to_str().unwrap()).await
     } else {
         Err(())
     }
+}
+
+#[tauri::command(async)]
+async fn open_pocket_folder(
+    state: tauri::State<'_, PocketSyncState>,
+    pocket_path: &str,
+) -> Result<Option<String>, ()> {
+    let pocket_path = PathBuf::from(pocket_path);
+    if !check_if_folder_looks_like_pocket(&pocket_path) {
+        return Ok(None);
+    }
+    let mut path_state = state.0.write().await;
+    *path_state = pocket_path.clone();
+    Ok(Some(String::from(path_state.to_str().unwrap())))
 }
 
 #[tauri::command(async)]
@@ -444,6 +451,7 @@ fn main() {
         .manage(PocketSyncState(Default::default()))
         .invoke_handler(tauri::generate_handler![
             open_pocket,
+            open_pocket_folder,
             list_files,
             walkdir_list_files,
             read_binary_file,

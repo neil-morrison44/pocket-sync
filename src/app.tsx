@@ -1,12 +1,13 @@
 import "./font.css"
 import "./app.css"
-import { useRecoilState } from "recoil"
-import { pocketPathAtom } from "./recoil/atoms"
+import { useRecoilState, useSetRecoilState } from "recoil"
+import { pocketPathAtom, reconnectWhenOpenedAtom } from "./recoil/atoms"
 import { Layout } from "./components/layout"
-import React, { Suspense, useCallback, useState } from "react"
-import { invokeOpenPocket } from "./utils/invokes"
+import React, { Suspense, useCallback, useEffect, useState } from "react"
+import { invokeOpenPocket, invokeOpenPocketFolder } from "./utils/invokes"
 import { Tip } from "./components/tip"
 import { NewsFeed } from "./components/newsFeed"
+import { currentViewAtom } from "./recoil/view/atoms"
 
 const Pocket = React.lazy(() =>
   import("./components/three/pocket").then((m) => ({ default: m.Pocket }))
@@ -14,17 +15,34 @@ const Pocket = React.lazy(() =>
 
 export const App = () => {
   const [pocketPath, setPocketPath] = useRecoilState(pocketPathAtom)
+  const [reconnectWhenOpened, setReconnectWhenOpened] = useRecoilState(
+    reconnectWhenOpenedAtom
+  )
+  const setView = useSetRecoilState(currentViewAtom)
   const [attempts, setAttempts] = useState(0)
+
+  useEffect(() => {
+    if (reconnectWhenOpened.enable && reconnectWhenOpened.path) {
+      invokeOpenPocketFolder(reconnectWhenOpened.path).then((result) => {
+        if (result) {
+          setView({ view: "Pocket Sync", selected: null })
+          setPocketPath(result)
+        }
+      })
+    }
+  }, [])
 
   const onOpenPocket = useCallback(async () => {
     const result = await invokeOpenPocket()
+    setView({ view: "Pocket Sync", selected: null })
     setPocketPath(result)
     if (result === null) {
       setAttempts((a) => a + 1)
     } else {
+      setReconnectWhenOpened((r) => ({ ...r, path: result }))
       setAttempts(0)
     }
-  }, [setPocketPath, setAttempts])
+  }, [setPocketPath, setAttempts, setReconnectWhenOpened])
 
   if (pocketPath) {
     return <Layout />

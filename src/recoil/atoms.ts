@@ -1,4 +1,8 @@
 import { atom } from "recoil"
+import {
+  syncToAppLocalDataEffect,
+  syncToAppLocalDataEffectDefault,
+} from "./effects"
 
 export const pocketPathAtom = atom<string | null>({
   key: "pocketPathAtom",
@@ -23,4 +27,13 @@ export const configInvalidationAtom = atom<number>({
 export const saveFileInvalidationAtom = atom<number>({
   key: "saveFileInvalidationAtom",
   default: Date.now(),
+})
+
+export const reconnectWhenOpenedAtom = atom<{ enable: boolean; path: string }>({
+  key: "reconnectWhenOpenedAtom",
+  default: syncToAppLocalDataEffectDefault("reconnect_when_opened", {
+    enable: false,
+    path: "",
+  }),
+  effects: [syncToAppLocalDataEffect("reconnect_when_opened")],
 })

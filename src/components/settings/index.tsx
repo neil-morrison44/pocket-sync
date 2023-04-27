@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
   PocketSyncConfigSelector,
   skipAlternateAssetsSelector,
@@ -8,6 +8,7 @@ import { Link } from "../link"
 import { useUpdateConfig } from "./hooks/useUpdateConfig"
 
 import "./index.css"
+import { pocketPathAtom, reconnectWhenOpenedAtom } from "../../recoil/atoms"
 
 const ARCHIVE_URL_TEXT = `Please check with your local laws around the downloading of potentially copyrighted (arcade) ROM & BIOS files.
 If you are comfortable with this, copy the following url into the input and hit "save".`
@@ -16,6 +17,10 @@ export const Settings = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
   const [archiveUrlInput, setArchiveUrl] = useState(config.archive_url || "")
   const skipAlternateAssets = useRecoilValue(skipAlternateAssetsSelector)
+  const setPocketPath = useSetRecoilState(pocketPathAtom)
+  const [reconnectWhenOpened, setReconnectWhenOpened] = useRecoilState(
+    reconnectWhenOpenedAtom
+  )
   const updateConfig = useUpdateConfig()
 
   return (
@@ -75,6 +80,42 @@ export const Settings = () => {
                 updateConfig("skipAlternateAssets", target.checked)
               }
             />
+          </label>
+        </div>
+
+        <div className="settings__row">
+          <h3 className="settings__row-title">
+            {"Reconnect when the app is opened"}
+          </h3>
+          <div className="settings__ramble">
+            Attempt to reconnect to the most recently opened location
+            <pre>{reconnectWhenOpened.path}</pre> upon opening the app, skipping
+            the "Connect to Pocket" button
+          </div>
+          <label className="settings__checkbox">
+            Reconnect when opened
+            <input
+              type="checkbox"
+              checked={reconnectWhenOpened.enable}
+              onChange={({ target }) => {
+                setReconnectWhenOpened((r) => ({
+                  ...r,
+                  enable: target.checked,
+                }))
+              }}
+            />
+          </label>
+        </div>
+
+        <div className="settings__row">
+          <h3 className="settings__row-title">{"Disconnect"}</h3>
+          <div className="settings__ramble">
+            {
+              'Return to the "Connect To Pocket" screen (This doesn\'t eject the SD Card / USB drive)'
+            }
+          </div>
+          <label className="settings__checkbox">
+            <button onClick={() => setPocketPath(null)}>Disconnect</button>
           </label>
         </div>
       </div>
