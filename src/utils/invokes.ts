@@ -3,6 +3,11 @@ import { RawFeedItem, SaveZipFile } from "../types"
 
 export const invokeOpenPocket = async () => invoke<string | null>("open_pocket")
 
+export const invokeOpenPocketFolder = async (path: string) =>
+  invoke<string | null>("open_pocket_folder", {
+    pocketPath: path,
+  })
+
 export const invokeListFiles = async (path: string) =>
   invoke<string[]>("list_files", {
     path,

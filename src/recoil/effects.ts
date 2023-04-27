@@ -35,3 +35,22 @@ export function syncToAppLocalDataEffect<T>(filename: string): AtomEffect<T> {
     }
   }
 }
+
+export async function syncToAppLocalDataEffectDefault<T>(
+  filename: string,
+  initialDefault: T
+): Promise<T> {
+  const fileExists = await exists(`${filename}.json`, {
+    dir: BaseDirectory.AppLocalData,
+  })
+
+  if (fileExists) {
+    const text = await readTextFile(`${filename}.json`, {
+      dir: BaseDirectory.AppLocalData,
+    })
+    const value = JSON.parse(text) as T
+    return value
+  } else {
+    return initialDefault
+  }
+}
