@@ -1,3 +1,5 @@
+import { StructuredText } from "react-datocms/structured-text"
+
 export type Screenshot = {
   file_name: string
   file: File
@@ -232,3 +234,20 @@ export type FeedItem = {
   title: string
   link: string
 }
+
+export type FirmwareInfo = {
+  version: VersionSting
+  filename: string
+  filesize: string
+  md5_hash: string
+  url: string
+  publishedAt?: string
+}
+
+export type VersionSting =
+  | `${number}.${number}.${number}`
+  | `${number}.${number}`
+
+export type StructuredTextFormat = React.ComponentProps<
+  typeof StructuredText
+>["data"]

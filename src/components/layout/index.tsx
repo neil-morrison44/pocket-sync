@@ -1,10 +1,4 @@
-import React, {
-  Suspense,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react"
+import React, { Suspense, useCallback, useEffect, useRef } from "react"
 import { useRecoilState } from "recoil"
 import { currentViewAtom, VIEWS_LIST } from "../../recoil/view/atoms"
 import { About } from "../about"
@@ -21,12 +15,13 @@ import { Screenshots } from "../screenshots"
 import { Settings } from "../settings"
 import { ZipInstall } from "../zipInstall"
 import "./index.css"
+import { Firmware } from "../firmware"
 
 export const Layout = () => {
   const [viewAndSubview, setViewAndSubview] = useRecoilState(currentViewAtom)
 
   const changeView = useCallback(
-    (viewName: typeof VIEWS_LIST[number]) => {
+    (viewName: (typeof VIEWS_LIST)[number]) => {
       setViewAndSubview({ view: viewName, selected: null })
       window.scrollTo({ top: 0 })
     },
@@ -80,6 +75,7 @@ export const Layout = () => {
             {view === "Games" && <Games />}
             {view === "Saves" && <Saves />}
             {view === "Save States" && <SaveStates />}
+            {view === "Firmware" && <Firmware />}
             {view === "Platforms" && <Platforms />}
           </Suspense>
         </ErrorBoundary>

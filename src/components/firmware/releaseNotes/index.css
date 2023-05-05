@@ -1,0 +1,24 @@
+.firmware-release-notes{
+  & h1,h2,h3,h4,h5,h6 {
+    font-family: initial;
+    font-size: initial;
+  }
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--info-colour);
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 5px 15px;
+}
+
+.firmware-release-notes__link{
+  text-align: center;
+}
+
+.firmware-release-notes__content{
+  overflow: auto;
+  flex-shrink: 1;
+  flex-grow: 0;
+}
