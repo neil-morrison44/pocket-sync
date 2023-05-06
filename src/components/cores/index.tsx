@@ -90,7 +90,7 @@ export const Cores = () => {
           },
           {
             type: "checkbox",
-            text: "Updates",
+            text: "Updatable",
             checked: onlyUpdates,
             onChange: (checked) => setOnlyUpdates(checked),
           },
