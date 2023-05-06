@@ -8,22 +8,20 @@ export const VIEWS_LIST = [
   "Saves",
   "Save States",
   "Platforms",
+  "Firmware",
   "Settings",
 ] as const
 
+type ALL_VIEWS = (typeof VIEWS_LIST)[number]
+type VIEWS_WITH_SELECTION = "Cores" | "Screenshots" | "Platforms"
+
 export type ViewAndSubview =
   | {
-      view:
-        | "Pocket Sync"
-        | "Games"
-        | "Saves"
-        | "Save States"
-        | "Platforms"
-        | "Settings"
+      view: Omit<ALL_VIEWS, VIEWS_WITH_SELECTION>
       selected: null
     }
   | {
-      view: "Cores" | "Screenshots" | "Platforms"
+      view: VIEWS_WITH_SELECTION
       selected: string | null
     }
 

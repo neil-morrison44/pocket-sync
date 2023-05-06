@@ -1,0 +1,48 @@
+.firmware{
+  display: grid;
+  height: 100%;
+
+  /* overflow: hidden; */
+  box-sizing: border-box;
+  padding: 15px;
+  gap: 10px;
+  grid-template-areas: "c c d d"
+    "s s s s"
+    "r r r r";
+  grid-template-rows: 100px min-content 1fr;
+  overflow: hidden;
+  justify-content: stretch;
+  align-items: center;
+}
+
+.firmware__current{
+  grid-area: c;
+}
+
+.firmware__downloaded{
+  text-align: center;
+  grid-area: d;
+  display: flex;
+  gap: 15px;
+  justify-content: space-around;
+}
+
+.firmware__current, .firmware__latest{
+  font-size: 2rem;
+}
+
+.firmware__release-notes{
+  grid-area: r;
+}
+
+.firmware__selector{
+  grid-area: s;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.firmware__select{
+  font-size: 2rem;
+  flex-grow: 1;
+}

@@ -1,5 +1,16 @@
 import { invoke } from "@tauri-apps/api"
-import { RawFeedItem, SaveZipFile } from "../types"
+import {
+  FirmwareInfo,
+  RawFeedItem,
+  SaveZipFile,
+  StructuredTextFormat,
+  VersionSting,
+} from "../types"
+
+import {
+  StructuredText,
+  StructuredTextDocument,
+} from "react-datocms/structured-text"
 
 export const invokeOpenPocket = async () => invoke<string | null>("open_pocket")
 
@@ -123,6 +134,52 @@ export const invokeFileMetadata = async (filePath: string) => {
       filePath,
     }
   )
-  console.log({ metadata })
   return { timestamp: metadata.timestamp_secs * 1000, crc32: metadata.crc32 }
+}
+
+export const invokeGetFirmwareVersionsList = async () => {
+  const firmwares = await invoke<{
+    latest: {
+      version: VersionSting
+      publishedAt: string
+      details: {
+        version: VersionSting
+        filesize: string
+        filename: string
+        md5_hash: string
+        url: string
+      }
+    }
+    firmwares: {
+      version: VersionSting
+      publishedAt: string
+      details: {
+        version: VersionSting
+        filesize: string
+        filename: string
+        md5_hash: string
+        url: string
+      }
+    }[]
+  }>("get_firmware_versions_list")
+  return firmwares
+}
+
+export const invokeGetFirmwareReleaseNotes = async (version: string) => {
+  const releaseNotes = await invoke<{
+    firmware: {
+      notes: {
+        value: StructuredTextDocument
+      }
+    }
+  }>("get_firmware_release_notes", { version })
+  return releaseNotes.firmware.notes.value
+}
+
+export const invokeDownloadFirmware = async (
+  url: string,
+  fileName: string,
+  md5: string
+) => {
+  return await invoke<Boolean>("download_firmware", { url, fileName, md5 })
 }

@@ -25,6 +25,7 @@ use tokio::io::AsyncReadExt;
 use walkdir::{DirEntry, WalkDir};
 mod checks;
 mod clean_fs;
+mod firmware;
 mod hashes;
 mod install_zip;
 mod news_feed;
@@ -444,6 +445,51 @@ async fn get_file_metadata(
         crc32,
     })
 }
+#[tauri::command(async)]
+async fn get_firmware_versions_list() -> Result<serde_json::Value, String> {
+    firmware::get_firmware_json()
+        .await
+        .map_err(|err| err.to_string())
+}
+
+#[tauri::command(async)]
+async fn get_firmware_release_notes(version: &str) -> Result<serde_json::Value, String> {
+    firmware::get_release_notes(version)
+        .await
+        .map_err(|err| err.to_string())
+}
+
+#[tauri::command(async)]
+async fn download_firmware(
+    url: &str,
+    md5: &str,
+    file_name: &str,
+    state: tauri::State<'_, PocketSyncState>,
+) -> Result<bool, String> {
+    let pocket_path = state.0.read().await;
+    let file_path = pocket_path.join(file_name);
+    let mut attempts = 0;
+
+    loop {
+        firmware::download_firmware_file(url, &file_path)
+            .await
+            .map_err(|err| err.to_string())?;
+
+        match (
+            firmware::verify_firmware_file(&file_path, md5)
+                .await
+                .map_err(|err| err.to_string())?,
+            attempts > 3,
+        ) {
+            (true, _) => return Ok(true),
+            (false, true) => return Ok(false),
+            (false, false) => {
+                attempts += 1;
+                continue;
+            }
+        }
+    }
+}
 
 fn main() {
     tauri::Builder::default()
@@ -472,7 +518,10 @@ fn main() {
             run_packager_for_core,
             get_news_feed,
             begin_mister_sync_session,
-            get_file_metadata
+            get_file_metadata,
+            get_firmware_versions_list,
+            get_firmware_release_notes,
+            download_firmware
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())
