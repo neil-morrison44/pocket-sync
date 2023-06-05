@@ -1,7 +1,10 @@
 type VersionSting = `${number}.${number}.${number}` | `${number}.${number}`
 
 // return true if b is later than a
-export const versionCompare = (a: VersionSting, b: VersionSting): boolean => {
+export const versionCompare = (a: string, b: string): boolean => {
+  if (a.includes("-beta-")) return true
+  if (b.includes("-beta-")) return false
+
   const aParts = a.split(".").map((s) => parseInt(s))
   const bParts = a.split(".").map((s) => parseInt(s))
 

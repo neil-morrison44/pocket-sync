@@ -33,7 +33,6 @@ export class ErrorBoundary extends Component<
   }
 
   clearError() {
-    console.log("clear error?")
     this.setState({ hasError: false, error: null })
   }
 

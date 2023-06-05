@@ -1,62 +1,44 @@
-use regex::Regex;
-use serde::Deserialize;
-use serde_json::json;
+use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use tokio::io::AsyncWriteExt;
 
 use crate::hashes::md5_for_file;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-struct NextProps {
-    page_props: serde_json::Value,
+pub struct FirmwareListItem {
+    version: String,
+    product: String,
+    published_at: String,
+    url: String,
 }
 
-async fn get_build_id() -> Result<Option<String>, reqwest::Error> {
-    let body = reqwest::get("https://www.analogue.co/support/pocket/firmware")
+#[derive(Deserialize, Serialize)]
+pub struct FirmwareDetails {
+    version: String,
+    product: String,
+    published_at: String,
+    url: String,
+    download_url: Option<String>,
+    file_size: Option<String>,
+    md5: Option<String>,
+    release_notes_html: String,
+}
+
+pub async fn get_firmware_json() -> Result<Vec<FirmwareListItem>, reqwest::Error> {
+    let json_body = reqwest::get("https://www.analogue.co/support/pocket/firmware/list")
         .await?
         .text()
         .await?;
-
-    Ok({
-        let re = Regex::new(r#"_next/static/([^/]+)/_buildManifest\.js"#).unwrap();
-        if let Some(capture) = re.captures(&body) {
-            let extracted_string = capture.get(1).unwrap().as_str();
-            Some(String::from(extracted_string))
-        } else {
-            None
-        }
-    })
+    let items: Vec<FirmwareListItem> = serde_json::from_str(&json_body).unwrap();
+    Ok(items)
 }
 
-pub async fn get_firmware_json() -> Result<serde_json::Value, reqwest::Error> {
-    let build_id = get_build_id().await?;
-
-    if let Some(build_id) = build_id {
-        let json_url = format!(
-        "https://www.analogue.co/_next/data/{build_id}/support/pocket/firmware.json?product=pocket"
-    );
-        let json_body = reqwest::get(json_url).await?.text().await?;
-        let props: NextProps = serde_json::from_str(&json_body).unwrap();
-        Ok(props.page_props)
-    } else {
-        Ok(json!("{}"))
-    }
-}
-
-pub async fn get_release_notes(version: &str) -> Result<serde_json::Value, reqwest::Error> {
-    let build_id = get_build_id().await?;
-
-    if let Some(build_id) = build_id {
-        let json_url = format!(
-        "https://www.analogue.co/_next/data/{build_id}/support/pocket/firmware/{version}.json?product=pocket&version={version}"
-    );
-        let json_body = reqwest::get(json_url).await?.text().await?;
-        let props: NextProps = serde_json::from_str(&json_body).unwrap();
-        Ok(props.page_props)
-    } else {
-        Ok(json!("{}"))
-    }
+pub async fn get_release_notes(version: &str) -> Result<FirmwareDetails, reqwest::Error> {
+    let json_url = format!("https://www.analogue.co/support/pocket/firmware/{version}/details");
+    let json_body = reqwest::get(json_url).await?.text().await?;
+    let release_details: FirmwareDetails = serde_json::from_str(&json_body).unwrap();
+    Ok(release_details)
 }
 
 pub async fn download_firmware_file(

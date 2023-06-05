@@ -1,58 +1,56 @@
 import { selector, selectorFamily } from "recoil"
 import {
-  invokeGetFirmwareReleaseNotes,
+  invokeGetFirmwareDetails,
   invokeGetFirmwareVersionsList,
   invokeListFiles,
   invokeReadTextFile,
 } from "../../utils/invokes"
 import { versionCompare } from "../../utils/versionCompare"
-import { FirmwareInfo, VersionSting } from "../../types"
-import { StructuredTextDocument } from "react-datocms/structured-text"
+import { FirmwareInfo, FirmwareListItem } from "../../types"
 import { fileSystemInvalidationAtom } from "../atoms"
 
-export const latestFirmwareSelector = selector<FirmwareInfo>({
+export const latestFirmwareSelector = selector<FirmwareListItem>({
   key: "latestFirmwareSelector",
   get: async () => {
     const firmwares = await invokeGetFirmwareVersionsList()
-
-    const latestInfo: FirmwareInfo = {
-      ...firmwares.latest,
-      ...firmwares.latest.details,
-    }
-
+    const [latestInfo, ..._] = firmwares
     return latestInfo
   },
 })
 
-export const previousFirmwareListSelector = selector<FirmwareInfo[]>({
+export const previousFirmwareListSelector = selector<FirmwareListItem[]>({
   key: "previousFirmwareListSelector",
   get: async () => {
     const firmwares = await invokeGetFirmwareVersionsList()
-    return firmwares.firmwares.map((f) => ({ ...f, ...f.details })) || []
+    const [_, ...previousFirmwares] = firmwares
+    return previousFirmwares
   },
 })
 
 export const currentFirmwareVersionSelector = selector<{
-  version: VersionSting
+  version: string
   build_date: string
 }>({
   key: "currentFirmwareVersionSelector",
   get: async () => {
     const analoguePocketJson = await invokeReadTextFile("Analogue_Pocket.json")
-
     const parsedJSON = JSON.parse(analoguePocketJson) as {
       product: "Analogue Pocket"
       firmware: {
         runtime: {
-          name: VersionSting
+          name: string
           byte: number
           build_date: string
         }
       }
     }
+    const hexValue = parsedJSON.firmware.runtime.byte.toString(16)
+    const version = hexValue.startsWith("b")
+      ? `1.1-beta-${hexValue[1]}`
+      : `${hexValue[0]}.${hexValue[1]}`
 
     return {
-      version: parsedJSON.firmware.runtime.name,
+      version,
       build_date: parsedJSON.firmware.runtime.build_date,
     }
   },
@@ -68,20 +66,21 @@ export const firmwareUpdateableSelector = selector<boolean>({
   },
 })
 
-export const FirmwareReleaseNotesSelectorFamily = selectorFamily<
-  StructuredTextDocument,
+export const FirmwareDetailsSelectorFamily = selectorFamily<
+  FirmwareInfo,
   { version: string }
 >({
-  key: "FirmwareReleaseNotesSelectorFamily",
+  key: "FirmwareDetailsSelectorFamily",
   get:
     ({ version }) =>
     async () => {
-      const notes = await invokeGetFirmwareReleaseNotes(version)
-      return notes
+      const details = await invokeGetFirmwareDetails(version)
+      details.file_name = details.download_url?.split("/").at(-1) || "unknown"
+      return details
     },
 })
 
-export const downloadedFirmwareSelector = selector<FirmwareInfo | null>({
+export const downloadedFirmwareSelector = selector<string | null>({
   key: "downloadedFirmwareSelector",
   get: async ({ get }) => {
     get(fileSystemInvalidationAtom)
@@ -91,8 +90,9 @@ export const downloadedFirmwareSelector = selector<FirmwareInfo | null>({
     const filesAtRoot = await invokeListFiles("")
     const firmwareFile = filesAtRoot.find((f) => f.endsWith(".bin"))
 
-    if (!firmwareFile) return null
-    const firmwareInfo = allFirmware.find((f) => f.filename === firmwareFile)
-    return firmwareInfo || null
+    return firmwareFile || null
+    // if (!firmwareFile) return null
+    // const firmwareInfo = allFirmware.find((f) => f.file_name === firmwareFile)
+    // return firmwareInfo || null
   },
 })

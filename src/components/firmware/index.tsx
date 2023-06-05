@@ -1,17 +1,14 @@
 import { useRecoilValue } from "recoil"
 import {
-  FirmwareReleaseNotesSelectorFamily,
+  FirmwareDetailsSelectorFamily,
   currentFirmwareVersionSelector,
   downloadedFirmwareSelector,
   latestFirmwareSelector,
   previousFirmwareListSelector,
 } from "../../recoil/firmware/selectors"
-import { Tip } from "../tip"
-
 import "./index.css"
 import { FirmwareReleaseNotes } from "./releaseNotes"
-import { Suspense, useCallback, useMemo, useState } from "react"
-import { VersionSting } from "../../types"
+import { Suspense, useCallback, useState } from "react"
 import { Loader } from "../loader"
 import { invokeDeleteFiles, invokeDownloadFirmware } from "../../utils/invokes"
 import { useInvalidateFileSystem } from "../../hooks/invalidation"
@@ -21,33 +18,10 @@ export const Firmware = () => {
   const latestFirmware = useRecoilValue(latestFirmwareSelector)
   const firmwares = useRecoilValue(previousFirmwareListSelector)
   const downloadedFirmware = useRecoilValue(downloadedFirmwareSelector)
-
   const [selectedFirmware, setSelectedFirmware] = useState(
     latestFirmware.version
   )
-
   const [isDownloading, setIsDownloading] = useState(false)
-
-  const selectedFirmwareInfo = useMemo(() => {
-    if (latestFirmware.version === selectedFirmware) return latestFirmware
-    const foundFirmware = firmwares.find((f) => f.version === selectedFirmware)
-    if (!foundFirmware) throw new Error("Selected impossible firmware")
-    return foundFirmware
-  }, [selectedFirmware])
-
-  const invalidateFS = useInvalidateFileSystem()
-
-  const onDownload = useCallback(async () => {
-    setIsDownloading(true)
-    const result = await invokeDownloadFirmware(
-      selectedFirmwareInfo.url,
-      selectedFirmwareInfo.filename,
-      selectedFirmwareInfo.md5_hash
-    )
-
-    invalidateFS()
-    setIsDownloading(false)
-  }, [selectedFirmwareInfo])
 
   return (
     <div className="firmware">
@@ -59,24 +33,28 @@ export const Firmware = () => {
         <select
           className="firmware__select"
           value={selectedFirmware}
-          onChange={({ target }) =>
-            setSelectedFirmware(target.value as VersionSting)
-          }
+          onChange={({ target }) => setSelectedFirmware(target.value)}
         >
           <option
             value={latestFirmware.version}
           >{`v${latestFirmware.version} (latest)`}</option>
           <optgroup label="Previous Versions">
             {firmwares.map((firmware) => (
-              <option
-                value={firmware.version}
-                key={firmware.version}
-              >{`v${firmware.version} (${firmware.publishedAt})`}</option>
+              <option value={firmware.version} key={firmware.version}>{`v${
+                firmware.version
+              } (${firmware.publishedAt.toLocaleDateString()})`}</option>
             ))}
           </optgroup>
         </select>
         {!downloadedFirmware && (
-          <button onClick={onDownload}>Load on to SD Card</button>
+          <Suspense>
+            <DownloadButton
+              key={selectedFirmware}
+              version={selectedFirmware}
+              onDownloadStart={() => setIsDownloading(true)}
+              onDownloadEnd={() => setIsDownloading(false)}
+            />
+          </Suspense>
         )}
       </div>
 
@@ -92,6 +70,41 @@ export const Firmware = () => {
   )
 }
 
+type DownloadButtonProps = {
+  onDownloadStart: () => void
+  onDownloadEnd: () => void
+  version: string
+}
+
+const DownloadButton = ({
+  onDownloadStart,
+  onDownloadEnd,
+  version,
+}: DownloadButtonProps) => {
+  const invalidateFS = useInvalidateFileSystem()
+
+  const firmwareDetails = useRecoilValue(
+    FirmwareDetailsSelectorFamily({ version })
+  )
+
+  const onDownload = useCallback(async () => {
+    if (!firmwareDetails.download_url) return
+
+    onDownloadStart()
+    const result = await invokeDownloadFirmware(
+      firmwareDetails.download_url,
+      firmwareDetails.file_name,
+      firmwareDetails.md5
+    )
+
+    invalidateFS()
+    onDownloadEnd()
+  }, [firmwareDetails])
+
+  if (!firmwareDetails.download_url) return null
+  return <button onClick={onDownload}>Load on to SD Card</button>
+}
+
 type FirmwareDownloadedProps = {
   downloading: boolean
 }
@@ -102,7 +115,7 @@ const FirmwareDownloaded = ({ downloading }: FirmwareDownloadedProps) => {
 
   const onRemove = useCallback(async () => {
     if (downloadedFirmware) {
-      await invokeDeleteFiles([downloadedFirmware.filename])
+      await invokeDeleteFiles([downloadedFirmware])
       invalidateFS()
     }
   }, [downloadedFirmware])
@@ -120,7 +133,7 @@ const FirmwareDownloaded = ({ downloading }: FirmwareDownloadedProps) => {
   return (
     <div className="firmware__downloaded">
       <div>
-        <strong>{`Firmware v${downloadedFirmware.version} is on the SD card`}</strong>
+        <strong>{`Firmware ${downloadedFirmware} is on the SD card`}</strong>
         <div>{"insert & turn the Pocket on to install"}</div>
       </div>
 

@@ -34,9 +34,6 @@ export const SaveInfo = ({
     AllBackupZipsFilesSelectorFamily(backupPath)
   )
   const [hideOnlyCurrent, setHideOnlyCurrent] = useState(true)
-
-  console.log({ zipFilesInfo })
-
   const pocketSaves = useRecoilValue(pocketSavesFilesListSelector)
   const { popScroll, pushScroll } = useSaveScroll()
 

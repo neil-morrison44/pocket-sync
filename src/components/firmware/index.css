@@ -17,6 +17,8 @@
 
 .firmware__current{
   grid-area: c;
+  font-size: 2rem;
+  white-space: nowrap;
 }
 
 .firmware__downloaded{
@@ -25,10 +27,6 @@
   display: flex;
   gap: 15px;
   justify-content: space-around;
-}
-
-.firmware__current, .firmware__latest{
-  font-size: 2rem;
 }
 
 .firmware__release-notes{
