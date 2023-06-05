@@ -1,5 +1,4 @@
 import { path } from "@tauri-apps/api"
-import { P } from "@tauri-apps/api/event-2a9960e7"
 import { selector, selectorFamily } from "recoil"
 import {
   invokeListInstancePackageableCores,

@@ -1,16 +1,5 @@
 import { invoke } from "@tauri-apps/api"
-import {
-  FirmwareInfo,
-  RawFeedItem,
-  SaveZipFile,
-  StructuredTextFormat,
-  VersionSting,
-} from "../types"
-
-import {
-  StructuredText,
-  StructuredTextDocument,
-} from "react-datocms/structured-text"
+import { FirmwareInfo, RawFeedItem, SaveZipFile } from "../types"
 
 export const invokeOpenPocket = async () => invoke<string | null>("open_pocket")
 
