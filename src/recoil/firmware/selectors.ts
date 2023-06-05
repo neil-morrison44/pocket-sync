@@ -5,7 +5,6 @@ import {
   invokeListFiles,
   invokeReadTextFile,
 } from "../../utils/invokes"
-import { versionCompare } from "../../utils/versionCompare"
 import { FirmwareInfo, FirmwareListItem } from "../../types"
 import { fileSystemInvalidationAtom } from "../atoms"
 
@@ -56,16 +55,6 @@ export const currentFirmwareVersionSelector = selector<{
   },
 })
 
-export const firmwareUpdateableSelector = selector<boolean>({
-  key: "firmwareUpdateableSelector",
-  get: async ({ get }) => {
-    const latestFirmware = get(latestFirmwareSelector)
-    const currentFirmware = get(currentFirmwareVersionSelector)
-
-    return versionCompare(currentFirmware.version, latestFirmware.version)
-  },
-})
-
 export const FirmwareDetailsSelectorFamily = selectorFamily<
   FirmwareInfo,
   { version: string }
@@ -84,15 +73,21 @@ export const downloadedFirmwareSelector = selector<string | null>({
   key: "downloadedFirmwareSelector",
   get: async ({ get }) => {
     get(fileSystemInvalidationAtom)
-    const latestFirmwareInfo = get(latestFirmwareSelector)
-    const previousFirmware = get(previousFirmwareListSelector)
-    const allFirmware = [latestFirmwareInfo, ...previousFirmware]
     const filesAtRoot = await invokeListFiles("")
     const firmwareFile = filesAtRoot.find((f) => f.endsWith(".bin"))
-
     return firmwareFile || null
-    // if (!firmwareFile) return null
-    // const firmwareInfo = allFirmware.find((f) => f.file_name === firmwareFile)
-    // return firmwareInfo || null
+  },
+})
+
+export const updateAvailableSelector = selector<string | null>({
+  key: "updateAvailableSelector",
+  get: async ({ get }) => {
+    const latestFirmware = get(latestFirmwareSelector)
+    const currentFirmware = get(currentFirmwareVersionSelector)
+
+    if (currentFirmware.version !== latestFirmware.version) {
+      return latestFirmware.version
+    }
+    return null
   },
 })
