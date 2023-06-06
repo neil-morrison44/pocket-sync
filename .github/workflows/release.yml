@@ -52,7 +52,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: tauri-apps/tauri-action@2846fa8fccaf00cb3d9b3433d18dd7bde8006a22
+      - uses: tauri-apps/tauri-action@v0.4.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
