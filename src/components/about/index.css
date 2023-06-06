@@ -11,13 +11,18 @@
 }
 
 .about__update-link {
-  font-size: 2rem;
+  font-size: 1.25rem;
   background-color: var(--green-colour);
-  padding: 20px 40px;
+  padding: 10px 30px;
   border-radius: 25px;
   white-space: nowrap;
   margin-left: auto;
   margin-right: auto;
+  cursor: pointer;
+
+  &:hover{
+    filter: brightness(90%);
+  }
 }
 
 .about__top {

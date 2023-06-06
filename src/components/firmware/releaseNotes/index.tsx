@@ -1,7 +1,6 @@
 import React from "react"
 import { useRecoilValue } from "recoil"
-import { FirmwareReleaseNotesSelectorFamily } from "../../../recoil/firmware/selectors"
-import { StructuredText } from "react-datocms/structured-text"
+import { FirmwareDetailsSelectorFamily } from "../../../recoil/firmware/selectors"
 
 import "./index.css"
 import { Link } from "../../link"
@@ -11,8 +10,8 @@ type FirmwareReleaseNotesProp = {
 }
 
 export const FirmwareReleaseNotes = ({ version }: FirmwareReleaseNotesProp) => {
-  const releaseNotes = useRecoilValue(
-    FirmwareReleaseNotesSelectorFamily({ version })
+  const firmwareDetails = useRecoilValue(
+    FirmwareDetailsSelectorFamily({ version })
   )
 
   return (
@@ -26,9 +25,10 @@ export const FirmwareReleaseNotes = ({ version }: FirmwareReleaseNotesProp) => {
           {`https://www.analogue.co/support/pocket/firmware/${version}`}
         </Link>
       </div>
-      <div className="firmware-release-notes__content">
-        <StructuredText data={releaseNotes} />
-      </div>
+      <div
+        className="firmware-release-notes__content"
+        dangerouslySetInnerHTML={{ __html: firmwareDetails.release_notes_html }}
+      ></div>
     </div>
   )
 }

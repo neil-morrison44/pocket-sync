@@ -1,5 +1,5 @@
 import { Suspense, useMemo } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil"
 import { useRecoilSmoothUpdatesFirstSuspend } from "../../hooks/recoilSmoothUpdates"
 import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
 import { AppVersionSelector } from "../../recoil/selectors"
@@ -10,6 +10,8 @@ import { Pocket } from "../three/pocket"
 import { RandomScreenshotScreen } from "../three/randomScreenshotScreen"
 
 import "./index.css"
+import { updateAvailableSelector } from "../../recoil/firmware/selectors"
+import { currentViewAtom } from "../../recoil/view/atoms"
 
 export const About = () => {
   const selfReleases = useRecoilSmoothUpdatesFirstSuspend(
@@ -20,10 +22,13 @@ export const About = () => {
   )
 
   const AppVersion = useRecoilValue(AppVersionSelector)
+  const firmwareUpdateAvailable = useRecoilValue(updateAvailableSelector)
 
   const updateAvailable = useMemo(() => {
     return selfReleases[0].tag_name !== `v${AppVersion}`
   }, [selfReleases, AppVersion])
+
+  const setCurrentView = useSetRecoilState(currentViewAtom)
 
   return (
     <div className="about">
@@ -32,6 +37,13 @@ export const About = () => {
           <h1>Pocket Sync</h1>
           {`v${AppVersion}`}
         </div>
+
+        {firmwareUpdateAvailable && (
+          <div
+            className="about__update-link"
+            onClick={() => setCurrentView({ view: "Firmware", selected: null })}
+          >{`New Pocket Firmware v${firmwareUpdateAvailable} available`}</div>
+        )}
 
         {updateAvailable && (
           <Link

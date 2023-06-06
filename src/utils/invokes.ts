@@ -1,16 +1,5 @@
 import { invoke } from "@tauri-apps/api"
-import {
-  FirmwareInfo,
-  RawFeedItem,
-  SaveZipFile,
-  StructuredTextFormat,
-  VersionSting,
-} from "../types"
-
-import {
-  StructuredText,
-  StructuredTextDocument,
-} from "react-datocms/structured-text"
+import { FirmwareInfo, RawFeedItem, SaveZipFile } from "../types"
 
 export const invokeOpenPocket = async () => invoke<string | null>("open_pocket")
 
@@ -138,42 +127,33 @@ export const invokeFileMetadata = async (filePath: string) => {
 }
 
 export const invokeGetFirmwareVersionsList = async () => {
-  const firmwares = await invoke<{
-    latest: {
-      version: VersionSting
+  const firmwares = await invoke<
+    {
+      version: string
+      product: "pocket"
+      url: string
       publishedAt: string
-      details: {
-        version: VersionSting
-        filesize: string
-        filename: string
-        md5_hash: string
-        url: string
-      }
-    }
-    firmwares: {
-      version: VersionSting
-      publishedAt: string
-      details: {
-        version: VersionSting
-        filesize: string
-        filename: string
-        md5_hash: string
-        url: string
-      }
     }[]
-  }>("get_firmware_versions_list")
-  return firmwares
+  >("get_firmware_versions_list")
+
+  const firmwaresWithDates = firmwares.map((f) => ({
+    ...f,
+    publishedAt: new Date(f.publishedAt),
+  }))
+
+  const sortedFirmwares = [...firmwaresWithDates].sort(
+    (a, b) => b.publishedAt.getTime() - a.publishedAt.getTime()
+  )
+
+  return sortedFirmwares
 }
 
-export const invokeGetFirmwareReleaseNotes = async (version: string) => {
-  const releaseNotes = await invoke<{
-    firmware: {
-      notes: {
-        value: StructuredTextDocument
-      }
-    }
-  }>("get_firmware_release_notes", { version })
-  return releaseNotes.firmware.notes.value
+export const invokeGetFirmwareDetails = async (version: string) => {
+  const releaseNotes = await invoke<FirmwareInfo>(
+    "get_firmware_release_notes",
+    { version }
+  )
+  return releaseNotes
 }
 
 export const invokeDownloadFirmware = async (

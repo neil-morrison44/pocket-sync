@@ -18,9 +18,6 @@ export const Saves = () => {
     null
   )
   const allSaves = useRecoilValue(AllSavesSelector)
-
-  console.log({ allSaves })
-
   const updateConfig = useUpdateConfig()
   const { saves } = useRecoilValue(PocketSyncConfigSelector)
 

@@ -5,6 +5,7 @@
 
 use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
 use clean_fs::find_dotfiles;
+use firmware::{FirmwareDetails, FirmwareListItem};
 use futures_locks::RwLock;
 use hashes::crc32_for_file;
 use install_zip::start_zip_thread;
@@ -446,14 +447,14 @@ async fn get_file_metadata(
     })
 }
 #[tauri::command(async)]
-async fn get_firmware_versions_list() -> Result<serde_json::Value, String> {
+async fn get_firmware_versions_list() -> Result<Vec<FirmwareListItem>, String> {
     firmware::get_firmware_json()
         .await
         .map_err(|err| err.to_string())
 }
 
 #[tauri::command(async)]
-async fn get_firmware_release_notes(version: &str) -> Result<serde_json::Value, String> {
+async fn get_firmware_release_notes(version: &str) -> Result<FirmwareDetails, String> {
     firmware::get_release_notes(version)
         .await
         .map_err(|err| err.to_string())

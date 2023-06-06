@@ -249,7 +249,6 @@ const InteractSettings = ({
 
             case "radio":
               const isChecked = Boolean(persistedValue?.val ?? v.defaultval)
-              // console.log({ isChecked })
               return (
                 <div className={varClassName} key={v.id}>
                   <label>
