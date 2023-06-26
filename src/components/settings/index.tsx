@@ -9,6 +9,7 @@ import { useUpdateConfig } from "./hooks/useUpdateConfig"
 
 import "./index.css"
 import { pocketPathAtom, reconnectWhenOpenedAtom } from "../../recoil/atoms"
+import { invokeClearFileCache } from "../../utils/invokes"
 
 const ARCHIVE_URL_TEXT = `Please check with your local laws around the downloading of potentially copyrighted (arcade) ROM & BIOS files.
 If you are comfortable with this, copy the following url into the input and hit "save".`
@@ -104,6 +105,20 @@ export const Settings = () => {
                 }))
               }}
             />
+          </label>
+        </div>
+
+        <div className="settings__row">
+          <h3 className="settings__row-title">{"Clear file cache"}</h3>
+          <div className="settings__ramble">
+            {
+              "To help with USB & SD card transfer larger files are copied & stored on your computer's file system, which should be fine but if you're running into issues try clearing the file cache."
+            }
+          </div>
+          <label className="settings__checkbox">
+            <button onClick={() => invokeClearFileCache()}>
+              Clear file cache
+            </button>
           </label>
         </div>
 

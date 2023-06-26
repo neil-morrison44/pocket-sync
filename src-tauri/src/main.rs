@@ -5,7 +5,7 @@
 
 use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
 use clean_fs::find_dotfiles;
-use file_cache::get_file_with_cache;
+use file_cache::{clear_file_caches, get_file_with_cache};
 use firmware::{FirmwareDetails, FirmwareListItem};
 use futures_locks::RwLock;
 use hashes::crc32_for_file;
@@ -355,12 +355,18 @@ async fn delete_files(
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<bool, ()> {
     let pocket_path = state.0.pocket_path.read().await;
-    for path in paths {
-        let file_path = pocket_path.join(path);
-        if file_path.exists() {
-            fs::remove_file(file_path).unwrap()
-        }
-    }
+
+    let tasks: Vec<_> = paths
+        .into_iter()
+        .filter_map(|path| {
+            let file_path = pocket_path.join(path);
+            file_path
+                .exists()
+                .then(|| tokio::fs::remove_file(file_path))
+        })
+        .collect();
+
+    futures::future::join_all(tasks).await;
     Ok(true)
 }
 
@@ -510,6 +516,16 @@ async fn download_firmware(
     }
 }
 
+#[tauri::command(async)]
+async fn clear_file_cache(app_handle: tauri::AppHandle) -> Result<(), String> {
+    if let Some(cache_dir) = app_handle.path_resolver().app_cache_dir() {
+        clear_file_caches(&cache_dir)
+            .await
+            .map_err(|err| err.to_string())?
+    }
+    Ok(())
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -540,7 +556,8 @@ fn main() {
             get_file_metadata,
             get_firmware_versions_list,
             get_firmware_release_notes,
-            download_firmware
+            download_firmware,
+            clear_file_cache
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())

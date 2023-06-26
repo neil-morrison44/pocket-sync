@@ -3,10 +3,20 @@ use tokio::{fs::File, io};
 
 use std::hash::{Hash, Hasher};
 
+pub static FILE_CACHE_FOLDER: &str = "file_caches";
+
+pub async fn clear_file_caches(cache_dir: &PathBuf) -> io::Result<()> {
+    let file_cache_dir = cache_dir.join(FILE_CACHE_FOLDER);
+    if file_cache_dir.exists() {
+        tokio::fs::remove_dir_all(file_cache_dir).await?;
+    }
+    Ok(())
+}
+
 pub async fn get_file_with_cache(path: &PathBuf, cache_dir: &PathBuf) -> io::Result<File> {
     let file = tokio::fs::File::open(&path).await?;
     let metadata = file.metadata().await?;
-    let file_cache_dir = cache_dir.join("file_caches");
+    let file_cache_dir = cache_dir.join(FILE_CACHE_FOLDER);
     if let (Ok(modified), length) = (&metadata.modified(), &metadata.len()) {
         if *length > 1000 {
             let cache_path = if let Some(existing_config_path) =
