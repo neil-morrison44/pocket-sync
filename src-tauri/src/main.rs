@@ -5,7 +5,7 @@
 
 use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
 use clean_fs::find_dotfiles;
-use file_cache::{get_file_with_cache, CacheRecord};
+use file_cache::get_file_with_cache;
 use firmware::{FirmwareDetails, FirmwareListItem};
 use futures_locks::RwLock;
 use hashes::crc32_for_file;
@@ -40,7 +40,6 @@ mod saves_zip;
 #[derive(Default)]
 struct InnerState {
     pocket_path: RwLock<PathBuf>,
-    cached_files: RwLock<Vec<CacheRecord>>,
 }
 
 struct PocketSyncState(InnerState);
@@ -79,7 +78,7 @@ async fn read_binary_file(
     let path = pocket_path.join(path);
 
     let mut f = if let Some(cache_dir) = app_handle.path_resolver().app_cache_dir() {
-        get_file_with_cache(&path, &state.0.cached_files, &cache_dir).await
+        get_file_with_cache(&path, &cache_dir).await
     } else {
         tokio::fs::File::open(&path).await
     }
@@ -103,7 +102,7 @@ async fn read_text_file(
     let path = pocket_path.join(path);
 
     let mut f = if let Some(cache_dir) = app_handle.path_resolver().app_cache_dir() {
-        get_file_with_cache(&path, &state.0.cached_files, &cache_dir).await
+        get_file_with_cache(&path, &cache_dir).await
     } else {
         tokio::fs::File::open(&path).await
     }

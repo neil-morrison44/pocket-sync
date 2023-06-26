@@ -2659,7 +2659,6 @@ dependencies = [
  "tempdir",
  "time 0.3.15",
  "tokio",
- "uuid",
  "walkdir",
  "zip",
 ]
