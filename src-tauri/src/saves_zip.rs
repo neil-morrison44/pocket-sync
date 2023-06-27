@@ -7,11 +7,9 @@ use std::{
     fs::{self, File},
     io::{Cursor, Read, Write},
     path::{Path, PathBuf},
-    sync::Arc,
     time::SystemTime,
 };
 use tempdir::TempDir;
-use tokio::task::JoinHandle;
 use zip::{result::ZipError, write::FileOptions, DateTime};
 
 use crate::hashes::crc32_for_file;

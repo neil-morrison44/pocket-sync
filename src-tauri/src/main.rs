@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use async_walkdir::{DirEntry, Filtering, WalkDir};
+use async_walkdir::{DirEntry, WalkDir};
 use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
 use clean_fs::find_dotfiles;
 use file_cache::{clear_file_caches, get_file_with_cache};
