@@ -35,7 +35,7 @@ pub fn start_connection_thread(app: &App) -> Result<(), Box<(dyn std::error::Err
         loop {
             tauri::async_runtime::block_on(async {
                 let state: tauri::State<PocketSyncState> = tauri::Manager::state(&app_handle);
-                let pocket_path = state.0.read().await;
+                let pocket_path = &state.0.pocket_path.read().await;
                 // println!("checking if still connected {}", pocket_path.exists());
                 if !pocket_path.exists() && was_connected {
                     was_connected = false;

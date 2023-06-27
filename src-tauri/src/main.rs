@@ -5,6 +5,7 @@
 
 use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
 use clean_fs::find_dotfiles;
+use file_cache::{clear_file_caches, get_file_with_cache};
 use firmware::{FirmwareDetails, FirmwareListItem};
 use futures_locks::RwLock;
 use hashes::crc32_for_file;
@@ -20,12 +21,14 @@ use std::fs::{self};
 use std::io::Write;
 use std::path::PathBuf;
 use std::time::SystemTime;
+use std::vec;
 use tauri::api::dialog;
 use tauri::{App, Window};
 use tokio::io::AsyncReadExt;
 use walkdir::{DirEntry, WalkDir};
 mod checks;
 mod clean_fs;
+mod file_cache;
 mod firmware;
 mod hashes;
 mod install_zip;
@@ -33,7 +36,13 @@ mod news_feed;
 mod progress;
 mod save_sync_session;
 mod saves_zip;
-struct PocketSyncState(RwLock<PathBuf>);
+
+#[derive(Default)]
+struct InnerState {
+    pocket_path: RwLock<PathBuf>,
+}
+
+struct PocketSyncState(InnerState);
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command(async)]
@@ -54,22 +63,26 @@ async fn open_pocket_folder(
     if !check_if_folder_looks_like_pocket(&pocket_path) {
         return Ok(None);
     }
-    let mut path_state = state.0.write().await;
-    *path_state = pocket_path.clone();
-    Ok(Some(String::from(path_state.to_str().unwrap())))
+    let mut pocket_path_state = state.0.pocket_path.write().await;
+    *pocket_path_state = pocket_path.clone();
+    Ok(Some(String::from(pocket_path_state.to_str().unwrap())))
 }
 
 #[tauri::command(async)]
 async fn read_binary_file(
     state: tauri::State<'_, PocketSyncState>,
     path: &str,
+    app_handle: tauri::AppHandle,
 ) -> Result<Vec<u8>, ()> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.pocket_path.read().await;
     let path = pocket_path.join(path);
 
-    let mut f = tokio::fs::File::open(&path)
-        .await
-        .expect(&format!("no file found: {:?}", path));
+    let mut f = if let Some(cache_dir) = app_handle.path_resolver().app_cache_dir() {
+        get_file_with_cache(&path, &cache_dir).await
+    } else {
+        tokio::fs::File::open(&path).await
+    }
+    .expect(&format!("no file found: {:?}", &path));
 
     let mut buffer = vec![];
     f.read_to_end(&mut buffer)
@@ -83,12 +96,17 @@ async fn read_binary_file(
 async fn read_text_file(
     state: tauri::State<'_, PocketSyncState>,
     path: &str,
+    app_handle: tauri::AppHandle,
 ) -> Result<String, ()> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.pocket_path.read().await;
     let path = pocket_path.join(path);
-    let mut f = tokio::fs::File::open(&path)
-        .await
-        .expect(&format!("no file found: {:?}", path));
+
+    let mut f = if let Some(cache_dir) = app_handle.path_resolver().app_cache_dir() {
+        get_file_with_cache(&path, &cache_dir).await
+    } else {
+        tokio::fs::File::open(&path).await
+    }
+    .expect(&format!("no file found: {:?}", &path));
 
     let mut file_contents = String::new();
     f.read_to_string(&mut file_contents)
@@ -99,7 +117,7 @@ async fn read_text_file(
 
 #[tauri::command(async)]
 async fn file_exists(state: tauri::State<'_, PocketSyncState>, path: &str) -> Result<bool, ()> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.pocket_path.read().await;
     let path = pocket_path.join(path);
     // println!("checking if file exists @{:?}", &path);
     Ok(path.exists())
@@ -120,7 +138,7 @@ async fn list_files(
     path: &str,
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<Vec<String>, ()> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.pocket_path.read().await;
     let dir_path = pocket_path.join(path);
 
     if !dir_path.exists() {
@@ -144,7 +162,7 @@ async fn walkdir_list_files(
     extensions: Vec<&str>,
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<Vec<String>, ()> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.pocket_path.read().await;
     let dir_path = pocket_path.join(path);
 
     if !dir_path.exists() {
@@ -177,7 +195,7 @@ async fn uninstall_core(
     core_name: &str,
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<bool, ()> {
-    let pocket_path = state.0.write().await;
+    let pocket_path = state.0.pocket_path.write().await;
     let core_path = pocket_path.join("Cores").join(core_name);
     // println!("I will remove {:?}", &core_path);
     if core_path.exists() && core_path.is_dir() {
@@ -210,7 +228,7 @@ async fn install_archive_files(
     state: tauri::State<'_, PocketSyncState>,
     window: Window,
 ) -> Result<bool, ()> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.pocket_path.read().await;
     let file_count = files.len();
 
     let mut failed_already = HashSet::new();
@@ -262,7 +280,7 @@ async fn backup_saves(
     max_count: usize,
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<bool, ()> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.pocket_path.read().await;
     build_save_zip(&pocket_path, save_paths, zip_path, max_count)
         .await
         .unwrap();
@@ -302,7 +320,7 @@ async fn list_saves_in_zip(zip_path: &str) -> Result<Vec<SaveZipFile>, ()> {
 async fn list_saves_on_pocket(
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<Vec<SaveZipFile>, ()> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.pocket_path.read().await;
     let saves_path = pocket_path.join("Saves");
     read_saves_in_folder(&saves_path).await
 }
@@ -313,7 +331,7 @@ async fn restore_save(
     file_path: &str,
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<(), ()> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.pocket_path.read().await;
     let path = PathBuf::from(zip_path);
     restore_save_from_zip(&path, file_path, &pocket_path);
 
@@ -336,13 +354,19 @@ async fn delete_files(
     paths: Vec<&str>,
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<bool, ()> {
-    let pocket_path = state.0.read().await;
-    for path in paths {
-        let file_path = pocket_path.join(path);
-        if file_path.exists() {
-            fs::remove_file(file_path).unwrap()
-        }
-    }
+    let pocket_path = state.0.pocket_path.read().await;
+
+    let tasks: Vec<_> = paths
+        .into_iter()
+        .filter_map(|path| {
+            let file_path = pocket_path.join(path);
+            file_path
+                .exists()
+                .then(|| tokio::fs::remove_file(file_path))
+        })
+        .collect();
+
+    futures::future::join_all(tasks).await;
     Ok(true)
 }
 
@@ -351,7 +375,7 @@ async fn find_cleanable_files(
     path: &str,
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<Vec<String>, String> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.pocket_path.read().await;
     let root_path = pocket_path.join(path);
     let files = find_dotfiles(&root_path).unwrap();
 
@@ -362,7 +386,7 @@ async fn find_cleanable_files(
 async fn list_instance_packageable_cores(
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<Vec<String>, ()> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.pocket_path.read().await;
     Ok(instance_packager::find_cores_with_package_json(&pocket_path).unwrap())
 }
 
@@ -372,7 +396,7 @@ async fn run_packager_for_core(
     core_name: &str,
     window: Window,
 ) -> Result<(), ()> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.pocket_path.read().await;
 
     let emit_event = |file_name, success, message| {
         window
@@ -425,7 +449,7 @@ async fn get_file_metadata(
     state: tauri::State<'_, PocketSyncState>,
     file_path: &str,
 ) -> Result<FileMetadata, String> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.pocket_path.read().await;
     let full_path = pocket_path.join(file_path);
 
     let crc32 = crc32_for_file(&full_path)
@@ -467,7 +491,7 @@ async fn download_firmware(
     file_name: &str,
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<bool, String> {
-    let pocket_path = state.0.read().await;
+    let pocket_path = state.0.pocket_path.read().await;
     let file_path = pocket_path.join(file_name);
     let mut attempts = 0;
 
@@ -490,6 +514,16 @@ async fn download_firmware(
             }
         }
     }
+}
+
+#[tauri::command(async)]
+async fn clear_file_cache(app_handle: tauri::AppHandle) -> Result<(), String> {
+    if let Some(cache_dir) = app_handle.path_resolver().app_cache_dir() {
+        clear_file_caches(&cache_dir)
+            .await
+            .map_err(|err| err.to_string())?
+    }
+    Ok(())
 }
 
 fn main() {
@@ -522,7 +556,8 @@ fn main() {
             get_file_metadata,
             get_firmware_versions_list,
             get_firmware_release_notes,
-            download_firmware
+            download_firmware,
+            clear_file_cache
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())

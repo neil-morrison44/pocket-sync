@@ -67,7 +67,7 @@ pub fn start_zip_thread(app: &App) -> Result<(), Box<(dyn std::error::Error + 's
                     tokio::task::block_in_place(|| {
                         tauri::async_runtime::block_on(async {
                             let state: tauri::State<PocketSyncState> = app_handle.state();
-                            let pocket_path = state.0.read().await;
+                            let pocket_path = state.0.pocket_path.read().await;
                             let window = app_handle.get_window("main").unwrap();
 
                             if !pocket_path.exists() || paths.len() != 1 {
@@ -113,7 +113,7 @@ pub fn start_zip_thread(app: &App) -> Result<(), Box<(dyn std::error::Error + 's
                 tokio::task::block_in_place(|| {
                     tauri::async_runtime::block_on(async {
                         let state: tauri::State<PocketSyncState> = app_handle.state();
-                        let pocket_path = state.0.read().await;
+                        let pocket_path = state.0.pocket_path.read().await;
 
                         let install: InstallInfo =
                             serde_json::from_str(event.payload().unwrap()).unwrap();
