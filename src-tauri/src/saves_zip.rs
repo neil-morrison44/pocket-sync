@@ -29,28 +29,42 @@ impl Ord for SaveZipFile {
 
 static FILE_PREFIX: &str = "pocket-sync-save-backup__";
 
-pub fn restore_save_from_zip(zip_path: &PathBuf, file_path: &str, pocket_path: &PathBuf) -> () {
-    let zip_file = fs::read(zip_path).unwrap();
+pub async fn restore_save_from_zip(
+    zip_path: &PathBuf,
+    file_path: &str,
+    pocket_path: &PathBuf,
+) -> () {
+    let zip_file = tokio::fs::read(zip_path).await.unwrap();
     let cursor = Cursor::new(zip_file);
     let mut archive = zip::ZipArchive::new(cursor).unwrap();
 
     let tmp_dir = TempDir::new("zip_saves_tmp").unwrap();
     let tmp_path = tmp_dir.into_path();
-    archive.extract(&tmp_path).unwrap();
+
+    let tmp_path_clone = tmp_path.clone();
+    tokio::task::spawn_blocking(move || {
+        archive.extract(&tmp_path_clone).unwrap();
+    })
+    .await
+    .unwrap();
 
     let src_file_path = tmp_path.join(remove_leading_slash(file_path));
     let dest_file_path = pocket_path
         .join("Saves")
         .join(remove_leading_slash(file_path));
 
-    println!("from {:?} to {:?}", src_file_path, dest_file_path);
+    // println!("from {:?} to {:?}", src_file_path, dest_file_path);
 
-    fs::create_dir_all(dest_file_path.parent().unwrap()).unwrap();
-    fs::copy(&src_file_path, &dest_file_path).unwrap();
+    tokio::fs::create_dir_all(dest_file_path.parent().unwrap())
+        .await
+        .unwrap();
+    tokio::fs::copy(&src_file_path, &dest_file_path)
+        .await
+        .unwrap();
 }
 
 pub async fn read_saves_in_zip(zip_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
-    let zip_file = fs::read(zip_path).unwrap();
+    let zip_file = tokio::fs::read(zip_path).await.unwrap();
     let cursor = Cursor::new(zip_file);
 
     match zip::ZipArchive::new(cursor) {
@@ -58,7 +72,14 @@ pub async fn read_saves_in_zip(zip_path: &PathBuf) -> Result<Vec<SaveZipFile>, (
             let mut archive = archive;
             let tmp_dir = TempDir::new("zip_saves_tmp").unwrap();
             let tmp_path = tmp_dir.into_path();
-            archive.extract(&tmp_path).unwrap();
+
+            let tmp_path_clone = tmp_path.clone();
+            tokio::task::spawn_blocking(move || {
+                archive.extract(&tmp_path_clone).unwrap();
+            })
+            .await
+            .unwrap();
+
             read_saves_in_folder(&tmp_path).await
         }
         Err(ZipError::InvalidArchive(_)) => {
@@ -110,29 +131,29 @@ pub async fn read_save_zip_list(dir_path: &PathBuf) -> Result<Vec<SaveZipFile>, 
     if !dir_path.exists() {
         return Ok(vec![]);
     }
-    let paths = fs::read_dir(dir_path).unwrap();
-    Ok(join_all(
-        paths
-            .into_iter()
-            .filter(Result::is_ok)
-            .map(|p| p.unwrap())
-            .map(|p| p.file_name().into_string().unwrap())
-            .filter(|s| s.starts_with(FILE_PREFIX))
-            .map(|filename| async {
-                let file_path = dir_path.join(&filename);
-                let metadata = file_path.metadata().unwrap();
-                let last_modified = time::OffsetDateTime::from(metadata.modified().unwrap());
+    let mut paths = tokio::fs::read_dir(dir_path).await.unwrap();
+    let mut results: Vec<_> = Vec::new();
 
-                let crc32 = crc32_for_file(&file_path.into()).await.unwrap();
+    while let Ok(Some(entry)) = paths.next_entry().await {
+        let file_name = entry.file_name().into_string().unwrap();
+        if !file_name.contains(FILE_PREFIX) {
+            continue;
+        }
 
-                SaveZipFile {
-                    filename,
-                    last_modified: last_modified.unix_timestamp().try_into().unwrap(),
-                    crc32,
-                }
-            }),
-    )
-    .await)
+        let file_path = dir_path.join(&file_name);
+        let metadata = file_path.metadata().unwrap();
+        let last_modified = time::OffsetDateTime::from(metadata.modified().unwrap());
+
+        let crc32 = crc32_for_file(&file_path.into()).await.unwrap();
+
+        results.push(SaveZipFile {
+            filename: file_name,
+            last_modified: last_modified.unix_timestamp().try_into().unwrap(),
+            crc32,
+        });
+    }
+
+    Ok(results)
 }
 
 pub async fn build_save_zip(

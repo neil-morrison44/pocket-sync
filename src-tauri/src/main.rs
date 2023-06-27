@@ -343,7 +343,7 @@ async fn restore_save(
 ) -> Result<(), ()> {
     let pocket_path = state.0.pocket_path.read().await;
     let path = PathBuf::from(zip_path);
-    restore_save_from_zip(&path, file_path, &pocket_path);
+    restore_save_from_zip(&path, file_path, &pocket_path).await;
 
     Ok(())
 }
