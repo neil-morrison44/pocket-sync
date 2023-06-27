@@ -8,9 +8,7 @@ export const renderBinImage = (
   const context = canvas.getContext("2d")
   if (!context) throw new Error("Failed to get canvas context")
 
-  // not sure why this should be 1px wider than it should be
-  // but it fixes an off-by-one error so it'll do
-  canvas.width = width + 1
+  canvas.width = width
   canvas.height = height
 
   let index = 0

@@ -1,20 +1,22 @@
+use async_walkdir::WalkDir;
+use futures::StreamExt;
 use std::error;
 use std::path::PathBuf;
-use walkdir::WalkDir;
 
-pub fn find_dotfiles(root: &PathBuf) -> Result<Vec<String>, Box<dyn error::Error>> {
-    let walker = WalkDir::new(&root).into_iter();
-    let dotfiles: Vec<String> = walker
-        .into_iter()
-        .filter_map(|x| x.ok())
-        .filter(|e| e.path().is_file())
-        .filter(|e| {
-            let file_name = e.path().file_name().and_then(|f| f.to_str()).unwrap();
+pub async fn find_dotfiles(root: &PathBuf) -> Result<Vec<String>, Box<dyn error::Error>> {
+    let mut walker = WalkDir::new(&root);
+    let mut dotfiles = Vec::new();
 
-            file_name.starts_with("._") || file_name == ".DS_Store"
-        })
-        .map(|e| String::from(e.path().to_str().unwrap()))
-        .collect();
+    while let Some(Ok(entry)) = walker.next().await {
+        if !entry.file_type().await.is_ok_and(|f| f.is_file()) {
+            continue;
+        }
+        let path = entry.path();
+        let file_name = path.file_name().and_then(|f| f.to_str()).unwrap();
+        if file_name.starts_with("._") || file_name == ".DS_Store" {
+            dotfiles.push(entry.path().to_str().unwrap().to_owned());
+        }
+    }
 
     Ok(dotfiles)
 }

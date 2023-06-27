@@ -3,10 +3,12 @@
     windows_subsystem = "windows"
 )]
 
+use async_walkdir::{DirEntry, Filtering, WalkDir};
 use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
 use clean_fs::find_dotfiles;
 use file_cache::{clear_file_caches, get_file_with_cache};
 use firmware::{FirmwareDetails, FirmwareListItem};
+use futures::StreamExt;
 use futures_locks::RwLock;
 use hashes::crc32_for_file;
 use install_zip::start_zip_thread;
@@ -22,10 +24,9 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::time::SystemTime;
 use std::vec;
-use tauri::api::dialog;
+use tauri::api::{dialog, file};
 use tauri::{App, Window};
 use tokio::io::AsyncReadExt;
-use walkdir::{DirEntry, WalkDir};
 mod checks;
 mod clean_fs;
 mod file_cache;
@@ -177,17 +178,26 @@ async fn walkdir_list_files(
             .unwrap_or(false)
     }
 
-    let walker = WalkDir::new(&dir_path).into_iter();
+    let mut walker = WalkDir::new(&dir_path);
     let dir_path_str = &dir_path.to_str().unwrap();
-    Ok(walker
-        .filter_entry(|e| !is_hidden(e))
-        .into_iter()
-        .filter_map(|x| x.ok())
-        .filter(|e| e.path().is_file())
-        .map(|e| String::from(e.path().to_str().unwrap()))
-        .filter(|s| extensions.len() == 0 || extensions.iter().any(|e| s.ends_with(e)))
-        .map(|s| s.replace(dir_path_str, ""))
-        .collect())
+    let mut file_paths = Vec::new();
+
+    while let Some(Ok(entry)) = walker.next().await {
+        if !entry.file_type().await.is_ok_and(|f| f.is_file()) {
+            continue;
+        }
+        if is_hidden(&entry) {
+            continue;
+        }
+        let path = entry.path();
+        let path_str = path.to_str().unwrap();
+        let relative_path = path_str.replace(dir_path_str, "");
+        if extensions.is_empty() || extensions.iter().any(|ext| path_str.ends_with(ext)) {
+            file_paths.push(relative_path);
+        }
+    }
+
+    Ok(file_paths)
 }
 
 #[tauri::command(async)]
@@ -377,7 +387,7 @@ async fn find_cleanable_files(
 ) -> Result<Vec<String>, String> {
     let pocket_path = state.0.pocket_path.read().await;
     let root_path = pocket_path.join(path);
-    let files = find_dotfiles(&root_path).unwrap();
+    let files = find_dotfiles(&root_path).await.unwrap();
 
     Ok(files)
 }
