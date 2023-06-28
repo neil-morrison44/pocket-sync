@@ -1,4 +1,5 @@
-use futures::future::join_all;
+use async_walkdir::WalkDir;
+use futures::{future::join_all, StreamExt};
 use serde::{Deserialize, Serialize};
 use std::{
     cmp::{Ord, Ordering},
@@ -9,8 +10,7 @@ use std::{
     time::SystemTime,
 };
 use tempdir::TempDir;
-use walkdir::WalkDir;
-use zip::{write::FileOptions, DateTime};
+use zip::{result::ZipError, write::FileOptions, DateTime};
 
 use crate::hashes::crc32_for_file;
 
@@ -29,90 +29,131 @@ impl Ord for SaveZipFile {
 
 static FILE_PREFIX: &str = "pocket-sync-save-backup__";
 
-pub fn restore_save_from_zip(zip_path: &PathBuf, file_path: &str, pocket_path: &PathBuf) -> () {
-    let zip_file = fs::read(zip_path).unwrap();
+pub async fn restore_save_from_zip(
+    zip_path: &PathBuf,
+    file_path: &str,
+    pocket_path: &PathBuf,
+) -> () {
+    let zip_file = tokio::fs::read(zip_path).await.unwrap();
     let cursor = Cursor::new(zip_file);
     let mut archive = zip::ZipArchive::new(cursor).unwrap();
 
     let tmp_dir = TempDir::new("zip_saves_tmp").unwrap();
     let tmp_path = tmp_dir.into_path();
-    archive.extract(&tmp_path).unwrap();
+
+    let tmp_path_clone = tmp_path.clone();
+    tokio::task::spawn_blocking(move || {
+        archive.extract(&tmp_path_clone).unwrap();
+    })
+    .await
+    .unwrap();
 
     let src_file_path = tmp_path.join(remove_leading_slash(file_path));
     let dest_file_path = pocket_path
         .join("Saves")
         .join(remove_leading_slash(file_path));
 
-    println!("from {:?} to {:?}", src_file_path, dest_file_path);
+    // println!("from {:?} to {:?}", src_file_path, dest_file_path);
 
-    fs::create_dir_all(dest_file_path.parent().unwrap()).unwrap();
-    fs::copy(&src_file_path, &dest_file_path).unwrap();
+    tokio::fs::create_dir_all(dest_file_path.parent().unwrap())
+        .await
+        .unwrap();
+    tokio::fs::copy(&src_file_path, &dest_file_path)
+        .await
+        .unwrap();
 }
 
 pub async fn read_saves_in_zip(zip_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
-    let zip_file = fs::read(zip_path).unwrap();
+    let zip_file = tokio::fs::read(zip_path).await.unwrap();
     let cursor = Cursor::new(zip_file);
-    let mut archive = zip::ZipArchive::new(cursor).unwrap();
 
-    let tmp_dir = TempDir::new("zip_saves_tmp").unwrap();
-    let tmp_path = tmp_dir.into_path();
-    archive.extract(&tmp_path).unwrap();
+    match zip::ZipArchive::new(cursor) {
+        Ok(archive) => {
+            let mut archive = archive;
+            let tmp_dir = TempDir::new("zip_saves_tmp").unwrap();
+            let tmp_path = tmp_dir.into_path();
 
-    read_saves_in_folder(&tmp_path).await
+            let tmp_path_clone = tmp_path.clone();
+            tokio::task::spawn_blocking(move || {
+                archive.extract(&tmp_path_clone).unwrap();
+            })
+            .await
+            .unwrap();
+
+            read_saves_in_folder(&tmp_path).await
+        }
+        Err(ZipError::InvalidArchive(_)) => {
+            tokio::fs::remove_file(&zip_path).await.unwrap();
+            Ok(vec![])
+        }
+        Err(_) => Ok(vec![]),
+    }
 }
 
 pub async fn read_saves_in_folder(folder_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
-    let walker = WalkDir::new(&folder_path).into_iter();
-    let dir_path_str = &folder_path.to_str().unwrap();
-    Ok(join_all(
-        walker
-            .into_iter()
-            .filter_map(|x| x.ok())
-            .filter(|e| e.path().is_file())
-            .map(|e| async move {
-                let file_path = e.path();
-                let metadata = file_path.metadata().unwrap();
-                let last_modified = time::OffsetDateTime::from(metadata.created().unwrap());
+    let mut walker = WalkDir::new(&folder_path);
+    let mut tasks: Vec<_> = Vec::new();
 
-                let crc32 = crc32_for_file(&file_path.into()).await.unwrap();
+    while let Some(Ok(entry)) = walker.next().await {
+        if !entry.file_type().await.is_ok_and(|f| f.is_file()) {
+            continue;
+        }
 
-                SaveZipFile {
-                    filename: String::from(e.path().to_str().unwrap()).replace(dir_path_str, ""),
-                    last_modified: last_modified.unix_timestamp().try_into().unwrap(),
-                    crc32,
-                }
-            }),
-    )
-    .await)
+        let file_path = entry.path().to_owned();
+        let folder_path_clone = folder_path.clone();
+
+        let task = tokio::spawn(async move {
+            let metadata = tokio::fs::metadata(&file_path).await.unwrap();
+            let last_modified = time::OffsetDateTime::from(metadata.created().unwrap());
+            let crc32 = crc32_for_file(&file_path).await.unwrap();
+            let folder_path_str = folder_path_clone.to_str().unwrap();
+
+            SaveZipFile {
+                filename: String::from(file_path.to_str().unwrap()).replace(&folder_path_str, ""),
+                last_modified: last_modified.unix_timestamp().try_into().unwrap(),
+                crc32,
+            }
+        });
+
+        tasks.push(task);
+    }
+
+    let results: Vec<SaveZipFile> = join_all(tasks)
+        .await
+        .into_iter()
+        .filter_map(Result::ok)
+        .collect();
+
+    return Ok(results);
 }
 
 pub async fn read_save_zip_list(dir_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
     if !dir_path.exists() {
         return Ok(vec![]);
     }
-    let paths = fs::read_dir(dir_path).unwrap();
-    Ok(join_all(
-        paths
-            .into_iter()
-            .filter(Result::is_ok)
-            .map(|p| p.unwrap())
-            .map(|p| p.file_name().into_string().unwrap())
-            .filter(|s| s.starts_with(FILE_PREFIX))
-            .map(|filename| async {
-                let file_path = dir_path.join(&filename);
-                let metadata = file_path.metadata().unwrap();
-                let last_modified = time::OffsetDateTime::from(metadata.modified().unwrap());
+    let mut paths = tokio::fs::read_dir(dir_path).await.unwrap();
+    let mut results: Vec<_> = Vec::new();
 
-                let crc32 = crc32_for_file(&file_path.into()).await.unwrap();
+    while let Ok(Some(entry)) = paths.next_entry().await {
+        let file_name = entry.file_name().into_string().unwrap();
+        if !file_name.contains(FILE_PREFIX) {
+            continue;
+        }
 
-                SaveZipFile {
-                    filename,
-                    last_modified: last_modified.unix_timestamp().try_into().unwrap(),
-                    crc32,
-                }
-            }),
-    )
-    .await)
+        let file_path = dir_path.join(&file_name);
+        let metadata = file_path.metadata().unwrap();
+        let last_modified = time::OffsetDateTime::from(metadata.modified().unwrap());
+
+        let crc32 = crc32_for_file(&file_path.into()).await.unwrap();
+
+        results.push(SaveZipFile {
+            filename: file_name,
+            last_modified: last_modified.unix_timestamp().try_into().unwrap(),
+            crc32,
+        });
+    }
+
+    Ok(results)
 }
 
 pub async fn build_save_zip(

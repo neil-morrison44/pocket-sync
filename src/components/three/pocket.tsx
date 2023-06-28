@@ -1,5 +1,5 @@
 import { Canvas, useFrame } from "@react-three/fiber"
-import { Environment, RoundedBox } from "@react-three/drei"
+import { Environment, RoundedBox, Stats } from "@react-three/drei"
 import { ReactNode, useRef } from "react"
 import { useRecoilValue } from "recoil"
 import envMap from "./kloofendal_48d_partly_cloudy_puresky_1k.hdr"
@@ -16,6 +16,7 @@ type PocketProps = {
 
 const BLACK_COLOUR = "rgb(1,1,1)"
 const WHITE_COLOUR = "rgb(90,90,90)"
+const SWAY_SPEED = 0.2
 
 export const Pocket = ({
   move = "none",
@@ -56,7 +57,7 @@ const Body = ({
   screenMaterial,
 }: Pick<PocketProps, "move" | "screenMaterial">) => {
   const groupRef = useRef<THREE.Group>(null)
-  const speedRef = useRef<number>(1)
+  const speedRef = useRef<number>(SWAY_SPEED)
   useFrame((_, delta) => {
     if (groupRef.current && speedRef.current) {
       const speed = speedRef.current
@@ -67,9 +68,9 @@ const Body = ({
         case "back-and-forth":
           groupRef.current.rotateY(-0.6 * speed * delta)
           if (groupRef.current.rotation.y > 0.4) {
-            speedRef.current = 0.2
+            speedRef.current = SWAY_SPEED
           } else if (groupRef.current.rotation.y < -0.4) {
-            speedRef.current = -0.2
+            speedRef.current = -SWAY_SPEED
           }
           break
         default:

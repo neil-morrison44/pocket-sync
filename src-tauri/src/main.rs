@@ -3,10 +3,12 @@
     windows_subsystem = "windows"
 )]
 
+use async_walkdir::{DirEntry, WalkDir};
 use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
 use clean_fs::find_dotfiles;
 use file_cache::{clear_file_caches, get_file_with_cache};
 use firmware::{FirmwareDetails, FirmwareListItem};
+use futures::StreamExt;
 use futures_locks::RwLock;
 use hashes::crc32_for_file;
 use install_zip::start_zip_thread;
@@ -17,15 +19,12 @@ use saves_zip::{
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
-use std::fs::{self};
-use std::io::Write;
 use std::path::PathBuf;
 use std::time::SystemTime;
 use std::vec;
 use tauri::api::dialog;
 use tauri::{App, Window};
-use tokio::io::AsyncReadExt;
-use walkdir::{DirEntry, WalkDir};
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 mod checks;
 mod clean_fs;
 mod file_cache;
@@ -116,20 +115,23 @@ async fn read_text_file(
 }
 
 #[tauri::command(async)]
-async fn file_exists(state: tauri::State<'_, PocketSyncState>, path: &str) -> Result<bool, ()> {
+async fn file_exists(state: tauri::State<'_, PocketSyncState>, path: &str) -> Result<bool, String> {
     let pocket_path = state.0.pocket_path.read().await;
     let path = pocket_path.join(path);
-    // println!("checking if file exists @{:?}", &path);
-    Ok(path.exists())
+
+    tokio::fs::try_exists(&path)
+        .await
+        .map_err(|err| err.to_string())
 }
 
 #[tauri::command(async)]
-fn save_file(path: &str, buffer: Vec<u8>) -> Result<bool, ()> {
+async fn save_file(path: &str, buffer: Vec<u8>) -> Result<bool, ()> {
     let file_path = PathBuf::from(path);
-    // println!("Saving file {:?}", &file_path);
-    fs::create_dir_all(file_path.parent().unwrap()).unwrap();
-    let mut file = fs::File::create(file_path).unwrap();
-    file.write_all(&buffer).unwrap();
+    tokio::fs::create_dir_all(file_path.parent().unwrap())
+        .await
+        .unwrap();
+    let mut file = tokio::fs::File::create(file_path).await.unwrap();
+    file.write_all(&buffer).await.unwrap();
     Ok(true)
 }
 
@@ -141,19 +143,23 @@ async fn list_files(
     let pocket_path = state.0.pocket_path.read().await;
     let dir_path = pocket_path.join(path);
 
-    if !dir_path.exists() {
+    if !tokio::fs::try_exists(&dir_path).await.unwrap() {
         return Ok(vec![]);
     }
 
-    let paths = fs::read_dir(dir_path).unwrap();
+    let mut paths = tokio::fs::read_dir(dir_path).await.unwrap();
+    let mut results: Vec<_> = Vec::new();
 
-    Ok(paths
-        .into_iter()
-        .filter(Result::is_ok)
-        .map(|p| p.unwrap())
-        .map(|p| p.file_name().into_string().unwrap())
-        .filter(|s| !s.starts_with("."))
-        .collect())
+    while let Ok(Some(entry)) = paths.next_entry().await {
+        let file_name = entry.file_name();
+        let file_name = file_name.to_str().unwrap();
+
+        if !file_name.starts_with(".") {
+            results.push(String::from(file_name))
+        }
+    }
+
+    Ok(results)
 }
 
 #[tauri::command(async)]
@@ -177,17 +183,26 @@ async fn walkdir_list_files(
             .unwrap_or(false)
     }
 
-    let walker = WalkDir::new(&dir_path).into_iter();
+    let mut walker = WalkDir::new(&dir_path);
     let dir_path_str = &dir_path.to_str().unwrap();
-    Ok(walker
-        .filter_entry(|e| !is_hidden(e))
-        .into_iter()
-        .filter_map(|x| x.ok())
-        .filter(|e| e.path().is_file())
-        .map(|e| String::from(e.path().to_str().unwrap()))
-        .filter(|s| extensions.len() == 0 || extensions.iter().any(|e| s.ends_with(e)))
-        .map(|s| s.replace(dir_path_str, ""))
-        .collect())
+    let mut file_paths = Vec::new();
+
+    while let Some(Ok(entry)) = walker.next().await {
+        if !entry.file_type().await.is_ok_and(|f| f.is_file()) {
+            continue;
+        }
+        if is_hidden(&entry) {
+            continue;
+        }
+        let path = entry.path();
+        let path_str = path.to_str().unwrap();
+        let relative_path = path_str.replace(dir_path_str, "");
+        if extensions.is_empty() || extensions.iter().any(|ext| path_str.ends_with(ext)) {
+            file_paths.push(relative_path);
+        }
+    }
+
+    Ok(file_paths)
 }
 
 #[tauri::command(async)]
@@ -197,27 +212,11 @@ async fn uninstall_core(
 ) -> Result<bool, ()> {
     let pocket_path = state.0.pocket_path.write().await;
     let core_path = pocket_path.join("Cores").join(core_name);
-    // println!("I will remove {:?}", &core_path);
     if core_path.exists() && core_path.is_dir() {
-        // not sure why this doesn't work
-        // fs::remove_dir_all(core_path).unwrap();
-
-        if let Ok(entries) = std::fs::read_dir(&core_path) {
-            for entry in entries {
-                let path = entry.unwrap().path();
-                // println!("{:?}", path);
-
-                if path.exists() {
-                    std::fs::remove_file(path).unwrap();
-                }
-            }
-        };
-
-        fs::remove_dir(&core_path).unwrap();
+        tokio::fs::remove_dir_all(core_path).await.unwrap();
     } else {
         println!("Weird, it's gone already");
     }
-
     Ok(true)
 }
 
@@ -254,14 +253,16 @@ async fn install_archive_files(
                         let folder = pocket_path.join(file.path);
 
                         if !folder.exists() {
-                            fs::create_dir_all(&folder).unwrap();
+                            tokio::fs::create_dir_all(&folder).await.unwrap();
                         }
 
                         let new_file_path = folder.join(&file.filename);
-                        let mut dest = fs::File::create(&new_file_path).unwrap();
+                        let mut dest = tokio::fs::File::create(&new_file_path).await.unwrap();
                         let content = r.bytes().await.unwrap();
                         let mut content_cusror = std::io::Cursor::new(content);
-                        std::io::copy(&mut content_cusror, &mut dest).unwrap();
+                        tokio::io::copy(&mut content_cusror, &mut dest)
+                            .await
+                            .unwrap();
                     }
                 }
             }
@@ -333,7 +334,7 @@ async fn restore_save(
 ) -> Result<(), ()> {
     let pocket_path = state.0.pocket_path.read().await;
     let path = PathBuf::from(zip_path);
-    restore_save_from_zip(&path, file_path, &pocket_path);
+    restore_save_from_zip(&path, file_path, &pocket_path).await;
 
     Ok(())
 }
@@ -342,7 +343,7 @@ async fn restore_save(
 async fn create_folder_if_missing(path: &str) -> Result<bool, ()> {
     let folder_path = PathBuf::from(path);
     if !folder_path.exists() {
-        fs::create_dir_all(path).unwrap();
+        tokio::fs::create_dir_all(path).await.unwrap();
         return Ok(true);
     }
 
@@ -377,7 +378,7 @@ async fn find_cleanable_files(
 ) -> Result<Vec<String>, String> {
     let pocket_path = state.0.pocket_path.read().await;
     let root_path = pocket_path.join(path);
-    let files = find_dotfiles(&root_path).unwrap();
+    let files = find_dotfiles(&root_path).await.unwrap();
 
     Ok(files)
 }
@@ -456,7 +457,8 @@ async fn get_file_metadata(
         .await
         .map_err(|err| err.to_string())?;
 
-    let metadata = fs::metadata(full_path)
+    let metadata = tokio::fs::metadata(full_path)
+        .await
         .and_then(|m| m.modified())
         .map_err(|err| err.to_string())?;
 
