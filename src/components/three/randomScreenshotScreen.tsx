@@ -1,17 +1,18 @@
-import React, { useEffect, useMemo, useRef, useState } from "react"
-import { useRecoilCallback, useRecoilValue } from "recoil"
+import React, { useEffect, useMemo, useState } from "react"
+import { useRecoilValue } from "recoil"
 import {
   screenshotsListSelector,
-  SingleScreenshotSelectorFamily,
+  SingleScreenshotImageSelectorFamily,
 } from "../../recoil/screenshots/selectors"
 import { Texture } from "three"
+import { StaticScreen } from "./staticScreen"
 
 type RandomScreenshotScreenProps = {
   interval?: number
 }
 
 export const RandomScreenshotScreen = ({
-  interval = 2000,
+  interval = 3000,
 }: RandomScreenshotScreenProps) => {
   const screenshotList = useRecoilValue(screenshotsListSelector)
   const [randomNudge, setRandomNudge] = useState(0)
@@ -31,41 +32,25 @@ export const RandomScreenshotScreen = ({
     }
   })
 
-  if (screenshotList.length === 0)
-    return <meshPhongMaterial attach="material" color="green" />
-
-  return <ScreenshotScreen name={screenshotName} />
+  if (screenshotList.length === 0) return <StaticScreen mode="GAMEBOY" />
+  return <ScreenshotScreen key={screenshotName} name={screenshotName} />
 }
 
 const ScreenshotScreen = ({ name }: { name: string }) => {
   const [texture, setTexture] = useState<THREE.Texture | null>(null)
-
-  const loadImageFile = useRecoilCallback(
-    ({ snapshot }) =>
-      async (imageName: string) => {
-        const screenshot = await snapshot.getPromise(
-          SingleScreenshotSelectorFamily(imageName)
-        )
-        if (!screenshot) return
-        const image = new Image()
-        image.src = URL.createObjectURL(screenshot.file)
-        return image
-      }
-  )
+  const image = useRecoilValue(SingleScreenshotImageSelectorFamily(name))
 
   useEffect(() => {
     ;(async () => {
-      const image = await loadImageFile(name)
       if (!image) return
-      image.onload = () => {
-        const newTexture = new Texture()
-        newTexture.image = image
-        newTexture.needsUpdate = true
-        newTexture.anisotropy = 4
-        setTexture(newTexture)
-      }
+
+      const newTexture = new Texture()
+      newTexture.image = image
+      newTexture.needsUpdate = true
+      newTexture.anisotropy = 4
+      setTexture(newTexture)
     })()
-  }, [name])
+  }, [image])
 
   return (
     <meshBasicMaterial

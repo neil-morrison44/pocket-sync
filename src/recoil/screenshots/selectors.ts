@@ -61,3 +61,25 @@ export const SingleScreenshotSelectorFamily = selectorFamily<
       }
     },
 })
+
+export const SingleScreenshotImageSelectorFamily = selectorFamily<
+  HTMLImageElement | null,
+  string
+>({
+  key: "SingleScreenshotImageSelectorFamily",
+  get:
+    (fileName) =>
+    async ({ get }) => {
+      const screenshot = get(SingleScreenshotSelectorFamily(fileName))
+      if (!screenshot) return null
+
+      const image = new Image()
+
+      const loadPromise = new Promise<HTMLImageElement>((resolve, reject) => {
+        image.onload = () => resolve(image)
+      })
+
+      image.src = URL.createObjectURL(screenshot.file)
+      return loadPromise
+    },
+})
