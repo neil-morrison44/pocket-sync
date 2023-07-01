@@ -19,7 +19,7 @@ pub async fn get_file_with_cache(path: &PathBuf, cache_dir: &PathBuf) -> io::Res
     let file_cache_dir = cache_dir.join(FILE_CACHE_FOLDER);
 
     match (&metadata.modified(), *&metadata.len()) {
-        (Ok(modified), 100..=u64::MAX) => {
+        (Ok(modified), 1_000..=u64::MAX) => {
             let cache_path = if let Some(existing_config_path) =
                 find_in_cache(&path.into(), &modified, &file_cache_dir).await
             {

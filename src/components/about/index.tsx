@@ -1,5 +1,5 @@
 import { Suspense, useMemo } from "react"
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil"
+import { useRecoilValue, useSetRecoilState } from "recoil"
 import { useRecoilSmoothUpdatesFirstSuspend } from "../../hooks/recoilSmoothUpdates"
 import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
 import { AppVersionSelector } from "../../recoil/selectors"
@@ -12,6 +12,7 @@ import { RandomScreenshotScreen } from "../three/randomScreenshotScreen"
 import "./index.css"
 import { updateAvailableSelector } from "../../recoil/firmware/selectors"
 import { currentViewAtom } from "../../recoil/view/atoms"
+import { StaticScreen } from "../three/staticScreen"
 
 export const About = () => {
   const selfReleases = useRecoilSmoothUpdatesFirstSuspend(
@@ -55,9 +56,7 @@ export const About = () => {
           <Pocket
             move="back-and-forth"
             screenMaterial={
-              <Suspense
-                fallback={<meshPhongMaterial attach="material" color="green" />}
-              >
+              <Suspense fallback={<StaticScreen />}>
                 <RandomScreenshotScreen />
               </Suspense>
             }
