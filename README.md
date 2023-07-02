@@ -35,6 +35,24 @@ https://user-images.githubusercontent.com/2095051/204883337-f0e34a44-5ea4-47a4-9
 
 ## Roadmap
 
+### Translations
+
+The app now supports translations into the user's language & locale for _most_ things in the UI.
+
+If you're fluent in another language and feel like helping out you can find the files in https://github.com/neil-morrison44/pocket-sync/tree/main/src/i18n/locales , just add one for the language (e.g. `en`) then make tweaks on top of it for locale specific things (e.g. `en-US`).
+
+I'm particuarly looking for Japanese, Chinese, & Spanish - but any language will be accepted if the translation seems good enough.
+
+It's in the ICU message format, which there are some guides available online for, but the main trick is that the brackets create levels of stuff to change vs leave e.g. `"Change me {leave me {change me}}"` so a "language" which is just english but shouting might have:
+
+```json
+{
+  "item": {
+    "game_count": "THERE ARE {count, plural, =0 {NO GAMES} one {ONE GAME} other {# GAMES}}"
+  }
+}
+```
+
 ### Done
 
 - Hopefully get the saves backups working how I'd planned (close enough)
@@ -49,15 +67,16 @@ https://user-images.githubusercontent.com/2095051/204883337-f0e34a44-5ea4-47a4-9
 - Settings supporting game specific settings
 - Image packs
 - Manual MiSTer save file sync
+- Installing / Checking for firmware updates (might wait for the real release of 1.1 for this)
+- Newsfeed support
+- Support for i18n translations
 
 ### Soon
-
-- Installing / Checking for firmware updates (might wait for the real release of 1.1 for this)
 
 ### Longer term
 
 - List new cores / updates since the last Pocket was connected (with, optional, notifications)
-- Library viewing / editing once that's rolled out
+- Library viewing / editing once that's rolled out to OpenFPGA
 - OpenFPGA video filter features (format dependent)
 
 ## FAQs
