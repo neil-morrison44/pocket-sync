@@ -95,27 +95,31 @@ pub async fn read_saves_in_folder(folder_path: &PathBuf) -> Result<Vec<SaveZipFi
     let mut tasks: Vec<_> = Vec::new();
 
     while let Some(Ok(entry)) = walker.next().await {
-        if !entry.file_type().await.is_ok_and(|f| f.is_file()) {
-            continue;
-        }
+        match entry.file_type().await {
+            Ok(f) => {
+                if f.is_file() {
+                    let file_path = entry.path().to_owned();
+                    let folder_path_clone = folder_path.clone();
 
-        let file_path = entry.path().to_owned();
-        let folder_path_clone = folder_path.clone();
+                    let task = tokio::spawn(async move {
+                        let metadata = tokio::fs::metadata(&file_path).await.unwrap();
+                        let last_modified = time::OffsetDateTime::from(metadata.created().unwrap());
+                        let crc32 = crc32_for_file(&file_path).await.unwrap();
+                        let folder_path_str = folder_path_clone.to_str().unwrap();
 
-        let task = tokio::spawn(async move {
-            let metadata = tokio::fs::metadata(&file_path).await.unwrap();
-            let last_modified = time::OffsetDateTime::from(metadata.created().unwrap());
-            let crc32 = crc32_for_file(&file_path).await.unwrap();
-            let folder_path_str = folder_path_clone.to_str().unwrap();
+                        SaveZipFile {
+                            filename: String::from(file_path.to_str().unwrap())
+                                .replace(&folder_path_str, ""),
+                            last_modified: last_modified.unix_timestamp().try_into().unwrap(),
+                            crc32,
+                        }
+                    });
 
-            SaveZipFile {
-                filename: String::from(file_path.to_str().unwrap()).replace(&folder_path_str, ""),
-                last_modified: last_modified.unix_timestamp().try_into().unwrap(),
-                crc32,
+                    tasks.push(task);
+                }
             }
-        });
-
-        tasks.push(task);
+            Err(_) => continue,
+        }
     }
 
     let results: Vec<SaveZipFile> = join_all(tasks)

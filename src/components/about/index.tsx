@@ -14,6 +14,7 @@ import { updateAvailableSelector } from "../../recoil/firmware/selectors"
 import { currentViewAtom } from "../../recoil/view/atoms"
 import { StaticScreen } from "../three/staticScreen"
 import { useTranslation } from "react-i18next"
+import { semverCompare } from "../../utils/semverCompare"
 
 export const About = () => {
   const selfReleases = useRecoilSmoothUpdatesFirstSuspend(
@@ -28,7 +29,7 @@ export const About = () => {
   const firmwareUpdateAvailable = useRecoilValue(updateAvailableSelector)
 
   const updateAvailable = useMemo(() => {
-    return selfReleases[0].tag_name !== `v${AppVersion}`
+    return semverCompare(selfReleases[0].tag_name, AppVersion)
   }, [selfReleases, AppVersion])
 
   const setCurrentView = useSetRecoilState(currentViewAtom)

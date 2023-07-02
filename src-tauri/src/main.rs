@@ -188,17 +188,19 @@ async fn walkdir_list_files(
     let mut file_paths = Vec::new();
 
     while let Some(Ok(entry)) = walker.next().await {
-        if !entry.file_type().await.is_ok_and(|f| f.is_file()) {
-            continue;
-        }
-        if is_hidden(&entry) {
-            continue;
-        }
-        let path = entry.path();
-        let path_str = path.to_str().unwrap();
-        let relative_path = path_str.replace(dir_path_str, "");
-        if extensions.is_empty() || extensions.iter().any(|ext| path_str.ends_with(ext)) {
-            file_paths.push(relative_path);
+        match entry.file_type().await {
+            Ok(f) => {
+                if f.is_file() && !is_hidden(&entry) {
+                    let path = entry.path();
+                    let path_str = path.to_str().unwrap();
+                    let relative_path = path_str.replace(dir_path_str, "");
+                    if extensions.is_empty() || extensions.iter().any(|ext| path_str.ends_with(ext))
+                    {
+                        file_paths.push(relative_path);
+                    }
+                }
+            }
+            Err(_) => continue,
         }
     }
 
