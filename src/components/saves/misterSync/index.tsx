@@ -25,6 +25,7 @@ import {
 import { Tip } from "../../tip"
 import { pocketPathAtom } from "../../../recoil/atoms"
 import { MiSTerCredsAtom } from "./recoil/atoms"
+import { useTranslation } from "react-i18next"
 
 type MisterSyncProps = {
   onClose: () => void
@@ -37,6 +38,8 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
 
   const [query, setQuery] = useState("")
   const [creds, setCreds] = useRecoilState(MiSTerCredsAtom)
+
+  const { t } = useTranslation("mister_sync")
 
   const connect = useCallback(async () => {
     setConnecting(true)
@@ -73,12 +76,12 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
         controls={[
           {
             type: "back-button",
-            text: "Add backup location",
+            text: t("controls.back"),
             onClick: onClose,
           },
           connected && {
             type: "search",
-            text: "Search Saves",
+            text: t("controls.search"),
             value: query,
             onChange: (val) => setQuery(val),
           },
@@ -94,7 +97,7 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
           <>
             <div className="mister-sync__login">
               <label>
-                Host / IP Address:
+                {t("login.host")}
                 <input
                   type="text"
                   value={creds.host}
@@ -104,7 +107,7 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
                 />
               </label>
               <label>
-                Username:
+                {t("login.username")}
                 <input
                   type="text"
                   value={creds.user}
@@ -114,7 +117,7 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
                 />
               </label>
               <label>
-                Password:
+                {t("login.password")}
                 <input
                   type="text"
                   value={creds.password}
@@ -123,17 +126,11 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
                   }
                 />
               </label>
-              <button onClick={connect}>{"Connect"}</button>
+              <button onClick={connect}>{t("login.connect")}</button>
             </div>
-            <Tip>The MiSTer's FTP must be turned on</Tip>
-            <Tip>
-              Make sure the save is compatible between Pocket & MiSTer before
-              transfer
-            </Tip>
-            <Tip>
-              The Game must be named exactly the same on the Pocket and the
-              MiSTer for the save to be found
-            </Tip>
+            <Tip>{t("tip_1")}</Tip>
+            <Tip>{t("tip_2")}</Tip>
+            <Tip>{t("tip_3")}</Tip>
           </>
         )}
       </div>
@@ -150,6 +147,7 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
   const [equalityStatus, setEqualityStatus] = useState<"equals" | "unequal">(
     "equals"
   )
+  const { t } = useTranslation("mister_sync")
 
   const [platform, file] = useMemo(() => {
     const split = splitAsPath(path)
@@ -216,7 +214,7 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
   return (
     <div className="mister-sync__status">
       <div className="mister-sync__pocket">
-        <strong>Pocket</strong>
+        <strong>{t("pocket")}</strong>
         <div>{path}</div>
         <div>{new Date(pocketSaveInfo.timestamp).toLocaleString()}</div>
         <div className="mister-sync__crc">
@@ -243,21 +241,22 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
       <div className="mister-sync__mister">
         {misterSaveInfo?.path && (
           <>
-            <strong>MiSTer</strong>
+            <strong>{t("mister")}</strong>
             <div>{misterSaveInfo?.path.replace("/media/fat/saves/", "")}</div>
             <div>
               {misterSaveInfo?.timestamp &&
                 new Date(misterSaveInfo.timestamp).toLocaleString()}
             </div>
             <div className="mister-sync__crc">
-              {misterSaveInfo?.crc32?.toString(16) || "Not Found"}
+              {misterSaveInfo?.crc32?.toString(16) || t("not_found")}
             </div>
           </>
         )}
         {!misterSaveInfo?.path && (
           <>
-            <div>{`${platform} is not supported`}</div>
-            <div>{"(open a Github issue if it should be)"}</div>
+            <div style={{ whiteSpace: "pre-wrap" }}>
+              {t("unsupported", { platform })}
+            </div>
           </>
         )}
       </div>

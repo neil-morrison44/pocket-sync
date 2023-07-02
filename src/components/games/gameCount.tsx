@@ -4,6 +4,7 @@ import {
   DataJSONSelectorFamily,
   WalkDirSelectorFamily,
 } from "../../recoil/selectors"
+import { useTranslation } from "react-i18next"
 
 type GameCountProps = {
   platformId: string
@@ -20,6 +21,7 @@ export const GameCount = ({
   const files = useRecoilValue(
     WalkDirSelectorFamily({ path: `Assets/${platformId}`, extensions })
   )
+  const { t } = useTranslation("games")
 
   const count = useMemo(() => {
     const namedFiles = data.data.data_slots.flatMap((s) =>
@@ -32,7 +34,5 @@ export const GameCount = ({
     return nonNamedFiles.length
   }, [files, data, extensions])
 
-  return (
-    <div>{`${count.toLocaleString()} ${count === 1 ? "Game" : "Games"}`}</div>
-  )
+  return <div>{t("item.game_count", { count })}</div>
 }

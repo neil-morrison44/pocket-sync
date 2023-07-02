@@ -1,11 +1,5 @@
 import { Suspense, useMemo, useState } from "react"
-import {
-  useRecoilCallback,
-  useRecoilState,
-  useRecoilValue,
-  useResetRecoilState,
-  useSetRecoilState,
-} from "recoil"
+import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import { fileSystemInvalidationAtom } from "../../recoil/atoms"
 import { coreInventoryAtom } from "../../recoil/inventory/atoms"
@@ -19,6 +13,7 @@ import { SearchContextProvider } from "../search/context"
 import { Tip } from "../tip"
 import { CoreInfo } from "./info"
 import { CoreItem, NotInstalledCoreItem } from "./item"
+import { useTranslation } from "react-i18next"
 
 export const Cores = () => {
   const [selectedCore, setSelectedCore] = useRecoilState(
@@ -30,6 +25,7 @@ export const Cores = () => {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [onlyUpdates, setOnlyUpdates] = useState(false)
   const [filterCategory, setFilterCategory] = useState<string>("All")
+  const { t } = useTranslation("cores")
 
   const refresh = useRecoilCallback(({ set }) => () => {
     set(fileSystemInvalidationAtom, Date.now())
@@ -79,18 +75,18 @@ export const Cores = () => {
         controls={[
           {
             type: "search",
-            text: "Search",
+            text: t("controls.search"),
             value: searchQuery,
             onChange: (v) => setSearchQuery(v),
           },
           {
             type: "button",
-            text: "Refresh",
+            text: t("controls.refresh"),
             onClick: refresh,
           },
           {
             type: "checkbox",
-            text: "Updatable",
+            text: t("controls.updatable"),
             checked: onlyUpdates,
             onChange: (checked) => setOnlyUpdates(checked),
           },
@@ -98,12 +94,12 @@ export const Cores = () => {
             type: "select",
             options: categoryList,
             selected: filterCategory,
-            text: "Category",
+            text: t("controls.category"),
             onChange: (v) => setFilterCategory(v),
           },
         ]}
       />
-      <h2>{`Installed (${sortedList.length})`}</h2>
+      <h2>{t("installed", { count: sortedList.length })}</h2>
       <SearchContextProvider
         query={searchQuery}
         other={{ onlyUpdates, category: filterCategory }}
@@ -125,7 +121,7 @@ export const Cores = () => {
           ))}
         </Grid>
 
-        <h2>{`Available (${notInstalledCores.length})`}</h2>
+        <h2>{t("not_installed", { count: notInstalledCores.length })}</h2>
         <Grid>
           {notInstalledCores.map((item) => (
             <Suspense fallback={<Loader />} key={item.identifier}>
@@ -141,11 +137,7 @@ export const Cores = () => {
         </Grid>
       </SearchContextProvider>
 
-      <Tip>
-        {
-          "You can also install cores (or anything else in a zip) by dragging the .zip into this window"
-        }
-      </Tip>
+      <Tip>{t("install_tip")}</Tip>
     </div>
   )
 }

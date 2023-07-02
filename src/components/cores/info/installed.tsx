@@ -22,6 +22,7 @@ import { AuthorTag } from "../../shared/authorTag"
 import { CoreInputs } from "./coreInputs"
 import { CoreSettings } from "./coreSettings"
 import { RequiredFileInfoSelectorFamily } from "../../../recoil/requiredFiles/selectors"
+import { useTranslation } from "react-i18next"
 
 type CoreInfoProps = {
   coreName: string
@@ -41,6 +42,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   const [requiredFilesOpen, setRequiredFilesOpen] = useState(false)
   const [inputsOpen, setInputsOpen] = useState(false)
   const [coreSettingsOpen, setCoreSettingsOpen] = useState(false)
+  const { t } = useTranslation("core_info")
 
   return (
     <div className="core-info">
@@ -48,25 +50,25 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
         controls={[
           {
             type: "back-button",
-            text: "Back to list",
+            text: t("controls.back"),
             onClick: onBack,
           },
           {
             type: "button",
-            text: "Uninstall",
+            text: t("controls.uninstall"),
             onClick: () => uninstall(coreName),
           },
           requiredFilesLoadable.state === "hasValue" &&
           requiredFilesLoadable.getValue().length > 0
             ? {
                 type: "button",
-                text: "Required Files",
+                text: t("controls.required_files"),
                 onClick: () => setRequiredFilesOpen(true),
               }
             : null,
           downloadUrl && {
             type: "button",
-            text: "Update",
+            text: t("controls.update"),
             onClick: () => installCore(coreName, downloadUrl),
           },
         ]}
@@ -108,18 +110,27 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
 
         <div className="core-info__info-grid">
           <div className="core-info__info-row">
-            <strong>{"Version:"}</strong>
+            <strong>
+              {t("version")}
+              {":"}
+            </strong>
             <Version coreName={coreName} />
           </div>
 
           <div className="core-info__info-row">
-            <strong>{"Author:"}</strong>
+            <strong>
+              {t("author")}
+              {":"}
+            </strong>
             <AuthorTag coreName={coreName} />
           </div>
 
           {inventoryItem?.sponsor && (
             <div className="core-info__info-row core-info__info-row--right">
-              <strong>{"Sponsor:"}</strong>
+              <strong>
+                {t("sponsor")}
+                {":"}
+              </strong>
               <ErrorBoundary>
                 <SponsorLinks links={inventoryItem.sponsor} />
               </ErrorBoundary>
@@ -128,8 +139,10 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
 
           {coreInfo.core.metadata.url && (
             <div className="core-info__info-row">
-              <strong>{"URL:"}</strong>
-
+              <strong>
+                {t("url")}
+                {":"}
+              </strong>
               <Link href={coreInfo.core.metadata.url}>
                 {coreInfo.core.metadata.url}
               </Link>
@@ -139,7 +152,10 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
           <Suspense
             fallback={
               <div className="core-info__info-row">
-                <strong>{"Required Files:"}</strong>
+                <strong>
+                  {t("required_files")}
+                  {":"}
+                </strong>
                 Please wait, checking files...
               </div>
             }
@@ -152,7 +168,10 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
 
           {coreInfo.core.metadata.date_release && (
             <div className="core-info__info-row">
-              <strong>{"Release Date:"}</strong>
+              <strong>
+                {t("release_date")}
+                {":"}
+              </strong>
 
               {coreInfo.core.metadata.date_release}
             </div>
@@ -160,20 +179,23 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
         </div>
 
         <div className="core-info__info-row">
-          <strong>{"Supports:"}</strong>
+          <strong>
+            {t("supports")}
+            {":"}
+          </strong>
           <div className="core-info__supports-bubbles">
             <SupportsBubble supports={coreInfo.core.framework.sleep_supported}>
-              {"Save States / Sleep"}
+              {t("supports_items.save_states_and_sleep")}
             </SupportsBubble>
 
             <SupportsBubble supports={coreInfo.core.framework.dock.supported}>
-              {"Dock"}
+              {t("supports_items.dock")}
             </SupportsBubble>
 
             <SupportsBubble
               supports={coreInfo.core.framework.dock.analog_output}
             >
-              {"Dock (Analog)"}
+              {t("supports_items.dock_dac")}
             </SupportsBubble>
 
             <SupportsBubble
@@ -181,13 +203,16 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
                 coreInfo.core.framework.hardware.cartridge_adapter !== -1
               }
             >
-              {"Cartridges"}
+              {t("supports_items.cartridges")}
             </SupportsBubble>
           </div>
         </div>
 
         <div className="core-info__info-row">
-          <strong>{"Platforms:"}</strong>
+          <strong>
+            {t("platforms")}
+            {":"}
+          </strong>
           <Suspense
             fallback={<Loader className="core-info__platform-loader" />}
           >
@@ -203,13 +228,13 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             style={{ backgroundColor: "var(--light-colour)" }}
             onClick={() => setInputsOpen(true)}
           >
-            Inputs
+            {t("inputs")}
           </button>
           <button
             style={{ backgroundColor: "var(--light-colour)" }}
             onClick={() => setCoreSettingsOpen(true)}
           >
-            Settings
+            {t("settings")}
           </button>
         </div>
 

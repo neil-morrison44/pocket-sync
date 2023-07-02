@@ -15,11 +15,11 @@ import { PlatformId, SaveZipFile } from "../../../types"
 import { invokeRestoreZip } from "../../../utils/invokes"
 import { Controls } from "../../controls"
 import { ask } from "@tauri-apps/api/dialog"
-import { saveFileInvalidationAtom } from "../../../recoil/atoms"
 import { useSaveScroll } from "../../../hooks/useSaveScroll"
 import { useInvalidateSaveFiles } from "../../../hooks/invalidation"
 import { splitAsPath } from "../../../utils/splitAsPath"
 import { PlatformLabel } from "./platformLabel"
+import { useTranslation } from "react-i18next"
 
 export const SaveInfo = ({
   backupPath,
@@ -36,6 +36,7 @@ export const SaveInfo = ({
   const [hideOnlyCurrent, setHideOnlyCurrent] = useState(true)
   const pocketSaves = useRecoilValue(pocketSavesFilesListSelector)
   const { popScroll, pushScroll } = useSaveScroll()
+  const { t } = useTranslation("save_info")
 
   useEffect(() => {
     popScroll()
@@ -97,7 +98,7 @@ export const SaveInfo = ({
   const restore = useCallback(
     async (zip: string, savefile: string) => {
       const zipPath = `${backupPath}/${zip}`
-      const yes = await ask(`Restore from backup?`, "Pocket Sync")
+      const yes = await ask(t("confirm_restore"), "Pocket Sync")
       if (yes) {
         await invokeRestoreZip(zipPath, savefile)
         pushScroll()
@@ -126,18 +127,18 @@ export const SaveInfo = ({
         controls={[
           {
             type: "back-button",
-            text: "Back to list",
+            text: t("controls.back"),
             onClick: onBack,
           },
           {
             type: "checkbox",
             checked: hideOnlyCurrent,
-            text: "Hide Unchanged",
+            text: t("controls.hide_unchanged"),
             onChange: (v) => setHideOnlyCurrent(v),
           },
           {
             type: "search",
-            text: "Search",
+            text: t("controls.search"),
             value: searchQuery,
             onChange: (v) => {
               setSearchQuery(v)
@@ -157,12 +158,8 @@ export const SaveInfo = ({
                 gridArea: getAreaName(zip.last_modified),
               }}
             >
-              <div>{date.toLocaleDateString().replace(/\/\d{4}$/, "")}</div>
-              <div>
-                {date
-                  .toLocaleTimeString()
-                  .replace(/(\d{2}\:\d{2})\:\d{2}/, "$1")}
-              </div>
+              <div>{t("date", { date })}</div>
+              <div>{t("time", { date })}</div>
             </div>
           )
         })}
@@ -219,6 +216,7 @@ const SaveVersions = ({
   onSelect: (zip: string, filename: string) => void
   versions: SaveVersion[]
 }) => {
+  const { t } = useTranslation("save_info")
   const currentTimestamp =
     versions.find(({ crc32 }) => crc32 === currentHash)?.zip.last_modified ||
     Infinity
@@ -237,10 +235,10 @@ const SaveVersions = ({
           const lastVersionWithHash = getEndOfSave(index, versions)
 
           const text = isCurrent
-            ? "Current"
+            ? t("current")
             : zip.last_modified < currentTimestamp
-            ? "Older"
-            : "Newer"
+            ? t("older")
+            : t("newer")
 
           return (
             <div

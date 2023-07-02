@@ -12,7 +12,6 @@ import { Version } from "./version"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { InventoryItem } from "../../types"
 import { useUpdateAvailable } from "../../hooks/useUpdateAvailable"
-import { useCallback } from "react"
 
 type CoreItemProps = {
   coreName: string
@@ -25,7 +24,6 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
   const { platform } = useRecoilValue(
     PlatformInfoSelectorFamily(core.metadata.platform_ids[0])
   )
-
   const canUpdate = useUpdateAvailable(coreName)
 
   return (

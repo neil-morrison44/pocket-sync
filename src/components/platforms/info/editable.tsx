@@ -1,4 +1,5 @@
 import { useId, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 type EditableProps = {
   type: "freetext" | "freetext-with-choices" | "number"
@@ -35,6 +36,7 @@ export const Editable = ({
   const [localValue, setLocalValue] =
     useState<typeof initialValue>(initialValue)
   const uuid = useId()
+  const { t } = useTranslation("platforms")
 
   if (!editMode)
     return (
@@ -44,7 +46,7 @@ export const Editable = ({
           className="platforms__edit-button"
           onClick={() => setEditMode(true)}
         >
-          {"Edit"}
+          {t("edit")}
         </div>
       </div>
     )
@@ -73,9 +75,9 @@ export const Editable = ({
             setEditMode(false)
           }}
         >
-          {"Save"}
+          {t("save")}
         </button>
-        <button onClick={() => setEditMode(false)}>Cancel</button>
+        <button onClick={() => setEditMode(false)}>{t("cancel")}</button>
       </div>
     )
   }
@@ -95,9 +97,9 @@ export const Editable = ({
             setEditMode(false)
           }}
         >
-          {"Save"}
+          {t("save")}
         </button>
-        <button onClick={() => setEditMode(false)}>Cancel</button>
+        <button onClick={() => setEditMode(false)}>{t("cancel")}</button>
       </div>
     )
   }

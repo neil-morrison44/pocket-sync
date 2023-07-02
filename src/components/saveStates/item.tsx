@@ -1,13 +1,12 @@
 import React, { useMemo } from "react"
 import {
-  SaveStateBinarySelectorFamily,
   SaveStateImageSelectorFamily,
   SaveStateMetadataSelectorFamily,
 } from "../../recoil/saveStates/selectors"
 import { useRecoilValue } from "recoil"
-import { getBinaryMetadata } from "../../utils/getBinaryMetadata"
 import { parse } from "date-fns"
 import { SearchContextSelfHidingConsumer } from "../search/context"
+import { useTranslation } from "react-i18next"
 
 type SaveStateItemProps = {
   path: string
@@ -23,6 +22,7 @@ export const SaveStateItem = ({
   const metadata = useRecoilValue(SaveStateMetadataSelectorFamily(path))
   const imageSrc = useRecoilValue(SaveStateImageSelectorFamily(path))
   const date = useSaveStateDate(path)
+  const { t } = useTranslation("save_states")
 
   const gameName = useMemo(() => {
     const { game } = metadata
@@ -47,8 +47,8 @@ export const SaveStateItem = ({
           <div className="save-states__item-name">{gameName}</div>
           {date && (
             <div className="save-states__item--date">
-              <div>{date.toLocaleDateString()}</div>
-              <div>{date.toLocaleTimeString()}</div>
+              <div>{t("item.date", { date })}</div>
+              <div>{t("item.time", { date })}</div>
             </div>
           )}
         </div>

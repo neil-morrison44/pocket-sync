@@ -12,6 +12,7 @@ import { AllSavesSelector } from "../../recoil/saves/selectors"
 import { invokeBackupSaves } from "../../utils/invokes"
 import { SaveConfig } from "../../types"
 import { MisterSync } from "./misterSync"
+import { useTranslation } from "react-i18next"
 
 export const Saves = () => {
   const [selectedSaveBackup, setSelectedSavebackup] = useState<number | null>(
@@ -20,6 +21,7 @@ export const Saves = () => {
   const allSaves = useRecoilValue(AllSavesSelector)
   const updateConfig = useUpdateConfig()
   const { saves } = useRecoilValue(PocketSyncConfigSelector)
+  const { t } = useTranslation("saves")
 
   const [misterSync, setMisterSync] = useState(false)
 
@@ -62,20 +64,18 @@ export const Saves = () => {
         controls={[
           {
             type: "button",
-            text: "Add backup location",
+            text: t("controls.add_backup_location"),
             onClick: addBackupLocation,
           },
           {
             type: "button",
-            text: "MiSTer Sync",
+            text: t("controls.mister_sync"),
             onClick: () => setMisterSync(true),
           },
         ]}
       />
 
-      {saves.length === 0 && (
-        <div className="saves__none">{"Add a backup location above"}</div>
-      )}
+      {saves.length === 0 && <div className="saves__none">{t("none")}</div>}
       {saves.length > 0 && (
         <div className="saves__list">
           {saves.map((s, index) => (

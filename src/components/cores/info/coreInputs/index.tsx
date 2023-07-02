@@ -13,6 +13,7 @@ import { InputKey } from "../../../../types"
 import { Modal } from "../../../modal"
 import { LabeledLine } from "../../../three/labeledLine"
 import { Pocket } from "../../../three/pocket"
+import { useTranslation } from "react-i18next"
 
 const KEY_LINES: {
   [k in InputKey]: { start: THREE.Vector3Tuple; end: THREE.Vector3Tuple }
@@ -37,7 +38,7 @@ export const CoreInputs = ({
   platformId: string
 }) => {
   const platformImage = useRecoilValue(PlatformImageSelectorFamily(platformId))
-
+  const { t } = useTranslation("core_info")
   const presetInputList = useRecoilValue(
     ListPresetInputsSelectorFamily(coreName)
   )
@@ -91,7 +92,7 @@ export const CoreInputs = ({
           onChange={({ target }) => setChosenInput(target.value)}
           value={chosenInput}
         >
-          <option value={"core"}>{"Core"}</option>
+          <option value={"core"}>{t("modal.input_core")}</option>
           {presetInputList.map((fileName) => (
             <option key={fileName} value={fileName}>
               {fileName}
@@ -125,7 +126,7 @@ export const CoreInputs = ({
         </Suspense>
       </Pocket>
 
-      <button onClick={onClose}>Close</button>
+      <button onClick={onClose}>{t("modal.close")}</button>
     </Modal>
   )
 }

@@ -4,6 +4,7 @@ import { Tip } from "../tip"
 
 import "./index.css"
 import { ViewDebug } from "./viewDebug"
+import { Trans } from "react-i18next"
 
 type ErrorBoundaryProps = {
   children?: ReactNode
@@ -44,15 +45,15 @@ export class ErrorBoundary extends Component<
 
       return (
         <div className="error-boundary">
-          <h1>Error</h1>
+          <h1>
+            <Trans i18nKey="error:title"></Trans>
+          </h1>
           {shouldShowReportTip && (
             <Tip>
               <Link
                 href={"https://github.com/neil-morrison44/pocket-sync/issues"}
               >
-                {
-                  "You can report this via GitHub include the text below & whatever you just did"
-                }
+                <Trans i18nKey="error:report"></Trans>
               </Link>
             </Tip>
           )}
@@ -64,7 +65,7 @@ export class ErrorBoundary extends Component<
           <div className="error-boundary__stack">{this.state.error?.stack}</div>
 
           <button style={{ width: "100%" }} onClick={() => this.clearError()}>
-            Retry
+            <Trans i18nKey="error:retry"></Trans>
           </button>
         </div>
       )
