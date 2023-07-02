@@ -8,6 +8,7 @@ import { ErrorBoundary } from "../../errorBoundary"
 import { Link } from "../../link"
 import { Releases } from "./releases"
 import { SponsorLinks } from "./sponsorLinks"
+import { useTranslation } from "react-i18next"
 
 type NotInstalledCoreInfoProps = {
   onBack: () => void
@@ -19,6 +20,7 @@ export const NotInstalledCoreInfo = ({
   onBack,
 }: NotInstalledCoreInfoProps) => {
   const inventoryItem = useInventoryItem(coreName)
+  const { t } = useTranslation("core_info")
 
   const url = useMemo(() => {
     if (inventoryItem?.repository.platform !== "github") return null
@@ -34,12 +36,12 @@ export const NotInstalledCoreInfo = ({
         controls={[
           {
             type: "back-button",
-            text: "Back to list",
+            text: t("controls.back"),
             onClick: onBack,
           },
           download_url && {
             type: "button",
-            text: "Install",
+            text: t("controls.install"),
             onClick: () => {
               installCore(coreName, download_url)
             },
@@ -47,7 +49,7 @@ export const NotInstalledCoreInfo = ({
         ]}
       />
 
-      {!inventoryItem && <div>{`${coreName} not in cores inventory`}</div>}
+      {!inventoryItem && <div>{t("not_in_inventory", { coreName })}</div>}
 
       {inventoryItem && (
         <>
@@ -60,14 +62,20 @@ export const NotInstalledCoreInfo = ({
 
               {url && (
                 <div className="core-info__info-row">
-                  <strong>{"URL:"}</strong>
+                  <strong>
+                    {t("url")}
+                    {":"}
+                  </strong>
                   <Link href={url}>{url}</Link>
                 </div>
               )}
 
               {inventoryItem?.sponsor && (
                 <div className="core-info__info-row core-info__info-row--right">
-                  <strong>{"Sponsor:"}</strong>
+                  <strong>
+                    {t("sponsor")}
+                    {":"}
+                  </strong>
                   <ErrorBoundary>
                     <SponsorLinks links={inventoryItem.sponsor} />
                   </ErrorBoundary>
@@ -75,12 +83,18 @@ export const NotInstalledCoreInfo = ({
               )}
 
               <div className="core-info__info-row">
-                <strong>{"Version:"}</strong>
+                <strong>
+                  {t("version")}
+                  {":"}
+                </strong>
                 {inventoryItem.version}
               </div>
 
               <div className="core-info__info-row">
-                <strong>{"Release Date:"}</strong>
+                <strong>
+                  {t("release_date")}
+                  {":"}
+                </strong>
                 {inventoryItem.release_date}
               </div>
             </div>

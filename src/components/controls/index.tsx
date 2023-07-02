@@ -10,6 +10,7 @@ type Control = {
     }
   | {
       type: "back-button"
+      text: string
       onClick: () => void
     }
   | {
@@ -95,7 +96,7 @@ export const Controls = ({ controls }: ControlProps) => {
                 onClick={control.onClick}
                 key={control.text}
               >
-                {"Back to List"}
+                {control.text}
               </div>
             )
           case "checkbox":

@@ -13,6 +13,7 @@ import { PlatformImage } from "../../cores/platformImage"
 import { Link } from "../../link"
 import { Loader } from "../../loader"
 import { Modal } from "../../modal"
+import { useTranslation } from "react-i18next"
 
 import "./index.css"
 import { PlatformName } from "./platformName"
@@ -36,6 +37,7 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
 
   const changeCount = Object.values(selections).filter(Boolean).length
   const invalidateFS = useInvalidateFileSystem()
+  const { t } = useTranslation("platforms")
 
   const applyChanges = useRecoilCallback(
     ({ snapshot }) =>
@@ -65,7 +67,9 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
     <Modal className="image-packs">
       <div className="image-packs__content">
         <div className="image-packs__column image-packs__column--current">
-          <div className="image-packs__column-name">{"Current"}</div>
+          <div className="image-packs__column-name">
+            {t("image_packs.current")}
+          </div>
           {platformIds.map((pId) => (
             <div
               key={pId}
@@ -121,10 +125,10 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
       </div>
 
       <div className="image-packs__buttons">
-        <button onClick={applyChanges}>{`Apply ${changeCount} Change${
-          changeCount !== 1 ? "s" : ""
-        }`}</button>
-        <button onClick={onClose}>{"Close"}</button>
+        <button onClick={applyChanges}>
+          {t("image_packs.apply_changes", { count: changeCount })}
+        </button>
+        <button onClick={onClose}>{t("image_packs.close")}</button>
       </div>
     </Modal>
   )

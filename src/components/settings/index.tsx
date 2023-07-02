@@ -10,9 +10,7 @@ import { useUpdateConfig } from "./hooks/useUpdateConfig"
 import "./index.css"
 import { pocketPathAtom, reconnectWhenOpenedAtom } from "../../recoil/atoms"
 import { invokeClearFileCache } from "../../utils/invokes"
-
-const ARCHIVE_URL_TEXT = `Please check with your local laws around the downloading of potentially copyrighted (arcade) ROM & BIOS files.
-If you are comfortable with this, copy the following url into the input and hit "save".`
+import { useTranslation, Trans } from "react-i18next"
 
 export const Settings = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
@@ -23,13 +21,13 @@ export const Settings = () => {
     reconnectWhenOpenedAtom
   )
   const updateConfig = useUpdateConfig()
+  const { t } = useTranslation("settings")
 
   return (
     <div className="settings">
-      <h2>{"Settings"}</h2>
       <div className="settings__items">
         <div className="settings__row">
-          <h3 className="settings__row-title">{"Pocket Colour:"}</h3>
+          <h3 className="settings__row-title">{t("3d_pocket.title")}</h3>
 
           <select
             value={config.colour}
@@ -37,14 +35,14 @@ export const Settings = () => {
               updateConfig("colour", target.value as "black" | "white")
             }
           >
-            <option value="black">{"Black"}</option>
-            <option value="white">{"White"}</option>
+            <option value="black">{t("3d_pocket.black")}</option>
+            <option value="white">{t("3d_pocket.white")}</option>
           </select>
         </div>
 
         <div className="settings__row">
-          <h3 className="settings__row-title">{"ROM & BIOS archive:"}</h3>
-          <div className="settings__ramble">{ARCHIVE_URL_TEXT}</div>
+          <h3 className="settings__row-title">{t("archive.title")}</h3>
+          <div className="settings__ramble">{t("archive.warning")}</div>
           <pre>{"https://archive.org/download/openFPGA-Files"}</pre>
           <div className="settings__text-input-and-save">
             <input
@@ -56,24 +54,20 @@ export const Settings = () => {
             <button
               onClick={() => updateConfig("archive_url", archiveUrlInput)}
             >
-              {"Save"}
+              {t("archive.save")}
             </button>
           </div>
         </div>
 
         <div className="settings__row">
-          <h3 className="settings__row-title">{"Skip Alternate Assets"}</h3>
-          <div className="settings__ramble">
-            This setting will skip processing json files under the
-            `_alternatives` folder, meaning you'll just get the "main" titles
-            for the cores which sort their JSON files this way.
-          </div>
-          <div className="settings__ramble">
-            <b>Warning:</b> turning this off will mean that installing Required
-            Files takes <b>much</b> longer.
-          </div>
+          <h3 className="settings__row-title">{t("alternate_skip.title")}</h3>
+          <div className="settings__ramble">{t("alternate_skip.ramble_1")}</div>
+          <div
+            className="settings__ramble"
+            dangerouslySetInnerHTML={{ __html: t("alternate_skip.ramble_2") }}
+          ></div>
           <label className="settings__checkbox">
-            Skip Alternate Assets{" "}
+            {t("alternate_skip.checkbox")}
             <input
               type="checkbox"
               checked={skipAlternateAssets}
@@ -85,16 +79,20 @@ export const Settings = () => {
         </div>
 
         <div className="settings__row">
-          <h3 className="settings__row-title">
-            {"Reconnect when the app is opened"}
-          </h3>
+          <h3 className="settings__row-title">{t("reconnect.title")}</h3>
           <div className="settings__ramble">
-            Attempt to reconnect to the most recently opened location
-            <pre>{reconnectWhenOpened.path}</pre> upon opening the app, skipping
-            the "Connect to Pocket" button
+            <Trans
+              t={t}
+              i18nKey="reconnect.ramble"
+              values={{ ppath: reconnectWhenOpened.path }}
+            >
+              {"_"}
+              <pre>{"_"}</pre>
+              {"_"}
+            </Trans>
           </div>
           <label className="settings__checkbox">
-            Reconnect when opened
+            {t("reconnect.checkbox")}
             <input
               type="checkbox"
               checked={reconnectWhenOpened.enable}
@@ -109,34 +107,28 @@ export const Settings = () => {
         </div>
 
         <div className="settings__row">
-          <h3 className="settings__row-title">{"Clear file cache"}</h3>
-          <div className="settings__ramble">
-            {
-              "To help with USB & SD card transfer larger files are copied & stored on your computer's file system, which should be fine but if you're running into issues try clearing the file cache."
-            }
-          </div>
+          <h3 className="settings__row-title">{t("clear_file_cache.title")}</h3>
+          <div className="settings__ramble">{t("clear_file_cache.ramble")}</div>
           <label className="settings__checkbox">
             <button onClick={() => invokeClearFileCache()}>
-              Clear file cache
+              {t("clear_file_cache.button")}
             </button>
           </label>
         </div>
 
         <div className="settings__row">
-          <h3 className="settings__row-title">{"Disconnect"}</h3>
-          <div className="settings__ramble">
-            {
-              'Return to the "Connect To Pocket" screen (This doesn\'t eject the SD Card / USB drive)'
-            }
-          </div>
+          <h3 className="settings__row-title">{t("disconnect.title")}</h3>
+          <div className="settings__ramble">{t("disconnect.ramble")}</div>
           <label className="settings__checkbox">
-            <button onClick={() => setPocketPath(null)}>Disconnect</button>
+            <button onClick={() => setPocketPath(null)}>
+              {t("disconnect.button")}
+            </button>
           </label>
         </div>
       </div>
 
       <div className="settings__info">
-        <h3>Thanks to:</h3>
+        <h3>{t("thanks")}</h3>
 
         <ul>
           <li>
@@ -157,7 +149,7 @@ export const Settings = () => {
                 "https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky"
               }
             >
-              {"3D Pocket reflection map from Poly Haven"}
+              {"3D reflection map from Poly Haven"}
             </Link>
           </li>
         </ul>

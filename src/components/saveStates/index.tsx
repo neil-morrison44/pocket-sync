@@ -5,21 +5,21 @@ import { SaveStateItem } from "./item"
 import { Loader } from "../loader"
 
 import "./index.css"
-import { CoreInfoSelectorFamily } from "../../recoil/selectors"
 import { Controls } from "../controls"
 import { SearchContextProvider } from "../search/context"
 import { confirm } from "@tauri-apps/api/dialog"
 import { invokeDeleteFiles } from "../../utils/invokes"
 import { useInvalidateFileSystem } from "../../hooks/invalidation"
-import { AuthorTag } from "../shared/authorTag"
 import { splitAsPath } from "../../utils/splitAsPath"
 import { CoreTag } from "../shared/coreTag"
+import { useTranslation } from "react-i18next"
 
 export const SaveStates = () => {
   const invalidateFS = useInvalidateFileSystem()
   const allSaveStates = useRecoilValue(AllSaveStatesSelector)
   const [selectedStates, setSelectedStates] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState("")
+  const { t } = useTranslation("save_states")
 
   const groupByCore = useMemo(
     () =>
@@ -42,9 +42,7 @@ export const SaveStates = () => {
   const deleteSelected = useCallback(async () => {
     const plural = selectedStates.length > 1
     const okToDelete = await confirm(
-      `Are you sure you want to delete ${selectedStates.length} save state${
-        plural ? "s" : ""
-      }?`
+      t("confirm_delete", { count: selectedStates.length })
     )
     if (!okToDelete) return
 
@@ -61,7 +59,7 @@ export const SaveStates = () => {
         controls={[
           {
             type: "search",
-            text: "Search",
+            text: t("controls.search"),
             value: searchQuery,
             onChange: (v) => setSearchQuery(v),
           },
@@ -69,14 +67,16 @@ export const SaveStates = () => {
             ? undefined
             : {
                 type: "button",
-                text: `Clear Selection (${selectedStates.length})`,
+                text: t("controls.clear_selection"),
                 onClick: () => setSelectedStates([]),
               },
           selectedStates.length === 0
             ? undefined
             : {
                 type: "button",
-                text: `Delete Selected (${selectedStates.length})`,
+                text: t("controls.delete_selection", {
+                  count: selectedStates.length,
+                }),
                 onClick: deleteSelected,
               },
         ]}
@@ -133,12 +133,15 @@ const CartridgeHeader = ({
 }: {
   count: number
   zIndex: number
-}) => (
-  <div className="save-states__core-header" style={{ zIndex }}>
-    <b>{"Cartridge"}</b>
-    <div className="save-states__core-header-count">{`( ${count} / 128 )`}</div>
-  </div>
-)
+}) => {
+  const { t } = useTranslation("save_states")
+  return (
+    <div className="save-states__core-header" style={{ zIndex }}>
+      <b>{t("cartridge")}</b>
+      <div className="save-states__core-header-count">{`( ${count} / 128 )`}</div>
+    </div>
+  )
+}
 
 const CoreNameHeader = ({
   coreName,

@@ -14,6 +14,7 @@ import {
 } from "../../../../utils/hexStrings"
 import { Modal } from "../../../modal"
 import { Tip } from "../../../tip"
+import { useTranslation } from "react-i18next"
 
 import "./index.css"
 
@@ -71,6 +72,7 @@ const InteractSettings = ({
   const [persistJSON, setPersistJSON] = useRecoilState(
     PersistInteractFileAtomFamily({ coreName, filePath })
   )
+  const { t } = useTranslation("core_info")
 
   const updateValue = useCallback(
     (
@@ -142,7 +144,7 @@ const InteractSettings = ({
   return (
     <>
       {interactJSON.interact.variables.length === 0 && (
-        <Tip>{"No settings found!"}</Tip>
+        <Tip>{t("modal.no_settings_found")}</Tip>
       )}
 
       <div className="core-settings__settings">
@@ -278,9 +280,11 @@ const InteractSettings = ({
           }
         })}
       </div>
-      <button onClick={() => setPersistJSON(EMPTY_PERSIST)}>Reset All</button>
+      <button onClick={() => setPersistJSON(EMPTY_PERSIST)}>
+        {t("modal.reset_all")}
+      </button>
       <button className="core-settings__close-button" onClick={onClose}>
-        Close
+        {t("modal.close")}
       </button>
     </>
   )

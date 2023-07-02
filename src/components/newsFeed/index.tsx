@@ -5,6 +5,7 @@ import { newsFeedUpdateAtom } from "../../recoil/newsFeed/atoms"
 import { newsFeedSelector } from "../../recoil/newsFeed/selectors"
 import { currentViewAtom } from "../../recoil/view/atoms"
 import { Link } from "../link"
+import { useTranslation, Trans } from "react-i18next"
 
 import "./index.css"
 import { TimeAgo } from "./timeAgo"
@@ -18,17 +19,22 @@ export const NewsFeed = ({ deepLinks = false }: NewsFeedProps) => {
   const viewCore = useSetRecoilState(currentViewAtom)
   const newsfeedLastUpdate = useRecoilValue(newsFeedUpdateAtom)
   const listRef = useYScrollAsXScroll()
+  const { t } = useTranslation("news_feed")
 
   return (
     <div className="news-feed">
       <div className="news-feed__title">
-        {"Updates From the "}
-        <Link href="https://openfpga-cores-inventory.github.io/analogue-pocket/">
-          OpenFPGA Cores Inventory
-        </Link>
+        <Trans t={t} i18nKey={"updates_from"}>
+          {"_"}
+          <Link href="https://openfpga-cores-inventory.github.io/analogue-pocket/">
+            {"_"}
+          </Link>
+        </Trans>
         <span className="news-feed__title-last-updated">
-          {` last updated `}
-          <TimeAgo since={newsfeedLastUpdate} />
+          <Trans t={t} i18nKey={"last_updated"}>
+            {"_"}
+            <TimeAgo since={newsfeedLastUpdate} />
+          </Trans>
         </span>
       </div>
       <div className="news-feed__list" ref={listRef}>

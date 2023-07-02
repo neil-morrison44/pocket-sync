@@ -13,6 +13,7 @@ import "./index.css"
 import { updateAvailableSelector } from "../../recoil/firmware/selectors"
 import { currentViewAtom } from "../../recoil/view/atoms"
 import { StaticScreen } from "../three/staticScreen"
+import { useTranslation } from "react-i18next"
 
 export const About = () => {
   const selfReleases = useRecoilSmoothUpdatesFirstSuspend(
@@ -22,6 +23,7 @@ export const About = () => {
     })
   )
 
+  const { t } = useTranslation("about")
   const AppVersion = useRecoilValue(AppVersionSelector)
   const firmwareUpdateAvailable = useRecoilValue(updateAvailableSelector)
 
@@ -35,7 +37,7 @@ export const About = () => {
     <div className="about">
       <div className="about__top">
         <div>
-          <h1>Pocket Sync</h1>
+          <h1>{t("app_name")}</h1>
           {`v${AppVersion}`}
         </div>
 
@@ -43,14 +45,17 @@ export const About = () => {
           <div
             className="about__update-link"
             onClick={() => setCurrentView({ view: "Firmware", selected: null })}
-          >{`New Pocket Firmware v${firmwareUpdateAvailable} available`}</div>
+          >
+            {t("new_firmware", {
+              version: firmwareUpdateAvailable,
+            })}
+          </div>
         )}
 
         {updateAvailable && (
-          <Link
-            href={selfReleases[0].html_url}
-            className="about__update-link"
-          >{`Update Available! ${selfReleases[0].tag_name}`}</Link>
+          <Link href={selfReleases[0].html_url} className="about__update-link">
+            {t("update_available", { version: selfReleases[0].tag_name })}
+          </Link>
         )}
         <ErrorBoundary>
           <Pocket

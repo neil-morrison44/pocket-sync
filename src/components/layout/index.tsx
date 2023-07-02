@@ -16,9 +16,11 @@ import { Settings } from "../settings"
 import { ZipInstall } from "../zipInstall"
 import "./index.css"
 import { Firmware } from "../firmware"
+import { useTranslation } from "react-i18next"
 
 export const Layout = () => {
   const [viewAndSubview, setViewAndSubview] = useRecoilState(currentViewAtom)
+  const { t } = useTranslation("layout")
 
   const changeView = useCallback(
     (viewName: (typeof VIEWS_LIST)[number]) => {
@@ -61,7 +63,7 @@ export const Layout = () => {
             key={v}
             onClick={() => changeView(v)}
           >
-            {v}
+            {t(v.toLowerCase().replace(/\s/g, "_"))}
           </div>
         ))}
       </div>

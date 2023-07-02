@@ -48,8 +48,6 @@ export const currentFirmwareVersionSelector = selector<{
       ? `1.1-beta-${hexValue[1]}`
       : `${hexValue[0]}.${hexValue[1]}`
 
-    console.log({ version })
-
     return {
       version,
       build_date: parsedJSON.firmware.runtime.build_date,

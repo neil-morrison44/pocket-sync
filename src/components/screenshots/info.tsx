@@ -15,6 +15,7 @@ import { Controls } from "../controls"
 import { CoreTag } from "../shared/coreTag"
 import { Loader } from "../loader"
 import { useUpscaler } from "./hooks/useUpscaler"
+import { useTranslation } from "react-i18next"
 
 type ScreenshotInfo = {
   fileName: string
@@ -30,6 +31,7 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfo) => {
   )
   const upscaler = useUpscaler()
   const [imageSrc, setImageSrc] = useState<string | null>(null)
+  const { t } = useTranslation("screenshot_info")
 
   useEffect(() => {
     let cancelled = false
@@ -71,21 +73,25 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfo) => {
         controls={[
           {
             type: "back-button",
-            text: "Back to list",
+            text: t("controls.back"),
             onClick: onBack,
           },
           {
             type: "button",
-            text: "Save",
+            text: t("controls.save"),
             onClick: () => {
               if (!imageSrc) return
               saveFile(screenshot.file_name, imageSrc)
             },
           },
-          { type: "button", text: "Share", onClick: openShareSheet },
+          {
+            type: "button",
+            text: t("controls.share"),
+            onClick: openShareSheet,
+          },
           {
             type: "checkbox",
-            text: "Upscaled",
+            text: t("controls.upscaled"),
             checked: imageMode === "upscaled",
             onChange: (checked) =>
               checked ? setImageMode("upscaled") : setImageMode("raw"),
@@ -99,7 +105,7 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfo) => {
 
       <div className="screenshot-info__info">
         <div>{screenshot.game}</div>
-        {screenshot.platform && <div>{`Platform: ${screenshot.platform}`}</div>}
+        {screenshot.platform && <div>{screenshot.platform}</div>}
         {screenshot.core && screenshot.author && (
           <Suspense fallback={<Loader />}>
             <CoreTag coreName={`${screenshot.author}.${screenshot.core}`} />

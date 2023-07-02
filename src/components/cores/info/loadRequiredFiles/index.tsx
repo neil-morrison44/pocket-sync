@@ -9,6 +9,7 @@ import {
 import { Modal } from "../../../modal"
 import { Progress } from "../../../progress"
 import { Tip } from "../../../tip"
+import { useTranslation } from "react-i18next"
 
 import "./index.css"
 import { RequiredFileRow } from "./row"
@@ -33,6 +34,7 @@ export const LoadRequiredFiles = ({
   const requiredFiles = useRecoilValue(
     RequiredFilesWithStatusSelectorFamily(coreName)
   )
+  const { t } = useTranslation("core_info_required_files")
   const pocketSyncConfig = useRecoilValue(PocketSyncConfigSelector)
   const {
     installRequiredFiles,
@@ -64,7 +66,7 @@ export const LoadRequiredFiles = ({
 
   return (
     <Modal className="load-required-files">
-      <h2>{"Required Files"}</h2>
+      <h2>{t("title")}</h2>
 
       {inProgress && (
         <Progress
@@ -86,22 +88,16 @@ export const LoadRequiredFiles = ({
             ))}
           </div>
 
-          {!hasArchiveLink && (
-            <Tip>
-              {
-                "Please view the Settings section for more options with required files"
-              }
-            </Tip>
-          )}
+          {!hasArchiveLink && <Tip>{t("no_link_tip")}</Tip>}
 
           {skipAlternateAssets && (
             <div className="load-required-files__skip-notice">
-              {"(Alternative files skipped)"}
+              {t("skip_alternates")}
             </div>
           )}
 
           <div className="load-required-files__buttons">
-            <button onClick={onClose}>{"Close"}</button>
+            <button onClick={onClose}>{t("close")}</button>
 
             {hasArchiveLink && (
               <button
@@ -114,7 +110,7 @@ export const LoadRequiredFiles = ({
                   )
                 }
               >
-                {"Download All"}
+                {t("download_all")}
               </button>
             )}
           </div>

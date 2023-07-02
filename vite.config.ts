@@ -1,10 +1,11 @@
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
 import postcssNesting from "postcss-nesting"
+import i18nextLoader from "vite-plugin-i18next-loader"
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), i18nextLoader({ paths: ["./src/i18n/locales"] })],
   css: {
     postcss: {
       plugins: [postcssNesting],

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 export const TimeAgo = ({ since }: { since: number }) => {
   const timeAgoFormatter = useMemo(() => {
@@ -6,6 +7,7 @@ export const TimeAgo = ({ since }: { since: number }) => {
   }, [])
 
   const [now, setNow] = useState(() => Date.now())
+  const { t } = useTranslation("time_ago")
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -19,7 +21,7 @@ export const TimeAgo = ({ since }: { since: number }) => {
     const secondsDiff = Math.round((since - now) / 1000)
     if (secondsDiff < -60)
       return timeAgoFormatter.format(Math.ceil(secondsDiff / 60), "minutes")
-    return "less than one minute ago"
+    return t("less_than_1_min_ago")
   }, [now, since])
 
   return <span>{timeText}</span>

@@ -1,6 +1,7 @@
 import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles/selectors"
+import { useTranslation } from "react-i18next"
 import "./index.css"
 
 type RequiredFilesProps = {
@@ -11,6 +12,7 @@ type RequiredFilesProps = {
 
 export const RequiredFiles = ({ coreName, onClick }: RequiredFilesProps) => {
   const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
+  const { t } = useTranslation("core_info")
 
   const foundFiles = useMemo(
     () =>
@@ -29,13 +31,21 @@ export const RequiredFiles = ({ coreName, onClick }: RequiredFilesProps) => {
 
   return (
     <div className="core-info__info-row">
-      <strong>{"Required Files:"}</strong>
+      <strong>
+        {t("required_files")}
+        {":"}
+      </strong>
       <div
         className={`required-files required-files--${
           full ? "full" : "missing"
         }`}
         onClick={onClick}
-      >{`${foundFiles.length} / ${requiredFiles.length} Files`}</div>
+      >
+        {t("required_files_count", {
+          count: foundFiles.length,
+          total: requiredFiles.length,
+        })}
+      </div>
     </div>
   )
 }

@@ -12,11 +12,13 @@ import { PlatformItem } from "./item"
 import "./index.css"
 import { selectedSubviewSelector } from "../../recoil/view/selectors"
 import { ImagePacks } from "./imagePacks"
+import { useTranslation } from "react-i18next"
 
 export const Platforms = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const platformIds = useRecoilValue(platformsListSelector)
   const { pushScroll, popScroll } = useSaveScroll()
+  const { t } = useTranslation("platforms")
 
   const [selectedPlatform, setSelectedPlatform] = useRecoilState(
     selectedSubviewSelector
@@ -46,13 +48,13 @@ export const Platforms = () => {
         controls={[
           {
             type: "search",
-            text: "Search",
+            text: t("controls.search"),
             value: searchQuery,
             onChange: (v) => setSearchQuery(v),
           },
           {
             type: "button",
-            text: "Image Packs",
+            text: t("controls.image_packs"),
             onClick: () => setImagePacksOpen(true),
           },
         ]}

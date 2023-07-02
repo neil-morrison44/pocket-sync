@@ -20,12 +20,14 @@ import { selectedSubviewSelector } from "../../recoil/view/selectors"
 import { useMultiExport } from "./hooks/useMultiExport"
 import { invokeDeleteFiles } from "../../utils/invokes"
 import { useInvalidateFileSystem } from "../../hooks/invalidation"
+import { useTranslation } from "react-i18next"
 
 export const Screenshots = () => {
   const [selected, setSelected] = useRecoilState(selectedSubviewSelector)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectMode, setSelectMode] = useState(false)
   const [selectedScreenshots, setSelectedScreenshots] = useState<string[]>([])
+  const { t } = useTranslation("screenshots")
 
   const screenshots = useRecoilValue(screenshotsListSelector)
   const exportMulti = useMultiExport()
@@ -98,7 +100,7 @@ export const Screenshots = () => {
   if (sortedScreenshots.length === 0) {
     return (
       <div className="screenshots screenshots--none">
-        <p>Once you take some screenshots they'll appear here</p>
+        <p>{t("no_screenshots")}</p>
       </div>
     )
   }
@@ -109,7 +111,7 @@ export const Screenshots = () => {
         controls={[
           {
             type: "search",
-            text: "Search",
+            text: t("controls.search"),
             value: searchQuery,
             onChange: (v) => {
               setSearchQuery(v)
@@ -118,21 +120,25 @@ export const Screenshots = () => {
           selectMode
             ? {
                 type: "button",
-                text: `Export Selected (${selectedScreenshots.length})`,
+                text: t("controls.export_selected", {
+                  count: selectedScreenshots.length,
+                }),
                 onClick: () => exportMulti(selectedScreenshots),
               }
             : undefined,
           selectMode
             ? {
                 type: "button",
-                text: `Delete Selected (${selectedScreenshots.length})`,
+                text: t("controls.delete_selected", {
+                  count: selectedScreenshots.length,
+                }),
                 onClick: () => deleteScreenshots(selectedScreenshots),
               }
             : undefined,
           {
             type: "checkbox",
             checked: selectMode,
-            text: "Select",
+            text: t("controls.select"),
             onChange: (checked) => {
               setSelectedScreenshots([])
               setSelectMode(checked)

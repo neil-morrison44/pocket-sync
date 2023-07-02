@@ -12,6 +12,7 @@ import { Suspense, useCallback, useState } from "react"
 import { Loader } from "../loader"
 import { invokeDeleteFiles, invokeDownloadFirmware } from "../../utils/invokes"
 import { useInvalidateFileSystem } from "../../hooks/invalidation"
+import { useTranslation, Trans } from "react-i18next"
 
 export const Firmware = () => {
   const currentFirmware = useRecoilValue(currentFirmwareVersionSelector)
@@ -22,10 +23,13 @@ export const Firmware = () => {
     latestFirmware.version
   )
   const [isDownloading, setIsDownloading] = useState(false)
+  const { t } = useTranslation("firmware")
 
   return (
     <div className="firmware">
-      <div className="firmware__current">{`Current Firmware: v${currentFirmware.version}`}</div>
+      <div className="firmware__current">
+        {t("current", { version: currentFirmware.version })}
+      </div>
 
       <FirmwareDownloaded downloading={isDownloading} />
 
@@ -35,14 +39,17 @@ export const Firmware = () => {
           value={selectedFirmware}
           onChange={({ target }) => setSelectedFirmware(target.value)}
         >
-          <option
-            value={latestFirmware.version}
-          >{`v${latestFirmware.version} (latest)`}</option>
-          <optgroup label="Previous Versions">
+          <option value={latestFirmware.version}>
+            {t("options.latest", { version: latestFirmware.version })}
+          </option>
+          <optgroup label={t("options.previous_versions")}>
             {firmwares.map((firmware) => (
-              <option value={firmware.version} key={firmware.version}>{`v${
-                firmware.version
-              } (${firmware.publishedAt.toLocaleDateString()})`}</option>
+              <option value={firmware.version} key={firmware.version}>
+                {t("options.older", {
+                  version: firmware.version,
+                  date: firmware.publishedAt,
+                })}
+              </option>
             ))}
           </optgroup>
         </select>
@@ -82,6 +89,7 @@ const DownloadButton = ({
   version,
 }: DownloadButtonProps) => {
   const invalidateFS = useInvalidateFileSystem()
+  const { t } = useTranslation("firmware")
 
   const firmwareDetails = useRecoilValue(
     FirmwareDetailsSelectorFamily({ version })
@@ -102,7 +110,7 @@ const DownloadButton = ({
   }, [firmwareDetails])
 
   if (!firmwareDetails.download_url) return null
-  return <button onClick={onDownload}>Load on to SD Card</button>
+  return <button onClick={onDownload}>{t("load_firmware")}</button>
 }
 
 type FirmwareDownloadedProps = {
@@ -112,6 +120,7 @@ type FirmwareDownloadedProps = {
 const FirmwareDownloaded = ({ downloading }: FirmwareDownloadedProps) => {
   const downloadedFirmware = useRecoilValue(downloadedFirmwareSelector)
   const invalidateFS = useInvalidateFileSystem()
+  const { t } = useTranslation("firmware")
 
   const onRemove = useCallback(async () => {
     if (downloadedFirmware) {
@@ -123,9 +132,7 @@ const FirmwareDownloaded = ({ downloading }: FirmwareDownloadedProps) => {
   if (!downloadedFirmware) {
     return (
       <div className="firmware__downloaded">
-        {downloading
-          ? "Downloading Firmware..."
-          : "No firmware file on the SD card waiting to be installed"}
+        {downloading ? t("downloading_firmware") : t("no_firmware_loaded")}
       </div>
     )
   }
@@ -133,11 +140,11 @@ const FirmwareDownloaded = ({ downloading }: FirmwareDownloadedProps) => {
   return (
     <div className="firmware__downloaded">
       <div>
-        <strong>{`Firmware ${downloadedFirmware} is on the SD card`}</strong>
-        <div>{"insert & turn the Pocket on to install"}</div>
+        <strong>{t("loaded_firmware", { version: downloadedFirmware })}</strong>
+        <div>{t("loaded_firmware_tip")}</div>
       </div>
 
-      <button onClick={onRemove}>Remove</button>
+      <button onClick={onRemove}>{t("remove_button")}</button>
     </div>
   )
 }

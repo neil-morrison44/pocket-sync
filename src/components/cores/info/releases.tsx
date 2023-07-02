@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm"
 import { useState } from "react"
 import { Link } from "../../link"
 import { GithubReleasesSelectorFamily } from "../../../recoil/github/selectors"
+import { useTranslation } from "react-i18next"
 
 import "./releases.css"
 
@@ -18,7 +19,7 @@ export const Releases = ({ inventoryItem }: ReleasesProps) => {
   if (inventoryItem.repository.platform !== "github") {
     throw new Error("Can't show non-github releases")
   }
-
+  const { t } = useTranslation("core_info")
   const [showAll, setShowAll] = useState(false)
 
   const githubReleases = useRecoilValue(
@@ -31,7 +32,7 @@ export const Releases = ({ inventoryItem }: ReleasesProps) => {
 
   return (
     <div>
-      <strong>Release History:</strong>
+      <strong>{t("releases.release_history")}:</strong>
       {githubReleases
         .slice(0, showAll ? Infinity : INITAL_COUNT)
         .map(({ id, name, body, tag_name, created_at }) => (
@@ -51,7 +52,7 @@ export const Releases = ({ inventoryItem }: ReleasesProps) => {
           role="button"
           onClick={() => setShowAll(true)}
         >
-          {"Show previous releases"}
+          {t("releases.show_previous")}
         </div>
       )}
     </div>

@@ -10,6 +10,7 @@ import { SearchContextProvider } from "../search/context"
 import { InstanceJson } from "./instanceJson"
 import { CleanFilesModal } from "./cleanFiles"
 import { CoreFolderItem } from "./item"
+import { useTranslation } from "react-i18next"
 
 export const Games = () => {
   const coresList = useRecoilValue(coresListSelector)
@@ -17,6 +18,7 @@ export const Games = () => {
   const [filterCategory, setFilterCategory] = useState<string>("All")
   const [cleanFilesOpen, setCleanFilesOpen] = useState(false)
   const [instanceJsonOpen, setInstanceJsonOpen] = useState(false)
+  const { t } = useTranslation("games")
 
   const refresh = useRecoilCallback(({ set }) => () => {
     set(fileSystemInvalidationAtom, Date.now())
@@ -52,30 +54,30 @@ export const Games = () => {
         controls={[
           {
             type: "search",
-            text: "Search",
+            text: t("controls.search"),
             value: searchQuery,
             onChange: (v) => setSearchQuery(v),
           },
           {
             type: "button",
-            text: "Clean Files",
+            text: t("controls.clean_files"),
             onClick: () => setCleanFilesOpen(true),
           },
           {
             type: "button",
-            text: "Instance JSON",
+            text: t("controls.instance_json"),
             onClick: () => setInstanceJsonOpen(true),
           },
           {
             type: "button",
-            text: "Refresh",
+            text: t("controls.refresh"),
             onClick: refresh,
           },
           {
             type: "select",
             options: categoryList,
             selected: filterCategory,
-            text: "Category",
+            text: t("controls.category"),
             onChange: (v) => setFilterCategory(v),
           },
         ]}

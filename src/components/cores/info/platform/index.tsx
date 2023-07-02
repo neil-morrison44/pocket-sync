@@ -4,6 +4,7 @@ import { PlatformInfoSelectorFamily } from "../../../../recoil/platforms/selecto
 import { currentViewAtom } from "../../../../recoil/view/atoms"
 import { PlatformId } from "../../../../types"
 import { Link } from "../../../link"
+import { useTranslation } from "react-i18next"
 
 import "./index.css"
 
@@ -15,8 +16,8 @@ type CorePlatformInfoProps = {
 
 export const CorePlatformInfo = ({ platformId }: CorePlatformInfoProps) => {
   const { platform } = useRecoilValue(PlatformInfoSelectorFamily(platformId))
-
   const setViewAndSubview = useSetRecoilState(currentViewAtom)
+  const { t } = useTranslation("core_info")
 
   const wikiLink = useMemo(() => {
     const searchTerm = HARD_TO_FIND_THINGS.includes(platform.name)
@@ -31,16 +32,11 @@ export const CorePlatformInfo = ({ platformId }: CorePlatformInfoProps) => {
   return (
     <div className="cores__platform-info">
       <div className="cores__platform-info-cateogry">{platform.category}</div>
-      <strong
-        className="cores__platform-info-name"
-        title="View / Edit platform info"
-      >
-        {platform.name}
-      </strong>
+      <strong className="cores__platform-info-name">{platform.name}</strong>
 
       <div>{`${platform.manufacturer}, ${platform.year}`}</div>
       <Link className="cores__platform-info-wiki" href={wikiLink}>
-        {"Wikipedia"}
+        {t("platform.wikipedia")}
       </Link>
 
       <div
@@ -48,9 +44,8 @@ export const CorePlatformInfo = ({ platformId }: CorePlatformInfoProps) => {
         onClick={() =>
           setViewAndSubview({ view: "Platforms", selected: platformId })
         }
-        title="View / Edit platform info"
       >
-        {"Edit"}
+        {t("platform.edit")}
       </div>
     </div>
   )

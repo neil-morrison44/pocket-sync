@@ -16,6 +16,7 @@ import {
 
 import "./index.css"
 import { useInvalidateFileSystem } from "../../../../hooks/invalidation"
+import { useTranslation } from "react-i18next"
 
 type ImageEditorProps = {
   onClose: () => void
@@ -38,6 +39,7 @@ export const ImageEditor = ({
   const [selectedStampIndex, setSelectedStampIndex] = useState(0)
   const [imageStamps, setImageStamps] = useState<ImageInfo[]>([])
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const { t } = useTranslation("image_editor")
 
   useSetCurrentImageAsStamp(imageStamps, currentImageSrc, setImageStamps)
   useCanvasToDragStamps(canvasRef, setImageStamps, selectedStampIndex)
@@ -102,7 +104,7 @@ export const ImageEditor = ({
                 ></img>
 
                 <div className="image-editor__stamp-controls">
-                  {"Scale"}
+                  {t("scale")}
                   <input
                     type="range"
                     className="image-editor__range"
@@ -116,7 +118,7 @@ export const ImageEditor = ({
                       })
                     }
                   ></input>
-                  {"Rotate"}
+                  {t("rotate")}
                   <input
                     type="range"
                     className="image-editor__range"
@@ -140,7 +142,7 @@ export const ImageEditor = ({
                       )
                     }}
                   >
-                    {"Remove"}
+                    {t("remove")}
                   </div>
                   <div
                     className="image-editor__stamp-control"
@@ -153,7 +155,7 @@ export const ImageEditor = ({
                       })
                     }
                   >
-                    {"Reset"}
+                    {t("reset")}
                   </div>
                 </div>
                 <div className="image-editor__stamp-controls">
@@ -174,12 +176,12 @@ export const ImageEditor = ({
             )
           })}
         </div>
-        <button onClick={addNewImage}>{"Import Image"}</button>
+        <button onClick={addNewImage}>{t("import_image")}</button>
       </div>
       <div className="image-editor__bottom-buttons">
-        <button onClick={saveBinary}>{"Save"}</button>
+        <button onClick={saveBinary}>{t("save")}</button>
         <button className="image-editor__close-button" onClick={onClose}>
-          {"Cancel"}
+          {t("cancel")}
         </button>
       </div>
     </Modal>
