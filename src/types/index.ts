@@ -204,10 +204,7 @@ export type SaveZipFile = {
 
 export type ArchiveFileMetadata = {
   name: string
-  size: string
-  md5: string
   crc32: string
-  sha1: string
 }
 
 export type ImagePack = {

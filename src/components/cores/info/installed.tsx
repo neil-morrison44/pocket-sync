@@ -1,4 +1,8 @@
-import { useRecoilValue, useRecoilValueLoadable } from "recoil"
+import {
+  useRecoilValue,
+  useRecoilValueLoadable,
+  useSetRecoilState,
+} from "recoil"
 import { CoreInfoSelectorFamily } from "../../../recoil/selectors"
 import { DownloadURLSelectorFamily } from "../../../recoil/inventory/selectors"
 import { Controls } from "../../controls"
@@ -23,6 +27,7 @@ import { CoreInputs } from "./coreInputs"
 import { CoreSettings } from "./coreSettings"
 import { RequiredFileInfoSelectorFamily } from "../../../recoil/requiredFiles/selectors"
 import { useTranslation } from "react-i18next"
+import { archiveBumpAtom } from "../../../recoil/archive/atoms"
 
 type CoreInfoProps = {
   coreName: string
@@ -40,6 +45,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   const downloadUrl = useRecoilValue(DownloadURLSelectorFamily(coreName))
 
   const [requiredFilesOpen, setRequiredFilesOpen] = useState(false)
+  const setArchiveBump = useSetRecoilState(archiveBumpAtom)
   const [inputsOpen, setInputsOpen] = useState(false)
   const [coreSettingsOpen, setCoreSettingsOpen] = useState(false)
   const { t } = useTranslation("core_info")
@@ -63,7 +69,10 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             ? {
                 type: "button",
                 text: t("controls.required_files"),
-                onClick: () => setRequiredFilesOpen(true),
+                onClick: () => {
+                  setArchiveBump((a) => a + 1)
+                  setRequiredFilesOpen(true)
+                },
               }
             : null,
           downloadUrl && {
@@ -156,7 +165,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
                   {t("required_files")}
                   {":"}
                 </strong>
-                Please wait, checking files...
+                {t("please_wait")}
               </div>
             }
           >

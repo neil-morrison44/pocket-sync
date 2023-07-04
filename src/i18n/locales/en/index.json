@@ -45,6 +45,7 @@
     "version": "Version",
     "author": "Author",
     "required_files": "Required Files",
+    "please_wait": "Please wait, checking files...",
     "required_files_count": "{count} / {total} Files",
     "release_date": "Release Date",
     "supports": "Supports",

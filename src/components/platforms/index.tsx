@@ -1,7 +1,10 @@
 import { Suspense, useMemo, useState } from "react"
-import { useRecoilState, useRecoilValue } from "recoil"
+import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
-import { platformsListSelector } from "../../recoil/platforms/selectors"
+import {
+  platformsListSelector,
+  platformsWithoutCoresSelector,
+} from "../../recoil/platforms/selectors"
 import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
@@ -13,6 +16,10 @@ import "./index.css"
 import { selectedSubviewSelector } from "../../recoil/view/selectors"
 import { ImagePacks } from "./imagePacks"
 import { useTranslation } from "react-i18next"
+import { confirm } from "@tauri-apps/api/dialog"
+import { invokeDeleteFiles } from "../../utils/invokes"
+import { useInvalidateFileSystem } from "../../hooks/invalidation"
+import { DataPacks } from "./dataPacks"
 
 export const Platforms = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -30,6 +37,32 @@ export const Platforms = () => {
   )
 
   const [imagePacksOpen, setImagePacksOpen] = useState(false)
+  const [dataPacksOpen, setDataPacksOpen] = useState(false)
+
+  const invalidateFS = useInvalidateFileSystem()
+
+  const removeCorelessPlatforms = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const platformsWithoutCores = await snapshot.getPromise(
+          platformsWithoutCoresSelector
+        )
+        console.log({ platformsWithoutCores })
+        const confirmation = await confirm(
+          `Delete ${platformsWithoutCores.length} unused Platforms?`
+        )
+
+        if (confirmation && platformsWithoutCores.length > 0) {
+          await invokeDeleteFiles(
+            platformsWithoutCores.map(
+              (platformId) => `Platforms/${platformId}.json`
+            )
+          )
+          invalidateFS()
+        }
+      },
+    []
+  )
 
   if (selectedPlatform)
     return (
@@ -54,6 +87,16 @@ export const Platforms = () => {
           },
           {
             type: "button",
+            text: "Remove Coreless",
+            onClick: removeCorelessPlatforms,
+          },
+          {
+            type: "button",
+            text: t("controls.data_packs"),
+            onClick: () => setDataPacksOpen(true),
+          },
+          {
+            type: "button",
             text: t("controls.image_packs"),
             onClick: () => setImagePacksOpen(true),
           },
@@ -63,6 +106,7 @@ export const Platforms = () => {
       {imagePacksOpen && (
         <ImagePacks onClose={() => setImagePacksOpen(false)} />
       )}
+      {dataPacksOpen && <DataPacks onClose={() => setDataPacksOpen(false)} />}
 
       <SearchContextProvider query={searchQuery}>
         <Grid>

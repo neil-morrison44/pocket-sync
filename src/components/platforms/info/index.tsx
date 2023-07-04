@@ -14,6 +14,7 @@ import { ImagePacks } from "../imagePacks"
 import { CoresForPlatform } from "./coresForPlatform"
 import { Editable } from "./editable"
 import { ImageEditor } from "./imageEditor"
+import { DataPacks } from "../dataPacks"
 
 type PlatformInfoProps = {
   id: PlatformId
@@ -32,6 +33,7 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
 
   const cats = useRecoilValue(allCategoriesSelector)
   const [imagePacksOpen, setImagePacksOpen] = useState(false)
+  const [dataPacksOpen, setDataPacksOpen] = useState(false)
   const updateValue = useUpdatePlatformValue(id)
 
   return (
@@ -42,6 +44,11 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
             type: "back-button",
             text: "Back to list",
             onClick: onBack,
+          },
+          {
+            type: "button",
+            text: "Data Packs",
+            onClick: () => setDataPacksOpen(true),
           },
           {
             type: "button",
@@ -56,6 +63,10 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
           onClose={() => setImagePacksOpen(false)}
           singlePlatformId={id}
         />
+      )}
+
+      {dataPacksOpen && (
+        <DataPacks onClose={() => setDataPacksOpen(false)} platformId={id} />
       )}
 
       {imageEditorOpen && (

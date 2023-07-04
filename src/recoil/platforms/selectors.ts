@@ -25,6 +25,17 @@ export const platformsListSelector = selector<PlatformId[]>({
   },
 })
 
+export const platformsWithoutCoresSelector = selector<PlatformId[]>({
+  key: "platformsWithoutCoresSelector",
+  get: async ({ get }) => {
+    const platforms = get(platformsListSelector)
+    return platforms.filter((platformId) => {
+      const cores = get(CoresForPlatformSelectorFamily(platformId))
+      return cores.length === 0
+    })
+  },
+})
+
 export const CoresForPlatformSelectorFamily = selectorFamily<
   string[],
   PlatformId
@@ -149,6 +160,39 @@ export const ImagePackBlobSelectorFamily = selectorFamily<
       })
 
       return fileBlob
+    },
+})
+
+export const DataPackJsonSelectorFamily = selectorFamily<
+  PlatformInfoJSON | null,
+  ImagePack & {
+    platformId: PlatformId
+  }
+>({
+  key: "DataPackJsonSelectorFamily",
+  get:
+    ({ owner, repository, variant, platformId }) =>
+    async ({ get }) => {
+      const zipBlob = get(
+        ImagePackBlobSelectorFamily({ owner, repository, variant })
+      )
+
+      if (!zipBlob) return null
+
+      const abortController = new AbortController()
+      const entries = await new zip.ZipReader(new zip.BlobReader(zipBlob), {
+        signal: abortController.signal,
+      }).getEntries({})
+
+      const platformJsonEntry = entries.find((e) =>
+        e.filename.endsWith(`Platforms/${platformId}.json`)
+      )
+
+      if (!platformJsonEntry || !platformJsonEntry.getData) return null
+      const data = await platformJsonEntry.getData(new zip.BlobWriter(), {})
+      const text = await data.text()
+
+      return JSON.parse(text)
     },
 })
 
