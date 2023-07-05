@@ -2,18 +2,26 @@ import { selector, selectorFamily } from "recoil"
 import { ArchiveFileMetadata, RequiredFileInfo } from "../../types"
 import { PocketSyncConfigSelector } from "../config/selectors"
 import { RequiredFileInfoSelectorFamily } from "../requiredFiles/selectors"
+import { archiveBumpAtom } from "./atoms"
+import { invokeFetchJSONURL } from "../../utils/invokes"
 
 export const archiveMetadataSelector = selector<ArchiveFileMetadata[]>({
   key: "archiveMetadataSelector",
   get: async ({ get }) => {
+    get(archiveBumpAtom)
     const config = get(PocketSyncConfigSelector)
     if (!config.archive_url) return []
-    // TODO: Support different archive sites
-    const url = config.archive_url.replace("download", "metadata")
-    const { files } = (await (await fetch(url)).json()) as {
-      files: ArchiveFileMetadata[]
-    }
 
+    let url = config.archive_url.replace("download", "metadata")
+    if (url.includes("updater.")) url = url + "/updater.php"
+
+    const { files } = await invokeFetchJSONURL<{
+      files: ArchiveFileMetadata[]
+    }>(url)
+
+    // const { files } = (await (await fetch(url)).json()) as {
+    //   files: ArchiveFileMetadata[]
+    // }
     return files
   },
 })

@@ -14,6 +14,8 @@ import { ImagePacks } from "../imagePacks"
 import { CoresForPlatform } from "./coresForPlatform"
 import { Editable } from "./editable"
 import { ImageEditor } from "./imageEditor"
+import { DataPacks } from "../dataPacks"
+import { useTranslation } from "react-i18next"
 
 type PlatformInfoProps = {
   id: PlatformId
@@ -24,6 +26,7 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
   const [imageEditorOpen, setImageEditorOpen] = useState(false)
   const { platform } = useRecoilValue(PlatformInfoSelectorFamily(id))
   const platformImage = useRecoilValue(PlatformImageSelectorFamily(id))
+  const { t } = useTranslation("platform_info")
 
   const category = useMemo(
     () => platform.category || "Uncategorised",
@@ -32,6 +35,7 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
 
   const cats = useRecoilValue(allCategoriesSelector)
   const [imagePacksOpen, setImagePacksOpen] = useState(false)
+  const [dataPacksOpen, setDataPacksOpen] = useState(false)
   const updateValue = useUpdatePlatformValue(id)
 
   return (
@@ -40,12 +44,17 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
         controls={[
           {
             type: "back-button",
-            text: "Back to list",
+            text: t("controls.back"),
             onClick: onBack,
           },
           {
             type: "button",
-            text: "Image Packs",
+            text: t("controls.data_packs"),
+            onClick: () => setDataPacksOpen(true),
+          },
+          {
+            type: "button",
+            text: t("controls.image_packs"),
             onClick: () => setImagePacksOpen(true),
           },
         ]}
@@ -56,6 +65,10 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
           onClose={() => setImagePacksOpen(false)}
           singlePlatformId={id}
         />
+      )}
+
+      {dataPacksOpen && (
+        <DataPacks onClose={() => setDataPacksOpen(false)} platformId={id} />
       )}
 
       {imageEditorOpen && (
@@ -74,7 +87,7 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
             onClick={() => setImageEditorOpen(true)}
             src={platformImage}
           />
-          <div className="platform__image-edit">Edit</div>
+          <div className="platform__image-edit">{t("edit")}</div>
         </div>
         <div className="cores__info-blurb">
           <Editable
@@ -104,7 +117,7 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
         </div>
 
         <div>
-          <h3 className="platform-info__cores-title">Cores: </h3>
+          <h3 className="platform-info__cores-title">{t("cores")}: </h3>
           <Suspense fallback={<Loader />}>
             <CoresForPlatform platformId={id} />
           </Suspense>
