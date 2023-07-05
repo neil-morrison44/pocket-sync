@@ -119,8 +119,17 @@
     }
   },
   "platforms": {
-    "controls": { "search": "Search", "image_packs": "Image Packs" },
+    "controls": {
+      "search": "Search",
+      "image_packs": "Image Packs",
+      "data_packs": "Data Packs"
+    },
     "image_packs": {
+      "current": "Current",
+      "apply_changes": "Apply {count, plural, =0 {0 Changes} one {1 Change} other {# Changes}}",
+      "close": "Close"
+    },
+    "data_packs": {
       "current": "Current",
       "apply_changes": "Apply {count, plural, =0 {0 Changes} one {1 Change} other {# Changes}}",
       "close": "Close"
@@ -128,6 +137,15 @@
     "edit": "Edit",
     "save": "Save",
     "cancel": "Cancel"
+  },
+  "platform_info": {
+    "controls": {
+      "back": "Back to list",
+      "data_packs": "Data Packs",
+      "image_packs": "Image Packs"
+    },
+    "cores": "Cores",
+    "edit": "Edit"
   },
   "save_states": {
     "controls": {

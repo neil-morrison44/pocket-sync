@@ -13,6 +13,7 @@ import "./index.css"
 import { invokeSaveFile } from "../../../utils/invokes"
 import { pocketPathAtom } from "../../../recoil/atoms"
 import { useInvalidateFileSystem } from "../../../hooks/invalidation"
+import { useTranslation } from "react-i18next"
 
 type DataPacksProps = {
   platformId?: PlatformId
@@ -23,6 +24,7 @@ export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
   const imagePacks = useRecoilValue(imagePackListSelector)
   const platformIds = useRecoilValue(platformsListSelector)
   const invalidateFS = useInvalidateFileSystem()
+  const { t } = useTranslation("platforms")
 
   const sortedPlatformIds = useMemo(() => {
     if (platformId) return [platformId]
@@ -92,10 +94,9 @@ export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
       </div>
       <div className="data-packs__buttons">
         <button onClick={apply}>
-          {"data_packs.apply"}
-          {applyCount}
+          {t("data_packs.apply_changes", { count: applyCount })}
         </button>
-        <button onClick={onClose}>{"data_packs.close"}</button>
+        <button onClick={onClose}>{t("data_packs.close")}</button>
       </div>
     </Modal>
   )
@@ -110,6 +111,7 @@ const CurrentJSON = ({
   selected: Boolean
   onClick: () => void
 }) => {
+  const { t } = useTranslation("platforms")
   const currentJson = useRecoilValue(PlatformInfoSelectorFamily(platformId))
   const { platform } = currentJson
 
@@ -120,7 +122,7 @@ const CurrentJSON = ({
       }`}
       onClick={onClick}
     >
-      <div>{`Current`}</div>
+      <div>{t("data_packs.current")}</div>
       <div className="cores__info-blurb">
         <strong>{platform.name}</strong>
         {platform.category ?? <div>{platform.category}</div>}
