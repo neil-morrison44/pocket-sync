@@ -9,6 +9,7 @@ export const VIEWS_LIST = [
   "Save States",
   "Platforms",
   "Firmware",
+  "Fetch",
   "Settings",
 ] as const
 

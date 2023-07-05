@@ -253,13 +253,17 @@ async fn install_archive_files(
                         failed_already.insert(file.filename);
                     } else {
                         let folder = pocket_path.join(file.path);
+                        let new_file_path = folder.join(&file.filename);
 
-                        if !folder.exists() {
-                            tokio::fs::create_dir_all(&folder).await.unwrap();
+                        if let Some(parent) = new_file_path.parent() {
+                            if !parent.exists() {
+                                tokio::fs::create_dir_all(&parent).await.unwrap();
+                            }
                         }
 
-                        let new_file_path = folder.join(&file.filename);
+                        dbg!(&new_file_path);
                         let mut dest = tokio::fs::File::create(&new_file_path).await.unwrap();
+
                         let content = r.bytes().await.unwrap();
                         let mut content_cusror = std::io::Cursor::new(content);
                         tokio::io::copy(&mut content_cusror, &mut dest)

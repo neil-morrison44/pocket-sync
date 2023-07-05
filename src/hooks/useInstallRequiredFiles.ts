@@ -17,13 +17,14 @@ export const useInstallRequiredFiles = () => {
   )
 
   const installRequiredFiles = useCallback(
-    async (files: RequiredFileInfo[]) => {
-      if (!archive_url)
+    async (files: RequiredFileInfo[], other_archive_url?: string) => {
+      let this_archive_url = other_archive_url ?? archive_url
+      if (!this_archive_url)
         throw new Error("Attempt to download without an `archive_url` set")
 
       const response = await invoke<boolean>("install_archive_files", {
         files,
-        archiveUrl: archive_url,
+        archiveUrl: this_archive_url,
       })
     },
     [archive_url]

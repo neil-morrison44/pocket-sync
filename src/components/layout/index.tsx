@@ -17,6 +17,7 @@ import { ZipInstall } from "../zipInstall"
 import "./index.css"
 import { Firmware } from "../firmware"
 import { useTranslation } from "react-i18next"
+import { Fetch } from "../fetch"
 
 export const Layout = () => {
   const [viewAndSubview, setViewAndSubview] = useRecoilState(currentViewAtom)
@@ -79,6 +80,7 @@ export const Layout = () => {
             {view === "Save States" && <SaveStates />}
             {view === "Firmware" && <Firmware />}
             {view === "Platforms" && <Platforms />}
+            {view === "Fetch" && <Fetch />}
           </Suspense>
         </ErrorBoundary>
       </div>

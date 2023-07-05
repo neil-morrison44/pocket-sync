@@ -1,0 +1,32 @@
+.fetch__list{
+  padding: 20px;
+}
+
+.fetch__list-item{
+  background-color: var(--info-colour);
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+}
+
+.fetch__status {
+  flex-grow: 1;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+  border-radius: 5px;
+  font-size: 1.25rem;
+}
+
+
+.fetch__status--none{
+  background-color: var(--red-colour);
+}
+
+.fetch__status--partial{
+  background-color: rgb(177 133 44);
+}
+
+.fetch__status--complete{
+  background-color: var(--green-colour);
+}

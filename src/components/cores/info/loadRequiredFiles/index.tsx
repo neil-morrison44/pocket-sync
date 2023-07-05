@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from "react"
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import { useMemo } from "react"
+import { useRecoilValue } from "recoil"
 import { useInstallRequiredFiles } from "../../../../hooks/useInstallRequiredFiles"
 import { RequiredFilesWithStatusSelectorFamily } from "../../../../recoil/archive/selectors"
 import {
@@ -13,7 +13,6 @@ import { useTranslation } from "react-i18next"
 
 import "./index.css"
 import { RequiredFileRow } from "./row"
-import { archiveBumpAtom } from "../../../../recoil/archive/atoms"
 
 const STATUS_SORT_ORDER = [
   "wrong",

@@ -1,9 +1,54 @@
 import { selector, selectorFamily } from "recoil"
 import { ArchiveFileMetadata, RequiredFileInfo } from "../../types"
 import { PocketSyncConfigSelector } from "../config/selectors"
-import { RequiredFileInfoSelectorFamily } from "../requiredFiles/selectors"
+import {
+  FileInfoSelectorFamily,
+  RequiredFileInfoSelectorFamily,
+} from "../requiredFiles/selectors"
 import { archiveBumpAtom } from "./atoms"
-import { invokeFetchJSONURL } from "../../utils/invokes"
+import {
+  invokeFetchJSONURL,
+  invokeListFiles,
+  invokeWalkDirListFiles,
+} from "../../utils/invokes"
+
+export const ArchiveMetadataSelectorFamily = selectorFamily<
+  ArchiveFileMetadata[],
+  { archiveName: string }
+>({
+  key: "ArchiveMetadataSelectorFamily",
+  get:
+    ({ archiveName }) =>
+    async ({ get }) => {
+      get(archiveBumpAtom)
+      const url = `https://archive.org/metadata/${archiveName}`
+      const { files } = await invokeFetchJSONURL<{
+        files: ArchiveFileMetadata[]
+      }>(url)
+
+      return files
+    },
+})
+
+export const PathFileInfoSelectorFamily = selectorFamily<
+  Omit<RequiredFileInfo, "type">[],
+  { path: string }
+>({
+  key: "PathFileInfoSelectorFamily",
+  get:
+    ({ path }) =>
+    async ({ get }) => {
+      const fileList = await invokeWalkDirListFiles(path, [])
+
+      const all = fileList.map((filename) =>
+        get(FileInfoSelectorFamily({ path, filename }))
+      )
+
+      console.log({ all })
+
+      return all
+    },
+})
 
 export const archiveMetadataSelector = selector<ArchiveFileMetadata[]>({
   key: "archiveMetadataSelector",
