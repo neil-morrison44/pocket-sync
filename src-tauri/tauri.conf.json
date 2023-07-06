@@ -16,7 +16,9 @@
         "scope": [
           "https://github.com/*",
           "https://api.github.com/*",
-          "https://raw.githubusercontent.com/*"
+          "https://raw.githubusercontent.com/*",
+          "https://archive.org/*",
+          "https://updater.retrodriven.com/*"
         ]
       },
       "fs": {

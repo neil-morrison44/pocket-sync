@@ -11,6 +11,7 @@ import {
   invokeListFiles,
   invokeWalkDirListFiles,
 } from "../../utils/invokes"
+import { ResponseType, getClient } from "@tauri-apps/api/http"
 
 export const ArchiveMetadataSelectorFamily = selectorFamily<
   ArchiveFileMetadata[],
@@ -22,10 +23,16 @@ export const ArchiveMetadataSelectorFamily = selectorFamily<
     async ({ get }) => {
       get(archiveBumpAtom)
       const url = `https://archive.org/metadata/${archiveName}`
-      const { files } = await invokeFetchJSONURL<{
-        files: ArchiveFileMetadata[]
-      }>(url)
 
+      const httpClient = await getClient()
+      const response = await httpClient.get<{
+        files: ArchiveFileMetadata[]
+      }>(`https://archive.org/metadata/${archiveName}`, {
+        timeout: 30,
+        responseType: ResponseType.JSON,
+      })
+
+      const { files } = response.data
       return files
     },
 })
@@ -60,13 +67,18 @@ export const archiveMetadataSelector = selector<ArchiveFileMetadata[]>({
     let url = config.archive_url.replace("download", "metadata")
     if (url.includes("updater.")) url = url + "/updater.php"
 
-    const { files } = await invokeFetchJSONURL<{
+    const httpClient = await getClient()
+    const response = await httpClient.get<{
       files: ArchiveFileMetadata[]
-    }>(url)
+    }>(url, {
+      timeout: 30,
+      responseType: ResponseType.JSON,
+    })
 
     // const { files } = (await (await fetch(url)).json()) as {
     //   files: ArchiveFileMetadata[]
     // }
+    const { files } = response.data
     return files
   },
 })

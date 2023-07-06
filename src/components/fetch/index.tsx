@@ -1,4 +1,4 @@
-import React, { ReactNode, Suspense, useMemo } from "react"
+import React, { ReactNode, Suspense, useMemo, useState } from "react"
 
 import "./index.css"
 import { useRecoilValue } from "recoil"
@@ -11,25 +11,42 @@ import { Progress } from "../progress"
 import { RequiredFileInfo } from "../../types"
 import { Modal } from "../modal"
 import { useInvalidateFileSystem } from "../../hooks/invalidation"
+import { Controls } from "../controls"
+import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
+import { NewFetch } from "./new"
 
 type FileStatus = "complete" | "partial" | "none" | "waiting"
 
-type FetchTypes = { type: string; destination: string } & (
-  | { type: "archive.org"; name: string; extensions?: string[] }
-  | { type: "filesystem"; path: string }
-)
-
 export const Fetch = () => {
-  const list: FetchTypes[] = [
-    {
-      type: "archive.org",
-      name: "fpga-gnw-opt",
-      destination: "Assets/gameandwatch/common/optimised",
-    },
-  ]
+  const config = useRecoilValue(PocketSyncConfigSelector)
+
+  const [newFetchOpen, setNewFetchOpen] = useState<boolean>(false)
+  // const list: FetchTypes[] = [
+  //   {
+  //     type: "archive.org",
+  //     name: "fpga-gnw-opt",
+  //     destination: "Assets/gameandwatch/common/optimised",
+  //   },
+  // ]
+  const list = config.fetches || []
 
   return (
     <div className="fetch">
+      <Controls
+        controls={[
+          {
+            type: "button",
+            text: "Add fetch location",
+            onClick: () => {
+              setNewFetchOpen(true)
+              console.log("hello")
+            },
+          },
+        ]}
+      />
+
+      {newFetchOpen && <NewFetch onClose={() => setNewFetchOpen(false)} />}
+
       <div className="fetch__list">
         {list.map((item) => {
           switch (item.type) {

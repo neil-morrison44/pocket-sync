@@ -182,12 +182,18 @@ export type InstallDetails = {
   files: { path: string; exists: boolean }[]
 }
 
+export type FetchType = { type: string; destination: string } & (
+  | { type: "archive.org"; name: string; extensions?: string[] }
+  | { type: "filesystem"; path: string; extensions?: string[] }
+)
+
 export type PocketSyncConfig = {
   version: string
   colour: "white" | "black"
   archive_url: string | null
   saves: SaveConfig[]
   skipAlternateAssets?: boolean
+  fetches?: FetchType[]
 }
 
 export type SaveConfig = {

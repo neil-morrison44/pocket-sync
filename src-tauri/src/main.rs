@@ -534,27 +534,6 @@ async fn clear_file_cache(app_handle: tauri::AppHandle) -> Result<(), String> {
     Ok(())
 }
 
-#[tauri::command(async)]
-async fn fetch_json_url(url: &str) -> Result<serde_json::Value, String> {
-    let client = reqwest::Client::new();
-    let response = client.get(url).send().await;
-
-    match response {
-        Ok(res) => {
-            if res.status().is_success() {
-                let json = res.json::<serde_json::Value>().await;
-                match json {
-                    Ok(data) => Ok(data),
-                    Err(_) => Err("Failed to parse JSON data".to_string()),
-                }
-            } else {
-                Err(format!("Request failed with status code: {}", res.status()))
-            }
-        }
-        Err(err) => Err(format!("Failed to send request: {}", err)),
-    }
-}
-
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -586,8 +565,7 @@ fn main() {
             get_firmware_versions_list,
             get_firmware_release_notes,
             download_firmware,
-            clear_file_cache,
-            fetch_json_url
+            clear_file_cache
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())

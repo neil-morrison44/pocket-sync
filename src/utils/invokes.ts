@@ -165,8 +165,3 @@ export const invokeDownloadFirmware = async (
 }
 
 export const invokeClearFileCache = async () => await invoke("clear_file_cache")
-
-export const invokeFetchJSONURL = async <T>(url: string): Promise<T> => {
-  const result = await invoke("fetch_json_url", { url })
-  return result as T
-}
