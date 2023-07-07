@@ -1,5 +1,10 @@
+
+
 .fetch__list{
   padding: 20px;
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
 }
 
 .fetch__list-item{
@@ -9,13 +14,18 @@
   display: flex;
 }
 
+.fetch__type-select{
+  font-size: 1.5rem;
+}
+
 .fetch__status {
-  flex-grow: 1;
   justify-self: center;
   align-self: center;
   text-align: center;
   border-radius: 5px;
   font-size: 1.25rem;
+  padding: 10px;
+  margin-inline-start: auto;
 }
 
 
@@ -29,4 +39,84 @@
 
 .fetch__status--complete{
   background-color: var(--green-colour);
+}
+
+.fetch__new{
+  display: flex;
+  gap: 20px;
+}
+
+.fetch__folder-picker{
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.fetch__text-input{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  > input {
+    font-size: 1rem;
+    padding: 5px 10px;
+  }
+}
+
+.fetch__folder-picker-value{
+  box-sizing: border-box;
+  font-size: 1.25rem;
+  background-color: rgb(255 255 255 / 10%);
+  display: flex;
+  align-items: center;
+  padding-inline: 10px;
+  cursor: pointer;
+  flex-grow: 1;
+}
+
+.fetch__folder-button{
+  flex-basis: 25%;
+}
+
+.fetch__list-input-list{
+  width: 50%;
+  appearance: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fetch__list-input-list-item{
+  appearance: none;
+  margin: 0;
+  border-radius: 5px;
+  background-color: rgb(255 255 255 / 20%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 20px;
+  padding-block: 5px;
+}
+
+.fetch__list-input-add{
+  display: flex;
+  gap: 20px;
+  width: 50%;
+
+  > * {
+    /* flex-grow: 1; */
+    flex-basis: min-content;
+    font-size: 1rem;
+  }
+
+  > input {
+    flex-grow: 1;
+    padding-inline: 20px;
+  }
+}
+
+.fetch__close-button{
+  margin-block-start: auto;
 }

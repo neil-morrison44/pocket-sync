@@ -19,16 +19,10 @@ type FileStatus = "complete" | "partial" | "none" | "waiting"
 
 export const Fetch = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
-
   const [newFetchOpen, setNewFetchOpen] = useState<boolean>(false)
-  // const list: FetchTypes[] = [
-  //   {
-  //     type: "archive.org",
-  //     name: "fpga-gnw-opt",
-  //     destination: "Assets/gameandwatch/common/optimised",
-  //   },
-  // ]
   const list = config.fetches || []
+
+  console.log({ list })
 
   return (
     <div className="fetch">
@@ -37,10 +31,7 @@ export const Fetch = () => {
           {
             type: "button",
             text: "Add fetch location",
-            onClick: () => {
-              setNewFetchOpen(true)
-              console.log("hello")
-            },
+            onClick: () => setNewFetchOpen(true),
           },
         ]}
       />
@@ -52,10 +43,35 @@ export const Fetch = () => {
           switch (item.type) {
             case "archive.org":
               return <ArchiveOrgItem key={item.name} {...item} />
+            case "filesystem":
+              return (
+                <FileSystemItem
+                  key={`${item.path}->${item.destination}`}
+                  {...item}
+                />
+              )
             default:
               return null
           }
         })}
+      </div>
+    </div>
+  )
+}
+
+const FileSystemItem = ({
+  path,
+  destination,
+}: {
+  path: string
+  destination: string
+}) => {
+  return (
+    <div className="fetch__list-item">
+      <div>
+        <div className="fetch__list-item-type">Local Files</div>
+        <div className="fetch__list-item-name">{path}</div>
+        <div className="fetch__list-item-destination">{destination}</div>
       </div>
     </div>
   )
@@ -106,13 +122,13 @@ const ArchiveOrgItem = ({
         >
           {(status, files) => (
             <>
-              <FileStatus status={status} />
+              <FileStatus status={status} files={files} />
 
               <button
                 onClick={async () => {
                   console.log({ files })
                   await installRequiredFiles(
-                    files,
+                    files.filter(({ exists }) => !exists),
                     `https://archive.org/download/${name}`
                   )
                   invalidateFileSystem()
@@ -146,38 +162,61 @@ const ArchiveOrgStatus = ({
   )
   const fileInfo = useRecoilValue(PathFileInfoSelectorFamily({ path }))
 
+  const filteredMetadata = useMemo(
+    () =>
+      metadata.filter((m) => {
+        if (!extensions || extensions.length === 0) return true
+        return extensions.some((e) => m.name.endsWith(e))
+      }),
+    [metadata, extensions]
+  )
+
+  console.log({ filteredMetadata, fileInfo })
+
+  const files: RequiredFileInfo[] = useMemo(() => {
+    return filteredMetadata.map((m) => {
+      const exists =
+        fileInfo.find((fi) => {
+          if (`/${m.name}` === fi.filename.replace(/\\\//g, "/"))
+            return fi.crc32 && m.crc32.endsWith(fi.crc32.toString(16))
+          return false
+        }) !== undefined
+
+      return {
+        filename: m.name,
+        path,
+        exists,
+        type: "core",
+      }
+    })
+  }, [filteredMetadata, path])
+
   const status: FileStatus = useMemo(() => {
     // do this better (needs to take crc32 into account)
     if (fileInfo.length === 0) return "none"
-    if (fileInfo.length === metadata.length) return "complete"
+    if (files.every(({ exists }) => exists)) return "complete"
     return "partial"
-  }, [metadata, fileInfo])
+  }, [metadata, fileInfo, files])
 
-  console.log({ metadata, fileInfo })
-
-  const files: RequiredFileInfo[] = useMemo(() => {
-    return metadata
-      .filter((m) => {
-        if (!extensions || extensions.length === 0) return true
-        return extensions.some((e) => m.name.endsWith(e))
-      })
-      .map((m) => {
-        return {
-          filename: m.name,
-          path: path,
-          // this should check if the file exists & matches the crc32 and be used to filter
-          // out already downloaded ones
-          exists: false,
-          type: "core",
-        }
-      })
-  }, [metadata, path])
+  console.log({ files })
 
   return <>{children(status, files)}</>
 }
 
-const FileStatus = ({ status }: { status: FileStatus }) => {
+const FileStatus = ({
+  status,
+  files,
+}: {
+  status: FileStatus
+  files: RequiredFileInfo[]
+}) => {
+  const statusText = useMemo(() => {
+    return `${files.filter(({ exists }) => exists).length} / ${
+      files.length
+    } files`
+  }, [files])
+
   return (
-    <div className={`fetch__status fetch__status--${status}`}>{status}</div>
+    <div className={`fetch__status fetch__status--${status}`}>{statusText}</div>
   )
 }

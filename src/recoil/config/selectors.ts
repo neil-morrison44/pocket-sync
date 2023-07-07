@@ -42,18 +42,16 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
     return readJSONFile<PocketSyncConfig>("pocket-sync.json")
   },
 
-  set: async ({ set, get }, newValue) => {
+  set: ({ set, get }, newValue) => {
     if (newValue instanceof DefaultValue) return
-
     const pocketPath = get(pocketPathAtom)
     const encoder = new TextEncoder()
-
-    await invokeSaveFile(
+    invokeSaveFile(
       `${pocketPath}/pocket-sync.json`,
       encoder.encode(JSON.stringify(newValue, null, 2))
-    )
-
-    set(configInvalidationAtom, (v) => v + 1)
+    ).then(() => {
+      set(configInvalidationAtom, (v) => v + 1)
+    })
   },
 })
 

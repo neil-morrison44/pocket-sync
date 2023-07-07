@@ -20,6 +20,7 @@ import {
 import { AUTHOUR_IMAGE, IGNORE_INSTANCE_JSON_LIST } from "../values"
 import { readJSONFile } from "../utils/readJSONFile"
 import { skipAlternateAssetsSelector } from "./config/selectors"
+import { path } from "@tauri-apps/api"
 
 export const DataJSONSelectorFamily = selectorFamily<DataJSON, string>({
   key: "DataJSONSelectorFamily",
@@ -153,4 +154,9 @@ export const CleanableFilesSelectorFamily = selectorFamily<string[], string>({
       const files = await invokeFindCleanableFiles(path)
       return files
     },
+})
+
+export const homeDirSelector = selector<string>({
+  key: "homeDirSelector",
+  get: () => path.homeDir(),
 })
