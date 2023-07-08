@@ -15,7 +15,7 @@ use install_zip::start_zip_thread;
 use save_sync_session::start_mister_save_sync_session;
 use saves_zip::{
     build_save_zip, read_save_zip_list, read_saves_in_folder, read_saves_in_zip,
-    restore_save_from_zip, SaveZipFile,
+    remove_leading_slash, restore_save_from_zip, SaveZipFile,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
@@ -172,10 +172,13 @@ async fn walkdir_list_files(
     let pocket_path = state.0.pocket_path.read().await;
     let dir_path = match off_pocket {
         Some(true) => PathBuf::from(path),
-        None | Some(false) => pocket_path.join(path),
+        None | Some(false) => pocket_path.join(remove_leading_slash(path)),
     };
 
+    dbg!(&dir_path);
+
     if !dir_path.exists() {
+        println!("Doesn't exist");
         return Ok(vec![]);
     }
 

@@ -239,7 +239,7 @@ async fn prune_zips(zip_path: &Path, max_count: usize) -> Result<(), Box<dyn err
     Ok(())
 }
 
-fn remove_leading_slash(value: &str) -> String {
+pub fn remove_leading_slash(value: &str) -> String {
     let mut result = String::new();
     let mut chars = value.chars();
 
