@@ -107,7 +107,7 @@ export const NewFetchArchive = ({ addFetch }: NewFetchTypeProps) => {
         <input
           type="text"
           placeholder=""
-          value={info.name}
+          value={info.name ?? ""}
           onChange={(e) => setInfo((i) => ({ ...i, name: e.target.value }))}
         />
       </label>

@@ -302,6 +302,7 @@ const ArchiveOrgStatus = ({
   const filteredMetadata = useMemo(
     () =>
       metadata.filter((m) => {
+        if (!m.crc32) return false
         if (!extensions || extensions.length === 0) return true
         return extensions.some((e) => m.name.endsWith(e))
       }),

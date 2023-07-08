@@ -176,7 +176,6 @@ async fn walkdir_list_files(
     };
 
     if !dir_path.exists() {
-        println!("Doesn't exist");
         return Ok(vec![]);
     }
 
