@@ -1,9 +1,56 @@
 import { selector, selectorFamily } from "recoil"
 import { ArchiveFileMetadata, RequiredFileInfo } from "../../types"
 import { PocketSyncConfigSelector } from "../config/selectors"
-import { RequiredFileInfoSelectorFamily } from "../requiredFiles/selectors"
+import {
+  FileInfoSelectorFamily,
+  RequiredFileInfoSelectorFamily,
+} from "../requiredFiles/selectors"
 import { archiveBumpAtom } from "./atoms"
-import { invokeFetchJSONURL } from "../../utils/invokes"
+import { invokeWalkDirListFiles } from "../../utils/invokes"
+import { ResponseType, getClient } from "@tauri-apps/api/http"
+import { fileSystemInvalidationAtom } from "../atoms"
+
+export const ArchiveMetadataSelectorFamily = selectorFamily<
+  ArchiveFileMetadata[],
+  { archiveName: string }
+>({
+  key: "ArchiveMetadataSelectorFamily",
+  get:
+    ({ archiveName }) =>
+    async ({ get }) => {
+      get(archiveBumpAtom)
+      const url = `https://archive.org/metadata/${archiveName}`
+
+      const httpClient = await getClient()
+      const response = await httpClient.get<{
+        files: ArchiveFileMetadata[]
+      }>(`https://archive.org/metadata/${archiveName}`, {
+        timeout: 30,
+        responseType: ResponseType.JSON,
+      })
+
+      const { files } = response.data
+      return files
+    },
+})
+
+export const PathFileInfoSelectorFamily = selectorFamily<
+  Omit<RequiredFileInfo, "type">[],
+  { path: string; offPocket?: boolean }
+>({
+  key: "PathFileInfoSelectorFamily",
+  get:
+    ({ path, offPocket }) =>
+    async ({ get }) => {
+      get(fileSystemInvalidationAtom)
+      const fileList = await invokeWalkDirListFiles(path, [], offPocket)
+
+      const all = fileList.map((filename) =>
+        get(FileInfoSelectorFamily({ path, filename }))
+      )
+      return all
+    },
+})
 
 export const archiveMetadataSelector = selector<ArchiveFileMetadata[]>({
   key: "archiveMetadataSelector",
@@ -15,13 +62,18 @@ export const archiveMetadataSelector = selector<ArchiveFileMetadata[]>({
     let url = config.archive_url.replace("download", "metadata")
     if (url.includes("updater.")) url = url + "/updater.php"
 
-    const { files } = await invokeFetchJSONURL<{
+    const httpClient = await getClient()
+    const response = await httpClient.get<{
       files: ArchiveFileMetadata[]
-    }>(url)
+    }>(url, {
+      timeout: 30,
+      responseType: ResponseType.JSON,
+    })
 
     // const { files } = (await (await fetch(url)).json()) as {
     //   files: ArchiveFileMetadata[]
     // }
+    const { files } = response.data
     return files
   },
 })

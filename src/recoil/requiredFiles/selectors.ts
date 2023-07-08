@@ -12,16 +12,15 @@ import { fileSystemInvalidationAtom } from "../atoms"
 import { skipAlternateAssetsSelector } from "../config/selectors"
 import { DataJSONSelectorFamily, CoreInfoSelectorFamily } from "../selectors"
 
-const SingleRequiredFileInfo = selectorFamily<
-  RequiredFileInfo,
-  { filename: string | undefined; path: string; type: "core" | "instance" }
+export const FileInfoSelectorFamily = selectorFamily<
+  Omit<RequiredFileInfo, "type">,
+  { filename: string | undefined; path: string }
 >({
-  key: "SingleRequiredFileInfo",
+  key: "FileInfoSelectorFamily",
   get:
-    ({ filename, path, type }) =>
+    ({ filename, path }) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-
       if (!filename) throw new Error("Attempting to find empty file")
 
       const fullPath = `${path}/${filename}`
@@ -35,8 +34,21 @@ const SingleRequiredFileInfo = selectorFamily<
         path,
         exists,
         crc32,
-        type,
       }
+    },
+})
+
+const SingleRequiredFileInfo = selectorFamily<
+  RequiredFileInfo,
+  { filename: string | undefined; path: string; type: "core" | "instance" }
+>({
+  key: "SingleRequiredFileInfo",
+  get:
+    ({ filename, path, type }) =>
+    async ({ get }) => {
+      get(fileSystemInvalidationAtom)
+      const info = get(FileInfoSelectorFamily({ filename, path }))
+      return { ...info, type }
     },
 })
 

@@ -47,7 +47,7 @@ export const Platforms = () => {
         const platformsWithoutCores = await snapshot.getPromise(
           platformsWithoutCoresSelector
         )
-        console.log({ platformsWithoutCores })
+
         const confirmation = await confirm(
           `Delete ${platformsWithoutCores.length} unused Platforms?`
         )

@@ -1,4 +1,4 @@
-import { selector } from "recoil"
+import { DefaultValue, selector } from "recoil"
 import { PocketSyncConfig } from "../../types"
 import { invokeFileExists, invokeSaveFile } from "../../utils/invokes"
 import { readJSONFile } from "../../utils/readJSONFile"

@@ -166,10 +166,14 @@ async fn list_files(
 async fn walkdir_list_files(
     path: &str,
     extensions: Vec<&str>,
+    off_pocket: Option<bool>,
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<Vec<String>, ()> {
     let pocket_path = state.0.pocket_path.read().await;
-    let dir_path = pocket_path.join(path);
+    let dir_path = match off_pocket {
+        Some(true) => PathBuf::from(path),
+        None | Some(false) => pocket_path.join(path),
+    };
 
     if !dir_path.exists() {
         return Ok(vec![]);
@@ -253,12 +257,13 @@ async fn install_archive_files(
                         failed_already.insert(file.filename);
                     } else {
                         let folder = pocket_path.join(file.path);
-
-                        if !folder.exists() {
-                            tokio::fs::create_dir_all(&folder).await.unwrap();
-                        }
-
                         let new_file_path = folder.join(&file.filename);
+
+                        if let Some(parent) = new_file_path.parent() {
+                            if !parent.exists() {
+                                tokio::fs::create_dir_all(&parent).await.unwrap();
+                            }
+                        }
                         let mut dest = tokio::fs::File::create(&new_file_path).await.unwrap();
                         let content = r.bytes().await.unwrap();
                         let mut content_cusror = std::io::Cursor::new(content);
@@ -370,6 +375,19 @@ async fn delete_files(
         .collect();
 
     futures::future::join_all(tasks).await;
+    Ok(true)
+}
+
+#[tauri::command(async)]
+async fn copy_files(copies: Vec<(&str, &str)>) -> Result<bool, ()> {
+    for (origin, destination) in copies {
+        let origin = PathBuf::from(origin);
+        let destination = PathBuf::from(destination);
+        if let Err(err) = tokio::fs::copy(origin, destination).await {
+            println!("{}", err);
+        }
+    }
+
     Ok(true)
 }
 
@@ -530,27 +548,6 @@ async fn clear_file_cache(app_handle: tauri::AppHandle) -> Result<(), String> {
     Ok(())
 }
 
-#[tauri::command(async)]
-async fn fetch_json_url(url: &str) -> Result<serde_json::Value, String> {
-    let client = reqwest::Client::new();
-    let response = client.get(url).send().await;
-
-    match response {
-        Ok(res) => {
-            if res.status().is_success() {
-                let json = res.json::<serde_json::Value>().await;
-                match json {
-                    Ok(data) => Ok(data),
-                    Err(_) => Err("Failed to parse JSON data".to_string()),
-                }
-            } else {
-                Err(format!("Request failed with status code: {}", res.status()))
-            }
-        }
-        Err(err) => Err(format!("Failed to send request: {}", err)),
-    }
-}
-
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -573,6 +570,7 @@ fn main() {
             restore_save,
             create_folder_if_missing,
             delete_files,
+            copy_files,
             find_cleanable_files,
             list_instance_packageable_cores,
             run_packager_for_core,
@@ -582,8 +580,7 @@ fn main() {
             get_firmware_versions_list,
             get_firmware_release_notes,
             download_firmware,
-            clear_file_cache,
-            fetch_json_url
+            clear_file_cache
         ])
         .setup(|app| start_threads(&app))
         .run(tauri::generate_context!())
