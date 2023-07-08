@@ -23,7 +23,7 @@ export const ZipInstallInner = ({
   title,
 }: InstallZipEventPayload) => {
   const tree = useTree(files)
-  const { allowedFiles, toggleFile } = useAllowedFiles(files)
+  const { allowedFiles, toggleFile, toggleDir } = useAllowedFiles(files)
   const { confirm, cancel, handleMovedFiles, setHandleMovedFiles } =
     useZipInstallButtons(allowedFiles)
 
@@ -50,6 +50,7 @@ export const ZipInstallInner = ({
               allowed={allowedFiles}
               defaultExpanded
               toggleFile={toggleFile}
+              toggleDir={toggleDir}
             />
           ))}
       </div>

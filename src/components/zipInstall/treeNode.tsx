@@ -6,24 +6,26 @@ export const TreeNode = ({
   allowed,
   defaultExpanded = false,
   toggleFile,
+  toggleDir,
 }: {
   node: FileTreeNode
   defaultExpanded?: boolean
   allowed: string[]
   toggleFile: (path: string) => void
+  toggleDir: (node: FileTreeNode) => void
 }) => {
   const [expanded, setExpanded] = useState(defaultExpanded)
 
   return (
     <div className="zip-install__tree-node">
       <div className="zip-install__tree-node-info">
-        {!node.is_dir && (
-          <input
-            type="checkbox"
-            checked={allowed.includes(node.full)}
-            onChange={() => toggleFile(node.full)}
-          ></input>
-        )}
+        <input
+          type="checkbox"
+          checked={allowed.includes(node.full)}
+          onChange={() => {
+            node.is_dir ? toggleDir(node) : toggleFile(node.full)
+          }}
+        ></input>
         <div
           className="zip-install__tree-node-name"
           onClick={() => setExpanded((e) => !e)}
@@ -47,6 +49,7 @@ export const TreeNode = ({
             key={n.full}
             allowed={allowed}
             toggleFile={toggleFile}
+            toggleDir={toggleDir}
           />
         ))}
     </div>
