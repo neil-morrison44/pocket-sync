@@ -116,7 +116,6 @@
   width: 50%;
 
   > * {
-    /* flex-grow: 1; */
     flex-basis: min-content;
     font-size: 1rem;
   }
