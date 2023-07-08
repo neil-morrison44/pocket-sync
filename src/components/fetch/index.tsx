@@ -255,7 +255,7 @@ const ArchiveOrgStatus = ({
         type: "core",
       }
     })
-  }, [filteredMetadata, destination])
+  }, [filteredMetadata, fileInfo, destination])
 
   const status: FileStatus = useMemo(() => {
     // do this better (needs to take crc32 into account)
