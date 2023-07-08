@@ -254,6 +254,7 @@
     "save_states": "Save States",
     "platforms": "Platforms",
     "firmware": "Firmware",
+    "fetch": "Fetch",
     "settings": "Settings"
   },
   "image_editor": {
@@ -264,5 +265,30 @@
     "save": "Save",
     "cancel": "Cancel",
     "import_image": "Import Image"
+  },
+  "fetch": {
+    "controls": {
+      "add_fetch_item": "Add new fetch",
+      "refresh": "Refresh"
+    },
+    "types": {
+      "archive_org": "Internet Archive",
+      "filesystem": "Local Files"
+    },
+    "file_count": "{count} / {total, plural, one {# File} other {# Files}",
+    "loading": "loading...",
+    "fetch_button": "Fetch",
+    "remove_button": "Remove",
+    "remove_confirm": "This'll remove the fetch item, but not the files. Are you sure?",
+    "new": {
+      "title": "Add new Fetch",
+      "origin": "Origin Folder",
+      "destination": "Destination Folder",
+      "archive_name": "Archive name: <i>https://archive.org/download/[this bit here]</i>",
+      "extensions": "Limit to File Extensions:",
+      "add_fetch": "Add fetch",
+      "add_extension": "Add",
+      "close": "Close"
+    }
   }
 }

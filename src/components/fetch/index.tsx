@@ -1,4 +1,10 @@
-import React, { ReactNode, Suspense, useCallback, useMemo, useState } from "react"
+import React, {
+  ReactNode,
+  Suspense,
+  useCallback,
+  useMemo,
+  useState,
+} from "react"
 
 import "./index.css"
 import { useRecoilValue, useSetRecoilState } from "recoil"
@@ -10,7 +16,10 @@ import { useInstallRequiredFiles } from "../../hooks/useInstallRequiredFiles"
 import { Progress } from "../progress"
 import { FileCopy, RequiredFileInfo } from "../../types"
 import { Modal } from "../modal"
-import { useInvalidateConfig, useInvalidateFileSystem } from "../../hooks/invalidation"
+import {
+  useInvalidateConfig,
+  useInvalidateFileSystem,
+} from "../../hooks/invalidation"
 import { Controls } from "../controls"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { NewFetch } from "./new"
@@ -20,6 +29,8 @@ import { comparePaths } from "../../utils/comparePaths"
 import { splitAsPath } from "../../utils/splitAsPath"
 import { archiveBumpAtom } from "../../recoil/archive/atoms"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
+import { confirm } from "@tauri-apps/api/dialog"
+import { useTranslation } from "react-i18next"
 
 type FileStatus = "complete" | "partial" | "none" | "waiting"
 
@@ -27,19 +38,25 @@ export const Fetch = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
   const updateConfig = useUpdateConfig()
   const [newFetchOpen, setNewFetchOpen] = useState<boolean>(false)
+  const { t } = useTranslation("fetch")
 
   const invalidateFileSystem = useInvalidateFileSystem()
   const invalidateConfig = useInvalidateConfig()
   const setArchiveBumpAtom = useSetRecoilState(archiveBumpAtom)
   const list = config.fetches || []
 
-  const removeItem = useCallback((index: number) => {
-    updateConfig("fetches", (fetches) => {
-      const clonedFetches = [...(fetches ?? [])]
-      clonedFetches.splice(index)
-      return clonedFetches
-    })
-  }, [updateConfig])
+  const removeItem = useCallback(
+    async (index: number) => {
+      const confirmed = await confirm(t("remove_confirm"), { type: "warning" })
+      if (!confirmed) return
+      updateConfig("fetches", (fetches) => {
+        const clonedFetches = [...(fetches ?? [])]
+        clonedFetches.splice(index)
+        return clonedFetches
+      })
+    },
+    [updateConfig]
+  )
 
   return (
     <div className="fetch">
@@ -47,14 +64,18 @@ export const Fetch = () => {
         controls={[
           {
             type: "button",
-            text: "Add fetch location",
+            text: t("controls.add_fetch_item"),
             onClick: () => setNewFetchOpen(true),
           },
-          {type: "button", text: "Refresh", onClick: () => {
-            invalidateConfig()
-            invalidateFileSystem()
-            setArchiveBumpAtom((c) => c + 1)
-          }}
+          {
+            type: "button",
+            text: t("controls.refresh"),
+            onClick: () => {
+              invalidateConfig()
+              invalidateFileSystem()
+              setArchiveBumpAtom((c) => c + 1)
+            },
+          },
         ]}
       />
 
@@ -64,7 +85,13 @@ export const Fetch = () => {
         {list.map((item, index) => {
           switch (item.type) {
             case "archive.org":
-              return <ArchiveOrgItem key={item.name} onRemove={() => removeItem(index)} {...item}  />
+              return (
+                <ArchiveOrgItem
+                  key={item.name}
+                  onRemove={() => removeItem(index)}
+                  {...item}
+                />
+              )
             case "filesystem":
               return (
                 <FileSystemItem
@@ -85,7 +112,7 @@ export const Fetch = () => {
 const FileSystemItem = ({
   path,
   destination,
-  onRemove
+  onRemove,
 }: {
   path: string
   destination: string
@@ -94,38 +121,40 @@ const FileSystemItem = ({
   const invalidateFileSystem = useInvalidateFileSystem()
   const [isCopying, setIsCopying] = useState<boolean>(false)
 
+  const { t } = useTranslation("fetch")
+
   return (
     <div className="fetch__list-item">
       <div>
-        <div className="fetch__list-item-type">Local Files</div>
+        <div className="fetch__list-item-type">{t("types.filesystem")}</div>
         <div className="fetch__list-item-name">{path}</div>
         <div className="fetch__list-item-destination">{destination}</div>
       </div>
 
-      {isCopying && <FileStatus status="waiting" files={[]} /> }
+      {isCopying && <FileStatus status="waiting" files={[]} />}
       {!isCopying && (
-      <Suspense fallback={<FileStatus status="waiting" files={[]} />}>
-        <FileSystemStatus path={path} destination={destination}>
-          {(status, files) => (
-            <>
-              <FileStatus status={status} files={files} />
+        <Suspense fallback={<FileStatus status="waiting" files={[]} />}>
+          <FileSystemStatus path={path} destination={destination}>
+            {(status, files) => (
+              <>
+                <FileStatus status={status} files={files} />
+                <button
+                  onClick={async () => {
+                    setIsCopying(true)
+                    await invokeCopyFiles(files)
+                    setIsCopying(false)
+                    invalidateFileSystem()
+                  }}
+                >
+                  {t("fetch_button")}
+                </button>
+              </>
+            )}
+          </FileSystemStatus>
+        </Suspense>
+      )}
 
-              <button
-                onClick={async () => {
-                  setIsCopying(true)
-                  await invokeCopyFiles(files)
-                  setIsCopying(false)
-                  invalidateFileSystem()
-                }}
-              >
-                Fetch
-              </button>
-            </>
-          )}
-        </FileSystemStatus>
-      </Suspense>)}
-
-      <button onClick={onRemove}>Remove</button>
+      <button onClick={onRemove}>{t("remove_button")}</button>
     </div>
   )
 }
@@ -161,7 +190,8 @@ const FileSystemStatus = ({
   )
 
   const status: FileStatus = useMemo(() => {
-    if (files.length > 0 && files.every(({ exists }) => exists)) return "complete"
+    if (files.length > 0 && files.every(({ exists }) => exists))
+      return "complete"
     if (files.some(({ exists }) => exists)) return "partial"
     return "none"
   }, [pocketFileInfo, files])
@@ -173,7 +203,7 @@ const ArchiveOrgItem = ({
   name,
   destination,
   extensions,
-  onRemove
+  onRemove,
 }: {
   name: string
   destination: string
@@ -187,8 +217,8 @@ const ArchiveOrgItem = ({
     lastMessage,
     remainingTime,
   } = useInstallRequiredFiles()
-
   const invalidateFileSystem = useInvalidateFileSystem()
+  const { t } = useTranslation("fetch")
 
   return (
     <div className="fetch__list-item">
@@ -203,7 +233,7 @@ const ArchiveOrgItem = ({
       )}
 
       <div>
-        <div className="fetch__list-item-type">Archive.org</div>
+        <div className="fetch__list-item-type">{t("types.archive_org")}</div>
         <div className="fetch__list-item-name">{name}</div>
         <div className="fetch__list-item-destination">{destination}</div>
       </div>
@@ -227,14 +257,13 @@ const ArchiveOrgItem = ({
                   invalidateFileSystem()
                 }}
               >
-                Fetch
+                {t("fetch_button")}
               </button>
             </>
           )}
         </ArchiveOrgStatus>
       </Suspense>
-
-      <button onClick={onRemove}>Remove</button>
+      <button onClick={onRemove}>{t("remove_button")}</button>
     </div>
   )
 }
@@ -270,7 +299,7 @@ const ArchiveOrgStatus = ({
     return filteredMetadata.map((m) => {
       const exists =
         fileInfo.find((fi) => {
-          if (comparePaths(m.name.split("/"), splitAsPath(fi.filename))){
+          if (comparePaths(m.name.split("/"), splitAsPath(fi.filename))) {
             return fi.crc32 && parseInt(m.crc32, 16) === fi.crc32
           }
           return false
@@ -286,7 +315,8 @@ const ArchiveOrgStatus = ({
   }, [filteredMetadata, fileInfo, destination])
 
   const status: FileStatus = useMemo(() => {
-    if (files.length > 0 && files.every(({ exists }) => exists)) return "complete"
+    if (files.length > 0 && files.every(({ exists }) => exists))
+      return "complete"
     if (files.length > 0 && files.some(({ exists }) => exists)) return "partial"
     return "none"
   }, [metadata, fileInfo, files])
@@ -301,8 +331,10 @@ const FileStatus = ({
   status: FileStatus
   files: { exists: boolean }[]
 }) => {
+  const { t } = useTranslation("fetch")
+
   const statusText = useMemo(() => {
-    if (status === "waiting") return "loading..."
+    if (status === "waiting") return t("loading")
     return `${files.filter(({ exists }) => exists).length} / ${
       files.length
     } files`

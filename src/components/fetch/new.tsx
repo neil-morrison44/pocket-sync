@@ -7,12 +7,14 @@ import { open } from "@tauri-apps/api/dialog"
 import { pocketPathAtom } from "../../recoil/atoms"
 import { homeDirSelector } from "../../recoil/selectors"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
+import { useTranslation } from "react-i18next"
 
 type NewFetchProps = {
   onClose: () => void
 }
 
 export const NewFetch = ({ onClose }: NewFetchProps) => {
+  const { t } = useTranslation("fetch")
   const updateConfig = useUpdateConfig()
 
   const addFetch = useCallback(
@@ -26,20 +28,20 @@ export const NewFetch = ({ onClose }: NewFetchProps) => {
 
   return (
     <Modal className="fetch__new">
-      <div>Add new Fetch</div>
+      <h2>{t("new.title")}</h2>
       <select
         className="fetch__type-select"
         onChange={(e) => setFetchType(e.target.value as FetchType["type"])}
       >
-        <option value="filesystem">{"Local Files"}</option>
-        <option value="archive.org">{"Internet Archive"}</option>
+        <option value="filesystem">{t("types.filesystem")}</option>
+        <option value="archive.org">{t("types.archive_org")}</option>
       </select>
 
       {fetchType === "filesystem" && <NewFetchFileSystem addFetch={addFetch} />}
       {fetchType === "archive.org" && <NewFetchArchive addFetch={addFetch} />}
 
       <button className="fetch__close-button" onClick={onClose}>
-        Close
+        {t("new.close")}
       </button>
     </Modal>
   )
@@ -57,23 +59,27 @@ export const NewFetchFileSystem = ({ addFetch }: NewFetchTypeProps) => {
     return info.destination !== undefined && info.path !== undefined
   }, [info])
 
+  const { t } = useTranslation("fetch")
+
   return (
     <>
       <FolderPicker
-        text="Origin Folder"
+        text={t("new.origin")}
         onChange={(path) => setInfo((i) => ({ ...i, path }))}
         value={info.path}
       />
 
       <FolderPicker
         fileIsOnPocket
-        text="Destination Folder"
+        text={t("new.destination")}
         onChange={(path) => setInfo((i) => ({ ...i, destination: path }))}
         value={info.destination}
       />
 
       {isValid && (
-        <button onClick={() => addFetch(info as FetchType)}>Add</button>
+        <button onClick={() => addFetch(info as FetchType)}>
+          {t("new.add_fetch")}
+        </button>
       )}
     </>
   )
@@ -82,6 +88,7 @@ export const NewFetchFileSystem = ({ addFetch }: NewFetchTypeProps) => {
 export const NewFetchArchive = ({ addFetch }: NewFetchTypeProps) => {
   const [info, setInfo] = useState<Partial<FetchType>>({ type: "archive.org" })
   if (info.type !== "archive.org") throw new Error("Wrong type")
+  const { t } = useTranslation("fetch")
 
   const isValid = useMemo(() => {
     return (
@@ -94,7 +101,7 @@ export const NewFetchArchive = ({ addFetch }: NewFetchTypeProps) => {
   return (
     <>
       <label className="fetch__text-input">
-        {"Archive name: https://archive.org/download/[this bit here]"}
+        <span dangerouslySetInnerHTML={{ __html: t("new.archive_name") }} />
         <input
           type="text"
           placeholder=""
@@ -105,19 +112,21 @@ export const NewFetchArchive = ({ addFetch }: NewFetchTypeProps) => {
 
       <FolderPicker
         fileIsOnPocket
-        text="Destination Folder"
+        text={t("new.destination")}
         onChange={(path) => setInfo((i) => ({ ...i, destination: path }))}
         value={info.destination}
       />
       <div className="fetch__text-input">
-        {"File Extensions:"}
+        {t("new.extensions")}
         <ListInput
           value={info.extensions || []}
           onChange={(ext) => setInfo((i) => ({ ...i, extensions: ext }))}
         />
       </div>
       {isValid && (
-        <button onClick={() => addFetch(info as FetchType)}>Add</button>
+        <button onClick={() => addFetch(info as FetchType)}>
+          {t("new.add_fetch")}
+        </button>
       )}
     </>
   )
@@ -147,8 +156,6 @@ const FolderPicker = ({
       defaultPath: fileIsOnPocket ? pocketPath : homeDir,
     })
 
-    console.log({path})
-
     if (path && !(path instanceof Array)) {
       onChange(fileIsOnPocket ? path.replace(pocketPath, "") : path)
     }
@@ -173,6 +180,7 @@ type ListInputProps = {
 
 const ListInput = ({ value, onChange }: ListInputProps) => {
   const [interimValue, setInterimValue] = useState("")
+  const { t } = useTranslation("fetch")
 
   const submitValue = useCallback(() => {
     if (interimValue.length === 0) return
@@ -194,7 +202,7 @@ const ListInput = ({ value, onChange }: ListInputProps) => {
                 onChange(array)
               }}
             >
-              Remove
+              {"X"}
             </button>
           </li>
         ))}
@@ -207,8 +215,11 @@ const ListInput = ({ value, onChange }: ListInputProps) => {
           autoCapitalize="off"
           autoComplete="off"
           spellCheck="false"
+          onKeyDown={(e) => {
+            if (e.code === "Enter") submitValue()
+          }}
         />
-        <button onClick={submitValue}>Add</button>
+        <button onClick={submitValue}>{t("new.add_extension")}</button>
       </div>
     </div>
   )
