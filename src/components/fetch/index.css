@@ -19,6 +19,11 @@
   }
 }
 
+.fetch__list-item-type{
+  font-weight: bold;
+  font-size: 1.125rem;
+}
+
 .fetch__type-select{
   font-size: 1.5rem;
 }

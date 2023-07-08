@@ -24,7 +24,7 @@ export const NewFetch = ({ onClose }: NewFetchProps) => {
     },
     [setConfig]
   )
-  const [fetchType, setFetchType] = useState<FetchType["type"] | null>(null)
+  const [fetchType, setFetchType] = useState<FetchType["type"]>("filesystem")
 
   return (
     <Modal className="fetch__new">
@@ -148,7 +148,10 @@ const FolderPicker = ({
       directory: true,
       defaultPath: fileIsOnPocket ? pocketPath : homeDir,
     })
-    if (path && !(path instanceof Array)) onChange(path)
+    if (path && !(path instanceof Array)) {
+      if (fileIsOnPocket)
+        onChange(fileIsOnPocket ? path.replace(pocketPath, "") : path)
+    }
   }, [])
 
   return (

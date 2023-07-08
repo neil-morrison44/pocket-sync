@@ -15,6 +15,7 @@ import { Controls } from "../controls"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { NewFetch } from "./new"
 import { invokeCopyFiles } from "../../utils/invokes"
+import { pocketPathAtom } from "../../recoil/atoms"
 
 type FileStatus = "complete" | "partial" | "none" | "waiting"
 
@@ -110,9 +111,11 @@ const FileSystemStatus = ({
   destination: string
   children: (status: FileStatus, files: FileCopy[]) => ReactNode
 }) => {
+  const pocketPath = useRecoilValue(pocketPathAtom)
   // TODO: these shouldn't be full paths when stored in `fetches`
+  console.log({ destination })
   const pocketFileInfo = useRecoilValue(
-    PathFileInfoSelectorFamily({ path: destination, offPocket: true })
+    PathFileInfoSelectorFamily({ path: destination })
   )
   const fsFileInfo = useRecoilValue(
     PathFileInfoSelectorFamily({ path, offPocket: true })
@@ -122,7 +125,7 @@ const FileSystemStatus = ({
     () =>
       fsFileInfo.map((f) => ({
         origin: `${f.path}/${f.filename}`,
-        destination: `${destination}/${f.filename}`,
+        destination: `${pocketPath}/${destination}/${f.filename}`,
         exists:
           pocketFileInfo.find(
             (pF) => pF.filename === f.filename && pF.crc32 === f.crc32
@@ -245,7 +248,7 @@ const ArchiveOrgStatus = ({
       const exists =
         fileInfo.find((fi) => {
           if (`/${m.name}` === fi.filename.replace(/\\\//g, "/"))
-            return fi.crc32 && m.crc32.endsWith(fi.crc32.toString(16))
+            return fi.crc32 && parseInt(m.crc32, 16) === fi.crc32
           return false
         }) !== undefined
 

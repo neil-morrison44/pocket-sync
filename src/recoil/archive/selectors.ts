@@ -12,6 +12,7 @@ import {
   invokeWalkDirListFiles,
 } from "../../utils/invokes"
 import { ResponseType, getClient } from "@tauri-apps/api/http"
+import { fileSystemInvalidationAtom } from "../atoms"
 
 export const ArchiveMetadataSelectorFamily = selectorFamily<
   ArchiveFileMetadata[],
@@ -45,6 +46,7 @@ export const PathFileInfoSelectorFamily = selectorFamily<
   get:
     ({ path, offPocket }) =>
     async ({ get }) => {
+      get(fileSystemInvalidationAtom)
       const fileList = await invokeWalkDirListFiles(path, [], offPocket)
 
       const all = fileList.map((filename) =>
