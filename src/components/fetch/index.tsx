@@ -1,7 +1,7 @@
-import React, { ReactNode, Suspense, useMemo, useState } from "react"
+import React, { ReactNode, Suspense, useCallback, useMemo, useState } from "react"
 
 import "./index.css"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
   ArchiveMetadataSelectorFamily,
   PathFileInfoSelectorFamily,
@@ -18,15 +18,28 @@ import { invokeCopyFiles } from "../../utils/invokes"
 import { pocketPathAtom } from "../../recoil/atoms"
 import { comparePaths } from "../../utils/comparePaths"
 import { splitAsPath } from "../../utils/splitAsPath"
+import { archiveBumpAtom } from "../../recoil/archive/atoms"
+import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 
 type FileStatus = "complete" | "partial" | "none" | "waiting"
 
 export const Fetch = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
+  const updateConfig = useUpdateConfig()
   const [newFetchOpen, setNewFetchOpen] = useState<boolean>(false)
+
   const invalidateFileSystem = useInvalidateFileSystem()
   const invalidateConfig = useInvalidateConfig()
+  const setArchiveBumpAtom = useSetRecoilState(archiveBumpAtom)
   const list = config.fetches || []
+
+  const removeItem = useCallback((index: number) => {
+    updateConfig("fetches", (fetches) => {
+      const clonedFetches = [...(fetches ?? [])]
+      clonedFetches.splice(index)
+      return clonedFetches
+    })
+  }, [updateConfig])
 
   return (
     <div className="fetch">
@@ -40,6 +53,7 @@ export const Fetch = () => {
           {type: "button", text: "Refresh", onClick: () => {
             invalidateConfig()
             invalidateFileSystem()
+            setArchiveBumpAtom((c) => c + 1)
           }}
         ]}
       />
@@ -47,14 +61,15 @@ export const Fetch = () => {
       {newFetchOpen && <NewFetch onClose={() => setNewFetchOpen(false)} />}
 
       <div className="fetch__list">
-        {list.map((item) => {
+        {list.map((item, index) => {
           switch (item.type) {
             case "archive.org":
-              return <ArchiveOrgItem key={item.name} {...item} />
+              return <ArchiveOrgItem key={item.name} onRemove={() => removeItem(index)} {...item}  />
             case "filesystem":
               return (
                 <FileSystemItem
                   key={`${item.path}->${item.destination}`}
+                  onRemove={() => removeItem(index)}
                   {...item}
                 />
               )
@@ -70,9 +85,11 @@ export const Fetch = () => {
 const FileSystemItem = ({
   path,
   destination,
+  onRemove
 }: {
   path: string
   destination: string
+  onRemove: () => void
 }) => {
   const invalidateFileSystem = useInvalidateFileSystem()
   const [isCopying, setIsCopying] = useState<boolean>(false)
@@ -108,7 +125,7 @@ const FileSystemItem = ({
         </FileSystemStatus>
       </Suspense>)}
 
-      <button>Remove</button>
+      <button onClick={onRemove}>Remove</button>
     </div>
   )
 }
@@ -156,10 +173,12 @@ const ArchiveOrgItem = ({
   name,
   destination,
   extensions,
+  onRemove
 }: {
   name: string
   destination: string
   extensions?: string[]
+  onRemove: () => void
 }) => {
   const {
     installRequiredFiles,
@@ -215,7 +234,7 @@ const ArchiveOrgItem = ({
         </ArchiveOrgStatus>
       </Suspense>
 
-      <button>Remove</button>
+      <button onClick={onRemove}>Remove</button>
     </div>
   )
 }

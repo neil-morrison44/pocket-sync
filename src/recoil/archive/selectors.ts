@@ -52,9 +52,6 @@ export const PathFileInfoSelectorFamily = selectorFamily<
       const all = fileList.map((filename) =>
         get(FileInfoSelectorFamily({ path, filename }))
       )
-
-      console.log({ all })
-
       return all
     },
 })

@@ -6,23 +6,21 @@ import { FetchType } from "../../types"
 import { open } from "@tauri-apps/api/dialog"
 import { pocketPathAtom } from "../../recoil/atoms"
 import { homeDirSelector } from "../../recoil/selectors"
+import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 
 type NewFetchProps = {
   onClose: () => void
 }
 
 export const NewFetch = ({ onClose }: NewFetchProps) => {
-  const setConfig = useSetRecoilState(PocketSyncConfigSelector)
+  const updateConfig = useUpdateConfig()
 
   const addFetch = useCallback(
-    (newFetch: FetchType) => {
-      setConfig((conf) => ({
-        ...conf,
-        fetches: [...(conf.fetches || []), newFetch],
-      }))
+    async (newFetch: FetchType) => {
+      await updateConfig("fetches", (fetches) => [...(fetches || []), newFetch])
       onClose()
     },
-    [setConfig]
+    [updateConfig, onClose]
   )
   const [fetchType, setFetchType] = useState<FetchType["type"]>("filesystem")
 
