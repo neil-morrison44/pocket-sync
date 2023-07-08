@@ -121,10 +121,23 @@ const FileSystemItem = ({
   const invalidateFileSystem = useInvalidateFileSystem()
   const [isCopying, setIsCopying] = useState<boolean>(false)
 
+  const { percent, inProgress, lastMessage, remainingTime } =
+    useInstallRequiredFiles()
+
   const { t } = useTranslation("fetch")
 
   return (
     <div className="fetch__list-item">
+      {inProgress && (
+        <Modal>
+          <Progress
+            percent={percent}
+            message={lastMessage}
+            remainingTime={remainingTime}
+          />
+        </Modal>
+      )}
+
       <div>
         <div className="fetch__list-item-type">{t("types.filesystem")}</div>
         <div className="fetch__list-item-name">{path}</div>
@@ -141,7 +154,7 @@ const FileSystemItem = ({
                 <button
                   onClick={async () => {
                     setIsCopying(true)
-                    await invokeCopyFiles(files)
+                    await invokeCopyFiles(files.filter(({ exists }) => !exists))
                     setIsCopying(false)
                     invalidateFileSystem()
                   }}

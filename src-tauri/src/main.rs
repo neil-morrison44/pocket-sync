@@ -175,8 +175,6 @@ async fn walkdir_list_files(
         None | Some(false) => pocket_path.join(remove_leading_slash(path)),
     };
 
-    dbg!(&dir_path);
-
     if !dir_path.exists() {
         println!("Doesn't exist");
         return Ok(vec![]);
@@ -382,14 +380,25 @@ async fn delete_files(
 }
 
 #[tauri::command(async)]
-async fn copy_files(copies: Vec<(&str, &str)>) -> Result<bool, ()> {
+async fn copy_files(copies: Vec<(&str, &str)>, window: Window) -> Result<bool, ()> {
+    let mut progress = progress::ProgressEmitter::start(copies.len(), &window);
+
     for (origin, destination) in copies {
         let origin = PathBuf::from(origin);
-        let destination = PathBuf::from(destination);
-        if let Err(err) = tokio::fs::copy(origin, destination).await {
+        let destination = PathBuf::from(&destination);
+        if let Err(err) = tokio::fs::copy(&origin, &destination).await {
             println!("{}", err);
+        } else {
+            progress.emit_progress(
+                &destination
+                    .file_name()
+                    .and_then(|s| s.to_str())
+                    .unwrap_or("Unknown File"),
+            )
         }
     }
+
+    progress.end();
 
     Ok(true)
 }
@@ -601,13 +610,6 @@ struct DownloadFile {
     filename: String,
     path: String,
 }
-
-#[derive(Serialize, Deserialize, Clone)]
-struct FileProgressPayload {
-    value: usize,
-    max: usize,
-}
-
 #[derive(Serialize, Deserialize)]
 struct BackupSavesResponse {
     files: Vec<SaveZipFile>,

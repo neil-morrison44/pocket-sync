@@ -85,7 +85,10 @@ export const NewFetchFileSystem = ({ addFetch }: NewFetchTypeProps) => {
 }
 
 export const NewFetchArchive = ({ addFetch }: NewFetchTypeProps) => {
-  const [info, setInfo] = useState<Partial<FetchType>>({ type: "archive.org" })
+  const [info, setInfo] = useState<Partial<FetchType>>({
+    type: "archive.org",
+    extensions: [],
+  })
   if (info.type !== "archive.org") throw new Error("Wrong type")
   const { t } = useTranslation("fetch")
 
