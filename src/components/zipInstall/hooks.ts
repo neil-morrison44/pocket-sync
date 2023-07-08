@@ -97,7 +97,35 @@ export const useAllowedFiles = (files: InstallZipEventPayload["files"]) => {
     [setAllowedFiles]
   )
 
-  return { allowedFiles, toggleFile }
+  const toggleDir = useCallback(
+    (node: FileTreeNode) => {
+      const underNodes: FileTreeNode[] = []
+
+      const visit = (node: FileTreeNode) => {
+        underNodes.push(node)
+        if (node.is_dir) node.children.forEach(visit)
+      }
+
+      visit(node)
+
+      setAllowedFiles((files) => {
+        if (files?.includes(node.full)) {
+          return files?.filter((f) => !f.startsWith(node.full)) || null
+        } else {
+          return Array.from(
+            new Set([
+              ...(files ?? []),
+              node.full,
+              ...underNodes.map((n) => n.full),
+            ])
+          )
+        }
+      })
+    },
+    [setAllowedFiles]
+  )
+
+  return { allowedFiles, toggleFile, toggleDir }
 }
 
 export const useZipInstallButtons = (allowedFiles: string[] | null) => {
