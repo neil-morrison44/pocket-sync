@@ -12,7 +12,7 @@
   padding: 20px;
   border-radius: 5px;
   display: flex;
-  gap: 10px;
+  gap: 15px;
 
   > button{
     background-color: var(--background-colour);
@@ -26,6 +26,25 @@
 
 .fetch__type-select{
   font-size: 1.5rem;
+}
+
+.fetch__list-item-info {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+
+.fetch__list-item-destination{
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+
+  &::before{
+    font-family: GamePocket;
+    content: "@face00@";
+    font-variant-ligatures: discretionary-ligatures;
+    font-size: 1.5rem;
+  }
 }
 
 .fetch__status {

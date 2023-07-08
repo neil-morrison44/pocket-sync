@@ -139,6 +139,10 @@ export const Settings = () => {
           </li>
 
           <li>
+            <Link href={"https://github.com/mumchristmas/GamePocket-font"}>
+              {"https://github.com/mumchristmas/GamePocket-font"}
+            </Link>
+            {" & "}
             <Link href={"https://github.com/AbFarid/analogue-os-font"}>
               {"https://github.com/AbFarid/analogue-os-font"}
             </Link>
