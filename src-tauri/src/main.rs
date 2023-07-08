@@ -264,10 +264,7 @@ async fn install_archive_files(
                                 tokio::fs::create_dir_all(&parent).await.unwrap();
                             }
                         }
-
-                        dbg!(&new_file_path);
                         let mut dest = tokio::fs::File::create(&new_file_path).await.unwrap();
-
                         let content = r.bytes().await.unwrap();
                         let mut content_cusror = std::io::Cursor::new(content);
                         tokio::io::copy(&mut content_cusror, &mut dest)
