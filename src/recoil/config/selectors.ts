@@ -49,9 +49,8 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
     invokeSaveFile(
       `${pocketPath}/pocket-sync.json`,
       encoder.encode(JSON.stringify(newValue, null, 2))
-    ).then(() => {
-      set(configInvalidationAtom, (v) => v + 1)
-    })
+    )
+    set(configInvalidationAtom, (v) => v + 1)
   },
 })
 

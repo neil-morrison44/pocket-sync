@@ -148,9 +148,11 @@ const FolderPicker = ({
       directory: true,
       defaultPath: fileIsOnPocket ? pocketPath : homeDir,
     })
+
+    console.log({path})
+
     if (path && !(path instanceof Array)) {
-      if (fileIsOnPocket)
-        onChange(fileIsOnPocket ? path.replace(pocketPath, "") : path)
+      onChange(fileIsOnPocket ? path.replace(pocketPath, "") : path)
     }
   }, [])
 

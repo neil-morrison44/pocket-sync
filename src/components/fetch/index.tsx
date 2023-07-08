@@ -10,7 +10,7 @@ import { useInstallRequiredFiles } from "../../hooks/useInstallRequiredFiles"
 import { Progress } from "../progress"
 import { FileCopy, RequiredFileInfo } from "../../types"
 import { Modal } from "../modal"
-import { useInvalidateFileSystem } from "../../hooks/invalidation"
+import { useInvalidateConfig, useInvalidateFileSystem } from "../../hooks/invalidation"
 import { Controls } from "../controls"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { NewFetch } from "./new"
@@ -24,6 +24,8 @@ type FileStatus = "complete" | "partial" | "none" | "waiting"
 export const Fetch = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
   const [newFetchOpen, setNewFetchOpen] = useState<boolean>(false)
+  const invalidateFileSystem = useInvalidateFileSystem()
+  const invalidateConfig = useInvalidateConfig()
   const list = config.fetches || []
 
   return (
@@ -35,6 +37,10 @@ export const Fetch = () => {
             text: "Add fetch location",
             onClick: () => setNewFetchOpen(true),
           },
+          {type: "button", text: "Refresh", onClick: () => {
+            invalidateConfig()
+            invalidateFileSystem()
+          }}
         ]}
       />
 
@@ -69,6 +75,7 @@ const FileSystemItem = ({
   destination: string
 }) => {
   const invalidateFileSystem = useInvalidateFileSystem()
+  const [isCopying, setIsCopying] = useState<boolean>(false)
 
   return (
     <div className="fetch__list-item">
@@ -78,6 +85,8 @@ const FileSystemItem = ({
         <div className="fetch__list-item-destination">{destination}</div>
       </div>
 
+      {isCopying && <FileStatus status="waiting" files={[]} /> }
+      {!isCopying && (
       <Suspense fallback={<FileStatus status="waiting" files={[]} />}>
         <FileSystemStatus path={path} destination={destination}>
           {(status, files) => (
@@ -86,7 +95,9 @@ const FileSystemItem = ({
 
               <button
                 onClick={async () => {
+                  setIsCopying(true)
                   await invokeCopyFiles(files)
+                  setIsCopying(false)
                   invalidateFileSystem()
                 }}
               >
@@ -95,7 +106,7 @@ const FileSystemItem = ({
             </>
           )}
         </FileSystemStatus>
-      </Suspense>
+      </Suspense>)}
 
       <button>Remove</button>
     </div>
@@ -133,9 +144,9 @@ const FileSystemStatus = ({
   )
 
   const status: FileStatus = useMemo(() => {
-    if (pocketFileInfo.length === 0) return "none"
-    if (files.every(({ exists }) => exists)) return "complete"
-    return "partial"
+    if (files.length > 0 && files.every(({ exists }) => exists)) return "complete"
+    if (files.some(({ exists }) => exists)) return "partial"
+    return "none"
   }, [pocketFileInfo, files])
 
   return <>{children(status, files)}</>
@@ -236,8 +247,6 @@ const ArchiveOrgStatus = ({
     [metadata, extensions]
   )
 
-  console.log({ filteredMetadata, fileInfo })
-
   const files: RequiredFileInfo[] = useMemo(() => {
     return filteredMetadata.map((m) => {
       const exists =
@@ -258,10 +267,9 @@ const ArchiveOrgStatus = ({
   }, [filteredMetadata, fileInfo, destination])
 
   const status: FileStatus = useMemo(() => {
-    // do this better (needs to take crc32 into account)
-    if (fileInfo.length === 0) return "none"
-    if (files.every(({ exists }) => exists)) return "complete"
-    return "partial"
+    if (files.length > 0 && files.every(({ exists }) => exists)) return "complete"
+    if (files.length > 0 && files.some(({ exists }) => exists)) return "partial"
+    return "none"
   }, [metadata, fileInfo, files])
 
   return <>{children(status, files)}</>
