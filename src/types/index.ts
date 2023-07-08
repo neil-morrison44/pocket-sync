@@ -252,3 +252,5 @@ export type FirmwareInfo = {
   publishedAt: Date
   release_notes_html: string
 }
+
+export type FileCopy = { origin: string; destination: string; exists: boolean }

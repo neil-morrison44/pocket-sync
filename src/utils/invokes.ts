@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api"
-import { FirmwareInfo, RawFeedItem, SaveZipFile } from "../types"
+import { FileCopy, FirmwareInfo, RawFeedItem, SaveZipFile } from "../types"
 
 export const invokeOpenPocket = async () => invoke<string | null>("open_pocket")
 
@@ -27,11 +27,13 @@ export const invokeReadBinaryFile = async (path: string) => {
 
 export const invokeWalkDirListFiles = async (
   path: string,
-  extensions: string[]
+  extensions: string[],
+  offPocket = false
 ) => {
   const files = await invoke<string[]>("walkdir_list_files", {
     path,
     extensions,
+    offPocket,
   })
   files.sort((a, b) => a.localeCompare(b))
   return files
@@ -90,6 +92,12 @@ export const invokeCreateFolderIfMissing = async (path: string) => {
 
 export const invokeDeleteFiles = async (paths: string[]) => {
   return invoke<boolean>("delete_files", { paths })
+}
+
+export const invokeCopyFiles = async (copies: FileCopy[]) => {
+  return invoke<boolean>("copy_files", {
+    copies: copies.map(({ origin, destination }) => [origin, destination]),
+  })
 }
 
 export const invokeFindCleanableFiles = async (path: string) => {

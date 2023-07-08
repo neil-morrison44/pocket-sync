@@ -39,13 +39,13 @@ export const ArchiveMetadataSelectorFamily = selectorFamily<
 
 export const PathFileInfoSelectorFamily = selectorFamily<
   Omit<RequiredFileInfo, "type">[],
-  { path: string }
+  { path: string; offPocket?: boolean }
 >({
   key: "PathFileInfoSelectorFamily",
   get:
-    ({ path }) =>
+    ({ path, offPocket }) =>
     async ({ get }) => {
-      const fileList = await invokeWalkDirListFiles(path, [])
+      const fileList = await invokeWalkDirListFiles(path, [], offPocket)
 
       const all = fileList.map((filename) =>
         get(FileInfoSelectorFamily({ path, filename }))

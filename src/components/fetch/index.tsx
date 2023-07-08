@@ -8,12 +8,13 @@ import {
 } from "../../recoil/archive/selectors"
 import { useInstallRequiredFiles } from "../../hooks/useInstallRequiredFiles"
 import { Progress } from "../progress"
-import { RequiredFileInfo } from "../../types"
+import { FileCopy, RequiredFileInfo } from "../../types"
 import { Modal } from "../modal"
 import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { Controls } from "../controls"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { NewFetch } from "./new"
+import { invokeCopyFiles } from "../../utils/invokes"
 
 type FileStatus = "complete" | "partial" | "none" | "waiting"
 
@@ -66,6 +67,8 @@ const FileSystemItem = ({
   path: string
   destination: string
 }) => {
+  const invalidateFileSystem = useInvalidateFileSystem()
+
   return (
     <div className="fetch__list-item">
       <div>
@@ -73,8 +76,70 @@ const FileSystemItem = ({
         <div className="fetch__list-item-name">{path}</div>
         <div className="fetch__list-item-destination">{destination}</div>
       </div>
+
+      <Suspense fallback={<FileStatus status="waiting" files={[]} />}>
+        <FileSystemStatus path={path} destination={destination}>
+          {(status, files) => (
+            <>
+              <FileStatus status={status} files={files} />
+
+              <button
+                onClick={async () => {
+                  await invokeCopyFiles(files)
+                  invalidateFileSystem()
+                }}
+              >
+                Fetch
+              </button>
+            </>
+          )}
+        </FileSystemStatus>
+      </Suspense>
+
+      <button>Remove</button>
     </div>
   )
+}
+
+const FileSystemStatus = ({
+  path,
+  destination,
+  children,
+}: {
+  path: string
+  destination: string
+  children: (status: FileStatus, files: FileCopy[]) => ReactNode
+}) => {
+  // TODO: these shouldn't be full paths when stored in `fetches`
+  const pocketFileInfo = useRecoilValue(
+    PathFileInfoSelectorFamily({ path: destination, offPocket: true })
+  )
+  const fsFileInfo = useRecoilValue(
+    PathFileInfoSelectorFamily({ path, offPocket: true })
+  )
+
+  const files: FileCopy[] = useMemo(
+    () =>
+      fsFileInfo.map((f) => ({
+        origin: `${f.path}/${f.filename}`,
+        destination: `${destination}/${f.filename}`,
+        exists:
+          pocketFileInfo.find(
+            (pF) => pF.filename === f.filename && pF.crc32 === f.crc32
+          ) !== undefined,
+      })),
+    [pocketFileInfo, fsFileInfo]
+  )
+
+  const status: FileStatus = useMemo(() => {
+    if (pocketFileInfo.length === 0) return "none"
+    if (files.every(({ exists }) => exists)) return "complete"
+    return "partial"
+  }, [pocketFileInfo, files])
+
+  console.log({ pocketFileInfo, fsFileInfo })
+
+  return <>{children(status, files)}</>
 }
 
 const ArchiveOrgItem = ({
@@ -114,10 +179,10 @@ const ArchiveOrgItem = ({
         <div className="fetch__list-item-destination">{destination}</div>
       </div>
 
-      <Suspense fallback={<FileStatus status="waiting" />}>
+      <Suspense fallback={<FileStatus status="waiting" files={[]} />}>
         <ArchiveOrgStatus
           name={name}
-          path={destination}
+          destination={destination}
           extensions={extensions}
         >
           {(status, files) => (
@@ -148,19 +213,21 @@ const ArchiveOrgItem = ({
 
 const ArchiveOrgStatus = ({
   name,
-  path,
+  destination,
   extensions,
   children,
 }: {
   name: string
-  path: string
+  destination: string
   extensions?: string[]
   children: (status: FileStatus, files: RequiredFileInfo[]) => ReactNode
 }) => {
   const metadata = useRecoilValue(
     ArchiveMetadataSelectorFamily({ archiveName: name })
   )
-  const fileInfo = useRecoilValue(PathFileInfoSelectorFamily({ path }))
+  const fileInfo = useRecoilValue(
+    PathFileInfoSelectorFamily({ path: destination })
+  )
 
   const filteredMetadata = useMemo(
     () =>
@@ -184,12 +251,12 @@ const ArchiveOrgStatus = ({
 
       return {
         filename: m.name,
-        path,
+        path: destination,
         exists,
         type: "core",
       }
     })
-  }, [filteredMetadata, path])
+  }, [filteredMetadata, destination])
 
   const status: FileStatus = useMemo(() => {
     // do this better (needs to take crc32 into account)
@@ -208,13 +275,14 @@ const FileStatus = ({
   files,
 }: {
   status: FileStatus
-  files: RequiredFileInfo[]
+  files: { exists: boolean }[]
 }) => {
   const statusText = useMemo(() => {
+    if (status === "waiting") return "loading..."
     return `${files.filter(({ exists }) => exists).length} / ${
       files.length
     } files`
-  }, [files])
+  }, [files, status])
 
   return (
     <div className={`fetch__status fetch__status--${status}`}>{statusText}</div>

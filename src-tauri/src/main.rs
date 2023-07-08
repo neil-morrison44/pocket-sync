@@ -166,10 +166,14 @@ async fn list_files(
 async fn walkdir_list_files(
     path: &str,
     extensions: Vec<&str>,
+    off_pocket: Option<bool>,
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<Vec<String>, ()> {
     let pocket_path = state.0.pocket_path.read().await;
-    let dir_path = pocket_path.join(path);
+    let dir_path = match off_pocket {
+        Some(true) => PathBuf::from(path),
+        None | Some(false) => pocket_path.join(path),
+    };
 
     if !dir_path.exists() {
         return Ok(vec![]);
@@ -378,6 +382,19 @@ async fn delete_files(
 }
 
 #[tauri::command(async)]
+async fn copy_files(copies: Vec<(&str, &str)>) -> Result<bool, ()> {
+    for (origin, destination) in copies {
+        let origin = PathBuf::from(origin);
+        let destination = PathBuf::from(destination);
+        if let Err(err) = tokio::fs::copy(origin, destination).await {
+            println!("{}", err);
+        }
+    }
+
+    Ok(true)
+}
+
+#[tauri::command(async)]
 async fn find_cleanable_files(
     path: &str,
     state: tauri::State<'_, PocketSyncState>,
@@ -556,6 +573,7 @@ fn main() {
             restore_save,
             create_folder_if_missing,
             delete_files,
+            copy_files,
             find_cleanable_files,
             list_instance_packageable_cores,
             run_packager_for_core,
