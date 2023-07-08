@@ -16,6 +16,8 @@ import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { NewFetch } from "./new"
 import { invokeCopyFiles } from "../../utils/invokes"
 import { pocketPathAtom } from "../../recoil/atoms"
+import { comparePaths } from "../../utils/comparePaths"
+import { splitAsPath } from "../../utils/splitAsPath"
 
 type FileStatus = "complete" | "partial" | "none" | "waiting"
 
@@ -23,8 +25,6 @@ export const Fetch = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
   const [newFetchOpen, setNewFetchOpen] = useState<boolean>(false)
   const list = config.fetches || []
-
-  console.log({ list })
 
   return (
     <div className="fetch">
@@ -112,8 +112,6 @@ const FileSystemStatus = ({
   children: (status: FileStatus, files: FileCopy[]) => ReactNode
 }) => {
   const pocketPath = useRecoilValue(pocketPathAtom)
-  // TODO: these shouldn't be full paths when stored in `fetches`
-  console.log({ destination })
   const pocketFileInfo = useRecoilValue(
     PathFileInfoSelectorFamily({ path: destination })
   )
@@ -139,8 +137,6 @@ const FileSystemStatus = ({
     if (files.every(({ exists }) => exists)) return "complete"
     return "partial"
   }, [pocketFileInfo, files])
-
-  console.log({ pocketFileInfo, fsFileInfo })
 
   return <>{children(status, files)}</>
 }
@@ -194,7 +190,6 @@ const ArchiveOrgItem = ({
 
               <button
                 onClick={async () => {
-                  console.log({ files })
                   await installRequiredFiles(
                     files.filter(({ exists }) => !exists),
                     `https://archive.org/download/${name}`
@@ -247,8 +242,9 @@ const ArchiveOrgStatus = ({
     return filteredMetadata.map((m) => {
       const exists =
         fileInfo.find((fi) => {
-          if (`/${m.name}` === fi.filename.replace(/\\\//g, "/"))
+          if (comparePaths(m.name.split("/"), splitAsPath(fi.filename))){
             return fi.crc32 && parseInt(m.crc32, 16) === fi.crc32
+          }
           return false
         }) !== undefined
 
@@ -267,8 +263,6 @@ const ArchiveOrgStatus = ({
     if (files.every(({ exists }) => exists)) return "complete"
     return "partial"
   }, [metadata, fileInfo, files])
-
-  console.log({ files })
 
   return <>{children(status, files)}</>
 }
