@@ -51,7 +51,7 @@ export const Fetch = () => {
       if (!confirmed) return
       updateConfig("fetches", (fetches) => {
         const clonedFetches = [...(fetches ?? [])]
-        clonedFetches.splice(index)
+        clonedFetches.splice(index, 1)
         return clonedFetches
       })
     },
@@ -175,8 +175,6 @@ const FileSystemStatus = ({
   const fsFileInfo = useRecoilValue(
     PathFileInfoSelectorFamily({ path, offPocket: true })
   )
-
-  console.log({ pocketFileInfo, fsFileInfo })
 
   const files: FileCopy[] = useMemo(
     () =>
