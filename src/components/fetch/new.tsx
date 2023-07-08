@@ -7,6 +7,7 @@ import { pocketPathAtom } from "../../recoil/atoms"
 import { homeDirSelector } from "../../recoil/selectors"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { useTranslation } from "react-i18next"
+import { Tip } from "../tip"
 
 type NewFetchProps = {
   onClose: () => void
@@ -125,6 +126,9 @@ export const NewFetchArchive = ({ addFetch }: NewFetchTypeProps) => {
           onChange={(ext) => setInfo((i) => ({ ...i, extensions: ext }))}
         />
       </div>
+
+      <Tip>{t("new.archive_tip")}</Tip>
+
       {isValid && (
         <button onClick={() => addFetch(info as FetchType)}>
           {t("new.add_fetch")}

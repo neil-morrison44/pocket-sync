@@ -286,11 +286,12 @@
       "title": "Add new Fetch",
       "origin": "Origin Folder",
       "destination": "Destination Folder",
-      "archive_name": "Archive name: <i>https://archive.org/download/[this bit here]</i>",
+      "archive_name": "Archive name: <i>https://archive.org/details/[this bit here]</i>",
       "extensions": "Limit to File Extensions:",
       "add_fetch": "Add fetch",
       "add_extension": "Add",
-      "close": "Close"
+      "close": "Close",
+      "archive_tip": "This won't work for achives where the files are zipped, and you should set which extensions you want to avoid downloading the metadata files."
     }
   }
 }
