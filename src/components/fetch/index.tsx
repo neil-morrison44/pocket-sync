@@ -138,7 +138,7 @@ const FileSystemItem = ({
         </Modal>
       )}
 
-      <div>
+      <div className="fetch__list-item-info">
         <div className="fetch__list-item-type">{t("types.filesystem")}</div>
         <div className="fetch__list-item-name">{path}</div>
         <div className="fetch__list-item-destination">{destination}</div>
@@ -245,7 +245,7 @@ const ArchiveOrgItem = ({
         </Modal>
       )}
 
-      <div>
+      <div className="fetch__list-item-info">
         <div className="fetch__list-item-type">{t("types.archive_org")}</div>
         <div className="fetch__list-item-name">{name}</div>
         <div className="fetch__list-item-destination">{destination}</div>

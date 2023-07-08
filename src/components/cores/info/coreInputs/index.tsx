@@ -72,7 +72,7 @@ export const CoreInputs = ({
       let fontSize = 32
       do {
         fontSize -= 1
-        context.font = `${fontSize * scale}px Analogue`
+        context.font = `${fontSize * scale}px GamePocket`
       } while (context.measureText(coreName).width > canvas.width * 0.9)
 
       context.fillText(coreName, canvas.width / 2, canvas.height - 16 * scale)

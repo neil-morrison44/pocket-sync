@@ -36,7 +36,7 @@ export const ProgressScreen = ({
     context.fillRect(0, 0, canvas.width * (value / max), canvas.height)
 
     context.fillStyle = LIGHTEST_GREEN
-    context.font = `${85 * SCALE}px Analogue`
+    context.font = `${85 * SCALE}px GamePocket`
     const text = `${((value / max) * 100).toFixed(0)}%`
     context.textAlign = "center"
     context.textBaseline = "middle"
@@ -45,7 +45,7 @@ export const ProgressScreen = ({
     if (message) {
       let fontSize = 40
       do {
-        context.font = `${fontSize * SCALE}px Analogue`
+        context.font = `${fontSize * SCALE}px GamePocket`
         fontSize--
       } while (context.measureText(message).width > canvas.width * 0.8)
       context.fillStyle = LIGHT_GREEN
