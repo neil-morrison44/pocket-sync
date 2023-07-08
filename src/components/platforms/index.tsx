@@ -49,7 +49,7 @@ export const Platforms = () => {
         )
 
         const confirmation = await confirm(
-          `Delete ${platformsWithoutCores.length} unused Platforms?`
+          t("delete_unused", { count: platformsWithoutCores.length })
         )
 
         if (confirmation && platformsWithoutCores.length > 0) {

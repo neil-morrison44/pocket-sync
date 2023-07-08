@@ -6,9 +6,13 @@ import {
   RequiredFileInfoSelectorFamily,
 } from "../requiredFiles/selectors"
 import { archiveBumpAtom } from "./atoms"
-import { invokeWalkDirListFiles } from "../../utils/invokes"
+import {
+  invokeFileExists,
+  invokeFileMetadata,
+  invokeWalkDirListFiles,
+} from "../../utils/invokes"
 import { ResponseType, getClient } from "@tauri-apps/api/http"
-import { fileSystemInvalidationAtom } from "../atoms"
+import { fileSystemInvalidationAtom, pocketPathAtom } from "../atoms"
 
 export const ArchiveMetadataSelectorFamily = selectorFamily<
   ArchiveFileMetadata[],
@@ -19,8 +23,6 @@ export const ArchiveMetadataSelectorFamily = selectorFamily<
     ({ archiveName }) =>
     async ({ get }) => {
       get(archiveBumpAtom)
-      const url = `https://archive.org/metadata/${archiveName}`
-
       const httpClient = await getClient()
       const response = await httpClient.get<{
         files: ArchiveFileMetadata[]
@@ -43,11 +45,29 @@ export const PathFileInfoSelectorFamily = selectorFamily<
     ({ path, offPocket }) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
+      const pocketPath = get(pocketPathAtom)
       const fileList = await invokeWalkDirListFiles(path, [], offPocket)
 
-      const all = fileList.map((filename) =>
-        get(FileInfoSelectorFamily({ path, filename }))
+      const all = await Promise.all(
+        fileList.map(async (filename) => {
+          const fullPath = offPocket
+            ? `${path}/${filename}`
+            : `${pocketPath}/${path}/${filename}`
+
+          const exists = await invokeFileExists(fullPath)
+          const crc32 = exists
+            ? (await invokeFileMetadata(fullPath)).crc32
+            : undefined
+
+          return {
+            filename,
+            path,
+            exists,
+            crc32,
+          }
+        })
       )
+
       return all
     },
 })

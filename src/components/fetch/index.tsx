@@ -32,7 +32,7 @@ import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { confirm } from "@tauri-apps/api/dialog"
 import { useTranslation } from "react-i18next"
 
-type FileStatus = "complete" | "partial" | "none" | "waiting"
+type FileStatus = "complete" | "partial" | "none" | "waiting" | "copying"
 
 export const Fetch = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
@@ -51,7 +51,7 @@ export const Fetch = () => {
       if (!confirmed) return
       updateConfig("fetches", (fetches) => {
         const clonedFetches = [...(fetches ?? [])]
-        clonedFetches.splice(index)
+        clonedFetches.splice(index, 1)
         return clonedFetches
       })
     },
@@ -131,7 +131,7 @@ const FileSystemItem = ({
         <div className="fetch__list-item-destination">{destination}</div>
       </div>
 
-      {isCopying && <FileStatus status="waiting" files={[]} />}
+      {isCopying && <FileStatus status="copying" files={[]} />}
       {!isCopying && (
         <Suspense fallback={<FileStatus status="waiting" files={[]} />}>
           <FileSystemStatus path={path} destination={destination}>
@@ -334,10 +334,11 @@ const FileStatus = ({
   const { t } = useTranslation("fetch")
 
   const statusText = useMemo(() => {
+    if (status === "copying") return t("copying")
     if (status === "waiting") return t("loading")
-    return `${files.filter(({ exists }) => exists).length} / ${
-      files.length
-    } files`
+    const count = files.filter(({ exists }) => exists).length
+    const total = files.length
+    return t("file_count", { count, total })
   }, [files, status])
 
   return (

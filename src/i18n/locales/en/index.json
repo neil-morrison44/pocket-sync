@@ -136,7 +136,8 @@
     },
     "edit": "Edit",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "delete_unused": "Delete {count, plural, one {# unused Platform} other {# unused Platforms}}?"
   },
   "platform_info": {
     "controls": {
@@ -275,11 +276,12 @@
       "archive_org": "Internet Archive",
       "filesystem": "Local Files"
     },
-    "file_count": "{count} / {total, plural, one {# File} other {# Files}",
+    "file_count": "{count} / {total, plural, one {# File} other {# Files}}",
+    "copying": "Copying Files...",
     "loading": "loading...",
     "fetch_button": "Fetch",
     "remove_button": "Remove",
-    "remove_confirm": "This'll remove the fetch item, but not the files. Are you sure?",
+    "remove_confirm": "This'll remove the fetch configuration, but not the files. Are you sure?",
     "new": {
       "title": "Add new Fetch",
       "origin": "Origin Folder",

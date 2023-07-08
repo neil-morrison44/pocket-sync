@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
+import { useRecoilState, useRecoilValue } from "recoil"
 import {
   PocketSyncConfigSelector,
   skipAlternateAssetsSelector,
@@ -8,20 +8,21 @@ import { Link } from "../link"
 import { useUpdateConfig } from "./hooks/useUpdateConfig"
 
 import "./index.css"
-import { pocketPathAtom, reconnectWhenOpenedAtom } from "../../recoil/atoms"
+import { reconnectWhenOpenedAtom } from "../../recoil/atoms"
 import { invokeClearFileCache } from "../../utils/invokes"
 import { useTranslation, Trans } from "react-i18next"
+import { useDisconnectPocket } from "../../hooks/useDisconnectPocket"
 
 export const Settings = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
   const [archiveUrlInput, setArchiveUrl] = useState(config.archive_url || "")
   const skipAlternateAssets = useRecoilValue(skipAlternateAssetsSelector)
-  const setPocketPath = useSetRecoilState(pocketPathAtom)
   const [reconnectWhenOpened, setReconnectWhenOpened] = useRecoilState(
     reconnectWhenOpenedAtom
   )
   const updateConfig = useUpdateConfig()
   const { t } = useTranslation("settings")
+  const onDisconnect = useDisconnectPocket()
 
   return (
     <div className="settings">
@@ -120,7 +121,7 @@ export const Settings = () => {
           <h3 className="settings__row-title">{t("disconnect.title")}</h3>
           <div className="settings__ramble">{t("disconnect.ramble")}</div>
           <label className="settings__checkbox">
-            <button onClick={() => setPocketPath(null)}>
+            <button onClick={() => onDisconnect()}>
               {t("disconnect.button")}
             </button>
           </label>

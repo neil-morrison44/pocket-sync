@@ -197,7 +197,7 @@ const ListInput = ({ value, onChange }: ListInputProps) => {
             <button
               onClick={() => {
                 const array = [...value]
-                array.splice(index)
+                array.splice(index, 1)
                 onChange(array)
               }}
             >
