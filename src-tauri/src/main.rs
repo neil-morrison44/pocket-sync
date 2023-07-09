@@ -385,6 +385,11 @@ async fn copy_files(copies: Vec<(&str, &str)>, window: Window) -> Result<bool, (
     for (origin, destination) in copies {
         let origin = PathBuf::from(origin);
         let destination = PathBuf::from(&destination);
+
+        tokio::fs::create_dir_all(destination.parent().unwrap())
+            .await
+            .unwrap();
+
         if let Err(err) = tokio::fs::copy(&origin, &destination).await {
             println!("{}", err);
         } else {
