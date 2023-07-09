@@ -23,7 +23,7 @@ export const CoreTag = ({
       }
     >
       <AuthorTag coreName={coreName} />
-      <b>{`${coreInfo.core.metadata.shortname}`}</b>
+      <b>{coreInfo.core.metadata.shortname}</b>
     </div>
   )
 }

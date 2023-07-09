@@ -1,4 +1,3 @@
-import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { CoreInfoSelectorFamily } from "../../../recoil/selectors"
 

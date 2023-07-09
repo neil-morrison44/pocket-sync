@@ -1,4 +1,3 @@
-import React from "react"
 import { useRecoilValue } from "recoil"
 import { FirmwareDetailsSelectorFamily } from "../../../recoil/firmware/selectors"
 import { useTranslation } from "react-i18next"
@@ -15,17 +14,14 @@ export const FirmwareReleaseNotes = ({ version }: FirmwareReleaseNotesProp) => {
     FirmwareDetailsSelectorFamily({ version })
   )
   const { t } = useTranslation("firmware")
+  const url = `https://www.analogue.co/support/pocket/firmware/${version}`
 
   return (
     <div className="firmware-release-notes">
       <h1>{t("release_notes.title", { version })}</h1>
       <div className="firmware-release-notes__link">
         {t("release_notes.from")}
-        <Link
-          href={`https://www.analogue.co/support/pocket/firmware/${version}`}
-        >
-          {`https://www.analogue.co/support/pocket/firmware/${version}`}
-        </Link>
+        <Link href={url}>{url}</Link>
       </div>
       <div
         className="firmware-release-notes__content"

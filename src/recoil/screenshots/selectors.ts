@@ -75,7 +75,7 @@ export const SingleScreenshotImageSelectorFamily = selectorFamily<
 
       const image = new Image()
 
-      const loadPromise = new Promise<HTMLImageElement>((resolve, reject) => {
+      const loadPromise = new Promise<HTMLImageElement>((resolve) => {
         image.onload = () => resolve(image)
       })
 

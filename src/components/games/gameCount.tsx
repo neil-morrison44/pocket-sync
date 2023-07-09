@@ -32,7 +32,7 @@ export const GameCount = ({
       (f) => !namedFiles.some((nf) => f.endsWith(nf))
     )
     return nonNamedFiles.length
-  }, [files, data, extensions])
+  }, [files, data])
 
   return <div>{t("item.game_count", { count })}</div>
 }

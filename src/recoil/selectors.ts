@@ -2,24 +2,19 @@ import { selector, selectorFamily } from "recoil"
 import {
   CoreInfoJSON,
   DataJSON,
-  InstanceDataJSON,
-  RequiredFileInfo,
 } from "../types"
 import { renderBinImage } from "../utils/renderBinImage"
 import { fileSystemInvalidationAtom } from "./atoms"
 import { getVersion } from "@tauri-apps/api/app"
-import { decodeDataParams } from "../utils/decodeDataParams"
 import {
   invokeFileExists,
-  invokeFileMetadata,
   invokeFindCleanableFiles,
   invokeListFiles,
   invokeReadBinaryFile,
   invokeWalkDirListFiles,
 } from "../utils/invokes"
-import { AUTHOUR_IMAGE, IGNORE_INSTANCE_JSON_LIST } from "../values"
+import { AUTHOUR_IMAGE } from "../values"
 import { readJSONFile } from "../utils/readJSONFile"
-import { skipAlternateAssetsSelector } from "./config/selectors"
 import { path } from "@tauri-apps/api"
 
 export const DataJSONSelectorFamily = selectorFamily<DataJSON, string>({

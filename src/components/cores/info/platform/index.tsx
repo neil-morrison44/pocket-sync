@@ -34,7 +34,7 @@ export const CorePlatformInfo = ({ platformId }: CorePlatformInfoProps) => {
       <div className="cores__platform-info-cateogry">{platform.category}</div>
       <strong className="cores__platform-info-name">{platform.name}</strong>
 
-      <div>{`${platform.manufacturer}, ${platform.year}`}</div>
+      <div>{[platform.manufacturer, platform.year].join(", ")}</div>
       <Link className="cores__platform-info-wiki" href={wikiLink}>
         {t("platform.wikipedia")}
       </Link>

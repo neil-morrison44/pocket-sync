@@ -54,7 +54,7 @@ export const SearchContextSelfHidingConsumer = ({
         ),
       0
     )
-  }, [query])
+  }, [fields, query])
 
   if (otherFn && other && !otherFn(other)) return null
 

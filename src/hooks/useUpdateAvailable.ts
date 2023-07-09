@@ -25,5 +25,5 @@ export const useUpdateAvailable = (coreName: string) => {
     }
 
     return null
-  }, [coreInfo.core.metadata.version, coreInventory])
+  }, [coreInfo.core.metadata.version, coreInventory.data, coreName])
 }

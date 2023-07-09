@@ -165,7 +165,7 @@ const FolderPicker = ({
     if (path && !(path instanceof Array)) {
       onChange(fileIsOnPocket ? path.replace(pocketPath, "") : path)
     }
-  }, [])
+  }, [fileIsOnPocket, homeDir, onChange, pocketPath])
 
   return (
     <label className="fetch__folder-picker">
@@ -193,7 +193,7 @@ const ListInput = ({ value, onChange }: ListInputProps) => {
     if (value.includes(interimValue)) return
     onChange([...value, interimValue])
     setInterimValue("")
-  }, [interimValue, onChange, setInterimValue])
+  }, [interimValue, onChange, value])
 
   return (
     <div className="fetch__list-input">

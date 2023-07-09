@@ -40,7 +40,7 @@ export const SaveInfo = ({
 
   useEffect(() => {
     popScroll()
-  }, [pocketSaves])
+  }, [pocketSaves, popScroll])
 
   const perSaveFormat = useMemo(() => {
     const perSave: {
@@ -105,7 +105,7 @@ export const SaveInfo = ({
         invalidateSaveFileList()
       }
     },
-    [backupPath, invalidateSaveFileList, pushScroll]
+    [backupPath, invalidateSaveFileList, pushScroll, t]
   )
 
   const gridStyling = useMemo<CSSProperties>(() => {
@@ -223,7 +223,7 @@ const SaveVersions = ({
 
   return (
     <div className="saves__info-save-file">
-      <div className="saves__info-save-file-path">{`${savefile}`}</div>
+      <div className="saves__info-save-file-path">{savefile}</div>
       <div className="saves__info-save-file-versions" style={gridStyling}>
         {versions.map(({ zip, crc32 }, index) => {
           // skip ones we've already drawn the box for

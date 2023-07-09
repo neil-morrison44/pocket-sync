@@ -2,7 +2,6 @@ import { selector, selectorFamily } from "recoil"
 import { ArchiveFileMetadata, RequiredFileInfo } from "../../types"
 import { PocketSyncConfigSelector } from "../config/selectors"
 import {
-  FileInfoSelectorFamily,
   RequiredFileInfoSelectorFamily,
 } from "../requiredFiles/selectors"
 import { archiveBumpAtom } from "./atoms"

@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useEffect, useRef } from "react"
+import { Suspense, useCallback, useEffect, useRef } from "react"
 import { useRecoilState } from "recoil"
 import { currentViewAtom, VIEWS_LIST } from "../../recoil/view/atoms"
 import { About } from "../about"

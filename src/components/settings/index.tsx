@@ -4,7 +4,6 @@ import {
   PocketSyncConfigSelector,
   skipAlternateAssetsSelector,
 } from "../../recoil/config/selectors"
-import { Link } from "../link"
 import { useUpdateConfig } from "./hooks/useUpdateConfig"
 
 import "./index.css"
@@ -12,6 +11,7 @@ import { reconnectWhenOpenedAtom } from "../../recoil/atoms"
 import { invokeClearFileCache } from "../../utils/invokes"
 import { useTranslation, Trans } from "react-i18next"
 import { useDisconnectPocket } from "../../hooks/useDisconnectPocket"
+import { Thanks } from "./thanks"
 
 export const Settings = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
@@ -44,6 +44,7 @@ export const Settings = () => {
         <div className="settings__row">
           <h3 className="settings__row-title">{t("archive.title")}</h3>
           <div className="settings__ramble">{t("archive.warning")}</div>
+          {/* eslint-disable-next-line react/jsx-no-literals */}
           <pre>{"https://archive.org/download/openFPGA-Files"}</pre>
           <div className="settings__text-input-and-save">
             <input
@@ -128,37 +129,7 @@ export const Settings = () => {
         </div>
       </div>
 
-      <div className="settings__info">
-        <h3>{t("thanks")}</h3>
-
-        <ul>
-          <li>
-            <Link href={"https://github.com/openfpga-cores-inventory"}>
-              {"https://github.com/openfpga-cores-inventory"}
-            </Link>
-          </li>
-
-          <li>
-            <Link href={"https://github.com/mumchristmas/GamePocket-font"}>
-              {"https://github.com/mumchristmas/GamePocket-font"}
-            </Link>
-            {" & "}
-            <Link href={"https://github.com/AbFarid/analogue-os-font"}>
-              {"https://github.com/AbFarid/analogue-os-font"}
-            </Link>
-          </li>
-
-          <li>
-            <Link
-              href={
-                "https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky"
-              }
-            >
-              {"3D reflection map from Poly Haven"}
-            </Link>
-          </li>
-        </ul>
-      </div>
+      <Thanks />
     </div>
   )
 }

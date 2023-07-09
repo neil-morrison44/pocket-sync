@@ -19,5 +19,5 @@ export const useDisconnectPocket = () => {
     invalidateFS()
     invalidateConfig()
     invalidateSaves()
-  }, [])
+  }, [invalidateConfig, invalidateFS, invalidateSaves, setPocketPath])
 }

@@ -10,7 +10,7 @@ export const useSetCurrentImageAsStamp = (
   setImageStamps: Dispatch<SetStateAction<ImageInfo[]>>
 ) => {
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       if (imageStamps.length !== 0) return
       const image = new Image()
       image.src = currentImageSrc
@@ -27,7 +27,7 @@ export const useSetCurrentImageAsStamp = (
         },
       ])
     })()
-  }, [setImageStamps, currentImageSrc])
+  }, [setImageStamps, currentImageSrc, imageStamps.length])
 }
 
 export const useCanvasToDragStamps = (
@@ -63,7 +63,7 @@ export const useCanvasToDragStamps = (
   }, [selectedStampIndex, setImageStamps, canvasRef])
 }
 
-export const renderStamps = (
+export const useRenderStamps = (
   canvasRef: RefObject<HTMLCanvasElement>,
   width: number,
   height: number,
@@ -103,7 +103,7 @@ export const renderStamps = (
       )
       context.restore()
     })
-  }, [imageStamps])
+  }, [canvasRef, height, imageStamps, width])
 }
 
 export const useUpdateImageStampValuesCallback = (

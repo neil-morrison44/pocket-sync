@@ -6,7 +6,7 @@ import { invokeSaveFile } from "../../../../utils/invokes"
 import { pocketPathAtom } from "../../../../recoil/atoms"
 import { ImageInfo } from "./types"
 import {
-  renderStamps,
+  useRenderStamps,
   useAddNewImageCallback,
   useCanvasToDragStamps,
   useMoveStampCallback,
@@ -43,7 +43,7 @@ export const ImageEditor = ({
 
   useSetCurrentImageAsStamp(imageStamps, currentImageSrc, setImageStamps)
   useCanvasToDragStamps(canvasRef, setImageStamps, selectedStampIndex)
-  renderStamps(canvasRef, width, height, imageStamps)
+  useRenderStamps(canvasRef, width, height, imageStamps)
 
   const updateImageStampValues =
     useUpdateImageStampValuesCallback(setImageStamps)
@@ -72,7 +72,7 @@ export const ImageEditor = ({
     await invokeSaveFile(`${pocketPath}/${path}`, buffer)
     invalidateFS()
     onClose()
-  }, [width, height])
+  }, [width, height, pocketPath, path, invalidateFS, onClose])
 
   return (
     <Modal className="image-editor">

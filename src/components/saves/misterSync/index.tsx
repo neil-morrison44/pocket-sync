@@ -192,7 +192,7 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
         }
       }
     },
-    [path, misterSaveInfo, pocketSaveInfo]
+    [pocketPath, path, misterSaveInfo?.path]
   )
 
   const toPocketClassName = useBEM({

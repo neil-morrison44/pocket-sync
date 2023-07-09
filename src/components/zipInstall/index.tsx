@@ -9,6 +9,7 @@ import { TreeNode } from "./treeNode"
 import { InstallZipEventPayload } from "./types"
 import { Progress } from "../progress"
 import "./index.css"
+import { useTranslation } from "react-i18next"
 
 export const ZipInstall = () => {
   const { installState } = useListenForZipInstall()
@@ -27,6 +28,8 @@ export const ZipInstallInner = ({
   const { confirm, cancel, handleMovedFiles, setHandleMovedFiles } =
     useZipInstallButtons(allowedFiles)
 
+  const { t } = useTranslation("zip_install")
+
   if (progress) {
     return (
       <Modal>
@@ -40,7 +43,7 @@ export const ZipInstallInner = ({
     <Modal>
       <h2>{title}</h2>
       <div className="zip-install__paths">
-        {!tree && <p>{`Scanning files...`}</p>}
+        {!tree && <p>{t("scanning")}</p>}
         {tree &&
           allowedFiles &&
           tree.map((node) => (
@@ -56,7 +59,7 @@ export const ZipInstallInner = ({
       </div>
 
       <div className="zip-install__controls">
-        <button onClick={cancel}>Cancel</button>
+        <button onClick={cancel}>{t("cancel_button")}</button>
         <label
           className="zip-install__control-checkbox"
           title="Handles cases where files have moved, e.g. JSON files are now in `_alternatives`"
@@ -66,9 +69,9 @@ export const ZipInstallInner = ({
             checked={handleMovedFiles}
             onChange={({ target }) => setHandleMovedFiles(target.checked)}
           />
-          Remove duplicate existing files
+          {t("remove_duplicate")}
         </label>
-        <button onClick={confirm}>Confirm</button>
+        <button onClick={confirm}>{t("confirm_button")}</button>
       </div>
     </Modal>
   )

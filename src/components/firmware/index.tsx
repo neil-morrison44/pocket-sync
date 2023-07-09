@@ -12,7 +12,7 @@ import { Suspense, useCallback, useState } from "react"
 import { Loader } from "../loader"
 import { invokeDeleteFiles, invokeDownloadFirmware } from "../../utils/invokes"
 import { useInvalidateFileSystem } from "../../hooks/invalidation"
-import { useTranslation, Trans } from "react-i18next"
+import { useTranslation } from "react-i18next"
 
 export const Firmware = () => {
   const currentFirmware = useRecoilValue(currentFirmwareVersionSelector)
@@ -99,7 +99,7 @@ const DownloadButton = ({
     if (!firmwareDetails.download_url) return
 
     onDownloadStart()
-    const result = await invokeDownloadFirmware(
+    const _result = await invokeDownloadFirmware(
       firmwareDetails.download_url,
       firmwareDetails.file_name,
       firmwareDetails.md5
@@ -107,7 +107,14 @@ const DownloadButton = ({
 
     invalidateFS()
     onDownloadEnd()
-  }, [firmwareDetails])
+  }, [
+    firmwareDetails.download_url,
+    firmwareDetails.file_name,
+    firmwareDetails.md5,
+    invalidateFS,
+    onDownloadEnd,
+    onDownloadStart,
+  ])
 
   if (!firmwareDetails.download_url) return null
   return <button onClick={onDownload}>{t("load_firmware")}</button>
@@ -127,7 +134,7 @@ const FirmwareDownloaded = ({ downloading }: FirmwareDownloadedProps) => {
       await invokeDeleteFiles([downloadedFirmware])
       invalidateFS()
     }
-  }, [downloadedFirmware])
+  }, [downloadedFirmware, invalidateFS])
 
   if (!downloadedFirmware) {
     return (

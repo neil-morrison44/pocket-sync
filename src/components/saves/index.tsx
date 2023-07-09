@@ -46,7 +46,7 @@ export const Saves = () => {
       newSaveLocation.backup_location,
       newSaveLocation.backup_count
     )
-  }, [saves])
+  }, [allSaves, saves, updateConfig])
 
   if (selectedSaveBackup !== null)
     return (

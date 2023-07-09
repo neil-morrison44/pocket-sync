@@ -7,24 +7,22 @@ import { Modal } from "../../modal"
 import { CoreTag } from "../../shared/coreTag"
 
 import "./index.css"
+import { useTranslation } from "react-i18next"
 
-type BinCueJsonModalProp = {
+type InstanceJsonProps = {
   onClose: () => void
 }
 
-const MAX_BIN_FILES = 31
-
-export const InstanceJson = ({ onClose }: BinCueJsonModalProp) => {
-  // const cueFiles = useRecoilValue(cueFilesSelector)
-  const [buildInProgress, setBuildInProgress] = useState(false)
+export const InstanceJson = ({ onClose }: InstanceJsonProps) => {
   const coresList = useRecoilValue(instancePackagerCoresListSelector)
   const buildLog = useBuildLog()
+  const { t } = useTranslation("instance_json")
 
   return (
     <Modal className="instance-json">
-      <h2>Build Instance JSON files</h2>
+      <h2>{t("title")}</h2>
       <div className="instance-json--top-content">
-        <div>Automatic instance.json file creation available for:</div>
+        <div>{t("available_for")}</div>
         <div className="instance-json__cores-list">
           {coresList.map((f) => (
             <CoreTag
@@ -40,19 +38,26 @@ export const InstanceJson = ({ onClose }: BinCueJsonModalProp) => {
 
       {buildLog.length > 0 && (
         <div className="instance-json__build-log">
-          {buildLog.map(({ file_name, success, message }) => {
+          {buildLog.map(({ file_name, success }) => {
             if (success) {
               return (
-                <div className="instance-json__build-log-item">{`Wrote ${file_name}`}</div>
+                <div key={file_name} className="instance-json__build-log-item">
+                  {t("wrote_file", { file_name })}
+                </div>
               )
             }
             return (
-              <div className="instance-json__build-log-item instance-json__build-log-item--warn">{`Skipped ${file_name} \n ${message}`}</div>
+              <div
+                key={file_name}
+                className="instance-json__build-log-item instance-json__build-log-item--warn"
+              >
+                {t("skipped_file", { file_name })}
+              </div>
             )
           })}
         </div>
       )}
-      <button onClick={onClose}>Close</button>
+      <button onClick={onClose}>{t("close_button")}</button>
     </Modal>
   )
 }

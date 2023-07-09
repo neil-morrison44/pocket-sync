@@ -71,5 +71,3 @@ type ProgressPayload = {
   message: string
   progress: number
 }
-
-type ProgressEndPayload = {}

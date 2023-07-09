@@ -40,7 +40,6 @@ export const SaveStates = () => {
   )
 
   const deleteSelected = useCallback(async () => {
-    const plural = selectedStates.length > 1
     const okToDelete = await confirm(
       t("confirm_delete", { count: selectedStates.length })
     )
@@ -51,7 +50,7 @@ export const SaveStates = () => {
     )
     setSelectedStates([])
     invalidateFS()
-  }, [selectedStates, setSelectedStates])
+  }, [invalidateFS, selectedStates, t])
 
   return (
     <div className="save-states">
@@ -138,7 +137,9 @@ const CartridgeHeader = ({
   return (
     <div className="save-states__core-header" style={{ zIndex }}>
       <b>{t("cartridge")}</b>
-      <div className="save-states__core-header-count">{`( ${count} / 128 )`}</div>
+      <div className="save-states__core-header-count">
+        {t("count", { count })}
+      </div>
     </div>
   )
 }
@@ -152,10 +153,13 @@ const CoreNameHeader = ({
   count: number
   zIndex: number
 }) => {
+  const { t } = useTranslation("save_states")
   return (
     <div className="save-states__core-header" style={{ zIndex }}>
       <CoreTag coreName={coreName} />
-      <div className="save-states__core-header-count">{`( ${count} / 128 )`}</div>
+      <div className="save-states__core-header-count">
+        {t("count", { count })}
+      </div>
     </div>
   )
 }

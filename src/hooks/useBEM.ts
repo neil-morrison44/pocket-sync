@@ -18,4 +18,4 @@ export const useBEM = ({
       .map(([modifier]) => `${className}--${modifier}`)
 
     return `${className} ${mods.join(" ")}`.trim()
-  }, [block, element, ...Object.keys(modifiers), ...Object.values(modifiers)])
+  }, [block, element, modifiers])
