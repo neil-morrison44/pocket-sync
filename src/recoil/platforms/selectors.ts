@@ -122,10 +122,7 @@ export const imagePackListSelector = selector<ImagePack[]>({
   },
 })
 
-export const ImagePackBlobSelectorFamily = selectorFamily<
-  Blob | null,
-  ImagePack
->({
+const ImagePackBlobSelectorFamily = selectorFamily<Blob | null, ImagePack>({
   key: "ImagePackFileSelectorFamily",
   get:
     ({ owner, repository, variant }) =>

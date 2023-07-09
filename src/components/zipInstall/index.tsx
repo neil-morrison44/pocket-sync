@@ -18,7 +18,7 @@ export const ZipInstall = () => {
   return <ZipInstallInner {...installState} />
 }
 
-export const ZipInstallInner = ({
+const ZipInstallInner = ({
   files,
   progress,
   title,

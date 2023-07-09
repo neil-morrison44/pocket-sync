@@ -31,10 +31,7 @@ export const BackupZipsSelectorFamily = selectorFamily<
     },
 })
 
-export const SaveZipFilesListSelectorFamily = selectorFamily<
-  SaveZipFile[],
-  string
->({
+const SaveZipFilesListSelectorFamily = selectorFamily<SaveZipFile[], string>({
   key: "SaveZipFilesListSelectorFamily",
   get: (zipPath) => async () => {
     const backups = await invokeListSavesInZip(zipPath)

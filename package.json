@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "lint-i18n": "eslint --fix --ext .json --format node_modules/eslint-plugin-i18n-json/formatter.js src/i18n"
+    "lint-i18n": "eslint --fix --ext .json --format node_modules/eslint-plugin-i18n-json/formatter.js src/i18n",
+    "dead-code": "npx ts-prune"
   },
   "dependencies": {
     "@prantlf/jsonlint": "11.7.0",

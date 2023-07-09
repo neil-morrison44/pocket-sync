@@ -14,11 +14,6 @@ export const fileSystemInvalidationAtom = atom<number>({
   default: Date.now(),
 })
 
-export const PocketModelColourAtom = atom<"black" | "white">({
-  key: "PocketModelColourAtom",
-  default: "black",
-})
-
 export const configInvalidationAtom = atom<number>({
   key: "configInvalidationAtom",
   default: Date.now(),

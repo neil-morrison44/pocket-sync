@@ -51,7 +51,7 @@ type NewFetchTypeProps = {
   addFetch: (newFetch: FetchType) => void
 }
 
-export const NewFetchFileSystem = ({ addFetch }: NewFetchTypeProps) => {
+const NewFetchFileSystem = ({ addFetch }: NewFetchTypeProps) => {
   const [info, setInfo] = useState<Partial<FetchType>>({ type: "filesystem" })
   if (info.type !== "filesystem") throw new Error("Wrong type")
 
@@ -85,7 +85,7 @@ export const NewFetchFileSystem = ({ addFetch }: NewFetchTypeProps) => {
   )
 }
 
-export const NewFetchArchive = ({ addFetch }: NewFetchTypeProps) => {
+const NewFetchArchive = ({ addFetch }: NewFetchTypeProps) => {
   const [info, setInfo] = useState<Partial<FetchType>>({
     type: "archive.org",
     extensions: [],

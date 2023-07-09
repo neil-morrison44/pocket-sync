@@ -1,12 +1,12 @@
 import React, { ReactNode, useContext, useDeferredValue, useMemo } from "react"
 import { fuzzy } from "fast-fuzzy"
 
-export type Other = {
+type Other = {
   onlyUpdates?: boolean
   category?: string
 }
 
-export const SearchContext = React.createContext<{
+const SearchContext = React.createContext<{
   query: string
   other?: Other
 }>({ query: "" })

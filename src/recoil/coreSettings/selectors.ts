@@ -4,10 +4,7 @@ import { invokeWalkDirListFiles } from "../../utils/invokes"
 import { readJSONFile } from "../../utils/readJSONFile"
 import { fileSystemInvalidationAtom } from "../atoms"
 
-export const CoreInteractFileSelectorFamily = selectorFamily<
-  InteractJSON,
-  string
->({
+const CoreInteractFileSelectorFamily = selectorFamily<InteractJSON, string>({
   key: "CoreInteractFileSelectorFamily",
   get:
     (coreName) =>

@@ -19,15 +19,13 @@ export const AllSaveStatesSelector = selector<string[]>({
   },
 })
 
-export const SaveStateBinarySelectorFamily = selectorFamily<Uint8Array, string>(
-  {
-    key: "SaveStateBinarySelectorFamily",
-    get: (path) => async () => {
-      const file = await invokeReadBinaryFile(`Memories/Save States/${path}`)
-      return file
-    },
-  }
-)
+const SaveStateBinarySelectorFamily = selectorFamily<Uint8Array, string>({
+  key: "SaveStateBinarySelectorFamily",
+  get: (path) => async () => {
+    const file = await invokeReadBinaryFile(`Memories/Save States/${path}`)
+    return file
+  },
+})
 
 export const SaveStateImageSelectorFamily = selectorFamily<string, string>({
   key: "SaveStateImageSelectorFamily",
