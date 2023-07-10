@@ -39,7 +39,7 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
       (pId) =>
         `${pocketPath}/Assets/${pId}/${coreSpecific ? coreName : "common"}`
     )
-  }, [romsSlot, platformIds])
+  }, [romsSlot, platformIds, pocketPath, coreName])
 
   const onOpenFolder = useCallback(async (path: string) => {
     await invokeCreateFolderIfMissing(path)
@@ -80,7 +80,7 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
               extensions={romsSlot?.extensions || []}
             />
 
-            {`${(romsSlot?.extensions || []).map((e) => `.${e}`).join(", ")}`}
+            {(romsSlot?.extensions || []).map((e) => `.${e}`).join(", ")}
           </div>
         </div>
       ))}

@@ -14,7 +14,7 @@ export const coreInventoryAtom = atom<InventoryJSON>({
   })(),
   effects: [
     ({ onSet, setSelf }) => {
-      onSet(async (_a, _b, isReset) => {
+      onSet(async (_a, _b, _isReset) => {
         // isReset should work here but it doesn't seem to
         // so instead do this for any outside set
         const response = await fetch(

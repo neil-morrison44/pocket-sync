@@ -30,6 +30,6 @@ export const useUpdateConfig = () => {
 
       setTimeout(() => invalidateConfigSelector(), 500)
     },
-    [currentConfig]
+    [currentConfig, invalidateConfigSelector, pocketPath]
   )
 }

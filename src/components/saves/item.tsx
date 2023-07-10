@@ -30,7 +30,7 @@ export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
     )
 
     invalidateFS()
-  }, [])
+  }, [config, invalidateFS, t, updateConfig])
 
   if (!exists) {
     return (

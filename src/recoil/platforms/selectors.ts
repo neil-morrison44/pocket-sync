@@ -12,7 +12,6 @@ import * as zip from "@zip.js/zip.js"
 import { renderBinImage } from "../../utils/renderBinImage"
 import { getClient, ResponseType } from "@tauri-apps/api/http"
 import { readJSONFile } from "../../utils/readJSONFile"
-import { http } from "@tauri-apps/api"
 
 export const platformsListSelector = selector<PlatformId[]>({
   key: "platformsListSelector",
@@ -123,10 +122,7 @@ export const imagePackListSelector = selector<ImagePack[]>({
   },
 })
 
-export const ImagePackBlobSelectorFamily = selectorFamily<
-  Blob | null,
-  ImagePack
->({
+const ImagePackBlobSelectorFamily = selectorFamily<Blob | null, ImagePack>({
   key: "ImagePackFileSelectorFamily",
   get:
     ({ owner, repository, variant }) =>

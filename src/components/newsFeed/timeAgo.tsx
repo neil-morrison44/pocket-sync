@@ -22,7 +22,7 @@ export const TimeAgo = ({ since }: { since: number }) => {
     if (secondsDiff < -60)
       return timeAgoFormatter.format(Math.ceil(secondsDiff / 60), "minutes")
     return t("less_than_1_min_ago")
-  }, [now, since])
+  }, [now, since, t, timeAgoFormatter])
 
   return <span>{timeText}</span>
 }

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import { useMemo } from "react"
 import {
   SaveStateImageSelectorFamily,
   SaveStateMetadataSelectorFamily,
@@ -29,7 +29,7 @@ export const SaveStateItem = ({
     if (!game.includes(".")) return game
     const filetypeIndex = game.lastIndexOf(".")
     return game.substring(0, filetypeIndex)
-  }, [metadata.game])
+  }, [metadata])
 
   return (
     <SearchContextSelfHidingConsumer

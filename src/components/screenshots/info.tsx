@@ -1,10 +1,4 @@
-import React, {
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react"
+import { Suspense, useCallback, useEffect, useState } from "react"
 import { useRecoilValue } from "recoil"
 import { SingleScreenshotSelectorFamily } from "../../recoil/screenshots/selectors"
 import { VideoJSONSelectorFamily } from "../../recoil/screenshots/selectors"
@@ -17,12 +11,12 @@ import { Loader } from "../loader"
 import { useUpscaler } from "./hooks/useUpscaler"
 import { useTranslation } from "react-i18next"
 
-type ScreenshotInfo = {
+type ScreenshotInfoProps = {
   fileName: string
   onBack: () => void
 }
 
-export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfo) => {
+export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
   const [imageMode, setImageMode] = useState<"raw" | "upscaled">("upscaled")
   const screenshot = useRecoilValue(SingleScreenshotSelectorFamily(fileName))
   if (screenshot === null) throw new Error(`Null file ${fileName}`)
@@ -40,11 +34,13 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfo) => {
         setImageSrc(URL.createObjectURL(screenshot.file))
         break
       case "upscaled":
-        const image = new Image()
-        image.src = URL.createObjectURL(screenshot.file)
-        image.onload = () => {
-          if (cancelled) return
-          setImageSrc(upscaler(videoJson, image))
+        {
+          const image = new Image()
+          image.src = URL.createObjectURL(screenshot.file)
+          image.onload = () => {
+            if (cancelled) return
+            setImageSrc(upscaler(videoJson, image))
+          }
         }
         break
     }
@@ -52,7 +48,7 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfo) => {
     return () => {
       cancelled = true
     }
-  }, [screenshot.file, imageMode])
+  }, [screenshot.file, imageMode, upscaler, videoJson])
 
   const saveFile = useSaveFile()
 
@@ -65,7 +61,7 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfo) => {
       )
 
     navigator.share({ files: [file] })
-  }, [imageSrc])
+  }, [imageSrc, screenshot.file_name])
 
   return (
     <div className="screenshot-info">

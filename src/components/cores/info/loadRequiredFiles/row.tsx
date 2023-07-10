@@ -1,4 +1,4 @@
-import { ArchiveFileMetadata, RequiredFileInfo } from "../../../../types"
+import { RequiredFileInfo } from "../../../../types"
 
 type RequiredFileRowProps = {
   info: RequiredFileInfo

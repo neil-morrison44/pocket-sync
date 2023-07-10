@@ -1,10 +1,4 @@
-import React, {
-  ReactNode,
-  Suspense,
-  useCallback,
-  useMemo,
-  useState,
-} from "react"
+import { ReactNode, Suspense, useCallback, useMemo, useState } from "react"
 
 import "./index.css"
 import { useRecoilValue, useSetRecoilState } from "recoil"
@@ -55,7 +49,7 @@ export const Fetch = () => {
         return clonedFetches
       })
     },
-    [updateConfig]
+    [t, updateConfig]
   )
 
   return (
@@ -199,7 +193,7 @@ const FileSystemStatus = ({
             (pF) => pF.filename === f.filename && pF.crc32 === f.crc32
           ) !== undefined,
       })),
-    [pocketFileInfo, fsFileInfo]
+    [fsFileInfo, pocketPath, destination, pocketFileInfo]
   )
 
   const status: FileStatus = useMemo(() => {
@@ -207,7 +201,7 @@ const FileSystemStatus = ({
       return "complete"
     if (files.some(({ exists }) => exists)) return "partial"
     return "none"
-  }, [pocketFileInfo, files])
+  }, [files])
 
   return <>{children(status, files)}</>
 }
@@ -333,7 +327,7 @@ const ArchiveOrgStatus = ({
       return "complete"
     if (files.length > 0 && files.some(({ exists }) => exists)) return "partial"
     return "none"
-  }, [metadata, fileInfo, files])
+  }, [files])
 
   return <>{children(status, files)}</>
 }
@@ -353,7 +347,7 @@ const FileStatus = ({
     const count = files.filter(({ exists }) => exists).length
     const total = files.length
     return t("file_count", { count, total })
-  }, [files, status])
+  }, [files, status, t])
 
   return (
     <div className={`fetch__status fetch__status--${status}`}>{statusText}</div>

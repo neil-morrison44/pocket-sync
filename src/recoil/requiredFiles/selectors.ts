@@ -12,7 +12,7 @@ import { fileSystemInvalidationAtom } from "../atoms"
 import { skipAlternateAssetsSelector } from "../config/selectors"
 import { DataJSONSelectorFamily, CoreInfoSelectorFamily } from "../selectors"
 
-export const FileInfoSelectorFamily = selectorFamily<
+const FileInfoSelectorFamily = selectorFamily<
   Omit<RequiredFileInfo, "type">,
   { filename: string | undefined; path: string }
 >({

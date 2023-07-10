@@ -12,7 +12,9 @@ i18n
   .use({
     type: "languageDetector",
     async: true,
-    init: () => {},
+    init: () => {
+      return
+    },
     detect: async () => await locale(),
     cacheUserLanguage: (lng: string) => {
       userLanguage = lng

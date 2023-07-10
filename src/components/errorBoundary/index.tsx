@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from "react"
+import { Component, ErrorInfo, ReactNode } from "react"
 import { Link } from "../link"
 import { Tip } from "../tip"
 

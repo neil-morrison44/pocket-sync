@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api"
-import { useCallback, useState } from "react"
+import { useCallback } from "react"
 import { useRecoilValue } from "recoil"
 import { PocketSyncConfigSelector } from "../recoil/config/selectors"
 import { RequiredFileInfo } from "../types"
@@ -18,11 +18,11 @@ export const useInstallRequiredFiles = () => {
 
   const installRequiredFiles = useCallback(
     async (files: RequiredFileInfo[], other_archive_url?: string) => {
-      let this_archive_url = other_archive_url ?? archive_url
+      const this_archive_url = other_archive_url ?? archive_url
       if (!this_archive_url)
         throw new Error("Attempt to download without an `archive_url` set")
 
-      const response = await invoke<boolean>("install_archive_files", {
+      const _response = await invoke<boolean>("install_archive_files", {
         files,
         archiveUrl: this_archive_url,
       })

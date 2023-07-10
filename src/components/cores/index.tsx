@@ -38,7 +38,7 @@ export const Cores = () => {
       coreInventory.data.filter(
         ({ identifier }) => !coresList.includes(identifier)
       ),
-    [filterCategory, coresList, coreInventory]
+    [coresList, coreInventory]
   )
 
   const sortedList = useMemo(
@@ -52,7 +52,7 @@ export const Cores = () => {
 
         return switchedA.localeCompare(switchedB)
       }),
-    [filterCategory, coresList]
+    [coresList]
   )
 
   const categoryList = useRecoilValue(cateogryListselector)

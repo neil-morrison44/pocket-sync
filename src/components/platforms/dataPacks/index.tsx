@@ -108,7 +108,7 @@ const CurrentJSON = ({
   onClick,
 }: {
   platformId: string
-  selected: Boolean
+  selected: boolean
   onClick: () => void
 }) => {
   const { t } = useTranslation("platforms")
@@ -141,7 +141,7 @@ const JsonInPack = ({
 }: {
   pack: ImagePack
   platformId: string
-  selected: Boolean
+  selected: boolean
   onClick: () => void
 }) => {
   const packJson = useRecoilValue(
@@ -154,6 +154,10 @@ const JsonInPack = ({
 
   const { platform } = packJson
 
+  const titleText = `${pack.owner}: ${pack.repository} ${
+    pack.variant ? `- ${pack.variant}` : ""
+  }`
+
   return (
     <div
       className={`data-packs__pack-item ${
@@ -161,9 +165,7 @@ const JsonInPack = ({
       }`}
       onClick={onClick}
     >
-      <div>{`${pack.owner}: ${pack.repository} ${
-        pack.variant ? `- ${pack.variant}` : ""
-      }`}</div>
+      <div>{titleText}</div>
       <div className="cores__info-blurb">
         <strong>{platform.name}</strong>
         {platform.category ?? <div>{platform.category}</div>}

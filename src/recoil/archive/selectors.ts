@@ -1,10 +1,7 @@
 import { selector, selectorFamily } from "recoil"
 import { ArchiveFileMetadata, RequiredFileInfo } from "../../types"
 import { PocketSyncConfigSelector } from "../config/selectors"
-import {
-  FileInfoSelectorFamily,
-  RequiredFileInfoSelectorFamily,
-} from "../requiredFiles/selectors"
+import { RequiredFileInfoSelectorFamily } from "../requiredFiles/selectors"
 import { archiveBumpAtom } from "./atoms"
 import {
   invokeFileExists,
@@ -72,7 +69,7 @@ export const PathFileInfoSelectorFamily = selectorFamily<
     },
 })
 
-export const archiveMetadataSelector = selector<ArchiveFileMetadata[]>({
+const archiveMetadataSelector = selector<ArchiveFileMetadata[]>({
   key: "archiveMetadataSelector",
   get: async ({ get }) => {
     get(archiveBumpAtom)

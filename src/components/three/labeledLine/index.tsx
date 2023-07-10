@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import React, { ReactNode, useLayoutEffect, useMemo, useRef } from "react"
+import { ReactNode, useLayoutEffect, useMemo, useRef } from "react"
 import { Html } from "@react-three/drei"
 import { useRecoilValue } from "recoil"
 import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"

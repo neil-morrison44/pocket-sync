@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
 import {
   screenshotsListSelector,
@@ -18,6 +18,7 @@ export const RandomScreenshotScreen = ({
   const [randomNudge, setRandomNudge] = useState(0)
 
   const screenshotName = useMemo(() => {
+    randomNudge
     return screenshotList[Math.floor(Math.random() * screenshotList.length)]
   }, [screenshotList, randomNudge])
 
@@ -41,7 +42,7 @@ const ScreenshotScreen = ({ name }: { name: string }) => {
   const image = useRecoilValue(SingleScreenshotImageSelectorFamily(name))
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       if (!image) return
 
       const newTexture = new Texture()

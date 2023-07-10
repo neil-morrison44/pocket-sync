@@ -33,13 +33,14 @@ export const About = () => {
   }, [selfReleases, AppVersion])
 
   const setCurrentView = useSetRecoilState(currentViewAtom)
+  const version = `v${AppVersion}`
 
   return (
     <div className="about">
       <div className="about__top">
         <div>
           <h1>{t("app_name")}</h1>
-          {`v${AppVersion}`}
+          {version}
         </div>
 
         {firmwareUpdateAvailable && (

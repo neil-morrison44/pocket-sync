@@ -29,6 +29,7 @@ export const CoreSettings = ({
     ListPresetInteractSelectorFamily(coreName)
   )
   const [chosenInteractFile, setChosenInteractFile] = useState("core")
+  const { t } = useTranslation("core_info")
 
   return (
     <Modal className="core-settings">
@@ -38,7 +39,7 @@ export const CoreSettings = ({
           onChange={({ target }) => setChosenInteractFile(target.value)}
           value={chosenInteractFile}
         >
-          <option value={"core"}>{"Core"}</option>
+          <option value={"core"}>{t("modal.input_core")}</option>
           {interactFileList.map((fileName) => (
             <option key={fileName} value={fileName}>
               {fileName}
@@ -138,7 +139,7 @@ const InteractSettings = ({
         }
       })
     },
-    [setPersistJSON]
+    [interactJSON.interact.variables, setPersistJSON]
   )
 
   return (
@@ -159,7 +160,7 @@ const InteractSettings = ({
           }`
 
           switch (v.type) {
-            case "list":
+            case "list": {
               const selectedIndex = persistedValue?.val ?? v.defaultval ?? 0
               const valueOfSelected =
                 v.options[
@@ -195,6 +196,7 @@ const InteractSettings = ({
                   </label>
                 </div>
               )
+            }
             case "check":
               return (
                 <div className={varClassName} key={v.id}>
@@ -213,7 +215,7 @@ const InteractSettings = ({
                   </label>
                 </div>
               )
-            case "slider_u32":
+            case "slider_u32": {
               const rawValue = persistedValue?.val ?? v.defaultval ?? 0
 
               const value =
@@ -244,12 +246,12 @@ const InteractSettings = ({
                       }}
                     ></input>
 
-                    <span>{`(${persistedValue?.val ?? v.defaultval})`}</span>
+                    <span>{persistedValue?.val ?? v.defaultval}</span>
                   </label>
                 </div>
               )
-
-            case "radio":
+            }
+            case "radio": {
               const isChecked = Boolean(persistedValue?.val ?? v.defaultval)
               return (
                 <div className={varClassName} key={v.id}>
@@ -270,13 +272,15 @@ const InteractSettings = ({
                   </label>
                 </div>
               )
+            }
             case "action":
             case "number_u32":
               return null
 
-            default:
+            default: {
               const text = JSON.stringify(v, null, 2)
               return <div key={text}>{text}</div>
+            }
           }
         })}
       </div>

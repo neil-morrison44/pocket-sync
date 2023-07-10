@@ -56,8 +56,8 @@ export type RequiredFileInfo = {
 
 export type PlatformId = string
 export type Category = string
-export type AuthorName = string
-export type Semver = `${number}.${number}.${number}`
+type AuthorName = string
+type Semver = `${number}.${number}.${number}`
 
 export type PlatformInfoJSON = {
   platform: {
@@ -175,11 +175,6 @@ export type GithubRelease = {
     content_type: string
     size: 1024
   }[]
-}
-
-export type InstallDetails = {
-  success: boolean
-  files: { path: string; exists: boolean }[]
 }
 
 export type FetchType = { type: string; destination: string } & (

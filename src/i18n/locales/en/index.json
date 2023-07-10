@@ -4,140 +4,189 @@
     "new_firmware": "New Pocket Firmware v{version} available",
     "update_available": "Update Available! {version}"
   },
-  "news_feed": {
-    "updates_from": "Updates from the <1>OpenFPGA Cores Inventory</1>",
-    "last_updated": "Last updated <1></1>"
+  "app": {
+    "app_name": "Pocket Sync",
+    "connect_button": "Connect to Pocket",
+    "not_pocket_tip": "That folder doesn't look like the Pocket's file system. The SD card must be initialised by the Pocket at least once."
   },
-  "time_ago": {
-    "less_than_1_min_ago": "less than one minute ago"
-  },
-  "games": {
-    "controls": {
-      "search": "Search",
-      "clean_files": "Clean Files",
-      "instance_json": "Instance JSON",
-      "refresh": "Refresh",
-      "category": "Category"
-    },
-    "item": {
-      "game_count": "{count, plural, =0 {No Games} one {# Game} other {# Games}}"
-    }
-  },
-  "cores": {
-    "controls": {
-      "search": "Search",
-      "refresh": "Refresh",
-      "updatable": "Updatable",
-      "category": "Category"
-    },
-    "installed": "Installed ({count})",
-    "not_installed": "Available ({count})",
-    "install_tip": "You can also install cores (or anything else in a zip) by dragging the .zip into this window"
+  "clean_files": {
+    "close_button": "Close",
+    "delete_files_button": "Delete Files",
+    "files_found": "{count, plural, =0 {No cleanable files} one {# cleanable file} other {# cleanable files} } found",
+    "title": "Clean Files"
   },
   "core_info": {
+    "author": "Author",
     "controls": {
       "back": "Back to list",
-      "uninstall": "Uninstall",
+      "install": "Install",
       "required_files": "Required Files",
-      "update": "Update",
-      "install": "Install"
+      "uninstall": "Uninstall",
+      "update": "Update"
     },
-    "version": "Version",
-    "author": "Author",
-    "required_files": "Required Files",
-    "please_wait": "Please wait, checking files...",
-    "required_files_count": "{count} / {total} Files",
-    "release_date": "Release Date",
-    "supports": "Supports",
-    "url": "URL",
-    "sponsor": "Sponsor",
-    "platforms": "Platforms",
     "inputs": "Inputs",
-    "settings": "Settings",
-    "supports_items": {
-      "save_states_and_sleep": "Save States / Sleep",
-      "dock": "Dock",
-      "dock_dac": "Dock (Analog)",
-      "cartridges": "Cartridges"
+    "modal": {
+      "close": "Close",
+      "input_core": "Core",
+      "no_settings_found": "No settings found!",
+      "reset_all": "Reset All"
     },
+    "not_in_inventory": "{coreName} not in cores inventory",
+    "platform": {
+      "edit": "Edit",
+      "wikipedia": "Wikipedia"
+    },
+    "platforms": "Platforms",
+    "please_wait": "Please wait, checking files...",
+    "release_date": "Release Date",
     "releases": {
       "release_history": "Release History",
       "show_previous": "Show previous releases"
     },
-    "not_in_inventory": "{coreName} not in cores inventory",
-    "platform": {
-      "wikipedia": "Wikipedia",
-      "edit": "Edit"
+    "required_files": "Required Files",
+    "required_files_count": "{count} / {total} Files",
+    "settings": "Settings",
+    "sponsor": "Sponsor",
+    "supports": "Supports",
+    "supports_items": {
+      "cartridges": "Cartridges",
+      "dock": "Dock",
+      "dock_dac": "Dock (Analog)",
+      "save_states_and_sleep": "Save States / Sleep"
     },
-    "modal": {
-      "close": "Close",
-      "reset_all": "Reset All",
-      "input_core": "Core",
-      "no_settings_found": "No settings found!"
-    }
+    "url": "URL",
+    "version": "Version"
   },
   "core_info_required_files": {
-    "title": "Required Files",
+    "close": "Close",
+    "download_all": "Download All",
     "no_link_tip": "Please view the Settings section for more options with required files",
     "skip_alternates": "(Alternative files skipped)",
-    "close": "Close",
-    "download_all": "Download All"
+    "title": "Required Files"
   },
-  "screenshots": {
+  "cores": {
     "controls": {
+      "category": "Category",
+      "refresh": "Refresh",
       "search": "Search",
-      "select": "Select",
-      "export_selected": "Export Selected ({count})",
-      "delete_selected": "Delete Selected ({count})"
+      "updatable": "Updatable"
     },
-    "no_screenshots": "Once you take some screenshots they'll appear here"
+    "install_tip": "You can also install cores (or anything else in a zip) by dragging the .zip into this window",
+    "installed": "Installed ({count})",
+    "not_installed": "Available ({count})"
   },
-  "screenshot_info": {
+  "error": {
+    "report": "You can report this via GitHub include the text below & whatever you just did",
+    "retry": "Retry",
+    "title": "Error"
+  },
+  "fetch": {
     "controls": {
-      "back": "Back to list",
-      "save": "Save",
-      "share": "Share",
-      "upscaled": "Upscaled"
+      "add_fetch_item": "Add new fetch",
+      "refresh": "Refresh"
+    },
+    "copying": "Copying Files...",
+    "fetch_button": "Fetch",
+    "file_count": "{count} / {total, plural, one {# File} other {# Files}}",
+    "loading": "loading...",
+    "new": {
+      "add_extension": "Add",
+      "add_fetch": "Add fetch",
+      "archive_name": "Archive name: <i>https://archive.org/details/[this bit here]</i>",
+      "archive_tip": "This won't work for achives where the files are zipped, and you should set which extensions you want to avoid downloading the metadata files.",
+      "close": "Close",
+      "destination": "Destination Folder",
+      "extensions": "Limit to File Extensions:",
+      "origin": "Origin Folder",
+      "title": "Add new Fetch"
+    },
+    "remove_button": "Remove",
+    "remove_confirm": "This'll remove the fetch configuration, but not the files. Are you sure?",
+    "types": {
+      "archive_org": "Internet Archive",
+      "filesystem": "Local Files"
     }
   },
   "firmware": {
     "current": "Current Firmware: v{version}",
+    "downloading_firmware": "Downloading Firmware...",
+    "load_firmware": "Load on to SD Card",
+    "loaded_firmware": "Firmware {version} is on the SD card",
+    "loaded_firmware_info": "insert & turn the Pocket on to install",
+    "no_firmware_loaded": "No firmware file on the SD card waiting to be installed",
     "options": {
       "latest": "v{version} (latest)",
       "older": "v{version} ({date, date, short})",
       "previous_versions": "Previous Versions"
     },
-    "load_firmware": "Load on to SD Card",
-    "downloading_firmware": "Downloading Firmware...",
-    "no_firmware_loaded": "No firmware file on the SD card waiting to be installed",
-    "loaded_firmware": "Firmware {version} is on the SD card",
-    "loaded_firmware_info": "insert & turn the Pocket on to install",
-    "remove_button": "Remove",
     "release_notes": {
-      "title": "v{version} Release Notes:",
-      "from": "From "
+      "from": "From ",
+      "title": "v{version} Release Notes:"
+    },
+    "remove_button": "Remove"
+  },
+  "games": {
+    "controls": {
+      "category": "Category",
+      "clean_files": "Clean Files",
+      "instance_json": "Instance JSON",
+      "refresh": "Refresh",
+      "search": "Search"
+    },
+    "item": {
+      "game_count": "{count, plural, =0 {No Games} one {# Game} other {# Games}}"
     }
   },
-  "platforms": {
-    "controls": {
-      "search": "Search",
-      "image_packs": "Image Packs",
-      "data_packs": "Data Packs"
-    },
-    "image_packs": {
-      "current": "Current",
-      "apply_changes": "Apply {count, plural, =0 {0 Changes} one {1 Change} other {# Changes}}",
-      "close": "Close"
-    },
-    "data_packs": {
-      "current": "Current",
-      "apply_changes": "Apply {count, plural, =0 {0 Changes} one {1 Change} other {# Changes}}",
-      "close": "Close"
-    },
-    "edit": "Edit",
-    "save": "Save",
+  "image_editor": {
     "cancel": "Cancel",
-    "delete_unused": "Delete {count, plural, one {# unused Platform} other {# unused Platforms}}?"
+    "import_image": "Import Image",
+    "remove": "Remove",
+    "reset": "Reset",
+    "rotate": "Rotate",
+    "save": "Save",
+    "scale": "Scale"
+  },
+  "instance_json": {
+    "available_for": "Automatic instance.json file creation available for:",
+    "close_button": "Close",
+    "skipped_file": "Skipped {file_name}",
+    "title": "Build Instance JSON files",
+    "wrote_file": "Wrote {file_name}"
+  },
+  "layout": {
+    "cores": "Cores",
+    "fetch": "Fetch",
+    "firmware": "Firmware",
+    "games": "Games",
+    "platforms": "Platforms",
+    "pocket_sync": "Pocket Sync",
+    "save_states": "Save States",
+    "saves": "Saves",
+    "screenshots": "Screenshots",
+    "settings": "Settings"
+  },
+  "mister_sync": {
+    "controls": {
+      "back": "Exit",
+      "search": "Search Saves"
+    },
+    "login": {
+      "connect": "Connect",
+      "host": "Host / IP Address:",
+      "password": "Password:",
+      "username": "Username:"
+    },
+    "mister": "MiSTer",
+    "not_found": "Not found",
+    "pocket": "Pocket",
+    "tip_1": "The MiSTer's FTP must be turned on",
+    "tip_2": "Make sure the save is compatible between Pocket & MiSTer before transfer",
+    "tip_3": "The Game must be named exactly the same on the Pocket and the MiSTer for the save to be found",
+    "unsupported": "{platform} is not supported\n(open a github issue if it should be)"
+  },
+  "news_feed": {
+    "last_updated": "Last updated <1></1>",
+    "updates_from": "Updates from the <1>OpenFPGA Cores Inventory</1>"
   },
   "platform_info": {
     "controls": {
@@ -148,150 +197,133 @@
     "cores": "Cores",
     "edit": "Edit"
   },
-  "save_states": {
+  "platforms": {
+    "cancel": "Cancel",
     "controls": {
-      "search": "Search",
-      "clear_selection": "Clear Selection",
-      "delete_selection": "Delete Selected ({count})"
+      "data_packs": "Data Packs",
+      "image_packs": "Image Packs",
+      "search": "Search"
     },
-    "confirm_delete": "Are you sure you want to delete {count, plural, =0 {no save states} one {one save state } other {# save states}}?",
+    "data_packs": {
+      "apply_changes": "Apply {count, plural, =0 {0 Changes} one {1 Change} other {# Changes}}",
+      "close": "Close",
+      "current": "Current"
+    },
+    "delete_unused": "Delete {count, plural, one {# unused Platform} other {# unused Platforms}}?",
+    "edit": "Edit",
+    "image_packs": {
+      "apply_changes": "Apply {count, plural, =0 {0 Changes} one {1 Change} other {# Changes}}",
+      "close": "Close",
+      "current": "Current"
+    },
+    "save": "Save"
+  },
+  "progress": {
+    "remaining_time": "Remaining Time (approx): {remainingTime}"
+  },
+  "save_info": {
+    "confirm_restore": "Restore from backup?",
+    "controls": {
+      "back": "Back to list",
+      "hide_unchanged": "Hide Unchanged",
+      "search": "Search"
+    },
+    "current": "Current",
+    "date": "{date, date, short}",
+    "newer": "Newer",
+    "older": "Older",
+    "time": "{date, time, short}"
+  },
+  "save_states": {
     "cartridge": "Cartridge",
+    "confirm_delete": "Are you sure you want to delete {count, plural, =0 {no save states} one {one save state } other {# save states}}?",
+    "controls": {
+      "clear_selection": "Clear Selection",
+      "delete_selection": "Delete Selected ({count})",
+      "search": "Search"
+    },
+    "count": "( {count} / 128 )",
     "item": {
       "date": "{date, date, long}",
       "time": "{date, time, short}"
     }
   },
   "saves": {
+    "backups": "Backups: {count}",
+    "confirm_delete": "Are you sure you want to remove this backup location?",
     "controls": {
       "add_backup_location": "Add backup location",
       "mister_sync": "MiSTer Sync"
     },
-    "none": "Add a backup location above",
-    "backups": "Backups: {count}",
     "latest_backup": "Last Backup: {date, date, long}, {date, time, short}",
+    "none": "Add a backup location above",
+    "not_found": "Not found",
     "oldest_backup": "Oldest Backup: {date, date, long}, {date, time, short}",
     "remove": "Remove Location",
-    "view_saves": "View Saves",
-    "confirm_delete": "Are you sure you want to remove this backup location?",
-    "not_found": "Not found"
+    "view_saves": "View Saves"
   },
-  "save_info": {
+  "screenshot_info": {
     "controls": {
       "back": "Back to list",
-      "hide_unchanged": "Hide Unchanged",
-      "search": "Search"
-    },
-    "confirm_restore": "Restore from backup?",
-    "date": "{date, date, short}",
-    "time": "{date, time, short}",
-    "current": "Current",
-    "older": "Older",
-    "newer": "Newer"
+      "save": "Save",
+      "share": "Share",
+      "upscaled": "Upscaled"
+    }
   },
-  "mister_sync": {
+  "screenshots": {
     "controls": {
-      "back": "Exit",
-      "search": "Search Saves"
+      "delete_selected": "Delete Selected ({count})",
+      "export_selected": "Export Selected ({count})",
+      "search": "Search",
+      "select": "Select"
     },
-    "login": {
-      "host": "Host / IP Address:",
-      "username": "Username:",
-      "password": "Password:",
-      "connect": "Connect"
-    },
-    "tip_1": "The MiSTer's FTP must be turned on",
-    "tip_2": "Make sure the save is compatible between Pocket & MiSTer before transfer",
-    "tip_3": "The Game must be named exactly the same on the Pocket and the MiSTer for the save to be found",
-    "pocket": "Pocket",
-    "mister": "MiSTer",
-    "unsupported": "{platform} is not supported\n(open a github issue if it should be)",
-    "not_found": "Not found"
+    "no_screenshots": "Once you take some screenshots they'll appear here"
   },
   "settings": {
     "3d_pocket": {
-      "title": "Pocket Colour:",
       "black": "Black",
+      "title": "Pocket Colour:",
       "white": "White"
     },
-    "archive": {
-      "title": "ROM & BIOS archive",
-      "warning": "Please check with your local laws around the downloading of potentially copyrighted (arcade) ROM & BIOS files.\nIf you are comfortable with this, copy the following url into the input and hit \"save\".",
-      "save": "Save"
-    },
     "alternate_skip": {
-      "title": "Skip Alternate Assets",
+      "checkbox": "Skip Alternate Assets",
       "ramble_1": "This setting will skip processing json files under the `_alternatives` folder,\nmeaning you'll just get the \"main\" titles for the cores which sort their JSON files this way.",
       "ramble_2": "<b>Warning:</b> turning this off will mean that installing Required Files takes <b>much</b> longer.",
-      "checkbox": "Skip Alternate Assets"
+      "title": "Skip Alternate Assets"
     },
-    "reconnect": {
-      "title": "Reconnect when the app is opened",
-      "ramble": "Attempt to reconnect to the most recently opened location <1> { ppath } </1> upon opening the app, skipping the \"Connect to Pocket\" button",
-      "checkbox": "Reconnect when opened"
+    "archive": {
+      "save": "Save",
+      "title": "ROM & BIOS archive",
+      "warning": "Please check with your local laws around the downloading of potentially copyrighted (arcade) ROM & BIOS files.\nIf you are comfortable with this, copy the following url into the input and hit \"save\"."
     },
     "clear_file_cache": {
-      "title": "Clear file cache",
+      "button": "Clear file cache",
       "ramble": "To help with USB & SD card transfer larger files are copied & stored on your computer's file system,\nwhich should be fine but if you're running into issues try clearing the file cache.",
-      "button": "Clear file cache"
+      "title": "Clear file cache"
     },
     "disconnect": {
-      "title": "Disconnect",
+      "button": "Disconnect",
       "ramble": "Return to the \"Connect To Pocket\" screen (This doesn't eject the SD Card / USB drive)",
-      "button": "Disconnect"
+      "title": "Disconnect"
+    },
+    "reconnect": {
+      "checkbox": "Reconnect when opened",
+      "ramble": "Attempt to reconnect to the most recently opened location <1> { ppath } </1> upon opening the app, skipping the \"Connect to Pocket\" button",
+      "title": "Reconnect when the app is opened"
     },
     "thanks": "Thanks to:"
   },
-  "error": {
-    "title": "Error",
-    "report": "You can report this via GitHub include the text below & whatever you just did",
-    "retry": "Retry"
+  "time_ago": {
+    "less_than_1_min_ago": "less than one minute ago"
   },
-  "layout": {
-    "pocket_sync": "Pocket Sync",
-    "games": "Games",
-    "cores": "Cores",
-    "screenshots": "Screenshots",
-    "saves": "Saves",
-    "save_states": "Save States",
-    "platforms": "Platforms",
-    "firmware": "Firmware",
-    "fetch": "Fetch",
-    "settings": "Settings"
+  "uninstall_core": {
+    "confirm_text": "This will remove the core, but not any games, saves, library data, or platform information. Are you sure?",
+    "confirm_title": "Uninstall Core"
   },
-  "image_editor": {
-    "scale": "Scale",
-    "rotate": "Rotate",
-    "remove": "Remove",
-    "reset": "Reset",
-    "save": "Save",
-    "cancel": "Cancel",
-    "import_image": "Import Image"
-  },
-  "fetch": {
-    "controls": {
-      "add_fetch_item": "Add new fetch",
-      "refresh": "Refresh"
-    },
-    "types": {
-      "archive_org": "Internet Archive",
-      "filesystem": "Local Files"
-    },
-    "file_count": "{count} / {total, plural, one {# File} other {# Files}}",
-    "copying": "Copying Files...",
-    "loading": "loading...",
-    "fetch_button": "Fetch",
-    "remove_button": "Remove",
-    "remove_confirm": "This'll remove the fetch configuration, but not the files. Are you sure?",
-    "new": {
-      "title": "Add new Fetch",
-      "origin": "Origin Folder",
-      "destination": "Destination Folder",
-      "archive_name": "Archive name: <i>https://archive.org/details/[this bit here]</i>",
-      "extensions": "Limit to File Extensions:",
-      "add_fetch": "Add fetch",
-      "add_extension": "Add",
-      "close": "Close",
-      "archive_tip": "This won't work for achives where the files are zipped, and you should set which extensions you want to avoid downloading the metadata files."
-    }
+  "zip_install": {
+    "cancel_button": "Cancel",
+    "confirm_button": "Confirm",
+    "remove_duplicate": "Remove duplicate existing files",
+    "scanning": "Scanning files..."
   }
 }

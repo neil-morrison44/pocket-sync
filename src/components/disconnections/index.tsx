@@ -15,7 +15,7 @@ export const Disconnections = () => {
     return () => {
       unlisten.then((l) => l())
     }
-  }, [])
+  }, [onDisconnect])
 
   return null
 }

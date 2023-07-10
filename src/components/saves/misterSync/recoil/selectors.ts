@@ -1,4 +1,4 @@
-import { emit, listen, once } from "@tauri-apps/api/event"
+import { emit, listen } from "@tauri-apps/api/event"
 import { selectorFamily } from "recoil"
 import { invokeFileMetadata } from "../../../../utils/invokes"
 import { SavesInvalidationAtom } from "./atoms"
@@ -26,7 +26,7 @@ export const MiSTerSaveInfoSelectorFamily = selectorFamily<
 
       emit("mister-save-sync-find-save", { file, platform })
 
-      return new Promise<MiSTerSaveInfo>((resolve, reject) => {
+      return new Promise<MiSTerSaveInfo>((resolve, _reject) => {
         const listener = listen<MiSTerSaveInfo>(
           "mister-save-sync-found-save",
           ({ payload }) => {

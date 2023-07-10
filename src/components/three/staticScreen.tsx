@@ -1,5 +1,5 @@
 import { useFrame } from "@react-three/fiber"
-import React, { useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 import { ShaderMaterial, Vector2 } from "three"
 
 const vertexShader = `
@@ -98,7 +98,7 @@ export const StaticScreen = ({
     }
   }, [])
 
-  useFrame(({ clock, ...rest }) => {
+  useFrame(({ clock, ..._rest }) => {
     frameCount.current += 1
     if (frameCount.current % 5 !== 0) return
     frameCount.current = 0

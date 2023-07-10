@@ -169,7 +169,7 @@ export const invokeDownloadFirmware = async (
   fileName: string,
   md5: string
 ) => {
-  return await invoke<Boolean>("download_firmware", { url, fileName, md5 })
+  return await invoke<boolean>("download_firmware", { url, fileName, md5 })
 }
 
 export const invokeClearFileCache = async () => await invoke("clear_file_cache")

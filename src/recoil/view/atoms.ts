@@ -16,7 +16,7 @@ export const VIEWS_LIST = [
 type ALL_VIEWS = (typeof VIEWS_LIST)[number]
 type VIEWS_WITH_SELECTION = "Cores" | "Screenshots" | "Platforms"
 
-export type ViewAndSubview =
+type ViewAndSubview =
   | {
       view: Omit<ALL_VIEWS, VIEWS_WITH_SELECTION>
       selected: null

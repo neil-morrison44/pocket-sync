@@ -30,6 +30,6 @@ export const useUpdatePlatformValue = (id: PlatformId) => {
 
       setTimeout(() => invalidateFS(), 500)
     },
-    [platformInfo]
+    [id, invalidateFS, platformInfo, pocketPath]
   )
 }

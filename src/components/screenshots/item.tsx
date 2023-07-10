@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useMemo } from "react"
+import { ReactElement, useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { SingleScreenshotSelectorFamily } from "../../recoil/screenshots/selectors"
 import { SearchContextSelfHidingConsumer } from "../search/context"

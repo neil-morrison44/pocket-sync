@@ -35,7 +35,7 @@ export const Games = () => {
 
         return switchedA.localeCompare(switchedB)
       }),
-    [filterCategory, coresList]
+    [coresList]
   )
 
   const categoryList = useRecoilValue(cateogryListselector)

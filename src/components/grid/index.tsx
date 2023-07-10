@@ -57,10 +57,12 @@ const useHasBeenShown = (element: MutableRefObject<HTMLElement | null>) => {
         observer.unobserve(element.current)
       }
     })
-    element.current && observer.observe(element.current)
+
+    const node = element.current
+    node && observer.observe(node)
     return () => {
-      element.current && observer.unobserve(element.current)
+      node && observer.unobserve(node)
     }
-  }, [])
+  }, [element])
   return hasBeenShown
 }

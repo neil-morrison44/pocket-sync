@@ -4,7 +4,7 @@ import { invokeWalkDirListFiles } from "../../utils/invokes"
 import { readJSONFile } from "../../utils/readJSONFile"
 import { fileSystemInvalidationAtom } from "../atoms"
 
-export const CoreInputSelectorFamily = selectorFamily<InputJSON, string>({
+const CoreInputSelectorFamily = selectorFamily<InputJSON, string>({
   key: "CoreInputSelectorFamily",
   get:
     (coreName: string) =>

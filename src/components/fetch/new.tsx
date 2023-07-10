@@ -51,7 +51,7 @@ type NewFetchTypeProps = {
   addFetch: (newFetch: FetchType) => void
 }
 
-export const NewFetchFileSystem = ({ addFetch }: NewFetchTypeProps) => {
+const NewFetchFileSystem = ({ addFetch }: NewFetchTypeProps) => {
   const [info, setInfo] = useState<Partial<FetchType>>({ type: "filesystem" })
   if (info.type !== "filesystem") throw new Error("Wrong type")
 
@@ -85,7 +85,7 @@ export const NewFetchFileSystem = ({ addFetch }: NewFetchTypeProps) => {
   )
 }
 
-export const NewFetchArchive = ({ addFetch }: NewFetchTypeProps) => {
+const NewFetchArchive = ({ addFetch }: NewFetchTypeProps) => {
   const [info, setInfo] = useState<Partial<FetchType>>({
     type: "archive.org",
     extensions: [],
@@ -165,7 +165,7 @@ const FolderPicker = ({
     if (path && !(path instanceof Array)) {
       onChange(fileIsOnPocket ? path.replace(pocketPath, "") : path)
     }
-  }, [])
+  }, [fileIsOnPocket, homeDir, onChange, pocketPath])
 
   return (
     <label className="fetch__folder-picker">
@@ -193,7 +193,7 @@ const ListInput = ({ value, onChange }: ListInputProps) => {
     if (value.includes(interimValue)) return
     onChange([...value, interimValue])
     setInterimValue("")
-  }, [interimValue, onChange, setInterimValue])
+  }, [interimValue, onChange, value])
 
   return (
     <div className="fetch__list-input">

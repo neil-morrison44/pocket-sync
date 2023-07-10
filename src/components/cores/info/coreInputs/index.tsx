@@ -4,7 +4,6 @@ import { ReactElement } from "react-markdown/lib/react-markdown"
 import { useRecoilValue } from "recoil"
 import { Texture } from "three"
 import {
-  CoreInputSelectorFamily,
   ListPresetInputsSelectorFamily,
   PresetInputSelectorFamily,
 } from "../../../../recoil/input/selectors"
@@ -82,7 +81,7 @@ export const CoreInputs = ({
       newTexture.anisotropy = 16
       setScreenTexture(newTexture)
     }
-  }, [platformImage])
+  }, [coreName, platformImage])
 
   return (
     <Modal>

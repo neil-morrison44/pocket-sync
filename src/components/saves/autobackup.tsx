@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import { useRecoilValue } from "recoil"
 import { AllSavesSelector } from "../../recoil/saves/selectors"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
@@ -23,6 +23,7 @@ export const AutoBackup = () => {
         )
       }
     })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return null
