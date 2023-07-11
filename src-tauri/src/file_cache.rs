@@ -56,7 +56,6 @@ async fn write_to_cache(
 ) -> Option<PathBuf> {
     let file_name = generate_filename_hash(path, modified);
     if !file_cache_dir.exists() {
-        println!("Creating filecache dir");
         if let Err(err) = create_dir(&file_cache_dir).await {
             println!(
                 "Error creating {} as file cache {}",
