@@ -251,26 +251,26 @@ async fn install_archive_files(
                     println!("Error downloading from {full_url}: ({e})");
                     failed_already.insert(file.filename);
                 }
+                Ok(r) if r.status() != 200 => {
+                    println!("Unable to find {full_url}, skipping");
+                    failed_already.insert(file.filename);
+                }
                 Ok(r) => {
-                    if r.status() != 200 {
-                        println!("Unable to find {full_url}, skipping");
-                        failed_already.insert(file.filename);
-                    } else {
-                        let folder = pocket_path.join(file.path);
-                        let new_file_path = folder.join(&file.filename);
+                    let file_path = remove_leading_slash(&file.path);
+                    let folder = pocket_path.join(file_path);
+                    let new_file_path = folder.join(&file.filename);
 
-                        if let Some(parent) = new_file_path.parent() {
-                            if !parent.exists() {
-                                tokio::fs::create_dir_all(&parent).await.unwrap();
-                            }
+                    if let Some(parent) = new_file_path.parent() {
+                        if !parent.exists() {
+                            tokio::fs::create_dir_all(&parent).await.unwrap();
                         }
-                        let mut dest = tokio::fs::File::create(&new_file_path).await.unwrap();
-                        let content = r.bytes().await.unwrap();
-                        let mut content_cusror = std::io::Cursor::new(content);
-                        tokio::io::copy(&mut content_cusror, &mut dest)
-                            .await
-                            .unwrap();
                     }
+                    let mut dest = tokio::fs::File::create(&new_file_path).await.unwrap();
+                    let content = r.bytes().await.unwrap();
+                    let mut content_cusror = std::io::Cursor::new(content);
+                    tokio::io::copy(&mut content_cusror, &mut dest)
+                        .await
+                        .unwrap();
                 }
             }
         }
