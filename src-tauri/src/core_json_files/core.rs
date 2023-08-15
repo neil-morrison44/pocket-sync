@@ -130,7 +130,7 @@ mod tests {
     #[test]
     fn test_from_core_path_and_into_core_details() -> Result<(), Box<dyn Error>> {
         let core_folder = core_folder_setup()?;
-        let core_file = CoreFile::from_core_path(core_folder)?;
+        let core_file = CoreFile::from_core_path(&core_folder)?;
         let core_details: CoreDetails = core_file.into();
 
         assert_eq!(core_details.author, "agg23");
