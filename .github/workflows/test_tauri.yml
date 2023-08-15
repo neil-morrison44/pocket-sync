@@ -1,4 +1,4 @@
-name: "test-on-pr"
+name: "test-tauri-on-pr"
 on: [pull_request]
 
 jobs:

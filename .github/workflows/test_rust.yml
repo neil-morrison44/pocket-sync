@@ -1,0 +1,34 @@
+name: "test-rust-on-pr"
+on: [pull_request]
+
+jobs:
+  test-rust:
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - platform: macos-latest
+            target: universal-apple-darwin
+          - platform: ubuntu-20.04
+            target: x86_64-unknown-linux-gnu
+          - platform: windows-latest
+            target: x86_64-pc-windows-msvc
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: install Rust target (macOS)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          rustup target add aarch64-apple-darwin
+          rustup target add x86_64-apple-darwin
+      - name: install Rust target (Windows, Linux)
+        if: matrix.platform != 'macos-latest'
+        run: rustup target add ${{ matrix.target }}
+      - name: Cargo test
+        run: cargo test
+        working-directory: "src-tauri"

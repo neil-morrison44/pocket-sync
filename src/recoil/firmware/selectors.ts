@@ -1,17 +1,17 @@
 import { selector, selectorFamily } from "recoil"
 import {
   invokeGetFirmwareDetails,
-  invokeGetFirmwareVersionsList,
   invokeListFiles,
   invokeReadTextFile,
 } from "../../utils/invokes"
 import { FirmwareInfo, FirmwareListItem } from "../../types"
 import { fileSystemInvalidationAtom } from "../atoms"
+import { allFirmwaresAtom } from "./atoms"
 
 export const latestFirmwareSelector = selector<FirmwareListItem>({
   key: "latestFirmwareSelector",
-  get: async () => {
-    const firmwares = await invokeGetFirmwareVersionsList()
+  get: async ({ get }) => {
+    const firmwares = get(allFirmwaresAtom)
     const [latestInfo, ..._] = firmwares
     return latestInfo
   },
@@ -19,8 +19,8 @@ export const latestFirmwareSelector = selector<FirmwareListItem>({
 
 export const previousFirmwareListSelector = selector<FirmwareListItem[]>({
   key: "previousFirmwareListSelector",
-  get: async () => {
-    const firmwares = await invokeGetFirmwareVersionsList()
+  get: async ({ get }) => {
+    const firmwares = get(allFirmwaresAtom)
     const [_, ...previousFirmwares] = firmwares
     return previousFirmwares
   },
@@ -31,7 +31,8 @@ export const currentFirmwareVersionSelector = selector<{
   build_date: string
 }>({
   key: "currentFirmwareVersionSelector",
-  get: async () => {
+  get: async ({ get }) => {
+    get(fileSystemInvalidationAtom)
     const analoguePocketJson = await invokeReadTextFile("Analogue_Pocket.json")
     const parsedJSON = JSON.parse(analoguePocketJson) as {
       product: "Analogue Pocket"

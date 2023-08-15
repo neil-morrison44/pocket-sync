@@ -11,3 +11,7 @@ export type InstallZipEventPayload = {
   files?: { path: string; exists: boolean }[]
   progress?: { value: number; max: number }
 }
+
+export type ZipReplaceRequestPayload = {
+  previous_core_names: string[]
+}

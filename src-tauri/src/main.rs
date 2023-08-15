@@ -4,14 +4,14 @@
 )]
 
 use async_walkdir::{DirEntry, WalkDir};
-use checks::{check_if_folder_looks_like_pocket, start_connection_thread};
+use checks::{check_if_folder_looks_like_pocket, connection_task};
 use clean_fs::find_dotfiles;
 use file_cache::{clear_file_caches, get_file_with_cache};
 use firmware::{FirmwareDetails, FirmwareListItem};
 use futures::StreamExt;
 use futures_locks::RwLock;
 use hashes::crc32_for_file;
-use install_zip::start_zip_thread;
+use install_zip::start_zip_task;
 use save_sync_session::start_mister_save_sync_session;
 use saves_zip::{
     build_save_zip, read_save_zip_list, read_saves_in_folder, read_saves_in_zip,
@@ -23,10 +23,11 @@ use std::path::PathBuf;
 use std::time::SystemTime;
 use std::vec;
 use tauri::api::dialog;
-use tauri::{App, Window};
+use tauri::{App, Manager, Window};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 mod checks;
 mod clean_fs;
+mod core_json_files;
 mod file_cache;
 mod firmware;
 mod hashes;
@@ -598,14 +599,22 @@ fn main() {
             download_firmware,
             clear_file_cache
         ])
-        .setup(|app| start_threads(&app))
+        .setup(|app| start_tasks(app))
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
-fn start_threads(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
-    start_connection_thread(&app).unwrap();
-    start_zip_thread(&app).unwrap();
+fn start_tasks(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
+    let window = &app.get_window("main").unwrap();
+    {
+        let window = window.clone();
+        tauri::async_runtime::spawn(async move { start_zip_task(window).await });
+    }
+    {
+        let window = window.clone();
+        tauri::async_runtime::spawn(async move { connection_task(window).await });
+    }
+
     Ok(())
 }
 
