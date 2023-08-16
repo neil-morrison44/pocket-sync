@@ -15,7 +15,7 @@ import { Releases } from "./releases"
 import { Version } from "../version"
 import { useUninstallCore } from "../../../hooks/useUninstallCore"
 import { useInstallCore } from "../../../hooks/useInstallCore"
-import { ReactNode, Suspense, useState } from "react"
+import { ReactNode, Suspense, useCallback, useState } from "react"
 import { CorePlatformInfo } from "./platform"
 import { Loader } from "../../loader"
 import { SponsorLinks } from "./sponsorLinks"
@@ -26,8 +26,9 @@ import { AuthorTag } from "../../shared/authorTag"
 import { CoreInputs } from "./coreInputs"
 import { CoreSettings } from "./coreSettings"
 import { RequiredFileInfoSelectorFamily } from "../../../recoil/requiredFiles/selectors"
-import { useTranslation } from "react-i18next"
+import { Trans, useTranslation } from "react-i18next"
 import { archiveBumpAtom } from "../../../recoil/archive/atoms"
+import { currentViewAtom } from "../../../recoil/view/atoms"
 
 type CoreInfoProps = {
   coreName: string
@@ -49,6 +50,14 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   const [inputsOpen, setInputsOpen] = useState(false)
   const [coreSettingsOpen, setCoreSettingsOpen] = useState(false)
   const { t } = useTranslation("core_info")
+  const setViewAndSubview = useSetRecoilState(currentViewAtom)
+
+  // TODO: Pull this from the inventoryItem once it's there
+  const replacementCore = null
+
+  const goToReplacement = useCallback(() => {
+    setViewAndSubview({ view: "Cores", selected: replacementCore })
+  }, [replacementCore, setViewAndSubview])
 
   return (
     <div className="core-info">
@@ -106,6 +115,15 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
       )}
 
       <h3 className="core-info__title">{coreInfo.core.metadata.shortname}</h3>
+      {replacementCore && (
+        <div className="core-info__replaced" onClick={goToReplacement}>
+          <Trans t={t} i18nKey={"replaced"} values={{ replacementCore }}>
+            {"_"}
+            <strong>{"_"}</strong>
+          </Trans>
+        </div>
+      )}
+
       {coreInfo.core.metadata.platform_ids.map((platformId) => (
         <PlatformImage
           className="core-info__image"

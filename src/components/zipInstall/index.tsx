@@ -6,10 +6,13 @@ import {
   useZipInstallButtons,
 } from "./hooks"
 import { TreeNode } from "./treeNode"
-import { InstallZipEventPayload } from "./types"
+import { InstallZipEventPayload, ZipReplaceRequestPayload } from "./types"
 import { Progress } from "../progress"
 import "./index.css"
 import { useTranslation } from "react-i18next"
+import { useEffect } from "react"
+import { emit, listen } from "@tauri-apps/api/event"
+import { confirm as TauriConfirm } from "@tauri-apps/api/dialog"
 
 export const ZipInstall = () => {
   const { installState } = useListenForZipInstall()
@@ -29,6 +32,32 @@ const ZipInstallInner = ({
     useZipInstallButtons(allowedFiles)
 
   const { t } = useTranslation("zip_install")
+
+  useEffect(() => {
+    const unlisten = listen<ZipReplaceRequestPayload>(
+      "replace-confirm-request",
+      async ({ payload }) => {
+        await new Promise((resolve) => setTimeout(resolve, 200))
+        const allow = await TauriConfirm(
+          t("replace.text", { list: payload.previous_core_names.join(",\n") }),
+          {
+            type: "warning",
+            title: t("replace.title"),
+            cancelLabel: t("replace.cancel"),
+            okLabel: t("replace.ok"),
+          }
+        )
+
+        emit("replace-confirm-response", {
+          allow,
+        })
+      }
+    )
+
+    return () => {
+      unlisten.then((l) => l())
+    }
+  }, [])
 
   if (progress) {
     return (
@@ -62,7 +91,7 @@ const ZipInstallInner = ({
         <button onClick={cancel}>{t("cancel_button")}</button>
         <label
           className="zip-install__control-checkbox"
-          title="Handles cases where files have moved, e.g. JSON files are now in `_alternatives`"
+          title={t("moved_files_info")}
         >
           <input
             type="checkbox"

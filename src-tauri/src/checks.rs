@@ -1,10 +1,7 @@
 use serde::{Deserialize, Serialize};
-use std::{
-    path::PathBuf,
-    thread::{self, sleep},
-    time::Duration,
-};
-use tauri::{App, Manager};
+use std::{path::PathBuf, time::Duration};
+use tauri::{Manager, Window};
+use tokio::time::sleep;
 
 use crate::PocketSyncState;
 
@@ -26,35 +23,26 @@ pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
     return true;
 }
 
-pub fn start_connection_thread(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
-    let app_handle = app.handle();
+pub async fn connection_task(window: Window) -> () {
+    let state: tauri::State<PocketSyncState> = window.state();
+    let main_window = window.clone();
+    let mut was_connected: bool = false;
 
-    thread::spawn(move || {
-        let main_window = app_handle.get_window("main").unwrap();
-        let mut was_connected: bool = false;
-        loop {
-            tauri::async_runtime::block_on(async {
-                let state: tauri::State<PocketSyncState> = tauri::Manager::state(&app_handle);
-                let pocket_path = &state.0.pocket_path.read().await;
-                // println!("checking if still connected {}", pocket_path.exists());
-                if !pocket_path.exists() && was_connected {
-                    was_connected = false;
-                    main_window
-                        .emit(
-                            "pocket-connection",
-                            ConnectionEventPayload { connected: false },
-                        )
-                        .unwrap();
-                } else if pocket_path.exists() && !was_connected {
-                    was_connected = true;
-                }
-            });
-
-            sleep(Duration::from_secs(5));
+    loop {
+        sleep(Duration::from_secs(1)).await;
+        let pocket_path = &state.0.pocket_path.read().await;
+        if !pocket_path.exists() && was_connected {
+            was_connected = false;
+            main_window
+                .emit(
+                    "pocket-connection",
+                    ConnectionEventPayload { connected: false },
+                )
+                .unwrap();
+        } else if pocket_path.exists() && !was_connected {
+            was_connected = true;
         }
-    });
-
-    Ok(())
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone)]

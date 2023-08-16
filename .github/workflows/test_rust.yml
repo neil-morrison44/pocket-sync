@@ -1,0 +1,45 @@
+name: "test-rust-on-pr"
+on: [pull_request]
+
+jobs:
+  test-rust:
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - platform: macos-latest
+            target: universal-apple-darwin
+          - platform: ubuntu-20.04
+            target: x86_64-unknown-linux-gnu
+          - platform: windows-latest
+            target: x86_64-pc-windows-msvc
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-20.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
+      - name: install Rust target (macOS)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          rustup target add aarch64-apple-darwin
+          rustup target add x86_64-apple-darwin
+      - name: install Rust target (Windows, Linux)
+        if: matrix.platform != 'macos-latest'
+        run: rustup target add ${{ matrix.target }}
+      - name: install app dependencies and build it
+        run: npm i && npm run build
+      - name: Cargo test
+        run: cargo test
+        working-directory: "src-tauri"

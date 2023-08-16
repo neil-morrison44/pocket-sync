@@ -36,6 +36,7 @@
       "edit": "Edit",
       "wikipedia": "Wikipedia"
     },
+    "replaced": "This core has been replaced by <1>{replacementCore}</1>",
     "platforms": "Platforms",
     "please_wait": "Please wait, checking files...",
     "release_date": "Release Date",
@@ -324,6 +325,13 @@
     "cancel_button": "Cancel",
     "confirm_button": "Confirm",
     "remove_duplicate": "Remove duplicate existing files",
-    "scanning": "Scanning files..."
+    "scanning": "Scanning files...",
+    "moved_files_info": "Handles cases where files have moved, e.g. JSON files are now in `_alternatives`",
+    "replace": {
+      "ok": "Allow",
+      "cancel": "Skip",
+      "text": "{list}\n\nAssets, Saves etc will be moved over and the old core will be removed.",
+      "title": "Replace Cores?"
+    }
   }
 }
