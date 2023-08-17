@@ -42,17 +42,14 @@ pub struct Core {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct CoreFile {
-    #[serde(rename = "core")]
-    core: CoreWrapper,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct CoreWrapper {
-    magic: String,
-    metadata: CoreMetadata,
-    framework: Framework,
-    cores: Vec<Core>,
+#[serde(rename_all = "snake_case")]
+pub enum CoreFile {
+    Core {
+        magic: String,
+        metadata: CoreMetadata,
+        framework: Framework,
+        cores: Vec<Core>,
+    },
 }
 
 impl CoreFile {
@@ -66,10 +63,12 @@ impl CoreFile {
 
 impl Into<CoreDetails> for CoreFile {
     fn into(self) -> CoreDetails {
-        CoreDetails {
-            author: self.core.metadata.author,
-            shortname: self.core.metadata.shortname,
-            platform_id: self.core.metadata.platform_ids[0].clone(),
+        match self {
+            CoreFile::Core { metadata, .. } => CoreDetails {
+                author: metadata.author,
+                shortname: metadata.shortname,
+                platform_id: metadata.platform_ids[0].clone(),
+            },
         }
     }
 }
@@ -131,6 +130,7 @@ mod tests {
     fn test_from_core_path_and_into_core_details() -> Result<(), Box<dyn Error>> {
         let core_folder = core_folder_setup()?;
         let core_file = CoreFile::from_core_path(&core_folder)?;
+        dbg!("{:?}", &core_file);
         let core_details: CoreDetails = core_file.into();
 
         assert_eq!(core_details.author, "agg23");

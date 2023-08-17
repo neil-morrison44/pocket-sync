@@ -7,11 +7,13 @@ export type FileTreeNode = {
 }
 
 export type InstallZipEventPayload = {
+  type: "InstallZipEvent"
   title: string
   files?: { path: string; exists: boolean }[]
   progress?: { value: number; max: number }
 }
 
 export type ZipReplaceRequestPayload = {
+  type: "ReplaceConfirmEvent"
   previous_core_names: string[]
 }
