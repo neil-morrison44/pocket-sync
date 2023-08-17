@@ -132,6 +132,7 @@ export const useZipInstallButtons = (allowedFiles: string[] | null) => {
 
   const confirm = useCallback(() => {
     emit("install-confirmation", {
+      type: "InstallConfirmation",
       paths: allowedFiles,
       handle_moved_files: handleMovedFiles,
       allow: true,
@@ -140,6 +141,7 @@ export const useZipInstallButtons = (allowedFiles: string[] | null) => {
 
   const cancel = useCallback(() => {
     emit("install-confirmation", {
+      type: "InstallConfirmation",
       paths: [],
       handle_moved_files: false,
       allow: false,

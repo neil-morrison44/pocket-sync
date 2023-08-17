@@ -49,6 +49,7 @@ const ZipInstallInner = ({
         )
 
         emit("replace-confirm-response", {
+          type: "ReplaceConfirmation",
           allow,
         })
       }

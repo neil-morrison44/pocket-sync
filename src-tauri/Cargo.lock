@@ -2643,7 +2643,6 @@ dependencies = [
 name = "pocket-sync"
 version = "3.5.3"
 dependencies = [
- "async-trait",
  "async-walkdir",
  "bytes",
  "crc32fast",

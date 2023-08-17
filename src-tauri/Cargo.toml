@@ -14,7 +14,6 @@ rust-version = "1.67.0"
 tauri-build = { version = "1.1", features = [] }
 
 [dependencies]
-async-trait = "0.1.73"
 async-walkdir = "0.2.0"
 bytes = "1.4"
 crc32fast = "1.3.2"
@@ -28,7 +27,17 @@ openfpga-instance-packager = { git = "https://github.com/neil-morrison44/openfpg
 reqwest = "0.11.18"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-tauri = { version = "1.4", features = ["dialog-all", "fs-exists", "fs-read-file", "fs-write-file", "http-request", "os-all", "path-all", "shell-open", "updater"] }
+tauri = { version = "1.4", features = [
+  "dialog-all",
+  "fs-exists",
+  "fs-read-file",
+  "fs-write-file",
+  "http-request",
+  "os-all",
+  "path-all",
+  "shell-open",
+  "updater",
+] }
 tauri-plugin-window-state = "0.1.0"
 tempdir = "0.3.7"
 time = "0.3.15"

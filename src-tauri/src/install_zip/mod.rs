@@ -11,6 +11,8 @@ use tempdir::TempDir;
 use walkdir::WalkDir;
 use zip::ZipArchive;
 
+mod payloads;
+
 use crate::{
     core_json_files::{core::CoreFile, updaters::UpdatersFile, CoreDetails},
     PocketSyncState,
@@ -20,42 +22,6 @@ use crate::{
 struct InstallInfo {
     core_name: String,
     zip_url: String,
-}
-
-#[derive(Serialize, Deserialize, Clone)]
-struct PathStatus {
-    path: String,
-    exists: bool,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-struct InstallConfirmation {
-    paths: Vec<PathBuf>,
-    handle_moved_files: bool,
-    allow: bool,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-struct ReplaceConfirmation {
-    allow: bool,
-}
-
-#[derive(Serialize, Deserialize, Clone)]
-struct InstallZipEventPayload {
-    title: String,
-    files: Option<Vec<PathStatus>>,
-    progress: Option<ZipInstallProgress>,
-}
-
-#[derive(Serialize, Deserialize, Clone)]
-struct ZipInstallFinishedPayload {
-    error: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Clone)]
-struct ZipInstallProgress {
-    max: usize,
-    value: usize,
 }
 
 struct Titles {
@@ -71,6 +37,8 @@ enum ZipStartAction {
 
 use tauri::FileDropEvent::Dropped;
 use tauri::WindowEvent::FileDrop;
+
+use self::payloads::{FromRustPayload, FromTSPayload, PathStatus, ZipInstallProgress};
 
 pub async fn start_zip_task(window: Window) -> () {
     let state: tauri::State<PocketSyncState> = window.state();
@@ -153,37 +121,17 @@ pub async fn start_zip_task(window: Window) -> () {
                         .unwrap();
                     }
                     _s => {
-                        emit_finished(Some(String::from("Unable to download ZIP")), &window);
+                        FromRustPayload::ZipInstallFinished {
+                            error: Some(String::from("Unable to download ZIP")),
+                        }
+                        .emit(&main_window)
+                        .unwrap();
                     }
                 }
             }
             None => break,
         }
     }
-}
-
-fn emit_progress(
-    title: &str,
-    files: Option<Vec<PathStatus>>,
-    progress: Option<ZipInstallProgress>,
-    window: &Window,
-) -> () {
-    window
-        .emit(
-            "install-zip-event",
-            InstallZipEventPayload {
-                title: String::from(title),
-                files: files,
-                progress,
-            },
-        )
-        .unwrap();
-}
-
-fn emit_finished(error: Option<String>, window: &Window) -> () {
-    window
-        .emit("install-zip-finished", ZipInstallFinishedPayload { error })
-        .unwrap();
 }
 
 async fn process_core_replacements(
@@ -207,19 +155,36 @@ async fn process_core_replacements(
     if installed_previous_cores.len() == 0 {
         return ();
     }
-
-    let confirm_event = ReplaceConfirmEventPayload {
+    let confirm_event = FromRustPayload::ReplaceConfirmEvent {
         previous_core_names: previous_cores
             .iter()
             .map(|d| format!("{}.{}", d.author, d.shortname))
             .collect(),
     };
     let replace_confirm = confirm_event.wait_for_confirmation(&window).await.unwrap();
-    if !replace_confirm.allow {
+
+    let allow = match replace_confirm {
+        payloads::FromTSPayload::ReplaceConfirmation { allow } => allow,
+        _ => panic!("Wrong replace_confirm payload"),
+    };
+
+    if !allow {
         return ();
     }
 
     for previous_core in installed_previous_cores {
+        FromRustPayload::InstallZipEvent {
+            title: format!(
+                "Replacing core {}.{}",
+                previous_core.author, previous_core.shortname
+            )
+            .into(),
+            files: None,
+            progress: Some(ZipInstallProgress { value: 1, max: 100 }),
+        }
+        .emit(&window)
+        .unwrap();
+
         move_files(
             pocket_path.join(format!(
                 "Assets/{}/{}.{}",
@@ -346,7 +311,7 @@ async fn start_zip_install_flow(
     pocket_path: PathBuf,
     window: &Window,
 ) -> Result<(), ()> {
-    let zip_confirm_event = InstallZipEventPayload {
+    let zip_confirm_event = FromRustPayload::InstallZipEvent {
         title: String::from(&titles.title),
         files: Some(get_file_names(&archive, &pocket_path)),
         progress: None,
@@ -358,27 +323,39 @@ async fn start_zip_install_flow(
         .await
         .unwrap();
 
-    if !install_confirm.allow {
-        emit_finished(None, &main_window);
+    let (paths, handle_moved_files, allow) = match install_confirm {
+        FromTSPayload::InstallConfirmation {
+            paths,
+            handle_moved_files,
+            allow,
+        } => (paths, handle_moved_files, allow),
+        _ => panic!("Wrong install_confirm type"),
+    };
+
+    if !allow {
+        FromRustPayload::ZipInstallFinished { error: None }
+            .emit(&main_window)
+            .unwrap();
         return Ok(());
     }
 
-    emit_progress(
-        &titles.installing_title,
-        None,
-        Some(ZipInstallProgress {
+    FromRustPayload::InstallZipEvent {
+        title: titles.installing_title.clone(),
+        files: None,
+        progress: Some(ZipInstallProgress {
             value: 0,
-            max: install_confirm.paths.len(),
+            max: paths.len(),
         }),
-        &main_window,
-    );
+    }
+    .emit(&window)
+    .unwrap();
 
     let tmp_dir = TempDir::new("zip_install_tmp").unwrap();
     let tmp_path = tmp_dir.into_path();
     archive.extract(&tmp_path).unwrap();
 
-    if install_confirm.handle_moved_files || true {
-        for path in install_confirm.paths.iter() {
+    if handle_moved_files || true {
+        for path in paths.iter() {
             let destination = pocket_path.join(&path);
             let source = tmp_path.join(&path);
 
@@ -409,7 +386,7 @@ async fn start_zip_install_flow(
         }
     }
 
-    for (index, path) in install_confirm.paths.iter().enumerate() {
+    for (index, path) in paths.iter().enumerate() {
         let destination = pocket_path.join(&path);
         let source = tmp_path.join(&path);
 
@@ -424,21 +401,21 @@ async fn start_zip_install_flow(
             tokio::fs::copy(&source, &destination).await.unwrap();
         }
 
-        emit_progress(
-            &titles.installing_title,
-            None,
-            Some(ZipInstallProgress {
+        FromRustPayload::InstallZipEvent {
+            title: titles.installing_title.clone(),
+            files: None,
+            progress: Some(ZipInstallProgress {
                 value: index + 1,
-                max: install_confirm.paths.len(),
+                max: paths.len(),
             }),
-            &main_window,
-        );
+        }
+        .emit(&main_window)
+        .unwrap();
     }
 
     // check if there's an updaters.json file in the installed cores
 
-    let cores: Vec<_> = install_confirm
-        .paths
+    let cores: Vec<_> = paths
         .iter()
         .filter(|path| path.ends_with("core.json"))
         .map(|p| p.parent().unwrap())
@@ -454,7 +431,9 @@ async fn start_zip_install_flow(
         }
     }
 
-    emit_finished(None, &main_window);
+    FromRustPayload::ZipInstallFinished { error: None }
+        .emit(&main_window)
+        .unwrap();
 
     Ok(())
 }
@@ -483,66 +462,4 @@ fn find_matching_files(root_path: &Path, file_name: &str) -> Vec<PathBuf> {
         .filter(|entry| entry.file_name().to_str() == Some(file_name))
         .map(|entry| entry.into_path())
         .collect()
-}
-
-use async_trait::async_trait;
-#[async_trait]
-trait Confirmable: Serialize {
-    type Confirmation;
-    async fn wait_for_confirmation(
-        &self,
-        window: &tauri::Window,
-    ) -> Result<Self::Confirmation, Box<dyn std::error::Error>>;
-}
-
-#[async_trait]
-impl Confirmable for InstallZipEventPayload {
-    type Confirmation = InstallConfirmation;
-
-    async fn wait_for_confirmation(
-        &self,
-        window: &tauri::Window,
-    ) -> Result<Self::Confirmation, Box<dyn std::error::Error>> {
-        window.emit("install-zip-event", &self).unwrap();
-
-        let (tx, rx) = tokio::sync::oneshot::channel();
-        window.once("install-confirmation", move |event| {
-            let install_confirm: InstallConfirmation =
-                serde_json::from_str(event.payload().unwrap()).unwrap();
-            tx.send(install_confirm).unwrap();
-        });
-
-        let install_confirm = rx.await?;
-        Ok(install_confirm)
-    }
-}
-
-#[derive(Serialize, Deserialize, Clone)]
-struct ReplaceConfirmEventPayload {
-    previous_core_names: Vec<String>,
-}
-
-#[async_trait]
-impl Confirmable for ReplaceConfirmEventPayload {
-    type Confirmation = ReplaceConfirmation;
-
-    async fn wait_for_confirmation(
-        &self,
-        window: &tauri::Window,
-    ) -> Result<Self::Confirmation, Box<dyn std::error::Error>> {
-        window.emit("replace-confirm-request", &self).unwrap();
-
-        let confirm = {
-            let (tx, rx) = tokio::sync::oneshot::channel();
-            window.once("replace-confirm-response", move |event| {
-                let replace_confirm: ReplaceConfirmation =
-                    serde_json::from_str(event.payload().unwrap()).unwrap();
-                tx.send(replace_confirm).unwrap();
-            });
-            rx
-        };
-
-        let install_confirm = confirm.await?;
-        Ok(install_confirm)
-    }
 }
