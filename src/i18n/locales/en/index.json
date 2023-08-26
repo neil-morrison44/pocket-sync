@@ -333,5 +333,10 @@
       "text": "{list}\n\nAssets, Saves etc will be moved over and the old core will be removed.",
       "title": "Replace Cores?"
     }
+  },
+  "version": {
+    "update_alt": "Update {version} available",
+    "replaced_alt": "Replacement core {core} available",
+    "replaced": "Replaced"
   }
 }
