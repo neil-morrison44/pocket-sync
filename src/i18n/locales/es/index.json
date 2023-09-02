@@ -1,0 +1,337 @@
+{
+  "about": {
+    "app_name": "Pocket Sync",
+    "new_firmware": "Nuevo Pocket Firmware v{version} disponible",
+    "update_available": "¡Actualización disponible! {version}"
+  },
+  "app": {
+    "app_name": "Pocket Sync",
+    "connect_button": "Conectar con Pocket",
+    "not_pocket_tip": "Esa carpeta no se parece al sistema de archivos de Pocket. El Pocket debe inicializar la tarjeta SD al menos una vez."
+  },
+  "clean_files": {
+    "close_button": "Cerrar",
+    "delete_files_button": "Eliminar archivos",
+    "files_found": "{count, plural, =0 {No hay archivos que se puedan limpiar} one {# archivo que se pueda limpiar} other {# archivos que se puedan limpiar} } encontrado",
+    "title": "Archivos limpios"
+  },
+  "core_info": {
+    "author": "Autor",
+    "controls": {
+      "back": "Volver a la lista",
+      "install": "Instalar",
+      "required_files": "Archivos requeridos",
+      "uninstall": "Desinstalar",
+      "update": "Actualizar"
+    },
+    "inputs": "Entradas",
+    "modal": {
+      "close": "Cerrar",
+      "input_core": "Núcleo",
+      "no_settings_found": "¡No se encontraron configuraciones!",
+      "reset_all": "Resetear todo"
+    },
+    "not_in_inventory": "{coreName} no está en el inventario de núcleos",
+    "platform": {
+      "edit": "Editar",
+      "wikipedia": "Wikipedia"
+    },
+    "replaced": "Este núcleo ha sido reemplazado por <1>{replacementCore}</1>",
+    "platforms": "Plataformas",
+    "please_wait": "Por favor espere, revisando archivos...",
+    "release_date": "Fecha de lanzamiento",
+    "releases": {
+      "release_history": "Historial de lanzamientos",
+      "show_previous": "Mostrar lanzamientos anteriores"
+    },
+    "required_files": "Archivos requeridos",
+    "required_files_count": "{count} / {total} archivos",
+    "settings": "Configuración",
+    "sponsor": "Patrocinador",
+    "supports": "Soportes",
+    "supports_items": {
+      "cartridges": "Cartuchos",
+      "dock": "Base",
+      "dock_dac": "Base (Analog)",
+      "save_states_and_sleep": "Guardar estados /dormir"
+    },
+    "url": "URL",
+    "version": "Versión"
+  },
+  "core_info_required_files": {
+    "close": "Cerrar",
+    "download_all": "Descargar todo",
+    "no_link_tip": "Por favor consulte la sección de Configuración para obtener más opciones con archivos requeridos.",
+    "skip_alternates": "(Archivos alternativos omitidos)",
+    "title": "Archivos requeridos"
+  },
+  "cores": {
+    "controls": {
+      "category": "Categoría",
+      "refresh": "Actualizar",
+      "search": "Buscar",
+      "updatable": "Actualizable"
+    },
+    "install_tip": "También puedes instalar núcleos (o cualquier otra cosa en un zip) arrastrando el archivo .zip a esta ventana",
+    "installed": "Instalado ({count})",
+    "not_installed": "Disponible ({count})"
+  },
+  "error": {
+    "report": "Puedes reportar esto a través de GitHub, incluye el texto a continuación y lo que acabas de hacer.",
+    "retry": "Reintentar",
+    "title": "Error"
+  },
+  "fetch": {
+    "controls": {
+      "add_fetch_item": "Agregar nueva búsqueda",
+      "refresh": "Actualizar"
+    },
+    "copying": "Copiando documentos...",
+    "fetch_button": "Buscar",
+    "file_count": "{count} / {total, plural, one {# Archivo} other {# Archivos}}",
+    "loading": "cargando...",
+    "new": {
+      "add_extension": "Agregar",
+      "add_fetch": "Añadir búsqueda",
+      "archive_name": "Nombre del archivo: <i>https://archive.org/details/[this bit here]</i>",
+      "archive_tip": "Esto no funcionará para librerias donde los archivos están comprimidos y debes configurar qué extensiones deseas evitar que descarguen los archivos de metadatos.",
+      "close": "Cerrar",
+      "destination": "Carpeta de destino",
+      "extensions": "Limitar a extensiones de archivo:",
+      "origin": "Carpeta de origen",
+      "title": "Añadir nueva búsqueda"
+    },
+    "remove_button": "Eliminar",
+    "remove_confirm": "Esto eliminará la configuración de búsqueda, pero no los archivos. ¿Está seguro?",
+    "types": {
+      "archive_org": "Librerias de Internet",
+      "filesystem": "Archivos locales"
+    }
+  },
+  "firmware": {
+    "current": "Firmware actual: v{version}",
+    "downloading_firmware": "Descargando Firmware...",
+    "load_firmware": "Cargar en la tarjeta SD",
+    "loaded_firmware": "La {version} del Firmware está en la tarjeta SD",
+    "loaded_firmware_info": "Inserte y encienda el Pocket para instalarlo.",
+    "no_firmware_loaded": "No hay ningún archivo de Firmware en la tarjeta SD esperando a ser instalado",
+    "options": {
+      "latest": "v{version} (más reciente)",
+      "older": "v{version} ({date, date, short})",
+      "previous_versions": "Versiones previas"
+    },
+    "release_notes": {
+      "from": "De ",
+      "title": "v{version} Notas de lanzamiento:"
+    },
+    "remove_button": "Eliminar"
+  },
+  "games": {
+    "controls": {
+      "category": "Categoría",
+      "clean_files": "Archivos limpios",
+      "instance_json": "Instancia JSON",
+      "refresh": "Actualizar",
+      "search": "Buscar"
+    },
+    "item": {
+      "game_count": "{count, plural, =0 {No hay Juegos} one {# Juego} other {# Juegos}}"
+    }
+  },
+  "image_editor": {
+    "cancel": "Cancelar",
+    "import_image": "Importar imagen",
+    "remove": "Eliminar",
+    "reset": "Reiniciar",
+    "rotate": "Rotar",
+    "save": "Guardar",
+    "scale": "Escala"
+  },
+  "instance_json": {
+    "available_for": "Creación automática de archivos instance.json disponible para:",
+    "close_button": "Cerrar",
+    "skipped_file": "Se omitió {file_name}",
+    "title": "Crear archivos JSON de instancia",
+    "wrote_file": "Escribió {file_name}"
+  },
+  "layout": {
+    "cores": "Núcleos",
+    "fetch": "Buscar",
+    "firmware": "Firmware",
+    "games": "Juegos",
+    "platforms": "Plataformas",
+    "pocket_sync": "Pocket Sync",
+    "save_states": "Guardar estados",
+    "saves": "Guardados",
+    "screenshots": "Capturas de pantalla",
+    "settings": "Ajustes"
+  },
+  "mister_sync": {
+    "controls": {
+      "back": "Salida",
+      "search": "Buscar guardados"
+    },
+    "login": {
+      "connect": "Conectar",
+      "host": "Anfitrión / Dirección IP:",
+      "password": "Contraseña:",
+      "username": "Nombre de usuario:"
+    },
+    "mister": "MiSTer",
+    "not_found": "No encontrado",
+    "pocket": "Pocket",
+    "tip_1": "El FTP del MiSTer debe estar activado",
+    "tip_2": "Asegúrese de que el guardado sea compatible entre Pocket y MiSTer antes de realizar la transferencia.",
+    "tip_3": "El juego debe tener exactamente el mismo nombre en el Pocket y en MiSTer para poder encontrar el guardado.",
+    "unsupported": "{platform} no es compatible\n(abra un problema de github si así debe ser)"
+  },
+  "news_feed": {
+    "last_updated": "Última actualización <1></1>",
+    "updates_from": "Actualizaciones del <1>OpenFPGA Cores Inventory</1>"
+  },
+  "platform_info": {
+    "controls": {
+      "back": "Volver a la lista",
+      "data_packs": "Paquetes de datos",
+      "image_packs": "Paquetes de imágenes"
+    },
+    "cores": "Núcleos",
+    "edit": "Editar"
+  },
+  "platforms": {
+    "cancel": "Cancelar",
+    "controls": {
+      "data_packs": "Paquetes de datos",
+      "image_packs": "Paquetes de imágenes",
+      "search": "Buscar"
+    },
+    "data_packs": {
+      "apply_changes": "Aplicar {count, plural, =0 {0 Cambios} one {1 Cambio} other {# Cambios}}",
+      "close": "Cerrar",
+      "current": "Actual"
+    },
+    "delete_unused": "¿Eliminar {count, plural, one {# Plataforma no utilizada} other {# Plataformas no utilizadas}}?",
+    "edit": "Editar",
+    "image_packs": {
+      "apply_changes": "Aplicar {count, plural, =0 {0 Cambios} one {1 Cambio} other {# Cambios}}",
+      "close": "Cerrar",
+      "current": "Actual"
+    },
+    "save": "Guardar"
+  },
+  "progress": {
+    "remaining_time": "Tiempo restante (aprox.): {remainingTime}"
+  },
+  "save_info": {
+    "confirm_restore": "¿Restaurar desde el respaldo?",
+    "controls": {
+      "back": "Volver a la lista",
+      "hide_unchanged": "Ocultar sin cambios",
+      "search": "Buscar"
+    },
+    "current": "Actual",
+    "date": "{date, date, short}",
+    "newer": "Más nuevo",
+    "older": "Más viejo",
+    "time": "{date, time, short}"
+  },
+  "save_states": {
+    "cartridge": "Cartucho",
+    "confirm_delete": "¿Está seguro de que desea eliminar {count, plural, =0 {sin estados de guardado} one {un estado de guardado} other {# estados de guardado}}?",
+    "controls": {
+      "clear_selection": "Despejar selección",
+      "delete_selection": "Eliminar seleccionados ({count})",
+      "search": "Buscar"
+    },
+    "count": "( {count} / 128 )",
+    "item": {
+      "date": "{date, date, long}",
+      "time": "{date, time, short}"
+    }
+  },
+  "saves": {
+    "backups": "Respaldos: {count}",
+    "confirm_delete": "¿Está seguro de que desea eliminar esta ubicación de respaldo?",
+    "controls": {
+      "add_backup_location": "Agregar ubicación de respaldo",
+      "mister_sync": "Sincronización MiSTer"
+    },
+    "latest_backup": "Último respaldo: {date, date, long}, {date, time, short}",
+    "none": "Agregue una ubicación de respaldo arriba",
+    "not_found": "No encontrado",
+    "oldest_backup": "respaldo más antiguo: {date, date, long}, {date, time, short}",
+    "remove": "Eliminar ubicación",
+    "view_saves": "Ver guardados"
+  },
+  "screenshot_info": {
+    "controls": {
+      "back": "Volver a la lista",
+      "save": "Guardar",
+      "share": "Compartir",
+      "upscaled": "Mejorado"
+    }
+  },
+  "screenshots": {
+    "controls": {
+      "delete_selected": "Eliminar seleccionados ({count})",
+      "export_selected": "Exportar seleccionados ({count})",
+      "search": "Buscar",
+      "select": "Seleccionar"
+    },
+    "no_screenshots": "Una vez que tomes algunas capturas de pantalla, aparecerán aquí."
+  },
+  "settings": {
+    "3d_pocket": {
+      "black": "Negro",
+      "title": "Color de Pocket:",
+      "white": "Blanco"
+    },
+    "alternate_skip": {
+      "checkbox": "Saltar activos alternativos",
+      "ramble_1": "Esta configuración omitirá el procesamiento de archivos json en la carpeta `_alternatives`,\nlo que significa que obtendrá los títulos \"main\" de los núcleos que clasifican sus archivos JSON de esta manera.",
+      "ramble_2": "<b>Advertencia:</b> desactivar esto significará que la instalación de los archivos requeridos llevará <b>mucho más</b> tiempo.",
+      "title": "Saltar activos alternativos"
+    },
+    "archive": {
+      "save": "Guardar",
+      "title": "Libreria ROM y BIOS",
+      "warning": "Por favor consulte las leyes locales sobre la descarga de archivos ROM y BIOS potencialmente protegidos por derechos de autor (arcade).\nSi se siente cómodo con esto, copie la siguiente URL en la entrada y presione 'guardar'."
+    },
+    "clear_file_cache": {
+      "button": "Borrar caché de archivos",
+      "ramble": "Para ayudar con la transferencia de tarjetas USB y SD, los archivos más grandes se copian y almacenan en el sistema de archivos de su computadora,\nLo cual debería estar bien, pero si tiene problemas, intente borrar el caché del archivo.",
+      "title": "Borrar caché de archivos"
+    },
+    "disconnect": {
+      "button": "Desconectar",
+      "ramble": "Regrese a la pantalla \"Conectar con Pocket\" (Esto no expulsa la tarjeta SD/unidad USB)",
+      "title": "Desconectar"
+    },
+    "reconnect": {
+      "checkbox": "Reconectar cuando se abra",
+      "ramble": "Intente volver a conectarse a la ubicación abierta más recientemente <1> { ppath } </1> al abrir la aplicación, omitiendo el botón \"Conectar con Pocket\"",
+      "title": "Reconectar cuando la aplicación esta abierta"
+    },
+    "thanks": "Gracias a:"
+  },
+  "time_ago": {
+    "less_than_1_min_ago": "hace menos de un minuto"
+  },
+  "uninstall_core": {
+    "confirm_text": "Esto eliminará el núcleo, pero no los juegos, archivos guardados, datos de la biblioteca o información de la plataforma. ¿Está seguro?",
+    "confirm_title": "Desinstalar núcleo"
+  },
+  "zip_install": {
+    "cancel_button": "Cancelar",
+    "confirm_button": "Confirmar",
+    "remove_duplicate": "Eliminar archivos duplicados existentes",
+    "scanning": "Escaneando archivos...",
+    "moved_files_info": "Maneja casos en los que los archivos se han movido, p. Los archivos JSON ahora están en `_alternatives`",
+    "replace": {
+      "ok": "Permitir",
+      "cancel": "Saltar",
+      "text": "{list}\n\nLos activos, guardados, etc. se moverán y se eliminará el núcleo anterior.",
+      "title": "¿Reemplazar núcleos?"
+    }
+  }
+}
