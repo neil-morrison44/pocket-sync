@@ -3,10 +3,23 @@
   gap: 5px;
   justify-content: space-between;
   align-items: flex-start;
+  flex-wrap: wrap;
 }
 
-.version__update {
-  background-color: var(--green-colour);
-  padding: 0 10px;
+.version__update, .version__replaced {
+  padding-inline: 4px;
+  padding-inline-end: 8px;
   border-radius: 10px;
+  display: flex;
+  align-items: center;
+
+}
+
+.version__update{
+  background-color: var(--green-colour);
+}
+
+.version__replaced {
+  background-color: var(--red-colour);
+  gap: 2px;
 }

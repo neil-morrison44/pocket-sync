@@ -130,6 +130,9 @@ export type InventoryJSON = {
 }
 
 export type InventoryItem = {
+  replaced_by?: string
+  replaces?: string[]
+
   identifier: string
   platform_id: PlatformId
   repository: {

@@ -29,6 +29,7 @@ import { RequiredFileInfoSelectorFamily } from "../../../recoil/requiredFiles/se
 import { Trans, useTranslation } from "react-i18next"
 import { archiveBumpAtom } from "../../../recoil/archive/atoms"
 import { currentViewAtom } from "../../../recoil/view/atoms"
+import { useReplacementAvailable } from "../../../hooks/useReplacementAvailable"
 
 type CoreInfoProps = {
   coreName: string
@@ -51,9 +52,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   const [coreSettingsOpen, setCoreSettingsOpen] = useState(false)
   const { t } = useTranslation("core_info")
   const setViewAndSubview = useSetRecoilState(currentViewAtom)
-
-  // TODO: Pull this from the inventoryItem once it's there
-  const replacementCore = null
+  const replacementCore = useReplacementAvailable(coreName)
 
   const goToReplacement = useCallback(() => {
     setViewAndSubview({ view: "Cores", selected: replacementCore })
