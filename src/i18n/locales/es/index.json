@@ -51,8 +51,8 @@
     "supports": "Soportes",
     "supports_items": {
       "cartridges": "Cartuchos",
-      "dock": "Base",
-      "dock_dac": "Base (Analog)",
+      "dock": "Dock",
+      "dock_dac": "Dock (Analog)",
       "save_states_and_sleep": "Guardar estados /dormir"
     },
     "url": "URL",
