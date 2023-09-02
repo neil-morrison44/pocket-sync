@@ -282,9 +282,10 @@
   },
   "settings": {
     "3d_pocket": {
-      "black": "Negro",
       "title": "Color de Pocket:",
-      "white": "Blanco"
+      "black": "Negro",
+      "white": "Blanco",
+      "glow": "Que brilla en la oscuridad"
     },
     "alternate_skip": {
       "checkbox": "Saltar activos alternativos",
@@ -333,5 +334,10 @@
       "text": "{list}\n\nLos activos, guardados, etc. se moverán y se eliminará el núcleo anterior.",
       "title": "¿Reemplazar núcleos?"
     }
+  },
+  "version": {
+    "update_alt": "Actualización {version} disponible",
+    "replaced_alt": "Núcleo de repuesto {core} disponible",
+    "replaced": "Reemplazado"
   }
 }

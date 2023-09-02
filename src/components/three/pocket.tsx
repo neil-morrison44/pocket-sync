@@ -2,11 +2,14 @@ import { Canvas, useFrame } from "@react-three/fiber"
 import { Environment, RoundedBox } from "@react-three/drei"
 import { ReactNode, useRef } from "react"
 import { useRecoilValue } from "recoil"
-import envMap from "./kloofendal_48d_partly_cloudy_puresky_1k.hdr"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 
 import "./index.css"
 import { DoubleSide, Group, MathUtils, Mesh } from "three"
+import { Bloom, EffectComposer } from "@react-three/postprocessing"
+import { KernelSize } from "postprocessing"
+
+import envMap from "./studio_small_08_1k.hdr"
 
 type PocketProps = {
   move?: "none" | "spin" | "back-and-forth"
@@ -15,7 +18,21 @@ type PocketProps = {
 }
 
 const BLACK_COLOUR = "rgb(1,1,1)"
-const WHITE_COLOUR = "rgb(90,90,90)"
+const WHITE_COLOUR = "rgb(244,244,244)"
+const GLOW_COLOUR = "rgb(163, 195, 138)"
+
+const BODY_COLOUR = {
+  black: BLACK_COLOUR,
+  white: WHITE_COLOUR,
+  glow: GLOW_COLOUR,
+}
+
+const LIGHTING_SCALE = {
+  black: 2,
+  white: 0.4,
+  glow: 0.15,
+}
+
 const SWAY_SPEED = 0.2
 
 export const Pocket = ({
@@ -32,22 +49,39 @@ export const Pocket = ({
       <Environment files={envMap} />
       <Lights />
       <Body move={move} screenMaterial={screenMaterial} />
-      {/* <OrbitControls maxDistance={4} minDistance={3} enablePan={false} /> */}
+      {/* <OrbitControls enablePan={false} /> */}
       {/* <Stats /> */}
+      <GlowBloom />
 
       {children && children}
     </Canvas>
   )
 }
 
-const Lights = () => {
+const GlowBloom = () => {
   const { colour } = useRecoilValue(PocketSyncConfigSelector)
   return (
+    <EffectComposer enabled={colour === "glow"}>
+      <Bloom
+        intensity={0.05}
+        luminanceThreshold={0.8}
+        kernelSize={KernelSize.HUGE}
+        luminanceSmoothing={0.025}
+      />
+    </EffectComposer>
+  )
+}
+
+const Lights = () => {
+  const { colour } = useRecoilValue(PocketSyncConfigSelector)
+  const scale = LIGHTING_SCALE[colour]
+
+  return (
     <>
-      <ambientLight intensity={colour === "black" ? 2 : 1} />
-      <directionalLight position={[0, 200, 0]} intensity={10} />
-      <pointLight position={[20, 10, 20]} intensity={3} castShadow />
-      <pointLight position={[10, 20, 10]} intensity={2} castShadow />
+      <ambientLight intensity={1 * scale} />
+      <directionalLight position={[0, 200, 0]} intensity={5 * scale} />
+      <pointLight position={[20, 10, 20]} intensity={1.5 * scale} castShadow />
+      <pointLight position={[10, 20, 10]} intensity={1 * scale} castShadow />
     </>
   )
 }
@@ -127,7 +161,10 @@ const Screen = ({ screenMaterial }: PocketProps) => {
       {/* colour */}
       <mesh position={[0, 7.5, 1.11]}>
         <planeGeometry attach="geometry" args={[16, 14]} />
-        <meshPhongMaterial color={colour === "black" ? "black" : "white"} />
+        <meshPhysicalMaterial
+          ior={1.46}
+          color={colour === "white" ? "rgb(222,222,220)" : "black"}
+        />
       </mesh>
 
       {/* LCD */}
@@ -421,10 +458,14 @@ const Material = ({ isButton = false }: { isButton?: boolean }) => {
   return (
     <meshPhysicalMaterial
       attach="material"
-      ior={isButton ? 1.4 : 1.46}
-      color={colour == "black" ? BLACK_COLOUR : WHITE_COLOUR}
-      clearcoat={isButton ? 0.3 : 0}
-      clearcoatRoughness={isButton ? 0.8 : undefined}
+      ior={isButton ? 1.4 : 1.34}
+      color={BODY_COLOUR[colour]}
+      clearcoat={isButton ? 0.25 : 0}
+      clearcoatRoughness={isButton ? 0.8 : 0}
+      emissive={BODY_COLOUR[colour]}
+      emissiveIntensity={colour === "glow" ? 1.5 : 0}
+      toneMapped={colour !== "glow"}
+      envMapIntensity={0}
     />
   )
 }
