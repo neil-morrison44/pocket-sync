@@ -15,7 +15,7 @@ i18n
     init: () => {
       return
     },
-    detect: async () => "es" || (await locale()),
+    detect: async () => await locale(),
     cacheUserLanguage: (lng: string) => {
       userLanguage = lng
     },
