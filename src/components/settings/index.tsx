@@ -33,11 +33,12 @@ export const Settings = () => {
           <select
             value={config.colour}
             onChange={({ target }) =>
-              updateConfig("colour", target.value as "black" | "white")
+              updateConfig("colour", target.value as "black" | "white" | "glow")
             }
           >
             <option value="black">{t("3d_pocket.black")}</option>
             <option value="white">{t("3d_pocket.white")}</option>
+            <option value="glow">{t("3d_pocket.glow")}</option>
           </select>
         </div>
 

@@ -282,9 +282,10 @@
   },
   "settings": {
     "3d_pocket": {
-      "black": "Black",
       "title": "Pocket Colour:",
-      "white": "White"
+      "black": "Black",
+      "white": "White",
+      "glow": "Glow in the Dark"
     },
     "alternate_skip": {
       "checkbox": "Skip Alternate Assets",

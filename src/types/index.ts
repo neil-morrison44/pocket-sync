@@ -187,7 +187,7 @@ export type FetchType = { type: string; destination: string } & (
 
 export type PocketSyncConfig = {
   version: string
-  colour: "white" | "black"
+  colour: "white" | "black" | "glow"
   archive_url: string | null
   saves: SaveConfig[]
   skipAlternateAssets?: boolean

@@ -12,7 +12,7 @@
   top: 0;
   height: 100vh;
   background-color: var(--light-colour);
-  flex-basis: max-content;
+  flex-basis: min-content;
   flex-shrink: 0;
   z-index: 100;
 
@@ -30,6 +30,10 @@
 
   &:hover {
     background-color: var(--hover-colour);
+  }
+
+  &:first-child {
+    white-space: nowrap;
   }
 }
 
