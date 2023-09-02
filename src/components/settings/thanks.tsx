@@ -27,11 +27,7 @@ export const Thanks = () => {
         </li>
 
         <li>
-          <Link
-            href={
-              "https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky"
-            }
-          >
+          <Link href={"https://polyhaven.com/a/studio_small_08"}>
             {"3D reflection map from Poly Haven"}
           </Link>
         </li>
