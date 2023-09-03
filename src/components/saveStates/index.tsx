@@ -13,6 +13,7 @@ import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { splitAsPath } from "../../utils/splitAsPath"
 import { CoreTag } from "../shared/coreTag"
 import { useTranslation } from "react-i18next"
+import { PhotoExportModal } from "./photoExportModal"
 
 export const SaveStates = () => {
   const invalidateFS = useInvalidateFileSystem()
@@ -20,6 +21,10 @@ export const SaveStates = () => {
   const [selectedStates, setSelectedStates] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const { t } = useTranslation("save_states")
+
+  const [isExportingPhotos, setIsExportingPhotos] = useState<string | null>(
+    null
+  )
 
   const groupByCore = useMemo(
     () =>
@@ -80,6 +85,14 @@ export const SaveStates = () => {
               },
         ]}
       />
+
+      {isExportingPhotos && (
+        <PhotoExportModal
+          path={isExportingPhotos}
+          onClose={() => setIsExportingPhotos(null)}
+        />
+      )}
+
       <div className="save-states__list">
         <SearchContextProvider query={searchQuery}>
           {Object.entries(groupByCore).map(([coreName, saveStates], index) => (
@@ -99,6 +112,7 @@ export const SaveStates = () => {
                           return [...s, p]
                         })
                       }
+                      onExportPhotos={() => setIsExportingPhotos(p)}
                     />
                   </Suspense>
                 ))}

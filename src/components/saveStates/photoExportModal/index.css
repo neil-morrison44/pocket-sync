@@ -1,0 +1,71 @@
+.photo-export-modal {
+
+}
+
+.photo-export-modal__layout{
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1.5fr;
+  align-items: center;
+  justify-items: center;
+  flex-grow: 0;
+  overflow: hidden;
+}
+
+.photo-export-modal__image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  grid-template-columns: auto;
+  overflow: auto;
+  height: 100%;
+  align-items: baseline;
+
+  .photo-export-modal__canvas {
+    flex-grow: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    width: 100px;
+
+    &:hover{
+      transform: scale(1.1);
+    }
+  }
+}
+
+.photo-export-modal__canvas {
+  image-rendering: pixelated;
+  width: 100%;
+  height: auto;
+}
+
+.photo-export-modal__colour-inputs{
+  margin-inline-start: auto;
+  display: inherit;
+  align-items: inherit;
+  gap: inherit;
+}
+
+.photo-export-modal__palette-bar{
+  display: flex;
+  align-items: center;
+  grid-column: 1;
+  grid-row: 1;
+  gap: 10px;
+}
+
+.photo-export-modal__colour-input{
+  width: 40px;
+  height: 40px;
+}
+
+.photo-export-modal__export-buttons{
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 12px;
+
+  > button {
+    flex-grow: 1;
+  }
+}

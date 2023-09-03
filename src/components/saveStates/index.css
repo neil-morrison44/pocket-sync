@@ -37,32 +37,17 @@
 }
 
 .save-states__item {
-  --flex-size: 50%;
-
   display: flex;
   align-items: center;
   background-color: var(--info-colour);
   padding: 10px;
   box-sizing: border-box;
   gap: 20px;
-  flex-basis: calc(var(--flex-size) - 4px);
   cursor: pointer;
   border: 2px solid transparent;
 
   &:hover {
     transform: scale(1.05);
-  }
-
-  @media (max-width: 800px) {
-    --flex-size: 100%;
-  }
-
-  @media (min-width: 1000px) {
-    --flex-size: 33%;
-  }
-
-  @media (min-width: 1200px) {
-    --flex-size: 25%;
   }
 }
 
@@ -86,4 +71,14 @@
   width: 123px;
   height: auto;
   aspect-ratio: 160 / 144;
+}
+
+
+.save-states__camera-export-button {
+  align-self: flex-start;
+  opacity: 0.6;
+
+  &:hover{
+    opacity: 1;
+  }
 }

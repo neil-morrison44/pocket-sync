@@ -4,9 +4,8 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0,0,0,0.8);
-  z-index: 1000;
-
+  background-color: rgb(0 0 0 / 80%);
+  z-index: 2000;
   display: flex;
   flex-direction: column;
   justify-content: center;
