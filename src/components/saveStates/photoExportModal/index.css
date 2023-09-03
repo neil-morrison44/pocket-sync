@@ -64,6 +64,7 @@
   display: grid;
   grid-template-columns: 1fr 1.5fr;
   gap: 12px;
+  margin-block-start: auto;
 
   > button {
     flex-grow: 1;
