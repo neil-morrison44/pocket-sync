@@ -3,7 +3,10 @@ import {
   useRecoilValueLoadable,
   useSetRecoilState,
 } from "recoil"
-import { CoreInfoSelectorFamily } from "../../../recoil/selectors"
+import {
+  CoreInfoSelectorFamily,
+  CoreMainPlatformIdSelectorFamily,
+} from "../../../recoil/selectors"
 import { DownloadURLSelectorFamily } from "../../../recoil/inventory/selectors"
 import { Controls } from "../../controls"
 import { Link } from "../../link"
@@ -58,6 +61,10 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
     setViewAndSubview({ view: "Cores", selected: replacementCore })
   }, [replacementCore, setViewAndSubview])
 
+  const mainPlatformId = useRecoilValue(
+    CoreMainPlatformIdSelectorFamily(coreName)
+  )
+
   return (
     <div className="core-info">
       <Controls
@@ -102,7 +109,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
         <CoreInputs
           coreName={coreName}
           onClose={() => setInputsOpen(false)}
-          platformId={coreInfo.core.metadata.platform_ids[0]}
+          platformId={mainPlatformId}
         />
       )}
 
@@ -123,13 +130,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
         </div>
       )}
 
-      {coreInfo.core.metadata.platform_ids.map((platformId) => (
-        <PlatformImage
-          className="core-info__image"
-          platformId={platformId}
-          key={platformId}
-        />
-      ))}
+      <PlatformImage className="core-info__image" platformId={mainPlatformId} />
 
       <section className="core-info__info">
         <p>{coreInfo.core.metadata.description}</p>

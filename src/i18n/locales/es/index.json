@@ -63,7 +63,15 @@
     "download_all": "Descargar todo",
     "no_link_tip": "Por favor consulte la sección de Configuración para obtener más opciones con archivos requeridos.",
     "skip_alternates": "(Archivos alternativos omitidos)",
-    "title": "Archivos requeridos"
+    "title": "Archivos requeridos",
+    "file_status": {
+      "wrong": "Actualizable",
+      "downloadable": "Descargable",
+      "not_in_archive": "No en el archivo",
+      "ok": "Descargado",
+      "unknown": "Desconocido",
+      "at_root": "Existe en la carpeta raíz"
+    }
   },
   "cores": {
     "controls": {

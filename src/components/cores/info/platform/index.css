@@ -39,3 +39,22 @@
   display: flex;
   align-items: center;
 }
+
+
+.cores__platform-info--non-existent{
+  padding-block: 10px;
+  padding-inline: 15px;
+  padding-inline-start: 10px;
+  width: min-content;
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+
+  &::before{
+    content: "#";
+    font-family: GamePocket, sans-serif;
+    font-size: 2em;
+    transform: translateY(0.1em);
+    opacity: 0.75;
+  }
+}

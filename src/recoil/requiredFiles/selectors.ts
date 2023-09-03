@@ -10,7 +10,11 @@ import { readJSONFile } from "../../utils/readJSONFile"
 import { IGNORE_INSTANCE_JSON_LIST } from "../../values"
 import { fileSystemInvalidationAtom } from "../atoms"
 import { skipAlternateAssetsSelector } from "../config/selectors"
-import { DataJSONSelectorFamily, CoreInfoSelectorFamily } from "../selectors"
+import {
+  DataJSONSelectorFamily,
+  CoreInfoSelectorFamily,
+  CoreMainPlatformIdSelectorFamily,
+} from "../selectors"
 
 const FileInfoSelectorFamily = selectorFamily<
   Omit<RequiredFileInfo, "type">,
@@ -62,7 +66,7 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
     async ({ get }) => {
       const dataJSON = get(DataJSONSelectorFamily(coreName))
       const coreJSON = get(CoreInfoSelectorFamily(coreName))
-      const [platform_id] = coreJSON.core.metadata.platform_ids
+      const platform_id = get(CoreMainPlatformIdSelectorFamily(coreName))
 
       const requiredCoreFiles = dataJSON.data.data_slots.filter(
         ({ name, required, filename }) => {

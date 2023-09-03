@@ -1,11 +1,12 @@
 import { selector, selectorFamily } from "recoil"
-import { ArchiveFileMetadata, RequiredFileInfo } from "../../types"
+import { ArchiveFileMetadata, RequiredFileInfo, RootFile } from "../../types"
 import { PocketSyncConfigSelector } from "../config/selectors"
 import { RequiredFileInfoSelectorFamily } from "../requiredFiles/selectors"
 import { archiveBumpAtom } from "./atoms"
 import {
   invokeFileExists,
   invokeFileMetadata,
+  invokeListRootFiles,
   invokeWalkDirListFiles,
 } from "../../utils/invokes"
 import { ResponseType, getClient } from "@tauri-apps/api/http"
@@ -102,12 +103,25 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
   key: "requiredFilesWithStatus",
   get:
     (coreName: string) =>
-    ({ get }) => {
+    async ({ get }) => {
       const archiveMetadata = get(archiveMetadataSelector)
       const requiredFiles = get(RequiredFileInfoSelectorFamily(coreName))
+      const rootFileInfo = get(listRootFilesSelector)
 
       return requiredFiles
         .map((r) => {
+          const existsAtRoot = rootFileInfo.find((fi) => {
+            switch (fi.type) {
+              case "UnZipped":
+                return fi.file_name === r.filename
+              case "Zipped":
+                return fi.inner_file === r.filename
+            }
+          })
+
+          if (existsAtRoot)
+            return { ...r, status: "at_root" } satisfies RequiredFileInfo
+
           const metadata = archiveMetadata.find(
             ({ name }) => name === r.filename
           )
@@ -124,11 +138,19 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
           }
 
           if (!metadata) {
-            status = "not-in-archive"
+            status = "not_in_archive"
           }
 
           return { ...r, status }
         })
         .sort((a, b) => (a.status || "").localeCompare(b.status || ""))
     },
+})
+
+export const listRootFilesSelector = selector<RootFile[]>({
+  key: "listRootFilesSelector",
+  get: async () => {
+    const rootFileInfo = await invokeListRootFiles()
+    return rootFileInfo
+  },
 })

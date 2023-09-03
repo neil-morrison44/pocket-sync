@@ -74,6 +74,8 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
           />
           <div className="cores__info-blurb">
             <b>{coreName}</b>
+            {/* eslint-disable-next-line react/jsx-no-literals */}
+            {index > 0 && <span>{`(${platformId})`}</span>}
             <GameCount
               platformId={platformId}
               coreName={coreName}

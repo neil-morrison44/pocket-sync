@@ -7,6 +7,7 @@ use async_walkdir::{DirEntry, WalkDir};
 use checks::{check_if_folder_looks_like_pocket, connection_task};
 use clean_fs::find_dotfiles;
 use file_cache::{clear_file_caches, get_file_with_cache};
+use files_from_zip::copy_file_from_zip;
 use firmware::{FirmwareDetails, FirmwareListItem};
 use futures::StreamExt;
 use futures_locks::RwLock;
@@ -233,14 +234,56 @@ async fn install_archive_files(
     archive_url: &str,
     state: tauri::State<'_, PocketSyncState>,
     window: Window,
-) -> Result<bool, ()> {
+) -> Result<bool, String> {
     let pocket_path = state.0.pocket_path.read().await;
     let file_count = files.len();
 
     let mut failed_already = HashSet::new();
     let mut progress = progress::ProgressEmitter::start(file_count, &window);
+    let root_files = check_root_files(state).await?;
 
     for file in files {
+        let matching_root_files: Vec<_> = root_files
+            .iter()
+            .filter(|rf| match rf {
+                RootFile::Zipped {
+                    zip_file: _,
+                    inner_file,
+                } => inner_file == &file.filename,
+                RootFile::UnZipped { file_name } => file_name == &file.filename,
+            })
+            .collect();
+
+        if let Some(matching_root_file) = matching_root_files.first() {
+            progress.emit_progress(&file.filename);
+            let file_path = remove_leading_slash(&file.path);
+            let folder = pocket_path.join(file_path);
+            let new_file_path = folder.join(&file.filename);
+
+            if let Some(parent) = new_file_path.parent() {
+                if !parent.exists() {
+                    tokio::fs::create_dir_all(&parent).await.unwrap();
+                }
+            }
+
+            match matching_root_file {
+                RootFile::Zipped {
+                    zip_file,
+                    inner_file,
+                } => {
+                    copy_file_from_zip(&pocket_path.join(zip_file), &inner_file, &new_file_path)
+                        .await?;
+                }
+                RootFile::UnZipped { file_name } => {
+                    tokio::fs::copy(pocket_path.join(file_name), new_file_path)
+                        .await
+                        .map_err(|err| err.to_string())?;
+                }
+            }
+
+            continue;
+        }
+
         let full_url = format!("{}/{}", archive_url, file.filename);
         progress.emit_progress(&file.filename);
 
@@ -565,6 +608,59 @@ async fn clear_file_cache(app_handle: tauri::AppHandle) -> Result<(), String> {
     Ok(())
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(tag = "type")]
+enum RootFile {
+    Zipped {
+        zip_file: String,
+        inner_file: String,
+    },
+    UnZipped {
+        file_name: String,
+    },
+}
+
+mod files_from_zip;
+
+#[tauri::command(async)]
+async fn check_root_files(
+    state: tauri::State<'_, PocketSyncState>,
+) -> Result<Vec<RootFile>, String> {
+    let pocket_path = state.0.pocket_path.read().await;
+    let mut entries = tokio::fs::read_dir(&pocket_path.as_path())
+        .await
+        .map_err(|err| err.to_string())?;
+    let mut results: Vec<RootFile> = Vec::new();
+
+    while let Ok(Some(entry)) = entries.next_entry().await {
+        if let Ok(metadata) = entry.metadata().await {
+            if metadata.is_file() {
+                let path = entry.path();
+                if let (Some(ext), Some(file_name)) = (
+                    path.extension().and_then(|s| s.to_str()),
+                    path.file_name().and_then(|s| s.to_str()),
+                ) {
+                    if ext == "zip" {
+                        let files = files_from_zip::list_files(&path).await?;
+                        if files.len() > 0 {
+                            results.push(RootFile::Zipped {
+                                zip_file: String::from(file_name),
+                                inner_file: files[0].clone(),
+                            })
+                        }
+                    } else {
+                        results.push(RootFile::UnZipped {
+                            file_name: String::from(file_name),
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    Ok(results)
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -597,7 +693,8 @@ fn main() {
             get_firmware_versions_list,
             get_firmware_release_notes,
             download_firmware,
-            clear_file_cache
+            clear_file_cache,
+            check_root_files
         ])
         .setup(|app| start_tasks(app))
         .run(tauri::generate_context!())

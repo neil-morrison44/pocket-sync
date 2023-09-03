@@ -18,7 +18,7 @@ const STATUS_SORT_ORDER = [
   "wrong",
   "downloadable",
   "ok",
-  "not-in-archive",
+  "not_in_archive",
   undefined,
 ]
 
@@ -105,7 +105,9 @@ export const LoadRequiredFiles = ({
                   installRequiredFiles(
                     requiredFiles.filter(
                       ({ status }) =>
-                        status === "downloadable" || status === "wrong"
+                        status === "downloadable" ||
+                        status === "wrong" ||
+                        status === "at_root"
                     )
                   )
                 }
