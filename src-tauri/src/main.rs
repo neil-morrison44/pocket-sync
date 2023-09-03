@@ -271,8 +271,6 @@ async fn install_archive_files(
                     zip_file,
                     inner_file,
                 } => {
-                    // Unzip and copy inner file
-                    dbg!(&zip_file);
                     copy_file_from_zip(&pocket_path.join(zip_file), &inner_file, &new_file_path)
                         .await?;
                 }
