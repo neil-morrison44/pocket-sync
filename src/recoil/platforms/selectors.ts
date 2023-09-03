@@ -1,6 +1,6 @@
 import { selector, selectorFamily } from "recoil"
 import { ImagePack, PlatformId, PlatformInfoJSON } from "../../types"
-import { invokeListFiles } from "../../utils/invokes"
+import { invokeFileExists, invokeListFiles } from "../../utils/invokes"
 import { PLATFORM_IMAGE } from "../../values"
 import { fileSystemInvalidationAtom } from "../atoms"
 import {
@@ -57,6 +57,19 @@ export const CoresForPlatformSelectorFamily = selectorFamily<
     },
 })
 
+export const PlatformExistsSelectorFamily = selectorFamily<boolean, PlatformId>(
+  {
+    key: "PlatformExistsSelectorFamily",
+    get:
+      (platformId: PlatformId) =>
+      async ({ get }) => {
+        get(fileSystemInvalidationAtom)
+        const path = `Platforms/${platformId}.json`
+        return await invokeFileExists(path)
+      },
+  }
+)
+
 export const PlatformInfoSelectorFamily = selectorFamily<
   PlatformInfoJSON,
   PlatformId
@@ -66,7 +79,10 @@ export const PlatformInfoSelectorFamily = selectorFamily<
     (platformId: PlatformId) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
-      return readJSONFile<PlatformInfoJSON>(`Platforms/${platformId}.json`)
+      const path = `Platforms/${platformId}.json`
+      const exists = await invokeFileExists(path)
+      if (!exists) throw new Error(`Attempt to read platform_id ${platformId}`)
+      return readJSONFile<PlatformInfoJSON>(path)
     },
 })
 

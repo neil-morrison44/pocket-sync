@@ -1,5 +1,11 @@
 import { invoke } from "@tauri-apps/api"
-import { FileCopy, FirmwareInfo, RawFeedItem, SaveZipFile } from "../types"
+import {
+  FileCopy,
+  FirmwareInfo,
+  RawFeedItem,
+  RootFile,
+  SaveZipFile,
+} from "../types"
 
 export const invokeOpenPocket = async () => invoke<string | null>("open_pocket")
 
@@ -173,3 +179,6 @@ export const invokeDownloadFirmware = async (
 }
 
 export const invokeClearFileCache = async () => await invoke("clear_file_cache")
+
+export const invokeListRootFiles = async () =>
+  await invoke<RootFile[]>("check_root_files")

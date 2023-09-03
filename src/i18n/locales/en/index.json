@@ -63,7 +63,15 @@
     "download_all": "Download All",
     "no_link_tip": "Please view the Settings section for more options with required files",
     "skip_alternates": "(Alternative files skipped)",
-    "title": "Required Files"
+    "title": "Required Files",
+    "file_status": {
+      "wrong": "Updatable",
+      "downloadable": "Downloadable",
+      "not_in_archive": "Not in archive",
+      "ok": "Downloaded",
+      "unknown": "Unknown",
+      "at_root": "Exists in root folder"
+    }
   },
   "cores": {
     "controls": {

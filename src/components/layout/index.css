@@ -14,7 +14,7 @@
   background-color: var(--light-colour);
   flex-basis: min-content;
   flex-shrink: 0;
-  z-index: 100;
+  z-index: 1000;
 
   /* stylelint-disable-next-line property-no-vendor-prefix */
   -webkit-user-select: none;

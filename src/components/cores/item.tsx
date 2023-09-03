@@ -2,6 +2,7 @@ import { useRecoilValue } from "recoil"
 import {
   CoreAuthorImageSelectorFamily,
   CoreInfoSelectorFamily,
+  CoreMainPlatformIdSelectorFamily,
 } from "../../recoil/selectors"
 
 import { PlatformInfoSelectorFamily } from "../../recoil/platforms/selectors"
@@ -21,8 +22,11 @@ type CoreItemProps = {
 export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
   const { core } = useRecoilValue(CoreInfoSelectorFamily(coreName))
   const imageSrc = useRecoilValue(CoreAuthorImageSelectorFamily(coreName))
+  const mainPlatformId = useRecoilValue(
+    CoreMainPlatformIdSelectorFamily(coreName)
+  )
   const { platform } = useRecoilValue(
-    PlatformInfoSelectorFamily(core.metadata.platform_ids[0])
+    PlatformInfoSelectorFamily(mainPlatformId)
   )
   const canUpdate = useUpdateAvailable(coreName)
 
@@ -46,13 +50,10 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
       }}
     >
       <div className="cores__item" role="button" onClick={onClick}>
-        {core.metadata.platform_ids.map((platformId) => (
-          <PlatformImage
-            className="cores__platform-image"
-            platformId={platformId}
-            key={platformId}
-          />
-        ))}
+        <PlatformImage
+          className="cores__platform-image"
+          platformId={mainPlatformId}
+        />
 
         <div className="cores__info-blurb">
           <div className="cores__info-blurb-name">

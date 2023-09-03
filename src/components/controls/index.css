@@ -6,6 +6,8 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  border-bottom: 2px var(--light-colour) solid;
+  box-shadow: 0 0 5px black;
 }
 
 .controls__item {

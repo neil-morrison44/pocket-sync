@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { RequiredFileInfo } from "../../../../types"
 
 type RequiredFileRowProps = {
@@ -5,18 +6,12 @@ type RequiredFileRowProps = {
   hasArchiveLink: boolean
 }
 
-const STATUS_TEXT = {
-  wrong: "Updatable",
-  downloadable: "Downloadable",
-  "not-in-archive": "Not in archive",
-  ok: "Downloaded",
-  unknown: "Unknown",
-}
-
 export const RequiredFileRow = ({
   info,
   hasArchiveLink,
 }: RequiredFileRowProps) => {
+  const { t } = useTranslation("core_info_required_files")
+
   return (
     <div
       key={info.path + info.filename}
@@ -26,7 +21,9 @@ export const RequiredFileRow = ({
     >
       <div className="load-required-files__row_name">{info.filename}</div>
       <div>{info.path}</div>
-      {hasArchiveLink && <div>{STATUS_TEXT[info.status || "unknown"]}</div>}
+      {hasArchiveLink && (
+        <div>{t(`file_status.${info.status || "unknown"}`)}</div>
+      )}
     </div>
   )
 }

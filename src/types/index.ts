@@ -51,7 +51,7 @@ export type RequiredFileInfo = {
   exists: boolean
   type: "core" | "instance"
   crc32?: number
-  status?: "ok" | "wrong" | "downloadable" | "not-in-archive"
+  status?: "ok" | "wrong" | "downloadable" | "not_in_archive" | "at_root"
 }
 
 export type PlatformId = string
@@ -252,3 +252,11 @@ export type FirmwareInfo = {
 }
 
 export type FileCopy = { origin: string; destination: string; exists: boolean }
+
+export type RootFileZipped = {
+  type: "Zipped"
+  inner_file: string
+  zip_file: string
+}
+export type RootFileUnZipped = { type: "UnZipped"; file_name: string }
+export type RootFile = RootFileZipped | RootFileUnZipped

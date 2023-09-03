@@ -1,8 +1,5 @@
 import { selector, selectorFamily } from "recoil"
-import {
-  CoreInfoJSON,
-  DataJSON,
-} from "../types"
+import { CoreInfoJSON, DataJSON } from "../types"
 import { renderBinImage } from "../utils/renderBinImage"
 import { fileSystemInvalidationAtom } from "./atoms"
 import { getVersion } from "@tauri-apps/api/app"
@@ -42,6 +39,18 @@ export const CoreInfoSelectorFamily = selectorFamily<CoreInfoJSON, string>({
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
       return readJSONFile<CoreInfoJSON>(`Cores/${coreName}/core.json`)
+    },
+})
+
+export const CoreMainPlatformIdSelectorFamily = selectorFamily<string, string>({
+  key: "CoreMainPlatformIdSelectorFamily",
+  get:
+    (coreName: string) =>
+    async ({ get }) => {
+      get(fileSystemInvalidationAtom)
+      const { core } = get(CoreInfoSelectorFamily(coreName))
+      // Hopefully 0 is the one that exists
+      return core.metadata.platform_ids[0]
     },
 })
 
