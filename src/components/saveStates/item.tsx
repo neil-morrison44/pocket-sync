@@ -15,6 +15,8 @@ type SaveStateItemProps = {
   onExportPhotos: () => void
 }
 
+const GB_CAMERA_NAMES = ["Game Boy Camera", "Pocket Camera"]
+
 export const SaveStateItem = ({
   path,
   selected,
@@ -55,7 +57,7 @@ export const SaveStateItem = ({
           )}
         </div>
 
-        {metadata.game === "Game Boy Camera" && (
+        {GB_CAMERA_NAMES.includes(metadata.game) && (
           <div
             className="save-states__camera-export-button"
             title={t("photos.title")}
