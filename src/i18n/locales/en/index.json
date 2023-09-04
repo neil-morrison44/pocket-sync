@@ -255,6 +255,19 @@
     "item": {
       "date": "{date, date, long}",
       "time": "{date, time, short}"
+    },
+    "photos": {
+      "title": "Photo Export",
+      "palette": "Palette",
+      "custom": "Custom",
+      "close": "Close",
+      "export_selected": "Export Selected",
+      "export_all": "Export All",
+      "colours": {
+        "gb": "GB",
+        "gb_player": "GB Player",
+        "black_and_white": "Black & White"
+      }
     }
   },
   "saves": {
