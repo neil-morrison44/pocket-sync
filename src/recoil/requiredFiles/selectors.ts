@@ -12,7 +12,6 @@ import { fileSystemInvalidationAtom } from "../atoms"
 import { skipAlternateAssetsSelector } from "../config/selectors"
 import {
   DataJSONSelectorFamily,
-  CoreInfoSelectorFamily,
   CoreMainPlatformIdSelectorFamily,
 } from "../selectors"
 
@@ -65,16 +64,12 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
     (coreName) =>
     async ({ get }) => {
       const dataJSON = get(DataJSONSelectorFamily(coreName))
-      const coreJSON = get(CoreInfoSelectorFamily(coreName))
       const platform_id = get(CoreMainPlatformIdSelectorFamily(coreName))
-
       const requiredCoreFiles = dataJSON.data.data_slots.filter(
         ({ name, required, filename }) => {
           return (
             // not sure why some bioses aren't required
-            (required || name?.toLowerCase().includes("bios")) &&
-            filename &&
-            coreJSON.core.metadata.platform_ids.length === 1
+            (required || name?.toLowerCase().includes("bios")) && filename
           )
         }
       )
@@ -107,11 +102,7 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
       const instanceFileInfo = await Promise.all(
         dataJSON.data.data_slots
           .filter(({ required, parameters }) => {
-            return (
-              required &&
-              decodeDataParams(parameters).instanceJSON &&
-              coreJSON.core.metadata.platform_ids.length === 1
-            )
+            return required && decodeDataParams(parameters).instanceJSON
           })
           .map(async ({ filename, parameters }) => {
             if (filename) {
