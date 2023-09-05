@@ -108,8 +108,6 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
       const requiredFiles = get(RequiredFileInfoSelectorFamily(coreName))
       const rootFileInfo = get(listRootFilesSelector)
 
-      console.log({ requiredFiles })
-
       return requiredFiles
         .map((r) => {
           const existsAtRoot = rootFileInfo.find((fi) => {
