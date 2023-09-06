@@ -640,6 +640,9 @@ async fn check_root_files(
                     path.extension().and_then(|s| s.to_str()),
                     path.file_name().and_then(|s| s.to_str()),
                 ) {
+                    if file_name.starts_with(".") {
+                        continue;
+                    }
                     if ext == "zip" {
                         let files = files_from_zip::list_files(&path).await?;
                         if files.len() > 0 {

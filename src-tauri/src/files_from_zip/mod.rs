@@ -9,7 +9,11 @@ pub async fn list_files(zip_path: &PathBuf) -> Result<Vec<String>, String> {
         let cursor = Cursor::new(zip_file);
         let archive = zip::ZipArchive::new(cursor).map_err(|err| err.to_string())?;
 
-        Ok(archive.file_names().map(|s| String::from(s)).collect())
+        Ok(archive
+            .file_names()
+            .map(|s| String::from(s))
+            .filter(|s| !s.starts_with("."))
+            .collect())
     })
     .await
     .map_err(|err| err.to_string())?
