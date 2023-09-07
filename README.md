@@ -69,13 +69,14 @@ It's in the ICU message format, which there are some guides available online for
 - Manual MiSTer save file sync
 - Installing / Checking for firmware updates (might wait for the real release of 1.1 for this)
 - Newsfeed support
-- Support for i18n translations
+- Support for i18n translations (Spanish so far)
+- List new cores / updates since the last Pocket was connected (covered by the inventory's newsfeed)
+- Export Game Boy Camera images from the save state
 
 ### Soon
 
 ### Longer term
 
-- List new cores / updates since the last Pocket was connected (with, optional, notifications)
 - Library viewing / editing once that's rolled out to OpenFPGA
 - OpenFPGA video filter features (format dependent)
 
