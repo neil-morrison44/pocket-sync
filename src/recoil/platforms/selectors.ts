@@ -204,7 +204,23 @@ export const DataPackJsonSelectorFamily = selectorFamily<
       const data = await platformJsonEntry.getData(new zip.BlobWriter(), {})
       const text = await data.text()
 
-      return JSON.parse(text)
+      let parsed: PlatformInfoJSON | null = null
+
+      try {
+        parsed = JSON.parse(text)
+      } catch (err) {
+        console.warn(
+          `Data Pack Error: ${JSON.stringify({
+            owner,
+            repository,
+            variant,
+            platformId,
+          })}`,
+          err
+        )
+      }
+
+      return parsed
     },
 })
 
