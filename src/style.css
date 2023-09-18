@@ -9,8 +9,9 @@
   --hover-colour: #222;
   --info-colour: #111;
   --light-colour: #555;
-  --green-colour: rgb(88 144 80);
+  --green-colour: #589050;
   --red-colour: rgb(200 80 88);
+  --purple-colour: #885090;
   --selection-colour: #396cd8;
 
   background-color: var(--background-colour);

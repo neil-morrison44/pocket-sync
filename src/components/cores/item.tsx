@@ -13,6 +13,9 @@ import { Version } from "./version"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { InventoryItem } from "../../types"
 import { useUpdateAvailable } from "../../hooks/useUpdateAvailable"
+import { KeyIcon } from "./keyIcon"
+import { useTranslation } from "react-i18next"
+import { useInventoryItem } from "../../hooks/useInventoryItem"
 
 type CoreItemProps = {
   coreName: string
@@ -29,6 +32,9 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
     PlatformInfoSelectorFamily(mainPlatformId)
   )
   const canUpdate = useUpdateAvailable(coreName)
+  const inventoryItem = useInventoryItem(coreName)
+
+  console.log({ inventoryItem })
 
   return (
     <SearchContextSelfHidingConsumer
@@ -67,6 +73,7 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
             {core.metadata.author}
           </div>
         </div>
+        {inventoryItem && inventoryItem.requires_license && <SponsorBanner />}
       </div>
     </SearchContextSelfHidingConsumer>
   )
@@ -81,7 +88,7 @@ export const NotInstalledCoreItem = ({
   inventoryItem,
   onClick,
 }: NotInstalledCoreItemProps) => {
-  const { platform_id, identifier, platform } = inventoryItem
+  const { platform_id, identifier, platform, requires_license } = inventoryItem
 
   return (
     <SearchContextSelfHidingConsumer
@@ -94,7 +101,20 @@ export const NotInstalledCoreItem = ({
       <div className="cores__item cores__item--not-installed" onClick={onClick}>
         <div>{platform_id}</div>
         <div className="cores__not-installed-item-id">{identifier}</div>
+        {requires_license && <SponsorBanner />}
       </div>
     </SearchContextSelfHidingConsumer>
+  )
+}
+
+const SponsorBanner = () => {
+  const { t } = useTranslation("core_info")
+  return (
+    <div
+      className="cores__item-sponsor-banner"
+      title={t("requires_license.all")}
+    >
+      <KeyIcon />
+    </div>
   )
 }

@@ -135,6 +135,9 @@ export type InventoryItem = {
 
   identifier: string
   platform_id: PlatformId
+
+  requires_license: boolean
+
   repository: {
     platform: "github" | string
     owner: string

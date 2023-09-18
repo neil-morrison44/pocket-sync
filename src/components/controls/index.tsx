@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import "./index.css"
 
 type Control = {
@@ -36,6 +37,25 @@ type ControlProps = {
 }
 
 export const Controls = ({ controls }: ControlProps) => {
+  useEffect(() => {
+    const listener = ({ key }: KeyboardEvent) => {
+      if (key === "Escape") {
+        const backControl = controls.find((c) => c && c.type === "back-button")
+        if (
+          backControl &&
+          backControl.type === "back-button" &&
+          backControl.onClick
+        ) {
+          // ugly check to see if there's a modal open
+          if (document.getElementsByClassName("modal").length > 0) return
+          backControl.onClick()
+        }
+      }
+    }
+    document.addEventListener("keydown", listener)
+    return () => document.removeEventListener("keydown", listener)
+  }, [controls])
+
   return (
     <div className="controls">
       {controls.map((control) => {

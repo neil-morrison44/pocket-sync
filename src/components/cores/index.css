@@ -31,6 +31,8 @@
   display: flex;
   flex-direction: column;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 
   &:hover,
   &:focus {
@@ -49,4 +51,16 @@
 .cores__not-installed-item-id {
   font-weight: normal;
   font-size: 0.825rem;
+}
+
+.cores__item-sponsor-banner{
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: var(--purple-colour);
+  transform: translateX(40px) translateY(5px) rotate(35deg);
+  width: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

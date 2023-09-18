@@ -9,6 +9,7 @@ import { Link } from "../../link"
 import { Releases } from "./releases"
 import { SponsorLinks } from "./sponsorLinks"
 import { useTranslation } from "react-i18next"
+import { KeyIcon } from "../keyIcon"
 
 type NotInstalledCoreInfoProps = {
   onBack: () => void
@@ -54,6 +55,20 @@ export const NotInstalledCoreInfo = ({
       {inventoryItem && (
         <>
           <h3 className="core-info__title">{inventoryItem.platform_id}</h3>
+          {inventoryItem.requires_license && (
+            <>
+              <div className="core-info__requires-license">
+                <KeyIcon />
+                {t("requires_license.all")}
+              </div>
+              {inventoryItem.identifier.startsWith("jotego") && (
+                <div className="core-info__requires-license">
+                  {t("requires_license.jotego")}
+                </div>
+              )}
+            </>
+          )}
+
           <div className="core-info__info">
             <div className="core-info__info-grid">
               <div className="core-info__info-row">
