@@ -98,12 +98,9 @@ export const LoadRequiredFiles = ({
               <input
                 type="checkbox"
                 checked={skipAlternateAssets}
-                onChange={({ target }) => {
-                  console.log("skip", target.checked)
+                onChange={({ target }) =>
                   updateConfig("skipAlternateAssets", target.checked)
-                }}
-                onClick={() => console.log("hello")}
-                style={{ width: "20px", height: "20px", fontSize: "20px" }}
+                }
               />
             </label>
           </div>
