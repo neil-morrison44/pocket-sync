@@ -66,7 +66,7 @@
     "close": "Close",
     "download_all": "Download All",
     "no_link_tip": "Please view the Settings section for more options with required files",
-    "skip_alternates": "(Alternative files skipped)",
+    "skip_alternates_label": "Skip alternative files",
     "title": "Required Files",
     "file_status": {
       "wrong": "Updatable",
