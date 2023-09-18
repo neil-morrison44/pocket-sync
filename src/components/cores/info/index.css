@@ -49,6 +49,14 @@
   }
 }
 
+.core-info__requires-license{
+  background-color: var(--purple-colour);
+  white-space: pre-wrap;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+}
+
 .core-info__info {
   background-color: var(--info-colour);
   padding: 10px;

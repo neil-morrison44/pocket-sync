@@ -31,6 +31,10 @@
       "no_settings_found": "¡No se encontraron configuraciones!",
       "reset_all": "Resetear todo"
     },
+    "requires_license": {
+      "all": "Advertencia: este núcleo actualmente requiere un archivo de licencia para ejecutarse.",
+      "jotego": "Las betas de JOTEGO requieren un archivo JTBETA del Patreon en la sección de patrocinadores a continuación. \nEl jtbeta.zip debe colocarse en la raíz de su tarjeta SD y luego se encontrará y se copiará en el lugar correcto durante el proceso de \"Archivos necesarios\"."
+    },
     "not_in_inventory": "{coreName} no está en el inventario de núcleos",
     "platform": {
       "edit": "Editar",
