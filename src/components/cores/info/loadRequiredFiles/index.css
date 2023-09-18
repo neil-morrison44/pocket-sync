@@ -56,4 +56,15 @@
   text-align: right;
   opacity: 0.6;
   font-size: 0.87rem;
+
+  &:hover{
+    opacity: 0.8;
+  }
+}
+
+.load-required-files__skip-input{
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  cursor: pointer;
 }

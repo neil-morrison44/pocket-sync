@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next"
 
 import "./index.css"
 import { RequiredFileRow } from "./row"
+import { useUpdateConfig } from "../../../settings/hooks/useUpdateConfig"
 
 const STATUS_SORT_ORDER = [
   "wrong",
@@ -45,6 +46,7 @@ export const LoadRequiredFiles = ({
   } = useInstallRequiredFiles()
 
   const skipAlternateAssets = useRecoilValue(skipAlternateAssetsSelector)
+  const updateConfig = useUpdateConfig()
 
   const hasArchiveLink = useMemo(
     () =>
@@ -90,11 +92,21 @@ export const LoadRequiredFiles = ({
 
           {!hasArchiveLink && <Tip>{t("no_link_tip")}</Tip>}
 
-          {skipAlternateAssets && (
-            <div className="load-required-files__skip-notice">
-              {t("skip_alternates")}
-            </div>
-          )}
+          <div className="load-required-files__skip-notice">
+            <label className="load-required-files__skip-input">
+              {t("skip_alternates_label")}
+              <input
+                type="checkbox"
+                checked={skipAlternateAssets}
+                onChange={({ target }) => {
+                  console.log("skip", target.checked)
+                  updateConfig("skipAlternateAssets", target.checked)
+                }}
+                onClick={() => console.log("hello")}
+                style={{ width: "20px", height: "20px", fontSize: "20px" }}
+              />
+            </label>
+          </div>
 
           <div className="load-required-files__buttons">
             <button onClick={onClose}>{t("close")}</button>
