@@ -43,8 +43,10 @@
 .cores__item--not-installed {
   background-color: var(--info-colour);
   justify-content: space-between;
-  padding: 10px;
-  font-weight: bold;
+
+  /* padding: 10px; */
+
+  /* font-weight: bold; */
   cursor: pointer;
 }
 
