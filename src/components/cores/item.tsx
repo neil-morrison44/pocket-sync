@@ -16,6 +16,7 @@ import { useUpdateAvailable } from "../../hooks/useUpdateAvailable"
 import { KeyIcon } from "./keyIcon"
 import { useTranslation } from "react-i18next"
 import { useInventoryItem } from "../../hooks/useInventoryItem"
+import { PlatformInventoryImageSelectorFamily } from "../../recoil/inventory/selectors"
 
 type CoreItemProps = {
   coreName: string
@@ -33,8 +34,6 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
   )
   const canUpdate = useUpdateAvailable(coreName)
   const inventoryItem = useInventoryItem(coreName)
-
-  console.log({ inventoryItem })
 
   return (
     <SearchContextSelfHidingConsumer
@@ -88,7 +87,15 @@ export const NotInstalledCoreItem = ({
   inventoryItem,
   onClick,
 }: NotInstalledCoreItemProps) => {
-  const { platform_id, identifier, platform, requires_license } = inventoryItem
+  const { platform_id, identifier, platform, requires_license, version } =
+    inventoryItem
+  const imageUrl = useRecoilValue(
+    PlatformInventoryImageSelectorFamily(platform_id)
+  )
+
+  const authorImageUrl = `https://openfpga-cores-inventory.github.io/analogue-pocket/assets/images/authors/${identifier}.png`
+
+  const [author] = identifier.split(".")
 
   return (
     <SearchContextSelfHidingConsumer
@@ -99,9 +106,16 @@ export const NotInstalledCoreItem = ({
       }}
     >
       <div className="cores__item cores__item--not-installed" onClick={onClick}>
-        <div>{platform_id}</div>
-        <div className="cores__not-installed-item-id">{identifier}</div>
-        {requires_license && <SponsorBanner />}
+        <img className="cores__platform-image" src={imageUrl}></img>
+        <div className="cores__info-blurb">
+          <div className="cores__info-blurb-name">{platform_id}</div>
+          <div className="version">{version}</div>
+          <div className="cores__author-tag">
+            <img className="cores__author-tag-image" src={authorImageUrl} />
+            {author}
+          </div>
+          {requires_license && <SponsorBanner />}
+        </div>
       </div>
     </SearchContextSelfHidingConsumer>
   )

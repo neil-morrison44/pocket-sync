@@ -2,7 +2,10 @@ import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { useInstallCore } from "../../../hooks/useInstallCore"
 import { useInventoryItem } from "../../../hooks/useInventoryItem"
-import { DownloadURLSelectorFamily } from "../../../recoil/inventory/selectors"
+import {
+  DownloadURLSelectorFamily,
+  PlatformInventoryImageSelectorFamily,
+} from "../../../recoil/inventory/selectors"
 import { Controls } from "../../controls"
 import { ErrorBoundary } from "../../errorBoundary"
 import { Link } from "../../link"
@@ -29,6 +32,9 @@ export const NotInstalledCoreInfo = ({
   }, [inventoryItem])
 
   const download_url = useRecoilValue(DownloadURLSelectorFamily(coreName))
+  const imageUrl = useRecoilValue(
+    PlatformInventoryImageSelectorFamily(inventoryItem?.platform_id)
+  )
   const { installCore } = useInstallCore()
 
   return (
@@ -55,6 +61,8 @@ export const NotInstalledCoreInfo = ({
       {inventoryItem && (
         <>
           <h3 className="core-info__title">{inventoryItem.platform_id}</h3>
+          <img className="core-info__image" src={imageUrl} />
+
           {inventoryItem.requires_license && (
             <>
               <div className="core-info__requires-license">

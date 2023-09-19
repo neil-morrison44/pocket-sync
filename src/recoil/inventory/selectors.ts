@@ -1,5 +1,5 @@
 import { selector, selectorFamily } from "recoil"
-import { Category } from "../../types"
+import { Category, PlatformId } from "../../types"
 import { allCategoriesSelector } from "../platforms/selectors"
 import { coreInventoryAtom } from "./atoms"
 
@@ -32,4 +32,15 @@ export const cateogryListselector = selector<Category[]>({
 
     return ["All", ...Array.from(cateogrySet)]
   },
+})
+
+export const PlatformInventoryImageSelectorFamily = selectorFamily<
+  string | undefined,
+  PlatformId | undefined
+>({
+  key: "PlatformInventoryImageSelectorFamily",
+  get: (platformId) => () =>
+    platformId
+      ? `https://openfpga-cores-inventory.github.io/analogue-pocket/assets/images/platforms/${platformId}.png`
+      : undefined,
 })
