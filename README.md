@@ -25,7 +25,7 @@ Features:
 - Plug in your Pocket / put in the SD card, click "Connect to Pocket", select the root folder (the one with Assets & Cores & Saves etc in it) and go
 - It'll slap a `pocket_sync.json` file on to your pocket to hold config on first run
 
-## Windows Defender (/ other AntiVirus warnings)
+## Windows Defender (& other AntiVirus) warnings
 
 Some people are getting virus warnings for this, which isn't great - but I'm pretty sure is a false positive.
 It seems to be common for the tool I'm using to build the app, Tuari [See issue here & linked issues in other apps](https://github.com/tauri-apps/tauri/issues/2486).
