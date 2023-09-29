@@ -25,6 +25,17 @@ Features:
 - Plug in your Pocket / put in the SD card, click "Connect to Pocket", select the root folder (the one with Assets & Cores & Saves etc in it) and go
 - It'll slap a `pocket_sync.json` file on to your pocket to hold config on first run
 
+## Windows Defender (/ other AntiVirus warnings)
+
+Some people are getting virus warnings for this, which isn't great - but I'm pretty sure is a false positive.
+It seems to be common for the tool I'm using to build the app, Tuari [See issue here & linked issues in other apps](https://github.com/tauri-apps/tauri/issues/2486).
+
+The full source code of the app is viewable in this repo, Tauri's source code is viewable in its repo, and all other dependencies have their source code fully viewable (to my knowledge, at least).
+The app is built via GitHub action, and isn't developed on a Windows computer.
+I've submitted the app to the Windows Defender team as a false positive, hopefully they'll do a proper scan and it'll no longer be flagged.
+
+I _could_ pay upwards of £300 a year for a certificate, and £100 a year to Apple for their app signing - but since this is a fully open source app I have no intentions of making any money off that seems extortionate. Plus, I suspect that if I did sign the app then let the certificate expire (for whatever reason) the app would end up in a worse place than if I'd just kept it unsigned (since it'd be an expired / revoked certificate).
+
 ## Philosophy
 
 - What this purposely _isn't_ is a way to install 100 Cores in 20 seconds without really knowing what any of them are
