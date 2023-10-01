@@ -1,0 +1,12 @@
+name: Check min Rust version
+on: [pull_request]
+
+jobs:
+  check_min:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: 1.67
+      - run: cargo +1.67 check
