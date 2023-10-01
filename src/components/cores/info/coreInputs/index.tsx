@@ -1,6 +1,5 @@
 import { OrbitControls } from "@react-three/drei"
-import { Suspense, useEffect, useMemo, useState } from "react"
-import { ReactElement } from "react-markdown/lib/react-markdown"
+import { ReactElement, Suspense, useEffect, useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
 import { Texture } from "three"
 import {
