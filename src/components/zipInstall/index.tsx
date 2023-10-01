@@ -71,7 +71,7 @@ const ZipInstallInner = ({
 
   return (
     <Modal>
-      <h2>{title}</h2>
+      <h2 className="zip-install__title">{title}</h2>
       <div className="zip-install__paths">
         {!tree && <p>{t("scanning")}</p>}
         {tree &&

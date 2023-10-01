@@ -7,6 +7,10 @@
   padding: 10px;
 }
 
+.zip-install__title{
+  line-height: 3.2rem;
+}
+
 .zip-install__controls {
   display: flex;
   justify-content: space-around;

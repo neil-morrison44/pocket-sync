@@ -21,7 +21,10 @@ export const TreeNode = ({
       <div className="zip-install__tree-node-info">
         <input
           type="checkbox"
-          checked={allowed.includes(node.full)}
+          checked={
+            allowed.includes(node.full) ||
+            (node.is_dir && allowed.some((f) => f.startsWith(node.full)))
+          }
           onChange={() => {
             node.is_dir ? toggleDir(node) : toggleFile(node.full)
           }}

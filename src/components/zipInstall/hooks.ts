@@ -55,7 +55,7 @@ export const useTree = (files: InstallZipEventPayload["files"]) => {
         if (!treeNode.find(({ name }) => name === element)) {
           treeNode.push({
             name: element,
-            full: curr.path,
+            full: fileBits.slice(0, index + 1).join("/"),
             exists: curr.exists,
             is_dir: index !== fileBits.length - 1,
             children: [],
@@ -108,7 +108,10 @@ export const useAllowedFiles = (files: InstallZipEventPayload["files"]) => {
       visit(node)
 
       setAllowedFiles((files) => {
-        if (files?.includes(node.full)) {
+        if (
+          files?.includes(node.full) ||
+          (node.is_dir && files?.some((f) => f.startsWith(node.full)))
+        ) {
           return files?.filter((f) => !f.startsWith(node.full)) || null
         } else {
           return Array.from(

@@ -75,6 +75,8 @@ h1 {
   font-smooth: never;
   -webkit-font-smoothing: none;
   font-variant-ligatures: discretionary-ligatures;
+
+  /* line-height: 4.2rem; */
 }
 
 h2 {
@@ -86,6 +88,7 @@ h2 {
   padding: 0 10px;
   margin-bottom: 15px;
   font-variant-ligatures: discretionary-ligatures;
+  line-height: 3.2rem;
 }
 
 button {
