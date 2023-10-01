@@ -10,3 +10,4 @@ jobs:
         with:
           toolchain: 1.67
       - run: cargo +1.67 check
+        working-directory: src-tauri
