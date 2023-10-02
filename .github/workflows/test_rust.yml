@@ -39,7 +39,7 @@ jobs:
         if: matrix.platform != 'macos-latest'
         run: rustup target add ${{ matrix.target }}
       - name: install app dependencies and build it
-        run: npm i && npm run build
+        run: npm ci && npm run build
       - name: Cargo test
         run: cargo test
         working-directory: "src-tauri"

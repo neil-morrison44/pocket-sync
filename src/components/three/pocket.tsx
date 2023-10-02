@@ -17,7 +17,7 @@ type PocketProps = {
   children?: ReactNode
 }
 
-const BLACK_COLOUR = "rgb(1,1,1)"
+const BLACK_COLOUR = "rgb(25,25,25)"
 const WHITE_COLOUR = "rgb(244,244,244)"
 const GLOW_COLOUR = "rgb(163, 195, 138)"
 
@@ -28,9 +28,9 @@ const BODY_COLOUR = {
 }
 
 const LIGHTING_SCALE = {
-  black: 2,
-  white: 0.4,
-  glow: 0.15,
+  black: 5,
+  white: 1.5,
+  glow: 0,
 }
 
 const SWAY_SPEED = 0.2
