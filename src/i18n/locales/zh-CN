@@ -1,0 +1,375 @@
+  /* I have an issue with my v3.8.1. After clicking Connect to Pocket, I just got a blank page on my Mac
+  So I couldn't verify whether the texts were adequate or not...
+  And I don't know what is the "fetch" function for...
+  fevaoctwh, Oct 7, 2023
+  */
+
+{
+  "about": {
+    "app_name": "Pocket Sync",
+    "new_firmware": "发现新的Pocket固件 v{version}",
+    "update_available": "软件有更新! {version}"
+  },
+  "app": {
+    "app_name": "Pocket Sync",
+    "connect_button": "连接到Pocket",
+    "not_pocket_tip": "目录无法识别, 请确认SD卡已经由Pocket完成初始化"
+  },
+  "clean_files": {
+    "close_button": "关闭",
+    "delete_files_button": "删除文件",
+    "files_found": "共找到{count, plural, =0 {0个可清理文件} one {# 个可清理文件} other {# 个可清理文件} }",
+    "title": "清理文件"
+  },
+  "core_info": {
+    "author": "作者",
+    "controls": {
+      "back": "返回列表",
+      "install": "安装",
+      "required_files": "必要文件",
+      "uninstall": "卸载",
+      "update": "更新"
+    },
+    "inputs": "按键提示",
+    "modal": {
+      "close": "关闭",
+      "input_core": "核心",
+      "no_settings_found": "未发现设置文件!",
+      "reset_all": "重置所有设置"
+    },
+    "requires_license": {
+      "all": "请注意!运行该核心需要取得许可授权",
+      "jotego": "The JOTEGO betas require a JTBETA file from the Patreon in the sponsors section below. \nThe jtbeta.zip should be placed at the root of your SD card then it'll be found & copied to the right place during the \"Required Files\" process."
+    //Myself couldn't fully understand the sentence above
+    },
+    "not_in_inventory": "核心{coreName}尚未加入清单",
+    "platform": {
+      "edit": "编辑",
+      "wikipedia": "维基百科"
+    },
+    "replaced": "此核心已经由<1>{replacementCore}</1>核心替代",
+    "platforms": "平台",
+    "please_wait": "请稍后，检查文件中...",
+    "release_date": "发布日期",
+    "releases": {
+      "release_history": "版本发布历史",
+      "show_previous": "显示之前的版本发布历史信息"
+    },
+    "required_files": "必要文件",
+    "required_files_count": "{count} / {total} 文件",
+    "settings": "配置",
+    "sponsor": "Sponsor",
+    "supports": "Supports",
+    "supports_items": {
+      "cartridges": "卡带",
+      "dock": "底座", //do you mean the 99.99 USD Analogue Dock? If it is, the translation is correct
+      "dock_dac": "DAC解码器", // are u refering this item? https://www.analogue.co/dac
+      "save_states_and_sleep": "即时存档/睡眠"
+    },
+    "url": "网页地址",
+    "version": "版本"
+  },
+  "core_info_required_files": {
+    "close": "关闭",
+    "download_all": "下载全部",
+    "no_link_tip": "请进入配置页面查询必要文件的更多选项",
+    "skip_alternates_label": "跳过次要文件",
+    "title": "必要文件",
+    "file_status": {
+      "wrong": "可更新",
+      "downloadable": "可下载",
+      "not_in_archive": "未入库",
+      "ok": "已下载",
+      "unknown": "未知",
+      "at_root": "已存在于根目录"
+    }
+  },
+  "cores": {
+    "controls": {
+      "category": "类型",
+      "refresh": "刷新",
+      "search": "搜索",
+      "updatable": "可更新"
+    },
+    "install_tip": "您也可以通过拖拽ZIP压缩包到窗口内的方式安装核心或其他内容",
+    "installed": "已安装({count})",
+    "not_installed": "可安装({count})"
+  },
+  "error": {
+    "report": "您可以通过GitHub报告错误信息（含错误信息和错误发生的描述性文字）",
+    "retry": "重试",
+    "title": "错误"
+  },
+  "fetch": {
+    "controls": {
+      "add_fetch_item": "Add new fetch",
+      "refresh": "刷新"
+    },
+    "copying": "正在复制文件...",
+    "fetch_button": "Fetch",
+    "file_count": "{count} / {total, plural, one {# 文件} other {# 文件}}",
+    "loading": "载入中……",
+    "new": {
+      "add_extension": "添加",
+      "add_fetch": "Add fetch",
+      "archive_name": "Archive name: <i>https://archive.org/details/[this bit here]</i>",
+      "archive_tip": "This won't work for achives where the files are zipped, and you should set which extensions you want to avoid downloading the metadata files.",
+      "close": "关闭",
+      "destination": "目标目录",
+      "extensions": "限制文件扩展名(类型):",
+      "origin": "源目录",
+      "title": "Add new Fetch"
+    },
+    "remove_button": "移除",
+    "remove_confirm": "This'll remove the fetch configuration, but not the files. Are you sure?",
+    "types": {
+      "archive_org": "在线文件", //refering to online(local&internet) source, correct?
+      "filesystem": "本地文件"
+    }
+  },
+  "firmware": {
+    "current": "现有固件版本: v{version}",
+    "downloading_firmware": "下载固件中...",
+    "load_firmware": "上传至SD卡",
+    "loaded_firmware": "固件 {version} 已经上传至SD卡",
+    "loaded_firmware_info": "插入SD卡并启动Pocket完成新固件安装",
+    "no_firmware_loaded": "未发现SD卡上有待安装的固件",
+    "options": {
+      "latest": "v{version} (latest)",
+      "older": "v{version} ({date, date, short})",
+      "previous_versions": "上一版本"
+    },
+    "release_notes": {
+      "from": "来自 ",
+      "title": "v{version} 更新记录:"
+    },
+    "remove_button": "移除"
+  },
+  "games": {
+    "controls": {
+      "category": "类型",
+      "clean_files": "清理文件",
+      "instance_json": "Instance JSON", //don't know what does it mean...
+      "refresh": "刷新",
+      "search": "搜索"
+    },
+    "item": {
+      "game_count": "共找到{count, plural, =0 {0个游戏} one {# 个游戏} other {# 个游戏}}"
+    }
+  },
+  "image_editor": {
+    "cancel": "取消",
+    "import_image": "导入图像",
+    "remove": "移除",
+    "reset": "重置",
+    "rotate": "旋转",
+    "save": "保存",
+    "scale": "缩放"
+  },
+  "instance_json": {
+    "available_for": "Automatic instance.json file creation available for:", //same as line 150
+    "close_button": "关闭",
+    "skipped_file": "跳过 {file_name}",
+    "title": "Build Instance JSON files", //same
+    "wrote_file": "写入 {file_name}"
+  },
+  "layout": {
+    "cores": "核心",
+    "fetch": "Fetch",
+    "firmware": "固件",
+    "games": "游戏",
+    "platforms": "平台",
+    "pocket_sync": "Pocket Sync",
+    "save_states": "即时存档",
+    "saves": "存档",
+    "screenshots": "截屏",
+    "settings": "设置"
+  },
+  "mister_sync": {
+    "controls": {
+      "back": "退出",
+      "search": "搜索存档"
+    },
+    "login": {
+      "connect": "连接",
+      "host": "主机名/IP地址:",
+      "password": "密码:",
+      "username": "用户名:"
+    },
+    "mister": "MiSTer",
+    "not_found": "未找到",
+    "pocket": "Pocket",
+    "tip_1": "MiSTer FTP 功能必须打开",
+    "tip_2": "在传输前请确认存档文件兼容Pocket和MiSTer",
+    "tip_3": "存档匹配要求Pocket和MiSTer上的游戏文档名称完全一致",
+    "unsupported": "尚未支持{platform}平台\n(如果这个平台应该被支持，请在github上反馈)"
+  },
+  "news_feed": {
+    "last_updated": "最新更新 <1></1>",
+    "updates_from": "更新信息来自 <1>OpenFPGA Cores Inventory</1>"
+  },
+  "platform_info": {
+    "controls": {
+      "back": "返回列表",
+      "data_packs": "数据包",
+      "image_packs": "图像包"
+    },
+    "cores": "核心",
+    "edit": "编辑"
+  },
+  "platforms": {
+    "cancel": "取消",
+    "controls": {
+      "data_packs": "数据包",
+      "image_packs": "图像包",
+      "search": "搜索"
+    },
+    "data_packs": {
+      "apply_changes": "共执行了 {count, plural, =0 {0项修改} one {1项修改} other {# 项修改}}",
+      "close": "关闭",
+      "current": "现有"
+    },
+    "delete_unused": "删除 {count, plural, one {# 个未被使用的平台} other {# 个未被使用的平台}}?",
+    "edit": "编辑",
+    "image_packs": {
+      "apply_changes": "共执行了 {count, plural, =0 {0项修改} one {1项修改} other {# 项修改}}",
+      "close": "关闭",
+      "current": "现有"
+    },
+    "save": "保存"
+  },
+  "progress": {
+    "remaining_time": "剩余时间 (approx): {remainingTime}"
+  },
+  "save_info": {
+    "confirm_restore": "确认使用备份恢复?",
+    "controls": {
+      "back": "返回列表",
+      "hide_unchanged": "隐藏未变更项目",
+      "search": "搜索"
+    },
+    "current": "目前",
+    "date": "{date, date, short}",
+    "newer": "更新",
+    "older": "更旧",
+    "time": "{date, time, short}"
+  },
+  "save_states": {
+    "cartridge": "卡带",
+    "confirm_delete": "您确认删除 {count, plural, =0 {0个即时存档} one {1个即时存档} other {# 个即时存档}}?",
+    "controls": {
+      "clear_selection": "取消勾选",
+      "delete_selection": "删除勾选 ({count})",
+      "search": "搜索"
+    },
+    "count": "( {count} / 128 )",
+    "item": {
+      "date": "{date, date, long}",
+      "time": "{date, time, short}"
+    },
+    "photos": {
+      "title": "图片输出",
+      "palette": "调色板",
+      "custom": "自定义",
+      "close": "关闭",
+      "export_selected": "输出选择项",
+      "export_all": "输出所有",
+      "colours": {
+        "gb": "GB",
+        "gb_player": "GB Player",
+        "black_and_white": "黑&白"
+      }
+    }
+  },
+  "saves": {
+    "backups": "备份: {count}",
+    "confirm_delete": "您确认需要移除这个备份目录?",
+    "controls": {
+      "add_backup_location": "添加备份目录",
+      "mister_sync": "MiSTer Sync"
+    },
+    "latest_backup": "最后的备份: {date, date, long}, {date, time, short}",
+    "none": "添加以上备份目录",
+    "not_found": "未找到",
+    "oldest_backup": "最早的备份: {date, date, long}, {date, time, short}",
+    "remove": "移除目录",
+    "view_saves": "浏览存档"
+  },
+  "screenshot_info": {
+    "controls": {
+      "back": "返回列表",
+      "save": "保存",
+      "share": "分享",
+      "upscaled": "画质提升"
+    }
+  },
+  "screenshots": {
+    "controls": {
+      "delete_selected": "删除选择 ({count})",
+      "export_selected": "输出选择 ({count})",
+      "search": "搜索",
+      "select": "选择"
+    },
+    "no_screenshots": "您的截屏都会在此显示"
+  },
+  "settings": {
+    "3d_pocket": {
+      "title": "Pocket颜色:",
+      "black": "黑",
+      "white": "白",
+      "glow": "荧光"
+    },
+    "alternate_skip": {
+      "checkbox": "跳过可选资源",
+      "ramble_1": "This setting will skip processing json files under the `_alternatives` folder,\nmeaning you'll just get the \"main\" titles for the cores which sort their JSON files this way.", //not fully understand
+      "ramble_2": "<b>警告:</b> 关闭此选项可能导致安装时间<b>显著延长</b> ",
+      "title": "跳过可选资源"
+    },
+    "archive": {
+      "save": "保存",
+      "title": "游戏ROM & BIOS 资料库",
+      "warning": "请您自行评估所处地区针对数字版权保护的法律法规风险。\n若您确认使用资料库，请复制下面的链接到文本框并点击 \"保存\"。"
+    },
+    "clear_file_cache": {
+      "button": "清除文件缓存",
+      "ramble": "为确保USB和SD卡资料传输效果，较大的文件会被缓存于您的电脑中，\n如果碰到相关问题，可以尝试清除文件缓存进行修复。",
+      "title": "清除文件缓存"
+    },
+    "disconnect": {
+      "button": "断开连接",
+      "ramble": "返回\"连接到Pocket\" 初始页面 (这一操作并不会卸载弹出系统中的SD卡或USB磁盘)",
+      "title": "断开连接"
+    },
+    "reconnect": {
+      "checkbox": "运行程序时自动重新连接",
+      "ramble": "当程序运行时，会自动尝试读取最后一次使用的目录 <1> { ppath } </1> , 不需要每次点击 \"连接到Pocket\" 按钮",
+      "title": "运行程序时自动重新连接"
+    },
+    "thanks": "鸣谢:"
+  },
+  "time_ago": {
+    "less_than_1_min_ago": "少于一分钟前"
+  },
+  "uninstall_core": {
+    "confirm_text": "这个操作将移除核心文件, 但会保留游戏存档等文件, 您确认卸载吗?",
+    "confirm_title": "卸载核心"
+  },
+  "zip_install": {
+    "cancel_button": "取消",
+    "confirm_button": "确认",
+    "remove_duplicate": "移除已存在的重复文件",
+    "scanning": "扫描文件中...",
+    "moved_files_info": "Handles cases where files have moved, e.g. JSON files are now in `_alternatives`", //not fully understand
+    "replace": {
+      "ok": "允许",
+      "cancel": "跳过",
+      "text": "{list}\n\nAssets, Saves etc will be moved over and the old core will be removed.", //same above
+      "title": "替换现有核心文件?"
+    }
+  },
+  "version": {
+    "update_alt": "核心有更新版本 {version}",
+    "replaced_alt": "有替换核心 {core} 可供使用",
+    "replaced": "已替换"
+  }
+}
