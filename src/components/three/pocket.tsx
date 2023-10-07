@@ -1,15 +1,27 @@
-import { Canvas, useFrame } from "@react-three/fiber"
-import { Environment, RoundedBox } from "@react-three/drei"
+import { Canvas, useFrame, useLoader } from "@react-three/fiber"
+import { Environment, OrbitControls, RoundedBox } from "@react-three/drei"
 import { ReactNode, useRef } from "react"
 import { useRecoilValue } from "recoil"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 
 import "./index.css"
-import { DoubleSide, Group, MathUtils, Mesh } from "three"
+import { DoubleSide, Group, MathUtils, Mesh, TextureLoader } from "three"
 import { Bloom, EffectComposer } from "@react-three/postprocessing"
 import { KernelSize } from "postprocessing"
 
 import envMap from "./studio_small_08_1k.hdr"
+import boardImg from "./board.png"
+
+import {
+  FrontMeshPrimitive,
+  BackMeshPrimitive,
+  ConcavePrimitive,
+  ConvexPrimitive,
+  DpadPrimitive,
+  ShoulderButtonPrimitive,
+  PowerButtonPrimitive,
+  VolumeButtonPrimitive,
+} from "./stlPrimitives"
 
 type PocketProps = {
   move?: "none" | "spin" | "back-and-forth"
@@ -44,12 +56,12 @@ export const Pocket = ({
     <Canvas
       shadows
       className="three-pocket"
-      camera={{ fov: 50, position: [0, 0, 42] }}
+      camera={{ fov: 50, position: [0, 0, 160] }}
     >
       <Environment files={envMap} />
       <Lights />
       <Body move={move} screenMaterial={screenMaterial} />
-      {/* <OrbitControls enablePan={false} /> */}
+      <OrbitControls enablePan={false} />
       {/* <Stats /> */}
       <GlowBloom />
 
@@ -115,14 +127,36 @@ const Body = ({
 
   return (
     <group ref={groupRef} rotation={[0, move === "spin" ? 1 : 0, -0.2]}>
-      <RoundedBox
+      <mesh
+        scale={[0.2, 0.2, 0.2]}
+        rotation={[0, Math.PI, 0]}
+        position={[0, 0, 1.05]}
+        receiveShadow
+      >
+        <FrontMeshPrimitive />
+        {/* <Material /> */}
+        <TransparentMaterial />
+      </mesh>
+      <mesh
+        scale={[0.2, 0.2, 0.2]}
+        rotation={[0, 0, 0]}
+        position={[0, 0, -1.66]}
+        receiveShadow
+      >
+        <BackMeshPrimitive />
+        {/* <Material /> */}
+        <TransparentMaterial />
+      </mesh>
+
+      <BoardImage />
+      {/* <RoundedBox
         args={[0.86 * 20, 1.49 * 20, 0.11 * 20]}
         radius={1}
         receiveShadow
       >
         <Material />
-      </RoundedBox>
-      <RoundedBox
+      </RoundedBox> */}
+      {/* <RoundedBox
         castShadow
         receiveShadow
         args={[0.86 * 20, 1.49 * 12.5, 0.22 * 20]}
@@ -130,7 +164,9 @@ const Body = ({
         position={[0, -11 / 2, -1.2]}
       >
         <Material />
-      </RoundedBox>
+      </RoundedBox> */}
+
+      <Battery />
 
       <Buttons />
       <DPAD />
@@ -139,16 +175,24 @@ const Body = ({
 
       <Screen screenMaterial={screenMaterial} />
 
-      <mesh position={[-8.2, 12, 1.11]}>
-        <RoundedBox
-          castShadow
-          receiveShadow
-          args={[1.5, 3, 1]}
-          radius={0.5}
-          position={[0, -11 / 2, -1]}
-        >
-          <meshBasicMaterial attach="material" color="rgb(88, 144, 80)" />
-        </RoundedBox>
+      {/* Power Button */}
+      <mesh
+        position={[-8.3, 5.678, -0.07]}
+        scale={[0.2, 0.2, 0.2]}
+        rotation={[0, Math.PI / 2, 0]}
+      >
+        <PowerButtonPrimitive />
+        <meshBasicMaterial attach="material" color="rgb(88, 144, 80)" />
+      </mesh>
+      {/* Volume Button */}
+
+      <mesh
+        position={[-8.35, 8.1, -0.07]}
+        scale={[0.2, 0.2, 0.2]}
+        rotation={[0, -Math.PI / 2, 0]}
+      >
+        <VolumeButtonPrimitive />
+        <Material />
       </mesh>
     </group>
   )
@@ -159,33 +203,29 @@ const Screen = ({ screenMaterial }: PocketProps) => {
   return (
     <>
       {/* colour */}
-      <mesh position={[0, 7.5, 1.11]}>
-        <planeGeometry attach="geometry" args={[16, 14]} />
+      <mesh position={[0, 6.8, 1.11]}>
+        <planeGeometry attach="geometry" args={[17.25, 15.95]} />
         <meshPhysicalMaterial
           ior={1.46}
           color={colour === "white" ? "rgb(222,222,220)" : "black"}
+          reflectivity={0.3}
         />
       </mesh>
 
       {/* LCD */}
-      <mesh position={[0, 7.5, 1.12]}>
-        <planeGeometry attach="geometry" args={[160 / 13, 140 / 13]} />
+      <mesh position={[0, 7, 1.12]}>
+        <planeGeometry attach="geometry" args={[160 / 11.5, 140 / 11.5]} />
         {screenMaterial || (
           <meshPhongMaterial attach="material" color="green" />
         )}
       </mesh>
       {/* Glass */}
-      <mesh position={[0, 7.5, 1.13]}>
-        <planeGeometry attach="geometry" args={[160 / 10, 140 / 10]} />
+      <mesh position={[0, 6.8, 1.13]}>
+        <planeGeometry attach="geometry" args={[17.25, 15.95]} />
         <meshPhysicalMaterial
-          thickness={0.1}
           roughness={0}
           transmission={1}
-          color="white"
-          ior={1.46}
-          clearcoat={0.1}
-          clearcoatRoughness={1}
-          opacity={0.4}
+          ior={1.51714}
           transparent
         />
       </mesh>
@@ -233,7 +273,7 @@ const Buttons = () => {
 
   return (
     <group
-      position={[4, -3, 1.25]}
+      position={[4.9, -5.2, 0.8]}
       rotation={[Math.PI / 2, Math.PI / 4, 0]}
       castShadow
       receiveShadow
@@ -247,9 +287,13 @@ const Buttons = () => {
           receiveShadow
           onPointerEnter={() => (hoverButtonRef.current = index)}
           onPointerLeave={() => (hoverButtonRef.current = null)}
+          scale={[0.2, 0.2, 0.2]}
+          rotation={[-Math.PI / 2, 0, 0]}
         >
-          <cylinderGeometry attach="geometry" args={[0.9, 0.9, 1, 16]} />
-          <Material isButton />
+          {/* <cylinderGeometry attach="geometry" args={[0.9, 0.9, 1, 16]} /> */}
+          {index > 1 ? <ConcavePrimitive /> : <ConvexPrimitive />}
+          {/* <Material isButton /> */}
+          <TransparentMaterial />
         </mesh>
       ))}
     </group>
@@ -288,7 +332,7 @@ const BottomButtons = () => {
 
   return (
     <group
-      position={[0, -10, 1.25]}
+      position={[0, -11.9, 0.6]}
       rotation={[Math.PI / 2, Math.PI / 4, 0]}
       castShadow
       receiveShadow
@@ -303,7 +347,7 @@ const BottomButtons = () => {
           castShadow
           receiveShadow
         >
-          <cylinderGeometry attach="geometry" args={[0.5, 0.5, 0.5, 16]} />
+          <cylinderGeometry attach="geometry" args={[0.5, 0.5, 1.5, 12]} />
           <Material isButton />
         </mesh>
       ))}
@@ -343,7 +387,7 @@ const DPAD = () => {
         hoverRef.current = false
         groupRef.current?.rotation.set(0, 0, 0)
       }}
-      position={[-4, -3, 1.25]}
+      position={[-4.9, -5.2, 1]}
       rotation={[Math.PI / 2, 0, 0]}
       castShadow
       receiveShadow
@@ -361,14 +405,18 @@ const DPAD = () => {
         <planeGeometry />
         <meshBasicMaterial opacity={0} transparent side={DoubleSide} />
       </mesh>
+
       <group ref={groupRef}>
-        {args.map((a, index) => (
-          <mesh key={index} castShadow receiveShadow>
-            {/* @ts-ignore */}
-            <boxGeometry args={a} />
-            <Material isButton />
-          </mesh>
-        ))}
+        <mesh
+          castShadow
+          receiveShadow
+          scale={[0.2, 0.2, 0.2]}
+          rotation={[-Math.PI / 2, 0, 0]}
+        >
+          <DpadPrimitive />
+          <TransparentMaterial />
+          {/* <Material isButton /> */}
+        </mesh>
       </group>
     </group>
   )
@@ -381,18 +429,21 @@ const ShoulderButtons = () => {
   const rightButtonRef = useRef<Mesh>(null)
   const rightButtonHoverRef = useRef(false)
 
+  const BUTTON_UP = 3.25
+  const BUTTON_DOWN = 2.8
+
   useFrame(() => {
     if (leftButtonRef.current) {
       if (leftButtonHoverRef.current) {
         leftButtonRef.current.position.y = MathUtils.lerp(
           leftButtonRef.current.position.y,
-          3.25,
+          BUTTON_DOWN,
           0.25
         )
       } else {
         leftButtonRef.current.position.y = MathUtils.lerp(
           leftButtonRef.current.position.y,
-          3.5,
+          BUTTON_UP,
           0.25
         )
       }
@@ -402,13 +453,13 @@ const ShoulderButtons = () => {
       if (rightButtonHoverRef.current) {
         rightButtonRef.current.position.y = MathUtils.lerp(
           rightButtonRef.current.position.y,
-          3.25,
+          BUTTON_DOWN,
           0.25
         )
       } else {
         rightButtonRef.current.position.y = MathUtils.lerp(
           rightButtonRef.current.position.y,
-          3.5,
+          BUTTON_UP,
           0.25
         )
       }
@@ -418,36 +469,26 @@ const ShoulderButtons = () => {
   return (
     <>
       <mesh
-        position={[-7.4, 3.5, -2]}
+        position={[-7.3, BUTTON_DOWN, -2.6]}
         ref={leftButtonRef}
         onPointerEnter={() => (leftButtonHoverRef.current = true)}
         onPointerLeave={() => (leftButtonHoverRef.current = false)}
+        scale={[0.2, -0.2, 0.2]}
+        rotation={[-Math.PI / 2, 0, 0]}
       >
-        <RoundedBox
-          castShadow
-          receiveShadow
-          args={[3, 1.5, 2.5]}
-          radius={0.5}
-          position={[0, 0, 0]}
-        >
-          <Material isButton />
-        </RoundedBox>
+        <ShoulderButtonPrimitive />
+        <Material isButton />
       </mesh>
       <mesh
-        position={[7.4, 3.5, -2]}
+        position={[7.3, BUTTON_DOWN, -2.6]}
         ref={rightButtonRef}
         onPointerEnter={() => (rightButtonHoverRef.current = true)}
         onPointerLeave={() => (rightButtonHoverRef.current = false)}
+        scale={[0.2, 0.2, 0.2]}
+        rotation={[-Math.PI / 2, 0, Math.PI]}
       >
-        <RoundedBox
-          castShadow
-          receiveShadow
-          args={[3, 1.5, 2.5]}
-          radius={0.5}
-          position={[0, 0, 0]}
-        >
-          <Material isButton />
-        </RoundedBox>
+        <ShoulderButtonPrimitive />
+        <Material isButton />
       </mesh>
     </>
   )
@@ -458,14 +499,58 @@ const Material = ({ isButton = false }: { isButton?: boolean }) => {
   return (
     <meshPhysicalMaterial
       attach="material"
-      ior={isButton ? 1.4 : 1.34}
+      ior={isButton ? 1.4 : 1.74}
       color={BODY_COLOUR[colour]}
-      clearcoat={isButton ? 0.25 : 0}
-      clearcoatRoughness={isButton ? 0.8 : 0}
+      clearcoat={isButton ? 0.25 : 0.1}
+      clearcoatRoughness={isButton ? 0.8 : 1}
       emissive={BODY_COLOUR[colour]}
       emissiveIntensity={colour === "glow" ? 1.5 : 0}
       toneMapped={colour !== "glow"}
       envMapIntensity={0}
+    />
+  )
+}
+
+const Battery = () => {
+  return (
+    <mesh position={[0, -6.5, -2]}>
+      <RoundedBox castShadow receiveShadow args={[14, 9, 2]} radius={0.5}>
+        <meshBasicMaterial attach="material" color="rgb(0, 0, 0)" />
+      </RoundedBox>
+    </mesh>
+  )
+}
+
+const BoardImage = () => {
+  const img = useLoader(TextureLoader, boardImg)
+  return (
+    <mesh position={[0, 0, -0.1]}>
+      <planeGeometry args={[17, 30, 1, 1]} />
+      <meshBasicMaterial
+        attach="material"
+        map={img}
+        side={DoubleSide}
+        alphaTest={0.5}
+        // transparent
+      />
+    </mesh>
+  )
+}
+
+const TransparentMaterial = ({ isButton = false }: { isButton?: boolean }) => {
+  const { colour } = useRecoilValue(PocketSyncConfigSelector)
+  return (
+    <meshPhysicalMaterial
+      attach="material"
+      transmission={0.975}
+      opacity={1}
+      roughness={0.2}
+      color="rgb(210,180,255)"
+      ior={1.46}
+      clearcoat={1}
+      clearcoatRoughness={1}
+      transparent
+      side={DoubleSide}
     />
   )
 }
