@@ -61,7 +61,7 @@ export const About = () => {
           </Link>
         )}
         <ErrorBoundary>
-          <ColourContextProvider body="trans_red" buttons="trans_red">
+          <ColourContextProvider body="trans_purple" buttons="glow">
             <Pocket
               move="back-and-forth"
               screenMaterial={

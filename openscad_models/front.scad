@@ -49,8 +49,8 @@ module cutouts(){
     translate([24.5, -26, 0])
     minkowski(){
         union(){
-    cube([$dpad_width, $dpad_span, 10], true);
-    cube([$dpad_span, $dpad_width, 10], true);
+    cube([$dpad_width-0.5, $dpad_span-0.5, 10], true);
+    cube([$dpad_span-0.5, $dpad_width-0.5, 10], true);
         }
         sphere(1, $fn = 12);
     }
@@ -94,7 +94,7 @@ module cutouts(){
 
     // SD card
 
-     translate([-$width/2, (($height / 2)) - 41.5, ($depth / 2)])
+     translate([-$width/2, (($height / 2)) - 43, ($depth / 2)])
       rotate([0,90,0]){
         cube([2.8, 13.1, 10], center = true);
     }
@@ -112,14 +112,14 @@ module cutouts(){
       rotate([90,0,0]){
         // USB C
           hull(){
-            for (i = [-4.5,4.5])
+            for (i = [-4.25,4.25])
                 translate([i, 0, 0])
-                    cylinder(h=5, r=1.5, center = true, $fn=12);
+                    cylinder(h=5, r=1.4, center = true, $fn=12);
 
           }
 
           // headphone
-          translate([-24,0,0])
+          translate([-25.8,0,0])
             cylinder(h=$width * 2, r=2, center = true, $fn=12);
 
           // link cable
