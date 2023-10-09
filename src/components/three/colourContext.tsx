@@ -1,16 +1,14 @@
 import { ReactNode, createContext, useEffect, useState } from "react"
-import { PocketSyncConfig } from "../../types"
+import { PocketColour } from "../../types"
 import { useRecoilValue } from "recoil"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 
-export const BodyColourContext =
-  createContext<PocketSyncConfig["colour"]>("black")
-export const ButtonsColourContext =
-  createContext<PocketSyncConfig["colour"]>("black")
+export const BodyColourContext = createContext<PocketColour>("black")
+export const ButtonsColourContext = createContext<PocketColour>("black")
 
 type ColourContextProviderProps = {
-  buttons: PocketSyncConfig["colour"]
-  body: PocketSyncConfig["colour"]
+  buttons: PocketColour
+  body: PocketColour
   children: ReactNode
 }
 
@@ -28,7 +26,7 @@ export const ColourContextProvider = ({
   )
 }
 
-const ALL_COLOURS: PocketSyncConfig["colour"][] = [
+const ALL_COLOURS: PocketColour[] = [
   "black",
   "white",
   "glow",
@@ -48,10 +46,8 @@ export const ColourContextProviderRandomised = ({
   children: ReactNode
   changeInterval: number
 }) => {
-  const [bodyColour, setBodyColour] =
-    useState<PocketSyncConfig["colour"]>("black")
-  const [buttonsColour, setButtonsColour] =
-    useState<PocketSyncConfig["colour"]>("black")
+  const [bodyColour, setBodyColour] = useState<PocketColour>("black")
+  const [buttonsColour, setButtonsColour] = useState<PocketColour>("black")
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -76,9 +72,9 @@ export const ColourContextProviderFromConfig = ({
 }: {
   children: ReactNode
 }) => {
-  const { colour } = useRecoilValue(PocketSyncConfigSelector)
+  const { colour, button_colour } = useRecoilValue(PocketSyncConfigSelector)
   return (
-    <ColourContextProvider body={colour} buttons={colour}>
+    <ColourContextProvider body={colour} buttons={button_colour ?? colour}>
       {children}
     </ColourContextProvider>
   )

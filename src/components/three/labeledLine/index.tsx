@@ -14,8 +14,8 @@ export const LabeledLine = ({ start, end, children }: LabeledLineProps) => {
   const ref = useRef<THREE.Line | null>()
   const { colour } = useRecoilValue(PocketSyncConfigSelector)
   const inversePocketColour = useMemo(() => {
-    if (colour === "black") return "white"
-    return "black"
+    if (colour === "white") return "black"
+    return "white"
   }, [colour])
 
   useLayoutEffect(() => {
@@ -39,7 +39,7 @@ export const LabeledLine = ({ start, end, children }: LabeledLineProps) => {
             textAlign: "center",
             whiteSpace: "nowrap",
             background: inversePocketColour,
-            color: colour,
+            color: inversePocketColour === "white" ? "black" : "white",
             padding: "0px 10px",
             borderRadius: "10px",
           }}

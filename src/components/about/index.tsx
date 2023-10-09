@@ -15,7 +15,7 @@ import { currentViewAtom } from "../../recoil/view/atoms"
 import { StaticScreen } from "../three/staticScreen"
 import { useTranslation } from "react-i18next"
 import { semverCompare } from "../../utils/semverCompare"
-import { ColourContextProvider } from "../three/colourContext"
+import { ColourContextProviderFromConfig } from "../three/colourContext"
 
 export const About = () => {
   const selfReleases = useRecoilSmoothUpdatesFirstSuspend(
@@ -61,7 +61,7 @@ export const About = () => {
           </Link>
         )}
         <ErrorBoundary>
-          <ColourContextProvider body="trans_purple" buttons="glow">
+          <ColourContextProviderFromConfig>
             <Pocket
               move="back-and-forth"
               screenMaterial={
@@ -70,7 +70,7 @@ export const About = () => {
                 </Suspense>
               }
             />
-          </ColourContextProvider>
+          </ColourContextProviderFromConfig>
         </ErrorBoundary>
       </div>
 

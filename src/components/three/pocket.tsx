@@ -1,19 +1,15 @@
 import { Canvas, useFrame, useLoader } from "@react-three/fiber"
-import {
-  Environment,
-  OrbitControls,
-  RoundedBox,
-  Stats,
-} from "@react-three/drei"
+import { Environment, RoundedBox } from "@react-three/drei"
 import { ReactNode, useContext, useRef } from "react"
 
 import "./index.css"
-import { DoubleSide, Group, MathUtils, Mesh } from "three"
+import { DoubleSide, Group, MathUtils, Mesh, TextureLoader } from "three"
 import { Bloom, EffectComposer } from "@react-three/postprocessing"
 import { KernelSize } from "postprocessing"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 
 import envMap from "./studio_small_08_1k.hdr"
+import screenAlphaMap from "./screen_alpha.png"
 import boardGLB from "./board.glb"
 
 import {
@@ -27,6 +23,7 @@ import {
   VolumeButtonPrimitive,
 } from "./stlPrimitives"
 import { BodyColourContext, ButtonsColourContext } from "./colourContext"
+import { PocketColour } from "../../types"
 
 type PocketProps = {
   move?: "none" | "spin" | "back-and-forth"
@@ -34,7 +31,10 @@ type PocketProps = {
   children?: ReactNode
 }
 
-const LIGHTING_SCALE = {
+type PartialColourMap = Partial<Record<PocketColour, string>>
+type PartialScaleMap = Partial<Record<PocketColour, number>>
+
+const LIGHTING_SCALE: PartialScaleMap = {
   black: 5,
   white: 1.5,
   glow: 0,
@@ -56,8 +56,8 @@ export const Pocket = ({
       <Environment files={envMap} />
       <Lights />
       <Body move={move} screenMaterial={screenMaterial} />
-      <OrbitControls enablePan={false} />
-      <Stats />
+      {/* <OrbitControls enablePan={false} /> */}
+      {/* <Stats showPanel={0} /> */}
       <GlowBloom />
       {children && children}
     </Canvas>
@@ -81,7 +81,7 @@ const GlowBloom = () => {
 
 const Lights = () => {
   const colour = useContext(BodyColourContext)
-  const scale = LIGHTING_SCALE[colour] || LIGHTING_SCALE["white"]
+  const scale = LIGHTING_SCALE[colour] || LIGHTING_SCALE["white"] || 1
 
   return (
     <>
@@ -196,6 +196,7 @@ const Body = ({
 
 const Screen = ({ screenMaterial }: PocketProps) => {
   const bodyColour = useContext(BodyColourContext)
+  const alphaMap = useLoader(TextureLoader, screenAlphaMap)
 
   return (
     <>
@@ -206,6 +207,8 @@ const Screen = ({ screenMaterial }: PocketProps) => {
           ior={1.46}
           color={bodyColour === "white" ? "rgb(222,222,220)" : "black"}
           reflectivity={0.3}
+          alphaMap={alphaMap}
+          alphaTest={0.5}
         />
       </mesh>
 
@@ -224,6 +227,8 @@ const Screen = ({ screenMaterial }: PocketProps) => {
           transmission={1}
           ior={1.51714}
           transparent
+          alphaMap={alphaMap}
+          alphaTest={0.5}
         />
       </mesh>
     </>
@@ -514,7 +519,7 @@ const Material = ({ isButton = false }: { isButton?: boolean }) => {
   const buttonsColour = useContext(ButtonsColourContext)
   const colour = isButton ? buttonsColour : bodyColour
 
-  const COLOUR = {
+  const COLOUR: PartialColourMap = {
     black: "rgb(25,25,25)",
     white: "rgb(244,244,244)",
     glow: "rgb(163, 195, 138)",
@@ -581,7 +586,7 @@ const TransparentMaterial = ({ isButton = false }: { isButton?: boolean }) => {
 
   const colour = isButton ? buttonsColour : bodyColour
 
-  const COLOURS = {
+  const COLOURS: PartialColourMap = {
     trans_purple: "rgb(205,175,250)",
     trans_orange: "rgb(200,130,10)",
     trans_clear: "rgb(220,220,220)",
