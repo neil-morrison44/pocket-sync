@@ -10,6 +10,8 @@ import shoulderButtonSTL from "../../../openscad_models/shoulder_button.stl"
 import powerButtonSTL from "../../../openscad_models/power_button.stl"
 import volumeButtonSTL from "../../../openscad_models/volume_button.stl"
 
+import boardSTL from "../../../openscad_models/board.stl"
+
 export const FrontMeshPrimitive = () => {
   const geom = useLoader(STLLoader, frontSTL)
   return <primitive object={geom} attach="geometry" />
@@ -40,5 +42,9 @@ export const PowerButtonPrimitive = () => {
 }
 export const VolumeButtonPrimitive = () => {
   const geom = useLoader(STLLoader, volumeButtonSTL)
+  return <primitive object={geom} attach="geometry" />
+}
+export const BoardPrimitive = () => {
+  const geom = useLoader(STLLoader, boardSTL)
   return <primitive object={geom} attach="geometry" />
 }
