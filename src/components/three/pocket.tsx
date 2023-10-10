@@ -201,7 +201,7 @@ const Screen = ({ screenMaterial }: PocketProps) => {
   return (
     <>
       {/* colour */}
-      <mesh position={[0, 6.8, 1.41]}>
+      <mesh position={[0, 6.8, 1.31]}>
         <planeGeometry attach="geometry" args={[17.25, 15.95]} />
         <meshPhysicalMaterial
           ior={1.46}
@@ -213,14 +213,14 @@ const Screen = ({ screenMaterial }: PocketProps) => {
       </mesh>
 
       {/* LCD */}
-      <mesh position={[0, 7, 1.42]}>
+      <mesh position={[0, 7, 1.32]}>
         <planeGeometry attach="geometry" args={[160 / 11.5, 140 / 11.5]} />
         {screenMaterial || (
           <meshPhongMaterial attach="material" color="green" />
         )}
       </mesh>
       {/* Glass */}
-      <mesh position={[0, 6.8, 1.43]}>
+      <mesh position={[0, 6.8, 1.33]}>
         <planeGeometry attach="geometry" args={[17.25, 15.95]} />
         <meshPhysicalMaterial
           roughness={0}
