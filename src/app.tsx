@@ -9,6 +9,7 @@ import { Tip } from "./components/tip"
 import { NewsFeed } from "./components/newsFeed"
 import { currentViewAtom } from "./recoil/view/atoms"
 import { useTranslation } from "react-i18next"
+import { ColourContextProviderRandomised } from "./components/three/colourContext"
 
 const Pocket = React.lazy(() =>
   import("./components/three/pocket").then((m) => ({ default: m.Pocket }))
@@ -56,7 +57,9 @@ export const App = () => {
       <h1>{t("app_name")}</h1>
 
       <Suspense fallback={<div style={{ flexGrow: 1 }}></div>}>
-        <Pocket move="spin" />
+        <ColourContextProviderRandomised changeInterval={15000}>
+          <Pocket move="spin" />
+        </ColourContextProviderRandomised>
       </Suspense>
 
       {attempts > 0 && <Tip>{t("not_pocket_tip")}</Tip>}

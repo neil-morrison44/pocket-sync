@@ -12,6 +12,7 @@ import { invokeClearFileCache } from "../../utils/invokes"
 import { useTranslation, Trans } from "react-i18next"
 import { useDisconnectPocket } from "../../hooks/useDisconnectPocket"
 import { Thanks } from "./thanks"
+import { PocketColour } from "../../types"
 
 export const Settings = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
@@ -30,16 +31,68 @@ export const Settings = () => {
         <div className="settings__row">
           <h3 className="settings__row-title">{t("3d_pocket.title")}</h3>
 
-          <select
-            value={config.colour}
-            onChange={({ target }) =>
-              updateConfig("colour", target.value as "black" | "white" | "glow")
-            }
-          >
-            <option value="black">{t("3d_pocket.black")}</option>
-            <option value="white">{t("3d_pocket.white")}</option>
-            <option value="glow">{t("3d_pocket.glow")}</option>
-          </select>
+          <label className="settings__checkbox">
+            {t("3d_pocket.body_label")}
+            <select
+              value={config.colour}
+              onChange={({ target }) =>
+                updateConfig("colour", target.value as PocketColour)
+              }
+            >
+              <OptionsList
+                values={["black", "white", "glow"]}
+                i18nPrefix="3d_pocket.colours"
+              />
+              <optgroup label={t("3d_pocket.transparent_label")}>
+                <OptionsList
+                  values={[
+                    "trans_clear",
+                    "trans_smoke",
+                    "trans_blue",
+                    "trans_green",
+                    "trans_orange",
+                    "trans_purple",
+                    "trans_red",
+                  ]}
+                  i18nPrefix="3d_pocket.colours"
+                />
+              </optgroup>
+            </select>
+          </label>
+
+          <label className="settings__checkbox">
+            {t("3d_pocket.buttons_label")}
+            <select
+              value={config.button_colour ?? "match"}
+              onChange={({ target }) => {
+                if (target.value === "match") {
+                  updateConfig("button_colour", undefined)
+                } else {
+                  updateConfig("button_colour", target.value as PocketColour)
+                }
+              }}
+            >
+              <option value={"match"}>{t("3d_pocket.match_body")}</option>
+              <OptionsList
+                values={["black", "white", "glow"]}
+                i18nPrefix="3d_pocket.colours"
+              />
+              <optgroup label={t("3d_pocket.transparent_label")}>
+                <OptionsList
+                  values={[
+                    "trans_clear",
+                    "trans_smoke",
+                    "trans_blue",
+                    "trans_green",
+                    "trans_orange",
+                    "trans_purple",
+                    "trans_red",
+                  ]}
+                  i18nPrefix="3d_pocket.colours"
+                />
+              </optgroup>
+            </select>
+          </label>
         </div>
 
         <div className="settings__row">
@@ -133,4 +186,18 @@ export const Settings = () => {
       <Thanks />
     </div>
   )
+}
+
+type OptionsListProps = {
+  values: string[]
+  i18nPrefix: string
+}
+
+const OptionsList = ({ values, i18nPrefix }: OptionsListProps) => {
+  const { t } = useTranslation("settings")
+  return values.map((value) => (
+    <option key={value} value={value}>
+      {t(`${i18nPrefix}.${value}`)}
+    </option>
+  ))
 }

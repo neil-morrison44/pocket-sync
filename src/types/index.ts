@@ -188,9 +188,22 @@ export type FetchType = { type: string; destination: string } & (
   | { type: "filesystem"; path: string; extensions?: string[] }
 )
 
+export type PocketColour =
+  | "white"
+  | "black"
+  | "glow"
+  | "trans_clear"
+  | "trans_smoke"
+  | "trans_blue"
+  | "trans_green"
+  | "trans_purple"
+  | "trans_orange"
+  | "trans_red"
+
 export type PocketSyncConfig = {
   version: string
-  colour: "white" | "black" | "glow"
+  colour: PocketColour
+  button_colour?: PocketColour
   archive_url: string | null
   saves: SaveConfig[]
   skipAlternateAssets?: boolean

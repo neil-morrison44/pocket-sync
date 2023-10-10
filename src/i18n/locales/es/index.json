@@ -308,9 +308,22 @@
   "settings": {
     "3d_pocket": {
       "title": "Color de Pocket:",
-      "black": "Negro",
-      "white": "Blanco",
-      "glow": "Que brilla en la oscuridad"
+      "colours": {
+        "black": "Negro",
+        "white": "Blanco",
+        "glow": "Que brilla en la oscuridad",
+        "trans_clear": "Claro",
+        "trans_smoke": "Humo",
+        "trans_blue": "Azul",
+        "trans_green": "Verde",
+        "trans_orange": "Naranja",
+        "trans_purple": "Púrpura",
+        "trans_red": "Rojo"
+      },
+      "transparent_label": "Transparente",
+      "body_label": "Cuerpo",
+      "buttons_label": "Botones",
+      "match_body": "Combina el color de la carrocería"
     },
     "alternate_skip": {
       "checkbox": "Saltar activos alternativos",

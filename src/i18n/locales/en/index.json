@@ -308,9 +308,22 @@
   "settings": {
     "3d_pocket": {
       "title": "Pocket Colour:",
-      "black": "Black",
-      "white": "White",
-      "glow": "Glow in the Dark"
+      "colours": {
+        "black": "Black",
+        "white": "White",
+        "glow": "Glow in the Dark",
+        "trans_clear": "Clear",
+        "trans_smoke": "Smoke",
+        "trans_blue": "Blue",
+        "trans_green": "Green",
+        "trans_orange": "Orange",
+        "trans_purple": "Purple",
+        "trans_red": "Red"
+      },
+      "transparent_label": "Transparent",
+      "body_label": "Body",
+      "buttons_label": "Buttons",
+      "match_body": "Match Body"
     },
     "alternate_skip": {
       "checkbox": "Skip Alternate Assets",
