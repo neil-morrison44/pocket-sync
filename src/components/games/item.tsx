@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { pocketPathAtom } from "../../recoil/atoms"
 import {
-  CoreInfoSelectorFamily,
+  CoreMainPlatformIdSelectorFamily,
   DataJSONSelectorFamily,
 } from "../../recoil/selectors"
 import { decodeDataParams } from "../../utils/decodeDataParams"
@@ -14,7 +14,6 @@ import { SearchContextSelfHidingConsumer } from "../search/context"
 import { PlatformInfoSelectorFamily } from "../../recoil/platforms/selectors"
 
 export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
-  const info = useRecoilValue(CoreInfoSelectorFamily(coreName))
   const data = useRecoilValue(DataJSONSelectorFamily(coreName))
   const pocketPath = useRecoilValue(pocketPathAtom)
 
@@ -26,27 +25,27 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
     [data]
   )
 
-  const platformIds = useMemo(() => info.core.metadata.platform_ids, [info])
+  const mainPlatformId = useRecoilValue(
+    CoreMainPlatformIdSelectorFamily(coreName)
+  )
   const { platform } = useRecoilValue(
-    PlatformInfoSelectorFamily(info.core.metadata.platform_ids[0])
+    PlatformInfoSelectorFamily(mainPlatformId)
   )
 
-  const paths = useMemo(() => {
-    if (!romsSlot || !platformIds) return []
+  const path = useMemo(() => {
+    if (!romsSlot) return ""
     const coreSpecific = decodeDataParams(romsSlot.parameters)?.coreSpecific
-
-    return platformIds.map(
-      (pId) =>
-        `${pocketPath}/Assets/${pId}/${coreSpecific ? coreName : "common"}`
-    )
-  }, [romsSlot, platformIds, pocketPath, coreName])
+    return `${pocketPath}/Assets/${mainPlatformId}/${
+      coreSpecific ? coreName : "common"
+    }`
+  }, [romsSlot, mainPlatformId, pocketPath, coreName])
 
   const onOpenFolder = useCallback(async (path: string) => {
     await invokeCreateFolderIfMissing(path)
     open(path)
   }, [])
 
-  if (paths.length === 0) return null
+  if (!romsSlot) return null
 
   return (
     <SearchContextSelfHidingConsumer
@@ -61,31 +60,22 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
         return category === platform.category
       }}
     >
-      {info.core.metadata.platform_ids.map((platformId, index) => (
-        <div
-          className="cores__item"
-          onClick={() => onOpenFolder(paths[index])}
-          key={platformId}
-        >
-          <PlatformImage
-            className="cores__platform-image"
-            platformId={platformId}
-            key={platformId}
+      <div className="cores__item" onClick={() => onOpenFolder(path)}>
+        <PlatformImage
+          className="cores__platform-image"
+          platformId={mainPlatformId}
+        />
+        <div className="cores__info-blurb">
+          <b>{coreName}</b>
+          <GameCount
+            platformId={mainPlatformId}
+            coreName={coreName}
+            extensions={romsSlot?.extensions || []}
           />
-          <div className="cores__info-blurb">
-            <b>{coreName}</b>
-            {/* eslint-disable-next-line react/jsx-no-literals */}
-            {index > 0 && <span>{`(${platformId})`}</span>}
-            <GameCount
-              platformId={platformId}
-              coreName={coreName}
-              extensions={romsSlot?.extensions || []}
-            />
 
-            {(romsSlot?.extensions || []).map((e) => `.${e}`).join(", ")}
-          </div>
+          {(romsSlot?.extensions || []).map((e) => `.${e}`).join(", ")}
         </div>
-      ))}
+      </div>
     </SearchContextSelfHidingConsumer>
   )
 }

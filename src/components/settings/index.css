@@ -61,3 +61,7 @@
     transform: scale(1.2, 1.2);
   }
 }
+
+.settings__checkbox:not(:last-child){
+  margin-block-end: 15px;
+}

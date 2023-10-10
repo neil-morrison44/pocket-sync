@@ -14,6 +14,7 @@ import {
   DataJSONSelectorFamily,
   CoreMainPlatformIdSelectorFamily,
 } from "../selectors"
+import { mergedDataSlots } from "../../utils/dataSlotsMerge"
 
 const FileInfoSelectorFamily = selectorFamily<
   Omit<RequiredFileInfo, "type">,
@@ -76,8 +77,9 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
 
       const fileInfo = (
         await Promise.all(
-          requiredCoreFiles.map(
-            async ({ filename, alternate_filenames, parameters }) => {
+          requiredCoreFiles
+            .filter(({ parameters }) => decodeDataParams(parameters).readOnly)
+            .map(async ({ filename, alternate_filenames, parameters }) => {
               const path = `Assets/${platform_id}/${
                 decodeDataParams(parameters).coreSpecific ? coreName : "common"
               }`
@@ -90,8 +92,7 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                     )
                 )
               )
-            }
-          )
+            })
         )
       ).flat()
 
@@ -106,7 +107,7 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
           })
           .map(async ({ filename, parameters }) => {
             if (filename) {
-              // can't handle this yet
+              // still can't handle this yet
               console.log("is a single filename")
             }
 
@@ -125,10 +126,22 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                 )
 
                 const dataPath = instanceFile.instance.data_path
+                const dataSlots = mergedDataSlots(
+                  dataJSON.data.data_slots,
+                  instanceFile.instance.data_slots
+                )
 
                 return await Promise.all(
-                  instanceFile.instance.data_slots.map(
-                    async ({ filename, parameters }) => {
+                  dataSlots
+                    // Could do this if cores marked read-only files as readonly
+                    // .filter(
+                    //   ({ parameters }) => decodeDataParams(parameters).readOnly
+                    // )
+                    // but they, largely, don't seem to so I'll do
+                    .filter(
+                      ({ filename }) => !filename || !filename?.endsWith(".sav")
+                    )
+                    .map(async ({ filename, parameters }) => {
                       const path = `Assets/${platform_id}/${
                         decodeDataParams(parameters).coreSpecific
                           ? coreName
@@ -142,8 +155,7 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                           type: "instance",
                         })
                       )
-                    }
-                  )
+                    })
                 )
               })
             )
