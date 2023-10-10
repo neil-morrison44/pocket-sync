@@ -37,6 +37,7 @@ export type InstanceDataJSON = {
 }
 
 type DataSlotJSON = {
+  id: number
   name?: string
   required?: boolean
   parameters: number | string
