@@ -39,8 +39,7 @@
     },
     "requires_license": {
       "all": "请注意!运行该核心需要取得许可授权",
-      "jotego": "The JOTEGO betas require a JTBETA file from the Patreon in the sponsors section below. \nThe jtbeta.zip should be placed at the root of your SD card then it'll be found & copied to the right place during the \"Required Files\" process."
-    //Myself couldn't fully understand the sentence above
+      "jotego": "JOTEGO betas需要JTBETA许可文件才能运行，可以通过JOTEGO的Patreon页面获取(https://www.patreon.com/jotego)。 \n 如果您取得了许可文件，请将jtbeta.zip放置在SD卡根目录，系统将自动根据必要文件的处理规则进行处理。"
     },
     "not_in_inventory": "核心{coreName}尚未加入清单",
     "platform": {
@@ -62,8 +61,8 @@
     "supports": "Supports",
     "supports_items": {
       "cartridges": "卡带",
-      "dock": "底座", //do you mean the 99.99 USD Analogue Dock? If it is, the translation is correct
-      "dock_dac": "DAC解码器", // are u refering this item? https://www.analogue.co/dac
+      "dock": "Analogue 底座", 
+      "dock_dac": "Analogue DAC解码器", 
       "save_states_and_sleep": "即时存档/睡眠"
     },
     "url": "网页地址",
@@ -123,7 +122,7 @@
     "remove_button": "移除",
     "remove_confirm": "This'll remove the fetch configuration, but not the files. Are you sure?",
     "types": {
-      "archive_org": "在线文件", //refering to online(local&internet) source, correct?
+      "archive_org": "archive.org网站在线文件", 
       "filesystem": "本地文件"
     }
   },
@@ -149,7 +148,7 @@
     "controls": {
       "category": "类型",
       "clean_files": "清理文件",
-      "instance_json": "Instance JSON", //don't know what does it mean...
+      "instance_json": "实例配置JSON", 
       "refresh": "刷新",
       "search": "搜索"
     },
@@ -167,7 +166,7 @@
     "scale": "缩放"
   },
   "instance_json": {
-    "available_for": "Automatic instance.json file creation available for:", //same as line 150
+    "available_for": "以下核心可以自动生成实例配置JSON文件:", 
     "close_button": "关闭",
     "skipped_file": "跳过 {file_name}",
     "title": "Build Instance JSON files", //same
@@ -321,7 +320,7 @@
     },
     "alternate_skip": {
       "checkbox": "跳过可选资源",
-      "ramble_1": "This setting will skip processing json files under the `_alternatives` folder,\nmeaning you'll just get the \"main\" titles for the cores which sort their JSON files this way.", //not fully understand
+      "ramble_1": "该选项生效后会忽略“_alternatives”文件夹内的JSON文件,\n 这意味着系统将处理首选核心资源。", 
       "ramble_2": "<b>警告:</b> 关闭此选项可能导致安装时间<b>显著延长</b> ",
       "title": "跳过可选资源"
     },
@@ -359,11 +358,11 @@
     "confirm_button": "确认",
     "remove_duplicate": "移除已存在的重复文件",
     "scanning": "扫描文件中...",
-    "moved_files_info": "Handles cases where files have moved, e.g. JSON files are now in `_alternatives`", //not fully understand
+    "moved_files_info": "处理特定情况下文件已经被移动到其他目录的情况，例如JSON文件在_alternatives目录中", 
     "replace": {
       "ok": "允许",
       "cancel": "跳过",
-      "text": "{list}\n\nAssets, Saves etc will be moved over and the old core will be removed.", //same above
+      "text": "{list}\n\n 资源及存档文件将会被移动到指定目录，旧核心文件将被删除。", 
       "title": "替换现有核心文件?"
     }
   },
