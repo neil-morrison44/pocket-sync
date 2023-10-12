@@ -191,7 +191,11 @@ const FileSystemStatus = ({
         mtime: f.mtime,
         exists:
           pocketFileInfo.find(
-            (pF) => pF.filename === f.filename && pF.crc32 === f.crc32
+            (pF) =>
+              pF.filename === f.filename &&
+              pF.mtime &&
+              f.mtime &&
+              pF.mtime >= f.mtime
           ) !== undefined,
       })),
     [fsFileInfo, pocketPath, destination, pocketFileInfo]
