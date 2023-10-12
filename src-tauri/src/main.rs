@@ -9,6 +9,7 @@ use clean_fs::find_dotfiles;
 use file_cache::{clear_file_caches, get_file_with_cache};
 use files_from_zip::copy_file_from_zip;
 use firmware::{FirmwareDetails, FirmwareListItem};
+use fs_set_times::{self, set_mtime, SystemTimeSpec};
 use futures::StreamExt;
 use futures_locks::RwLock;
 use hashes::crc32_for_file;
@@ -21,11 +22,12 @@ use saves_zip::{
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::path::PathBuf;
-use std::time::SystemTime;
+use std::time::{Duration, SystemTime};
 use std::vec;
 use tauri::api::dialog;
 use tauri::{App, Manager, Window};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
 mod checks;
 mod clean_fs;
 mod core_json_files;
@@ -315,6 +317,14 @@ async fn install_archive_files(
                     tokio::io::copy(&mut content_cusror, &mut dest)
                         .await
                         .unwrap();
+
+                    dbg!(&file);
+
+                    if let Some(mtime) = file.mtime {
+                        let time = SystemTime::UNIX_EPOCH + Duration::from_millis(mtime);
+                        dbg!(time);
+                        set_mtime(&new_file_path, SystemTimeSpec::Absolute(time)).unwrap();
+                    }
                 }
             }
         }
@@ -552,6 +562,28 @@ async fn get_file_metadata(
         crc32,
     })
 }
+
+#[tauri::command(async)]
+async fn get_file_metadata_mtime_only(
+    state: tauri::State<'_, PocketSyncState>,
+    file_path: &str,
+) -> Result<u64, String> {
+    let pocket_path = state.0.pocket_path.read().await;
+    let full_path = pocket_path.join(file_path);
+
+    let metadata = tokio::fs::metadata(full_path)
+        .await
+        .and_then(|m| m.modified())
+        .map_err(|err| err.to_string())?;
+
+    let timestamp = metadata
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .and_then(|d| Ok(d.as_secs()))
+        .map_err(|err| err.to_string())?;
+
+    Ok(timestamp)
+}
+
 #[tauri::command(async)]
 async fn get_firmware_versions_list() -> Result<Vec<FirmwareListItem>, String> {
     firmware::get_firmware_json()
@@ -693,6 +725,7 @@ fn main() {
             get_news_feed,
             begin_mister_sync_session,
             get_file_metadata,
+            get_file_metadata_mtime_only,
             get_firmware_versions_list,
             get_firmware_release_notes,
             download_firmware,
@@ -718,10 +751,11 @@ fn start_tasks(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> 
     Ok(())
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 struct DownloadFile {
     filename: String,
     path: String,
+    mtime: Option<u64>,
 }
 #[derive(Serialize, Deserialize)]
 struct BackupSavesResponse {

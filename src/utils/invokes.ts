@@ -140,6 +140,13 @@ export const invokeFileMetadata = async (filePath: string) => {
   return { timestamp: metadata.timestamp_secs * 1000, crc32: metadata.crc32 }
 }
 
+export const invokeFileMTime = async (filePath: string) => {
+  const mtime = await invoke<number>("get_file_metadata_mtime_only", {
+    filePath,
+  })
+  return mtime * 1000
+}
+
 export const invokeGetFirmwareVersionsList = async () => {
   const firmwares = await invoke<
     {

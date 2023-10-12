@@ -5,7 +5,7 @@ import { RequiredFileInfoSelectorFamily } from "../requiredFiles/selectors"
 import { archiveBumpAtom } from "./atoms"
 import {
   invokeFileExists,
-  invokeFileMetadata,
+  invokeFileMTime,
   invokeListRootFiles,
   invokeWalkDirListFiles,
 } from "../../utils/invokes"
@@ -53,15 +53,13 @@ export const PathFileInfoSelectorFamily = selectorFamily<
             : `${pocketPath}/${path}/${filename}`
 
           const exists = await invokeFileExists(fullPath)
-          const crc32 = exists
-            ? (await invokeFileMetadata(fullPath)).crc32
-            : undefined
+          const mtime = exists ? await invokeFileMTime(fullPath) : undefined
 
           return {
             filename,
             path,
             exists,
-            crc32,
+            mtime,
           }
         })
       )

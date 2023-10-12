@@ -188,9 +188,14 @@ const FileSystemStatus = ({
       fsFileInfo.map((f) => ({
         origin: `${f.path}/${f.filename}`,
         destination: `${pocketPath}/${destination}/${f.filename}`,
+        mtime: f.mtime,
         exists:
           pocketFileInfo.find(
-            (pF) => pF.filename === f.filename && pF.crc32 === f.crc32
+            (pF) =>
+              pF.filename === f.filename &&
+              pF.mtime &&
+              f.mtime &&
+              pF.mtime >= f.mtime
           ) !== undefined,
       })),
     [fsFileInfo, pocketPath, destination, pocketFileInfo]
@@ -308,7 +313,8 @@ const ArchiveOrgStatus = ({
       const exists =
         fileInfo.find((fi) => {
           if (comparePaths(m.name.split("/"), splitAsPath(fi.filename))) {
-            return fi.crc32 && parseInt(m.crc32, 16) === fi.crc32
+            // return fi.crc32 && parseInt(m.crc32, 16) === fi.crc32
+            return fi.mtime && parseInt(m.mtime) * 1000 <= fi.mtime
           }
           return false
         }) !== undefined
@@ -316,6 +322,7 @@ const ArchiveOrgStatus = ({
       return {
         filename: m.name,
         path: destination,
+        mtime: parseInt(m.mtime) * 1000,
         exists,
         type: "core",
       }

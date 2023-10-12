@@ -52,6 +52,7 @@ export type RequiredFileInfo = {
   exists: boolean
   type: "core" | "instance"
   crc32?: number
+  mtime?: number
   status?: "ok" | "wrong" | "downloadable" | "not_in_archive" | "at_root"
 }
 
@@ -226,6 +227,7 @@ export type SaveZipFile = {
 export type ArchiveFileMetadata = {
   name: string
   crc32: string
+  mtime: string
 }
 
 export type ImagePack = {
