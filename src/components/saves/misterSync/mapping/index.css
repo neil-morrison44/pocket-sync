@@ -1,0 +1,76 @@
+.mister-sync__mapping {
+  display: flex;
+  flex-direction: column;
+}
+
+.mister-sync__mapping-platform-list-header{
+  display: flex;
+  justify-content: space-between;
+  padding-inline-start: 130px;
+  padding-inline-end: 165px;
+  font-size: 1.75rem;
+  font-family: GamePocket;
+  background-color: var(--hover-colour);
+  padding-block: 10px;
+  border-radius: 5px;
+}
+
+.mister-sync__mapping-platform-list {
+  padding-inline: 120px;
+
+  /* padding-block: 12px; */
+  display: grid;
+  grid-template-columns: min-content 1fr min-content;
+  grid-template-rows: repeat(auto-fill, 30px);
+
+  /* grid-template-rows: minmax(100px, 1fr); */
+  overflow: auto;
+  gap: 12px;
+  column-gap: 0;
+  justify-content: center;
+  font-size: 1.15rem;
+  user-select: none;
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-user-select: none;
+  background-color: var(--hover-colour);
+  border-radius: 15px;
+}
+
+.mister-sync__mapping-platform{
+  cursor: grab;
+  border: 1px solid white;
+  border-radius: 5px;
+  padding-inline: 12px;
+  text-align: center;
+  transition: opacity 0.2s linear;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+}
+
+.mister-sync__mapping-platform--pocket{
+  grid-column: 1;
+}
+
+.mister-sync__mapping-platform--mister{
+  grid-column: 3;
+}
+
+.mister-sync__mapping-platform-list:has(.mister-sync__mapping-platform:hover) > .mister-sync__mapping-platform {
+  opacity: 0.2;
+}
+
+.mister-sync__mapping-platform--not-new-join{
+  opacity: 0.4;
+}
+
+.mister-sync__mapping-platform:hover{
+  opacity: 1 !important;
+}
+
+.mister-sync__mapping {
+  button:first-of-type {
+    margin-block-start: auto;
+  }
+}

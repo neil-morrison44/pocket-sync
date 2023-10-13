@@ -3,7 +3,7 @@ use std::{io::Read, path::PathBuf};
 
 pub enum FoundSave {
     Found(PathBuf),
-    NotFound(PathBuf),
+    NotFound,
     NotSupported,
 }
 
@@ -20,7 +20,7 @@ pub trait SaveSyncer {
 
     async fn find_save_for(
         &self,
-        platform: &str,
+        platforms: &Vec<String>,
         game: &str,
         log_channel: &tokio::sync::mpsc::Sender<String>,
     ) -> Result<FoundSave, Box<dyn std::error::Error + Send + Sync>>;
@@ -40,4 +40,7 @@ pub trait SaveSyncer {
         &self,
         path: &PathBuf,
     ) -> Result<u64, Box<dyn std::error::Error + Send + Sync>>;
+
+    async fn list_platforms(&self)
+        -> Result<Vec<String>, Box<dyn std::error::Error + Send + Sync>>;
 }

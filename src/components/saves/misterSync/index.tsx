@@ -26,6 +26,7 @@ import { Tip } from "../../tip"
 import { pocketPathAtom } from "../../../recoil/atoms"
 import { MiSTerCredsAtom } from "./recoil/atoms"
 import { useTranslation } from "react-i18next"
+import { SaveMapping } from "./mapping"
 
 type MisterSyncProps = {
   onClose: () => void
@@ -40,6 +41,8 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
   const [creds, setCreds] = useRecoilState(MiSTerCredsAtom)
 
   const { t } = useTranslation("mister_sync")
+
+  const [saveMappingOpen, setSaveMappingOpen] = useState(false)
 
   const connect = useCallback(async () => {
     setConnecting(true)
@@ -80,6 +83,11 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
             onClick: onClose,
           },
           connected && {
+            type: "button",
+            text: "Save Mapping",
+            onClick: () => setSaveMappingOpen(true),
+          },
+          connected && {
             type: "search",
             text: t("controls.search"),
             value: query,
@@ -87,6 +95,11 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
           },
         ]}
       />
+      <Suspense>
+        {saveMappingOpen && (
+          <SaveMapping onClose={() => setSaveMappingOpen(false)} />
+        )}
+      </Suspense>
       <Suspense fallback={<div className="mister-sync__status" />}>
         {selectedSave && <SaveStatus key={selectedSave} path={selectedSave} />}
       </Suspense>
