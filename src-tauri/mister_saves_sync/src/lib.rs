@@ -103,42 +103,41 @@ impl SaveSyncer for MiSTerSaveSync {
 
     async fn find_save_for(
         &self,
-        platform: &str,
+        platforms: &Vec<String>,
         game: &str,
-        log_channel: &Sender<String>,
+        _log_channel: &Sender<String>,
     ) -> Result<FoundSave, Box<dyn std::error::Error + Send + Sync>> {
+        let mut all_system_saves: Vec<String> = vec![];
+        let active_platforms = &self.list_platforms().await?;
+
         let mut guard = self.ftp_stream.lock().await;
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 
-        match pocket_platform_to_mister_system(platform) {
-            None => {
-                log_channel
-                    .send(format!(
-                        "Unable to find MiSTer system for \"{}\"",
-                        &platform
-                    ))
-                    .await
-                    .unwrap();
-                return Ok(FoundSave::NotSupported);
-            }
-            Some(mister_system) => {
-                let system_path = format!("/media/fat/saves/{}", mister_system);
-                let system_saves = ftp_stream.nlst(Some(&system_path)).await?;
-                let system_saves: Vec<_> =
-                    system_saves.into_iter().map(|s| PathBuf::from(s)).collect();
-                let game_path = PathBuf::from(game);
-                let expected_save_file_name = game_path.file_stem();
+        let platforms: Vec<&String> = platforms
+            .into_iter()
+            .filter(|p| active_platforms.iter().any(|ap| ap == *p))
+            .collect();
 
-                match system_saves
-                    .into_iter()
-                    .find(|p| p.file_stem() == expected_save_file_name)
-                {
-                    Some(found_save) => Ok(FoundSave::Found(
-                        PathBuf::from(&system_path).join(found_save),
-                    )),
-                    None => Ok(FoundSave::NotFound(PathBuf::from(&system_path).join(&game))),
-                }
-            }
+        for mister_system in platforms {
+            let system_path = format!("/media/fat/saves/{}", mister_system);
+            let system_saves = ftp_stream.nlst(Some(&system_path)).await?;
+            all_system_saves.extend(system_saves.into_iter());
+        }
+
+        let system_saves: Vec<_> = all_system_saves
+            .into_iter()
+            .map(|s| PathBuf::from(s))
+            .collect();
+
+        let game_path = PathBuf::from(game);
+        let expected_save_file_name = game_path.file_stem();
+
+        match system_saves
+            .into_iter()
+            .find(|p| p.file_stem() == expected_save_file_name)
+        {
+            Some(found_save) => Ok(FoundSave::Found(found_save)),
+            None => Ok(FoundSave::NotFound),
         }
     }
 
@@ -211,25 +210,25 @@ impl SaveSyncer for MiSTerSaveSync {
         let modtime = ftp_stream.mdtm(&file_name).await?;
         return Ok(modtime.timestamp_millis() as u64);
     }
-}
 
-fn pocket_platform_to_mister_system(platform: &str) -> Option<String> {
-    Some(match platform {
-        "gb" | "gbc" => "GAMEBOY",
-        "gg" | "sms" => "SMS",
-        "pce" | "pcecd" => "TGFX16",
-        "gba" => "GBA",
-        "sg1000" => "SG1000",
-        "arduboy" => "Arduboy",
-        "genesis" => "Genesis",
-        "ng" => "NEOGEO",
-        "nes" => "NES",
-        "snes" => "SNES",
-        "supervision" => "SuperVision",
-        "poke_mini" => "PokemonMini",
-        "wonderswan" => "WonderSwan",
-        "gamate" => "Gamate",
-        _ => return None,
-    })
-    .map(String::from)
+    async fn list_platforms(
+        &self,
+    ) -> Result<Vec<String>, Box<dyn std::error::Error + Send + Sync>> {
+        let mut guard = self.ftp_stream.lock().await;
+        let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
+        let save_folders = ftp_stream.nlst(Some("/media/fat/saves")).await?;
+
+        let platforms: Vec<String> = save_folders
+            .iter()
+            .map(|f| PathBuf::from(f))
+            .map(|p| {
+                p.file_name()
+                    .and_then(|f| f.to_str())
+                    .and_then(|s| Some(String::from(s)))
+            })
+            .filter_map(|p| p)
+            .collect();
+
+        return Ok(platforms);
+    }
 }

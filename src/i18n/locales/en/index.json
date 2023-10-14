@@ -195,7 +195,12 @@
     "tip_1": "The MiSTer's FTP must be turned on",
     "tip_2": "Make sure the save is compatible between Pocket & MiSTer before transfer",
     "tip_3": "The Game must be named exactly the same on the Pocket and the MiSTer for the save to be found",
-    "unsupported": "{platform} is not supported\n(open a github issue if it should be)"
+    "unsupported": "{platform} is not mapped",
+    "mapping": {
+      "close": "Close",
+      "clear": "Clear",
+      "reset": "Reset to default"
+    }
   },
   "news_feed": {
     "last_updated": "Last updated <1></1>",

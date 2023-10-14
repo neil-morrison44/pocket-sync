@@ -195,7 +195,12 @@
     "tip_1": "El FTP del MiSTer debe estar activado",
     "tip_2": "Asegúrese de que el guardado sea compatible entre Pocket y MiSTer antes de realizar la transferencia.",
     "tip_3": "El juego debe tener exactamente el mismo nombre en el Pocket y en MiSTer para poder encontrar el guardado.",
-    "unsupported": "{platform} no es compatible\n(abra un problema de github si así debe ser)"
+    "unsupported": "{platform} no es compatible",
+    "mapping": {
+      "close": "Cerrar",
+      "clear": "Borrar",
+      "reset": "Restablecer valores predeterminados"
+    }
   },
   "news_feed": {
     "last_updated": "Última actualización <1></1>",

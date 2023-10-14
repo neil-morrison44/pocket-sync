@@ -20,12 +20,14 @@ import { search } from "fast-fuzzy"
 import "./index.css"
 import {
   FileMetadataSelectorFamily,
+  MiSTerPlatformsForPocketPlatformSelectorFamily,
   MiSTerSaveInfoSelectorFamily,
 } from "./recoil/selectors"
 import { Tip } from "../../tip"
 import { pocketPathAtom } from "../../../recoil/atoms"
 import { MiSTerCredsAtom } from "./recoil/atoms"
 import { useTranslation } from "react-i18next"
+import { SaveMapping } from "./mapping"
 
 type MisterSyncProps = {
   onClose: () => void
@@ -40,6 +42,8 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
   const [creds, setCreds] = useRecoilState(MiSTerCredsAtom)
 
   const { t } = useTranslation("mister_sync")
+
+  const [saveMappingOpen, setSaveMappingOpen] = useState(false)
 
   const connect = useCallback(async () => {
     setConnecting(true)
@@ -80,6 +84,11 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
             onClick: onClose,
           },
           connected && {
+            type: "button",
+            text: "Save Mapping",
+            onClick: () => setSaveMappingOpen(true),
+          },
+          connected && {
             type: "search",
             text: t("controls.search"),
             value: query,
@@ -87,6 +96,11 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
           },
         ]}
       />
+      <Suspense>
+        {saveMappingOpen && (
+          <SaveMapping onClose={() => setSaveMappingOpen(false)} />
+        )}
+      </Suspense>
       <Suspense fallback={<div className="mister-sync__status" />}>
         {selectedSave && <SaveStatus key={selectedSave} path={selectedSave} />}
       </Suspense>
@@ -156,8 +170,12 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
     return [platform, file]
   }, [path])
 
+  const misterPlatforms = useRecoilValue(
+    MiSTerPlatformsForPocketPlatformSelectorFamily(platform)
+  )
+
   const misterSaveInfo = useRecoilValue(
-    MiSTerSaveInfoSelectorFamily({ platform, file })
+    MiSTerSaveInfoSelectorFamily({ platforms: misterPlatforms, file })
   )
   const pocketSaveInfo = useRecoilValue(
     FileMetadataSelectorFamily({ filePath: path })
@@ -173,13 +191,29 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
     }
   }, [misterSaveInfo, pocketSaveInfo])
 
+  const [selectedMisterPlatform, setSelectedMisterPlatform] = useState(
+    misterPlatforms[0] ?? ""
+  )
+
+  const misterPath = useMemo<string | null>(() => {
+    if (misterSaveInfo?.path) return misterSaveInfo.path
+    if (misterPlatforms.length === 0) return null
+    return `/media/fat/saves/${selectedMisterPlatform}/${file}`
+  }, [
+    file,
+    misterPlatforms.length,
+    misterSaveInfo?.path,
+    selectedMisterPlatform,
+  ])
+
   const moveSave = useCallback(
     (to: "pocket" | "mister") => {
       switch (to) {
         case "mister": {
+          if (!misterPath) return
           emit("mister-save-sync-move-save-to-mister", {
             from: `${pocketPath}/Saves/${path}`,
-            to: misterSaveInfo?.path || "",
+            to: misterPath,
           })
           break
         }
@@ -192,7 +226,7 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
         }
       }
     },
-    [pocketPath, path, misterSaveInfo?.path]
+    [misterPath, pocketPath, path, misterSaveInfo?.path]
   )
 
   const toPocketClassName = useBEM({
@@ -222,7 +256,7 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
         </div>
       </div>
       <div className="mister-sync__status-equals">
-        {misterSaveInfo?.path && (
+        {misterPath && (
           <>
             {misterSaveInfo?.crc32 && (
               <div
@@ -239,10 +273,10 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
       </div>
 
       <div className="mister-sync__mister">
-        {misterSaveInfo?.path && (
+        {misterPath && (
           <>
             <strong>{t("mister")}</strong>
-            <div>{misterSaveInfo?.path.replace("/media/fat/saves/", "")}</div>
+            <div>{misterPath.replace("/media/fat/saves/", "")}</div>
             <div>
               {misterSaveInfo?.timestamp &&
                 new Date(misterSaveInfo.timestamp).toLocaleString()}
@@ -250,9 +284,24 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
             <div className="mister-sync__crc">
               {misterSaveInfo?.crc32?.toString(16) || t("not_found")}
             </div>
+
+            {misterPlatforms.length > 1 && !misterSaveInfo?.path && (
+              <select
+                value={selectedMisterPlatform}
+                onChange={({ target }) =>
+                  setSelectedMisterPlatform(target.value)
+                }
+              >
+                {misterPlatforms.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
+                ))}
+              </select>
+            )}
           </>
         )}
-        {!misterSaveInfo?.path && (
+        {!misterPath && (
           <>
             <div style={{ whiteSpace: "pre-wrap" }}>
               {t("unsupported", { platform })}

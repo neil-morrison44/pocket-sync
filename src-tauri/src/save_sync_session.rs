@@ -21,7 +21,7 @@ struct MiSTerSaveInfo {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 struct PocketSaveInfo {
     file: String,
-    platform: String,
+    platforms: Vec<String>,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -35,12 +35,14 @@ enum IncomingMessage {
     Find(PocketSaveInfo),
     PocketToMiSTer(Transfer),
     MiSTerToPocket(Transfer),
+    ListPlatformsOnMiSTer,
     HeartBeat,
 }
 
 #[derive(Debug, Clone)]
 enum OutboundMessage {
     FoundSave(MiSTerSaveInfo),
+    PlatformList(Vec<String>),
     MovedSave(Transfer),
 }
 
@@ -91,6 +93,13 @@ pub async fn start_mister_save_sync_session(
                 task::spawn(async move {
                     while let Ok(msg) = message_rx.recv().await {
                         match msg {
+                            IncomingMessage::ListPlatformsOnMiSTer => {
+                                let platforms = &mister_syncer.list_platforms().await.unwrap();
+
+                                outbound_message_tx
+                                    .send(OutboundMessage::PlatformList(platforms.clone()))
+                                    .unwrap();
+                            }
                             IncomingMessage::Find(pocket_save_info) => {
                                 let result = find_mister_save(
                                     &outbound_message_tx,
@@ -169,7 +178,11 @@ pub async fn start_mister_save_sync_session(
                           _ = kill_rx.recv() => { break; }
                           msg = outbound_message_rx.recv() => {
                             match msg {
+                                Ok(OutboundMessage::PlatformList(platform_list)) => {
+                                    window.emit("mister-save-sync-platform-list", platform_list).unwrap();
+                                },
                                 Ok(OutboundMessage::FoundSave(mister_save_info)) => {
+                                    println!("Emmiting save");
                                     window.emit("mister-save-sync-found-save", mister_save_info).unwrap();
                                 },
                                 Ok(OutboundMessage::MovedSave(transfer)) => {
@@ -234,6 +247,16 @@ pub async fn start_mister_save_sync_session(
                 })
             };
 
+            let platform_list_listener = {
+                let message_tx = message_tx.clone();
+                let window = window.clone();
+                window.listen("mister-save-sync-list-platforms", move |_| {
+                    message_tx
+                        .send(IncomingMessage::ListPlatformsOnMiSTer)
+                        .unwrap();
+                })
+            };
+
             {
                 let mut kill_rx = kill_tx.subscribe();
                 task::spawn(async move {
@@ -242,6 +265,7 @@ pub async fn start_mister_save_sync_session(
                     window.unlisten(save_to_pocket_listener);
                     window.unlisten(save_to_mister_listener);
                     window.unlisten(heartbeat_listener);
+                    window.unlisten(platform_list_listener);
                 })
             }
         })
@@ -265,7 +289,7 @@ async fn find_mister_save(
     log_tx: &mpsc::Sender<String>,
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
     match mister_syncer
-        .find_save_for(&pocket_save_info.platform, &pocket_save_info.file, log_tx)
+        .find_save_for(&pocket_save_info.platforms, &pocket_save_info.file, log_tx)
         .await
     {
         Err(err) => {
@@ -286,9 +310,10 @@ async fn find_mister_save(
                 crc32: Some(crc32),
             }))?;
         }
-        Ok(FoundSave::NotFound(guessed_save_path)) => {
+        Ok(FoundSave::NotFound) => {
+            println!("Save not found");
             outbound_channel.send(OutboundMessage::FoundSave(MiSTerSaveInfo {
-                path: Some(guessed_save_path),
+                path: None,
                 timestamp: None,
                 pocket_save: pocket_save_info.clone(),
                 crc32: None,

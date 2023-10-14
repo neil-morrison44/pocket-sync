@@ -318,11 +318,8 @@ async fn install_archive_files(
                         .await
                         .unwrap();
 
-                    dbg!(&file);
-
                     if let Some(mtime) = file.mtime {
                         let time = SystemTime::UNIX_EPOCH + Duration::from_millis(mtime);
-                        dbg!(time);
                         set_mtime(&new_file_path, SystemTimeSpec::Absolute(time)).unwrap();
                     }
                 }
