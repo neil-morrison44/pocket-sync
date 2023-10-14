@@ -1,7 +1,7 @@
 import { emit, listen } from "@tauri-apps/api/event"
 import { selector, selectorFamily } from "recoil"
 import { invokeFileMetadata, invokeListFiles } from "../../../../utils/invokes"
-import { SavesInvalidationAtom } from "./atoms"
+import { SavesInvalidationAtom, saveMappingAtom } from "./atoms"
 
 type MiSTerSaveInfo = {
   crc32?: number
@@ -15,28 +15,25 @@ type MiSTerSaveInfo = {
 
 export const MiSTerSaveInfoSelectorFamily = selectorFamily<
   MiSTerSaveInfo | null,
-  { file: string | undefined; platform: string | undefined }
+  { file: string | undefined; platforms: string[] }
 >({
   key: "MiSTerSaveInfoSelectorFamily",
   get:
-    ({ platform, file }) =>
+    ({ platforms, file }) =>
     async ({ get }) => {
       get(SavesInvalidationAtom)
-      if (!platform || !file) return null
+      if (!platforms || !file) return null
 
-      emit("mister-save-sync-find-save", { file, platform })
+      emit("mister-save-sync-find-save", { file, platforms })
 
       return new Promise<MiSTerSaveInfo>((resolve, _reject) => {
-        const listener = listen<MiSTerSaveInfo>(
+        const unlistener = listen<MiSTerSaveInfo>(
           "mister-save-sync-found-save",
           ({ payload }) => {
             const { pocket_save } = payload
-            if (
-              pocket_save.platform === platform &&
-              pocket_save.file === file
-            ) {
+            if (pocket_save.file === file) {
               resolve(payload)
-              listener.then((l) => l())
+              unlistener.then((l) => l())
             }
           }
         )
@@ -83,4 +80,20 @@ export const platformListPocketSelector = selector<string[]>({
     const sorted = [...platforms].sort((a, b) => a.localeCompare(b))
     return sorted
   },
+})
+
+export const MiSTerPlatformsForPocketPlatformSelectorFamily = selectorFamily<
+  string[],
+  string | undefined
+>({
+  key: "MiSTerPlatformsForPocketPlatformSelectorFamily",
+  get:
+    (pocketPlatform) =>
+    ({ get }) => {
+      if (!pocketPlatform) return []
+      const mapping = get(saveMappingAtom)
+      return mapping
+        .filter((m) => m.pocket === pocketPlatform)
+        .map((m) => m.mister)
+    },
 })

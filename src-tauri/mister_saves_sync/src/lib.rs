@@ -107,10 +107,16 @@ impl SaveSyncer for MiSTerSaveSync {
         game: &str,
         _log_channel: &Sender<String>,
     ) -> Result<FoundSave, Box<dyn std::error::Error + Send + Sync>> {
+        let mut all_system_saves: Vec<String> = vec![];
+        let active_platforms = &self.list_platforms().await?;
+
         let mut guard = self.ftp_stream.lock().await;
         let ftp_stream = guard.as_mut().ok_or("ftp_stream not active")?;
 
-        let mut all_system_saves: Vec<String> = vec![];
+        let platforms: Vec<&String> = platforms
+            .into_iter()
+            .filter(|p| active_platforms.iter().any(|ap| ap == *p))
+            .collect();
 
         for mister_system in platforms {
             let system_path = format!("/media/fat/saves/{}", mister_system);
@@ -225,25 +231,4 @@ impl SaveSyncer for MiSTerSaveSync {
 
         return Ok(platforms);
     }
-}
-
-fn pocket_platform_to_mister_system(platform: &str) -> Option<String> {
-    Some(match platform {
-        "gb" | "gbc" => "GAMEBOY",
-        "gg" | "sms" => "SMS",
-        "pce" | "pcecd" => "TGFX16",
-        "gba" => "GBA",
-        "sg1000" => "SG1000",
-        "arduboy" => "Arduboy",
-        "genesis" => "Genesis",
-        "ng" => "NEOGEO",
-        "nes" => "NES",
-        "snes" => "SNES",
-        "supervision" => "SuperVision",
-        "poke_mini" => "PokemonMini",
-        "wonderswan" => "WonderSwan",
-        "gamate" => "Gamate",
-        _ => return None,
-    })
-    .map(String::from)
 }

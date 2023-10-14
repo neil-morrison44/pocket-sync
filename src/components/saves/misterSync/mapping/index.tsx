@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue } from "recoil"
 import { Modal } from "../../../modal"
 import {
   platformListPocketSelector,
@@ -15,18 +15,14 @@ import {
 } from "react"
 
 import "./index.css"
+import { DEFAULT_MISTER_SAVE_MAPPING, saveMappingAtom } from "../recoil/atoms"
 
 type SaveMappingProps = {
   onClose: () => void
 }
 
 export const SaveMapping = ({ onClose }: SaveMappingProps) => {
-  const [joins, setJoins] = useState<{ pocket: string; mister: string }[]>([
-    {
-      pocket: "gba",
-      mister: "GBA",
-    },
-  ])
+  const [joins, setJoins] = useRecoilState(saveMappingAtom)
 
   return (
     <Modal className="mister-sync__mapping">
@@ -37,6 +33,9 @@ export const SaveMapping = ({ onClose }: SaveMappingProps) => {
         </div>
         <PlatformsList joins={joins} setJoins={setJoins} />
       </Suspense>
+      <button onClick={() => setJoins(DEFAULT_MISTER_SAVE_MAPPING)}>
+        Reset To Default
+      </button>
       <button onClick={() => setJoins([])}>clear</button>
       <button onClick={onClose}>closed</button>
     </Modal>
@@ -200,36 +199,39 @@ const PlatformsList = ({ joins, setJoins }: PlatformsListProps) => {
       // joins
 
       for (let index = 0; index < joins.length; index++) {
-        context.save()
         const join = joins[index]
+        context.save()
         context.beginPath()
-        if (hoveredRef.current) {
-          if (
-            hoveredRef.current.platform === join.pocket ||
-            hoveredRef.current.platform === join.mister
-          ) {
-            context.strokeStyle = "white"
-          } else {
-            context.strokeStyle = "rgba(255,255,255,0.1)"
-          }
-        } else {
-          context.strokeStyle = "white"
-        }
-
-        if (newJoinOrigin) {
-          context.strokeStyle = "rgba(255,255,255,0.1)"
-        }
 
         const sY = pocketPositions[join.pocket]
         context.moveTo(0, sY)
 
+        let outlineStyle = "black"
+        let innerStyle = "white"
+
+        if (hoveredRef.current) {
+          if (
+            hoveredRef.current.platform !== join.pocket &&
+            hoveredRef.current.platform !== join.mister
+          ) {
+            innerStyle = "rgba(255,255,255,0.1)"
+            outlineStyle = "rgba(0,0,0,0.1)"
+          }
+        }
+
+        if (newJoinOrigin) {
+          innerStyle = "rgba(255,255,255,0.1)"
+          outlineStyle = "rgba(0,0,0,0.1)"
+        }
+
         const eY = misterPositions[join.mister]
         context.lineTo(cnv.width, eY)
         context.lineWidth = 5
-        context.strokeStyle = "black"
+        context.strokeStyle = outlineStyle
         context.stroke()
+
+        context.strokeStyle = innerStyle
         context.lineWidth = 3
-        context.strokeStyle = "white"
         context.stroke()
 
         context.restore()
