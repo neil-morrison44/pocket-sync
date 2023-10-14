@@ -51,8 +51,8 @@
     "required_files": "必要文件",
     "required_files_count": "{count} / {total} 文件",
     "settings": "配置",
-    "sponsor": "Sponsor",
-    "supports": "Supports",
+    "sponsor": "赞助作者",
+    "supports": "支持功能",
     "supports_items": {
       "cartridges": "卡带",
       "dock": "Analogue 底座", 
@@ -105,7 +105,7 @@
     "new": {
       "add_extension": "添加",
       "add_fetch": "添加同步",
-      "archive_name": "来源名称: <i>https://archive.org/details/[详细地址，例如gameboyroms_2019xx]</i>",
+      "archive_name": "来源名称: <i>https://archive.org/details/[详细地址]</i>",
       "archive_tip": "这一功能并不会对ZIP打包文件生效，并且您应该设置目标文件扩展名类型以避免下载元数据文件",
       "close": "关闭",
       "destination": "目标目录",
