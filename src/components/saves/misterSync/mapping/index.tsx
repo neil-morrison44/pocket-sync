@@ -16,6 +16,7 @@ import {
 
 import "./index.css"
 import { DEFAULT_MISTER_SAVE_MAPPING, saveMappingAtom } from "../recoil/atoms"
+import { useTranslation } from "react-i18next"
 
 type SaveMappingProps = {
   onClose: () => void
@@ -23,21 +24,22 @@ type SaveMappingProps = {
 
 export const SaveMapping = ({ onClose }: SaveMappingProps) => {
   const [joins, setJoins] = useRecoilState(saveMappingAtom)
+  const { t } = useTranslation("mister_sync")
 
   return (
     <Modal className="mister-sync__mapping">
       <Suspense>
         <div className="mister-sync__mapping-platform-list-header">
-          <div>Pocket</div>
-          <div>MiSTer</div>
+          <div>{t("pocket")}</div>
+          <div>{t("mister")}</div>
         </div>
         <PlatformsList joins={joins} setJoins={setJoins} />
       </Suspense>
       <button onClick={() => setJoins(DEFAULT_MISTER_SAVE_MAPPING)}>
-        Reset To Default
+        {t("mapping.reset")}
       </button>
-      <button onClick={() => setJoins([])}>clear</button>
-      <button onClick={onClose}>closed</button>
+      <button onClick={() => setJoins([])}>{t("mapping.clear")}</button>
+      <button onClick={onClose}>{t("mapping.close")}</button>
     </Modal>
   )
 }

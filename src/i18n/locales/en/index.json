@@ -286,7 +286,12 @@
     "not_found": "Not found",
     "oldest_backup": "Oldest Backup: {date, date, long}, {date, time, short}",
     "remove": "Remove Location",
-    "view_saves": "View Saves"
+    "view_saves": "View Saves",
+    "mapping": {
+      "close": "Close",
+      "clear": "Clear",
+      "reset": "Reset to default"
+    }
   },
   "screenshot_info": {
     "controls": {
