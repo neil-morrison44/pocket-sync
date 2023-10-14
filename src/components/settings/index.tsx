@@ -13,10 +13,13 @@ import { useTranslation, Trans } from "react-i18next"
 import { useDisconnectPocket } from "../../hooks/useDisconnectPocket"
 import { Thanks } from "./thanks"
 import { PocketColour } from "../../types"
+import { alwaysUseEnglishAtom } from "../../recoil/settings/atoms"
 
 export const Settings = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
   const [archiveUrlInput, setArchiveUrl] = useState(config.archive_url || "")
+  const [alwaysUseEnglish, setAlwaysUseEnglish] =
+    useRecoilState(alwaysUseEnglishAtom)
   const skipAlternateAssets = useRecoilValue(skipAlternateAssetsSelector)
   const [reconnectWhenOpened, setReconnectWhenOpened] = useRecoilState(
     reconnectWhenOpenedAtom
@@ -113,6 +116,20 @@ export const Settings = () => {
               {t("archive.save")}
             </button>
           </div>
+        </div>
+        <div className="settings__row">
+          <h3 className="settings__row-title">{t("language.title")}</h3>
+
+          <label className="settings__checkbox">
+            {t("language.checkbox")}
+            <input
+              type="checkbox"
+              checked={alwaysUseEnglish.value}
+              onChange={({ target }) =>
+                setAlwaysUseEnglish({ value: target.checked })
+              }
+            />
+          </label>
         </div>
 
         <div className="settings__row">

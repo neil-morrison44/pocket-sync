@@ -1,6 +1,9 @@
 import { listen } from "@tauri-apps/api/event"
 import { atom } from "recoil"
-import { syncToAppLocalDataEffect } from "../../../../recoil/effects"
+import {
+  syncToAppLocalDataEffect,
+  syncToAppLocalDataEffectDefault,
+} from "../../../../recoil/effects"
 
 export const SavesInvalidationAtom = atom<number>({
   key: "SavesInvalidationAtom",
@@ -81,6 +84,9 @@ export const DEFAULT_MISTER_SAVE_MAPPING = [
 
 export const saveMappingAtom = atom<MiSTerSaveJoin[]>({
   key: "saveMappingAtom",
-  default: DEFAULT_MISTER_SAVE_MAPPING,
+  default: syncToAppLocalDataEffectDefault(
+    "mister_save_mapping",
+    DEFAULT_MISTER_SAVE_MAPPING
+  ),
   effects: [syncToAppLocalDataEffect("mister_save_mapping")],
 })

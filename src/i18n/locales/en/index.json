@@ -336,6 +336,10 @@
       "ramble_2": "<b>Warning:</b> turning this off will mean that installing Required Files takes <b>much</b> longer.",
       "title": "Skip Alternate Assets"
     },
+    "language": {
+      "checkbox": "Always use English (US)",
+      "title": "Language"
+    },
     "archive": {
       "save": "Save",
       "title": "ROM & BIOS archive",

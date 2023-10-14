@@ -1,11 +1,29 @@
 .required-files {
   white-space: nowrap;
   background-color: var(--light-colour);
-  padding: 0 5px;
+  padding: 5px 15px;
   border-radius: 5px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .required-files--missing {
   background-color: var(--red-colour);
+}
+
+.required-files--none{
+  padding-inline-start: 5px;
+  animation: annoying-flash 1s infinite;
+}
+
+@keyframes annoying-flash {
+  0% {
+    filter: saturate(100%);
+  }
+
+  50% {
+    filter: saturate(200%);
+  }
 }
