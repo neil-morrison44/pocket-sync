@@ -55,8 +55,8 @@
     "supports": "支持功能",
     "supports_items": {
       "cartridges": "卡带",
-      "dock": "Analogue 底座", 
-      "dock_dac": "Analogue DAC解码器", 
+      "dock": "Analogue 底座",
+      "dock_dac": "Analogue DAC解码器",
       "save_states_and_sleep": "即时存档/睡眠"
     },
     "url": "网页地址",
@@ -116,7 +116,7 @@
     "remove_button": "移除",
     "remove_confirm": "这一操作将移除选定的同步设置但是并不会删除已经存在的文件，您确定吗?",
     "types": {
-      "archive_org": "archive.org网站在线文件", 
+      "archive_org": "archive.org网站在线文件",
       "filesystem": "本地文件"
     }
   },
@@ -142,7 +142,7 @@
     "controls": {
       "category": "类型",
       "clean_files": "清理文件",
-      "instance_json": "实例配置JSON", 
+      "instance_json": "实例配置JSON",
       "refresh": "刷新",
       "search": "搜索"
     },
@@ -160,10 +160,10 @@
     "scale": "缩放"
   },
   "instance_json": {
-    "available_for": "以下核心可以自动生成实例配置JSON文件:", 
+    "available_for": "以下核心可以自动生成实例配置JSON文件:",
     "close_button": "关闭",
     "skipped_file": "跳过 {file_name}",
-    "title": "生成实例配置JSON文件", 
+    "title": "生成实例配置JSON文件",
     "wrote_file": "写入 {file_name}"
   },
   "layout": {
@@ -195,7 +195,12 @@
     "tip_1": "MiSTer FTP 功能必须打开",
     "tip_2": "在传输前请确认存档文件兼容Pocket和MiSTer",
     "tip_3": "存档匹配要求Pocket和MiSTer上的游戏文档名称完全一致",
-    "unsupported": "尚未支持{platform}平台\n(如果这个平台应该被支持，请在github上反馈)"
+    "unsupported": "尚未支持{platform}平台",
+    "mapping": {
+      "close": "关闭",
+      "clear": "清除",
+      "reset": "重置为默认值"
+    }
   },
   "news_feed": {
     "last_updated": "最新更新 <1></1>",
@@ -308,13 +313,26 @@
   "settings": {
     "3d_pocket": {
       "title": "Pocket颜色:",
-      "black": "黑",
-      "white": "白",
-      "glow": "荧光"
+      "colours": {
+        "black": "黑",
+        "white": "白",
+        "glow": "荧光",
+        "trans_clear": "透明",
+        "trans_smoke": "烟色",
+        "trans_blue": "蓝色",
+        "trans_green": "绿色",
+        "trans_orange": "橙色",
+        "trans_purple": "紫色",
+        "trans_red": "红色"
+      },
+      "transparent_label": "透明",
+      "body_label": "主体",
+      "buttons_label": "按钮",
+      "match_body": "匹配机身"
     },
     "alternate_skip": {
       "checkbox": "跳过可选资源",
-      "ramble_1": "该选项生效后会忽略“_alternatives”文件夹内的JSON文件,\n 这意味着系统将处理首选核心资源。", 
+      "ramble_1": "该选项生效后会忽略“_alternatives”文件夹内的JSON文件,\n 这意味着系统将处理首选核心资源。",
       "ramble_2": "<b>警告:</b> 关闭此选项可能导致安装时间<b>显著延长</b> ",
       "title": "跳过可选资源"
     },
@@ -352,11 +370,11 @@
     "confirm_button": "确认",
     "remove_duplicate": "移除已存在的重复文件",
     "scanning": "扫描文件中...",
-    "moved_files_info": "处理特定情况下文件已经被移动到其他目录的情况，例如JSON文件在_alternatives目录中", 
+    "moved_files_info": "处理特定情况下文件已经被移动到其他目录的情况，例如JSON文件在_alternatives目录中",
     "replace": {
       "ok": "允许",
       "cancel": "跳过",
-      "text": "{list}\n\n 资源及存档文件将会被移动到指定目录，旧核心文件将被删除。", 
+      "text": "{list}\n\n 资源及存档文件将会被移动到指定目录，旧核心文件将被删除。",
       "title": "替换现有核心文件?"
     }
   },
