@@ -21,8 +21,6 @@ export const I18nProvider = ({
 }: I18nProviderProps) => {
   const alwaysUseEnglish = useRecoilValue(alwaysUseEnglishAtom)
 
-  console.log({ alwaysUseEnglish })
-
   const i18nInstance = useMemo(() => {
     i18n
       .use(initReactI18next)
