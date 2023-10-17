@@ -25,8 +25,14 @@ export function syncToAppLocalDataEffect<T>(filename: string): AtomEffect<T> {
           await readTextFile(`${filename}.json`, {
             dir: BaseDirectory.AppLocalData,
           }).then((text) => {
-            const value = JSON.parse(text) as T
-            setSelf(value)
+            try {
+              const value = JSON.parse(text) as T
+              setSelf(value)
+            } catch (err) {
+              console.log(
+                `Error Reading Config File ${filename}, ${err} \n ${text}`
+              )
+            }
           })
         }
       }
@@ -48,7 +54,12 @@ export async function syncToAppLocalDataEffectDefault<T>(
     const text = await readTextFile(`${filename}.json`, {
       dir: BaseDirectory.AppLocalData,
     })
-    const value = JSON.parse(text) as T
+    let value = initialDefault
+    try {
+      value = JSON.parse(text) as T
+    } catch (err) {
+      console.log(`Error Reading Config File ${filename}, ${err} \n ${text}`)
+    }
     return value
   } else {
     return initialDefault

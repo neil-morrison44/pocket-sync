@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "Pocket Sync",
-    "version": "3.9.0"
+    "version": "3.9.1"
   },
   "tauri": {
     "allowlist": {
