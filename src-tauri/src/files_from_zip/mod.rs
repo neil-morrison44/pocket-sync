@@ -46,3 +46,19 @@ pub async fn copy_file_from_zip(
         .map(|_| ())
         .map_err(|err| err.to_string())
 }
+
+pub async fn crc32_file_in_zip(zip_path: &PathBuf, file_name: &str) -> Result<u32, String> {
+    let zip_path = zip_path.clone();
+    let file_name = file_name.to_string();
+    tauri::async_runtime::spawn_blocking(move || {
+        let zip_file = fs::read(&zip_path).unwrap();
+        let cursor = Cursor::new(zip_file);
+        let mut archive = zip::ZipArchive::new(cursor).map_err(|err| err.to_string())?;
+
+        let file = archive.by_name(&file_name).map_err(|err| err.to_string())?;
+        let checksum = file.crc32();
+        Ok(checksum)
+    })
+    .await
+    .map_err(|err| err.to_string())?
+}
