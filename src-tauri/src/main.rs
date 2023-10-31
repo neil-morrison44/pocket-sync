@@ -7,7 +7,7 @@ use async_walkdir::{DirEntry, WalkDir};
 use checks::{check_if_folder_looks_like_pocket, connection_task};
 use clean_fs::find_dotfiles;
 use file_cache::{clear_file_caches, get_file_with_cache};
-use files_from_zip::copy_file_from_zip;
+use files_from_zip::{copy_file_from_zip, crc32_file_in_zip};
 use firmware::{FirmwareDetails, FirmwareListItem};
 use fs_set_times::{self, set_mtime, SystemTimeSpec};
 use futures::StreamExt;
@@ -251,8 +251,9 @@ async fn install_archive_files(
                 RootFile::Zipped {
                     zip_file: _,
                     inner_file,
+                    ..
                 } => inner_file == &file.filename,
-                RootFile::UnZipped { file_name } => file_name == &file.filename,
+                RootFile::UnZipped { file_name, .. } => file_name == &file.filename,
             })
             .collect();
 
@@ -272,11 +273,12 @@ async fn install_archive_files(
                 RootFile::Zipped {
                     zip_file,
                     inner_file,
+                    ..
                 } => {
                     copy_file_from_zip(&pocket_path.join(zip_file), &inner_file, &new_file_path)
                         .await?;
                 }
-                RootFile::UnZipped { file_name } => {
+                RootFile::UnZipped { file_name, .. } => {
                     tokio::fs::copy(pocket_path.join(file_name), new_file_path)
                         .await
                         .map_err(|err| err.to_string())?;
@@ -643,9 +645,11 @@ enum RootFile {
     Zipped {
         zip_file: String,
         inner_file: String,
+        crc32: u32,
     },
     UnZipped {
         file_name: String,
+        crc32: u32,
     },
 }
 
@@ -675,14 +679,22 @@ async fn check_root_files(
                     if ext == "zip" {
                         let files = files_from_zip::list_files(&path).await?;
                         if files.len() > 0 {
+                            let zip_file = String::from(file_name);
+                            let inner_file = files[0].clone();
                             results.push(RootFile::Zipped {
-                                zip_file: String::from(file_name),
-                                inner_file: files[0].clone(),
+                                crc32: crc32_file_in_zip(&pocket_path.join(&zip_file), &inner_file)
+                                    .await?,
+                                zip_file,
+                                inner_file,
                             })
                         }
                     } else {
+                        let file_name = String::from(file_name);
                         results.push(RootFile::UnZipped {
-                            file_name: String::from(file_name),
+                            crc32: crc32_for_file(&pocket_path.join(&file_name))
+                                .await
+                                .map_err(|e| e.to_string())?,
+                            file_name,
                         });
                     }
                 }

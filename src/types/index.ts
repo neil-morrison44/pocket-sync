@@ -273,9 +273,14 @@ export type FirmwareInfo = {
 export type FileCopy = { origin: string; destination: string; exists: boolean }
 
 export type RootFileZipped = {
+  crc32: number
   type: "Zipped"
   inner_file: string
   zip_file: string
 }
-export type RootFileUnZipped = { type: "UnZipped"; file_name: string }
+export type RootFileUnZipped = {
+  crc32: number
+  type: "UnZipped"
+  file_name: string
+}
 export type RootFile = RootFileZipped | RootFileUnZipped

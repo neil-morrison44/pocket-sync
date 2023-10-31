@@ -102,6 +102,7 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
   get:
     (coreName: string) =>
     async ({ get }) => {
+      get(fileSystemInvalidationAtom)
       const archiveMetadata = get(archiveMetadataSelector)
       const requiredFiles = get(RequiredFileInfoSelectorFamily(coreName))
       const rootFileInfo = get(listRootFilesSelector)
@@ -118,7 +119,11 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
           })
 
           if (existsAtRoot)
-            return { ...r, status: "at_root" } satisfies RequiredFileInfo
+            return {
+              ...r,
+              exists: existsAtRoot.crc32 === r.crc32,
+              status: "at_root",
+            } satisfies RequiredFileInfo
 
           const metadata = archiveMetadata.find(
             ({ name }) => name === r.filename
@@ -147,7 +152,8 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
 
 export const listRootFilesSelector = selector<RootFile[]>({
   key: "listRootFilesSelector",
-  get: async () => {
+  get: async ({ get }) => {
+    get(fileSystemInvalidationAtom)
     const rootFileInfo = await invokeListRootFiles()
     return rootFileInfo
   },
