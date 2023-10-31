@@ -29,6 +29,7 @@ use tauri::{App, Manager, Window};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 mod checks;
+// mod chunked_downloads;
 mod clean_fs;
 mod core_json_files;
 mod file_cache;

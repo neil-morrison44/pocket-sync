@@ -1,5 +1,7 @@
 import { useEffect } from "react"
 import "./index.css"
+import { useSetRecoilState } from "recoil"
+import { showSidebarAtom } from "../../recoil/atoms"
 
 type Control = {
   text: string
@@ -56,8 +58,11 @@ export const Controls = ({ controls }: ControlProps) => {
     return () => document.removeEventListener("keydown", listener)
   }, [controls])
 
+  const setShowSidebar = useSetRecoilState(showSidebarAtom)
+
   return (
     <div className="controls">
+      <button onClick={() => setShowSidebar(true)}>sidebar</button>
       {controls.map((control) => {
         if (!control) return null
         switch (control.type) {

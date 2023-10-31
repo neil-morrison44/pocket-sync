@@ -18,9 +18,11 @@ import "./index.css"
 import { Firmware } from "../firmware"
 import { useTranslation } from "react-i18next"
 import { Fetch } from "../fetch"
+import { showSidebarAtom } from "../../recoil/atoms"
 
 export const Layout = () => {
   const [viewAndSubview, setViewAndSubview] = useRecoilState(currentViewAtom)
+  const [showSidebar, setShowSidebar] = useRecoilState(showSidebarAtom)
   const { t } = useTranslation("layout")
 
   const changeView = useCallback(
@@ -55,7 +57,13 @@ export const Layout = () => {
       <Suspense>
         <AutoBackup />
       </Suspense>
-      <div className="layout__sidebar-menu" ref={sidebarRef}>
+      <div
+        className={`layout__sidebar-menu ${
+          !showSidebar ? "layout__sidebar-menu--hidden" : ""
+        }`}
+        ref={sidebarRef}
+      >
+        <button onClick={() => setShowSidebar(false)}>close</button>
         {VIEWS_LIST.map((v) => (
           <div
             className={`layout__sidebar-menu-item ${

@@ -1,6 +1,7 @@
 .layout {
-  display: flex;
-  align-items: flex-start;
+  /* display: flex; */
+
+  /* align-items: flex-start; */
   max-width: 100vw;
   position: relative;
 }
@@ -8,17 +9,22 @@
 .layout__sidebar-menu {
   display: flex;
   flex-direction: column;
-  position: sticky;
+  position: absolute;
   top: 0;
   height: 100vh;
   background-color: var(--light-colour);
-  flex-basis: min-content;
+  width: min-content;
   flex-shrink: 0;
   z-index: 1000;
 
   /* stylelint-disable-next-line property-no-vendor-prefix */
   -webkit-user-select: none;
   user-select: none;
+  transition: transform 0.2s ease-in-out;
+}
+
+.layout__sidebar-menu--hidden{
+  transform: translate(-100%, 0);
 }
 
 .layout__sidebar-menu-item {
@@ -46,6 +52,6 @@
 }
 
 .layout__content {
-  flex-grow: 1;
+  width: 100vw;
   position: relative;
 }

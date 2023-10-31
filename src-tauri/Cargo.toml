@@ -24,7 +24,9 @@ futures-locks = "0.7.1"
 hex = "0.4.3"
 md-5 = "0.10.5"
 mister_saves_sync = { path = "./mister_saves_sync" }
+num_cpus = "1.16.0"
 openfpga-instance-packager = { git = "https://github.com/neil-morrison44/openfpga-instance-packager", tag = "v0.3.1" }
+rayon = "1.8.0"
 reqwest = "0.11.18"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
