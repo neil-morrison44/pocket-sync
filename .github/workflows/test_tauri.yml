@@ -42,7 +42,7 @@ jobs:
         run: rustup target add ${{ matrix.target }}
       - name: install app dependencies and build it
         run: npm ci && npm run build
-      - uses: tauri-apps/tauri-action@v0.4.3
+      - uses: tauri-apps/tauri-action@v0.4.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
