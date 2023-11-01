@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { filterKnownBadFiles } from "../../utils/filterFiles"
 import { FileTreeNode, InstallZipEventPayload } from "./types"
+import { message } from "@tauri-apps/api/dialog"
 
 export const useListenForZipInstall = () => {
   const [installState, setInstallState] =
@@ -23,7 +24,10 @@ export const useListenForZipInstall = () => {
   useEffect(() => {
     const unlisten = listen<{ error?: string }>(
       "install-zip-finished",
-      ({ payload: _payload }) => {
+      ({ payload }) => {
+        if (payload.error)
+          message(payload.error, { title: "Error", type: "error" })
+
         setInstallState(null)
         invalidateFS()
       }

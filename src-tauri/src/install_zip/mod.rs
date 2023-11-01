@@ -108,7 +108,7 @@ pub async fn start_zip_task(window: Window) -> () {
                         let cursor = Cursor::new(zip_file);
                         let archive = zip::ZipArchive::new(cursor).unwrap();
 
-                        start_zip_install_flow(
+                        match start_zip_install_flow(
                             archive,
                             Titles {
                                 title: String::from("Install Core"),
@@ -118,11 +118,20 @@ pub async fn start_zip_task(window: Window) -> () {
                             &window,
                         )
                         .await
-                        .unwrap();
+                        {
+                            Ok(_) => (),
+                            Err(e) => {
+                                FromRustPayload::ZipInstallFinished {
+                                    error: Some(format!("Unable to install core:\n{}", e)),
+                                }
+                                .emit(&main_window)
+                                .unwrap();
+                            }
+                        }
                     }
-                    _s => {
+                    status => {
                         FromRustPayload::ZipInstallFinished {
-                            error: Some(String::from("Unable to download ZIP")),
+                            error: Some(format!("Unable to download ZIP:\n{}", status)),
                         }
                         .emit(&main_window)
                         .unwrap();
@@ -310,7 +319,7 @@ async fn start_zip_install_flow(
     titles: Titles,
     pocket_path: PathBuf,
     window: &Window,
-) -> Result<(), ()> {
+) -> Result<(), Box<dyn std::error::Error>> {
     let zip_confirm_event = FromRustPayload::InstallZipEvent {
         title: String::from(&titles.title),
         files: Some(get_file_names(&archive, &pocket_path)),
@@ -318,10 +327,7 @@ async fn start_zip_install_flow(
     };
 
     let main_window = window.clone();
-    let install_confirm = zip_confirm_event
-        .wait_for_confirmation(&window)
-        .await
-        .unwrap();
+    let install_confirm = zip_confirm_event.wait_for_confirmation(&window).await?;
 
     let (paths, handle_moved_files, allow) = match install_confirm {
         FromTSPayload::InstallConfirmation {
@@ -333,9 +339,7 @@ async fn start_zip_install_flow(
     };
 
     if !allow {
-        FromRustPayload::ZipInstallFinished { error: None }
-            .emit(&main_window)
-            .unwrap();
+        FromRustPayload::ZipInstallFinished { error: None }.emit(&main_window)?;
         return Ok(());
     }
 
@@ -347,12 +351,11 @@ async fn start_zip_install_flow(
             max: paths.len(),
         }),
     }
-    .emit(&window)
-    .unwrap();
+    .emit(&window)?;
 
-    let tmp_dir = TempDir::new("zip_install_tmp").unwrap();
+    let tmp_dir = TempDir::new("zip_install_tmp")?;
     let tmp_path = tmp_dir.into_path();
-    archive.extract(&tmp_path).unwrap();
+    archive.extract(&tmp_path)?;
 
     if handle_moved_files || true {
         for path in paths.iter() {
@@ -394,11 +397,9 @@ async fn start_zip_install_flow(
             continue;
         }
 
-        tokio::fs::create_dir_all(destination.parent().unwrap())
-            .await
-            .unwrap();
+        tokio::fs::create_dir_all(destination.parent().unwrap()).await?;
         if !source.is_dir() {
-            tokio::fs::copy(&source, &destination).await.unwrap();
+            tokio::fs::copy(&source, &destination).await?;
         }
 
         FromRustPayload::InstallZipEvent {
@@ -409,8 +410,7 @@ async fn start_zip_install_flow(
                 max: paths.len(),
             }),
         }
-        .emit(&main_window)
-        .unwrap();
+        .emit(&main_window)?;
     }
 
     // check if there's an updaters.json file in the installed cores
@@ -431,9 +431,7 @@ async fn start_zip_install_flow(
         }
     }
 
-    FromRustPayload::ZipInstallFinished { error: None }
-        .emit(&main_window)
-        .unwrap();
+    FromRustPayload::ZipInstallFinished { error: None }.emit(&main_window)?;
 
     Ok(())
 }
