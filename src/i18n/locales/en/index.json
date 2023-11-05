@@ -360,6 +360,11 @@
       "ramble": "Attempt to reconnect to the most recently opened location <1> { ppath } </1> upon opening the app, skipping the \"Connect to Pocket\" button",
       "title": "Reconnect when the app is opened"
     },
+    "turbo_downloads": {
+      "checkbox": "Enable Fast Downloads",
+      "ramble": "Enabling this setting will break up files from the archive into smaller chunks. These chunks are then downloaded in parallel, potentially resulting in up to an 8x speedup. However, this method will consume more bandwidth and may be less reliable. If you enable this, please consider <1>supporting the Internet Archive</1>.",
+      "title": "Fast Downloads"
+    },
     "thanks": "Thanks to:"
   },
   "time_ago": {

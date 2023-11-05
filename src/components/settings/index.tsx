@@ -13,13 +13,19 @@ import { useTranslation, Trans } from "react-i18next"
 import { useDisconnectPocket } from "../../hooks/useDisconnectPocket"
 import { Thanks } from "./thanks"
 import { PocketColour } from "../../types"
-import { alwaysUseEnglishAtom } from "../../recoil/settings/atoms"
+import {
+  alwaysUseEnglishAtom,
+  turboDownloadsAtom,
+} from "../../recoil/settings/atoms"
+import { Link } from "../link"
 
 export const Settings = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
   const [archiveUrlInput, setArchiveUrl] = useState(config.archive_url || "")
   const [alwaysUseEnglish, setAlwaysUseEnglish] =
     useRecoilState(alwaysUseEnglishAtom)
+
+  const [turboDownloads, setTurboDownloads] = useRecoilState(turboDownloadsAtom)
   const skipAlternateAssets = useRecoilValue(skipAlternateAssetsSelector)
   const [reconnectWhenOpened, setReconnectWhenOpened] = useRecoilState(
     reconnectWhenOpenedAtom
@@ -116,6 +122,25 @@ export const Settings = () => {
               {t("archive.save")}
             </button>
           </div>
+        </div>
+        <div className="settings__row">
+          <h3 className="settings__row-title">{t("turbo_downloads.title")}</h3>
+          <div className="settings__ramble">
+            <Trans i18nKey={"turbo_downloads.ramble"} t={t}>
+              {"_"}
+              <Link href="https://archive.org/donate">{"_"}</Link>
+            </Trans>
+          </div>
+          <label className="settings__checkbox">
+            {t("turbo_downloads.checkbox")}
+            <input
+              type="checkbox"
+              checked={turboDownloads.enabled}
+              onChange={({ target }) =>
+                setTurboDownloads((t) => ({ ...t, enabled: target.checked }))
+              }
+            />
+          </label>
         </div>
         <div className="settings__row">
           <h3 className="settings__row-title">{t("language.title")}</h3>

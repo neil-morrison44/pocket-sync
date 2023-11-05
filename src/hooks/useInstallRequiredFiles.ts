@@ -5,6 +5,7 @@ import { PocketSyncConfigSelector } from "../recoil/config/selectors"
 import { RequiredFileInfo } from "../types"
 import { useInvalidateFileSystem } from "./invalidation"
 import { useProgress } from "./useProgress"
+import { turboDownloadsAtom } from "../recoil/settings/atoms"
 
 export const useInstallRequiredFiles = () => {
   const { archive_url } = useRecoilValue(PocketSyncConfigSelector)
@@ -16,6 +17,8 @@ export const useInstallRequiredFiles = () => {
     }
   )
 
+  const turboDownloads = useRecoilValue(turboDownloadsAtom)
+
   const installRequiredFiles = useCallback(
     async (files: RequiredFileInfo[], other_archive_url?: string) => {
       const this_archive_url = other_archive_url ?? archive_url
@@ -25,9 +28,10 @@ export const useInstallRequiredFiles = () => {
       const _response = await invoke<boolean>("install_archive_files", {
         files,
         archiveUrl: this_archive_url,
+        turbo: turboDownloads.enabled,
       })
     },
-    [archive_url]
+    [archive_url, turboDownloads.enabled]
   )
 
   return {

@@ -11,3 +11,11 @@ export const alwaysUseEnglishAtom = atom<{ value: boolean }>({
   }),
   effects: [syncToAppLocalDataEffect("only-use-english")],
 })
+
+export const turboDownloadsAtom = atom<{ enabled: boolean }>({
+  key: "turboDownloadsAtom",
+  default: syncToAppLocalDataEffectDefault("turbo-downloads", {
+    enabled: false,
+  }),
+  effects: [syncToAppLocalDataEffect("turbo-downloads")],
+})

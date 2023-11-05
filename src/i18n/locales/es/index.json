@@ -356,6 +356,11 @@
       "ramble": "Intente volver a conectarse a la ubicación abierta más recientemente <1> { ppath } </1> al abrir la aplicación, omitiendo el botón \"Conectar con Pocket\"",
       "title": "Reconectar cuando la aplicación esta abierta"
     },
+    "turbo_downloads": {
+      "checkbox": "Habilitar descargas rápidas",
+      "ramble": "Al habilitar esta configuración, se dividirán los archivos del archivo en fragmentos más pequeños. Estos fragmentos luego se descargan en paralelo, lo que podría generar una aceleración de hasta 8 veces. Sin embargo, este método consumirá más ancho de banda y puede ser menos confiable. Si habilita esto, considere <1>apoyar Internet Archive</1>.",
+      "title": "Descargas rápidas"
+    },
     "thanks": "Gracias a:"
   },
   "time_ago": {
