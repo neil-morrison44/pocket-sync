@@ -27,6 +27,7 @@ use std::vec;
 use tauri::api::dialog;
 use tauri::{App, Manager, Window};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use turbo_downloads::turbo_download_file;
 
 mod checks;
 mod clean_fs;
@@ -39,6 +40,7 @@ mod news_feed;
 mod progress;
 mod save_sync_session;
 mod saves_zip;
+mod turbo_downloads;
 
 #[derive(Default)]
 struct InnerState {
@@ -234,6 +236,7 @@ async fn uninstall_core(
 async fn install_archive_files(
     files: Vec<DownloadFile>,
     archive_url: &str,
+    turbo: bool,
     state: tauri::State<'_, PocketSyncState>,
     window: Window,
 ) -> Result<bool, String> {
@@ -292,39 +295,48 @@ async fn install_archive_files(
         progress.emit_progress(&file.filename);
 
         if !failed_already.contains(&file.filename) {
-            let response = reqwest::get(&full_url).await;
-
-            match response {
+            let content = match turbo_download_file(&full_url, turbo).await {
+                Ok(Some(c)) => c,
+                Ok(None) => {
+                    let response = reqwest::get(&full_url).await;
+                    match response {
+                        Err(e) => {
+                            println!("Error downloading from {full_url}: ({e})");
+                            failed_already.insert(file.filename);
+                            continue;
+                        }
+                        Ok(r) if r.status() != 200 => {
+                            println!("Unable to find {full_url}, skipping");
+                            failed_already.insert(file.filename);
+                            continue;
+                        }
+                        Ok(r) => r.bytes().await.unwrap(),
+                    }
+                }
                 Err(e) => {
                     println!("Error downloading from {full_url}: ({e})");
                     failed_already.insert(file.filename);
+                    continue;
                 }
-                Ok(r) if r.status() != 200 => {
-                    println!("Unable to find {full_url}, skipping");
-                    failed_already.insert(file.filename);
-                }
-                Ok(r) => {
-                    let file_path = remove_leading_slash(&file.path);
-                    let folder = pocket_path.join(file_path);
-                    let new_file_path = folder.join(&file.filename);
+            };
+            let file_path = remove_leading_slash(&file.path);
+            let folder = pocket_path.join(file_path);
+            let new_file_path = folder.join(&file.filename);
 
-                    if let Some(parent) = new_file_path.parent() {
-                        if !parent.exists() {
-                            tokio::fs::create_dir_all(&parent).await.unwrap();
-                        }
-                    }
-                    let mut dest = tokio::fs::File::create(&new_file_path).await.unwrap();
-                    let content = r.bytes().await.unwrap();
-                    let mut content_cusror = std::io::Cursor::new(content);
-                    tokio::io::copy(&mut content_cusror, &mut dest)
-                        .await
-                        .unwrap();
-
-                    if let Some(mtime) = file.mtime {
-                        let time = SystemTime::UNIX_EPOCH + Duration::from_millis(mtime);
-                        set_mtime(&new_file_path, SystemTimeSpec::Absolute(time)).unwrap();
-                    }
+            if let Some(parent) = new_file_path.parent() {
+                if !parent.exists() {
+                    tokio::fs::create_dir_all(&parent).await.unwrap();
                 }
+            }
+            let mut dest = tokio::fs::File::create(&new_file_path).await.unwrap();
+            let mut content_cusror = std::io::Cursor::new(content);
+            tokio::io::copy(&mut content_cusror, &mut dest)
+                .await
+                .unwrap();
+
+            if let Some(mtime) = file.mtime {
+                let time = SystemTime::UNIX_EPOCH + Duration::from_millis(mtime);
+                set_mtime(&new_file_path, SystemTimeSpec::Absolute(time)).unwrap();
             }
         }
     }
