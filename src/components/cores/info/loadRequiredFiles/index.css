@@ -1,9 +1,9 @@
 .load-required-files {
   width: max-content;
   height: max-content;
-  max-height: 80vh;
+  max-height: 80%;
   min-width: 66vw;
-  min-height: 50vw;
+  min-height: 50%;
 }
 
 .load-required-files__files {
