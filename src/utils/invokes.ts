@@ -189,3 +189,7 @@ export const invokeClearFileCache = async () => await invoke("clear_file_cache")
 
 export const invokeListRootFiles = async () =>
   await invoke<RootFile[]>("check_root_files")
+
+export const invokeTestStreamedZip = async (url: string) => {
+  return await invoke<boolean>("test_streamed_zip", { url })
+}

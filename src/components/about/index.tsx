@@ -1,4 +1,4 @@
-import { Suspense, useMemo } from "react"
+import { Suspense, useEffect, useMemo } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import { useRecoilSmoothUpdatesFirstSuspend } from "../../hooks/recoilSmoothUpdates"
 import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
@@ -16,6 +16,7 @@ import { StaticScreen } from "../three/staticScreen"
 import { useTranslation } from "react-i18next"
 import { semverCompare } from "../../utils/semverCompare"
 import { ColourContextProviderFromConfig } from "../three/colourContext"
+import { invokeTestStreamedZip } from "../../utils/invokes"
 
 export const About = () => {
   const selfReleases = useRecoilSmoothUpdatesFirstSuspend(
@@ -35,6 +36,14 @@ export const About = () => {
 
   const setCurrentView = useSetRecoilState(currentViewAtom)
   const version = `v${AppVersion}`
+
+  useEffect(() => {
+    invokeTestStreamedZip(
+      "https://archive.org/download/analogue-pocket-library-image-set/Analogue%20Pocket%20Library%20Image%20Set%20%5Bv1.0%5D.zip"
+    ).then((res) => {
+      console.log(res)
+    })
+  }, [])
 
   return (
     <div className="about">

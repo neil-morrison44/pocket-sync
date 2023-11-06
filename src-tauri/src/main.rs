@@ -40,6 +40,7 @@ mod news_feed;
 mod progress;
 mod save_sync_session;
 mod saves_zip;
+mod streaming_zip;
 mod turbo_downloads;
 
 #[derive(Default)]
@@ -717,6 +718,21 @@ async fn check_root_files(
     Ok(results)
 }
 
+#[tauri::command(async)]
+async fn test_streamed_zip(url: &str) -> Result<Vec<String>, String> {
+    let url = String::from(url);
+    let entries: Vec<String> = tokio::task::spawn_blocking(move || {
+        let zip_stream = streaming_zip::ZipStream::new(String::from(url));
+        let archive = zip::ZipArchive::new(zip_stream).unwrap();
+
+        archive.file_names().map(|s| String::from(s)).collect()
+    })
+    .await
+    .unwrap();
+    dbg!(&entries);
+    Ok(entries)
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -751,7 +767,8 @@ fn main() {
             get_firmware_release_notes,
             download_firmware,
             clear_file_cache,
-            check_root_files
+            check_root_files,
+            test_streamed_zip,
         ])
         .setup(|app| start_tasks(app))
         .run(tauri::generate_context!())
