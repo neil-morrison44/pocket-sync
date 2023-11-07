@@ -15,18 +15,16 @@ export const Modal = ({ children, className }: ModalProps) => {
     if (!mainWindow) return
 
     mainWindow.innerSize().then(({ height }) => {
-      setWrapperHeight(height)
+      setWrapperHeight(height / window.devicePixelRatio)
     })
 
     const unlisten = mainWindow.onResized(({ payload }) => {
-      setWrapperHeight(payload.height)
+      setWrapperHeight(payload.height / window.devicePixelRatio)
     })
     return () => {
       unlisten.then((l) => l())
     }
   }, [])
-
-  console.log({ wrapperHeight })
 
   return (
     <div className="modal__wrapper" style={{ height: `${wrapperHeight}px` }}>
