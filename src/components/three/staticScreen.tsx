@@ -108,6 +108,8 @@ export const StaticScreen = ({
     }
   })
 
+  // return <meshBasicMaterial color={"red"} />
+
   return (
     <shaderMaterial
       ref={shaderMaterialRef}

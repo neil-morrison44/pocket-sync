@@ -1,4 +1,4 @@
-import { Suspense, useMemo } from "react"
+import { useMemo } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import { useRecoilSmoothUpdatesFirstSuspend } from "../../hooks/recoilSmoothUpdates"
 import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
@@ -7,7 +7,6 @@ import { ErrorBoundary } from "../errorBoundary"
 import { Link } from "../link"
 import { NewsFeed } from "../newsFeed"
 import { Pocket } from "../three/pocket"
-import { RandomScreenshotScreen } from "../three/randomScreenshotScreen"
 
 import "./index.css"
 import { updateAvailableSelector } from "../../recoil/firmware/selectors"
@@ -15,7 +14,7 @@ import { currentViewAtom } from "../../recoil/view/atoms"
 import { StaticScreen } from "../three/staticScreen"
 import { useTranslation } from "react-i18next"
 import { semverCompare } from "../../utils/semverCompare"
-import { ColourContextProviderFromConfig } from "../three/colourContext"
+import { ColourContextProvider } from "../three/colourContext"
 
 export const About = () => {
   const selfReleases = useRecoilSmoothUpdatesFirstSuspend(
@@ -61,16 +60,17 @@ export const About = () => {
           </Link>
         )}
         <ErrorBoundary>
-          <ColourContextProviderFromConfig>
+          <ColourContextProvider body="white" buttons="white">
             <Pocket
               move="back-and-forth"
               screenMaterial={
-                <Suspense fallback={<StaticScreen />}>
-                  <RandomScreenshotScreen />
-                </Suspense>
+                <StaticScreen />
+                // <Suspense fallback={<StaticScreen />}>
+                //   <RandomScreenshotScreen />
+                // </Suspense>
               }
             />
-          </ColourContextProviderFromConfig>
+          </ColourContextProvider>
         </ErrorBoundary>
       </div>
 

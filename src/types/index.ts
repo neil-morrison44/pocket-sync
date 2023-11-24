@@ -201,6 +201,14 @@ export type PocketColour =
   | "trans_purple"
   | "trans_orange"
   | "trans_red"
+  | "indigo"
+  | "red"
+  | "green"
+  | "blue"
+  | "yellow"
+  | "pink"
+  | "orange"
+  | "silver"
 
 export type PocketSyncConfig = {
   version: string

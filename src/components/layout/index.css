@@ -22,8 +22,9 @@
 }
 
 .layout__sidebar-menu-item {
-  padding: 20px;
-  font-size: 1.5rem;
+  padding-inline: 16px;
+  padding-block: 14px;
+  font-size: 1.25rem;
   cursor: pointer;
   user-select: none;
   border-bottom: 1px solid black;
