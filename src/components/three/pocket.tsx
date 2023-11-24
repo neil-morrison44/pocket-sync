@@ -556,7 +556,7 @@ const Material = ({ isButton = false }: { isButton?: boolean }) => {
 
   const COLOUR: PartialColourMap = {
     black: "rgb(0,0,0)",
-    white: "rgb(235,235,235)",
+    white: "rgb(245,245,245)",
     glow: "rgb(163, 195, 138)",
     indigo: "rgb(80, 76, 137)",
     red: "rgb(135, 43, 42)",
@@ -571,6 +571,7 @@ const Material = ({ isButton = false }: { isButton?: boolean }) => {
   return (
     <meshPhysicalMaterial
       attach="material"
+      envMapIntensity={0.5}
       // ior={isButton ? 1.4 : 1.74}
       metalness={0}
       color={COLOUR[colour] || "red"}
