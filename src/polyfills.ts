@@ -11,7 +11,7 @@ export const installPolyfills = () => {
 
   if (!Object.hasOwn) {
     Object.defineProperty(Object, "hasOwn", {
-      value: function (object, property) {
+      value: function (object: object, property: string) {
         if (object == null) {
           throw new TypeError("Cannot convert undefined or null to object")
         }
@@ -19,7 +19,7 @@ export const installPolyfills = () => {
       },
       configurable: true,
       enumerable: false,
-      writable: true
+      writable: true,
     })
   }
 }
