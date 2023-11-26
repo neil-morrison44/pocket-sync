@@ -1,10 +1,5 @@
 import { Canvas, useFrame, useLoader } from "@react-three/fiber"
-import {
-  Environment,
-  OrbitControls,
-  RoundedBox,
-  Stats,
-} from "@react-three/drei"
+import { Environment, RoundedBox } from "@react-three/drei"
 import { ReactNode, useContext, useRef } from "react"
 
 import "./index.css"
@@ -45,13 +40,6 @@ type PocketProps = {
 }
 
 type PartialColourMap = Partial<Record<PocketColour, string>>
-type PartialScaleMap = Partial<Record<PocketColour, number>>
-
-const LIGHTING_SCALE: PartialScaleMap = {
-  black: 5,
-  white: 1.5,
-  glow: 0,
-}
 
 const SWAY_SPEED = 0.2
 
@@ -70,8 +58,8 @@ export const Pocket = ({
       <Environment files={envMap} />
       <Lights />
       <Body move={move} screenMaterial={screenMaterial} />
-      <OrbitControls enablePan={false} />
-      <Stats showPanel={1} />
+      {/* <OrbitControls enablePan={false} /> */}
+      {/* <Stats showPanel={1} /> */}
       <PostEffects />
       {children && children}
     </Canvas>
@@ -99,18 +87,10 @@ const PostEffects = () => {
 }
 
 const Lights = () => {
-  const colour = useContext(BodyColourContext)
-  const scale = LIGHTING_SCALE[colour] || LIGHTING_SCALE["white"] || 1
-
   return (
     <>
-      <directionalLight
-        position={[0, 200, 0]}
-        intensity={5 * scale}
-        castShadow
-      />
-      <pointLight position={[20, 10, 20]} intensity={1.5 * scale} castShadow />
-      <pointLight position={[10, 20, 10]} intensity={1 * scale} castShadow />
+      <pointLight position={[-5, 22, 10]} intensity={1500} castShadow />
+      <pointLight position={[0, -20, 10]} intensity={250} castShadow />
     </>
   )
 }
@@ -317,7 +297,6 @@ const Buttons = () => {
           scale={[0.2, 0.2, 0.2]}
           rotation={[-Math.PI / 2, 0, 0]}
         >
-          {/* <cylinderGeometry attach="geometry" args={[0.9, 0.9, 1, 16]} /> */}
           {index > 1 ? <ConcavePrimitive /> : <ConvexPrimitive />}
           {buttonsColour.startsWith("trans_") ? (
             <TransparentMaterial isButton />
@@ -543,16 +522,16 @@ const Material = ({ isButton = false }: { isButton?: boolean }) => {
   const colour = isButton ? buttonsColour : bodyColour
 
   const clearcoatRoughnessMap = useNoiseTexture({
-    size: 64,
-    min: 200,
+    size: 16,
+    min: 220,
     max: 255,
   })
   const clearcoatMap = useNoiseTexture({
-    size: 12,
-    min: 0,
-    max: 128,
+    size: 32,
+    min: 64,
+    max: 80,
   })
-  const roughnessMap = useNoiseTexture({ size: 128, min: 200, max: 255 })
+  const roughnessMap = useNoiseTexture({ size: 64, min: 230, max: 245 })
 
   const COLOUR: PartialColourMap = {
     black: "rgb(0,0,0)",
@@ -572,20 +551,14 @@ const Material = ({ isButton = false }: { isButton?: boolean }) => {
     <meshPhysicalMaterial
       attach="material"
       envMapIntensity={0.5}
-      // ior={isButton ? 1.4 : 1.74}
-      metalness={0}
+      metalness={colour === "silver" ? 1 : 0}
       color={COLOUR[colour] || "red"}
-      clearcoat={isButton ? 0.2 : 0.1}
+      clearcoat={isButton ? 0.25 : 0.1}
       emissive={COLOUR[colour]}
       emissiveIntensity={colour === "glow" ? 0.7 : 0}
-      // clearcoatRoughness={isButton ? 0.75 : 1}
-      // dithering
-      roughness={1}
       roughnessMap={roughnessMap}
       clearcoatMap={clearcoatMap}
       clearcoatRoughnessMap={clearcoatRoughnessMap}
-      // map={metalnessMap}
-      // map={clearcoatMap}
     />
   )
 }
