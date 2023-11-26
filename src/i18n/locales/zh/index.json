@@ -323,8 +323,17 @@
         "trans_green": "绿色",
         "trans_orange": "橙色",
         "trans_purple": "紫色",
-        "trans_red": "红色"
+        "trans_red": "红色",
+        "indigo": "靛蓝",
+        "red": "红色",
+        "green": "绿色",
+        "blue": "蓝色",
+        "yellow": "黄色",
+        "pink": "粉红色",
+        "orange": "橙色",
+        "silver": "银色"
       },
+      "classic_label": "经典",
       "transparent_label": "透明",
       "body_label": "主体",
       "buttons_label": "按钮",
