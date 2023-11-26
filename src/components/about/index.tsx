@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { Suspense, useMemo } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import { useRecoilSmoothUpdatesFirstSuspend } from "../../hooks/recoilSmoothUpdates"
 import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
@@ -15,6 +15,7 @@ import { StaticScreen } from "../three/staticScreen"
 import { useTranslation } from "react-i18next"
 import { semverCompare } from "../../utils/semverCompare"
 import { ColourContextProvider } from "../three/colourContext"
+import { RandomScreenshotScreen } from "../three/randomScreenshotScreen"
 
 export const About = () => {
   const selfReleases = useRecoilSmoothUpdatesFirstSuspend(
@@ -64,10 +65,9 @@ export const About = () => {
             <Pocket
               move="back-and-forth"
               screenMaterial={
-                <StaticScreen />
-                // <Suspense fallback={<StaticScreen />}>
-                //   <RandomScreenshotScreen />
-                // </Suspense>
+                <Suspense fallback={<StaticScreen />}>
+                  <RandomScreenshotScreen />
+                </Suspense>
               }
             />
           </ColourContextProvider>

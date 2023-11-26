@@ -82,7 +82,7 @@ const PostEffects = () => {
   const colour = useContext(BodyColourContext)
 
   return (
-    <EffectComposer enabled={true}>
+    <EffectComposer>
       {colour == "glow" ? (
         <Bloom
           intensity={0.05}
@@ -93,7 +93,7 @@ const PostEffects = () => {
       ) : (
         <></>
       )}
-      <N8AO color="black" aoRadius={2} intensity={1} />
+      <N8AO color="black" aoRadius={2} intensity={4} />
     </EffectComposer>
   )
 }
