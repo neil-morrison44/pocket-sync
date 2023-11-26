@@ -7,7 +7,6 @@ import { ErrorBoundary } from "../errorBoundary"
 import { Link } from "../link"
 import { NewsFeed } from "../newsFeed"
 import { Pocket } from "../three/pocket"
-import { RandomScreenshotScreen } from "../three/randomScreenshotScreen"
 
 import "./index.css"
 import { updateAvailableSelector } from "../../recoil/firmware/selectors"
@@ -16,6 +15,7 @@ import { StaticScreen } from "../three/staticScreen"
 import { useTranslation } from "react-i18next"
 import { semverCompare } from "../../utils/semverCompare"
 import { ColourContextProviderFromConfig } from "../three/colourContext"
+import { RandomScreenshotScreen } from "../three/randomScreenshotScreen"
 
 export const About = () => {
   const selfReleases = useRecoilSmoothUpdatesFirstSuspend(

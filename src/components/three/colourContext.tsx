@@ -37,6 +37,14 @@ const ALL_COLOURS: PocketColour[] = [
   "trans_green",
   "trans_red",
   "trans_smoke",
+  "indigo",
+  "red",
+  "green",
+  "blue",
+  "yellow",
+  "pink",
+  "orange",
+  "silver",
 ]
 
 export const ColourContextProviderRandomised = ({

@@ -48,24 +48,7 @@ export const Settings = () => {
                 updateConfig("colour", target.value as PocketColour)
               }
             >
-              <OptionsList
-                values={["black", "white", "glow"]}
-                i18nPrefix="3d_pocket.colours"
-              />
-              <optgroup label={t("3d_pocket.transparent_label")}>
-                <OptionsList
-                  values={[
-                    "trans_clear",
-                    "trans_smoke",
-                    "trans_blue",
-                    "trans_green",
-                    "trans_orange",
-                    "trans_purple",
-                    "trans_red",
-                  ]}
-                  i18nPrefix="3d_pocket.colours"
-                />
-              </optgroup>
+              <ColoursList />
             </select>
           </label>
 
@@ -82,24 +65,7 @@ export const Settings = () => {
               }}
             >
               <option value={"match"}>{t("3d_pocket.match_body")}</option>
-              <OptionsList
-                values={["black", "white", "glow"]}
-                i18nPrefix="3d_pocket.colours"
-              />
-              <optgroup label={t("3d_pocket.transparent_label")}>
-                <OptionsList
-                  values={[
-                    "trans_clear",
-                    "trans_smoke",
-                    "trans_blue",
-                    "trans_green",
-                    "trans_orange",
-                    "trans_purple",
-                    "trans_red",
-                  ]}
-                  i18nPrefix="3d_pocket.colours"
-                />
-              </optgroup>
+              <ColoursList />
             </select>
           </label>
         </div>
@@ -242,4 +208,46 @@ const OptionsList = ({ values, i18nPrefix }: OptionsListProps) => {
       {t(`${i18nPrefix}.${value}`)}
     </option>
   ))
+}
+
+const ColoursList = () => {
+  const { t } = useTranslation("settings")
+
+  return (
+    <>
+      <OptionsList
+        values={["black", "white", "glow"]}
+        i18nPrefix="3d_pocket.colours"
+      />
+      <optgroup label={t("3d_pocket.transparent_label")}>
+        <OptionsList
+          values={[
+            "trans_clear",
+            "trans_smoke",
+            "trans_blue",
+            "trans_green",
+            "trans_orange",
+            "trans_purple",
+            "trans_red",
+          ]}
+          i18nPrefix="3d_pocket.colours"
+        />
+      </optgroup>
+      <optgroup label={t("3d_pocket.classic_label")}>
+        <OptionsList
+          values={[
+            "indigo",
+            "red",
+            "green",
+            "blue",
+            "yellow",
+            "pink",
+            "orange",
+            "silver",
+          ]}
+          i18nPrefix="3d_pocket.colours"
+        />
+      </optgroup>
+    </>
+  )
 }

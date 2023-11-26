@@ -15,6 +15,11 @@ declare module "*.stl" {
   export default value
 }
 
+declare module "*.obj" {
+  const value: string
+  export default value
+}
+
 // Allow for virtual module imports
 // https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention
 declare module "virtual:*"

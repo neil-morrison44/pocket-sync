@@ -323,8 +323,17 @@
         "trans_green": "Verde",
         "trans_orange": "Naranja",
         "trans_purple": "Púrpura",
-        "trans_red": "Rojo"
+        "trans_red": "Rojo",
+        "indigo": "Índigo",
+        "red": "Rojo",
+        "green": "Verde",
+        "blue": "Azul",
+        "yellow": "Amarillo",
+        "pink": "Rosa",
+        "orange": "Naranja",
+        "silver": "Plata"
       },
+      "classic_label": "Clásicos",
       "transparent_label": "Transparente",
       "body_label": "Cuerpo",
       "buttons_label": "Botones",
