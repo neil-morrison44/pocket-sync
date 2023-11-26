@@ -246,5 +246,6 @@ function _applyBoxUV(
       coords[2 * idx2 + 1] = uvs.uv2.y
     }
   }
+  //@ts-ignore array _can_ be set to (though if there's a better way that'd be better)
   geom.attributes.uv.array = new Float32Array(coords)
 }
