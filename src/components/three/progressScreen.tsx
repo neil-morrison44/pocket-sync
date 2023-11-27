@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
-import { NearestFilter, Texture } from "three"
+import { useEffect, useRef } from "react"
+import { MeshBasicMaterial, NearestFilter, Texture } from "three"
 
 type ProgressScreenProps = {
   value: number
@@ -19,7 +19,7 @@ export const ProgressScreen = ({
   max = 100,
   message,
 }: ProgressScreenProps) => {
-  const [texture, setTexture] = useState<THREE.Texture | null>(null)
+  const materialRef = useRef<MeshBasicMaterial | null>(null)
 
   useEffect(() => {
     const canvas = document.createElement("canvas")
@@ -51,11 +51,11 @@ export const ProgressScreen = ({
       context.fillStyle = LIGHT_GREEN
       context.fillText(message, canvas.width / 2, canvas.height * 0.9)
     }
-
     canvas.toBlob((b) => {
       if (!b) return
       const image = new Image()
       image.src = URL.createObjectURL(b)
+
       image.onload = () => {
         const newTexture = new Texture()
         newTexture.image = image
@@ -63,15 +63,18 @@ export const ProgressScreen = ({
         newTexture.anisotropy = 4
         newTexture.minFilter = NearestFilter
         newTexture.magFilter = NearestFilter
-        setTexture(newTexture)
+
+        if (!materialRef.current) return
+        materialRef.current.map = newTexture
+        materialRef.current.needsUpdate = true
       }
     })
   }, [value, max, message])
-
   return (
     <meshBasicMaterial
       attach="material"
-      map={texture || undefined}
+      ref={materialRef}
+      color="rgb(190,190,190)"
     ></meshBasicMaterial>
   )
 }
