@@ -1,4 +1,4 @@
-.modal__wrapper{
+.modal__wrapper {
   position: fixed;
   top: 0;
   left: 0;
@@ -11,7 +11,7 @@
   align-items: center;
 }
 
-.modal{
+.modal {
   width: calc(100% - 100px);
   height: calc(100% - 100px);
   background-color: var(--background-colour);
@@ -22,4 +22,8 @@
   box-sizing: border-box;
   padding: 20px;
   gap: 10px;
+}
+
+.modal h2 {
+  margin-block-start: 8px;
 }
