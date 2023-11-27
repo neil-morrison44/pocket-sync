@@ -109,7 +109,6 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
 
       return requiredFiles
         .map((r) => {
-          console.log({ r })
           const existsAtRoot = rootFileInfo.find((fi) => {
             switch (fi.type) {
               case "UnZipped":
@@ -170,8 +169,6 @@ export const listRootFilesSelector = selector<RootFile[]>({
   get: async ({ get }) => {
     get(fileSystemInvalidationAtom)
     const rootFileInfo = await invokeListRootFiles()
-
-    console.log({ rootFileInfo })
     return rootFileInfo
   },
 })
