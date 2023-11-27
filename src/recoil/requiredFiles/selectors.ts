@@ -44,15 +44,20 @@ const FileInfoSelectorFamily = selectorFamily<
 
 const SingleRequiredFileInfo = selectorFamily<
   RequiredFileInfo,
-  { filename: string | undefined; path: string; type: "core" | "instance" }
+  {
+    filename: string | undefined
+    path: string
+    md5?: string
+    type: "core" | "instance"
+  }
 >({
   key: "SingleRequiredFileInfo",
   get:
-    ({ filename, path, type }) =>
+    ({ filename, path, type, md5 }) =>
     async ({ get }) => {
       get(fileSystemInvalidationAtom)
       const info = get(FileInfoSelectorFamily({ filename, path }))
-      return { ...info, type }
+      return { ...info, md5, type }
     },
 })
 
@@ -75,11 +80,13 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
         }
       )
 
+      console.log({ requiredCoreFiles })
+
       const fileInfo = (
         await Promise.all(
           requiredCoreFiles
             .filter(({ parameters }) => decodeDataParams(parameters).readOnly)
-            .map(async ({ filename, alternate_filenames, parameters }) => {
+            .map(async ({ filename, alternate_filenames, parameters, md5 }) => {
               const path = `Assets/${platform_id}/${
                 decodeDataParams(parameters).coreSpecific ? coreName : "common"
               }`
@@ -88,7 +95,12 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                 [filename, ...(alternate_filenames || [])].map(
                   async (filename) =>
                     get(
-                      SingleRequiredFileInfo({ filename, path, type: "core" })
+                      SingleRequiredFileInfo({
+                        filename,
+                        path,
+                        md5,
+                        type: "core",
+                      })
                     )
                 )
               )
@@ -141,7 +153,7 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                     .filter(
                       ({ filename }) => !filename || !filename?.endsWith(".sav")
                     )
-                    .map(async ({ filename, parameters }) => {
+                    .map(async ({ filename, md5, parameters }) => {
                       const path = `Assets/${platform_id}/${
                         decodeDataParams(parameters).coreSpecific
                           ? coreName
@@ -152,6 +164,7 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                         SingleRequiredFileInfo({
                           filename,
                           path,
+                          md5,
                           type: "instance",
                         })
                       )
@@ -162,6 +175,16 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
           })
       )
 
-      return [...fileInfo, ...instanceFileInfo.flat(3)]
+      return [
+        ...fileInfo,
+        ...instanceFileInfo
+          .flat(3)
+          .filter(
+            (data, index, arr) =>
+              arr.findIndex(
+                (d) => d.filename === data.filename && d.path === data.path
+              ) === index
+          ),
+      ]
     },
 })

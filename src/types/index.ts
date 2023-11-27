@@ -44,6 +44,7 @@ type DataSlotJSON = {
   extensions?: string[]
   filename?: string
   alternate_filenames?: string[]
+  md5?: string
 }
 
 export type RequiredFileInfo = {
@@ -53,7 +54,15 @@ export type RequiredFileInfo = {
   type: "core" | "instance"
   crc32?: number
   mtime?: number
-  status?: "ok" | "wrong" | "downloadable" | "not_in_archive" | "at_root"
+  status?:
+    | "ok"
+    | "wrong"
+    | "downloadable"
+    | "not_in_archive"
+    | "at_root"
+    | "at_root_match"
+    | "at_root_mismatch"
+  md5?: string
 }
 
 export type PlatformId = string
@@ -285,10 +294,14 @@ export type RootFileZipped = {
   type: "Zipped"
   inner_file: string
   zip_file: string
+  md5: string
 }
+
 export type RootFileUnZipped = {
   crc32: number
   type: "UnZipped"
   file_name: string
+  md5: string
 }
+
 export type RootFile = RootFileZipped | RootFileUnZipped

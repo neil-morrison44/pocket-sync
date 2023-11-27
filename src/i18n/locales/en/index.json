@@ -74,7 +74,9 @@
       "not_in_archive": "Not in archive",
       "ok": "Downloaded",
       "unknown": "Unknown",
-      "at_root": "Exists in root folder"
+      "at_root": "Found in root",
+      "at_root_match": "File verified. Found in root",
+      "at_root_mismatch": "File mismatch. Please check the root"
     }
   },
   "cores": {

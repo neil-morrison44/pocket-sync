@@ -74,7 +74,9 @@
       "not_in_archive": "No en el archivo",
       "ok": "Descargado",
       "unknown": "Desconocido",
-      "at_root": "Existe en la carpeta raíz"
+      "at_root": "Encontrado en la raíz",
+      "at_root_match": "Archivo verificado. Encontrado en la raíz",
+      "at_root_mismatch": "El archivo no coincide. Por favor revisa la raíz"
     }
   },
   "cores": {
