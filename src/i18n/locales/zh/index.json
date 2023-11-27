@@ -74,7 +74,9 @@
       "not_in_archive": "未入库",
       "ok": "已下载",
       "unknown": "未知",
-      "at_root": "已存在于根目录"
+      "at_root": "已存在于根目录",
+      "at_root_match": "文件已验证。在根中找到",
+      "at_root_mismatch": "文件不匹配。请检查根目录"
     }
   },
   "cores": {

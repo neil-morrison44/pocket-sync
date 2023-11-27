@@ -109,6 +109,7 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
 
       return requiredFiles
         .map((r) => {
+          console.log({ r })
           const existsAtRoot = rootFileInfo.find((fi) => {
             switch (fi.type) {
               case "UnZipped":
@@ -118,12 +119,26 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
             }
           })
 
-          if (existsAtRoot)
+          if (existsAtRoot) {
+            let status: RequiredFileInfo["status"] = "at_root"
+            switch (r.md5) {
+              case undefined:
+                break
+              case existsAtRoot.md5:
+                status = "at_root_match"
+                break
+              default:
+                status = "at_root_mismatch"
+                break
+            }
+
             return {
               ...r,
-              exists: existsAtRoot.crc32 === r.crc32,
-              status: "at_root",
+              exists:
+                existsAtRoot.crc32 === r.crc32 && r.md5 === existsAtRoot.md5,
+              status,
             } satisfies RequiredFileInfo
+          }
 
           const metadata = archiveMetadata.find(
             ({ name }) => name === r.filename
@@ -155,6 +170,8 @@ export const listRootFilesSelector = selector<RootFile[]>({
   get: async ({ get }) => {
     get(fileSystemInvalidationAtom)
     const rootFileInfo = await invokeListRootFiles()
+
+    console.log({ rootFileInfo })
     return rootFileInfo
   },
 })
