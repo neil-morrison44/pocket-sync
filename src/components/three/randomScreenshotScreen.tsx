@@ -4,7 +4,7 @@ import {
   screenshotsListSelector,
   SingleScreenshotImageSelectorFamily,
 } from "../../recoil/screenshots/selectors"
-import { Texture } from "three"
+import { LinearFilter, NearestFilter, Texture } from "three"
 import { StaticScreen } from "./staticScreen"
 
 type RandomScreenshotScreenProps = {
@@ -42,13 +42,14 @@ const ScreenshotScreen = ({ name }: { name: string }) => {
   const image = useRecoilValue(SingleScreenshotImageSelectorFamily(name))
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       if (!image) return
 
       const newTexture = new Texture()
       newTexture.image = image
       newTexture.needsUpdate = true
-      newTexture.anisotropy = 4
+      newTexture.minFilter = LinearFilter
+      newTexture.magFilter = NearestFilter
       setTexture(newTexture)
     })()
   }, [image])
