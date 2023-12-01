@@ -83,3 +83,37 @@ export const SingleScreenshotImageSelectorFamily = selectorFamily<
       return loadPromise
     },
 })
+
+export const SingleScaledScreenshotImageSelectorFamily = selectorFamily<
+  HTMLImageElement | null,
+  string
+>({
+  key: "SingleScaledScreenshotImageSelectorFamily",
+  get:
+    (fileName) =>
+    async ({ get }) => {
+      const SCALE = 4
+      const image = get(SingleScreenshotImageSelectorFamily(fileName))
+      if (!image) return null
+
+      const canvas = document.createElement("canvas")
+      canvas.width = image.width * SCALE
+      canvas.height = image.height * SCALE
+
+      const context = canvas.getContext("2d")
+      if (!context) return null
+      context.imageSmoothingEnabled = false
+      context.drawImage(image, 0, 0, image.width * SCALE, image.height * SCALE)
+
+      const loadPromise = new Promise<HTMLImageElement>((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (!blob) return reject()
+          const scaledImage = new Image()
+          scaledImage.src = URL.createObjectURL(blob)
+          resolve(scaledImage)
+        })
+      })
+
+      return loadPromise
+    },
+})

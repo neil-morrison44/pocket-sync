@@ -1,11 +1,11 @@
 import { Canvas, useFrame, useLoader } from "@react-three/fiber"
 import { Environment, RoundedBox } from "@react-three/drei"
 import { ReactNode, useContext, useRef } from "react"
-
 import "./index.css"
 import {
   DoubleSide,
   Group,
+  Material,
   MathUtils,
   Mesh,
   NoToneMapping,
@@ -29,17 +29,15 @@ import {
   PowerButtonPrimitive,
   VolumeButtonPrimitive,
 } from "./stlPrimitives"
-import { BodyColourContext, ButtonsColourContext } from "./colourContext"
-import { PocketColour } from "../../types"
-import { useNoiseTexture } from "./hooks/useNoiseTexture"
+import { BodyColourContext } from "./colourContext"
+import { useBodyMaterial } from "./hooks/useBodyMaterial"
+import { useButtonsMaterial } from "./hooks/useButtonsMaterial"
 
 type PocketProps = {
   move?: "none" | "spin" | "back-and-forth"
   screenMaterial?: ReactNode
   children?: ReactNode
 }
-
-type PartialColourMap = Partial<Record<PocketColour, string>>
 
 const SWAY_SPEED = 0.2
 
@@ -54,7 +52,9 @@ export const Pocket = ({
       className="three-pocket"
       camera={{ fov: 50, position: [0, 0, 42] }}
       onCreated={(state) => (state.gl.toneMapping = NoToneMapping)}
+      dpr={2}
     >
+      {/* <Perf deepAnalyze matrixUpdate /> */}
       <Environment files={envMap} />
       <Lights />
       <Body move={move} screenMaterial={screenMaterial} />
@@ -100,7 +100,6 @@ const Body = ({
   screenMaterial,
 }: Pick<PocketProps, "move" | "screenMaterial">) => {
   const bodyColour = useContext(BodyColourContext)
-  const buttonsColour = useContext(ButtonsColourContext)
 
   const groupRef = useRef<THREE.Group>(null)
   const speedRef = useRef<number>(SWAY_SPEED)
@@ -125,33 +124,30 @@ const Body = ({
     }
   })
 
+  const bodyMaterial = useBodyMaterial()
+  const buttonsMaterial = useButtonsMaterial(bodyMaterial)
+
   return (
     <group ref={groupRef} rotation={[0, move === "spin" ? 1 : 0, -0.2]}>
       <mesh
         scale={[0.2, 0.2, 0.2]}
         rotation={[0, Math.PI, 0]}
         position={[0, 0, 1.05]}
+        material={bodyMaterial}
         receiveShadow
+        castShadow
       >
         <FrontMeshPrimitive />
-        {bodyColour.startsWith("trans_") ? (
-          <TransparentMaterial />
-        ) : (
-          <Material />
-        )}
       </mesh>
       <mesh
         scale={[0.2, 0.2, 0.2]}
         rotation={[0, 0, 0]}
         position={[0, 0, -1.66]}
+        material={bodyMaterial}
         receiveShadow
+        castShadow
       >
         <BackMeshPrimitive />
-        {bodyColour.startsWith("trans_") ? (
-          <TransparentMaterial />
-        ) : (
-          <Material />
-        )}
       </mesh>
 
       {bodyColour.startsWith("trans_") && (
@@ -162,10 +158,10 @@ const Body = ({
         </>
       )}
 
-      <Buttons />
-      <DPAD />
-      <BottomButtons />
-      <ShoulderButtons />
+      <Buttons material={buttonsMaterial} />
+      <DPAD material={buttonsMaterial} />
+      <BottomButtons material={buttonsMaterial} />
+      <ShoulderButtons material={buttonsMaterial} />
 
       <Screen screenMaterial={screenMaterial} />
 
@@ -184,13 +180,9 @@ const Body = ({
         position={[-8.35, 8.1, -0.07]}
         scale={[0.2, 0.2, 0.2]}
         rotation={[0, -Math.PI / 2, 0]}
+        material={buttonsMaterial}
       >
         <VolumeButtonPrimitive />
-        {buttonsColour.startsWith("trans_") ? (
-          <TransparentMaterial isButton />
-        ) : (
-          <Material isButton />
-        )}
       </mesh>
     </group>
   )
@@ -240,9 +232,7 @@ const Screen = ({ screenMaterial }: PocketProps) => {
 
 const BUTTON_GAP = 1.25 as const
 
-const Buttons = () => {
-  const buttonsColour = useContext(ButtonsColourContext)
-
+const Buttons = ({ material }: { material: Material }) => {
   const positions = [
     [BUTTON_GAP, 0, BUTTON_GAP],
     [-BUTTON_GAP, 0, BUTTON_GAP],
@@ -296,27 +286,22 @@ const Buttons = () => {
           onPointerLeave={() => (hoverButtonRef.current = null)}
           scale={[0.2, 0.2, 0.2]}
           rotation={[-Math.PI / 2, 0, 0]}
+          material={material}
         >
           {index > 1 ? <ConcavePrimitive /> : <ConvexPrimitive />}
-          {buttonsColour.startsWith("trans_") ? (
-            <TransparentMaterial isButton />
-          ) : (
-            <Material isButton />
-          )}
         </mesh>
       ))}
     </group>
   )
 }
 
-const BottomButtons = () => {
+const BottomButtons = ({ material }: { material: Material }) => {
   const positions = [
     [BUTTON_GAP, 0, BUTTON_GAP],
     [0, 0, 0],
     [-BUTTON_GAP, 0, -BUTTON_GAP],
   ] as const
 
-  const buttonsColour = useContext(ButtonsColourContext)
   const refs = [useRef<Mesh>(null), useRef<Mesh>(null), useRef<Mesh>(null)]
   const hoverButtonRef = useRef<keyof typeof refs | null>(null)
 
@@ -356,21 +341,16 @@ const BottomButtons = () => {
           onPointerLeave={() => (hoverButtonRef.current = null)}
           castShadow
           receiveShadow
+          material={material}
         >
           <cylinderGeometry attach="geometry" args={[0.5, 0.5, 1.5, 12]} />
-          {buttonsColour.startsWith("trans_") ? (
-            <TransparentMaterial isButton />
-          ) : (
-            <Material isButton />
-          )}
         </mesh>
       ))}
     </group>
   )
 }
 
-const DPAD = () => {
-  const buttonsColour = useContext(ButtonsColourContext)
+const DPAD = ({ material }: { material: Material }) => {
   const hoverRef = useRef<boolean>(false)
   const angleRef = useRef<number>(0)
   const groupRef = useRef<Group>(null)
@@ -420,21 +400,16 @@ const DPAD = () => {
           receiveShadow
           scale={[0.2, 0.2, 0.2]}
           rotation={[-Math.PI / 2, 0, 0]}
+          material={material}
         >
           <DpadPrimitive />
-          {buttonsColour.startsWith("trans_") ? (
-            <TransparentMaterial isButton />
-          ) : (
-            <Material isButton />
-          )}
         </mesh>
       </group>
     </group>
   )
 }
 
-const ShoulderButtons = () => {
-  const buttonsColour = useContext(ButtonsColourContext)
+const ShoulderButtons = ({ material }: { material: Material }) => {
   const leftButtonRef = useRef<Mesh>(null)
   const leftButtonHoverRef = useRef(false)
 
@@ -489,13 +464,9 @@ const ShoulderButtons = () => {
         rotation={[-Math.PI / 2, 0, 0]}
         castShadow
         receiveShadow
+        material={material}
       >
         <ShoulderButtonPrimitive />
-        {buttonsColour.startsWith("trans_") ? (
-          <TransparentMaterial isButton />
-        ) : (
-          <Material isButton />
-        )}
       </mesh>
       <mesh
         position={[7.3, BUTTON_DOWN, -2.6]}
@@ -504,62 +475,11 @@ const ShoulderButtons = () => {
         onPointerLeave={() => (rightButtonHoverRef.current = false)}
         scale={[0.2, 0.2, 0.2]}
         rotation={[-Math.PI / 2, 0, Math.PI]}
+        material={material}
       >
         <ShoulderButtonPrimitive />
-        {buttonsColour.startsWith("trans_") ? (
-          <TransparentMaterial isButton />
-        ) : (
-          <Material isButton />
-        )}
       </mesh>
     </>
-  )
-}
-
-const Material = ({ isButton = false }: { isButton?: boolean }) => {
-  const bodyColour = useContext(BodyColourContext)
-  const buttonsColour = useContext(ButtonsColourContext)
-  const colour = isButton ? buttonsColour : bodyColour
-
-  const clearcoatRoughnessMap = useNoiseTexture({
-    size: 16,
-    min: 220,
-    max: 255,
-  })
-  const clearcoatMap = useNoiseTexture({
-    size: 32,
-    min: 64,
-    max: 80,
-  })
-  const roughnessMap = useNoiseTexture({ size: 64, min: 230, max: 245 })
-
-  const COLOUR: PartialColourMap = {
-    black: "rgb(0,0,0)",
-    white: "rgb(245,245,245)",
-    glow: "rgb(163, 195, 138)",
-    indigo: "rgb(80, 76, 137)",
-    red: "rgb(135, 43, 42)",
-    green: "rgb(6, 138, 100)",
-    blue: "rgb(68, 90, 153)",
-    yellow: "rgb(227, 175, 45)",
-    pink: "rgb(238, 141, 183)",
-    orange: "rgb(236, 159, 74)",
-    silver: "rgb(208, 205, 204)",
-  }
-
-  return (
-    <meshPhysicalMaterial
-      attach="material"
-      envMapIntensity={0.5}
-      metalness={colour === "silver" ? 1 : 0}
-      color={COLOUR[colour] || "red"}
-      clearcoat={isButton ? 0.25 : 0.1}
-      emissive={COLOUR[colour]}
-      emissiveIntensity={colour === "glow" ? 0.7 : 0}
-      roughnessMap={roughnessMap}
-      clearcoatMap={clearcoatMap}
-      clearcoatRoughnessMap={clearcoatRoughnessMap}
-    />
   )
 }
 
@@ -600,37 +520,5 @@ const MainBoard = () => {
     >
       <primitive object={board.scene} />
     </group>
-  )
-}
-
-const TransparentMaterial = ({ isButton = false }: { isButton?: boolean }) => {
-  const bodyColour = useContext(BodyColourContext)
-  const buttonsColour = useContext(ButtonsColourContext)
-
-  const colour = isButton ? buttonsColour : bodyColour
-
-  const COLOURS: PartialColourMap = {
-    trans_purple: "rgb(205,175,250)",
-    trans_orange: "rgb(200,130,10)",
-    trans_clear: "rgb(220,220,220)",
-    trans_smoke: "rgb(120,120,120)",
-    trans_red: "rgb(235, 90, 90)",
-    trans_blue: "rgb(110, 100, 255)",
-    trans_green: "rgb(110, 255, 110)",
-  }
-
-  return (
-    <meshPhysicalMaterial
-      attach="material"
-      transmission={0.975}
-      opacity={1}
-      roughness={0.2}
-      color={COLOURS[colour] || "red"}
-      ior={1.46}
-      clearcoat={1}
-      clearcoatRoughness={1}
-      transparent
-      side={DoubleSide}
-    />
   )
 }

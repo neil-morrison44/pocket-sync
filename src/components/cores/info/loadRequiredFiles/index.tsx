@@ -116,7 +116,8 @@ export const LoadRequiredFiles = ({
                       ({ status }) =>
                         status === "downloadable" ||
                         status === "wrong" ||
-                        status === "at_root"
+                        status === "at_root" ||
+                        status === "at_root_match"
                     )
                   )
                 }

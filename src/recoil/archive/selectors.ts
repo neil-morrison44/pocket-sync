@@ -134,7 +134,8 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
             return {
               ...r,
               exists:
-                existsAtRoot.crc32 === r.crc32 && r.md5 === existsAtRoot.md5,
+                existsAtRoot.crc32 === r.crc32 &&
+                (!r.md5 || r.md5 === existsAtRoot.md5),
               status,
             } satisfies RequiredFileInfo
           }

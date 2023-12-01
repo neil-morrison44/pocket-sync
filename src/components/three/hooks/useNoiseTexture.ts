@@ -6,6 +6,7 @@ type NoiseTextureArgs = {
   size: number
   min: number
   max: number
+  pixelModFunc?: (rgb: [number, number, number]) => [number, number, number]
 }
 const NOISE_CACHE: Record<string, string> = {}
 
@@ -14,7 +15,7 @@ const generateNoise = (args: NoiseTextureArgs): string => {
 
   if (NOISE_CACHE[cacheKey]) return NOISE_CACHE[cacheKey]
 
-  const { size, min, max } = args
+  const { size, min, max, pixelModFunc } = args
   const canvas = document.createElement("canvas")
   canvas.width = canvas.height = size
 
@@ -27,9 +28,17 @@ const generateNoise = (args: NoiseTextureArgs): string => {
   const imageData = context.createImageData(size, size)
 
   for (let index = 0; index < imageData.data.length; index += 4) {
-    imageData.data[index] = Math.round(min + Math.random() * (max - min))
-    imageData.data[index + 1] = Math.round(min + Math.random() * (max - min))
-    imageData.data[index + 2] = Math.round(min + Math.random() * (max - min))
+    const rgb = [
+      Math.round(min + Math.random() * (max - min)),
+      Math.round(min + Math.random() * (max - min)),
+      Math.round(min + Math.random() * (max - min)),
+    ] as [number, number, number]
+
+    const [r, g, b] = pixelModFunc ? pixelModFunc(rgb) : rgb
+
+    imageData.data[index] = r
+    imageData.data[index + 1] = g
+    imageData.data[index + 2] = b
     imageData.data[index + 3] = 255
   }
 
@@ -47,12 +56,14 @@ export const useNoiseTexture = ({
   size,
   min = 0,
   max = 255,
+  pixelModFunc,
 }: NoiseTextureArgs): Texture | null => {
   const imageUrl = useMemo(() => {
     return generateNoise({
       size,
       min,
       max,
+      pixelModFunc,
     })
   }, [size, min, max])
 
