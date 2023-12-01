@@ -245,7 +245,7 @@ async fn install_archive_files(
 
     let mut failed_already = HashSet::new();
     let mut progress = progress::ProgressEmitter::start(file_count, &window);
-    let root_files = check_root_files(state).await?;
+    let root_files = check_root_files(state, None).await?;
 
     for file in files {
         let matching_root_files: Vec<_> = root_files
@@ -672,6 +672,7 @@ mod files_from_zip;
 #[tauri::command(async)]
 async fn check_root_files(
     state: tauri::State<'_, PocketSyncState>,
+    extensions: Option<Vec<&str>>,
 ) -> Result<Vec<RootFile>, String> {
     let pocket_path = state.0.pocket_path.read().await;
     let mut entries = tokio::fs::read_dir(&pocket_path.as_path())
@@ -695,6 +696,17 @@ async fn check_root_files(
                         if files.len() > 0 {
                             let zip_file = String::from(file_name);
                             let inner_file = files[0].clone();
+                            let file_path = PathBuf::from(&inner_file);
+                            if let Some(ext) = file_path.extension() {
+                                match extensions
+                                    .as_ref()
+                                    .and_then(|exts| Some(exts.iter().any(|ex| *ex == ext)))
+                                {
+                                    None | Some(true) => (),
+                                    Some(false) => continue,
+                                }
+                            }
+
                             results.push(RootFile::Zipped {
                                 crc32: crc32_file_in_zip(&pocket_path.join(&zip_file), &inner_file)
                                     .await?,
@@ -705,6 +717,14 @@ async fn check_root_files(
                             })
                         }
                     } else {
+                        match extensions
+                            .as_ref()
+                            .and_then(|exts| Some(exts.iter().any(|ex| *ex == ext)))
+                        {
+                            None | Some(true) => (),
+                            Some(false) => continue,
+                        }
+
                         let file_name = String::from(file_name);
                         let file_path = &pocket_path.join(&file_name);
 

@@ -105,7 +105,12 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
       get(fileSystemInvalidationAtom)
       const archiveMetadata = get(archiveMetadataSelector)
       const requiredFiles = get(RequiredFileInfoSelectorFamily(coreName))
-      const rootFileInfo = get(listRootFilesSelector)
+      const extensions = requiredFiles
+        .map((r) => r.filename.split(".").at(-1) as string)
+        .filter((e, index, arr) => index === arr.indexOf(e))
+      const rootFileInfo = get(ListSomeRootFilesSelectorFamily(extensions))
+
+      console.log({ extensions, rootFileInfo })
 
       return requiredFiles
         .map((r) => {
@@ -165,11 +170,16 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
     },
 })
 
-export const listRootFilesSelector = selector<RootFile[]>({
-  key: "listRootFilesSelector",
-  get: async ({ get }) => {
-    get(fileSystemInvalidationAtom)
-    const rootFileInfo = await invokeListRootFiles()
-    return rootFileInfo
-  },
+export const ListSomeRootFilesSelectorFamily = selectorFamily<
+  RootFile[],
+  string[]
+>({
+  key: "ListSomeRootFilesSelectorFamily",
+  get:
+    (extensions) =>
+    async ({ get }) => {
+      get(fileSystemInvalidationAtom)
+      const rootFileInfo = await invokeListRootFiles(extensions)
+      return rootFileInfo
+    },
 })
