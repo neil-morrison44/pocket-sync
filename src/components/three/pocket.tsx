@@ -1,7 +1,7 @@
 import { Canvas, useFrame, useLoader } from "@react-three/fiber"
 import { Environment, RoundedBox } from "@react-three/drei"
 import { ReactNode, useContext, useRef } from "react"
-
+import { Perf } from "r3f-perf"
 import "./index.css"
 import {
   DoubleSide,
@@ -54,7 +54,9 @@ export const Pocket = ({
       className="three-pocket"
       camera={{ fov: 50, position: [0, 0, 42] }}
       onCreated={(state) => (state.gl.toneMapping = NoToneMapping)}
+      dpr={2}
     >
+      <Perf deepAnalyze matrixUpdate />
       <Environment files={envMap} />
       <Lights />
       <Body move={move} screenMaterial={screenMaterial} />
@@ -533,6 +535,16 @@ const Material = ({ isButton = false }: { isButton?: boolean }) => {
   })
   const roughnessMap = useNoiseTexture({ size: 64, min: 230, max: 245 })
 
+  const metalnessMap = useNoiseTexture({
+    size: 64,
+    min: 0,
+    max: 255,
+    pixelModFunc: ([r, g, b]) => {
+      const newB = b > 200 ? 255 : 0
+      return [r, g, newB]
+    },
+  })
+
   const COLOUR: PartialColourMap = {
     black: "rgb(0,0,0)",
     white: "rgb(245,245,245)",
@@ -552,6 +564,7 @@ const Material = ({ isButton = false }: { isButton?: boolean }) => {
       attach="material"
       envMapIntensity={0.5}
       metalness={colour === "silver" ? 1 : 0}
+      metalnessMap={metalnessMap}
       color={COLOUR[colour] || "red"}
       clearcoat={isButton ? 0.25 : 0.1}
       emissive={COLOUR[colour]}

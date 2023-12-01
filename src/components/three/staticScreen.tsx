@@ -128,6 +128,7 @@ export const StaticScreen = ({
         }[mode]
       }
       uniforms={uniforms}
+      needsUpdate
     />
   )
 }

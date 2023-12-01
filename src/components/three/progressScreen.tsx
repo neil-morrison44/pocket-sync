@@ -1,5 +1,10 @@
 import { useEffect, useRef } from "react"
-import { MeshBasicMaterial, NearestFilter, Texture } from "three"
+import {
+  MeshBasicMaterial,
+  NearestFilter,
+  SRGBColorSpace,
+  Texture,
+} from "three"
 
 type ProgressScreenProps = {
   value: number
@@ -63,18 +68,16 @@ export const ProgressScreen = ({
         newTexture.anisotropy = 4
         newTexture.minFilter = NearestFilter
         newTexture.magFilter = NearestFilter
+        newTexture.colorSpace = SRGBColorSpace
 
         if (!materialRef.current) return
+        materialRef.current.map?.dispose()
         materialRef.current.map = newTexture
         materialRef.current.needsUpdate = true
       }
     })
   }, [value, max, message])
   return (
-    <meshBasicMaterial
-      attach="material"
-      ref={materialRef}
-      color="rgb(190,190,190)"
-    ></meshBasicMaterial>
+    <meshBasicMaterial attach="material" ref={materialRef}></meshBasicMaterial>
   )
 }

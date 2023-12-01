@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useRecoilValue } from "recoil"
 import {
   screenshotsListSelector,
-  SingleScreenshotImageSelectorFamily,
+  SingleScaledScreenshotImageSelectorFamily,
 } from "../../recoil/screenshots/selectors"
-import { LinearFilter, NearestFilter, Texture } from "three"
+import { MeshBasicMaterial, SRGBColorSpace, Texture } from "three"
 import { StaticScreen } from "./staticScreen"
 
 type RandomScreenshotScreenProps = {
@@ -38,26 +38,24 @@ export const RandomScreenshotScreen = ({
 }
 
 const ScreenshotScreen = ({ name }: { name: string }) => {
-  const [texture, setTexture] = useState<THREE.Texture | null>(null)
-  const image = useRecoilValue(SingleScreenshotImageSelectorFamily(name))
+  const materialRef = useRef<MeshBasicMaterial | null>(null)
+  const image = useRecoilValue(SingleScaledScreenshotImageSelectorFamily(name))
 
   useEffect(() => {
-    ;(async () => {
-      if (!image) return
+    if (!image || !materialRef.current) return
 
-      const newTexture = new Texture()
-      newTexture.image = image
-      newTexture.needsUpdate = true
-      newTexture.minFilter = LinearFilter
-      newTexture.magFilter = NearestFilter
-      setTexture(newTexture)
-    })()
+    const newTexture = new Texture(image)
+    newTexture.needsUpdate = true
+    // newTexture.minFilter = LinearFilter
+    // newTexture.magFilter = NearestFilter
+    newTexture.colorSpace = SRGBColorSpace
+
+    materialRef.current.map?.dispose()
+    materialRef.current.map = newTexture
+    materialRef.current.needsUpdate = true
   }, [image])
 
   return (
-    <meshBasicMaterial
-      attach="material"
-      map={texture || undefined}
-    ></meshBasicMaterial>
+    <meshBasicMaterial ref={materialRef} attach="material"></meshBasicMaterial>
   )
 }
