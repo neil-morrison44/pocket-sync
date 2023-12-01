@@ -349,7 +349,7 @@
     },
     "archive": {
       "save": "Guardar",
-      "title": "Libreria ROM y BIOS",
+      "title": "Libreria ROM y BIOS (Archivos requeridos)",
       "warning": "Por favor consulte las leyes locales sobre la descarga de archivos ROM y BIOS potencialmente protegidos por derechos de autor (arcade).\nSi se siente cómodo con esto, copie la siguiente URL en la entrada y presione 'guardar'."
     },
     "clear_file_cache": {
