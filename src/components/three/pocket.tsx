@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useLoader } from "@react-three/fiber"
 import { Environment, PerformanceMonitor, RoundedBox } from "@react-three/drei"
-import { ReactNode, useContext, useRef } from "react"
+import { ReactNode, useContext, useEffect, useRef } from "react"
 import "./index.css"
 import {
   DoubleSide,
@@ -51,7 +51,12 @@ export const Pocket = ({
   children,
 }: PocketProps) => {
   const [perfLevel, setPerfLevel] = useRecoilState(performanceLevelAtom)
+  const seenPerfLevelsRef = useRef(new Set<number>())
   const dpr = [1, 1.25, 1.5, 2][perfLevel]
+
+  useEffect(() => {
+    seenPerfLevelsRef.current.add(perfLevel)
+  }, [perfLevel])
 
   return (
     <Canvas
@@ -64,6 +69,12 @@ export const Pocket = ({
       <PerformanceMonitor
         onIncline={() => setPerfLevel((pl) => Math.min(MAX_PERF_LEVEL, pl + 1))}
         onDecline={() => setPerfLevel((pl) => Math.max(0, pl - 1))}
+        flipflops={3}
+        onFallback={() =>
+          setPerfLevel(
+            Math.min(...Array.from(seenPerfLevelsRef.current.values()))
+          )
+        }
       />
       <PerfLevelContext.Provider value={perfLevel}>
         {/* <Perf deepAnalyze matrixUpdate /> */}
@@ -71,7 +82,7 @@ export const Pocket = ({
         <Lights />
         <Body move={move} screenMaterial={screenMaterial} />
         {/* <OrbitControls enablePan={false} /> */}
-        {/* <Stats showPanel={1} /> */}
+        {/* <Stats showPanel={0} /> */}
         <PostEffects />
         {children && children}
       </PerfLevelContext.Provider>
