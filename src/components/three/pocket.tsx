@@ -33,7 +33,6 @@ import { BodyColourContext } from "./colourContext"
 import { useBodyMaterial } from "./hooks/useBodyMaterial"
 import { useButtonsMaterial } from "./hooks/useButtonsMaterial"
 import { PerfLevelContext } from "./context/perfLevel"
-import { Perf } from "r3f-perf"
 import { useRecoilState } from "recoil"
 import { performanceLevelAtom } from "../../recoil/atoms"
 
@@ -67,7 +66,7 @@ export const Pocket = ({
         onDecline={() => setPerfLevel((pl) => Math.max(0, pl - 1))}
       />
       <PerfLevelContext.Provider value={perfLevel}>
-        <Perf deepAnalyze matrixUpdate />
+        {/* <Perf deepAnalyze matrixUpdate /> */}
         <Environment files={envMap} />
         <Lights />
         <Body move={move} screenMaterial={screenMaterial} />
