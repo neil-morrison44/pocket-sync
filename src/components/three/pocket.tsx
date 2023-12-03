@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useLoader } from "@react-three/fiber"
-import { Environment, RoundedBox } from "@react-three/drei"
-import { ReactNode, useContext, useRef } from "react"
+import { Environment, PerformanceMonitor, RoundedBox } from "@react-three/drei"
+import { ReactNode, useContext, useEffect, useRef } from "react"
 import "./index.css"
 import {
   DoubleSide,
@@ -32,6 +32,9 @@ import {
 import { BodyColourContext } from "./colourContext"
 import { useBodyMaterial } from "./hooks/useBodyMaterial"
 import { useButtonsMaterial } from "./hooks/useButtonsMaterial"
+import { PerfLevelContext } from "./context/perfLevel"
+import { useRecoilState } from "recoil"
+import { performanceLevelAtom } from "../../recoil/atoms"
 
 type PocketProps = {
   move?: "none" | "spin" | "back-and-forth"
@@ -40,34 +43,57 @@ type PocketProps = {
 }
 
 const SWAY_SPEED = 0.2
+const MAX_PERF_LEVEL = 3
 
 export const Pocket = ({
   move = "none",
   screenMaterial,
   children,
 }: PocketProps) => {
+  const [perfLevel, setPerfLevel] = useRecoilState(performanceLevelAtom)
+  const seenPerfLevelsRef = useRef(new Set<number>())
+  const dpr = [1, 1.25, 1.5, 2][perfLevel]
+
+  useEffect(() => {
+    seenPerfLevelsRef.current.add(perfLevel)
+  }, [perfLevel])
+
   return (
     <Canvas
       shadows
       className="three-pocket"
       camera={{ fov: 50, position: [0, 0, 42] }}
       onCreated={(state) => (state.gl.toneMapping = NoToneMapping)}
-      dpr={2}
+      dpr={dpr}
     >
-      {/* <Perf deepAnalyze matrixUpdate /> */}
-      <Environment files={envMap} />
-      <Lights />
-      <Body move={move} screenMaterial={screenMaterial} />
-      {/* <OrbitControls enablePan={false} /> */}
-      {/* <Stats showPanel={1} /> */}
-      <PostEffects />
-      {children && children}
+      <PerformanceMonitor
+        onIncline={() => setPerfLevel((pl) => Math.min(MAX_PERF_LEVEL, pl + 1))}
+        onDecline={() => setPerfLevel((pl) => Math.max(0, pl - 1))}
+        flipflops={3}
+        onFallback={() =>
+          setPerfLevel(
+            Math.min(...Array.from(seenPerfLevelsRef.current.values()))
+          )
+        }
+      />
+      <PerfLevelContext.Provider value={perfLevel}>
+        {/* <Perf deepAnalyze matrixUpdate /> */}
+        <Environment files={envMap} />
+        <Lights />
+        <Body move={move} screenMaterial={screenMaterial} />
+        {/* <OrbitControls enablePan={false} /> */}
+        {/* <Stats showPanel={0} /> */}
+        <PostEffects />
+        {children && children}
+      </PerfLevelContext.Provider>
     </Canvas>
   )
 }
 
 const PostEffects = () => {
   const colour = useContext(BodyColourContext)
+  const perfLevel = useContext(PerfLevelContext)
+  if (perfLevel === 0 || (colour !== "glow" && perfLevel <= 2)) return null
 
   return (
     <EffectComposer>
@@ -81,16 +107,29 @@ const PostEffects = () => {
       ) : (
         <></>
       )}
-      <N8AO color="black" aoRadius={2} intensity={4} />
+      {perfLevel > 2 ? (
+        <N8AO color="black" aoRadius={2} intensity={4} />
+      ) : (
+        <></>
+      )}
     </EffectComposer>
   )
 }
 
 const Lights = () => {
+  const perfLevel = useContext(PerfLevelContext)
   return (
     <>
-      <pointLight position={[-5, 22, 10]} intensity={1500} castShadow />
-      <pointLight position={[0, -20, 10]} intensity={250} castShadow />
+      <pointLight
+        position={[-5, 22, 10]}
+        intensity={1500}
+        castShadow={perfLevel > 1}
+      />
+      <pointLight
+        position={[0, -20, 10]}
+        intensity={250}
+        castShadow={perfLevel > 2}
+      />
     </>
   )
 }
@@ -100,6 +139,7 @@ const Body = ({
   screenMaterial,
 }: Pick<PocketProps, "move" | "screenMaterial">) => {
   const bodyColour = useContext(BodyColourContext)
+  const perfLevel = useContext(PerfLevelContext)
 
   const groupRef = useRef<THREE.Group>(null)
   const speedRef = useRef<number>(SWAY_SPEED)
@@ -134,8 +174,8 @@ const Body = ({
         rotation={[0, Math.PI, 0]}
         position={[0, 0, 1.05]}
         material={bodyMaterial}
-        receiveShadow
-        castShadow
+        receiveShadow={perfLevel > 0}
+        castShadow={perfLevel > 1}
       >
         <FrontMeshPrimitive />
       </mesh>
@@ -144,8 +184,8 @@ const Body = ({
         rotation={[0, 0, 0]}
         position={[0, 0, -1.66]}
         material={bodyMaterial}
-        receiveShadow
-        castShadow
+        receiveShadow={perfLevel > 0}
+        castShadow={perfLevel > 1}
       >
         <BackMeshPrimitive />
       </mesh>
@@ -181,6 +221,7 @@ const Body = ({
         scale={[0.2, 0.2, 0.2]}
         rotation={[0, -Math.PI / 2, 0]}
         material={buttonsMaterial}
+        receiveShadow
       >
         <VolumeButtonPrimitive />
       </mesh>

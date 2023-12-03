@@ -3,6 +3,7 @@ import { Color, DoubleSide, MeshPhysicalMaterial } from "three"
 import { BodyColourContext } from "../colourContext"
 import { useNoiseTexture } from "./useNoiseTexture"
 import { PocketColour } from "../../../types"
+import { PerfLevelContext } from "../context/perfLevel"
 
 const COLOUR = {
   black: "rgb(0,0,0)",
@@ -27,6 +28,7 @@ const COLOUR = {
 
 export const useBodyMaterial = (): MeshPhysicalMaterial => {
   const bodyColour = useContext(BodyColourContext)
+  const perfLevel = useContext(PerfLevelContext)
 
   const clearcoatRoughnessMap = useNoiseTexture({
     size: 16,
@@ -65,14 +67,18 @@ export const useBodyMaterial = (): MeshPhysicalMaterial => {
       material.side = DoubleSide
     } else {
       material.envMapIntensity = 0.5
-      material.metalness = bodyColour === "silver" ? 1 : 0
-      material.metalnessMap = metalnessMap
       material.color = new Color(COLOUR[bodyColour] || "red")
       material.emissive = material.color
       material.emissiveIntensity = bodyColour === "glow" ? 0.7 : 0
-      material.roughnessMap = roughnessMap
-      material.clearcoatMap = clearcoatMap
-      material.clearcoatRoughnessMap = clearcoatRoughnessMap
+      if (perfLevel >= 1) {
+        material.metalness = bodyColour === "silver" ? 1 : 0
+        material.metalnessMap = metalnessMap
+        material.roughnessMap = roughnessMap
+        if (perfLevel >= 2) {
+          material.clearcoatMap = clearcoatMap
+          material.clearcoatRoughnessMap = clearcoatRoughnessMap
+        }
+      }
     }
 
     return material
@@ -82,5 +88,6 @@ export const useBodyMaterial = (): MeshPhysicalMaterial => {
     clearcoatRoughnessMap,
     metalnessMap,
     roughnessMap,
+    perfLevel,
   ])
 }
