@@ -64,7 +64,7 @@ export const Pocket = ({
       className="three-pocket"
       camera={{ fov: 50, position: [0, 0, 42] }}
       onCreated={(state) => (state.gl.toneMapping = NoToneMapping)}
-      dpr={dpr}
+      dpr={Math.min(dpr, window.devicePixelRatio)}
     >
       <PerformanceMonitor
         onIncline={() => setPerfLevel((pl) => Math.min(MAX_PERF_LEVEL, pl + 1))}
@@ -108,7 +108,14 @@ const PostEffects = () => {
         <></>
       )}
       {perfLevel > 2 ? (
-        <N8AO color="black" aoRadius={2} intensity={4} />
+        <N8AO
+          color="black"
+          aoRadius={1.5}
+          intensity={4}
+          depthAwareUpsampling={false}
+          quality="performance"
+          halfRes={window.devicePixelRatio > 1}
+        />
       ) : (
         <></>
       )}
@@ -236,36 +243,34 @@ const Screen = ({ screenMaterial }: PocketProps) => {
   return (
     <>
       {/* colour */}
-      <mesh position={[0, 6.8, 1.35]}>
+      <mesh position={[0, 6.8, 1.1]}>
         <planeGeometry attach="geometry" args={[17.25, 15.95]} />
         <meshPhysicalMaterial
           ior={1.46}
-          color={bodyColour === "white" ? "rgb(222,222,220)" : "black"}
+          color={bodyColour === "white" ? "rgb(255,255,255)" : "black"}
           reflectivity={0.3}
           alphaMap={alphaMap}
           alphaTest={0.5}
+          clearcoat={1}
+          clearcoatRoughness={0}
+          envMapIntensity={0.1}
         />
       </mesh>
 
       {/* LCD */}
-      <mesh position={[0, 7, 1.36]}>
+      <mesh position={[0, 7, 1.2]}>
         <planeGeometry attach="geometry" args={[160 / 11.5, 140 / 11.5]} />
         {screenMaterial || (
-          <meshPhongMaterial attach="material" color="green" />
+          <meshPhysicalMaterial
+            attach="material"
+            color="green"
+            clearcoat={1}
+            clearcoatRoughness={0}
+            envMapIntensity={0.01}
+            emissive={"green"}
+            emissiveIntensity={10}
+          />
         )}
-      </mesh>
-      {/* Glass */}
-      <mesh position={[0, 6.8, 1.37]}>
-        <planeGeometry attach="geometry" args={[17.25, 15.95]} />
-        <meshPhysicalMaterial
-          roughness={0}
-          transmission={1}
-          ior={1.51714}
-          transparent
-          alphaMap={alphaMap}
-          alphaTest={0.5}
-          envMapIntensity={0.01}
-        />
       </mesh>
     </>
   )

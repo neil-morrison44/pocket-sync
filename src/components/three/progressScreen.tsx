@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 import {
-  MeshBasicMaterial,
+  MeshPhysicalMaterial,
   NearestFilter,
   SRGBColorSpace,
   Texture,
@@ -24,7 +24,7 @@ export const ProgressScreen = ({
   max = 100,
   message,
 }: ProgressScreenProps) => {
-  const materialRef = useRef<MeshBasicMaterial | null>(null)
+  const materialRef = useRef<MeshPhysicalMaterial | null>(null)
 
   useEffect(() => {
     const canvas = document.createElement("canvas")
@@ -78,6 +78,12 @@ export const ProgressScreen = ({
     })
   }, [value, max, message])
   return (
-    <meshBasicMaterial attach="material" ref={materialRef}></meshBasicMaterial>
+    <meshPhysicalMaterial
+      attach="material"
+      ref={materialRef}
+      clearcoat={1}
+      clearcoatRoughness={0}
+      envMapIntensity={0.1}
+    />
   )
 }

@@ -2,9 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { useRecoilValue } from "recoil"
 import {
   screenshotsListSelector,
-  SingleScaledScreenshotImageSelectorFamily,
+  SingleScreenshotImageSelectorFamily,
 } from "../../recoil/screenshots/selectors"
-import { MeshBasicMaterial, SRGBColorSpace, Texture } from "three"
+import { MeshPhysicalMaterial, SRGBColorSpace, Texture } from "three"
 import { StaticScreen } from "./staticScreen"
 
 type RandomScreenshotScreenProps = {
@@ -38,8 +38,8 @@ export const RandomScreenshotScreen = ({
 }
 
 const ScreenshotScreen = ({ name }: { name: string }) => {
-  const materialRef = useRef<MeshBasicMaterial | null>(null)
-  const image = useRecoilValue(SingleScaledScreenshotImageSelectorFamily(name))
+  const materialRef = useRef<MeshPhysicalMaterial | null>(null)
+  const image = useRecoilValue(SingleScreenshotImageSelectorFamily(name))
 
   useEffect(() => {
     if (!image || !materialRef.current) return
@@ -52,10 +52,20 @@ const ScreenshotScreen = ({ name }: { name: string }) => {
 
     materialRef.current.map?.dispose()
     materialRef.current.map = newTexture
+    materialRef.current.emissiveMap = newTexture
     materialRef.current.needsUpdate = true
   }, [image])
 
   return (
-    <meshBasicMaterial ref={materialRef} attach="material"></meshBasicMaterial>
+    <meshPhysicalMaterial
+      ref={materialRef}
+      attach="material"
+      clearcoat={1}
+      clearcoatRoughness={0}
+      envMapIntensity={0.01}
+      reflectivity={0}
+      emissive={"white"}
+      emissiveIntensity={0.5}
+    />
   )
 }
