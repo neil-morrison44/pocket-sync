@@ -1,6 +1,6 @@
 [package]
 name = "pocket-sync"
-version = "3.11.1"
+version = "3.11.2"
 description = "A GUI tool for doing stuff with the Analogue Pocket"
 authors = ["neil-morrison44"]
 license = ""

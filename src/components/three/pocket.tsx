@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useLoader } from "@react-three/fiber"
 import { Environment, PerformanceMonitor, RoundedBox } from "@react-three/drei"
-import { ReactNode, useContext, useEffect, useRef } from "react"
+import { ReactNode, useCallback, useContext, useRef } from "react"
 import "./index.css"
 import {
   DoubleSide,
@@ -51,12 +51,19 @@ export const Pocket = ({
   children,
 }: PocketProps) => {
   const [perfLevel, setPerfLevel] = useRecoilState(performanceLevelAtom)
-  const seenPerfLevelsRef = useRef(new Set<number>())
-  const dpr = [1, 1.25, 1.5, 2][perfLevel]
+  const seenPerfLevelsRef = useRef(new Array<number>())
+  const dprScale = [0.5, 0.75, 1, 1][perfLevel]
 
-  useEffect(() => {
-    seenPerfLevelsRef.current.add(perfLevel)
-  }, [perfLevel])
+  const setAndStorePerfLevel = useCallback(
+    (updater: (currVal: number) => number) => {
+      setPerfLevel((curr) => {
+        const newValue = updater(curr)
+        seenPerfLevelsRef.current.push(newValue)
+        return newValue
+      })
+    },
+    [setPerfLevel]
+  )
 
   return (
     <Canvas
@@ -64,17 +71,25 @@ export const Pocket = ({
       className="three-pocket"
       camera={{ fov: 50, position: [0, 0, 42] }}
       onCreated={(state) => (state.gl.toneMapping = NoToneMapping)}
-      dpr={Math.min(dpr, window.devicePixelRatio)}
+      dpr={window.devicePixelRatio * dprScale}
     >
       <PerformanceMonitor
-        onIncline={() => setPerfLevel((pl) => Math.min(MAX_PERF_LEVEL, pl + 1))}
-        onDecline={() => setPerfLevel((pl) => Math.max(0, pl - 1))}
-        flipflops={3}
-        onFallback={() =>
+        onIncline={() => {
+          setAndStorePerfLevel((pl) => Math.min(MAX_PERF_LEVEL, pl + 1))
+        }}
+        onDecline={() => {
+          setAndStorePerfLevel((pl) => Math.max(0, pl - 1))
+        }}
+        flipflops={4}
+        onFallback={() => {
           setPerfLevel(
-            Math.min(...Array.from(seenPerfLevelsRef.current.values()))
+            Math.min(
+              seenPerfLevelsRef.current.at(-3) as number,
+              seenPerfLevelsRef.current.at(-2) as number,
+              seenPerfLevelsRef.current.at(-1) as number
+            )
           )
-        }
+        }}
       />
       <PerfLevelContext.Provider value={perfLevel}>
         {/* <Perf deepAnalyze matrixUpdate /> */}

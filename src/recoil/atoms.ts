@@ -35,5 +35,6 @@ export const reconnectWhenOpenedAtom = atom<{ enable: boolean; path: string }>({
 
 export const performanceLevelAtom = atom<number>({
   key: "performanceLevelAtom",
-  default: 3,
+  default: syncToAppLocalDataEffectDefault("perf_level", 2),
+  effects: [syncToAppLocalDataEffect("perf_level")],
 })
