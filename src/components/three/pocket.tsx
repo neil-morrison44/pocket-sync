@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useLoader } from "@react-three/fiber"
 import { Environment, PerformanceMonitor, RoundedBox } from "@react-three/drei"
-import { ReactNode, useContext, useEffect, useRef } from "react"
+import { ReactNode, useCallback, useContext, useMemo, useRef } from "react"
 import "./index.css"
 import {
   DoubleSide,
@@ -8,6 +8,7 @@ import {
   Material,
   MathUtils,
   Mesh,
+  MeshBasicMaterial,
   NoToneMapping,
   TextureLoader,
 } from "three"
@@ -51,12 +52,19 @@ export const Pocket = ({
   children,
 }: PocketProps) => {
   const [perfLevel, setPerfLevel] = useRecoilState(performanceLevelAtom)
-  const seenPerfLevelsRef = useRef(new Set<number>())
-  const dpr = [1, 1.25, 1.5, 2][perfLevel]
+  const seenPerfLevelsRef = useRef(new Array<number>())
+  const dprScale = [0.5, 0.75, 1, 1][perfLevel]
 
-  useEffect(() => {
-    seenPerfLevelsRef.current.add(perfLevel)
-  }, [perfLevel])
+  const setAndStorePerfLevel = useCallback(
+    (updater: (currVal: number) => number) => {
+      setPerfLevel((curr) => {
+        const newValue = updater(curr)
+        seenPerfLevelsRef.current.push(newValue)
+        return newValue
+      })
+    },
+    [setPerfLevel]
+  )
 
   return (
     <Canvas
@@ -64,17 +72,25 @@ export const Pocket = ({
       className="three-pocket"
       camera={{ fov: 50, position: [0, 0, 42] }}
       onCreated={(state) => (state.gl.toneMapping = NoToneMapping)}
-      dpr={dpr}
+      dpr={window.devicePixelRatio * dprScale}
     >
       <PerformanceMonitor
-        onIncline={() => setPerfLevel((pl) => Math.min(MAX_PERF_LEVEL, pl + 1))}
-        onDecline={() => setPerfLevel((pl) => Math.max(0, pl - 1))}
-        flipflops={3}
-        onFallback={() =>
+        onIncline={() => {
+          setAndStorePerfLevel((pl) => Math.min(MAX_PERF_LEVEL, pl + 1))
+        }}
+        onDecline={() => {
+          setAndStorePerfLevel((pl) => Math.max(0, pl - 1))
+        }}
+        flipflops={4}
+        onFallback={() => {
           setPerfLevel(
-            Math.min(...Array.from(seenPerfLevelsRef.current.values()))
+            Math.min(
+              seenPerfLevelsRef.current.at(-3) as number,
+              seenPerfLevelsRef.current.at(-2) as number,
+              seenPerfLevelsRef.current.at(-1) as number
+            )
           )
-        }
+        }}
       />
       <PerfLevelContext.Provider value={perfLevel}>
         {/* <Perf deepAnalyze matrixUpdate /> */}
@@ -108,7 +124,14 @@ const PostEffects = () => {
         <></>
       )}
       {perfLevel > 2 ? (
-        <N8AO color="black" aoRadius={2} intensity={4} />
+        <N8AO
+          color="black"
+          aoRadius={1.5}
+          intensity={4}
+          depthAwareUpsampling={false}
+          quality="performance"
+          halfRes={window.devicePixelRatio > 1}
+        />
       ) : (
         <></>
       )}
@@ -166,6 +189,13 @@ const Body = ({
 
   const bodyMaterial = useBodyMaterial()
   const buttonsMaterial = useButtonsMaterial(bodyMaterial)
+  const powerButtonMaterial = useMemo(
+    () =>
+      bodyColour === "black" || bodyColour === "white"
+        ? new MeshBasicMaterial({ color: "rgb(88, 144, 80)" })
+        : buttonsMaterial,
+    [bodyColour, buttonsMaterial]
+  )
 
   return (
     <group ref={groupRef} rotation={[0, move === "spin" ? 1 : 0, -0.2]}>
@@ -210,9 +240,10 @@ const Body = ({
         position={[-8.3, 5.678, -0.07]}
         scale={[0.2, 0.2, 0.2]}
         rotation={[0, Math.PI / 2, 0]}
+        material={powerButtonMaterial}
       >
         <PowerButtonPrimitive />
-        <meshBasicMaterial attach="material" color="rgb(88, 144, 80)" />
+        {/* <meshBasicMaterial attach="material" color="rgb(88, 144, 80)" /> */}
       </mesh>
       {/* Volume Button */}
 
@@ -236,36 +267,34 @@ const Screen = ({ screenMaterial }: PocketProps) => {
   return (
     <>
       {/* colour */}
-      <mesh position={[0, 6.8, 1.35]}>
+      <mesh position={[0, 6.8, 1.1]}>
         <planeGeometry attach="geometry" args={[17.25, 15.95]} />
         <meshPhysicalMaterial
           ior={1.46}
-          color={bodyColour === "white" ? "rgb(222,222,220)" : "black"}
+          color={bodyColour === "white" ? "rgb(255,255,255)" : "black"}
           reflectivity={0.3}
           alphaMap={alphaMap}
           alphaTest={0.5}
+          clearcoat={1}
+          clearcoatRoughness={0}
+          envMapIntensity={0.1}
         />
       </mesh>
 
       {/* LCD */}
-      <mesh position={[0, 7, 1.36]}>
+      <mesh position={[0, 7, 1.2]}>
         <planeGeometry attach="geometry" args={[160 / 11.5, 140 / 11.5]} />
         {screenMaterial || (
-          <meshPhongMaterial attach="material" color="green" />
+          <meshPhysicalMaterial
+            attach="material"
+            color="green"
+            clearcoat={1}
+            clearcoatRoughness={0}
+            envMapIntensity={0.01}
+            emissive={"green"}
+            emissiveIntensity={10}
+          />
         )}
-      </mesh>
-      {/* Glass */}
-      <mesh position={[0, 6.8, 1.37]}>
-        <planeGeometry attach="geometry" args={[17.25, 15.95]} />
-        <meshPhysicalMaterial
-          roughness={0}
-          transmission={1}
-          ior={1.51714}
-          transparent
-          alphaMap={alphaMap}
-          alphaTest={0.5}
-          envMapIntensity={0.01}
-        />
       </mesh>
     </>
   )

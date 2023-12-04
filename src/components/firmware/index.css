@@ -31,6 +31,16 @@
 
 .firmware__release-notes{
   grid-area: r;
+
+  h2{
+    line-height: unset;
+    margin-block-end: 0.5em;
+  }
+
+  p{
+    margin-block-start: 0.25em;
+    margin-block-end: 0.25em;
+  }
 }
 
 .firmware__selector{
