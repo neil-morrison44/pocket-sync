@@ -73,6 +73,7 @@ export const ProgressScreen = ({
         if (!materialRef.current) return
         materialRef.current.map?.dispose()
         materialRef.current.map = newTexture
+        materialRef.current.emissiveMap = newTexture
         materialRef.current.needsUpdate = true
       }
     })
@@ -83,7 +84,8 @@ export const ProgressScreen = ({
       ref={materialRef}
       clearcoat={1}
       clearcoatRoughness={0}
-      envMapIntensity={0.1}
+      envMapIntensity={0.01}
+      emissive={"white"}
     />
   )
 }
