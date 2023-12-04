@@ -102,10 +102,14 @@ export const CoreInputs = ({
       <ColourContextProviderFromConfig>
         <Pocket
           screenMaterial={
-            <meshBasicMaterial
+            <meshPhysicalMaterial
               attach="material"
               map={screenTexture || undefined}
-            ></meshBasicMaterial>
+              emissive={"white"}
+              emissiveMap={screenTexture || undefined}
+              clearcoat={1}
+              envMapIntensity={0.01}
+            />
           }
         >
           <OrbitControls maxDistance={42} minDistance={42} enablePan={false} />

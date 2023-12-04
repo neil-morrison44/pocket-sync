@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useLoader } from "@react-three/fiber"
 import { Environment, PerformanceMonitor, RoundedBox } from "@react-three/drei"
-import { ReactNode, useCallback, useContext, useRef } from "react"
+import { ReactNode, useCallback, useContext, useMemo, useRef } from "react"
 import "./index.css"
 import {
   DoubleSide,
@@ -8,6 +8,7 @@ import {
   Material,
   MathUtils,
   Mesh,
+  MeshBasicMaterial,
   NoToneMapping,
   TextureLoader,
 } from "three"
@@ -188,6 +189,13 @@ const Body = ({
 
   const bodyMaterial = useBodyMaterial()
   const buttonsMaterial = useButtonsMaterial(bodyMaterial)
+  const powerButtonMaterial = useMemo(
+    () =>
+      bodyColour === "black" || bodyColour === "white"
+        ? new MeshBasicMaterial({ color: "rgb(88, 144, 80)" })
+        : buttonsMaterial,
+    [bodyColour, buttonsMaterial]
+  )
 
   return (
     <group ref={groupRef} rotation={[0, move === "spin" ? 1 : 0, -0.2]}>
@@ -232,9 +240,10 @@ const Body = ({
         position={[-8.3, 5.678, -0.07]}
         scale={[0.2, 0.2, 0.2]}
         rotation={[0, Math.PI / 2, 0]}
+        material={powerButtonMaterial}
       >
         <PowerButtonPrimitive />
-        <meshBasicMaterial attach="material" color="rgb(88, 144, 80)" />
+        {/* <meshBasicMaterial attach="material" color="rgb(88, 144, 80)" /> */}
       </mesh>
       {/* Volume Button */}
 

@@ -71,11 +71,11 @@ export const useButtonsMaterial = (
       material.side = DoubleSide
     } else {
       material.envMapIntensity = 0.5
-      material.color = new Color(COLOUR[bodyColour] || "red")
+      material.color = new Color(COLOUR[buttonsColour] || "red")
       material.emissive = material.color
-      material.emissiveIntensity = bodyColour === "glow" ? 0.7 : 0
+      material.emissiveIntensity = buttonsColour === "glow" ? 0.7 : 0
       if (perfLevel >= 1) {
-        material.metalness = bodyColour === "silver" ? 1 : 0
+        material.metalness = buttonsColour === "silver" ? 1 : 0
         material.metalnessMap = metalnessMap
         material.roughnessMap = roughnessMap
         if (perfLevel >= 2) {
