@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { ReactNode, useEffect } from "react"
 import "./index.css"
 
 type Control = {
@@ -33,10 +33,11 @@ type Control = {
 )
 
 type ControlProps = {
-  controls: (Control | null | undefined | false | "")[]
+  controls?: (Control | null | undefined | false | "")[]
+  children?: ReactNode
 }
 
-export const Controls = ({ controls }: ControlProps) => {
+export const Controls = ({ children, controls = [] }: ControlProps) => {
   useEffect(() => {
     const listener = ({ key }: KeyboardEvent) => {
       if (key === "Escape") {
@@ -136,6 +137,7 @@ export const Controls = ({ controls }: ControlProps) => {
             )
         }
       })}
+      {children}
     </div>
   )
 }

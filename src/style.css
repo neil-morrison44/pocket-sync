@@ -72,6 +72,7 @@ h1 {
   text-align: center;
   font-family: GamePocket;
   font-size: 4rem;
+  /* stylelint-disable-next-line property-no-unknown */
   font-smooth: never;
   -webkit-font-smoothing: none;
   font-variant-ligatures: discretionary-ligatures;
@@ -83,12 +84,14 @@ h2 {
   text-align: left;
   font-family: GamePocket;
   font-size: 3rem;
+  /* stylelint-disable-next-line property-no-unknown */
   font-smooth: never;
   -webkit-font-smoothing: none;
   padding: 0 10px;
   margin-bottom: 15px;
   font-variant-ligatures: discretionary-ligatures;
-  line-height: 3.2rem;
+
+  /* line-height: 3.2rem; */
 }
 
 button {
