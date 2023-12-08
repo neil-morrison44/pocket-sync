@@ -16,6 +16,8 @@ import { Editable } from "./editable"
 import { ImageEditor } from "./imageEditor"
 import { DataPacks } from "../dataPacks"
 import { useTranslation } from "react-i18next"
+import { ControlsBackButton } from "../../controls/inputs/backButton"
+import { ControlsButton } from "../../controls/inputs/button"
 
 type PlatformInfoProps = {
   id: PlatformId
@@ -40,25 +42,17 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
 
   return (
     <div>
-      <Controls
-        controls={[
-          {
-            type: "back-button",
-            text: t("controls.back"),
-            onClick: onBack,
-          },
-          {
-            type: "button",
-            text: t("controls.data_packs"),
-            onClick: () => setDataPacksOpen(true),
-          },
-          {
-            type: "button",
-            text: t("controls.image_packs"),
-            onClick: () => setImagePacksOpen(true),
-          },
-        ]}
-      />
+      <Controls>
+        <ControlsBackButton onClick={onBack}>
+          {t("controls.back")}
+        </ControlsBackButton>
+        <ControlsButton onClick={() => setDataPacksOpen(true)}>
+          {t("controls.data_packs")}
+        </ControlsButton>
+        <ControlsButton onClick={() => setImagePacksOpen(true)}>
+          {t("controls.image_packs")}
+        </ControlsButton>
+      </Controls>
 
       {imagePacksOpen && (
         <ImagePacks

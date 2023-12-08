@@ -83,3 +83,18 @@ export const SingleScreenshotImageSelectorFamily = selectorFamily<
       return loadPromise
     },
 })
+
+export const ImageDimensionsSelectorFamily = selectorFamily<
+  { width: number; height: number },
+  string
+>({
+  key: "ImageDimensionsSelectorFamily",
+  get: (src) => async () => {
+    const image = new Image()
+    image.src = src
+
+    return new Promise<{ width: number; height: number }>((resolve) => {
+      image.onload = () => resolve({ width: image.width, height: image.height })
+    })
+  },
+})

@@ -20,6 +20,9 @@ import { useInvalidateSaveFiles } from "../../../hooks/invalidation"
 import { splitAsPath } from "../../../utils/splitAsPath"
 import { PlatformLabel } from "./platformLabel"
 import { useTranslation } from "react-i18next"
+import { ControlsBackButton } from "../../controls/inputs/backButton"
+import { ControlsCheckbox } from "../../controls/inputs/checkbox"
+import { ControlsSearch } from "../../controls/inputs/search"
 
 export const SaveInfo = ({
   backupPath,
@@ -123,29 +126,22 @@ export const SaveInfo = ({
 
   return (
     <div className="saves">
-      <Controls
-        controls={[
-          {
-            type: "back-button",
-            text: t("controls.back"),
-            onClick: onBack,
-          },
-          {
-            type: "checkbox",
-            checked: hideOnlyCurrent,
-            text: t("controls.hide_unchanged"),
-            onChange: (v) => setHideOnlyCurrent(v),
-          },
-          {
-            type: "search",
-            text: t("controls.search"),
-            value: searchQuery,
-            onChange: (v) => {
-              setSearchQuery(v)
-            },
-          },
-        ]}
-      ></Controls>
+      <Controls>
+        <ControlsBackButton onClick={onBack}>
+          {t("controls.back")}
+        </ControlsBackButton>
+        <ControlsCheckbox
+          checked={hideOnlyCurrent}
+          onChange={setHideOnlyCurrent}
+        >
+          {t("controls.hide_unchanged")}
+        </ControlsCheckbox>
+        <ControlsSearch
+          placeholder={t("controls.search")}
+          value={searchQuery}
+          onChange={setSearchQuery}
+        />
+      </Controls>
 
       <div className="saves__info-save-files-timestamps" style={gridStyling}>
         {zipFilesInfo.map(({ zip }) => {

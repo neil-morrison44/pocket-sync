@@ -33,6 +33,8 @@ import { Trans, useTranslation } from "react-i18next"
 import { archiveBumpAtom } from "../../../recoil/archive/atoms"
 import { currentViewAtom } from "../../../recoil/view/atoms"
 import { useReplacementAvailable } from "../../../hooks/useReplacementAvailable"
+import { ControlsBackButton } from "../../controls/inputs/backButton"
+import { ControlsButton } from "../../controls/inputs/button"
 
 type CoreInfoProps = {
   coreName: string
@@ -67,36 +69,30 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
 
   return (
     <div className="core-info">
-      <Controls
-        controls={[
-          {
-            type: "back-button",
-            text: t("controls.back"),
-            onClick: onBack,
-          },
-          {
-            type: "button",
-            text: t("controls.uninstall"),
-            onClick: () => uninstall(coreName),
-          },
-          requiredFilesLoadable.state === "hasValue" &&
-          requiredFilesLoadable.getValue().length > 0
-            ? {
-                type: "button",
-                text: t("controls.required_files"),
-                onClick: () => {
-                  setArchiveBump((a) => a + 1)
-                  setRequiredFilesOpen(true)
-                },
-              }
-            : null,
-          downloadUrl && {
-            type: "button",
-            text: t("controls.update"),
-            onClick: () => installCore(coreName, downloadUrl),
-          },
-        ]}
-      />
+      <Controls>
+        <ControlsBackButton onClick={onBack}>
+          {t("controls.back")}
+        </ControlsBackButton>
+        <ControlsButton onClick={() => uninstall(coreName)}>
+          {t("controls.uninstall")}
+        </ControlsButton>
+        {requiredFilesLoadable.state === "hasValue" &&
+          requiredFilesLoadable.getValue().length > 0 && (
+            <ControlsButton
+              onClick={() => {
+                setArchiveBump((a) => a + 1)
+                setRequiredFilesOpen(true)
+              }}
+            >
+              {t("controls.required_files")}
+            </ControlsButton>
+          )}
+        {downloadUrl && (
+          <ControlsButton onClick={() => installCore(coreName, downloadUrl)}>
+            {t("controls.update")}
+          </ControlsButton>
+        )}
+      </Controls>
 
       {requiredFilesOpen && (
         <LoadRequiredFiles

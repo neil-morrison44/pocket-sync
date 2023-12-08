@@ -13,14 +13,7 @@ export const ControlsSelect = ({
   selected,
   onChange,
 }: ControlsSelectProps) => (
-  // <div role="button" className="controls__button" onClick={onClick}>
-  //   {children}
-  // </div>
-
-  <label
-    className="controls__item controls__select
-  controls__item--select"
-  >
+  <label className="controls__item controls__select">
     {children}
     <select value={selected} onChange={({ target }) => onChange(target.value)}>
       {options.map((v) => (

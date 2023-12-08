@@ -183,7 +183,8 @@
   "mister_sync": {
     "controls": {
       "back": "Exit",
-      "search": "Search Saves"
+      "search": "Search Saves",
+      "save_mapping": "Save Mapping"
     },
     "login": {
       "connect": "Connect",
@@ -221,6 +222,7 @@
     "cancel": "Cancel",
     "controls": {
       "data_packs": "Data Packs",
+      "remove_coreless": "Remove Coreless",
       "image_packs": "Image Packs",
       "search": "Search"
     },
