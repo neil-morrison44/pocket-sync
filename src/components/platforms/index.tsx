@@ -20,6 +20,8 @@ import { confirm } from "@tauri-apps/api/dialog"
 import { invokeDeleteFiles } from "../../utils/invokes"
 import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { DataPacks } from "./dataPacks"
+import { ControlsSearch } from "../controls/inputs/search"
+import { ControlsButton } from "../controls/inputs/button"
 
 export const Platforms = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -77,31 +79,22 @@ export const Platforms = () => {
 
   return (
     <div>
-      <Controls
-        controls={[
-          {
-            type: "search",
-            text: t("controls.search"),
-            value: searchQuery,
-            onChange: (v) => setSearchQuery(v),
-          },
-          {
-            type: "button",
-            text: "Remove Coreless",
-            onClick: removeCorelessPlatforms,
-          },
-          {
-            type: "button",
-            text: t("controls.data_packs"),
-            onClick: () => setDataPacksOpen(true),
-          },
-          {
-            type: "button",
-            text: t("controls.image_packs"),
-            onClick: () => setImagePacksOpen(true),
-          },
-        ]}
-      />
+      <Controls>
+        <ControlsSearch
+          placeholder={t("controls.search")}
+          value={searchQuery}
+          onChange={setSearchQuery}
+        />
+        <ControlsButton onClick={removeCorelessPlatforms}>
+          {t("controls.remove_coreless")}
+        </ControlsButton>
+        <ControlsButton onClick={() => setDataPacksOpen(true)}>
+          {t("controls.data_packs")}
+        </ControlsButton>
+        <ControlsButton onClick={() => setImagePacksOpen(true)}>
+          {t("controls.image_packs")}
+        </ControlsButton>
+      </Controls>
 
       {imagePacksOpen && (
         <ImagePacks onClose={() => setImagePacksOpen(false)} />

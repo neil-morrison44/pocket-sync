@@ -28,6 +28,9 @@ import { pocketPathAtom } from "../../../recoil/atoms"
 import { MiSTerCredsAtom } from "./recoil/atoms"
 import { useTranslation } from "react-i18next"
 import { SaveMapping } from "./mapping"
+import { ControlsBackButton } from "../../controls/inputs/backButton"
+import { ControlsButton } from "../../controls/inputs/button"
+import { ControlsSearch } from "../../controls/inputs/search"
 
 type MisterSyncProps = {
   onClose: () => void
@@ -76,26 +79,24 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
 
   return (
     <div className="mister-sync">
-      <Controls
-        controls={[
-          {
-            type: "back-button",
-            text: t("controls.back"),
-            onClick: onClose,
-          },
-          connected && {
-            type: "button",
-            text: "Save Mapping",
-            onClick: () => setSaveMappingOpen(true),
-          },
-          connected && {
-            type: "search",
-            text: t("controls.search"),
-            value: query,
-            onChange: (val) => setQuery(val),
-          },
-        ]}
-      />
+      <Controls>
+        <ControlsBackButton onClick={onClose}>
+          {t("controls.back")}
+        </ControlsBackButton>
+
+        {connected && (
+          <>
+            <ControlsButton onClick={() => setSaveMappingOpen(true)}>
+              {t("controls.save_mapping")}
+            </ControlsButton>
+            <ControlsSearch
+              placeholder={t("controls.search")}
+              value={query}
+              onChange={setQuery}
+            />
+          </>
+        )}
+      </Controls>
       <Suspense>
         {saveMappingOpen && (
           <SaveMapping onClose={() => setSaveMappingOpen(false)} />

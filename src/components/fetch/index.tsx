@@ -25,6 +25,7 @@ import { archiveBumpAtom } from "../../recoil/archive/atoms"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { confirm } from "@tauri-apps/api/dialog"
 import { useTranslation } from "react-i18next"
+import { ControlsButton } from "../controls/inputs/button"
 
 type FileStatus = "complete" | "partial" | "none" | "waiting" | "copying"
 
@@ -54,27 +55,21 @@ export const Fetch = () => {
 
   return (
     <div className="fetch">
-      <Controls
-        controls={[
-          {
-            type: "button",
-            text: t("controls.add_fetch_item"),
-            onClick: () => setNewFetchOpen(true),
-          },
-          {
-            type: "button",
-            text: t("controls.refresh"),
-            onClick: () => {
-              invalidateConfig()
-              invalidateFileSystem()
-              setArchiveBumpAtom((c) => c + 1)
-            },
-          },
-        ]}
-      />
-
+      <Controls>
+        <ControlsButton onClick={() => setNewFetchOpen(true)}>
+          {t("controls.add_fetch_item")}
+        </ControlsButton>
+        <ControlsButton
+          onClick={() => {
+            invalidateConfig()
+            invalidateFileSystem()
+            setArchiveBumpAtom((c) => c + 1)
+          }}
+        >
+          {t("controls.refresh")}
+        </ControlsButton>
+      </Controls>
       {newFetchOpen && <NewFetch onClose={() => setNewFetchOpen(false)} />}
-
       <div className="fetch__list">
         {list.map((item, index) => {
           switch (item.type) {

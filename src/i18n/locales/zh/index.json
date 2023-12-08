@@ -183,7 +183,8 @@
   "mister_sync": {
     "controls": {
       "back": "退出",
-      "search": "搜索存档"
+      "search": "搜索存档",
+      "save_mapping": "保存映射"
     },
     "login": {
       "connect": "连接",
@@ -221,6 +222,7 @@
     "cancel": "取消",
     "controls": {
       "data_packs": "数据包",
+      "remove_coreless": "删除无核",
       "image_packs": "图像包",
       "search": "搜索"
     },

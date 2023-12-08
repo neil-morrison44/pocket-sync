@@ -1,10 +1,4 @@
-import {
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react"
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { screenshotsListSelector } from "../../recoil/screenshots/selectors"
 import { Screenshot } from "./item"
@@ -21,6 +15,9 @@ import { useMultiExport } from "./hooks/useMultiExport"
 import { invokeDeleteFiles } from "../../utils/invokes"
 import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { useTranslation } from "react-i18next"
+import { ControlsSearch } from "../controls/inputs/search"
+import { ControlsButton } from "../controls/inputs/button"
+import { ControlsCheckbox } from "../controls/inputs/checkbox"
 
 export const Screenshots = () => {
   const [selected, setSelected] = useRecoilState(selectedSubviewSelector)
@@ -107,45 +104,39 @@ export const Screenshots = () => {
 
   return (
     <>
-      <Controls
-        controls={[
-          {
-            type: "search",
-            text: t("controls.search"),
-            value: searchQuery,
-            onChange: (v) => {
-              setSearchQuery(v)
-            },
-          },
-          selectMode
-            ? {
-                type: "button",
-                text: t("controls.export_selected", {
-                  count: selectedScreenshots.length,
-                }),
-                onClick: () => exportMulti(selectedScreenshots),
-              }
-            : undefined,
-          selectMode
-            ? {
-                type: "button",
-                text: t("controls.delete_selected", {
-                  count: selectedScreenshots.length,
-                }),
-                onClick: () => deleteScreenshots(selectedScreenshots),
-              }
-            : undefined,
-          {
-            type: "checkbox",
-            checked: selectMode,
-            text: t("controls.select"),
-            onChange: (checked) => {
-              setSelectedScreenshots([])
-              setSelectMode(checked)
-            },
-          },
-        ]}
-      />
+      <Controls>
+        <ControlsSearch
+          placeholder={t("controls.search")}
+          value={searchQuery}
+          onChange={setSearchQuery}
+        />
+
+        {selectMode && (
+          <>
+            <ControlsButton onClick={() => exportMulti(selectedScreenshots)}>
+              {t("controls.export_selected", {
+                count: selectedScreenshots.length,
+              })}
+            </ControlsButton>
+            <ControlsButton
+              onClick={() => deleteScreenshots(selectedScreenshots)}
+            >
+              {t("controls.delete_selected", {
+                count: selectedScreenshots.length,
+              })}
+            </ControlsButton>
+          </>
+        )}
+        <ControlsCheckbox
+          checked={selectMode}
+          onChange={(checked) => {
+            setSelectedScreenshots([])
+            setSelectMode(checked)
+          }}
+        >
+          {t("controls.select")}
+        </ControlsCheckbox>
+      </Controls>
       <SearchContextProvider query={searchQuery}>
         <Grid className="screenshots">
           {sortedScreenshots.map((fileName) => (

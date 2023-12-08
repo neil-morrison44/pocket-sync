@@ -13,6 +13,8 @@ import { Releases } from "./releases"
 import { SponsorLinks } from "./sponsorLinks"
 import { useTranslation } from "react-i18next"
 import { KeyIcon } from "../keyIcon"
+import { ControlsBackButton } from "../../controls/inputs/backButton"
+import { ControlsButton } from "../../controls/inputs/button"
 
 type NotInstalledCoreInfoProps = {
   onBack: () => void
@@ -39,22 +41,20 @@ export const NotInstalledCoreInfo = ({
 
   return (
     <div className="core-info">
-      <Controls
-        controls={[
-          {
-            type: "back-button",
-            text: t("controls.back"),
-            onClick: onBack,
-          },
-          download_url && {
-            type: "button",
-            text: t("controls.install"),
-            onClick: () => {
+      <Controls>
+        <ControlsBackButton onClick={onBack}>
+          {t("controls.back")}
+        </ControlsBackButton>
+        {download_url && (
+          <ControlsButton
+            onClick={() => {
               installCore(coreName, download_url)
-            },
-          },
-        ]}
-      />
+            }}
+          >
+            {t("controls.install")}
+          </ControlsButton>
+        )}
+      </Controls>
 
       {!inventoryItem && <div>{t("not_in_inventory", { coreName })}</div>}
 

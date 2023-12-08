@@ -49,8 +49,10 @@ pub async fn start_zip_task(window: Window) -> () {
         let tx = zip_start_tx.clone();
         main_window.on_window_event(move |event| {
             if let FileDrop(Dropped(paths)) = event {
-                tx.try_send(ZipStartAction::FileDrop(paths.clone()))
-                    .unwrap();
+                if paths.len() != 0 {
+                    tx.try_send(ZipStartAction::FileDrop(paths.clone()))
+                        .unwrap();
+                }
             }
         });
     }

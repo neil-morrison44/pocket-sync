@@ -13,6 +13,7 @@ import { invokeBackupSaves } from "../../utils/invokes"
 import { SaveConfig } from "../../types"
 import { MisterSync } from "./misterSync"
 import { useTranslation } from "react-i18next"
+import { ControlsButton } from "../controls/inputs/button"
 
 export const Saves = () => {
   const [selectedSaveBackup, setSelectedSavebackup] = useState<number | null>(
@@ -60,20 +61,14 @@ export const Saves = () => {
 
   return (
     <div className="saves">
-      <Controls
-        controls={[
-          {
-            type: "button",
-            text: t("controls.add_backup_location"),
-            onClick: addBackupLocation,
-          },
-          {
-            type: "button",
-            text: t("controls.mister_sync"),
-            onClick: () => setMisterSync(true),
-          },
-        ]}
-      />
+      <Controls>
+        <ControlsButton onClick={addBackupLocation}>
+          {t("controls.add_backup_location")}
+        </ControlsButton>
+        <ControlsButton onClick={() => setMisterSync(true)}>
+          {t("controls.mister_sync")}
+        </ControlsButton>
+      </Controls>
 
       {saves.length === 0 && <div className="saves__none">{t("none")}</div>}
       {saves.length > 0 && (

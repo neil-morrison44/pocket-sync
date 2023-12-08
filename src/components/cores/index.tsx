@@ -14,6 +14,11 @@ import { Tip } from "../tip"
 import { CoreInfo } from "./info"
 import { CoreItem, NotInstalledCoreItem } from "./item"
 import { useTranslation } from "react-i18next"
+import { ControlsButton } from "../controls/inputs/button"
+import { ControlsCheckbox } from "../controls/inputs/checkbox"
+import { ControlsGroup } from "../controls/inputs/group"
+import { ControlsSelect } from "../controls/inputs/select"
+import { ControlsSearch } from "../controls/inputs/search"
 
 export const Cores = () => {
   const [selectedCore, setSelectedCore] = useRecoilState(
@@ -71,34 +76,29 @@ export const Cores = () => {
 
   return (
     <div>
-      <Controls
-        controls={[
-          {
-            type: "search",
-            text: t("controls.search"),
-            value: searchQuery,
-            onChange: (v) => setSearchQuery(v),
-          },
-          {
-            type: "button",
-            text: t("controls.refresh"),
-            onClick: refresh,
-          },
-          {
-            type: "checkbox",
-            text: t("controls.updatable"),
-            checked: onlyUpdates,
-            onChange: (checked) => setOnlyUpdates(checked),
-          },
-          {
-            type: "select",
-            options: categoryList,
-            selected: filterCategory,
-            text: t("controls.category"),
-            onChange: (v) => setFilterCategory(v),
-          },
-        ]}
-      />
+      <Controls>
+        <ControlsSearch
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder={t("controls.search")}
+        />
+
+        <ControlsGroup title={"Filters"}>
+          <ControlsCheckbox checked={onlyUpdates} onChange={setOnlyUpdates}>
+            {t("controls.updatable")}
+          </ControlsCheckbox>
+          <ControlsSelect
+            options={categoryList}
+            selected={filterCategory}
+            onChange={setFilterCategory}
+          >
+            {t("controls.category")}
+          </ControlsSelect>
+        </ControlsGroup>
+        <ControlsButton onClick={refresh}>
+          {t("controls.refresh")}
+        </ControlsButton>
+      </Controls>
       <h2>{t("installed", { count: sortedList.length })}</h2>
       <SearchContextProvider
         query={searchQuery}
