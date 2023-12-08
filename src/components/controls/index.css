@@ -64,7 +64,6 @@
 }
 
 .controls__checkbox{
-  border: 1px solid grey;
   clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
   align-self: stretch;
   padding-inline: 10px;
@@ -72,6 +71,8 @@
   background-color: #eee;
   color:black;
   font-weight: 500;
+  display: flex;
+  align-items: flex-end;
 
   input{
     display: none;
@@ -91,12 +92,10 @@
 .controls__checkbox--checked{
   background-color: var(--selection-colour);
   color: white;
-  border-color: white;
 
   &:active{
     background-color: #eee;
     color:black;
-    border-color: black;
   }
 }
 
