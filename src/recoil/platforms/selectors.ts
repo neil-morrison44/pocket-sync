@@ -151,7 +151,10 @@ const ImagePackBlobSelectorFamily = selectorFamily<Blob | null, ImagePack>({
 
       const downloadURL = latestRelease.assets.find(({ name }) => {
         if (!name.endsWith(".zip")) return false
-        if (variant) return name.includes(variant)
+        if (variant)
+          return (
+            name.endsWith(`${variant}.zip`) || name.startsWith(`${variant}_`)
+          )
         return true
       })
 

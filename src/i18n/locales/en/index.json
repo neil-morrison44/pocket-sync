@@ -84,7 +84,8 @@
       "category": "Category",
       "refresh": "Refresh",
       "search": "Search",
-      "updatable": "Updatable"
+      "updatable": "Updatable",
+      "update_all": "Update All"
     },
     "install_tip": "You can also install cores (or anything else in a zip) by dragging the .zip into this window",
     "installed": "Installed ({count})",

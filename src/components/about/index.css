@@ -32,6 +32,29 @@
   justify-content: space-around;
   gap: 10px;
   width: 100%;
+
+  h1 {
+    margin-block-end: 15px;
+    filter: drop-shadow(0 0 red) drop-shadow(0 0 blue) drop-shadow(0 0 green);
+    transition: filter 1s;
+    width: max-content;
+    display: block;
+
+    --x: calc(15px * var(--scale-x));
+    --y: calc(5px * var(--scale-y));
+
+    &:hover{
+      filter: drop-shadow(var(--x) var(--y) red) drop-shadow(var(--x) var(--y) blue) drop-shadow(var(--x) var(--y) green);
+      transition: none;
+    }
+  }
+}
+
+.about__title{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .about__news {
