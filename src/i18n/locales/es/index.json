@@ -15,6 +15,22 @@
     "files_found": "{count, plural, =0 {No hay archivos que se puedan limpiar} one {# archivo que se pueda limpiar} other {# archivos que se puedan limpiar} } encontrado",
     "title": "Archivos limpios"
   },
+  "update_all": {
+    "title": "Actualizar todo",
+    "heading": {
+      "update": "Actualizar",
+      "required_files": "Instalar archivos requeridos",
+      "platform_files": "Reemplazar archivos de plataforma"
+    },
+    "buttons": {
+      "update": "Actualizar {count, plural, =0 {none} one {# núcleo seleccionado} other {# núcleos seleccionados} }",
+      "close": "Cerrar"
+    },
+    "update": {
+      "title": "Actualizando {coreName}: { step, select, core { actualizando core... } files { descargando archivos requeridos... } other {on no} }"
+    },
+    "no_updates_found": "No se encontraron actualizaciones para los núcleos instalados"
+  },
   "core_info": {
     "author": "Autor",
     "controls": {
@@ -84,7 +100,8 @@
       "category": "Categoría",
       "refresh": "Actualizar",
       "search": "Buscar",
-      "updatable": "Actualizable"
+      "updatable": "Actualizable",
+      "update_all": "Actualizar todo"
     },
     "install_tip": "También puedes instalar núcleos (o cualquier otra cosa en un zip) arrastrando el archivo .zip a esta ventana",
     "installed": "Instalado ({count})",

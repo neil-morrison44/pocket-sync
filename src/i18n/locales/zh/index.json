@@ -15,6 +15,22 @@
     "files_found": "共找到{count, plural, =0 {0个可清理文件} one {# 个可清理文件} other {# 个可清理文件} }",
     "title": "清理文件"
   },
+  "update_all": {
+    "title": "全部更新",
+    "heading": {
+      "update": "更新",
+      "required_files": "安装所需文件",
+      "platform_files": "替换平台文件"
+    },
+    "buttons": {
+      "update": "更新 {count, plural, =0 {none} one {# 选择的核心} other {# 个选定核心} }",
+      "close": "关闭"
+    },
+    "update": {
+      "title": "更新 {coreName}: { step, select, core { 正在更新核心... } files { 正在下载所需文件... } other {on no} }"
+    },
+    "no_updates_found": "未找到已安装核心的更新"
+  },
   "core_info": {
     "author": "作者",
     "controls": {
@@ -84,7 +100,8 @@
       "category": "类型",
       "refresh": "刷新",
       "search": "搜索",
-      "updatable": "可更新"
+      "updatable": "可更新",
+      "update_all": "全部更新"
     },
     "install_tip": "您也可以通过拖拽ZIP压缩包到窗口内的方式安装核心或其他内容",
     "installed": "已安装({count})",
