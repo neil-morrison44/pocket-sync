@@ -51,6 +51,7 @@
       "all": "请注意!运行该核心需要取得许可授权",
       "jotego": "JOTEGO betas需要JTBETA许可文件才能运行，可以通过JOTEGO的Patreon页面获取(https://www.patreon.com/jotego)。 \n 如果您取得了许可文件，请将jtbeta.zip放置在SD卡根目录，系统将自动根据必要文件的处理规则进行处理。"
     },
+    "firmware_too_low": "该核心需要固件v{core_firmware}，当前安装的版本是v{pocket_firmware}",
     "not_in_inventory": "核心{coreName}尚未加入清单",
     "platform": {
       "edit": "编辑",

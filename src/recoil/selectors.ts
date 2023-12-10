@@ -54,6 +54,18 @@ export const CoreMainPlatformIdSelectorFamily = selectorFamily<string, string>({
     },
 })
 
+export const CorePlatformIdSelectorFamily = selectorFamily<string, string>({
+  key: "CorePlatformIdSelectorFamily",
+  get:
+    (coreName: string) =>
+    async ({ get }) => {
+      get(fileSystemInvalidationAtom)
+      const { core } = get(CoreInfoSelectorFamily(coreName))
+      // Hopefully 0 is the one that exists
+      return core.metadata.platform_ids[0]
+    },
+})
+
 export const CoreAuthorImageSelectorFamily = selectorFamily<string, string>({
   key: "CoreAuthorImageSelectorFamily",
   get:

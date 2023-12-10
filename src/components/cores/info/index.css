@@ -57,6 +57,15 @@
   padding: 12px;
 }
 
+.core-info__firmware-warning{
+  background-color: var(--red-colour);
+  cursor: pointer;
+  white-space: pre-wrap;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+}
+
 .core-info__info {
   background-color: var(--info-colour);
   padding: 10px;
