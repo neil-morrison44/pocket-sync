@@ -18,7 +18,7 @@ import { Releases } from "./releases"
 import { Version } from "../version"
 import { useUninstallCore } from "../../../hooks/useUninstallCore"
 import { useInstallCore } from "../../../hooks/useInstallCore"
-import { ReactNode, Suspense, useCallback, useState } from "react"
+import { ReactNode, Suspense, useCallback, useMemo, useState } from "react"
 import { CorePlatformInfo } from "./platform"
 import { Loader } from "../../loader"
 import { SponsorLinks } from "./sponsorLinks"
@@ -35,6 +35,8 @@ import { currentViewAtom } from "../../../recoil/view/atoms"
 import { useReplacementAvailable } from "../../../hooks/useReplacementAvailable"
 import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
+import { currentFirmwareVersionSelector } from "../../../recoil/firmware/selectors"
+import { WarningIcon } from "./requiredFiles/warningIcon"
 
 type CoreInfoProps = {
   coreName: string
@@ -127,6 +129,8 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
       )}
 
       <PlatformImage className="core-info__image" platformId={mainPlatformId} />
+
+      <FirmwareWarning coreName={coreName} />
 
       <section className="core-info__info">
         <p>{coreInfo.core.metadata.description}</p>
@@ -279,3 +283,38 @@ const SupportsBubble = ({ supports, children }: SupportsBubbleProps) => (
     {children}
   </div>
 )
+
+const FirmwareWarning = ({ coreName }: { coreName: string }) => {
+  const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
+  const currentFirmware = useRecoilValue(currentFirmwareVersionSelector)
+  const setViewAndSubview = useSetRecoilState(currentViewAtom)
+  const { t } = useTranslation("core_info")
+
+  const firmwareTooLow = useMemo(() => {
+    const [coreMajor, coreMinor] = coreInfo.core.framework.version_required
+      .split(".")
+      .map((v) => parseInt(v))
+    const [pocketMajor, pocketMinor] = currentFirmware.version
+      .split(".")
+      .map((v) => parseInt(v))
+
+    if (coreMajor > pocketMajor) return true
+    if (coreMinor > pocketMinor) return true
+
+    return false
+  }, [coreInfo.core.framework.version_required, currentFirmware.version])
+
+  if (!firmwareTooLow) return null
+  return (
+    <div
+      className="core-info__firmware-warning"
+      onClick={() => setViewAndSubview({ view: "Firmware", selected: null })}
+    >
+      <WarningIcon />
+      {t("firmware_too_low", {
+        core_firmware: coreInfo.core.framework.version_required,
+        pocket_firmware: currentFirmware.version,
+      })}
+    </div>
+  )
+}

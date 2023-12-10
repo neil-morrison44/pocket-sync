@@ -13,6 +13,7 @@ import { skipAlternateAssetsSelector } from "../config/selectors"
 import {
   DataJSONSelectorFamily,
   CoreMainPlatformIdSelectorFamily,
+  CoreInfoSelectorFamily,
 } from "../selectors"
 import { mergedDataSlots } from "../../utils/dataSlotsMerge"
 
@@ -71,6 +72,8 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
     async ({ get }) => {
       const dataJSON = get(DataJSONSelectorFamily(coreName))
       const platform_id = get(CoreMainPlatformIdSelectorFamily(coreName))
+      const platformIds = get(CoreInfoSelectorFamily(coreName)).core.metadata
+        .platform_ids
       const requiredCoreFiles = dataJSON.data.data_slots.filter(
         ({ name, required, filename }) => {
           return (
@@ -80,16 +83,18 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
         }
       )
 
-      console.log({ requiredCoreFiles })
-
       const fileInfo = (
         await Promise.all(
           requiredCoreFiles
             .filter(({ parameters }) => decodeDataParams(parameters).readOnly)
             .map(async ({ filename, alternate_filenames, parameters, md5 }) => {
-              const path = `Assets/${platform_id}/${
-                decodeDataParams(parameters).coreSpecific ? coreName : "common"
-              }`
+              const decodedParams = decodeDataParams(parameters)
+
+              const path = `Assets/${
+                platformIds[decodedParams.platformIndex]
+              }/${decodedParams.coreSpecific ? coreName : "common"}`
+
+              console.log({ path })
 
               return Promise.all(
                 [filename, ...(alternate_filenames || [])].map(
@@ -123,9 +128,12 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
               console.log("is a single filename")
             }
 
-            const path = `Assets/${platform_id}/${
-              decodeDataParams(parameters).coreSpecific ? coreName : "common"
+            const decodedParams = decodeDataParams(parameters)
+            const path = `Assets/${platformIds[decodedParams.platformIndex]}/${
+              decodedParams.coreSpecific ? coreName : "common"
             }/`
+
+            console.log({ path })
 
             let files = await invokeWalkDirListFiles(path, [".json"])
             if (get(skipAlternateAssetsSelector))
@@ -154,11 +162,12 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                       ({ filename }) => !filename || !filename?.endsWith(".sav")
                     )
                     .map(async ({ filename, md5, parameters }) => {
-                      const path = `Assets/${platform_id}/${
-                        decodeDataParams(parameters).coreSpecific
-                          ? coreName
-                          : "common"
-                      }${dataPath ? `/${dataPath}` : ""}`
+                      const decodedParams = decodeDataParams(parameters)
+                      const path = `Assets/${
+                        platformIds[decodedParams.platformIndex]
+                      }/${decodedParams.coreSpecific ? coreName : "common"}${
+                        dataPath ? `/${dataPath}` : ""
+                      }`
 
                       return get(
                         SingleRequiredFileInfo({

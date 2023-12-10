@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { pocketPathAtom } from "../../recoil/atoms"
 import {
-  CoreMainPlatformIdSelectorFamily,
+  CoreInfoSelectorFamily,
   DataJSONSelectorFamily,
 } from "../../recoil/selectors"
 import { decodeDataParams } from "../../utils/decodeDataParams"
@@ -12,12 +12,12 @@ import { GameCount } from "./gameCount"
 import { open } from "@tauri-apps/api/shell"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { PlatformInfoSelectorFamily } from "../../recoil/platforms/selectors"
+import { DataSlotJSON } from "../../types"
 
 export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
   const data = useRecoilValue(DataJSONSelectorFamily(coreName))
   const pocketPath = useRecoilValue(pocketPathAtom)
-
-  const romsSlot = useMemo(
+  const romsSlot = useMemo<DataSlotJSON | undefined>(
     () =>
       data.data.data_slots.filter(
         ({ required, extensions }) => required && extensions
@@ -25,20 +25,22 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
     [data]
   )
 
-  const mainPlatformId = useRecoilValue(
-    CoreMainPlatformIdSelectorFamily(coreName)
+  const decodedParams = useMemo(
+    () => decodeDataParams(romsSlot?.parameters),
+    [romsSlot?.parameters]
   )
-  const { platform } = useRecoilValue(
-    PlatformInfoSelectorFamily(mainPlatformId)
-  )
+
+  const { core } = useRecoilValue(CoreInfoSelectorFamily(coreName))
+  const platformId = core.metadata.platform_ids[decodedParams.platformIndex]
+  const { platform } = useRecoilValue(PlatformInfoSelectorFamily(platformId))
 
   const path = useMemo(() => {
     if (!romsSlot) return ""
-    const coreSpecific = decodeDataParams(romsSlot.parameters)?.coreSpecific
-    return `${pocketPath}/Assets/${mainPlatformId}/${
+    const coreSpecific = decodedParams?.coreSpecific
+    return `${pocketPath}/Assets/${platformId}/${
       coreSpecific ? coreName : "common"
     }`
-  }, [romsSlot, mainPlatformId, pocketPath, coreName])
+  }, [romsSlot, decodedParams?.coreSpecific, pocketPath, platformId, coreName])
 
   const onOpenFolder = useCallback(async (path: string) => {
     await invokeCreateFolderIfMissing(path)
@@ -63,12 +65,12 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
       <div className="cores__item" onClick={() => onOpenFolder(path)}>
         <PlatformImage
           className="cores__platform-image"
-          platformId={mainPlatformId}
+          platformId={platformId}
         />
         <div className="cores__info-blurb">
           <b>{coreName}</b>
           <GameCount
-            platformId={mainPlatformId}
+            platformId={platformId}
             coreName={coreName}
             extensions={romsSlot?.extensions || []}
           />
