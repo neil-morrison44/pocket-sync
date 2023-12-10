@@ -13,8 +13,8 @@ export const decodeDataParams = (rawParams: string | number | undefined) => {
   const parms = typeof rawParams === "string" ? Number(rawParams) : rawParams
 
   const platformIndex = [
-    (parms & Math.pow(2, 23)) === Math.pow(2, 23),
     (parms & Math.pow(2, 24)) === Math.pow(2, 24),
+    (parms & Math.pow(2, 23)) === Math.pow(2, 23),
   ].reduce((acc, value, index) => {
     const zeroOrOne = value ? 1 : 0
     return acc + zeroOrOne * (index + 1)
@@ -28,6 +28,8 @@ export const decodeDataParams = (rawParams: string | number | undefined) => {
     instanceJSON: (parms & 0b000010000) === 0b000010000,
     platformIndex,
   }
+
+  console.log({ decoded })
 
   return decoded
 }

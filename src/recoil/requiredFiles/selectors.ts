@@ -89,9 +89,12 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
             .filter(({ parameters }) => decodeDataParams(parameters).readOnly)
             .map(async ({ filename, alternate_filenames, parameters, md5 }) => {
               const decodedParams = decodeDataParams(parameters)
+
               const path = `Assets/${
                 platformIds[decodedParams.platformIndex]
               }/${decodedParams.coreSpecific ? coreName : "common"}`
+
+              console.log({ path })
 
               return Promise.all(
                 [filename, ...(alternate_filenames || [])].map(
@@ -130,6 +133,8 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
               decodedParams.coreSpecific ? coreName : "common"
             }/`
 
+            console.log({ path })
+
             let files = await invokeWalkDirListFiles(path, [".json"])
             if (get(skipAlternateAssetsSelector))
               files = files.filter((path) => !path.includes("_alternatives"))
@@ -157,11 +162,12 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                       ({ filename }) => !filename || !filename?.endsWith(".sav")
                     )
                     .map(async ({ filename, md5, parameters }) => {
-                      const path = `Assets/${platform_id}/${
-                        decodeDataParams(parameters).coreSpecific
-                          ? coreName
-                          : "common"
-                      }${dataPath ? `/${dataPath}` : ""}`
+                      const decodedParams = decodeDataParams(parameters)
+                      const path = `Assets/${
+                        platformIds[decodedParams.platformIndex]
+                      }/${decodedParams.coreSpecific ? coreName : "common"}${
+                        dataPath ? `/${dataPath}` : ""
+                      }`
 
                       return get(
                         SingleRequiredFileInfo({
