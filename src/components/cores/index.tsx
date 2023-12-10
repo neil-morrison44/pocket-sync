@@ -87,7 +87,7 @@ export const Cores = () => {
         <ControlsButton onClick={() => setUpdateAllOpen(true)}>
           {t("controls.update_all")}
         </ControlsButton>
-        <ControlsGroup title={"Filters"}>
+        <ControlsGroup title={t("controls.filters_group")}>
           <ControlsCheckbox checked={onlyUpdates} onChange={setOnlyUpdates}>
             {t("controls.updatable")}
           </ControlsCheckbox>
