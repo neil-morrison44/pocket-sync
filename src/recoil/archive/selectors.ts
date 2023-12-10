@@ -110,8 +110,6 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
         .filter((e, index, arr) => index === arr.indexOf(e))
       const rootFileInfo = get(ListSomeRootFilesSelectorFamily(extensions))
 
-      console.log({ extensions, rootFileInfo })
-
       return requiredFiles
         .map((r) => {
           const existsAtRoot = rootFileInfo.find((fi) => {
