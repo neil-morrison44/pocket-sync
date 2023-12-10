@@ -7,6 +7,7 @@
 A Windows / Mac / Linux GUI to do _stuff_ with the Analogue Pocket.
 
 <img alt="Main Screen" src="./readme_images/main_screen.png" width="100%"/>
+
 <img alt="The Core List" src="./readme_images/cores_list.png" width="50%"/><img alt="SNES core details" src="./readme_images/core_detail.png" width="50%"/>
 <img alt="Updating all cores" src="./readme_images/update_all.png" width="50%"/><img alt="Browsing Save States" src="./readme_images/save_states.png" width="50%"/><img alt="Exporting a screenshot" src="./readme_images/screenshot_detail.png" width="50%"/><img alt="Exporting GB Camera photos" src="./readme_images/photo_export.png" width="50%"/>
 
