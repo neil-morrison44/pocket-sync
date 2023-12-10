@@ -41,7 +41,7 @@ export const ProgressScreen = ({
     context.fillRect(0, 0, canvas.width * (value / max), canvas.height)
 
     context.fillStyle = LIGHTEST_GREEN
-    context.font = `${85 * SCALE}px GamePocket`
+    context.font = `${70 * SCALE}px GamePocket`
     const text = `${((value / max) * 100).toFixed(0)}%`
     context.textAlign = "center"
     context.textBaseline = "middle"

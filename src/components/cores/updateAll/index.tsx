@@ -16,21 +16,15 @@ import { installedCoresWithUpdatesSelector } from "../../../recoil/cores/selecto
 import { CoreMainPlatformIdSelectorFamily } from "../../../recoil/selectors"
 import { PlatformImage } from "../platformImage"
 import { enableGlobalZipInstallAtom } from "../../../recoil/atoms"
-import { DownloadURLSelectorFamily } from "../../../recoil/inventory/selectors"
-import { useInstallCore } from "../../../hooks/useInstallCore"
-import { Progress } from "../../progress"
-import { emit, listen } from "@tauri-apps/api/event"
-import { InstallZipEventPayload } from "../../zipInstall/types"
-import { message } from "@tauri-apps/api/dialog"
 import { NotInstalledCoreInfo } from "../info/notInstalled"
 import { useInvalidateFileSystem } from "../../../hooks/invalidation"
-import { RequiredFilesWithStatusSelectorFamily } from "../../../recoil/archive/selectors"
-import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
-import { useProgress } from "../../../hooks/useProgress"
-import { turboDownloadsAtom } from "../../../recoil/settings/atoms"
-import { RequiredFileInfo } from "../../../types"
-import { invoke } from "@tauri-apps/api"
 import { Loader } from "../../loader"
+import { PlatformInfoSelectorFamily } from "../../../recoil/platforms/selectors"
+import { AutoInstallCore } from "./autoInstallCore"
+import { AutoInstallFiles } from "./autoInstallFiles"
+import { useTranslation } from "react-i18next"
+import { message } from "@tauri-apps/api/dialog"
+import { useHasArchiveLink } from "../../../hooks/useHasArchiveLink"
 
 type UpdateAllProps = {
   onClose: () => void
@@ -51,6 +45,7 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
   const [updateList, setUpdateList] = useState<UpdateListItem[]>([])
   const [stage, setStage] = useState<UpdateStage | null>(null)
   const invalidateFS = useInvalidateFileSystem()
+  const { t } = useTranslation("update_all")
   const hasDoneAnUpdateRef = useRef(false)
 
   const setEnableGlobalZipInstall = useSetRecoilState(
@@ -85,8 +80,6 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
     })
   }, [updateList, setStage])
 
-  console.log({ stage })
-
   useEffect(() => {
     if (stage === null && hasDoneAnUpdateRef.current) {
       onClose()
@@ -106,7 +99,7 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
 
   return (
     <Modal className="update-all">
-      <h2>{"Update All"}</h2>
+      <h2>{t("title")}</h2>
 
       {stage === null && (
         <>
@@ -115,7 +108,7 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
               className="update-all__list-item-update"
               onClick={() => setUpdateList([])}
             >
-              {"Update"}
+              {t("heading.update")}
             </label>
 
             <label
@@ -126,18 +119,18 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
                 )
               }
             >
-              {"Install Required Files"}
+              {t("heading.required_files")}
             </label>
 
             <label
-              className="update-all__list-item-platform-images"
+              className="update-all__list-item-platform-files"
               onClick={() =>
                 setUpdateList((ul) =>
                   ul.map((u) => ({ ...u, platformFiles: false }))
                 )
               }
             >
-              {"Replace Platform Files"}
+              {t("heading.platform_files")}
             </label>
           </div>
           <Suspense
@@ -158,26 +151,31 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
                 setStage({ coreName: updateList[0].coreName, step: "core" })
               }}
             >
-              {"Update Selected"}
+              {t("buttons.update", { count: updateList.length })}
             </button>
           )}
-          <button onClick={onClose}>{"Cancel"}</button>
+          <button onClick={onClose}>{t("buttons.close")}</button>
         </>
       )}
 
       {stage && (
         <div className="update-all__step-info">
-          <h3 className="update-all__step-info-title">{`Installing ${stage.step} for ${stage.coreName} ${coreCount}/${updateList.length}`}</h3>
+          <h3 className="update-all__step-info-title">
+            <span>{t("update.title", { ...stage })}</span>
+            {/* eslint-disable-next-line react/jsx-no-literals */}
+            <span>{`(${coreCount}/${updateList.length})`}</span>
+          </h3>
           <div>
-            <Suspense>
+            <Suspense fallback={<Loader className="loader--no-background" />}>
               <NotInstalledCoreInfo
                 coreName={stage.coreName}
                 onBack={() => {}}
                 withoutControls
+                withoutTitle
               />
             </Suspense>
           </div>
-          <Suspense>
+          <Suspense fallback={<Loader className="loader--no-background" />}>
             {stage.step === "core" && (
               <AutoInstallCore
                 key={stage.coreName}
@@ -210,6 +208,7 @@ const UpdateAllList = ({
   updateList: UpdateListItem[]
   setUpdateList: Dispatch<SetStateAction<UpdateListItem[]>>
 }) => {
+  const { t } = useTranslation("")
   const unsortedCoresList = useRecoilValue(installedCoresWithUpdatesSelector)
 
   const coresList = useMemo(
@@ -220,21 +219,23 @@ const UpdateAllList = ({
     [unsortedCoresList]
   )
 
+  const hasArchiveLink = useHasArchiveLink()
+
   useEffect(() => {
     setUpdateList(
       coresList.map(({ coreName }) => ({
         coreName,
-        requiredFiles: true,
+        requiredFiles: hasArchiveLink,
         platformFiles: true,
       }))
     )
-  }, [coresList, setUpdateList])
+  }, [coresList, setUpdateList, hasArchiveLink])
 
   if (coresList.length === 0)
     return (
       <div className="update-all__list">
         <div className="update-all__no-updates">
-          {"Everything's up to date!"}
+          {t("update_all:no_updates_found")}
         </div>
       </div>
     )
@@ -267,6 +268,11 @@ const UpdateAllList = ({
             })
           }}
           onChangeRequiredFiles={(checked) => {
+            if (!hasArchiveLink) {
+              message(t("core_info_required_files:no_link_tip"))
+              return
+            }
+
             setUpdateList((curr) =>
               curr.map((core) => {
                 if (core.coreName !== coreName) return core
@@ -285,160 +291,6 @@ const UpdateAllList = ({
         />
       ))}
     </ol>
-  )
-}
-
-const AutoInstallFiles = ({
-  coreName,
-  onFinish,
-}: {
-  coreName: string
-  onFinish: () => void
-}) => {
-  const stageRef = useRef<"unstarted" | "started" | "finished">("unstarted")
-  const requiredFiles = useRecoilValue(
-    RequiredFilesWithStatusSelectorFamily(coreName)
-  )
-
-  const { archive_url } = useRecoilValue(PocketSyncConfigSelector)
-
-  const { percent, inProgress, lastMessage, remainingTime } = useProgress(
-    () => {
-      onFinish()
-    }
-  )
-
-  const turboDownloads = useRecoilValue(turboDownloadsAtom)
-
-  const installRequiredFiles = useCallback(
-    async (files: RequiredFileInfo[], other_archive_url?: string) => {
-      const this_archive_url = other_archive_url ?? archive_url
-      if (!this_archive_url)
-        throw new Error("Attempt to download without an `archive_url` set")
-
-      const _response = await invoke<boolean>("install_archive_files", {
-        files,
-        archiveUrl: this_archive_url,
-        turbo: turboDownloads.enabled,
-      })
-    },
-    [archive_url, turboDownloads.enabled]
-  )
-
-  useEffect(() => {
-    if (stageRef.current === "unstarted") {
-      stageRef.current = "started"
-      installRequiredFiles(
-        requiredFiles.filter(
-          ({ status }) =>
-            status === "downloadable" ||
-            status === "wrong" ||
-            status === "at_root" ||
-            status === "at_root_match"
-        )
-      )
-    }
-  }, [installRequiredFiles, requiredFiles])
-
-  return (
-    <div className="update-all__core-progress">
-      <h3>Installing Required Files...</h3>
-      <Progress
-        percent={percent}
-        message={lastMessage}
-        remainingTime={remainingTime}
-      />
-    </div>
-  )
-}
-
-const AutoInstallCore = ({
-  coreName,
-  platformFiles,
-  onFinish,
-}: {
-  coreName: string
-  platformFiles: boolean
-  onFinish: () => void
-}) => {
-  const { installCore } = useInstallCore()
-  const download_url = useRecoilValue(DownloadURLSelectorFamily(coreName))
-  const [installState, setInstallState] =
-    useState<null | InstallZipEventPayload>(null)
-
-  const installStageRef = useRef<
-    "unstarted" | "started" | "confirmed" | "finished"
-  >("unstarted")
-
-  useEffect(() => {
-    const unlisten = listen<InstallZipEventPayload>(
-      "install-zip-event",
-      ({ payload }) => setInstallState(payload)
-    )
-    return () => {
-      unlisten.then((l) => l())
-    }
-  }, [setInstallState])
-
-  useEffect(() => {
-    const unlisten = listen<{ error?: string }>(
-      "install-zip-finished",
-      ({ payload }) => {
-        installStageRef.current = "finished"
-        if (payload.error)
-          message(payload.error, { title: "Error", type: "error" })
-
-        setInstallState(null)
-        onFinish()
-      }
-    )
-    return () => {
-      unlisten.then((l) => l())
-    }
-  }, [setInstallState, onFinish])
-
-  useEffect(() => {
-    if (!download_url || installStageRef.current !== "unstarted") return
-    installCore(coreName, download_url)
-    installStageRef.current = "started"
-
-    return () => {}
-  }, [download_url, coreName, installCore])
-
-  useEffect(() => {
-    if (installState && installStageRef.current === "started") {
-      installStageRef.current = "confirmed"
-      const { files } = installState
-
-      const paths = (files || [])
-        .filter(({ path }) => {
-          const isRootTxt = !path.includes("/") && path.endsWith(".txt")
-          if (!platformFiles)
-            return !path.startsWith("Platforms/") && !isRootTxt
-          return !isRootTxt
-        })
-        .map(({ path }) => path)
-
-      emit("install-confirmation", {
-        type: "InstallConfirmation",
-        paths,
-        handle_moved_files: true,
-        allow: true,
-      })
-    }
-  }, [installState, platformFiles])
-
-  const progress = useMemo(() => {
-    if (!installState) return { value: 0, max: 100 }
-    if (installState.progress) return installState.progress
-    return { value: 0, max: 100 }
-  }, [installState])
-
-  return (
-    <div className="update-all__core-progress">
-      <h3>Installing Core...</h3>
-      <Progress percent={(progress.value / progress.max) * 100} />
-    </div>
   )
 }
 
@@ -463,6 +315,10 @@ const UpdateListItem = ({
     CoreMainPlatformIdSelectorFamily(coreName)
   )
 
+  const platformInfo = useRecoilValue(
+    PlatformInfoSelectorFamily(mainPlatformId)
+  )
+
   return (
     <div
       key={coreName}
@@ -474,6 +330,11 @@ const UpdateListItem = ({
         <PlatformImage platformId={mainPlatformId} />
       </div>
       <div className="update-all__list-item-name">{coreName}</div>
+      <div className="update-all__list-item-platform">
+        {platformInfo.platform.name}
+        {" - "}
+        {platformInfo.platform.category}
+      </div>
       <div className="update-all__list-item-version">
         {installedVersion}
         <ArrowIcon />
@@ -496,7 +357,7 @@ const UpdateListItem = ({
         ></input>
       </label>
 
-      <label className="update-all__list-item-platform-images">
+      <label className="update-all__list-item-platform-files">
         <input
           type="checkbox"
           checked={updateListItem?.platformFiles || false}

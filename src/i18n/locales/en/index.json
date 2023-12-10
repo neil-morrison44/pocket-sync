@@ -15,6 +15,22 @@
     "files_found": "{count, plural, =0 {No cleanable files} one {# cleanable file} other {# cleanable files} } found",
     "title": "Clean Files"
   },
+  "update_all": {
+    "title": "Update All",
+    "heading": {
+      "update": "Update",
+      "required_files": "Install Required Files",
+      "platform_files": "Replace Platform Files"
+    },
+    "buttons": {
+      "update": "Update {count, plural, =0 {none} one {# selected core} other {# selected cores} }",
+      "close": "Close"
+    },
+    "update": {
+      "title": "Updating {coreName}: { step, select, core { updating core... } files { downloading Required Files... } other {on no} }"
+    },
+    "no_updates_found": "No updates found for installed cores"
+  },
   "core_info": {
     "author": "Author",
     "controls": {

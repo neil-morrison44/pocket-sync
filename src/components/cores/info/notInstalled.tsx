@@ -20,12 +20,14 @@ type NotInstalledCoreInfoProps = {
   onBack: () => void
   coreName: string
   withoutControls?: boolean
+  withoutTitle?: boolean
 }
 
 export const NotInstalledCoreInfo = ({
   coreName,
   onBack,
   withoutControls = false,
+  withoutTitle = false,
 }: NotInstalledCoreInfoProps) => {
   const inventoryItem = useInventoryItem(coreName)
   const { t } = useTranslation("core_info")
@@ -62,7 +64,9 @@ export const NotInstalledCoreInfo = ({
       {!inventoryItem && <div>{t("not_in_inventory", { coreName })}</div>}
       {inventoryItem && (
         <>
-          <h3 className="core-info__title">{inventoryItem.platform_id}</h3>
+          {!withoutTitle && (
+            <h3 className="core-info__title">{inventoryItem.platform_id}</h3>
+          )}
           <img className="core-info__image" src={imageUrl} />
 
           {inventoryItem.requires_license && (
