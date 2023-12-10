@@ -1,5 +1,5 @@
 import { Suspense, useCallback, useEffect, useState } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue } from "recoil"
 import {
   ImageDimensionsSelectorFamily,
   SingleScreenshotSelectorFamily,
@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next"
 import { ControlsBackButton } from "../controls/inputs/backButton"
 import { ControlsButton } from "../controls/inputs/button"
 import { ControlsCheckbox } from "../controls/inputs/checkbox"
+import { imageModeAtom } from "../../recoil/screenshots/atom"
 
 type ScreenshotInfoProps = {
   fileName: string
@@ -23,7 +24,7 @@ type ScreenshotInfoProps = {
 }
 
 export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
-  const [imageMode, setImageMode] = useState<"raw" | "upscaled">("upscaled")
+  const [imageMode, setImageMode] = useRecoilState(imageModeAtom)
   const screenshot = useRecoilValue(SingleScreenshotSelectorFamily(fileName))
   if (screenshot === null) throw new Error(`Null file ${fileName}`)
   const videoJson = useRecoilValue(

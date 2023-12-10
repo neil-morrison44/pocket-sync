@@ -7,6 +7,7 @@ import {
 import { Screenshot } from "../../../types"
 import { invokeSaveFile } from "../../../utils/invokes"
 import { useUpscaler } from "./useUpscaler"
+import { imageModeAtom } from "../../../recoil/screenshots/atom"
 
 export const useMultiExport = () => {
   const upscaler = useUpscaler()
@@ -20,7 +21,9 @@ export const useMultiExport = () => {
           )
         )) as Screenshot[]
 
-        const screenshotsUpscaled = await Promise.all(
+        const imageMode = await snapshot.getPromise(imageModeAtom)
+
+        const processedScreenshots = await Promise.all(
           screenshots.map(async (screenshot) => {
             const objUrl = URL.createObjectURL(screenshot.file)
             const image = new Image()
@@ -30,14 +33,14 @@ export const useMultiExport = () => {
             const videoJson = await snapshot.getPromise(
               VideoJSONSelectorFamily(`${screenshot.author}.${screenshot.core}`)
             )
-            const url = upscaler(videoJson, image)
+            const url = upscaler(videoJson, image, imageMode === "raw")
             const file = await fetch(url)
               .then((res) => res.arrayBuffer())
               .then(
                 (buf) =>
                   new File([buf], screenshot.file_name, { type: "image/png" })
               )
-            return { ...screenshot, upscaledFile: file }
+            return { ...screenshot, processedFile: file }
           })
         )
 
@@ -50,15 +53,17 @@ export const useMultiExport = () => {
         if (!saveDir) return
 
         await Promise.all(
-          screenshotsUpscaled.map(async ({ game, file_name, upscaledFile }) => {
-            const buffer = await upscaledFile.arrayBuffer()
-            const filePath = `${saveDir}/${game
-              .replace(/\.[A-z]*$/, "")
-              .replace(/\s/g, "_")
-              .toLowerCase()
-              .substring(0, 60)}_${file_name}`
-            await invokeSaveFile(filePath, new Uint8Array(buffer))
-          })
+          processedScreenshots.map(
+            async ({ game, file_name, processedFile }) => {
+              const buffer = await processedFile.arrayBuffer()
+              const filePath = `${saveDir}/${game
+                .replace(/\.[A-z]*$/, "")
+                .replace(/\s/g, "_")
+                .toLowerCase()
+                .substring(0, 60)}_${file_name}`
+              await invokeSaveFile(filePath, new Uint8Array(buffer))
+            }
+          )
         )
       },
     []
