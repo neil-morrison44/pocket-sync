@@ -19,6 +19,7 @@ import { ControlsCheckbox } from "../controls/inputs/checkbox"
 import { ControlsGroup } from "../controls/inputs/group"
 import { ControlsSelect } from "../controls/inputs/select"
 import { ControlsSearch } from "../controls/inputs/search"
+import { UpdateAll } from "./updateAll"
 
 export const Cores = () => {
   const [selectedCore, setSelectedCore] = useRecoilState(
@@ -31,6 +32,7 @@ export const Cores = () => {
   const [onlyUpdates, setOnlyUpdates] = useState(false)
   const [filterCategory, setFilterCategory] = useState<string>("All")
   const { t } = useTranslation("cores")
+  const [updateAllOpen, setUpdateAllOpen] = useState(false)
 
   const refresh = useRecoilCallback(({ set }) => () => {
     set(fileSystemInvalidationAtom, Date.now())
@@ -82,7 +84,9 @@ export const Cores = () => {
           onChange={setSearchQuery}
           placeholder={t("controls.search")}
         />
-
+        <ControlsButton onClick={() => setUpdateAllOpen(true)}>
+          {t("controls.update_all")}
+        </ControlsButton>
         <ControlsGroup title={"Filters"}>
           <ControlsCheckbox checked={onlyUpdates} onChange={setOnlyUpdates}>
             {t("controls.updatable")}
@@ -99,6 +103,9 @@ export const Cores = () => {
           {t("controls.refresh")}
         </ControlsButton>
       </Controls>
+
+      {updateAllOpen && <UpdateAll onClose={() => setUpdateAllOpen(false)} />}
+
       <h2>{t("installed", { count: sortedList.length })}</h2>
       <SearchContextProvider
         query={searchQuery}

@@ -19,11 +19,15 @@ import { ControlsButton } from "../../controls/inputs/button"
 type NotInstalledCoreInfoProps = {
   onBack: () => void
   coreName: string
+  withoutControls?: boolean
+  withoutTitle?: boolean
 }
 
 export const NotInstalledCoreInfo = ({
   coreName,
   onBack,
+  withoutControls = false,
+  withoutTitle = false,
 }: NotInstalledCoreInfoProps) => {
   const inventoryItem = useInventoryItem(coreName)
   const { t } = useTranslation("core_info")
@@ -41,26 +45,28 @@ export const NotInstalledCoreInfo = ({
 
   return (
     <div className="core-info">
-      <Controls>
-        <ControlsBackButton onClick={onBack}>
-          {t("controls.back")}
-        </ControlsBackButton>
-        {download_url && (
-          <ControlsButton
-            onClick={() => {
-              installCore(coreName, download_url)
-            }}
-          >
-            {t("controls.install")}
-          </ControlsButton>
-        )}
-      </Controls>
-
+      {!withoutControls && (
+        <Controls>
+          <ControlsBackButton onClick={onBack}>
+            {t("controls.back")}
+          </ControlsBackButton>
+          {download_url && (
+            <ControlsButton
+              onClick={() => {
+                installCore(coreName, download_url)
+              }}
+            >
+              {t("controls.install")}
+            </ControlsButton>
+          )}
+        </Controls>
+      )}
       {!inventoryItem && <div>{t("not_in_inventory", { coreName })}</div>}
-
       {inventoryItem && (
         <>
-          <h3 className="core-info__title">{inventoryItem.platform_id}</h3>
+          {!withoutTitle && (
+            <h3 className="core-info__title">{inventoryItem.platform_id}</h3>
+          )}
           <img className="core-info__image" src={imageUrl} />
 
           {inventoryItem.requires_license && (

@@ -11,6 +11,10 @@
   height: 100vh;
 }
 
+.loader--no-background {
+  background-color: transparent;
+}
+
 .loader::before {
   content: "";
   display: block;
