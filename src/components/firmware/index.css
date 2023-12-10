@@ -27,6 +27,7 @@
   display: flex;
   gap: 15px;
   justify-content: space-around;
+  align-items: center;
 }
 
 .firmware__release-notes{

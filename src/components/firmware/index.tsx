@@ -146,11 +146,7 @@ const FirmwareDownloaded = ({ downloading }: FirmwareDownloadedProps) => {
 
   return (
     <div className="firmware__downloaded">
-      <div>
-        <strong>{t("loaded_firmware", { version: downloadedFirmware })}</strong>
-        <div>{t("loaded_firmware_tip")}</div>
-      </div>
-
+      <strong>{t("loaded_firmware", { version: downloadedFirmware })}</strong>
       <button onClick={onRemove}>{t("remove_button")}</button>
     </div>
   )
