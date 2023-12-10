@@ -98,6 +98,15 @@ I have no involvement in managing the files on the archive, try the FPGA Gaming 
 
 The tool I use to make this [tauri](https://www.tauri.app) only supports back to 10.13, so anything before then probably won't even open -- also Apple don't keep the default browser in old OSes up to date (Windows does for a while via service packs & in Linux you can do what you want) so I can only really support / can test on the last 2 major versions, sorry.
 
+### Why's the linux version using some EOL runtimes (webkitgtk issues)?
+
+This particularly affects the Flatpak version I believe.
+The short, and vauge, version is due to Tauri v1 only supporting a particular version of webkitgtk.
+
+I'm planning on updating to Tauri v2 soon after release, assuming I have the time around whenever it comes. Hopefully nothing fully breaks before then.
+
+Can read more here https://github.com/tauri-apps/tauri/discussions/4426#discussioncomment-6341398
+
 ### Why isn't _some core_ in the list?
 
 If it's new it could just be that it's not yet added to https://github.com/openfpga-cores-inventory/analogue-pocket. If it's been released outwith Github then support for whatever the format is will need to be added to the inventory.
