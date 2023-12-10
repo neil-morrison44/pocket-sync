@@ -39,6 +39,7 @@
     transition: filter 1s;
     width: max-content;
     display: block;
+    will-change: filter;
 
     --x: calc(15px * var(--scale-x));
     --y: calc(5px * var(--scale-y));

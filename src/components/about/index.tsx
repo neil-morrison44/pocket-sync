@@ -1,4 +1,4 @@
-import { Suspense, useLayoutEffect, useMemo, useRef } from "react"
+import { ReactNode, Suspense, useLayoutEffect, useMemo, useRef } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import { useRecoilSmoothUpdatesFirstSuspend } from "../../hooks/recoilSmoothUpdates"
 import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
@@ -36,35 +36,11 @@ export const About = () => {
   const setCurrentView = useSetRecoilState(currentViewAtom)
   const version = `v${AppVersion}`
 
-  const titleRef = useRef<HTMLHeadingElement>(null)
-
-  useLayoutEffect(() => {
-    const titleElement = titleRef.current
-    if (!titleElement) return
-    console.log("adding event")
-    const onMouseMove = (event: MouseEvent) => {
-      const titleRect = titleElement.getBoundingClientRect()
-      const x = event.clientX - titleRect.x
-      const y = event.clientY - titleRect.y
-
-      const scaleX = (titleRect.width / 2 - x) / (titleRect.width / 2)
-      const scaleY = (titleRect.height / 2 - y) / (titleRect.height / 2)
-
-      // console.log({ x, y, scaleX, scaleY })
-
-      titleElement.style.setProperty("--scale-x", scaleX.toFixed(3))
-      titleElement.style.setProperty("--scale-y", scaleY.toFixed(3))
-    }
-    titleElement.addEventListener("mousemove", onMouseMove)
-
-    return () => titleElement.removeEventListener("mousemove", onMouseMove)
-  }, [])
-
   return (
     <div className="about">
       <div className="about__top">
         <div className="about__title">
-          <h1 ref={titleRef}>{t("app_name")}</h1>
+          <SillyTitleEffect>{t("app_name")}</SillyTitleEffect>
           {version}
         </div>
 
@@ -103,4 +79,27 @@ export const About = () => {
       </div>
     </div>
   )
+}
+
+const SillyTitleEffect = ({ children }: { children: ReactNode }) => {
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  useLayoutEffect(() => {
+    const titleElement = titleRef.current
+    if (!titleElement) return
+    const onMouseMove = (event: MouseEvent) => {
+      const titleRect = titleElement.getBoundingClientRect()
+      const x = event.clientX - titleRect.x
+      const y = event.clientY - titleRect.y
+
+      const scaleX = (titleRect.width / 2 - x) / (titleRect.width / 2)
+      const scaleY = (titleRect.height / 2 - y) / (titleRect.height / 2)
+
+      titleElement.style.setProperty("--scale-x", scaleX.toFixed(3))
+      titleElement.style.setProperty("--scale-y", scaleY.toFixed(3))
+    }
+    titleElement.addEventListener("mousemove", onMouseMove)
+
+    return () => titleElement.removeEventListener("mousemove", onMouseMove)
+  }, [])
+  return <h1 ref={titleRef}>{children}</h1>
 }

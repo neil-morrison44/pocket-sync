@@ -94,8 +94,6 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                 platformIds[decodedParams.platformIndex]
               }/${decodedParams.coreSpecific ? coreName : "common"}`
 
-              console.log({ path })
-
               return Promise.all(
                 [filename, ...(alternate_filenames || [])].map(
                   async (filename) =>
@@ -132,8 +130,6 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
             const path = `Assets/${platformIds[decodedParams.platformIndex]}/${
               decodedParams.coreSpecific ? coreName : "common"
             }/`
-
-            console.log({ path })
 
             let files = await invokeWalkDirListFiles(path, [".json"])
             if (get(skipAlternateAssetsSelector))
