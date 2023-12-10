@@ -28,8 +28,5 @@ export const decodeDataParams = (rawParams: string | number | undefined) => {
     instanceJSON: (parms & 0b000010000) === 0b000010000,
     platformIndex,
   }
-
-  console.log({ decoded })
-
   return decoded
 }
