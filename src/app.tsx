@@ -3,7 +3,13 @@ import "./app.css"
 import { useRecoilState, useSetRecoilState } from "recoil"
 import { pocketPathAtom, reconnectWhenOpenedAtom } from "./recoil/atoms"
 import { Layout } from "./components/layout"
-import React, { Suspense, useCallback, useEffect, useState } from "react"
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 import { invokeOpenPocket, invokeOpenPocketFolder } from "./utils/invokes"
 import { Tip } from "./components/tip"
 import { NewsFeed } from "./components/newsFeed"
@@ -23,8 +29,12 @@ export const App = () => {
   const setView = useSetRecoilState(currentViewAtom)
   const [attempts, setAttempts] = useState(0)
   const { t } = useTranslation("app")
+  const reconnectRef = useRef<boolean>(false)
 
   useEffect(() => {
+    if (reconnectRef.current) return
+    reconnectRef.current = true
+
     if (reconnectWhenOpened.enable && reconnectWhenOpened.path) {
       invokeOpenPocketFolder(reconnectWhenOpened.path).then((result) => {
         if (result) {

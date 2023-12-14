@@ -51,9 +51,12 @@ struct PocketSyncState(InnerState);
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command(async)]
-async fn open_pocket(state: tauri::State<'_, PocketSyncState>) -> Result<Option<String>, ()> {
+async fn open_pocket(
+    state: tauri::State<'_, PocketSyncState>,
+    app_handle: tauri::AppHandle,
+) -> Result<Option<String>, ()> {
     if let Some(pocket_path) = dialog::blocking::FileDialogBuilder::new().pick_folder() {
-        open_pocket_folder(state, &pocket_path.to_str().unwrap()).await
+        open_pocket_folder(state, &pocket_path.to_str().unwrap(), app_handle).await
     } else {
         Err(())
     }
@@ -63,13 +66,23 @@ async fn open_pocket(state: tauri::State<'_, PocketSyncState>) -> Result<Option<
 async fn open_pocket_folder(
     state: tauri::State<'_, PocketSyncState>,
     pocket_path: &str,
+    app_handle: tauri::AppHandle,
 ) -> Result<Option<String>, ()> {
+    let window = app_handle.get_window("main").unwrap();
+    println!("open_pocket_folder {pocket_path}");
     let pocket_path = PathBuf::from(pocket_path);
     if !check_if_folder_looks_like_pocket(&pocket_path) {
         return Ok(None);
     }
     let mut pocket_path_state = state.0.pocket_path.write().await;
     *pocket_path_state = pocket_path.clone();
+
+    {
+        let window = window.clone();
+        let path_buf = pocket_path.clone();
+        tauri::async_runtime::spawn(async move { connection_task(window, path_buf).await });
+    }
+
     Ok(Some(String::from(pocket_path_state.to_str().unwrap())))
 }
 
@@ -795,10 +808,10 @@ fn start_tasks(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> 
         let window = window.clone();
         tauri::async_runtime::spawn(async move { start_zip_task(window).await });
     }
-    {
-        let window = window.clone();
-        tauri::async_runtime::spawn(async move { connection_task(window).await });
-    }
+    // {
+    //     let window = window.clone();
+    //     tauri::async_runtime::spawn(async move { connection_task(window).await });
+    // }
 
     Ok(())
 }

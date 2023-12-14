@@ -305,3 +305,17 @@ export type RootFileUnZipped = {
 }
 
 export type RootFile = RootFileZipped | RootFileUnZipped
+
+export type FSEvent = {
+  attrs: unknown
+  paths: string[]
+  type:
+    | { create: { kind: "folder" | "file" } }
+    | { remove: { kind: "folder" | "file" } }
+    | {
+        modify:
+          | { kind: "data"; mode: "content" }
+          | { kind: "metadata"; mode: "any" }
+          | { kind: "metadata"; mode: "ownership" }
+      }
+}

@@ -24,6 +24,12 @@ futures-locks = "0.7.1"
 hex = "0.4.3"
 md-5 = "0.10.5"
 mister_saves_sync = { path = "./mister_saves_sync" }
+notify = { version = "6.1.1", default-features = false, features = [
+  "fsevent-sys",
+  "macos_fsevent",
+  "serde",
+] }
+notify-debouncer-full = { version = "0.3.1" }
 num_cpus = "1.16.0"
 openfpga-instance-packager = { git = "https://github.com/neil-morrison44/openfpga-instance-packager", tag = "v0.3.1" }
 rayon = "1.8.0"
