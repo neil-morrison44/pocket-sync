@@ -14,6 +14,7 @@ struct FSEventPayload {
 enum DebouncedOrRoot {
     Root(Result<Event, notify::Error>),
     Debounced(Result<Vec<DebouncedEvent>, Vec<notify::Error>>),
+    PolledDisconnect,
 }
 
 pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
@@ -40,49 +41,47 @@ pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
 
     let root_tx = tx.clone();
     let mut debouncer = new_debouncer(Duration::from_millis(550), None, move |res| {
-        println!("File Watcher");
-        dbg!(&res);
         root_tx.try_send(DebouncedOrRoot::Debounced(res)).unwrap();
     })
     .unwrap();
-
-    println!("1");
-
-    // debouncer
-    //     .cache()
-    //     .add_root(&pocket_path, RecursiveMode::Recursive);
-
-    //     println!("1.5");
 
     debouncer
         .watcher()
         .watch(&pocket_path, RecursiveMode::Recursive)
         .unwrap();
 
-        println!("2");
-
-        dbg!(&pocket_path);
-
-
-
-        println!("3");
+    // This causes a deadlock on Windows for some reason
+    // debouncer
+    //     .cache()
+    //     .add_root(&pocket_path, RecursiveMode::Recursive);
 
     let files_tx = tx.clone();
     let mut root_watcher = RecommendedWatcher::new(
         move |res| {
-            println!("Root Watcher");
-            dbg!(&res);
             files_tx.try_send(DebouncedOrRoot::Root(res)).unwrap();
         },
         Config::default(),
     )
     .unwrap();
-println!("Gets to here?");
-    dbg!(&pocket_path);
 
     root_watcher
         .watch(&pocket_path, RecursiveMode::NonRecursive)
         .unwrap();
+
+    let poll_tx = tx.clone();
+    let polling_path = pocket_path.clone();
+    tauri::async_runtime::spawn(async move {
+        loop {
+            tokio::time::sleep(Duration::from_secs(1)).await;
+            if !polling_path.exists() {
+                poll_tx
+                    .send(DebouncedOrRoot::PolledDisconnect)
+                    .await
+                    .unwrap();
+                break;
+            }
+        }
+    });
 
     let main_window = window.clone();
     while let Some(res) = rx.recv().await {
@@ -110,6 +109,15 @@ println!("Gets to here?");
                 break;
             }
             DebouncedOrRoot::Root(Ok(_)) | DebouncedOrRoot::Root(Err(_)) => {}
+            DebouncedOrRoot::PolledDisconnect => {
+                main_window
+                    .emit(
+                        "pocket-connection",
+                        ConnectionEventPayload { connected: false },
+                    )
+                    .unwrap();
+                break;
+            }
         }
     }
 
