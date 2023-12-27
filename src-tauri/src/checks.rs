@@ -56,7 +56,6 @@ pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
     let files_tx = tx.clone();
     let mut root_watcher = RecommendedWatcher::new(
         move |res| {
-            dbg!(&res);
             files_tx.try_send(DebouncedOrRoot::Root(res)).unwrap();
         },
         Config::default(),

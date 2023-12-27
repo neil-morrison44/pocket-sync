@@ -183,7 +183,6 @@ pub async fn build_save_zip(
     let saves_path = pocket_path.join("Saves");
 
     let mut buffer = Vec::new();
-    dbg!(&save_paths);
     for name in save_paths {
         let safe_name = remove_leading_slash(name);
         let path = saves_path.join(&safe_name);
