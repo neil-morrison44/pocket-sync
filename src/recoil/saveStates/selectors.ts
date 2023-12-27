@@ -8,13 +8,13 @@ import {
   invokeReadBinaryFile,
   invokeWalkDirListFiles,
 } from "../../utils/invokes"
-import { fileSystemInvalidationAtom } from "../atoms"
 import { PhotoColourMapAtom } from "./atoms"
+import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
 
 export const AllSaveStatesSelector = selector<string[]>({
   key: "AllSaveStatesSelector",
   get: async ({ get }) => {
-    get(fileSystemInvalidationAtom)
+    get(FolderWatchAtomFamily("Memories/Save States"))
     const saves = await invokeWalkDirListFiles("Memories/Save States", [".sta"])
     return saves.map((f) => f.replace(/^\//g, ""))
   },
@@ -60,9 +60,10 @@ export const ReadSavForStaSelectorFamily = selectorFamily<Uint8Array, string>({
   get:
     (path) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
       const savPath = path.replace(".sta", ".sav")
-      const file = await invokeReadBinaryFile(`Memories/Save States/${savPath}`)
+      const fullpath = `Memories/Save States/${savPath}`
+      get(FileWatchAtomFamily(fullpath))
+      const file = await invokeReadBinaryFile(fullpath)
       return file
     },
 })

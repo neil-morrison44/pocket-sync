@@ -1,9 +1,20 @@
-use notify::{RecursiveMode, Watcher};
-use notify_debouncer_full::new_debouncer;
+use notify::{Config, Event, RecommendedWatcher, RecursiveMode, Watcher};
+use notify_debouncer_full::{new_debouncer, DebouncedEvent};
 use serde::{Deserialize, Serialize};
 use std::{path::PathBuf, time::Duration};
 use tauri::Window;
 use tokio::sync::mpsc;
+
+#[derive(Serialize, Deserialize, Clone)]
+struct FSEventPayload {
+    events: Vec<notify::Event>,
+    pocket_path: String,
+}
+
+enum DebouncedOrRoot {
+    Root(Result<Event, notify::Error>),
+    Debounced(Result<Vec<DebouncedEvent>, Vec<notify::Error>>),
+}
 
 pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
     let json_path = path.join("Analogue_Pocket.json");
@@ -24,22 +35,14 @@ pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
 }
 
 pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
-    // let state: tauri::State<PocketSyncState> = window.state();
-    let main_window = window.clone();
-
     let (tx, mut rx) = mpsc::channel(10);
-    // let mut was_connected: bool = false;
+    println!("Watching...");
 
-    // setup debouncer
-    // let (tx, rx) = std::sync::mpsc::channel();
-
-    // no specific tickrate, max debounce time 2 seconds
-    let mut debouncer = new_debouncer(Duration::from_millis(200), None, move |res| {
-        tx.try_send(res).unwrap();
+    let root_tx = tx.clone();
+    let mut debouncer = new_debouncer(Duration::from_millis(550), None, move |res| {
+        root_tx.try_send(DebouncedOrRoot::Debounced(res)).unwrap();
     })
     .unwrap();
-
-    println!("Watching...");
 
     debouncer
         .watcher()
@@ -50,27 +53,46 @@ pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
         .cache()
         .add_root(&pocket_path, RecursiveMode::Recursive);
 
-    // print all events and errors
-    // for result in rx {
-    //     match result {
-    //         Ok(events) => events.iter().for_each(|event| println!("{event:?}")),
-    //         Err(errors) => errors.iter().for_each(|error| println!("{error:?}")),
-    //     }
-    //     println!();
-    // }
+    let files_tx = tx.clone();
+    let mut root_watcher = RecommendedWatcher::new(
+        move |res| {
+            dbg!(&res);
+            files_tx.try_send(DebouncedOrRoot::Root(res)).unwrap();
+        },
+        Config::default(),
+    )
+    .unwrap();
 
+    root_watcher
+        .watch(&pocket_path, RecursiveMode::NonRecursive)
+        .unwrap();
+
+    let main_window = window.clone();
     while let Some(res) = rx.recv().await {
         match res {
-            Ok(events) => {
-                println!("changed: {:?}", &events);
+            DebouncedOrRoot::Debounced(Ok(events)) => {
+                // println!("changed: {:?}", &events);
                 main_window
                     .emit(
                         "pocket-fs-event",
-                        events.into_iter().map(|e| e.event).collect::<Vec<_>>(),
+                        FSEventPayload {
+                            events: events.into_iter().map(|e| e.event).collect::<Vec<_>>(),
+                            pocket_path: String::from(pocket_path.to_str().unwrap()),
+                        },
                     )
                     .unwrap();
             }
-            Err(e) => println!("watch error: {:?}", e),
+            DebouncedOrRoot::Debounced(Err(e)) => println!("watch error: {:?}", e),
+            DebouncedOrRoot::Root(Ok(r)) if r.kind.is_remove() => {
+                main_window
+                    .emit(
+                        "pocket-connection",
+                        ConnectionEventPayload { connected: false },
+                    )
+                    .unwrap();
+                break;
+            }
+            DebouncedOrRoot::Root(Ok(_)) | DebouncedOrRoot::Root(Err(_)) => {}
         }
     }
 

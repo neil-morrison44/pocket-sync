@@ -17,7 +17,6 @@ import { CoreMainPlatformIdSelectorFamily } from "../../../recoil/selectors"
 import { PlatformImage } from "../platformImage"
 import { enableGlobalZipInstallAtom } from "../../../recoil/atoms"
 import { NotInstalledCoreInfo } from "../info/notInstalled"
-import { useInvalidateFileSystem } from "../../../hooks/invalidation"
 import { Loader } from "../../loader"
 import { PlatformInfoSelectorFamily } from "../../../recoil/platforms/selectors"
 import { AutoInstallCore } from "./autoInstallCore"
@@ -44,7 +43,6 @@ type UpdateStage = {
 export const UpdateAll = ({ onClose }: UpdateAllProps) => {
   const [updateList, setUpdateList] = useState<UpdateListItem[]>([])
   const [stage, setStage] = useState<UpdateStage | null>(null)
-  const invalidateFS = useInvalidateFileSystem()
   const { t } = useTranslation("update_all")
   const hasDoneAnUpdateRef = useRef(false)
 
@@ -83,11 +81,10 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
   useEffect(() => {
     if (stage === null && hasDoneAnUpdateRef.current) {
       onClose()
-      invalidateFS()
       return
     }
     if (stage !== null) hasDoneAnUpdateRef.current = true
-  }, [invalidateFS, onClose, stage])
+  }, [onClose, stage])
 
   const coreCount = useMemo(() => {
     const updateListIndex = updateList.findIndex(

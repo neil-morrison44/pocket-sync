@@ -1,5 +1,5 @@
 import { useContext, useMemo } from "react"
-import { Color, DoubleSide, MeshPhysicalMaterial } from "three"
+import { Color, MeshPhysicalMaterial } from "three"
 import { BodyColourContext } from "../colourContext"
 import { useNoiseTexture } from "./useNoiseTexture"
 import { PocketColour } from "../../../types"
@@ -56,15 +56,17 @@ export const useBodyMaterial = (): MeshPhysicalMaterial => {
     const material = new MeshPhysicalMaterial()
 
     if (bodyColour.startsWith("trans_")) {
-      material.transmission = 0.975
+      material.transmission = 0.95
       material.opacity = 1
-      material.roughness = 0.2
+      material.roughness = 0.25
       material.color = new Color(COLOUR[bodyColour] || "red")
       material.ior = 1.46
       material.clearcoat = 1
       material.clearcoatRoughness = 1
       material.transparent = true
-      material.side = DoubleSide
+      // this causes random glitchy squares for some reason
+      // - though it looks better when it's on
+      // material.side = DoubleSide
     } else {
       material.envMapIntensity = 0.5
       material.color = new Color(COLOUR[bodyColour] || "red")

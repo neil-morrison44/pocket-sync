@@ -3,18 +3,14 @@ import { useCallback } from "react"
 import { useRecoilValue } from "recoil"
 import { PocketSyncConfigSelector } from "../recoil/config/selectors"
 import { RequiredFileInfo } from "../types"
-import { useInvalidateFileSystem } from "./invalidation"
 import { useProgress } from "./useProgress"
 import { turboDownloadsAtom } from "../recoil/settings/atoms"
 
 export const useInstallRequiredFiles = () => {
   const { archive_url } = useRecoilValue(PocketSyncConfigSelector)
-  const invalidateFS = useInvalidateFileSystem()
 
   const { percent, inProgress, lastMessage, remainingTime } = useProgress(
-    () => {
-      invalidateFS()
-    }
+    () => {}
   )
 
   const turboDownloads = useRecoilValue(turboDownloadsAtom)

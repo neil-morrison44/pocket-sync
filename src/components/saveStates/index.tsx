@@ -9,7 +9,6 @@ import { Controls } from "../controls"
 import { SearchContextProvider } from "../search/context"
 import { confirm } from "@tauri-apps/api/dialog"
 import { invokeDeleteFiles } from "../../utils/invokes"
-import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { splitAsPath } from "../../utils/splitAsPath"
 import { CoreTag } from "../shared/coreTag"
 import { useTranslation } from "react-i18next"
@@ -18,7 +17,6 @@ import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
 
 export const SaveStates = () => {
-  const invalidateFS = useInvalidateFileSystem()
   const allSaveStates = useRecoilValue(AllSaveStatesSelector)
   const [selectedStates, setSelectedStates] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState("")
@@ -56,8 +54,7 @@ export const SaveStates = () => {
       selectedStates.map((s) => `Memories/Save States/${s}`)
     )
     setSelectedStates([])
-    invalidateFS()
-  }, [invalidateFS, selectedStates, t])
+  }, [selectedStates, t])
 
   return (
     <div className="save-states">

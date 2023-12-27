@@ -1,7 +1,6 @@
 import { confirm } from "@tauri-apps/api/dialog"
 import { useCallback } from "react"
 import { useRecoilValue } from "recoil"
-import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { BackupZipsSelectorFamily } from "../../recoil/saves/selectors"
 import { SaveConfig } from "../../types"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
@@ -17,7 +16,6 @@ export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
     BackupZipsSelectorFamily(config.backup_location)
   )
 
-  const invalidateFS = useInvalidateFileSystem()
   const updateConfig = useUpdateConfig()
   const { t } = useTranslation("saves")
 
@@ -28,9 +26,7 @@ export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
     await updateConfig("saves", (currentSaves) =>
       currentSaves.filter((s) => s !== config)
     )
-
-    invalidateFS()
-  }, [config, invalidateFS, t, updateConfig])
+  }, [config, t, updateConfig])
 
   if (!exists) {
     return (

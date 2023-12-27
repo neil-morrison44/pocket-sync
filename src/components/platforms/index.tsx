@@ -18,7 +18,6 @@ import { ImagePacks } from "./imagePacks"
 import { useTranslation } from "react-i18next"
 import { confirm } from "@tauri-apps/api/dialog"
 import { invokeDeleteFiles } from "../../utils/invokes"
-import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { DataPacks } from "./dataPacks"
 import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
@@ -41,8 +40,6 @@ export const Platforms = () => {
   const [imagePacksOpen, setImagePacksOpen] = useState(false)
   const [dataPacksOpen, setDataPacksOpen] = useState(false)
 
-  const invalidateFS = useInvalidateFileSystem()
-
   const removeCorelessPlatforms = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
@@ -60,7 +57,6 @@ export const Platforms = () => {
               (platformId) => `Platforms/${platformId}.json`
             )
           )
-          invalidateFS()
         }
       },
     []

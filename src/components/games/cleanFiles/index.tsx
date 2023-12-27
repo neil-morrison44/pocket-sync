@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
-import { useInvalidateFileSystem } from "../../../hooks/invalidation"
 import { pocketPathAtom } from "../../../recoil/atoms"
 import { CleanableFilesSelectorFamily } from "../../../recoil/selectors"
 import { invokeDeleteFiles } from "../../../utils/invokes"
@@ -21,7 +20,6 @@ export const CleanFilesModal = ({
 }: CleanFilesModalProp) => {
   const cleanableFiles = useRecoilValue(CleanableFilesSelectorFamily(path))
   const [deleteInprogress, setDeleteInProgress] = useState(false)
-  const invalidateFileSystem = useInvalidateFileSystem()
   const pocketPath = useRecoilValue(pocketPathAtom) as string
   const { t } = useTranslation("clean_files")
 
@@ -32,9 +30,8 @@ export const CleanFilesModal = ({
   const deleteFiles = useCallback(async () => {
     setDeleteInProgress(true)
     await invokeDeleteFiles(files)
-    invalidateFileSystem()
     setDeleteInProgress(false)
-  }, [files, invalidateFileSystem])
+  }, [files])
 
   return (
     <Modal className="clean-files">

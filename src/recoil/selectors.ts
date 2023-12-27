@@ -1,7 +1,6 @@
 import { selector, selectorFamily } from "recoil"
 import { CoreInfoJSON, DataJSON } from "../types"
 import { renderBinImage } from "../utils/renderBinImage"
-import { fileSystemInvalidationAtom } from "./atoms"
 import { getVersion } from "@tauri-apps/api/app"
 import {
   invokeFileExists,
@@ -131,7 +130,7 @@ export const ImageBinSrcSelectorFamily = selectorFamily<
   get:
     ({ path, width, height }) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
+      get(FileWatchAtomFamily(path))
 
       const exists = await invokeFileExists(path)
 
@@ -166,7 +165,7 @@ export const CleanableFilesSelectorFamily = selectorFamily<string[], string>({
   get:
     (path) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
+      get(FolderWatchAtomFamily(path))
       const files = await invokeFindCleanableFiles(path)
       return files
     },

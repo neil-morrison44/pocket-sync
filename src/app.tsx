@@ -1,6 +1,6 @@
 import "./font.css"
 import "./app.css"
-import { useRecoilState, useSetRecoilState } from "recoil"
+import { RecoilRoot, useRecoilState, useSetRecoilState } from "recoil"
 import { pocketPathAtom, reconnectWhenOpenedAtom } from "./recoil/atoms"
 import { Layout } from "./components/layout"
 import React, {
@@ -59,7 +59,16 @@ export const App = () => {
   }, [setView, setPocketPath, setReconnectWhenOpened])
 
   if (pocketPath) {
-    return <Layout />
+    return (
+      <RecoilRoot
+        key={pocketPath}
+        initializeState={(snapshot) => {
+          snapshot.set(pocketPathAtom, pocketPath)
+        }}
+      >
+        <Layout />
+      </RecoilRoot>
+    )
   }
 
   return (

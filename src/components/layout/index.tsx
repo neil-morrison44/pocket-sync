@@ -3,7 +3,6 @@ import { useRecoilState, useRecoilValue } from "recoil"
 import { currentViewAtom, VIEWS_LIST } from "../../recoil/view/atoms"
 import { About } from "../about"
 import { Cores } from "../cores"
-import { Disconnections } from "../disconnections"
 import { ErrorBoundary } from "../errorBoundary"
 import { Games } from "../games"
 import { Loader } from "../loader"
@@ -52,7 +51,6 @@ export const Layout = () => {
 
   return (
     <div className="layout" ref={layoutRef}>
-      <Disconnections />
       {enableGlobalZipInstall && <ZipInstall />}
       <Suspense>
         <AutoBackup />

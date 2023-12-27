@@ -1,11 +1,9 @@
 import { useCallback } from "react"
 import { ask } from "@tauri-apps/api/dialog"
 import { invokeUninstallCore } from "../utils/invokes"
-import { useInvalidateFileSystem } from "./invalidation"
 import { useTranslation } from "react-i18next"
 
 export const useUninstallCore = () => {
-  const invalidateFileSystem = useInvalidateFileSystem()
   const { t } = useTranslation("uninstall_core")
 
   return useCallback(
@@ -21,9 +19,8 @@ export const useUninstallCore = () => {
 
       if (success) {
         await new Promise((resolve) => setTimeout(resolve, 1000))
-        invalidateFileSystem()
       }
     },
-    [invalidateFileSystem, t]
+    [t]
   )
 }

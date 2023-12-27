@@ -7,9 +7,10 @@ export const FileWatchAtomFamily = atomFamily<number, string>({
 
   effects: (path) => [
     ({ setSelf }) => {
-      registerFilePath(path, () => {
+      const unregister = registerFilePath(path, () => {
         setSelf(Date.now())
       })
+      return () => unregister()
     },
   ],
 })
@@ -20,9 +21,11 @@ export const FolderWatchAtomFamily = atomFamily<number, string>({
 
   effects: (path) => [
     ({ setSelf }) => {
-      registerFilePath(path, () => {
+      const unregister = registerFilePath(path, () => {
         setSelf(Date.now())
       })
+
+      return () => unregister()
     },
   ],
 })

@@ -1,8 +1,4 @@
-import {
-  useRecoilValue,
-  useRecoilValueLoadable,
-  useSetRecoilState,
-} from "recoil"
+import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
   CoreInfoSelectorFamily,
   CoreMainPlatformIdSelectorFamily,
@@ -37,6 +33,7 @@ import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
 import { currentFirmwareVersionSelector } from "../../../recoil/firmware/selectors"
 import { WarningIcon } from "./requiredFiles/warningIcon"
+import { Modal } from "../../modal"
 
 type CoreInfoProps = {
   coreName: string
@@ -44,9 +41,6 @@ type CoreInfoProps = {
 }
 
 export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
-  const requiredFilesLoadable = useRecoilValueLoadable(
-    RequiredFileInfoSelectorFamily(coreName)
-  )
   const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
   const uninstall = useUninstallCore()
   const { installCore } = useInstallCore()
@@ -78,17 +72,15 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
         <ControlsButton onClick={() => uninstall(coreName)}>
           {t("controls.uninstall")}
         </ControlsButton>
-        {requiredFilesLoadable.state === "hasValue" &&
-          requiredFilesLoadable.getValue().length > 0 && (
-            <ControlsButton
-              onClick={() => {
-                setArchiveBump((a) => a + 1)
-                setRequiredFilesOpen(true)
-              }}
-            >
-              {t("controls.required_files")}
-            </ControlsButton>
-          )}
+        <Suspense>
+          <RequiredFilesButton
+            coreName={coreName}
+            onClick={() => {
+              // setArchiveBump((a) => a + 1)
+              setRequiredFilesOpen(true)
+            }}
+          />
+        </Suspense>
         {downloadUrl && (
           <ControlsButton onClick={() => installCore(coreName, downloadUrl)}>
             {t("controls.update")}
@@ -97,10 +89,18 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
       </Controls>
 
       {requiredFilesOpen && (
-        <LoadRequiredFiles
-          coreName={coreName}
-          onClose={() => setRequiredFilesOpen(false)}
-        />
+        <Suspense
+          fallback={
+            <Modal className="load-required-files">
+              <Loader />
+            </Modal>
+          }
+        >
+          <LoadRequiredFiles
+            coreName={coreName}
+            onClose={() => setRequiredFilesOpen(false)}
+          />
+        </Suspense>
       )}
 
       {inputsOpen && (
@@ -278,6 +278,24 @@ type SupportsBubbleProps = {
   supports: boolean
 }
 
+const RequiredFilesButton = ({
+  coreName,
+  onClick,
+}: {
+  coreName: string
+  onClick: () => void
+}) => {
+  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
+  const { t } = useTranslation("core_info")
+
+  if (requiredFiles.length === 0) return null
+  return (
+    <ControlsButton onClick={onClick}>
+      {t("controls.required_files")}
+    </ControlsButton>
+  )
+}
+
 const SupportsBubble = ({ supports, children }: SupportsBubbleProps) => (
   <div className={`core-info__supports core-info__supports--${supports}`}>
     {children}
@@ -298,10 +316,9 @@ const FirmwareWarning = ({ coreName }: { coreName: string }) => {
       .split(".")
       .map((v) => parseInt(v))
 
-    if (coreMajor > pocketMajor) return true
-    if (coreMinor > pocketMinor) return true
-
-    return false
+    if (pocketMajor > coreMajor) return false
+    if (pocketMajor === coreMajor && pocketMinor > coreMinor) return false
+    return true
   }, [coreInfo.core.framework.version_required, currentFirmware.version])
 
   if (!firmwareTooLow) return null

@@ -2,15 +2,16 @@ import { selectorFamily } from "recoil"
 import { InputJSON } from "../../types"
 import { invokeWalkDirListFiles } from "../../utils/invokes"
 import { readJSONFile } from "../../utils/readJSONFile"
-import { fileSystemInvalidationAtom } from "../atoms"
+import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
 
 const CoreInputSelectorFamily = selectorFamily<InputJSON, string>({
   key: "CoreInputSelectorFamily",
   get:
     (coreName: string) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
-      return readJSONFile<InputJSON>(`Cores/${coreName}/input.json`)
+      const path = `Cores/${coreName}/input.json`
+      get(FolderWatchAtomFamily(path))
+      return readJSONFile<InputJSON>(path)
     },
 })
 
@@ -19,10 +20,9 @@ export const ListPresetInputsSelectorFamily = selectorFamily<string[], string>({
   get:
     (coreName: string) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
-      const inputFiles = invokeWalkDirListFiles(`Presets/${coreName}/Input`, [
-        "json",
-      ])
+      const path = `Presets/${coreName}/Input`
+      get(FolderWatchAtomFamily(path))
+      const inputFiles = invokeWalkDirListFiles(path, ["json"])
 
       return inputFiles
     },
@@ -36,8 +36,9 @@ export const PresetInputSelectorFamily = selectorFamily<
   get:
     ({ coreName, filePath }) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
       if (filePath === "core") return get(CoreInputSelectorFamily(coreName))
-      return readJSONFile<InputJSON>(`Presets/${coreName}/Input/${filePath}`)
+      const path = `Presets/${coreName}/Input${filePath}`
+      get(FileWatchAtomFamily(path))
+      return readJSONFile<InputJSON>(path)
     },
 })

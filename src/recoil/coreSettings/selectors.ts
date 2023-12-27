@@ -2,15 +2,16 @@ import { selectorFamily } from "recoil"
 import { InteractJSON, InteractPersistJSON } from "../../types/interact"
 import { invokeWalkDirListFiles } from "../../utils/invokes"
 import { readJSONFile } from "../../utils/readJSONFile"
-import { fileSystemInvalidationAtom } from "../atoms"
+import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
 
 const CoreInteractFileSelectorFamily = selectorFamily<InteractJSON, string>({
   key: "CoreInteractFileSelectorFamily",
   get:
     (coreName) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
-      return readJSONFile<InteractJSON>(`Cores/${coreName}/interact.json`)
+      const path = `Cores/${coreName}/interact.json`
+      get(FileWatchAtomFamily(path))
+      return readJSONFile<InteractJSON>(path)
     },
 })
 
@@ -29,12 +30,9 @@ export const ListPresetInteractSelectorFamily = selectorFamily<
   get:
     (coreName: string) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
-      const inputFiles = invokeWalkDirListFiles(
-        `Presets/${coreName}/Interact`,
-        ["json"]
-      )
-
+      const path = `Presets/${coreName}/Interact`
+      get(FolderWatchAtomFamily(path))
+      const inputFiles = invokeWalkDirListFiles(path, ["json"])
       return inputFiles
     },
 })
@@ -47,13 +45,11 @@ export const PresetInteractFileSelectorFamily = selectorFamily<
   get:
     ({ coreName, filePath }) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
-
       if (filePath === "core")
         return get(CoreInteractFileSelectorFamily(coreName))
 
-      return readJSONFile<InteractJSON>(
-        `Presets/${coreName}/Interact/${filePath}`
-      )
+      const path = `Presets/${coreName}/Interact/${filePath}`
+      get(FileWatchAtomFamily(path))
+      return readJSONFile<InteractJSON>(path)
     },
 })
