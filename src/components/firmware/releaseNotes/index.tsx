@@ -5,7 +5,6 @@ import parse, { Element, domToReact } from "html-react-parser"
 
 import "./index.css"
 import { Link } from "../../link"
-import { useMemo } from "react"
 
 type FirmwareReleaseNotesProp = {
   version: string
@@ -17,20 +16,6 @@ export const FirmwareReleaseNotes = ({ version }: FirmwareReleaseNotesProp) => {
   )
   const { t } = useTranslation("firmware")
   const url = `https://www.analogue.co/support/pocket/firmware/${version}`
-
-  const htmlChunks = useMemo(() => {
-    const parser = new DOMParser()
-    const htmlDoc = parser.parseFromString(
-      firmwareDetails.release_notes_html,
-      "text/html"
-    )
-
-    console.log({ htmlDoc })
-
-    console.log(htmlDoc.body.childNodes[0])
-
-    firmwareDetails.release_notes_html
-  }, [firmwareDetails.release_notes_html])
 
   return (
     <div className="firmware-release-notes">
