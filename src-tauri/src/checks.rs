@@ -36,31 +36,49 @@ pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
 
 pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
     let (tx, mut rx) = mpsc::channel(10);
-    println!("Watching...");
+    println!("Watching....");
 
     let root_tx = tx.clone();
     let mut debouncer = new_debouncer(Duration::from_millis(550), None, move |res| {
+        println!("File Watcher");
+        dbg!(&res);
         root_tx.try_send(DebouncedOrRoot::Debounced(res)).unwrap();
     })
     .unwrap();
+
+    println!("1");
+
+    // debouncer
+    //     .cache()
+    //     .add_root(&pocket_path, RecursiveMode::Recursive);
+
+    //     println!("1.5");
 
     debouncer
         .watcher()
         .watch(&pocket_path, RecursiveMode::Recursive)
         .unwrap();
 
-    debouncer
-        .cache()
-        .add_root(&pocket_path, RecursiveMode::Recursive);
+        println!("2");
+
+        dbg!(&pocket_path);
+
+
+
+        println!("3");
 
     let files_tx = tx.clone();
     let mut root_watcher = RecommendedWatcher::new(
         move |res| {
+            println!("Root Watcher");
+            dbg!(&res);
             files_tx.try_send(DebouncedOrRoot::Root(res)).unwrap();
         },
         Config::default(),
     )
     .unwrap();
+println!("Gets to here?");
+    dbg!(&pocket_path);
 
     root_watcher
         .watch(&pocket_path, RecursiveMode::NonRecursive)
@@ -96,22 +114,6 @@ pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
     }
 
     println!("Exited?");
-
-    // loop {
-    //     sleep(Duration::from_secs(1)).await;
-    //     let pocket_path = &state.0.pocket_path.read().await;
-    //     if !pocket_path.exists() && was_connected {
-    //         was_connected = false;
-    //         main_window
-    //             .emit(
-    //                 "pocket-connection",
-    //                 ConnectionEventPayload { connected: false },
-    //             )
-    //             .unwrap();
-    //     } else if pocket_path.exists() && !was_connected {
-    //         was_connected = true;
-    //     }
-    // }
 }
 
 #[derive(Serialize, Deserialize, Clone)]
