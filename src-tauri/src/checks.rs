@@ -14,6 +14,7 @@ struct FSEventPayload {
 enum DebouncedOrRoot {
     Root(Result<Event, notify::Error>),
     Debounced(Result<Vec<DebouncedEvent>, Vec<notify::Error>>),
+    PolledDisconnect,
 }
 
 pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
@@ -36,7 +37,7 @@ pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
 
 pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
     let (tx, mut rx) = mpsc::channel(10);
-    println!("Watching...");
+    println!("Watching....");
 
     let root_tx = tx.clone();
     let mut debouncer = new_debouncer(Duration::from_millis(550), None, move |res| {
@@ -49,9 +50,10 @@ pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
         .watch(&pocket_path, RecursiveMode::Recursive)
         .unwrap();
 
-    debouncer
-        .cache()
-        .add_root(&pocket_path, RecursiveMode::Recursive);
+    // This causes a deadlock on Windows for some reason
+    // debouncer
+    //     .cache()
+    //     .add_root(&pocket_path, RecursiveMode::Recursive);
 
     let files_tx = tx.clone();
     let mut root_watcher = RecommendedWatcher::new(
@@ -65,6 +67,21 @@ pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
     root_watcher
         .watch(&pocket_path, RecursiveMode::NonRecursive)
         .unwrap();
+
+    let poll_tx = tx.clone();
+    let polling_path = pocket_path.clone();
+    tauri::async_runtime::spawn(async move {
+        loop {
+            tokio::time::sleep(Duration::from_secs(1)).await;
+            if !polling_path.exists() {
+                poll_tx
+                    .send(DebouncedOrRoot::PolledDisconnect)
+                    .await
+                    .unwrap();
+                break;
+            }
+        }
+    });
 
     let main_window = window.clone();
     while let Some(res) = rx.recv().await {
@@ -92,26 +109,19 @@ pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
                 break;
             }
             DebouncedOrRoot::Root(Ok(_)) | DebouncedOrRoot::Root(Err(_)) => {}
+            DebouncedOrRoot::PolledDisconnect => {
+                main_window
+                    .emit(
+                        "pocket-connection",
+                        ConnectionEventPayload { connected: false },
+                    )
+                    .unwrap();
+                break;
+            }
         }
     }
 
     println!("Exited?");
-
-    // loop {
-    //     sleep(Duration::from_secs(1)).await;
-    //     let pocket_path = &state.0.pocket_path.read().await;
-    //     if !pocket_path.exists() && was_connected {
-    //         was_connected = false;
-    //         main_window
-    //             .emit(
-    //                 "pocket-connection",
-    //                 ConnectionEventPayload { connected: false },
-    //             )
-    //             .unwrap();
-    //     } else if pocket_path.exists() && !was_connected {
-    //         was_connected = true;
-    //     }
-    // }
 }
 
 #[derive(Serialize, Deserialize, Clone)]

@@ -1,5 +1,6 @@
 import { listen } from "@tauri-apps/api/event"
 import { FSEvent } from "../../types"
+import { splitAsPath } from "../../utils/splitAsPath"
 
 let previousPocketPath: string | null = null
 
@@ -81,7 +82,7 @@ class FSEventRegister {
   findOrCreateOnCallbackTree(path: string): TreeNode {
     if (path === "/") return this.callbackTree
 
-    const folders = path.split("/")
+    const folders = splitAsPath(path)
     let currentTreeNode = this.callbackTree
     while (folders.length > 0) {
       const folder = folders.shift()
