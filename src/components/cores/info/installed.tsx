@@ -317,7 +317,7 @@ const FirmwareWarning = ({ coreName }: { coreName: string }) => {
       .map((v) => parseInt(v))
 
     if (pocketMajor > coreMajor) return false
-    if (pocketMajor === coreMajor && pocketMinor > coreMinor) return false
+    if (pocketMajor === coreMajor && pocketMinor >= coreMinor) return false
     return true
   }, [coreInfo.core.framework.version_required, currentFirmware.version])
 
