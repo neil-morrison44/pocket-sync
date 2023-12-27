@@ -13,7 +13,6 @@ import { SearchContextProvider } from "../search/context"
 import { selectedSubviewSelector } from "../../recoil/view/selectors"
 import { useMultiExport } from "./hooks/useMultiExport"
 import { invokeDeleteFiles } from "../../utils/invokes"
-import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { useTranslation } from "react-i18next"
 import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
@@ -30,18 +29,11 @@ export const Screenshots = () => {
   const exportMulti = useMultiExport()
   const { pushScroll, popScroll } = useSaveScroll()
 
-  const invalidateFS = useInvalidateFileSystem()
+  const deleteScreenshots = useCallback(async (screenshots: string[]) => {
+    await invokeDeleteFiles(screenshots.map((s) => `Memories/Screenshots/${s}`))
 
-  const deleteScreenshots = useCallback(
-    async (screenshots: string[]) => {
-      await invokeDeleteFiles(
-        screenshots.map((s) => `Memories/Screenshots/${s}`)
-      )
-      invalidateFS()
-      setSelectedScreenshots([])
-    },
-    [invalidateFS]
-  )
+    setSelectedScreenshots([])
+  }, [])
 
   const sortedScreenshots = useMemo(() => {
     return [...screenshots].sort((a, b) => b.localeCompare(a))

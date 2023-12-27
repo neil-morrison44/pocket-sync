@@ -1,7 +1,6 @@
 import { selector, selectorFamily } from "recoil"
 import { CoreInfoJSON, DataJSON } from "../types"
 import { renderBinImage } from "../utils/renderBinImage"
-import { fileSystemInvalidationAtom } from "./atoms"
 import { getVersion } from "@tauri-apps/api/app"
 import {
   invokeFileExists,
@@ -13,21 +12,23 @@ import {
 import { AUTHOUR_IMAGE } from "../values"
 import { readJSONFile } from "../utils/readJSONFile"
 import { path } from "@tauri-apps/api"
+import { FileWatchAtomFamily, FolderWatchAtomFamily } from "./fileSystem/atoms"
 
 export const DataJSONSelectorFamily = selectorFamily<DataJSON, string>({
   key: "DataJSONSelectorFamily",
   get:
     (coreName) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
-      return readJSONFile<DataJSON>(`Cores/${coreName}/data.json`)
+      const path = `Cores/${coreName}/data.json`
+      get(FileWatchAtomFamily(path))
+      return readJSONFile<DataJSON>(path)
     },
 })
 
 export const coresListSelector = selector<string[]>({
   key: "coresListSelector",
   get: async ({ get }) => {
-    get(fileSystemInvalidationAtom)
+    get(FolderWatchAtomFamily("Cores"))
     return await invokeListFiles("Cores")
   },
 })
@@ -37,8 +38,9 @@ export const CoreInfoSelectorFamily = selectorFamily<CoreInfoJSON, string>({
   get:
     (coreName: string) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
-      return readJSONFile<CoreInfoJSON>(`Cores/${coreName}/core.json`)
+      const path = `Cores/${coreName}/core.json`
+      get(FileWatchAtomFamily(path))
+      return readJSONFile<CoreInfoJSON>(path)
     },
 })
 
@@ -47,7 +49,6 @@ export const CoreMainPlatformIdSelectorFamily = selectorFamily<string, string>({
   get:
     (coreName: string) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
       const { core } = get(CoreInfoSelectorFamily(coreName))
       // Hopefully 0 is the one that exists
       return core.metadata.platform_ids[0]
@@ -59,7 +60,6 @@ export const CorePlatformIdSelectorFamily = selectorFamily<string, string>({
   get:
     (coreName: string) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
       const { core } = get(CoreInfoSelectorFamily(coreName))
       // Hopefully 0 is the one that exists
       return core.metadata.platform_ids[0]
@@ -71,9 +71,8 @@ export const CoreAuthorImageSelectorFamily = selectorFamily<string, string>({
   get:
     (coreName: string) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
-
       const path = `Cores/${coreName}/icon.bin`
+      get(FileWatchAtomFamily(path))
       const width = AUTHOUR_IMAGE.WIDTH
       const height = AUTHOUR_IMAGE.HEIGHT
 
@@ -117,7 +116,7 @@ export const WalkDirSelectorFamily = selectorFamily<
   get:
     ({ path, extensions, offPocket = false }) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
+      get(FolderWatchAtomFamily(path))
       const files = await invokeWalkDirListFiles(path, extensions, offPocket)
       return files
     },
@@ -131,7 +130,7 @@ export const ImageBinSrcSelectorFamily = selectorFamily<
   get:
     ({ path, width, height }) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
+      get(FileWatchAtomFamily(path))
 
       const exists = await invokeFileExists(path)
 
@@ -166,7 +165,7 @@ export const CleanableFilesSelectorFamily = selectorFamily<string[], string>({
   get:
     (path) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
+      get(FolderWatchAtomFamily(path))
       const files = await invokeFindCleanableFiles(path)
       return files
     },

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
 import {
   PocketSyncConfigSelector,
@@ -10,7 +10,6 @@ import "./index.css"
 import { reconnectWhenOpenedAtom } from "../../recoil/atoms"
 import { invokeClearFileCache } from "../../utils/invokes"
 import { useTranslation, Trans } from "react-i18next"
-import { useDisconnectPocket } from "../../hooks/useDisconnectPocket"
 import { Thanks } from "./thanks"
 import { PocketColour } from "../../types"
 import {
@@ -18,6 +17,7 @@ import {
   turboDownloadsAtom,
 } from "../../recoil/settings/atoms"
 import { Link } from "../link"
+import { emit } from "@tauri-apps/api/event"
 
 export const Settings = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
@@ -32,7 +32,10 @@ export const Settings = () => {
   )
   const updateConfig = useUpdateConfig()
   const { t } = useTranslation("settings")
-  const onDisconnect = useDisconnectPocket()
+  const onDisconnect = useCallback(
+    () => emit("pocket-connection", { connetcted: false }),
+    []
+  )
 
   return (
     <div className="settings">

@@ -10,10 +10,7 @@ import { useInstallRequiredFiles } from "../../hooks/useInstallRequiredFiles"
 import { Progress } from "../progress"
 import { FileCopy, RequiredFileInfo } from "../../types"
 import { Modal } from "../modal"
-import {
-  useInvalidateConfig,
-  useInvalidateFileSystem,
-} from "../../hooks/invalidation"
+import { useInvalidateConfig } from "../../hooks/invalidation"
 import { Controls } from "../controls"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { NewFetch } from "./new"
@@ -35,7 +32,6 @@ export const Fetch = () => {
   const [newFetchOpen, setNewFetchOpen] = useState<boolean>(false)
   const { t } = useTranslation("fetch")
 
-  const invalidateFileSystem = useInvalidateFileSystem()
   const invalidateConfig = useInvalidateConfig()
   const setArchiveBumpAtom = useSetRecoilState(archiveBumpAtom)
   const list = config.fetches || []
@@ -62,7 +58,6 @@ export const Fetch = () => {
         <ControlsButton
           onClick={() => {
             invalidateConfig()
-            invalidateFileSystem()
             setArchiveBumpAtom((c) => c + 1)
           }}
         >
@@ -107,7 +102,6 @@ const FileSystemItem = ({
   destination: string
   onRemove: () => void
 }) => {
-  const invalidateFileSystem = useInvalidateFileSystem()
   const [isCopying, setIsCopying] = useState<boolean>(false)
 
   const { percent, inProgress, lastMessage, remainingTime } =
@@ -145,7 +139,6 @@ const FileSystemItem = ({
                     setIsCopying(true)
                     await invokeCopyFiles(files.filter(({ exists }) => !exists))
                     setIsCopying(false)
-                    invalidateFileSystem()
                   }}
                 >
                   {t("fetch_button")}
@@ -224,7 +217,6 @@ const ArchiveOrgItem = ({
     lastMessage,
     remainingTime,
   } = useInstallRequiredFiles()
-  const invalidateFileSystem = useInvalidateFileSystem()
   const { t } = useTranslation("fetch")
 
   return (
@@ -261,7 +253,6 @@ const ArchiveOrgItem = ({
                     files.filter(({ exists }) => !exists),
                     `https://archive.org/download/${name}`
                   )
-                  invalidateFileSystem()
                 }}
               >
                 {t("fetch_button")}

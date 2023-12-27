@@ -8,7 +8,6 @@ import {
 } from "../../utils/invokes"
 import { readJSONFile } from "../../utils/readJSONFile"
 import { IGNORE_INSTANCE_JSON_LIST } from "../../values"
-import { fileSystemInvalidationAtom } from "../atoms"
 import { skipAlternateAssetsSelector } from "../config/selectors"
 import {
   DataJSONSelectorFamily,
@@ -16,6 +15,7 @@ import {
   CoreInfoSelectorFamily,
 } from "../selectors"
 import { mergedDataSlots } from "../../utils/dataSlotsMerge"
+import { FileWatchAtomFamily } from "../fileSystem/atoms"
 
 const FileInfoSelectorFamily = selectorFamily<
   Omit<RequiredFileInfo, "type">,
@@ -25,10 +25,9 @@ const FileInfoSelectorFamily = selectorFamily<
   get:
     ({ filename, path }) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
       if (!filename) throw new Error("Attempting to find empty file")
-
       const fullPath = `${path}/${filename}`
+      get(FileWatchAtomFamily(fullPath))
       const exists = await invokeFileExists(fullPath)
       const crc32 = exists
         ? (await invokeFileMetadata(fullPath)).crc32
@@ -56,7 +55,6 @@ const SingleRequiredFileInfo = selectorFamily<
   get:
     ({ filename, path, type, md5 }) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
       const info = get(FileInfoSelectorFamily({ filename, path }))
       return { ...info, md5, type }
     },

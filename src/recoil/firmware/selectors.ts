@@ -5,8 +5,8 @@ import {
   invokeReadTextFile,
 } from "../../utils/invokes"
 import { FirmwareInfo, FirmwareListItem } from "../../types"
-import { fileSystemInvalidationAtom } from "../atoms"
 import { allFirmwaresAtom } from "./atoms"
+import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
 
 export const latestFirmwareSelector = selector<FirmwareListItem>({
   key: "latestFirmwareSelector",
@@ -32,7 +32,7 @@ export const currentFirmwareVersionSelector = selector<{
 }>({
   key: "currentFirmwareVersionSelector",
   get: async ({ get }) => {
-    get(fileSystemInvalidationAtom)
+    get(FileWatchAtomFamily("Analogue_Pocket.json"))
     const analoguePocketJson = await invokeReadTextFile("Analogue_Pocket.json")
     const parsedJSON = JSON.parse(analoguePocketJson) as {
       product: "Analogue Pocket"
@@ -73,7 +73,7 @@ export const FirmwareDetailsSelectorFamily = selectorFamily<
 export const downloadedFirmwareSelector = selector<string | null>({
   key: "downloadedFirmwareSelector",
   get: async ({ get }) => {
-    get(fileSystemInvalidationAtom)
+    get(FolderWatchAtomFamily("/"))
     const filesAtRoot = await invokeListFiles("")
     const firmwareFile = filesAtRoot.find((f) => f.endsWith(".bin"))
     return firmwareFile || null

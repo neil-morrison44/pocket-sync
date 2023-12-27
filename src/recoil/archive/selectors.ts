@@ -10,7 +10,8 @@ import {
   invokeWalkDirListFiles,
 } from "../../utils/invokes"
 import { ResponseType, getClient } from "@tauri-apps/api/http"
-import { fileSystemInvalidationAtom, pocketPathAtom } from "../atoms"
+import { pocketPathAtom } from "../atoms"
+import { FolderWatchAtomFamily } from "../fileSystem/atoms"
 
 export const ArchiveMetadataSelectorFamily = selectorFamily<
   ArchiveFileMetadata[],
@@ -42,7 +43,7 @@ export const PathFileInfoSelectorFamily = selectorFamily<
   get:
     ({ path, offPocket }) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
+      get(FolderWatchAtomFamily(path))
       const pocketPath = get(pocketPathAtom)
       const fileList = await invokeWalkDirListFiles(path, [], offPocket)
 
@@ -102,7 +103,6 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
   get:
     (coreName: string) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
       const archiveMetadata = get(archiveMetadataSelector)
       const requiredFiles = get(RequiredFileInfoSelectorFamily(coreName))
       const extensions = requiredFiles
@@ -176,7 +176,7 @@ export const ListSomeRootFilesSelectorFamily = selectorFamily<
   get:
     (extensions) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
+      get(FolderWatchAtomFamily("/"))
       const rootFileInfo = await invokeListRootFiles(extensions)
       return rootFileInfo
     },

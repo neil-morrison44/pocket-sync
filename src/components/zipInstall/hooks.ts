@@ -1,6 +1,5 @@
 import { emit, listen } from "@tauri-apps/api/event"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { filterKnownBadFiles } from "../../utils/filterFiles"
 import { FileTreeNode, InstallZipEventPayload } from "./types"
 import { message } from "@tauri-apps/api/dialog"
@@ -8,8 +7,6 @@ import { message } from "@tauri-apps/api/dialog"
 export const useListenForZipInstall = () => {
   const [installState, setInstallState] =
     useState<null | InstallZipEventPayload>(null)
-
-  const invalidateFS = useInvalidateFileSystem()
 
   useEffect(() => {
     const unlisten = listen<InstallZipEventPayload>(
@@ -29,13 +26,12 @@ export const useListenForZipInstall = () => {
           message(payload.error, { title: "Error", type: "error" })
 
         setInstallState(null)
-        invalidateFS()
       }
     )
     return () => {
       unlisten.then((l) => l())
     }
-  }, [invalidateFS, setInstallState])
+  }, [setInstallState])
 
   return { installState }
 }

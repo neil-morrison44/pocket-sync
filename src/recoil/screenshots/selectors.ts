@@ -1,6 +1,5 @@
 import { selector, selectorFamily } from "recoil"
 import { Screenshot, VideoJSON } from "../../types"
-import { fileSystemInvalidationAtom } from "../atoms"
 import {
   invokeFileExists,
   invokeListFiles,
@@ -8,14 +7,16 @@ import {
 } from "../../utils/invokes"
 import { getBinaryMetadata } from "../../utils/getBinaryMetadata"
 import { readJSONFile } from "../../utils/readJSONFile"
+import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
 
 export const VideoJSONSelectorFamily = selectorFamily<VideoJSON, string>({
   key: "VideoJSONSelectorFamily",
   get:
     (coreName) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
-      const exists = await invokeFileExists(`Cores/${coreName}/video.json`)
+      const path = `Cores/${coreName}/video.json`
+      get(FileWatchAtomFamily(path))
+      const exists = await invokeFileExists(path)
       if (!exists)
         return {
           video: {
@@ -24,14 +25,14 @@ export const VideoJSONSelectorFamily = selectorFamily<VideoJSON, string>({
           },
         }
 
-      return readJSONFile<VideoJSON>(`Cores/${coreName}/video.json`)
+      return readJSONFile<VideoJSON>(path)
     },
 })
 
 export const screenshotsListSelector = selector<string[]>({
   key: "screenshotsListSelector",
   get: async ({ get }) => {
-    get(fileSystemInvalidationAtom)
+    get(FolderWatchAtomFamily("Memories/Screenshots"))
     return await invokeListFiles("Memories/Screenshots")
   },
 })
@@ -44,11 +45,10 @@ export const SingleScreenshotSelectorFamily = selectorFamily<
   get:
     (fileName) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
+      const path = `Memories/Screenshots/${fileName}`
+      get(FileWatchAtomFamily(path))
 
-      const data = await invokeReadBinaryFile(
-        `Memories/Screenshots/${fileName}`
-      )
+      const data = await invokeReadBinaryFile(path)
       const buf = new Uint8Array(data)
       const file = new File([buf], fileName, { type: "image/png" })
       const metadata = getBinaryMetadata(buf, true)
