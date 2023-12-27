@@ -1,9 +1,11 @@
 import { useRecoilValue } from "recoil"
 import { FirmwareDetailsSelectorFamily } from "../../../recoil/firmware/selectors"
 import { useTranslation } from "react-i18next"
+import parse, { Element, domToReact } from "html-react-parser"
 
 import "./index.css"
 import { Link } from "../../link"
+import { useMemo } from "react"
 
 type FirmwareReleaseNotesProp = {
   version: string
@@ -16,6 +18,20 @@ export const FirmwareReleaseNotes = ({ version }: FirmwareReleaseNotesProp) => {
   const { t } = useTranslation("firmware")
   const url = `https://www.analogue.co/support/pocket/firmware/${version}`
 
+  const htmlChunks = useMemo(() => {
+    const parser = new DOMParser()
+    const htmlDoc = parser.parseFromString(
+      firmwareDetails.release_notes_html,
+      "text/html"
+    )
+
+    console.log({ htmlDoc })
+
+    console.log(htmlDoc.body.childNodes[0])
+
+    firmwareDetails.release_notes_html
+  }, [firmwareDetails.release_notes_html])
+
   return (
     <div className="firmware-release-notes">
       <h1>{t("release_notes.title", { version })}</h1>
@@ -23,10 +39,20 @@ export const FirmwareReleaseNotes = ({ version }: FirmwareReleaseNotesProp) => {
         {t("release_notes.from")}
         <Link href={url}>{url}</Link>
       </div>
-      <div
-        className="firmware-release-notes__content"
-        dangerouslySetInnerHTML={{ __html: firmwareDetails.release_notes_html }}
-      ></div>
+      <div className="firmware-release-notes__content">
+        {parse(firmwareDetails.release_notes_html, {
+          replace(domNode) {
+            if (domNode instanceof Element && domNode.name === "a") {
+              return (
+                <Link href={domNode.attribs.href || undefined}>
+                  {/* @ts-ignore */}
+                  {domToReact(domNode.childNodes)}
+                </Link>
+              )
+            }
+          },
+        })}
+      </div>
     </div>
   )
 }
