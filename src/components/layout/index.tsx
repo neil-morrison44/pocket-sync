@@ -18,6 +18,7 @@ import { Firmware } from "../firmware"
 import { useTranslation } from "react-i18next"
 import { Fetch } from "../fetch"
 import { enableGlobalZipInstallAtom } from "../../recoil/atoms"
+import { Palettes } from "../palettes"
 
 export const Layout = () => {
   const [viewAndSubview, setViewAndSubview] = useRecoilState(currentViewAtom)
@@ -80,6 +81,7 @@ export const Layout = () => {
             {view === "Save States" && <SaveStates />}
             {view === "Firmware" && <Firmware />}
             {view === "Platforms" && <Platforms />}
+            {view === "Palettes" && <Palettes />}
             {view === "Fetch" && <Fetch />}
           </Suspense>
         </ErrorBoundary>

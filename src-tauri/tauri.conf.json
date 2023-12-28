@@ -38,6 +38,9 @@
       },
       "shell": {
         "open": ""
+      },
+      "clipboard": {
+        "writeText": true
       }
     },
     "bundle": {

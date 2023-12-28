@@ -1,0 +1,122 @@
+.palettes__list{
+  list-style: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+}
+
+.palettes__list-item{
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.palettes_code-modal{
+  height: min-content;
+  width: min-content;
+}
+
+.palettes_code-modal-input{
+  width: 60vw;
+  font-size: 1.25rem;
+  padding: 10px;
+}
+
+.palettes_code-modal-buttons{
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.palettes__list-item-info{
+  background-color: var(--info-colour);
+  padding: 15px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 2rem;
+  font-family: GamePocket, sans-serif;
+  flex-grow: 1;
+  cursor: pointer;
+
+  &:hover{
+    transform: scale(1.02);
+  }
+}
+
+.palettes__list-item-canvas{
+  image-rendering: pixelated;
+  width: 120px;
+  height: 100px;
+  border: 1px solid white;
+
+  /* background-color: white; */
+}
+
+.palette__grid{
+  padding: 25px;
+  display: grid;
+  grid-template-columns: 1fr max-content;
+}
+
+.palette__emu-canvas{
+  image-rendering: pixelated;
+  width: 50%;
+}
+
+.palette__preview{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+
+
+  select{
+    font-size: 2rem;
+    width: 60%;
+  }
+}
+
+
+.palette__inputs{
+  padding: 15px;
+  background-color: var(--light-colour);
+  border-radius: 15px;
+
+  input {
+    block-size: 44px;
+    inline-size: 44px;
+  }
+
+  input:only-child {
+    inline-size: 100%;
+  }
+
+}
+
+.palette__inputs-name {
+  font-size: 1.5rem;
+  margin-block-end: 15px;
+  font-family: GamePocket, sans-serif;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.palette__inputs-set{
+  margin-block-end: 10px;
+}
+
+.palette__inputs-set-title {
+  font-size: 1.25rem;
+  font-family: GamePocket, sans-serif;
+
+}
+
+.palette__inputs-buttons{
+  display: flex;
+  justify-content: space-between;
+}

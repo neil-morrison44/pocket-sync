@@ -320,3 +320,12 @@ export type FSEvent = {
           | { kind: "metadata"; mode: "ownership" }
       }
 }
+
+export type rgb = [number, number, number]
+export type Palette = {
+  background: [rgb, rgb, rgb, rgb]
+  window: [rgb, rgb, rgb, rgb]
+  obj0: [rgb, rgb, rgb, rgb]
+  obj1: [rgb, rgb, rgb, rgb]
+  off: rgb
+}
