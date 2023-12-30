@@ -20,6 +20,7 @@ import { Loader } from "../loader"
 import { useSavePalette } from "./hooks/useSavePalette"
 import { Link } from "../link"
 import { PaletteName } from "./name"
+import { Trans, useTranslation } from "react-i18next"
 
 type PaletteFullProps = {
   name: string
@@ -28,6 +29,7 @@ type PaletteFullProps = {
 
 export const PaletteFull = ({ name }: PaletteFullProps) => {
   const paletteColours = useRecoilValue(PaletteColoursSelectorFamily(name))
+  const { t } = useTranslation("palettes")
   const [tempPalette, setTempPalette] = useState(() => paletteColours)
   const hasBeenChanged = useMemo(
     () => !comparePalettes(tempPalette, paletteColours),
@@ -68,45 +70,47 @@ export const PaletteFull = ({ name }: PaletteFullProps) => {
         )}
       </div>
       <div className="palette__credits">
-        {"GB emulator adapted from "}
-        <Link href="https://github.com/roblouie/gameboy-emulator">
-          roblouie/gameboy-emulator
-        </Link>
+        <Trans t={t} i18nKey={"full.emu_credit"}>
+          {"_"}
+          <Link href="https://github.com/roblouie/gameboy-emulator">{"_"}</Link>
+        </Trans>
       </div>
       <div className="palette__inputs">
         <PaletteInput
-          title={"Background"}
+          title={t("full.inputs.background")}
           colours={tempPalette.background}
           onChange={(background) =>
             setTempPalette((t) => ({ ...t, background }))
           }
         />
         <PaletteInput
-          title={"Obj0"}
+          title={t("full.inputs.obj0")}
           colours={tempPalette.obj0}
           onChange={(obj0) => setTempPalette((t) => ({ ...t, obj0 }))}
         />
         <PaletteInput
-          title={"Obj1"}
+          title={t("full.inputs.obj1")}
           colours={tempPalette.obj1}
           onChange={(obj1) => setTempPalette((t) => ({ ...t, obj1 }))}
         />
         <PaletteInput
-          title={"Window"}
+          title={t("full.inputs.window")}
           colours={tempPalette.window}
           onChange={(window) => setTempPalette((t) => ({ ...t, window }))}
         />
 
         <PaletteInput
-          title={"Off"}
+          title={t("full.inputs.off")}
           colours={[tempPalette.off]}
           onChange={([off]) => setTempPalette((t) => ({ ...t, off }))}
         />
         {hasBeenChanged && (
           <div className="palette__inputs-buttons">
-            <button onClick={() => savePalette(tempPalette, name)}>Save</button>
+            <button onClick={() => savePalette(tempPalette, name)}>
+              {t("full.save")}
+            </button>
             <button onClick={() => setTempPalette(paletteColours)}>
-              Reset
+              {t("full.reset")}
             </button>
           </div>
         )}
@@ -147,12 +151,7 @@ const PaletteInput = <T extends [rgb, rgb, rgb, rgb] | [rgb]>({
               ].map((s) => parseInt(s, 16)) as rgb
 
               onChange(
-                colours.map((c, i) => (i === index ? newColours : c)) as [
-                  rgb,
-                  rgb,
-                  rgb,
-                  rgb
-                ]
+                colours.map((c, i) => (i === index ? newColours : c)) as T
               )
             }}
           ></input>
@@ -174,20 +173,15 @@ const GameboyEmu = ({ game, palette }: GameboyEmuProps) => {
 
   const applyPalette = useCallback((palette: Palette) => {
     if (!gameboyRef.current) return
-
-    console.log("new palette")
     gameboyRef.current.gpu.backgroundPalette = palette.background.map(
       ([red, green, blue]) => ({ red, green, blue })
     )
-
     gameboyRef.current.gpu.obj0Palette = palette.obj0.map(
       ([red, green, blue]) => ({ red, green, blue })
     )
-
     gameboyRef.current.gpu.obj1Palette = palette.obj1.map(
       ([red, green, blue]) => ({ red, green, blue })
     )
-
     gameboyRef.current.gpu.windowPalette = palette.window.map(
       ([red, green, blue]) => ({ red, green, blue })
     )
@@ -199,8 +193,6 @@ const GameboyEmu = ({ game, palette }: GameboyEmuProps) => {
     if (!canvasRef.current) return
     const context = canvasRef.current.getContext("2d")
     if (!context) return
-
-    console.log("new gameboy")
     const gameboy = new Gameboy({ sound: false })
     gameboyRef.current = gameboy
 
@@ -209,11 +201,8 @@ const GameboyEmu = ({ game, palette }: GameboyEmuProps) => {
     })
 
     gameboy.loadGame(gameData.buffer)
-    // gameboy.apu.disableSound()
-
     applyPalette(palette)
     gameboy.run()
-
     return () => gameboy.stop()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applyPalette, gameData.buffer])

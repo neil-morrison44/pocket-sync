@@ -1,10 +1,9 @@
 import { useRecoilValue } from "recoil"
 import {
   PaletteCodeSelectorFamily,
-  PaletteColoursSelectorFamily,
   palettesListSelector,
 } from "../../recoil/palettes/selectors"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { Suspense, useCallback, useMemo, useState } from "react"
 
 import "./index.css"
 import { Controls } from "../controls"
@@ -23,9 +22,12 @@ import { PaletteName } from "./name"
 import { useSavePalette } from "./hooks/useSavePalette"
 import { Palette, rgb } from "../../types"
 import { splitAsPath } from "../../utils/splitAsPath"
+import { useTranslation } from "react-i18next"
+import { PreviewCanvas } from "./previewCanvas"
 
 export const Palettes = () => {
   const palettesList = useRecoilValue(palettesListSelector)
+  const { t } = useTranslation("palettes")
   const [mode, setMode] = useState<
     { name: "list" } | { name: "new" } | { name: "selected"; palette: string }
   >({ name: "list" })
@@ -50,7 +52,7 @@ export const Palettes = () => {
       window: boringPalette,
       obj0: boringPalette,
       obj1: boringPalette,
-      off: [0, 0, 0],
+      off: [255, 255, 255],
     }
 
     await savePalette(palette, "/a_new_palette.pal")
@@ -61,17 +63,17 @@ export const Palettes = () => {
       <Controls>
         {mode.name === "selected" && (
           <ControlsBackButton onClick={() => setMode({ name: "list" })}>
-            {"Back to list"}
+            {t("buttons.back")}
           </ControlsBackButton>
         )}
 
         {mode.name === "list" && (
           <>
             <ControlsButton onClick={() => setCodeModalOpen(true)}>
-              {"Add via code"}
+              {t("buttons.add_via_code")}
             </ControlsButton>
             <ControlsButton onClick={() => createNewPalette()}>
-              {"New Palette"}
+              {t("buttons.new")}
             </ControlsButton>
           </>
         )}
@@ -110,59 +112,11 @@ export const PaletteListItem = ({
   name: string
   onClick: () => void
 }) => {
-  const paletteColours = useRecoilValue(PaletteColoursSelectorFamily(name))
   const paletteCode = useRecoilValue(PaletteCodeSelectorFamily(name))
   const pocketPath = useRecoilValue(pocketPathAtom)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
   const [interimName, setInterimName] = useState(() => name.replace(".pal", ""))
-
+  const { t } = useTranslation("palettes")
   const [renameMode, setRenameMode] = useState(false)
-
-  useEffect(() => {
-    if (!canvasRef.current) return
-    const context = canvasRef.current.getContext("2d")
-    if (!context) return
-
-    const imageData = context.getImageData(0, 0, 4, 5)
-
-    paletteColours.background
-      .map((v) => [...v, 255])
-      .flat()
-      .forEach((v, index) => {
-        imageData.data[index] = v
-      })
-
-    paletteColours.obj0
-      .map((v) => [...v, 255])
-      .flat()
-      .forEach((v, index) => {
-        imageData.data[index + 16] = v
-      })
-
-    paletteColours.obj1
-      .map((v) => [...v, 255])
-      .flat()
-      .forEach((v, index) => {
-        imageData.data[index + 32] = v
-      })
-
-    paletteColours.window
-      .map((v) => [...v, 255])
-      .flat()
-      .forEach((v, index) => {
-        imageData.data[index + 48] = v
-      })
-
-    context.putImageData(imageData, 0, 0)
-    context.fillStyle = `rgb(${paletteColours.off.join(",")})`
-    context.fillRect(0, 4, 4, 1)
-  }, [
-    paletteColours.background,
-    paletteColours.obj0,
-    paletteColours.obj1,
-    paletteColours.off,
-    paletteColours.window,
-  ])
 
   const deletePalette = useCallback(async () => {
     await invokeDeleteFiles([`Assets/gb/common/palettes${name}`])
@@ -183,7 +137,6 @@ export const PaletteListItem = ({
 
   const renamePalette = useCallback(async () => {
     setRenameMode(false)
-
     const origin = `${pocketPath}/Assets/gb/common/palettes/${name}`
     const destination = `${pocketPath}/Assets/gb/common/palettes/${interimName}.pal`
     if (splitAsPath(origin).join("/") === splitAsPath(destination).join("/"))
@@ -216,28 +169,26 @@ export const PaletteListItem = ({
                 if (key === "Enter") renamePalette()
               }}
             />
-            <button onClick={renamePalette}>OK</button>
+            <button onClick={renamePalette}>
+              <CheckIcon />
+            </button>
           </div>
         ) : (
           <PaletteName name={name} />
         )}
 
-        <canvas
-          className="palettes__list-item-canvas"
-          ref={canvasRef}
-          width={4}
-          height={5}
-        ></canvas>
+        <Suspense>
+          <PreviewCanvas name={name} />
+        </Suspense>
       </div>
-      {/* <div>{paletteCode}</div> */}
       <div className="palettes__list-item-buttons">
-        <button onClick={duplicatePalette}>Duplicate</button>
+        <button onClick={duplicatePalette}>{t("item.duplicate")}</button>
         <button
           onClick={() => {
             writeText(paletteCode)
           }}
         >
-          Copy Share Code
+          {t("item.copy_code")}
         </button>
       </div>
 
@@ -248,9 +199,9 @@ export const PaletteListItem = ({
             setRenameMode(true)
           }}
         >
-          Rename
+          {t("item.rename")}
         </button>
-        <button onClick={deletePalette}>Delete</button>
+        <button onClick={deletePalette}>{t("item.delete")}</button>
       </div>
     </li>
   )
@@ -259,6 +210,7 @@ export const PaletteListItem = ({
 const AddViaCodeModal = ({ onClose }: { onClose: () => void }) => {
   const [inputedCode, setInputedCode] = useState("")
   const pocketPath = useRecoilValue(pocketPathAtom)
+  const { t } = useTranslation("palettes")
 
   const parsedPalette = useMemo<{
     name: string
@@ -289,28 +241,43 @@ const AddViaCodeModal = ({ onClose }: { onClose: () => void }) => {
   const onAdd = useCallback(async () => {
     if (!parsedPalette) return
     await invokeSaveFile(
-      `${pocketPath}/Assets/gb/common/palettes/${parsedPalette.name}.pal`,
+      `${pocketPath}/Assets/gb/common/palettes/${parsedPalette.name}`,
       parsedPalette.data
     )
-  }, [parsedPalette, pocketPath])
+    onClose()
+  }, [onClose, parsedPalette, pocketPath])
 
   return (
     <Modal className="palettes_code-modal">
-      <h2>Add via share code</h2>
+      <h2>{t("add_via_code.title")}</h2>
       <textarea
         className="palettes_code-modal-input"
         value={inputedCode}
         onChange={({ target }) => setInputedCode(target.value)}
       ></textarea>
       <div className="palettes_code-modal-buttons">
-        <button onClick={onClose}>Cancel</button>
+        <button onClick={onClose}>{t("add_via_code.cancel")}</button>
         {parsedPalette !== null && (
           <>
             <div>{parsedPalette.name}</div>
-            <button onClick={onAdd}>Add</button>
+            <button onClick={onAdd}>{t("add_via_code.add")}</button>
           </>
         )}
       </div>
     </Modal>
   )
 }
+
+const CheckIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    height="1.1em"
+    viewBox="0 -960 960 960"
+    width="1.1em"
+  >
+    <path
+      fill="currentColor"
+      d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"
+    />
+  </svg>
+)

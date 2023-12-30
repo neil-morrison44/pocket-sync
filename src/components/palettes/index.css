@@ -67,11 +67,9 @@
 
 .palettes__list-item-canvas{
   image-rendering: pixelated;
-  width: 120px;
-  height: 100px;
+  width: 100px;
+  height: 80px;
   border: 1px solid white;
-
-  /* background-color: white; */
 }
 
 .palettes__list-item-buttons {

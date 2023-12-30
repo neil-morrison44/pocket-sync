@@ -1,6 +1,6 @@
 [package]
 name = "pocket-sync"
-version = "4.0.0"
+version = "4.1.0"
 description = "A GUI tool for doing stuff with the Analogue Pocket"
 authors = ["neil-morrison44"]
 license = ""
@@ -36,7 +36,8 @@ rayon = "1.8.0"
 reqwest = { version = "0.11.18", features = ["blocking"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-tauri = { version = "1.5.2", features = [ "clipboard-write-text",
+tauri = { version = "1.5.2", features = [
+  "clipboard-write-text",
   "dialog-all",
   "fs-exists",
   "fs-read-file",

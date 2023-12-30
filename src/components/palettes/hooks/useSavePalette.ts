@@ -43,7 +43,6 @@ export const useSavePalette = () => {
     data[54] = 0x47
     data[55] = 0x42
 
-    console.log(`Saving ${pocketPath}/Assets/gb/common/palettes${name}`)
     await invokeSaveFile(`${pocketPath}/Assets/gb/common/palettes${name}`, data)
   }
 }
