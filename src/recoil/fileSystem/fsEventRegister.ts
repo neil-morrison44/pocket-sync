@@ -1,6 +1,7 @@
 import { listen } from "@tauri-apps/api/event"
 import { FSEvent } from "../../types"
 import { splitAsPath } from "../../utils/splitAsPath"
+import { sep } from '@tauri-apps/api/path';
 
 let previousPocketPath: string | null = null
 
@@ -46,7 +47,7 @@ class FSEventRegister {
         changedPaths
           .map((changedPath) => {
             const node = this.findOrCreateOnCallbackTree(
-              changedPath.replace(`${pocketPath}/`, "")
+              changedPath.replace(`${pocketPath}${sep}`, "")
             )
 
             return node
