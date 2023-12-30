@@ -6,10 +6,20 @@ import {
 import { Palette, rgb } from "../../types"
 
 import { Gameboy } from "@neil-morrison44/gameboy-emulator"
-import { Suspense, useEffect, useLayoutEffect, useRef, useState } from "react"
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
 import { WalkDirSelectorFamily } from "../../recoil/selectors"
 import { Loader } from "../loader"
 import { useSavePalette } from "./hooks/useSavePalette"
+import { Link } from "../link"
+import { PaletteName } from "./name"
 
 type PaletteFullProps = {
   name: string
@@ -18,22 +28,24 @@ type PaletteFullProps = {
 
 export const PaletteFull = ({ name }: PaletteFullProps) => {
   const paletteColours = useRecoilValue(PaletteColoursSelectorFamily(name))
-  const [tempPalette, setTempPalette] = useState(() => ({ ...paletteColours }))
-
+  const [tempPalette, setTempPalette] = useState(() => paletteColours)
+  const hasBeenChanged = useMemo(
+    () => !comparePalettes(tempPalette, paletteColours),
+    [tempPalette, paletteColours]
+  )
   const games = useRecoilValue(
     WalkDirSelectorFamily({ path: `Assets/gb`, extensions: ["gb"] })
   )
-
   const savePalette = useSavePalette()
-
   const [selectedGame, setSelectedGame] = useState<string | null>(
     games[0] || null
   )
 
-  console.log({ games })
-
   return (
     <div className="palette__grid">
+      <div className="palette__name">
+        <PaletteName name={name} />
+      </div>
       <div className="palette__preview">
         <select
           value={selectedGame || undefined}
@@ -41,7 +53,7 @@ export const PaletteFull = ({ name }: PaletteFullProps) => {
         >
           {games.map((g) => (
             <option value={g} key={g}>
-              {g}
+              {g.replace("/common/", "").replace("\\common\\", "")}
             </option>
           ))}
         </select>
@@ -55,9 +67,13 @@ export const PaletteFull = ({ name }: PaletteFullProps) => {
           </Suspense>
         )}
       </div>
+      <div className="palette__credits">
+        {"GB emulator adapted from "}
+        <Link href="https://github.com/roblouie/gameboy-emulator">
+          roblouie/gameboy-emulator
+        </Link>
+      </div>
       <div className="palette__inputs">
-        <div className="palette__inputs-name">{name}</div>
-
         <PaletteInput
           title={"Background"}
           colours={tempPalette.background}
@@ -86,10 +102,14 @@ export const PaletteFull = ({ name }: PaletteFullProps) => {
           colours={[tempPalette.off]}
           onChange={([off]) => setTempPalette((t) => ({ ...t, off }))}
         />
-        <div className="palette__inputs-buttons">
-          <button onClick={() => savePalette(tempPalette, name)}>Save</button>
-          <button onClick={() => setTempPalette(paletteColours)}>Reset</button>
-        </div>
+        {hasBeenChanged && (
+          <div className="palette__inputs-buttons">
+            <button onClick={() => savePalette(tempPalette, name)}>Save</button>
+            <button onClick={() => setTempPalette(paletteColours)}>
+              Reset
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -152,27 +172,10 @@ const GameboyEmu = ({ game, palette }: GameboyEmuProps) => {
   const gameboyRef = useRef<Gameboy | null>(null)
   const gameData = useRecoilValue(GameBoyGameSelectorFamily(game))
 
-  useLayoutEffect(() => {
-    if (!canvasRef.current) return
-    const context = canvasRef.current.getContext("2d")
-    if (!context) return
-    const gameboy = new Gameboy({ sound: false })
-    gameboyRef.current = gameboy
-
-    gameboy.onFrameFinished((imageData: ImageData) => {
-      context.putImageData(imageData, 0, 0)
-    })
-
-    gameboy.loadGame(gameData.buffer)
-    // gameboy.apu.disableSound()
-    gameboy.run()
-
-    return () => gameboy.stop()
-  }, [gameData.buffer])
-
-  useEffect(() => {
+  const applyPalette = useCallback((palette: Palette) => {
     if (!gameboyRef.current) return
 
+    console.log("new palette")
     gameboyRef.current.gpu.backgroundPalette = palette.background.map(
       ([red, green, blue]) => ({ red, green, blue })
     )
@@ -190,7 +193,35 @@ const GameboyEmu = ({ game, palette }: GameboyEmuProps) => {
     )
     const [red, green, blue] = palette.off
     gameboyRef.current.gpu.offColour = { red, green, blue }
-  }, [palette])
+  }, [])
+
+  useLayoutEffect(() => {
+    if (!canvasRef.current) return
+    const context = canvasRef.current.getContext("2d")
+    if (!context) return
+
+    console.log("new gameboy")
+    const gameboy = new Gameboy({ sound: false })
+    gameboyRef.current = gameboy
+
+    gameboy.onFrameFinished((imageData: ImageData) => {
+      context.putImageData(imageData, 0, 0)
+    })
+
+    gameboy.loadGame(gameData.buffer)
+    // gameboy.apu.disableSound()
+
+    applyPalette(palette)
+    gameboy.run()
+
+    return () => gameboy.stop()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applyPalette, gameData.buffer])
+
+  useEffect(() => {
+    if (!gameboyRef.current) return
+    applyPalette(palette)
+  }, [applyPalette, palette])
 
   return (
     <canvas
@@ -201,3 +232,12 @@ const GameboyEmu = ({ game, palette }: GameboyEmuProps) => {
     ></canvas>
   )
 }
+
+const comparePalettes = (a: Palette, b: Palette) =>
+  Object.entries(a).every(([key, value]) => {
+    const aValues = value.flat()
+    //@ts-ignore
+    const bValues = b[key].flat()
+
+    return aValues.every((av, index) => av === bValues[index])
+  })

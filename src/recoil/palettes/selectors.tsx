@@ -12,7 +12,7 @@ export const palettesListSelector = selector<string[]>({
     const path = "Assets/gb/common/palettes"
     get(FolderWatchAtomFamily(path))
     const platforms = await invokeWalkDirListFiles(path, ["pal"])
-    return platforms.map((s) => s.replace(".pal", ""))
+    return platforms
   },
 })
 
@@ -21,7 +21,7 @@ export const PaletteColoursSelectorFamily = selectorFamily<Palette, string>({
   get:
     (name: string) =>
     async ({ get }) => {
-      const path = `Assets/gb/common/palettes/${name}.pal`
+      const path = `Assets/gb/common/palettes${name}`
       get(FileWatchAtomFamily(path))
       const data = await invokeReadBinaryFile(path)
 
@@ -65,11 +65,9 @@ export const PaletteCodeSelectorFamily = selectorFamily<string, string>({
   get:
     (name: string) =>
     async ({ get }) => {
-      const path = `Assets/gb/common/palettes/${name}.pal`
+      const path = `Assets/gb/common/palettes${name}`
       get(FileWatchAtomFamily(path))
       const data = await invokeReadBinaryFile(path)
-
-      data.buffer
 
       return (
         Array.from(data)
