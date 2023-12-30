@@ -91,23 +91,24 @@ async fn read_binary_file(
     state: tauri::State<'_, PocketSyncState>,
     path: &str,
     app_handle: tauri::AppHandle,
-) -> Result<Vec<u8>, ()> {
+) -> Result<Vec<u8>, String> {
     let pocket_path = state.0.pocket_path.read().await;
     let path = pocket_path.join(path);
 
-    let mut f = if let Some(cache_dir) = app_handle.path_resolver().app_cache_dir() {
+    if let Ok(mut f) = if let Some(cache_dir) = app_handle.path_resolver().app_cache_dir() {
         get_file_with_cache(&path, &cache_dir).await
     } else {
         tokio::fs::File::open(&path).await
+    } {
+        let mut buffer = vec![];
+        f.read_to_end(&mut buffer)
+            .await
+            .expect(&format!("failed to read file: {:?}", path));
+
+        Ok(buffer)
+    } else {
+        Err(format!("No file found: {}", path.display()))
     }
-    .expect(&format!("no file found: {:?}", &path));
-
-    let mut buffer = vec![];
-    f.read_to_end(&mut buffer)
-        .await
-        .expect(&format!("failed to read file: {:?}", path));
-
-    Ok(buffer)
 }
 
 #[tauri::command(async)]

@@ -8,6 +8,7 @@ export const VIEWS_LIST = [
   "Saves",
   "Save States",
   "Platforms",
+  "Palettes",
   "Firmware",
   "Fetch",
   "Settings",

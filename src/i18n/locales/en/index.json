@@ -191,6 +191,7 @@
     "cores": "Cores",
     "fetch": "Fetch",
     "firmware": "Firmware",
+    "palettes": "Palettes",
     "games": "Games",
     "platforms": "Platforms",
     "pocket_sync": "Pocket Sync",
@@ -198,6 +199,36 @@
     "saves": "Saves",
     "screenshots": "Screenshots",
     "settings": "Settings"
+  },
+  "palettes": {
+    "buttons": {
+      "add_via_code": "Add via code",
+      "new": "New Palette",
+      "back": "Back to list"
+    },
+    "item": {
+      "duplicate": "Duplicate",
+      "rename": "Rename",
+      "copy_code": "Copy share code",
+      "delete": "Delete"
+    },
+    "add_via_code": {
+      "title": "Add via share code",
+      "cancel": "Cancel",
+      "add": "Add"
+    },
+    "full": {
+      "inputs": {
+        "background": "Background",
+        "obj0": "Obj0",
+        "obj1": "Obj1",
+        "window": "window",
+        "off": "LCD off"
+      },
+      "save": "Save",
+      "reset": "Reset",
+      "emu_credit": "GB emulator adapted from <1>roblouie/gameboy-emulator</1>"
+    }
   },
   "mister_sync": {
     "controls": {

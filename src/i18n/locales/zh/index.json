@@ -191,6 +191,7 @@
     "cores": "核心",
     "fetch": "同步",
     "firmware": "固件",
+    "palettes": "调色板",
     "games": "游戏",
     "platforms": "平台",
     "pocket_sync": "Pocket Sync",
@@ -198,6 +199,36 @@
     "saves": "存档",
     "screenshots": "截屏",
     "settings": "设置"
+  },
+  "palettes": {
+    "buttons": {
+      "add_via_code": "通过代码添加",
+      "new": "新建调色板",
+      "back": "返回列表"
+    },
+    "item": {
+      "duplicate": "复制",
+      "rename": "重命名",
+      "copy_code": "复制共享代码",
+      "delete": "删除"
+    },
+    "add_via_code": {
+      "title": "通过共享代码添加",
+      "cancel": "取消",
+      "add": "添加"
+    },
+    "full": {
+      "inputs": {
+        "background": "背景",
+        "obj0": "Obj0",
+        "obj1": "Obj1",
+        "window": "窗户",
+        "off": "LCD 关闭"
+      },
+      "save": "保存",
+      "reset": "重置",
+      "emu_credit": "GB模拟器改编自<1>roblouie/gameboy-emulator</1>"
+    }
   },
   "mister_sync": {
     "controls": {
