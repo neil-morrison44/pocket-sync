@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next"
 import { pocketPathAtom } from "../../../../recoil/atoms"
 import { VideoJSON } from "../../../../types"
 import { invokeSaveFile } from "../../../../utils/invokes"
+import { confirm } from "@tauri-apps/api/dialog"
 
 type DisplayModesProps = {
   coreName: string
@@ -53,7 +54,7 @@ export const DisplayModes = ({ coreName }: DisplayModesProps) => {
   }, [videoJson])
 
   const toggleVideoMode = useCallback(
-    async (id: number) => {
+    async (id: number, requiresCoreResponse: boolean) => {
       const encoder = new TextEncoder()
 
       const newModes = activeModes.includes(id)
@@ -69,12 +70,17 @@ export const DisplayModes = ({ coreName }: DisplayModesProps) => {
         },
       }
 
+      if (requiresCoreResponse && !activeModes.includes(id)) {
+        const allowed = await confirm(t("display_mode_warning"))
+        if (!allowed) return
+      }
+
       await invokeSaveFile(
         `${pocketPath}/Cores/${coreName}/video.json`,
         encoder.encode(JSON.stringify(newVideoJSON, null, 2))
       )
     },
-    [videoJson.video, activeModes, pocketPath, coreName]
+    [activeModes, videoJson.video, pocketPath, coreName, t]
   )
 
   return (
@@ -85,7 +91,7 @@ export const DisplayModes = ({ coreName }: DisplayModesProps) => {
             <SupportsBubble
               supports={activeModes.includes(id)}
               key={name}
-              onClick={() => toggleVideoMode(id)}
+              onClick={() => toggleVideoMode(id, requiresCoreResponse)}
             >
               {t(`display_modes.${name}`)}
             </SupportsBubble>

@@ -78,7 +78,8 @@
     },
     "url": "URL",
     "version": "Versión",
-    "display_modes_title": "Modos de visualización"
+    "display_modes_title": "Modos de visualización",
+    "display_mode_warning": "Este modo de visualización requiere que se actualice el núcleo, ¿está seguro de que desea activarlo?"
   },
   "core_info_required_files": {
     "close": "Cerrar",
