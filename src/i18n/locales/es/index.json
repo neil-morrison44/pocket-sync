@@ -77,7 +77,8 @@
       "save_states_and_sleep": "Guardar estados /dormir"
     },
     "url": "URL",
-    "version": "Versión"
+    "version": "Versión",
+    "display_modes_title": "Modos de visualización"
   },
   "core_info_required_files": {
     "close": "Cerrar",

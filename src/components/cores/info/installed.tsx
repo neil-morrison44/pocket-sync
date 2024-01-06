@@ -14,7 +14,7 @@ import { Releases } from "./releases"
 import { Version } from "../version"
 import { useUninstallCore } from "../../../hooks/useUninstallCore"
 import { useInstallCore } from "../../../hooks/useInstallCore"
-import { ReactNode, Suspense, useCallback, useMemo, useState } from "react"
+import { Suspense, useCallback, useMemo, useState } from "react"
 import { CorePlatformInfo } from "./platform"
 import { Loader } from "../../loader"
 import { SponsorLinks } from "./sponsorLinks"
@@ -34,6 +34,10 @@ import { ControlsButton } from "../../controls/inputs/button"
 import { currentFirmwareVersionSelector } from "../../../recoil/firmware/selectors"
 import { WarningIcon } from "./requiredFiles/warningIcon"
 import { Modal } from "../../modal"
+import { DisplayModes } from "./displayModes"
+import { SupportsBubble } from "./supportsBubble"
+import { Details } from "../../shared/details"
+import { CoreInfoTxtSelectorFamily } from "../../../recoil/cores/selectors"
 
 type CoreInfoProps = {
   coreName: string
@@ -265,17 +269,24 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
           </button>
         </div>
 
+        <div className="core-info__info-row">
+          <Details title={t("info_txt_title")}>
+            <InfoTxt coreName={coreName} />
+          </Details>
+        </div>
+
+        <div className="core-info__info-row">
+          <Details title={t("display_modes_title")}>
+            <DisplayModes coreName={coreName} />
+          </Details>
+        </div>
+
         {inventoryItem && inventoryItem.repository.platform === "github" && (
           <Releases inventoryItem={inventoryItem} />
         )}
       </section>
     </div>
   )
-}
-
-type SupportsBubbleProps = {
-  children: ReactNode
-  supports: boolean
 }
 
 const RequiredFilesButton = ({
@@ -295,12 +306,6 @@ const RequiredFilesButton = ({
     </ControlsButton>
   )
 }
-
-const SupportsBubble = ({ supports, children }: SupportsBubbleProps) => (
-  <div className={`core-info__supports core-info__supports--${supports}`}>
-    {children}
-  </div>
-)
 
 const FirmwareWarning = ({ coreName }: { coreName: string }) => {
   const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
@@ -334,4 +339,9 @@ const FirmwareWarning = ({ coreName }: { coreName: string }) => {
       })}
     </div>
   )
+}
+
+const InfoTxt = ({ coreName }: { coreName: string }) => {
+  const infoTxt = useRecoilValue(CoreInfoTxtSelectorFamily(coreName))
+  return <div className="core-info__info-txt">{infoTxt}</div>
 }
