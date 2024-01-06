@@ -47,7 +47,7 @@ class FSEventRegister {
         changedPaths
           .map((changedPath) => {
             const node = this.findOrCreateOnCallbackTree(
-              changedPath.replace(`${pocketPath}${sep}`, "")
+              changedPath.replace(`${pocketPath}${sep}`, "").replace(`${pocketPath}`, "")
             )
 
             return node
