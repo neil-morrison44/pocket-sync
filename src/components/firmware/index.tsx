@@ -11,7 +11,6 @@ import { FirmwareReleaseNotes } from "./releaseNotes"
 import { Suspense, useCallback, useState } from "react"
 import { Loader } from "../loader"
 import { invokeDeleteFiles, invokeDownloadFirmware } from "../../utils/invokes"
-import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { useTranslation } from "react-i18next"
 
 export const Firmware = () => {
@@ -88,7 +87,6 @@ const DownloadButton = ({
   onDownloadEnd,
   version,
 }: DownloadButtonProps) => {
-  const invalidateFS = useInvalidateFileSystem()
   const { t } = useTranslation("firmware")
 
   const firmwareDetails = useRecoilValue(
@@ -105,13 +103,11 @@ const DownloadButton = ({
       firmwareDetails.md5
     )
 
-    invalidateFS()
     onDownloadEnd()
   }, [
     firmwareDetails.download_url,
     firmwareDetails.file_name,
     firmwareDetails.md5,
-    invalidateFS,
     onDownloadEnd,
     onDownloadStart,
   ])
@@ -126,15 +122,13 @@ type FirmwareDownloadedProps = {
 
 const FirmwareDownloaded = ({ downloading }: FirmwareDownloadedProps) => {
   const downloadedFirmware = useRecoilValue(downloadedFirmwareSelector)
-  const invalidateFS = useInvalidateFileSystem()
   const { t } = useTranslation("firmware")
 
   const onRemove = useCallback(async () => {
     if (downloadedFirmware) {
       await invokeDeleteFiles([downloadedFirmware])
-      invalidateFS()
     }
-  }, [downloadedFirmware, invalidateFS])
+  }, [downloadedFirmware])
 
   if (!downloadedFirmware) {
     return (
@@ -146,11 +140,7 @@ const FirmwareDownloaded = ({ downloading }: FirmwareDownloadedProps) => {
 
   return (
     <div className="firmware__downloaded">
-      <div>
-        <strong>{t("loaded_firmware", { version: downloadedFirmware })}</strong>
-        <div>{t("loaded_firmware_tip")}</div>
-      </div>
-
+      <strong>{t("loaded_firmware", { version: downloadedFirmware })}</strong>
       <button onClick={onRemove}>{t("remove_button")}</button>
     </div>
   )

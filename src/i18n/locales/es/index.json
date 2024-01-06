@@ -15,6 +15,22 @@
     "files_found": "{count, plural, =0 {No hay archivos que se puedan limpiar} one {# archivo que se pueda limpiar} other {# archivos que se puedan limpiar} } encontrado",
     "title": "Archivos limpios"
   },
+  "update_all": {
+    "title": "Actualizar todo",
+    "heading": {
+      "update": "Actualizar",
+      "required_files": "Instalar archivos requeridos",
+      "platform_files": "Reemplazar archivos de plataforma"
+    },
+    "buttons": {
+      "update": "Actualizar {count, plural, =0 {none} one {# núcleo seleccionado} other {# núcleos seleccionados} }",
+      "close": "Cerrar"
+    },
+    "update": {
+      "title": "Actualizando {coreName}: { step, select, core { actualizando core... } files { descargando archivos requeridos... } other {on no} }"
+    },
+    "no_updates_found": "No se encontraron actualizaciones para los núcleos instalados"
+  },
   "core_info": {
     "author": "Autor",
     "controls": {
@@ -35,6 +51,7 @@
       "all": "Advertencia: este núcleo actualmente requiere un archivo de licencia para ejecutarse.",
       "jotego": "Las betas de JOTEGO requieren un archivo JTBETA del Patreon en la sección de patrocinadores a continuación. \nEl jtbeta.zip debe colocarse en la raíz de su tarjeta SD y luego se encontrará y se copiará en el lugar correcto durante el proceso de \"Archivos necesarios\"."
     },
+    "firmware_too_low": "Este núcleo necesita firmware v{core_firmware}, la versión instalada actualmente es v{pocket_firmware}",
     "not_in_inventory": "{coreName} no está en el inventario de núcleos",
     "platform": {
       "edit": "Editar",
@@ -74,7 +91,9 @@
       "not_in_archive": "No en el archivo",
       "ok": "Descargado",
       "unknown": "Desconocido",
-      "at_root": "Existe en la carpeta raíz"
+      "at_root": "Encontrado en la raíz",
+      "at_root_match": "Archivo verificado. Encontrado en la raíz",
+      "at_root_mismatch": "El archivo no coincide. Por favor revisa la raíz"
     }
   },
   "cores": {
@@ -82,7 +101,9 @@
       "category": "Categoría",
       "refresh": "Actualizar",
       "search": "Buscar",
-      "updatable": "Actualizable"
+      "updatable": "Actualizable",
+      "update_all": "Actualizar todo",
+      "filters_group": "Filtros"
     },
     "install_tip": "También puedes instalar núcleos (o cualquier otra cosa en un zip) arrastrando el archivo .zip a esta ventana",
     "installed": "Instalado ({count})",
@@ -170,6 +191,7 @@
     "cores": "Núcleos",
     "fetch": "Buscar",
     "firmware": "Firmware",
+    "palettes": "Paletas",
     "games": "Juegos",
     "platforms": "Plataformas",
     "pocket_sync": "Pocket Sync",
@@ -178,10 +200,41 @@
     "screenshots": "Capturas de pantalla",
     "settings": "Ajustes"
   },
+  "palettes": {
+    "buttons": {
+      "add_via_code": "Agregar mediante código",
+      "new": "Nueva paleta",
+      "back": "Volver a la lista"
+    },
+    "item": {
+      "duplicate": "Duplicar",
+      "rename": "Cambiar nombre",
+      "copy_code": "Copiar código compartido",
+      "delete": "Eliminar"
+    },
+    "add_via_code": {
+      "title": "Agregar mediante código compartido",
+      "cancel": "Cancelar",
+      "add": "Agregar"
+    },
+    "full": {
+      "inputs": {
+        "background": "Fondo",
+        "obj0": "Obj0",
+        "obj1": "Obj1",
+        "window": "Ventana",
+        "off": "LCD apagado"
+      },
+      "save": "Guardar",
+      "reset": "Restablecer",
+      "emu_credit": "Emulador GB adaptado de <1>roblouie/gameboy-emulator</1>"
+    }
+  },
   "mister_sync": {
     "controls": {
       "back": "Salida",
-      "search": "Buscar guardados"
+      "search": "Buscar guardados",
+      "save_mapping": "Guardar mapeo"
     },
     "login": {
       "connect": "Conectar",
@@ -219,6 +272,7 @@
     "cancel": "Cancelar",
     "controls": {
       "data_packs": "Paquetes de datos",
+      "remove_coreless": "Eliminar Coreless",
       "image_packs": "Paquetes de imágenes",
       "search": "Buscar"
     },
@@ -323,8 +377,17 @@
         "trans_green": "Verde",
         "trans_orange": "Naranja",
         "trans_purple": "Púrpura",
-        "trans_red": "Rojo"
+        "trans_red": "Rojo",
+        "indigo": "Índigo",
+        "red": "Rojo",
+        "green": "Verde",
+        "blue": "Azul",
+        "yellow": "Amarillo",
+        "pink": "Rosa",
+        "orange": "Naranja",
+        "silver": "Plata"
       },
+      "classic_label": "Clásicos",
       "transparent_label": "Transparente",
       "body_label": "Cuerpo",
       "buttons_label": "Botones",
@@ -338,7 +401,7 @@
     },
     "archive": {
       "save": "Guardar",
-      "title": "Libreria ROM y BIOS",
+      "title": "Libreria ROM y BIOS (Archivos requeridos)",
       "warning": "Por favor consulte las leyes locales sobre la descarga de archivos ROM y BIOS potencialmente protegidos por derechos de autor (arcade).\nSi se siente cómodo con esto, copie la siguiente URL en la entrada y presione 'guardar'."
     },
     "clear_file_cache": {

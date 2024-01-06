@@ -15,6 +15,22 @@
     "files_found": "共找到{count, plural, =0 {0个可清理文件} one {# 个可清理文件} other {# 个可清理文件} }",
     "title": "清理文件"
   },
+  "update_all": {
+    "title": "全部更新",
+    "heading": {
+      "update": "更新",
+      "required_files": "安装所需文件",
+      "platform_files": "替换平台文件"
+    },
+    "buttons": {
+      "update": "更新 {count, plural, =0 {none} one {# 选择的核心} other {# 个选定核心} }",
+      "close": "关闭"
+    },
+    "update": {
+      "title": "更新 {coreName}: { step, select, core { 正在更新核心... } files { 正在下载所需文件... } other {on no} }"
+    },
+    "no_updates_found": "未找到已安装核心的更新"
+  },
   "core_info": {
     "author": "作者",
     "controls": {
@@ -35,6 +51,7 @@
       "all": "请注意!运行该核心需要取得许可授权",
       "jotego": "JOTEGO betas需要JTBETA许可文件才能运行，可以通过JOTEGO的Patreon页面获取(https://www.patreon.com/jotego)。 \n 如果您取得了许可文件，请将jtbeta.zip放置在SD卡根目录，系统将自动根据必要文件的处理规则进行处理。"
     },
+    "firmware_too_low": "该核心需要固件v{core_firmware}，当前安装的版本是v{pocket_firmware}",
     "not_in_inventory": "核心{coreName}尚未加入清单",
     "platform": {
       "edit": "编辑",
@@ -74,7 +91,9 @@
       "not_in_archive": "未入库",
       "ok": "已下载",
       "unknown": "未知",
-      "at_root": "已存在于根目录"
+      "at_root": "已存在于根目录",
+      "at_root_match": "文件已验证。在根中找到",
+      "at_root_mismatch": "文件不匹配。请检查根目录"
     }
   },
   "cores": {
@@ -82,7 +101,9 @@
       "category": "类型",
       "refresh": "刷新",
       "search": "搜索",
-      "updatable": "可更新"
+      "updatable": "可更新",
+      "update_all": "全部更新",
+      "filters_group": "过滤器"
     },
     "install_tip": "您也可以通过拖拽ZIP压缩包到窗口内的方式安装核心或其他内容",
     "installed": "已安装({count})",
@@ -170,6 +191,7 @@
     "cores": "核心",
     "fetch": "同步",
     "firmware": "固件",
+    "palettes": "调色板",
     "games": "游戏",
     "platforms": "平台",
     "pocket_sync": "Pocket Sync",
@@ -178,10 +200,41 @@
     "screenshots": "截屏",
     "settings": "设置"
   },
+  "palettes": {
+    "buttons": {
+      "add_via_code": "通过代码添加",
+      "new": "新建调色板",
+      "back": "返回列表"
+    },
+    "item": {
+      "duplicate": "复制",
+      "rename": "重命名",
+      "copy_code": "复制共享代码",
+      "delete": "删除"
+    },
+    "add_via_code": {
+      "title": "通过共享代码添加",
+      "cancel": "取消",
+      "add": "添加"
+    },
+    "full": {
+      "inputs": {
+        "background": "背景",
+        "obj0": "Obj0",
+        "obj1": "Obj1",
+        "window": "窗户",
+        "off": "LCD 关闭"
+      },
+      "save": "保存",
+      "reset": "重置",
+      "emu_credit": "GB模拟器改编自<1>roblouie/gameboy-emulator</1>"
+    }
+  },
   "mister_sync": {
     "controls": {
       "back": "退出",
-      "search": "搜索存档"
+      "search": "搜索存档",
+      "save_mapping": "保存映射"
     },
     "login": {
       "connect": "连接",
@@ -219,6 +272,7 @@
     "cancel": "取消",
     "controls": {
       "data_packs": "数据包",
+      "remove_coreless": "删除无核",
       "image_packs": "图像包",
       "search": "搜索"
     },
@@ -323,8 +377,17 @@
         "trans_green": "绿色",
         "trans_orange": "橙色",
         "trans_purple": "紫色",
-        "trans_red": "红色"
+        "trans_red": "红色",
+        "indigo": "靛蓝",
+        "red": "红色",
+        "green": "绿色",
+        "blue": "蓝色",
+        "yellow": "黄色",
+        "pink": "粉红色",
+        "orange": "橙色",
+        "silver": "银色"
       },
+      "classic_label": "经典",
       "transparent_label": "透明",
       "body_label": "主体",
       "buttons_label": "按钮",
@@ -338,7 +401,7 @@
     },
     "archive": {
       "save": "保存",
-      "title": "游戏ROM & BIOS 资料库",
+      "title": "游戏ROM & BIOS 资料库 (必要文件)",
       "warning": "请您自行评估所处地区针对数字版权保护的法律法规风险。\n若您确认使用资料库，请复制下面的链接到文本框并点击 \"保存\"。"
     },
     "clear_file_cache": {

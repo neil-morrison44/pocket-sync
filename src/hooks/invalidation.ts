@@ -1,18 +1,8 @@
 import { useRecoilCallback } from "recoil"
 import {
   configInvalidationAtom,
-  fileSystemInvalidationAtom,
   saveFileInvalidationAtom,
 } from "../recoil/atoms"
-
-export const useInvalidateFileSystem = () =>
-  useRecoilCallback(
-    ({ set }) =>
-      () => {
-        set(fileSystemInvalidationAtom, Date.now())
-      },
-    []
-  )
 
 export const useInvalidateConfig = () =>
   useRecoilCallback(

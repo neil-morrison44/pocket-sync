@@ -6,12 +6,12 @@ import {
   invokeListSavesInZip,
   invokeListSavesOnPocket,
 } from "../../utils/invokes"
-import { fileSystemInvalidationAtom, saveFileInvalidationAtom } from "../atoms"
+import { FolderWatchAtomFamily } from "../fileSystem/atoms"
 
 export const AllSavesSelector = selector<string[]>({
   key: "AllSavesSelector",
   get: async ({ get }) => {
-    get(fileSystemInvalidationAtom)
+    get(FolderWatchAtomFamily("Saves"))
     const saves = await invokeWalkDirListFiles(`Saves`, [".sav"])
     return saves.map((f) => f.replace(/^\//g, ""))
   },
@@ -22,13 +22,10 @@ export const BackupZipsSelectorFamily = selectorFamily<
   string
 >({
   key: "BackupZipsSelectorFamily",
-  get:
-    (backupPath) =>
-    async ({ get }) => {
-      get(fileSystemInvalidationAtom)
-      const backups = await invokeListBackupSaves(backupPath)
-      return backups
-    },
+  get: (backupPath) => async () => {
+    const backups = await invokeListBackupSaves(backupPath)
+    return backups
+  },
 })
 
 const SaveZipFilesListSelectorFamily = selectorFamily<SaveZipFile[], string>({
@@ -42,7 +39,7 @@ const SaveZipFilesListSelectorFamily = selectorFamily<SaveZipFile[], string>({
 export const pocketSavesFilesListSelector = selector<SaveZipFile[]>({
   key: "pocketSavesFilesListSelector",
   get: async ({ get }) => {
-    get(saveFileInvalidationAtom)
+    get(FolderWatchAtomFamily("Saves"))
     const savesList = await invokeListSavesOnPocket()
     return savesList
   },

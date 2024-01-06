@@ -32,3 +32,14 @@ export const reconnectWhenOpenedAtom = atom<{ enable: boolean; path: string }>({
   }),
   effects: [syncToAppLocalDataEffect("reconnect_when_opened")],
 })
+
+export const performanceLevelAtom = atom<number>({
+  key: "performanceLevelAtom",
+  default: syncToAppLocalDataEffectDefault("perf_level", 2),
+  effects: [syncToAppLocalDataEffect("perf_level")],
+})
+
+export const enableGlobalZipInstallAtom = atom<boolean>({
+  key: "enableGlobalZipInstallAtom",
+  default: true,
+})

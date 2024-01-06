@@ -10,7 +10,8 @@ import {
   invokeWalkDirListFiles,
 } from "../../utils/invokes"
 import { ResponseType, getClient } from "@tauri-apps/api/http"
-import { fileSystemInvalidationAtom, pocketPathAtom } from "../atoms"
+import { pocketPathAtom } from "../atoms"
+import { FolderWatchAtomFamily } from "../fileSystem/atoms"
 
 export const ArchiveMetadataSelectorFamily = selectorFamily<
   ArchiveFileMetadata[],
@@ -42,7 +43,7 @@ export const PathFileInfoSelectorFamily = selectorFamily<
   get:
     ({ path, offPocket }) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
+      get(FolderWatchAtomFamily(path))
       const pocketPath = get(pocketPathAtom)
       const fileList = await invokeWalkDirListFiles(path, [], offPocket)
 
@@ -102,10 +103,12 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
   get:
     (coreName: string) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
       const archiveMetadata = get(archiveMetadataSelector)
       const requiredFiles = get(RequiredFileInfoSelectorFamily(coreName))
-      const rootFileInfo = get(listRootFilesSelector)
+      const extensions = requiredFiles
+        .map((r) => r.filename.split(".").at(-1) as string)
+        .filter((e, index, arr) => index === arr.indexOf(e))
+      const rootFileInfo = get(ListSomeRootFilesSelectorFamily(extensions))
 
       return requiredFiles
         .map((r) => {
@@ -118,12 +121,27 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
             }
           })
 
-          if (existsAtRoot)
+          if (existsAtRoot) {
+            let status: RequiredFileInfo["status"] = "at_root"
+            switch (r.md5) {
+              case undefined:
+                break
+              case existsAtRoot.md5:
+                status = "at_root_match"
+                break
+              default:
+                status = "at_root_mismatch"
+                break
+            }
+
             return {
               ...r,
-              exists: existsAtRoot.crc32 === r.crc32,
-              status: "at_root",
+              exists:
+                existsAtRoot.crc32 === r.crc32 &&
+                (!r.md5 || r.md5 === existsAtRoot.md5),
+              status,
             } satisfies RequiredFileInfo
+          }
 
           const metadata = archiveMetadata.find(
             ({ name }) => name === r.filename
@@ -150,11 +168,16 @@ export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
     },
 })
 
-export const listRootFilesSelector = selector<RootFile[]>({
-  key: "listRootFilesSelector",
-  get: async ({ get }) => {
-    get(fileSystemInvalidationAtom)
-    const rootFileInfo = await invokeListRootFiles()
-    return rootFileInfo
-  },
+export const ListSomeRootFilesSelectorFamily = selectorFamily<
+  RootFile[],
+  string[]
+>({
+  key: "ListSomeRootFilesSelectorFamily",
+  get:
+    (extensions) =>
+    async ({ get }) => {
+      get(FolderWatchAtomFamily("/"))
+      const rootFileInfo = await invokeListRootFiles(extensions)
+      return rootFileInfo
+    },
 })

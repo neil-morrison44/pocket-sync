@@ -15,6 +15,22 @@
     "files_found": "{count, plural, =0 {No cleanable files} one {# cleanable file} other {# cleanable files} } found",
     "title": "Clean Files"
   },
+  "update_all": {
+    "title": "Update All",
+    "heading": {
+      "update": "Update",
+      "required_files": "Install Required Files",
+      "platform_files": "Replace Platform Files"
+    },
+    "buttons": {
+      "update": "Update {count, plural, =0 {none} one {# selected core} other {# selected cores} }",
+      "close": "Close"
+    },
+    "update": {
+      "title": "Updating {coreName}: { step, select, core { updating core... } files { downloading Required Files... } other {on no} }"
+    },
+    "no_updates_found": "No updates found for installed cores"
+  },
   "core_info": {
     "author": "Author",
     "controls": {
@@ -35,6 +51,7 @@
       "all": "Warning - this core currently requires a license file to run.",
       "jotego": "The JOTEGO betas require a JTBETA file from the Patreon in the sponsors section below. \nThe jtbeta.zip should be placed at the root of your SD card then it'll be found & copied to the right place during the \"Required Files\" process."
     },
+    "firmware_too_low": "This core needs firmware v{core_firmware}, the currently installed version is v{pocket_firmware}",
     "not_in_inventory": "{coreName} not in cores inventory",
     "platform": {
       "edit": "Edit",
@@ -74,7 +91,9 @@
       "not_in_archive": "Not in archive",
       "ok": "Downloaded",
       "unknown": "Unknown",
-      "at_root": "Exists in root folder"
+      "at_root": "Found in root",
+      "at_root_match": "File verified. Found in root",
+      "at_root_mismatch": "File mismatch. Please check the root"
     }
   },
   "cores": {
@@ -82,7 +101,9 @@
       "category": "Category",
       "refresh": "Refresh",
       "search": "Search",
-      "updatable": "Updatable"
+      "updatable": "Updatable",
+      "update_all": "Update All",
+      "filters_group": "Filters"
     },
     "install_tip": "You can also install cores (or anything else in a zip) by dragging the .zip into this window",
     "installed": "Installed ({count})",
@@ -170,6 +191,7 @@
     "cores": "Cores",
     "fetch": "Fetch",
     "firmware": "Firmware",
+    "palettes": "Palettes",
     "games": "Games",
     "platforms": "Platforms",
     "pocket_sync": "Pocket Sync",
@@ -178,10 +200,41 @@
     "screenshots": "Screenshots",
     "settings": "Settings"
   },
+  "palettes": {
+    "buttons": {
+      "add_via_code": "Add via code",
+      "new": "New Palette",
+      "back": "Back to list"
+    },
+    "item": {
+      "duplicate": "Duplicate",
+      "rename": "Rename",
+      "copy_code": "Copy share code",
+      "delete": "Delete"
+    },
+    "add_via_code": {
+      "title": "Add via share code",
+      "cancel": "Cancel",
+      "add": "Add"
+    },
+    "full": {
+      "inputs": {
+        "background": "Background",
+        "obj0": "Obj0",
+        "obj1": "Obj1",
+        "window": "window",
+        "off": "LCD off"
+      },
+      "save": "Save",
+      "reset": "Reset",
+      "emu_credit": "GB emulator adapted from <1>roblouie/gameboy-emulator</1>"
+    }
+  },
   "mister_sync": {
     "controls": {
       "back": "Exit",
-      "search": "Search Saves"
+      "search": "Search Saves",
+      "save_mapping": "Save Mapping"
     },
     "login": {
       "connect": "Connect",
@@ -219,6 +272,7 @@
     "cancel": "Cancel",
     "controls": {
       "data_packs": "Data Packs",
+      "remove_coreless": "Remove Coreless",
       "image_packs": "Image Packs",
       "search": "Search"
     },
@@ -323,8 +377,17 @@
         "trans_green": "Green",
         "trans_orange": "Orange",
         "trans_purple": "Purple",
-        "trans_red": "Red"
+        "trans_red": "Red",
+        "indigo": "Indigo",
+        "red": "Red",
+        "green": "Green",
+        "blue": "Blue",
+        "yellow": "Yellow",
+        "pink": "Pink",
+        "orange": "Orange",
+        "silver": "Silver"
       },
+      "classic_label": "Classic",
       "transparent_label": "Transparent",
       "body_label": "Body",
       "buttons_label": "Buttons",
@@ -342,7 +405,7 @@
     },
     "archive": {
       "save": "Save",
-      "title": "ROM & BIOS archive",
+      "title": "ROM & BIOS archive (Required Files)",
       "warning": "Please check with your local laws around the downloading of potentially copyrighted (arcade) ROM & BIOS files.\nIf you are comfortable with this, copy the following url into the input and hit \"save\"."
     },
     "clear_file_cache": {

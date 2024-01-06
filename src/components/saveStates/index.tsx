@@ -9,14 +9,14 @@ import { Controls } from "../controls"
 import { SearchContextProvider } from "../search/context"
 import { confirm } from "@tauri-apps/api/dialog"
 import { invokeDeleteFiles } from "../../utils/invokes"
-import { useInvalidateFileSystem } from "../../hooks/invalidation"
 import { splitAsPath } from "../../utils/splitAsPath"
 import { CoreTag } from "../shared/coreTag"
 import { useTranslation } from "react-i18next"
 import { PhotoExportModal } from "./photoExportModal"
+import { ControlsSearch } from "../controls/inputs/search"
+import { ControlsButton } from "../controls/inputs/button"
 
 export const SaveStates = () => {
-  const invalidateFS = useInvalidateFileSystem()
   const allSaveStates = useRecoilValue(AllSaveStatesSelector)
   const [selectedStates, setSelectedStates] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState("")
@@ -54,37 +54,29 @@ export const SaveStates = () => {
       selectedStates.map((s) => `Memories/Save States/${s}`)
     )
     setSelectedStates([])
-    invalidateFS()
-  }, [invalidateFS, selectedStates, t])
+  }, [selectedStates, t])
 
   return (
     <div className="save-states">
-      <Controls
-        controls={[
-          {
-            type: "search",
-            text: t("controls.search"),
-            value: searchQuery,
-            onChange: (v) => setSearchQuery(v),
-          },
-          selectedStates.length === 0
-            ? undefined
-            : {
-                type: "button",
-                text: t("controls.clear_selection"),
-                onClick: () => setSelectedStates([]),
-              },
-          selectedStates.length === 0
-            ? undefined
-            : {
-                type: "button",
-                text: t("controls.delete_selection", {
-                  count: selectedStates.length,
-                }),
-                onClick: deleteSelected,
-              },
-        ]}
-      />
+      <Controls>
+        <ControlsSearch
+          placeholder={t("controls.search")}
+          value={searchQuery}
+          onChange={setSearchQuery}
+        />
+        {selectedStates.length !== 0 && (
+          <>
+            <ControlsButton onClick={() => setSelectedStates([])}>
+              {t("controls.clear_selection")}
+            </ControlsButton>
+            <ControlsButton onClick={deleteSelected}>
+              {t("controls.delete_selection", {
+                count: selectedStates.length,
+              })}
+            </ControlsButton>
+          </>
+        )}
+      </Controls>
 
       {isExportingPhotos && (
         <PhotoExportModal

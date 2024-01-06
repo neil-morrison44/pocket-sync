@@ -13,15 +13,21 @@ import { Releases } from "./releases"
 import { SponsorLinks } from "./sponsorLinks"
 import { useTranslation } from "react-i18next"
 import { KeyIcon } from "../keyIcon"
+import { ControlsBackButton } from "../../controls/inputs/backButton"
+import { ControlsButton } from "../../controls/inputs/button"
 
 type NotInstalledCoreInfoProps = {
   onBack: () => void
   coreName: string
+  withoutControls?: boolean
+  withoutTitle?: boolean
 }
 
 export const NotInstalledCoreInfo = ({
   coreName,
   onBack,
+  withoutControls = false,
+  withoutTitle = false,
 }: NotInstalledCoreInfoProps) => {
   const inventoryItem = useInventoryItem(coreName)
   const { t } = useTranslation("core_info")
@@ -39,28 +45,28 @@ export const NotInstalledCoreInfo = ({
 
   return (
     <div className="core-info">
-      <Controls
-        controls={[
-          {
-            type: "back-button",
-            text: t("controls.back"),
-            onClick: onBack,
-          },
-          download_url && {
-            type: "button",
-            text: t("controls.install"),
-            onClick: () => {
-              installCore(coreName, download_url)
-            },
-          },
-        ]}
-      />
-
+      {!withoutControls && (
+        <Controls>
+          <ControlsBackButton onClick={onBack}>
+            {t("controls.back")}
+          </ControlsBackButton>
+          {download_url && (
+            <ControlsButton
+              onClick={() => {
+                installCore(coreName, download_url)
+              }}
+            >
+              {t("controls.install")}
+            </ControlsButton>
+          )}
+        </Controls>
+      )}
       {!inventoryItem && <div>{t("not_in_inventory", { coreName })}</div>}
-
       {inventoryItem && (
         <>
-          <h3 className="core-info__title">{inventoryItem.platform_id}</h3>
+          {!withoutTitle && (
+            <h3 className="core-info__title">{inventoryItem.platform_id}</h3>
+          )}
           <img className="core-info__image" src={imageUrl} />
 
           {inventoryItem.requires_license && (

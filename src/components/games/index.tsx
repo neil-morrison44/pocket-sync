@@ -11,6 +11,9 @@ import { InstanceJson } from "./instanceJson"
 import { CleanFilesModal } from "./cleanFiles"
 import { CoreFolderItem } from "./item"
 import { useTranslation } from "react-i18next"
+import { ControlsSearch } from "../controls/inputs/search"
+import { ControlsButton } from "../controls/inputs/button"
+import { ControlsSelect } from "../controls/inputs/select"
 
 export const Games = () => {
   const coresList = useRecoilValue(coresListSelector)
@@ -50,38 +53,29 @@ export const Games = () => {
         <InstanceJson onClose={() => setInstanceJsonOpen(false)} />
       )}
 
-      <Controls
-        controls={[
-          {
-            type: "search",
-            text: t("controls.search"),
-            value: searchQuery,
-            onChange: (v) => setSearchQuery(v),
-          },
-          {
-            type: "button",
-            text: t("controls.clean_files"),
-            onClick: () => setCleanFilesOpen(true),
-          },
-          {
-            type: "button",
-            text: t("controls.instance_json"),
-            onClick: () => setInstanceJsonOpen(true),
-          },
-          {
-            type: "button",
-            text: t("controls.refresh"),
-            onClick: refresh,
-          },
-          {
-            type: "select",
-            options: categoryList,
-            selected: filterCategory,
-            text: t("controls.category"),
-            onChange: (v) => setFilterCategory(v),
-          },
-        ]}
-      />
+      <Controls>
+        <ControlsSearch
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder={t("controls.search")}
+        />
+        <ControlsButton onClick={() => setCleanFilesOpen(true)}>
+          {t("controls.clean_files")}
+        </ControlsButton>
+        <ControlsButton onClick={() => setInstanceJsonOpen(true)}>
+          {t("controls.instance_json")}
+        </ControlsButton>
+        <ControlsButton onClick={refresh}>
+          {t("controls.refresh")}
+        </ControlsButton>
+        <ControlsSelect
+          options={categoryList}
+          selected={filterCategory}
+          onChange={setFilterCategory}
+        >
+          {t("controls.category")}
+        </ControlsSelect>
+      </Controls>
       <SearchContextProvider
         query={searchQuery}
         other={{ category: filterCategory }}

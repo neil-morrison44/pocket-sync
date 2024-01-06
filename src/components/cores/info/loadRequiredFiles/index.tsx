@@ -2,10 +2,7 @@ import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { useInstallRequiredFiles } from "../../../../hooks/useInstallRequiredFiles"
 import { RequiredFilesWithStatusSelectorFamily } from "../../../../recoil/archive/selectors"
-import {
-  PocketSyncConfigSelector,
-  skipAlternateAssetsSelector,
-} from "../../../../recoil/config/selectors"
+import { skipAlternateAssetsSelector } from "../../../../recoil/config/selectors"
 import { Modal } from "../../../modal"
 import { Progress } from "../../../progress"
 import { Tip } from "../../../tip"
@@ -14,6 +11,7 @@ import { useTranslation } from "react-i18next"
 import "./index.css"
 import { RequiredFileRow } from "./row"
 import { useUpdateConfig } from "../../../settings/hooks/useUpdateConfig"
+import { useHasArchiveLink } from "../../../../hooks/useHasArchiveLink"
 
 const STATUS_SORT_ORDER = [
   "wrong",
@@ -36,7 +34,6 @@ export const LoadRequiredFiles = ({
     RequiredFilesWithStatusSelectorFamily(coreName)
   )
   const { t } = useTranslation("core_info_required_files")
-  const pocketSyncConfig = useRecoilValue(PocketSyncConfigSelector)
   const {
     installRequiredFiles,
     percent,
@@ -47,13 +44,7 @@ export const LoadRequiredFiles = ({
 
   const skipAlternateAssets = useRecoilValue(skipAlternateAssetsSelector)
   const updateConfig = useUpdateConfig()
-
-  const hasArchiveLink = useMemo(
-    () =>
-      pocketSyncConfig.archive_url !== null &&
-      pocketSyncConfig.archive_url !== "",
-    [pocketSyncConfig]
-  )
+  const hasArchiveLink = useHasArchiveLink()
 
   const sortedRequiredFiles = useMemo(() => {
     return [...requiredFiles].sort((a, b) => {
@@ -116,7 +107,8 @@ export const LoadRequiredFiles = ({
                       ({ status }) =>
                         status === "downloadable" ||
                         status === "wrong" ||
-                        status === "at_root"
+                        status === "at_root" ||
+                        status === "at_root_match"
                     )
                   )
                 }

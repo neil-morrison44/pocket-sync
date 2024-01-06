@@ -2,7 +2,6 @@ import { selector, selectorFamily } from "recoil"
 import { ImagePack, PlatformId, PlatformInfoJSON } from "../../types"
 import { invokeFileExists, invokeListFiles } from "../../utils/invokes"
 import { PLATFORM_IMAGE } from "../../values"
-import { fileSystemInvalidationAtom } from "../atoms"
 import {
   CoreInfoSelectorFamily,
   coresListSelector,
@@ -12,11 +11,12 @@ import * as zip from "@zip.js/zip.js"
 import { renderBinImage } from "../../utils/renderBinImage"
 import { getClient, ResponseType } from "@tauri-apps/api/http"
 import { readJSONFile } from "../../utils/readJSONFile"
+import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
 
 export const platformsListSelector = selector<PlatformId[]>({
   key: "platformsListSelector",
   get: async ({ get }) => {
-    get(fileSystemInvalidationAtom)
+    get(FolderWatchAtomFamily("Platforms"))
     const platforms = await invokeListFiles("Platforms")
     return platforms
       .filter((s) => s.endsWith(".json"))
@@ -63,8 +63,8 @@ export const PlatformExistsSelectorFamily = selectorFamily<boolean, PlatformId>(
     get:
       (platformId: PlatformId) =>
       async ({ get }) => {
-        get(fileSystemInvalidationAtom)
         const path = `Platforms/${platformId}.json`
+        get(FileWatchAtomFamily(path))
         return await invokeFileExists(path)
       },
   }
@@ -78,8 +78,8 @@ export const PlatformInfoSelectorFamily = selectorFamily<
   get:
     (platformId: PlatformId) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
       const path = `Platforms/${platformId}.json`
+      get(FileWatchAtomFamily(path))
       const exists = await invokeFileExists(path)
       if (!exists) throw new Error(`Attempt to read platform_id ${platformId}`)
       return readJSONFile<PlatformInfoJSON>(path)
@@ -103,7 +103,6 @@ export const PlatformImageSelectorFamily = selectorFamily<string, PlatformId>({
 export const allCategoriesSelector = selector<string[]>({
   key: "allCategoriesSelector",
   get: async ({ get }) => {
-    get(fileSystemInvalidationAtom)
     const platforms = get(platformsListSelector)
 
     return Array.from(
@@ -151,7 +150,10 @@ const ImagePackBlobSelectorFamily = selectorFamily<Blob | null, ImagePack>({
 
       const downloadURL = latestRelease.assets.find(({ name }) => {
         if (!name.endsWith(".zip")) return false
-        if (variant) return name.includes(variant)
+        if (variant)
+          return (
+            name.endsWith(`${variant}.zip`) || name.startsWith(`${variant}_`)
+          )
         return true
       })
 

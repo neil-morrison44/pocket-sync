@@ -36,14 +36,15 @@ export type InstanceDataJSON = {
   }
 }
 
-type DataSlotJSON = {
+export type DataSlotJSON = {
   id: number
   name?: string
   required?: boolean
-  parameters: number | string
+  parameters?: number | string
   extensions?: string[]
   filename?: string
   alternate_filenames?: string[]
+  md5?: string
 }
 
 export type RequiredFileInfo = {
@@ -53,7 +54,15 @@ export type RequiredFileInfo = {
   type: "core" | "instance"
   crc32?: number
   mtime?: number
-  status?: "ok" | "wrong" | "downloadable" | "not_in_archive" | "at_root"
+  status?:
+    | "ok"
+    | "wrong"
+    | "downloadable"
+    | "not_in_archive"
+    | "at_root"
+    | "at_root_match"
+    | "at_root_mismatch"
+  md5?: string
 }
 
 export type PlatformId = string
@@ -201,6 +210,14 @@ export type PocketColour =
   | "trans_purple"
   | "trans_orange"
   | "trans_red"
+  | "indigo"
+  | "red"
+  | "green"
+  | "blue"
+  | "yellow"
+  | "pink"
+  | "orange"
+  | "silver"
 
 export type PocketSyncConfig = {
   version: string
@@ -277,10 +294,38 @@ export type RootFileZipped = {
   type: "Zipped"
   inner_file: string
   zip_file: string
+  md5: string
 }
+
 export type RootFileUnZipped = {
   crc32: number
   type: "UnZipped"
   file_name: string
+  md5: string
 }
+
 export type RootFile = RootFileZipped | RootFileUnZipped
+
+export type FSEvent = {
+  attrs: { info?: "mount" }
+  paths: string[]
+  type:
+    | { create: { kind: "folder" | "file" } }
+    | { remove: { kind: "folder" | "file" | "other" } }
+    | {
+        modify:
+          | { kind: "data"; mode: "content" }
+          | { kind: "rename"; mode: "any" | "both" }
+          | { kind: "metadata"; mode: "any" }
+          | { kind: "metadata"; mode: "ownership" }
+      }
+}
+
+export type rgb = [number, number, number]
+export type Palette = {
+  background: [rgb, rgb, rgb, rgb]
+  window: [rgb, rgb, rgb, rgb]
+  obj0: [rgb, rgb, rgb, rgb]
+  obj1: [rgb, rgb, rgb, rgb]
+  off: rgb
+}

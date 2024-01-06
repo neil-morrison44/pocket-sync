@@ -15,7 +15,6 @@ import {
 } from "./hooks/stamps"
 
 import "./index.css"
-import { useInvalidateFileSystem } from "../../../../hooks/invalidation"
 import { useTranslation } from "react-i18next"
 
 type ImageEditorProps = {
@@ -35,7 +34,6 @@ export const ImageEditor = ({
     ImageBinSrcSelectorFamily({ path, width, height })
   )
   const pocketPath = useRecoilValue(pocketPathAtom)
-  const invalidateFS = useInvalidateFileSystem()
   const [selectedStampIndex, setSelectedStampIndex] = useState(0)
   const [imageStamps, setImageStamps] = useState<ImageInfo[]>([])
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -70,9 +68,8 @@ export const ImageEditor = ({
     }
 
     await invokeSaveFile(`${pocketPath}/${path}`, buffer)
-    invalidateFS()
     onClose()
-  }, [width, height, pocketPath, path, invalidateFS, onClose])
+  }, [width, height, pocketPath, path, onClose])
 
   return (
     <Modal className="image-editor">

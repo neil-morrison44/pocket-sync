@@ -1,8 +1,4 @@
-import {
-  useRecoilValue,
-  useRecoilValueLoadable,
-  useSetRecoilState,
-} from "recoil"
+import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
   CoreInfoSelectorFamily,
   CoreMainPlatformIdSelectorFamily,
@@ -18,7 +14,7 @@ import { Releases } from "./releases"
 import { Version } from "../version"
 import { useUninstallCore } from "../../../hooks/useUninstallCore"
 import { useInstallCore } from "../../../hooks/useInstallCore"
-import { ReactNode, Suspense, useCallback, useState } from "react"
+import { ReactNode, Suspense, useCallback, useMemo, useState } from "react"
 import { CorePlatformInfo } from "./platform"
 import { Loader } from "../../loader"
 import { SponsorLinks } from "./sponsorLinks"
@@ -33,6 +29,11 @@ import { Trans, useTranslation } from "react-i18next"
 import { archiveBumpAtom } from "../../../recoil/archive/atoms"
 import { currentViewAtom } from "../../../recoil/view/atoms"
 import { useReplacementAvailable } from "../../../hooks/useReplacementAvailable"
+import { ControlsBackButton } from "../../controls/inputs/backButton"
+import { ControlsButton } from "../../controls/inputs/button"
+import { currentFirmwareVersionSelector } from "../../../recoil/firmware/selectors"
+import { WarningIcon } from "./requiredFiles/warningIcon"
+import { Modal } from "../../modal"
 
 type CoreInfoProps = {
   coreName: string
@@ -40,9 +41,6 @@ type CoreInfoProps = {
 }
 
 export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
-  const requiredFilesLoadable = useRecoilValueLoadable(
-    RequiredFileInfoSelectorFamily(coreName)
-  )
   const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
   const uninstall = useUninstallCore()
   const { installCore } = useInstallCore()
@@ -67,42 +65,42 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
 
   return (
     <div className="core-info">
-      <Controls
-        controls={[
-          {
-            type: "back-button",
-            text: t("controls.back"),
-            onClick: onBack,
-          },
-          {
-            type: "button",
-            text: t("controls.uninstall"),
-            onClick: () => uninstall(coreName),
-          },
-          requiredFilesLoadable.state === "hasValue" &&
-          requiredFilesLoadable.getValue().length > 0
-            ? {
-                type: "button",
-                text: t("controls.required_files"),
-                onClick: () => {
-                  setArchiveBump((a) => a + 1)
-                  setRequiredFilesOpen(true)
-                },
-              }
-            : null,
-          downloadUrl && {
-            type: "button",
-            text: t("controls.update"),
-            onClick: () => installCore(coreName, downloadUrl),
-          },
-        ]}
-      />
+      <Controls>
+        <ControlsBackButton onClick={onBack}>
+          {t("controls.back")}
+        </ControlsBackButton>
+        <ControlsButton onClick={() => uninstall(coreName)}>
+          {t("controls.uninstall")}
+        </ControlsButton>
+        <Suspense>
+          <RequiredFilesButton
+            coreName={coreName}
+            onClick={() => {
+              // setArchiveBump((a) => a + 1)
+              setRequiredFilesOpen(true)
+            }}
+          />
+        </Suspense>
+        {downloadUrl && (
+          <ControlsButton onClick={() => installCore(coreName, downloadUrl)}>
+            {t("controls.update")}
+          </ControlsButton>
+        )}
+      </Controls>
 
       {requiredFilesOpen && (
-        <LoadRequiredFiles
-          coreName={coreName}
-          onClose={() => setRequiredFilesOpen(false)}
-        />
+        <Suspense
+          fallback={
+            <Modal className="load-required-files">
+              <Loader />
+            </Modal>
+          }
+        >
+          <LoadRequiredFiles
+            coreName={coreName}
+            onClose={() => setRequiredFilesOpen(false)}
+          />
+        </Suspense>
       )}
 
       {inputsOpen && (
@@ -131,6 +129,8 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
       )}
 
       <PlatformImage className="core-info__image" platformId={mainPlatformId} />
+
+      <FirmwareWarning coreName={coreName} />
 
       <section className="core-info__info">
         <p>{coreInfo.core.metadata.description}</p>
@@ -278,8 +278,60 @@ type SupportsBubbleProps = {
   supports: boolean
 }
 
+const RequiredFilesButton = ({
+  coreName,
+  onClick,
+}: {
+  coreName: string
+  onClick: () => void
+}) => {
+  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
+  const { t } = useTranslation("core_info")
+
+  if (requiredFiles.length === 0) return null
+  return (
+    <ControlsButton onClick={onClick}>
+      {t("controls.required_files")}
+    </ControlsButton>
+  )
+}
+
 const SupportsBubble = ({ supports, children }: SupportsBubbleProps) => (
   <div className={`core-info__supports core-info__supports--${supports}`}>
     {children}
   </div>
 )
+
+const FirmwareWarning = ({ coreName }: { coreName: string }) => {
+  const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
+  const currentFirmware = useRecoilValue(currentFirmwareVersionSelector)
+  const setViewAndSubview = useSetRecoilState(currentViewAtom)
+  const { t } = useTranslation("core_info")
+
+  const firmwareTooLow = useMemo(() => {
+    const [coreMajor, coreMinor] = coreInfo.core.framework.version_required
+      .split(".")
+      .map((v) => parseInt(v))
+    const [pocketMajor, pocketMinor] = currentFirmware.version
+      .split(".")
+      .map((v) => parseInt(v))
+
+    if (pocketMajor > coreMajor) return false
+    if (pocketMajor === coreMajor && pocketMinor >= coreMinor) return false
+    return true
+  }, [coreInfo.core.framework.version_required, currentFirmware.version])
+
+  if (!firmwareTooLow) return null
+  return (
+    <div
+      className="core-info__firmware-warning"
+      onClick={() => setViewAndSubview({ view: "Firmware", selected: null })}
+    >
+      <WarningIcon />
+      {t("firmware_too_low", {
+        core_firmware: coreInfo.core.framework.version_required,
+        pocket_firmware: currentFirmware.version,
+      })}
+    </div>
+  )
+}

@@ -58,3 +58,14 @@
   background-color: var(--info-colour);
   padding: 10px;
 }
+
+.screenshot-info__name{
+  display: flex;
+  justify-content: space-between;
+  gap:20px;
+}
+
+.screenshot-info__dimensions{
+  opacity: 0.8;
+  white-space: nowrap;
+}

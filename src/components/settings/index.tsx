@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
 import {
   PocketSyncConfigSelector,
@@ -10,7 +10,6 @@ import "./index.css"
 import { reconnectWhenOpenedAtom } from "../../recoil/atoms"
 import { invokeClearFileCache } from "../../utils/invokes"
 import { useTranslation, Trans } from "react-i18next"
-import { useDisconnectPocket } from "../../hooks/useDisconnectPocket"
 import { Thanks } from "./thanks"
 import { PocketColour } from "../../types"
 import {
@@ -18,6 +17,7 @@ import {
   turboDownloadsAtom,
 } from "../../recoil/settings/atoms"
 import { Link } from "../link"
+import { emit } from "@tauri-apps/api/event"
 
 export const Settings = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
@@ -32,7 +32,10 @@ export const Settings = () => {
   )
   const updateConfig = useUpdateConfig()
   const { t } = useTranslation("settings")
-  const onDisconnect = useDisconnectPocket()
+  const onDisconnect = useCallback(
+    () => emit("pocket-connection", { connetcted: false }),
+    []
+  )
 
   return (
     <div className="settings">
@@ -48,24 +51,7 @@ export const Settings = () => {
                 updateConfig("colour", target.value as PocketColour)
               }
             >
-              <OptionsList
-                values={["black", "white", "glow"]}
-                i18nPrefix="3d_pocket.colours"
-              />
-              <optgroup label={t("3d_pocket.transparent_label")}>
-                <OptionsList
-                  values={[
-                    "trans_clear",
-                    "trans_smoke",
-                    "trans_blue",
-                    "trans_green",
-                    "trans_orange",
-                    "trans_purple",
-                    "trans_red",
-                  ]}
-                  i18nPrefix="3d_pocket.colours"
-                />
-              </optgroup>
+              <ColoursList />
             </select>
           </label>
 
@@ -82,24 +68,7 @@ export const Settings = () => {
               }}
             >
               <option value={"match"}>{t("3d_pocket.match_body")}</option>
-              <OptionsList
-                values={["black", "white", "glow"]}
-                i18nPrefix="3d_pocket.colours"
-              />
-              <optgroup label={t("3d_pocket.transparent_label")}>
-                <OptionsList
-                  values={[
-                    "trans_clear",
-                    "trans_smoke",
-                    "trans_blue",
-                    "trans_green",
-                    "trans_orange",
-                    "trans_purple",
-                    "trans_red",
-                  ]}
-                  i18nPrefix="3d_pocket.colours"
-                />
-              </optgroup>
+              <ColoursList />
             </select>
           </label>
         </div>
@@ -242,4 +211,46 @@ const OptionsList = ({ values, i18nPrefix }: OptionsListProps) => {
       {t(`${i18nPrefix}.${value}`)}
     </option>
   ))
+}
+
+const ColoursList = () => {
+  const { t } = useTranslation("settings")
+
+  return (
+    <>
+      <OptionsList
+        values={["black", "white", "glow"]}
+        i18nPrefix="3d_pocket.colours"
+      />
+      <optgroup label={t("3d_pocket.transparent_label")}>
+        <OptionsList
+          values={[
+            "trans_clear",
+            "trans_smoke",
+            "trans_blue",
+            "trans_green",
+            "trans_orange",
+            "trans_purple",
+            "trans_red",
+          ]}
+          i18nPrefix="3d_pocket.colours"
+        />
+      </optgroup>
+      <optgroup label={t("3d_pocket.classic_label")}>
+        <OptionsList
+          values={[
+            "indigo",
+            "red",
+            "green",
+            "blue",
+            "yellow",
+            "pink",
+            "orange",
+            "silver",
+          ]}
+          i18nPrefix="3d_pocket.colours"
+        />
+      </optgroup>
+    </>
+  )
 }

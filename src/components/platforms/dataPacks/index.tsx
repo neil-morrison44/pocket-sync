@@ -12,7 +12,6 @@ import { Modal } from "../../modal"
 import "./index.css"
 import { invokeSaveFile } from "../../../utils/invokes"
 import { pocketPathAtom } from "../../../recoil/atoms"
-import { useInvalidateFileSystem } from "../../../hooks/invalidation"
 import { useTranslation } from "react-i18next"
 
 type DataPacksProps = {
@@ -23,7 +22,6 @@ type DataPacksProps = {
 export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
   const imagePacks = useRecoilValue(imagePackListSelector)
   const platformIds = useRecoilValue(platformsListSelector)
-  const invalidateFS = useInvalidateFileSystem()
   const { t } = useTranslation("platforms")
 
   const sortedPlatformIds = useMemo(() => {
@@ -59,7 +57,6 @@ export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
             encoder.encode(JSON.stringify(packJson, null, 2))
           )
         }
-        invalidateFS()
         onClose()
       },
     [selections]

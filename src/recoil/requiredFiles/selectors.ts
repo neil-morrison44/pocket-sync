@@ -8,13 +8,14 @@ import {
 } from "../../utils/invokes"
 import { readJSONFile } from "../../utils/readJSONFile"
 import { IGNORE_INSTANCE_JSON_LIST } from "../../values"
-import { fileSystemInvalidationAtom } from "../atoms"
 import { skipAlternateAssetsSelector } from "../config/selectors"
 import {
   DataJSONSelectorFamily,
   CoreMainPlatformIdSelectorFamily,
+  CoreInfoSelectorFamily,
 } from "../selectors"
 import { mergedDataSlots } from "../../utils/dataSlotsMerge"
+import { FileWatchAtomFamily } from "../fileSystem/atoms"
 
 const FileInfoSelectorFamily = selectorFamily<
   Omit<RequiredFileInfo, "type">,
@@ -24,10 +25,9 @@ const FileInfoSelectorFamily = selectorFamily<
   get:
     ({ filename, path }) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
       if (!filename) throw new Error("Attempting to find empty file")
-
       const fullPath = `${path}/${filename}`
+      get(FileWatchAtomFamily(fullPath))
       const exists = await invokeFileExists(fullPath)
       const crc32 = exists
         ? (await invokeFileMetadata(fullPath)).crc32
@@ -44,15 +44,19 @@ const FileInfoSelectorFamily = selectorFamily<
 
 const SingleRequiredFileInfo = selectorFamily<
   RequiredFileInfo,
-  { filename: string | undefined; path: string; type: "core" | "instance" }
+  {
+    filename: string | undefined
+    path: string
+    md5?: string
+    type: "core" | "instance"
+  }
 >({
   key: "SingleRequiredFileInfo",
   get:
-    ({ filename, path, type }) =>
+    ({ filename, path, type, md5 }) =>
     async ({ get }) => {
-      get(fileSystemInvalidationAtom)
       const info = get(FileInfoSelectorFamily({ filename, path }))
-      return { ...info, type }
+      return { ...info, md5, type }
     },
 })
 
@@ -66,6 +70,8 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
     async ({ get }) => {
       const dataJSON = get(DataJSONSelectorFamily(coreName))
       const platform_id = get(CoreMainPlatformIdSelectorFamily(coreName))
+      const platformIds = get(CoreInfoSelectorFamily(coreName)).core.metadata
+        .platform_ids
       const requiredCoreFiles = dataJSON.data.data_slots.filter(
         ({ name, required, filename }) => {
           return (
@@ -79,16 +85,23 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
         await Promise.all(
           requiredCoreFiles
             .filter(({ parameters }) => decodeDataParams(parameters).readOnly)
-            .map(async ({ filename, alternate_filenames, parameters }) => {
-              const path = `Assets/${platform_id}/${
-                decodeDataParams(parameters).coreSpecific ? coreName : "common"
-              }`
+            .map(async ({ filename, alternate_filenames, parameters, md5 }) => {
+              const decodedParams = decodeDataParams(parameters)
+
+              const path = `Assets/${
+                platformIds[decodedParams.platformIndex]
+              }/${decodedParams.coreSpecific ? coreName : "common"}`
 
               return Promise.all(
                 [filename, ...(alternate_filenames || [])].map(
                   async (filename) =>
                     get(
-                      SingleRequiredFileInfo({ filename, path, type: "core" })
+                      SingleRequiredFileInfo({
+                        filename,
+                        path,
+                        md5,
+                        type: "core",
+                      })
                     )
                 )
               )
@@ -111,8 +124,9 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
               console.log("is a single filename")
             }
 
-            const path = `Assets/${platform_id}/${
-              decodeDataParams(parameters).coreSpecific ? coreName : "common"
+            const decodedParams = decodeDataParams(parameters)
+            const path = `Assets/${platformIds[decodedParams.platformIndex]}/${
+              decodedParams.coreSpecific ? coreName : "common"
             }/`
 
             let files = await invokeWalkDirListFiles(path, [".json"])
@@ -141,17 +155,19 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
                     .filter(
                       ({ filename }) => !filename || !filename?.endsWith(".sav")
                     )
-                    .map(async ({ filename, parameters }) => {
-                      const path = `Assets/${platform_id}/${
-                        decodeDataParams(parameters).coreSpecific
-                          ? coreName
-                          : "common"
-                      }${dataPath ? `/${dataPath}` : ""}`
+                    .map(async ({ filename, md5, parameters }) => {
+                      const decodedParams = decodeDataParams(parameters)
+                      const path = `Assets/${
+                        platformIds[decodedParams.platformIndex]
+                      }/${decodedParams.coreSpecific ? coreName : "common"}${
+                        dataPath ? `/${dataPath}` : ""
+                      }`
 
                       return get(
                         SingleRequiredFileInfo({
                           filename,
                           path,
+                          md5,
                           type: "instance",
                         })
                       )
@@ -162,6 +178,16 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
           })
       )
 
-      return [...fileInfo, ...instanceFileInfo.flat(3)]
+      return [
+        ...fileInfo,
+        ...instanceFileInfo
+          .flat(3)
+          .filter(
+            (data, index, arr) =>
+              arr.findIndex(
+                (d) => d.filename === data.filename && d.path === data.path
+              ) === index
+          ),
+      ]
     },
 })

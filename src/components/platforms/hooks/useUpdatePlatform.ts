@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useRecoilValue } from "recoil"
-import { useInvalidateFileSystem } from "../../../hooks/invalidation"
 import { pocketPathAtom } from "../../../recoil/atoms"
 import { PlatformInfoSelectorFamily } from "../../../recoil/platforms/selectors"
 import { PlatformId, PlatformInfoJSON } from "../../../types"
@@ -11,7 +10,6 @@ type InnerPlatform = PlatformInfoJSON["platform"]
 export const useUpdatePlatformValue = (id: PlatformId) => {
   const platformInfo = useRecoilValue(PlatformInfoSelectorFamily(id))
   const pocketPath = useRecoilValue(pocketPathAtom)
-  const invalidateFS = useInvalidateFileSystem()
 
   return useCallback(
     async <T extends keyof InnerPlatform>(key: T, value: InnerPlatform[T]) => {
@@ -27,9 +25,7 @@ export const useUpdatePlatformValue = (id: PlatformId) => {
         `${pocketPath}/Platforms/${id}.json`,
         encoder.encode(JSON.stringify(newPlatform, null, 2))
       )
-
-      setTimeout(() => invalidateFS(), 500)
     },
-    [id, invalidateFS, platformInfo, pocketPath]
+    [id, platformInfo, pocketPath]
   )
 }

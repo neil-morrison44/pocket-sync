@@ -10,10 +10,7 @@ import { useInstallRequiredFiles } from "../../hooks/useInstallRequiredFiles"
 import { Progress } from "../progress"
 import { FileCopy, RequiredFileInfo } from "../../types"
 import { Modal } from "../modal"
-import {
-  useInvalidateConfig,
-  useInvalidateFileSystem,
-} from "../../hooks/invalidation"
+import { useInvalidateConfig } from "../../hooks/invalidation"
 import { Controls } from "../controls"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { NewFetch } from "./new"
@@ -25,6 +22,7 @@ import { archiveBumpAtom } from "../../recoil/archive/atoms"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { confirm } from "@tauri-apps/api/dialog"
 import { useTranslation } from "react-i18next"
+import { ControlsButton } from "../controls/inputs/button"
 
 type FileStatus = "complete" | "partial" | "none" | "waiting" | "copying"
 
@@ -34,7 +32,6 @@ export const Fetch = () => {
   const [newFetchOpen, setNewFetchOpen] = useState<boolean>(false)
   const { t } = useTranslation("fetch")
 
-  const invalidateFileSystem = useInvalidateFileSystem()
   const invalidateConfig = useInvalidateConfig()
   const setArchiveBumpAtom = useSetRecoilState(archiveBumpAtom)
   const list = config.fetches || []
@@ -54,27 +51,20 @@ export const Fetch = () => {
 
   return (
     <div className="fetch">
-      <Controls
-        controls={[
-          {
-            type: "button",
-            text: t("controls.add_fetch_item"),
-            onClick: () => setNewFetchOpen(true),
-          },
-          {
-            type: "button",
-            text: t("controls.refresh"),
-            onClick: () => {
-              invalidateConfig()
-              invalidateFileSystem()
-              setArchiveBumpAtom((c) => c + 1)
-            },
-          },
-        ]}
-      />
-
+      <Controls>
+        <ControlsButton onClick={() => setNewFetchOpen(true)}>
+          {t("controls.add_fetch_item")}
+        </ControlsButton>
+        <ControlsButton
+          onClick={() => {
+            invalidateConfig()
+            setArchiveBumpAtom((c) => c + 1)
+          }}
+        >
+          {t("controls.refresh")}
+        </ControlsButton>
+      </Controls>
       {newFetchOpen && <NewFetch onClose={() => setNewFetchOpen(false)} />}
-
       <div className="fetch__list">
         {list.map((item, index) => {
           switch (item.type) {
@@ -112,7 +102,6 @@ const FileSystemItem = ({
   destination: string
   onRemove: () => void
 }) => {
-  const invalidateFileSystem = useInvalidateFileSystem()
   const [isCopying, setIsCopying] = useState<boolean>(false)
 
   const { percent, inProgress, lastMessage, remainingTime } =
@@ -150,7 +139,6 @@ const FileSystemItem = ({
                     setIsCopying(true)
                     await invokeCopyFiles(files.filter(({ exists }) => !exists))
                     setIsCopying(false)
-                    invalidateFileSystem()
                   }}
                 >
                   {t("fetch_button")}
@@ -229,7 +217,6 @@ const ArchiveOrgItem = ({
     lastMessage,
     remainingTime,
   } = useInstallRequiredFiles()
-  const invalidateFileSystem = useInvalidateFileSystem()
   const { t } = useTranslation("fetch")
 
   return (
@@ -266,7 +253,6 @@ const ArchiveOrgItem = ({
                     files.filter(({ exists }) => !exists),
                     `https://archive.org/download/${name}`
                   )
-                  invalidateFileSystem()
                 }}
               >
                 {t("fetch_button")}

@@ -2,14 +2,17 @@ import { selector } from "recoil"
 import { PocketSyncConfig } from "../../types"
 import { invokeFileExists, invokeSaveFile } from "../../utils/invokes"
 import { readJSONFile } from "../../utils/readJSONFile"
-import { configInvalidationAtom, pocketPathAtom } from "../atoms"
+import { pocketPathAtom } from "../atoms"
 import { AppVersionSelector } from "../selectors"
+import { FileWatchAtomFamily } from "../fileSystem/atoms"
 
 export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
   key: "PocketSyncConfigSelector",
   get: async ({ get }) => {
-    get(configInvalidationAtom)
     const pocketPath = get(pocketPathAtom)
+    const file = "pocket-sync.json"
+    const path = `${pocketPath}/${file}`
+    get(FileWatchAtomFamily(file))
 
     if (!pocketPath) {
       return {
@@ -21,7 +24,7 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
       } satisfies PocketSyncConfig
     }
 
-    const exists = await invokeFileExists("pocket-sync.json")
+    const exists = await invokeFileExists(file)
     if (!exists) {
       const defaultConfig = {
         version: get(AppVersionSelector),
@@ -30,16 +33,14 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
         saves: [],
         skipAlternateAssets: true,
       } satisfies PocketSyncConfig
-
       const encoder = new TextEncoder()
-
       await invokeSaveFile(
-        `${pocketPath}/pocket-sync.json`,
+        path,
         encoder.encode(JSON.stringify(defaultConfig, null, 2))
       )
     }
 
-    return readJSONFile<PocketSyncConfig>("pocket-sync.json")
+    return readJSONFile<PocketSyncConfig>(file)
   },
 })
 

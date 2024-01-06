@@ -1,14 +1,22 @@
 import { Canvas, useFrame, useLoader } from "@react-three/fiber"
-import { Environment, RoundedBox } from "@react-three/drei"
-import { ReactNode, useContext, useRef } from "react"
-
+import { Environment, PerformanceMonitor, RoundedBox } from "@react-three/drei"
+import { ReactNode, useCallback, useContext, useMemo, useRef } from "react"
 import "./index.css"
-import { DoubleSide, Group, MathUtils, Mesh, TextureLoader } from "three"
-import { Bloom, EffectComposer } from "@react-three/postprocessing"
+import {
+  DoubleSide,
+  Group,
+  Material,
+  MathUtils,
+  Mesh,
+  MeshBasicMaterial,
+  NoToneMapping,
+  TextureLoader,
+} from "three"
+import { Bloom, EffectComposer, N8AO } from "@react-three/postprocessing"
 import { KernelSize } from "postprocessing"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 
-import envMap from "./studio_small_08_1k.hdr"
+import envMap from "./small_empty_room_1_1k.hdr"
 import screenAlphaMap from "./screen_alpha.png"
 import boardGLB from "./board.glb"
 
@@ -22,8 +30,12 @@ import {
   PowerButtonPrimitive,
   VolumeButtonPrimitive,
 } from "./stlPrimitives"
-import { BodyColourContext, ButtonsColourContext } from "./colourContext"
-import { PocketColour } from "../../types"
+import { BodyColourContext } from "./colourContext"
+import { useBodyMaterial } from "./hooks/useBodyMaterial"
+import { useButtonsMaterial } from "./hooks/useButtonsMaterial"
+import { PerfLevelContext } from "./context/perfLevel"
+import { useRecoilState } from "recoil"
+import { performanceLevelAtom } from "../../recoil/atoms"
 
 type PocketProps = {
   move?: "none" | "spin" | "back-and-forth"
@@ -31,64 +43,116 @@ type PocketProps = {
   children?: ReactNode
 }
 
-type PartialColourMap = Partial<Record<PocketColour, string>>
-type PartialScaleMap = Partial<Record<PocketColour, number>>
-
-const LIGHTING_SCALE: PartialScaleMap = {
-  black: 5,
-  white: 1.5,
-  glow: 0,
-}
-
 const SWAY_SPEED = 0.2
+const MAX_PERF_LEVEL = 3
 
 export const Pocket = ({
   move = "none",
   screenMaterial,
   children,
 }: PocketProps) => {
+  const [perfLevel, setPerfLevel] = useRecoilState(performanceLevelAtom)
+  const seenPerfLevelsRef = useRef(new Array<number>())
+  const dprScale = [0.5, 0.75, 1, 1][perfLevel]
+
+  const setAndStorePerfLevel = useCallback(
+    (updater: (currVal: number) => number) => {
+      setPerfLevel((curr) => {
+        const newValue = updater(curr)
+        seenPerfLevelsRef.current.push(newValue)
+        return newValue
+      })
+    },
+    [setPerfLevel]
+  )
+
   return (
     <Canvas
       shadows
       className="three-pocket"
       camera={{ fov: 50, position: [0, 0, 42] }}
+      onCreated={(state) => (state.gl.toneMapping = NoToneMapping)}
+      dpr={window.devicePixelRatio * dprScale}
     >
-      <Environment files={envMap} />
-      <Lights />
-      <Body move={move} screenMaterial={screenMaterial} />
-      {/* <OrbitControls enablePan={false} /> */}
-      {/* <Stats showPanel={0} /> */}
-      <GlowBloom />
-      {children && children}
+      <PerformanceMonitor
+        onIncline={() => {
+          setAndStorePerfLevel((pl) => Math.min(MAX_PERF_LEVEL, pl + 1))
+        }}
+        onDecline={() => {
+          setAndStorePerfLevel((pl) => Math.max(0, pl - 1))
+        }}
+        flipflops={4}
+        onFallback={() => {
+          setPerfLevel(
+            Math.min(
+              seenPerfLevelsRef.current.at(-3) as number,
+              seenPerfLevelsRef.current.at(-2) as number,
+              seenPerfLevelsRef.current.at(-1) as number
+            )
+          )
+        }}
+      />
+      <PerfLevelContext.Provider value={perfLevel}>
+        {/* <Perf deepAnalyze matrixUpdate /> */}
+        <Environment files={envMap} />
+        <Lights />
+        <Body move={move} screenMaterial={screenMaterial} />
+        {/* <OrbitControls enablePan={false} /> */}
+        {/* <Stats showPanel={0} /> */}
+        <PostEffects />
+        {children && children}
+      </PerfLevelContext.Provider>
     </Canvas>
   )
 }
 
-const GlowBloom = () => {
+const PostEffects = () => {
   const colour = useContext(BodyColourContext)
+  const perfLevel = useContext(PerfLevelContext)
+  if (perfLevel === 0 || (colour !== "glow" && perfLevel <= 2)) return null
 
   return (
-    <EffectComposer enabled={colour === "glow"}>
-      <Bloom
-        intensity={0.05}
-        luminanceThreshold={0.8}
-        kernelSize={KernelSize.HUGE}
-        luminanceSmoothing={0.025}
-      />
+    <EffectComposer>
+      {colour == "glow" ? (
+        <Bloom
+          intensity={0.05}
+          luminanceThreshold={0.8}
+          kernelSize={KernelSize.HUGE}
+          luminanceSmoothing={0.025}
+        />
+      ) : (
+        <></>
+      )}
+      {perfLevel > 2 ? (
+        <N8AO
+          color="black"
+          aoRadius={1.5}
+          intensity={4}
+          depthAwareUpsampling={false}
+          quality="performance"
+          halfRes={window.devicePixelRatio > 1}
+        />
+      ) : (
+        <></>
+      )}
     </EffectComposer>
   )
 }
 
 const Lights = () => {
-  const colour = useContext(BodyColourContext)
-  const scale = LIGHTING_SCALE[colour] || LIGHTING_SCALE["white"] || 1
-
+  const perfLevel = useContext(PerfLevelContext)
   return (
     <>
-      <ambientLight intensity={1 * scale} />
-      <directionalLight position={[0, 200, 0]} intensity={5 * scale} />
-      <pointLight position={[20, 10, 20]} intensity={1.5 * scale} castShadow />
-      <pointLight position={[10, 20, 10]} intensity={1 * scale} castShadow />
+      <pointLight
+        position={[-5, 22, 10]}
+        intensity={1500}
+        castShadow={perfLevel > 1}
+      />
+      <pointLight
+        position={[0, -20, 10]}
+        intensity={250}
+        castShadow={perfLevel > 2}
+      />
     </>
   )
 }
@@ -98,7 +162,7 @@ const Body = ({
   screenMaterial,
 }: Pick<PocketProps, "move" | "screenMaterial">) => {
   const bodyColour = useContext(BodyColourContext)
-  const buttonsColour = useContext(ButtonsColourContext)
+  const perfLevel = useContext(PerfLevelContext)
 
   const groupRef = useRef<THREE.Group>(null)
   const speedRef = useRef<number>(SWAY_SPEED)
@@ -123,33 +187,37 @@ const Body = ({
     }
   })
 
+  const bodyMaterial = useBodyMaterial()
+  const buttonsMaterial = useButtonsMaterial(bodyMaterial)
+  const powerButtonMaterial = useMemo(
+    () =>
+      bodyColour === "black" || bodyColour === "white"
+        ? new MeshBasicMaterial({ color: "rgb(88, 144, 80)" })
+        : buttonsMaterial,
+    [bodyColour, buttonsMaterial]
+  )
+
   return (
     <group ref={groupRef} rotation={[0, move === "spin" ? 1 : 0, -0.2]}>
       <mesh
         scale={[0.2, 0.2, 0.2]}
         rotation={[0, Math.PI, 0]}
         position={[0, 0, 1.05]}
-        receiveShadow
+        material={bodyMaterial}
+        receiveShadow={perfLevel > 0}
+        castShadow={perfLevel > 1}
       >
         <FrontMeshPrimitive />
-        {bodyColour.startsWith("trans_") ? (
-          <TransparentMaterial />
-        ) : (
-          <Material />
-        )}
       </mesh>
       <mesh
         scale={[0.2, 0.2, 0.2]}
         rotation={[0, 0, 0]}
         position={[0, 0, -1.66]}
-        receiveShadow
+        material={bodyMaterial}
+        receiveShadow={perfLevel > 0}
+        castShadow={perfLevel > 1}
       >
         <BackMeshPrimitive />
-        {bodyColour.startsWith("trans_") ? (
-          <TransparentMaterial />
-        ) : (
-          <Material />
-        )}
       </mesh>
 
       {bodyColour.startsWith("trans_") && (
@@ -160,10 +228,10 @@ const Body = ({
         </>
       )}
 
-      <Buttons />
-      <DPAD />
-      <BottomButtons />
-      <ShoulderButtons />
+      <Buttons material={buttonsMaterial} />
+      <DPAD material={buttonsMaterial} />
+      <BottomButtons material={buttonsMaterial} />
+      <ShoulderButtons material={buttonsMaterial} />
 
       <Screen screenMaterial={screenMaterial} />
 
@@ -172,9 +240,10 @@ const Body = ({
         position={[-8.3, 5.678, -0.07]}
         scale={[0.2, 0.2, 0.2]}
         rotation={[0, Math.PI / 2, 0]}
+        material={powerButtonMaterial}
       >
         <PowerButtonPrimitive />
-        <meshBasicMaterial attach="material" color="rgb(88, 144, 80)" />
+        {/* <meshBasicMaterial attach="material" color="rgb(88, 144, 80)" /> */}
       </mesh>
       {/* Volume Button */}
 
@@ -182,13 +251,10 @@ const Body = ({
         position={[-8.35, 8.1, -0.07]}
         scale={[0.2, 0.2, 0.2]}
         rotation={[0, -Math.PI / 2, 0]}
+        material={buttonsMaterial}
+        receiveShadow
       >
         <VolumeButtonPrimitive />
-        {buttonsColour.startsWith("trans_") ? (
-          <TransparentMaterial isButton />
-        ) : (
-          <Material isButton />
-        )}
       </mesh>
     </group>
   )
@@ -201,35 +267,34 @@ const Screen = ({ screenMaterial }: PocketProps) => {
   return (
     <>
       {/* colour */}
-      <mesh position={[0, 6.8, 1.31]}>
+      <mesh position={[0, 6.8, 1.1]}>
         <planeGeometry attach="geometry" args={[17.25, 15.95]} />
         <meshPhysicalMaterial
           ior={1.46}
-          color={bodyColour === "white" ? "rgb(222,222,220)" : "black"}
+          color={bodyColour === "white" ? "rgb(255,255,255)" : "black"}
           reflectivity={0.3}
           alphaMap={alphaMap}
           alphaTest={0.5}
+          clearcoat={1}
+          clearcoatRoughness={0}
+          envMapIntensity={0.1}
         />
       </mesh>
 
       {/* LCD */}
-      <mesh position={[0, 7, 1.32]}>
+      <mesh position={[0, 7, 1.2]}>
         <planeGeometry attach="geometry" args={[160 / 11.5, 140 / 11.5]} />
         {screenMaterial || (
-          <meshPhongMaterial attach="material" color="green" />
+          <meshPhysicalMaterial
+            attach="material"
+            color="green"
+            clearcoat={1}
+            clearcoatRoughness={0}
+            envMapIntensity={0.01}
+            emissive={"green"}
+            emissiveIntensity={10}
+          />
         )}
-      </mesh>
-      {/* Glass */}
-      <mesh position={[0, 6.8, 1.33]}>
-        <planeGeometry attach="geometry" args={[17.25, 15.95]} />
-        <meshPhysicalMaterial
-          roughness={0}
-          transmission={1}
-          ior={1.51714}
-          transparent
-          alphaMap={alphaMap}
-          alphaTest={0.5}
-        />
       </mesh>
     </>
   )
@@ -237,9 +302,7 @@ const Screen = ({ screenMaterial }: PocketProps) => {
 
 const BUTTON_GAP = 1.25 as const
 
-const Buttons = () => {
-  const buttonsColour = useContext(ButtonsColourContext)
-
+const Buttons = ({ material }: { material: Material }) => {
   const positions = [
     [BUTTON_GAP, 0, BUTTON_GAP],
     [-BUTTON_GAP, 0, BUTTON_GAP],
@@ -293,28 +356,22 @@ const Buttons = () => {
           onPointerLeave={() => (hoverButtonRef.current = null)}
           scale={[0.2, 0.2, 0.2]}
           rotation={[-Math.PI / 2, 0, 0]}
+          material={material}
         >
-          {/* <cylinderGeometry attach="geometry" args={[0.9, 0.9, 1, 16]} /> */}
           {index > 1 ? <ConcavePrimitive /> : <ConvexPrimitive />}
-          {buttonsColour.startsWith("trans_") ? (
-            <TransparentMaterial isButton />
-          ) : (
-            <Material isButton />
-          )}
         </mesh>
       ))}
     </group>
   )
 }
 
-const BottomButtons = () => {
+const BottomButtons = ({ material }: { material: Material }) => {
   const positions = [
     [BUTTON_GAP, 0, BUTTON_GAP],
     [0, 0, 0],
     [-BUTTON_GAP, 0, -BUTTON_GAP],
   ] as const
 
-  const buttonsColour = useContext(ButtonsColourContext)
   const refs = [useRef<Mesh>(null), useRef<Mesh>(null), useRef<Mesh>(null)]
   const hoverButtonRef = useRef<keyof typeof refs | null>(null)
 
@@ -354,21 +411,16 @@ const BottomButtons = () => {
           onPointerLeave={() => (hoverButtonRef.current = null)}
           castShadow
           receiveShadow
+          material={material}
         >
           <cylinderGeometry attach="geometry" args={[0.5, 0.5, 1.5, 12]} />
-          {buttonsColour.startsWith("trans_") ? (
-            <TransparentMaterial isButton />
-          ) : (
-            <Material isButton />
-          )}
         </mesh>
       ))}
     </group>
   )
 }
 
-const DPAD = () => {
-  const buttonsColour = useContext(ButtonsColourContext)
+const DPAD = ({ material }: { material: Material }) => {
   const hoverRef = useRef<boolean>(false)
   const angleRef = useRef<number>(0)
   const groupRef = useRef<Group>(null)
@@ -397,8 +449,6 @@ const DPAD = () => {
       }}
       position={[-4.9, -5.2, 1]}
       rotation={[Math.PI / 2, 0, 0]}
-      castShadow
-      receiveShadow
     >
       <mesh
         position={[0, 0, 0]}
@@ -420,21 +470,16 @@ const DPAD = () => {
           receiveShadow
           scale={[0.2, 0.2, 0.2]}
           rotation={[-Math.PI / 2, 0, 0]}
+          material={material}
         >
           <DpadPrimitive />
-          {buttonsColour.startsWith("trans_") ? (
-            <TransparentMaterial isButton />
-          ) : (
-            <Material isButton />
-          )}
         </mesh>
       </group>
     </group>
   )
 }
 
-const ShoulderButtons = () => {
-  const buttonsColour = useContext(ButtonsColourContext)
+const ShoulderButtons = ({ material }: { material: Material }) => {
   const leftButtonRef = useRef<Mesh>(null)
   const leftButtonHoverRef = useRef(false)
 
@@ -487,13 +532,11 @@ const ShoulderButtons = () => {
         onPointerLeave={() => (leftButtonHoverRef.current = false)}
         scale={[0.2, -0.2, 0.2]}
         rotation={[-Math.PI / 2, 0, 0]}
+        castShadow
+        receiveShadow
+        material={material}
       >
         <ShoulderButtonPrimitive />
-        {buttonsColour.startsWith("trans_") ? (
-          <TransparentMaterial isButton />
-        ) : (
-          <Material isButton />
-        )}
       </mesh>
       <mesh
         position={[7.3, BUTTON_DOWN, -2.6]}
@@ -502,41 +545,11 @@ const ShoulderButtons = () => {
         onPointerLeave={() => (rightButtonHoverRef.current = false)}
         scale={[0.2, 0.2, 0.2]}
         rotation={[-Math.PI / 2, 0, Math.PI]}
+        material={material}
       >
         <ShoulderButtonPrimitive />
-        {buttonsColour.startsWith("trans_") ? (
-          <TransparentMaterial isButton />
-        ) : (
-          <Material isButton />
-        )}
       </mesh>
     </>
-  )
-}
-
-const Material = ({ isButton = false }: { isButton?: boolean }) => {
-  const bodyColour = useContext(BodyColourContext)
-  const buttonsColour = useContext(ButtonsColourContext)
-  const colour = isButton ? buttonsColour : bodyColour
-
-  const COLOUR: PartialColourMap = {
-    black: "rgb(25,25,25)",
-    white: "rgb(244,244,244)",
-    glow: "rgb(163, 195, 138)",
-  }
-
-  return (
-    <meshPhysicalMaterial
-      attach="material"
-      ior={isButton ? 1.4 : 1.74}
-      color={COLOUR[colour] || "red"}
-      clearcoat={isButton ? 0.75 : 0.1}
-      clearcoatRoughness={isButton ? 0 : 1}
-      emissive={COLOUR[colour] || "red"}
-      emissiveIntensity={colour === "glow" ? 1.5 : 0}
-      toneMapped={colour !== "glow"}
-      envMapIntensity={0}
-    />
   )
 }
 
@@ -577,37 +590,5 @@ const MainBoard = () => {
     >
       <primitive object={board.scene} />
     </group>
-  )
-}
-
-const TransparentMaterial = ({ isButton = false }: { isButton?: boolean }) => {
-  const bodyColour = useContext(BodyColourContext)
-  const buttonsColour = useContext(ButtonsColourContext)
-
-  const colour = isButton ? buttonsColour : bodyColour
-
-  const COLOURS: PartialColourMap = {
-    trans_purple: "rgb(205,175,250)",
-    trans_orange: "rgb(200,130,10)",
-    trans_clear: "rgb(220,220,220)",
-    trans_smoke: "rgb(120,120,120)",
-    trans_red: "rgb(235, 90, 90)",
-    trans_blue: "rgb(110, 100, 255)",
-    trans_green: "rgb(110, 255, 110)",
-  }
-
-  return (
-    <meshPhysicalMaterial
-      attach="material"
-      transmission={0.975}
-      opacity={1}
-      roughness={0.2}
-      color={COLOURS[colour] || "red"}
-      ior={1.46}
-      clearcoat={1}
-      clearcoatRoughness={1}
-      transparent
-      side={DoubleSide}
-    />
   )
 }

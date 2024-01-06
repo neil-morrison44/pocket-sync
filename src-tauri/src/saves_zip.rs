@@ -186,29 +186,33 @@ pub async fn build_save_zip(
     for name in save_paths {
         let safe_name = remove_leading_slash(name);
         let path = saves_path.join(&safe_name);
-        let metadata = path.metadata().unwrap();
-        let last_modified = time::OffsetDateTime::from(metadata.modified().unwrap());
+        if let Ok(metadata) = path.metadata() {
+            let last_modified = time::OffsetDateTime::from(metadata.modified().unwrap());
 
-        let file_options = options.last_modified_time(
-            DateTime::from_date_and_time(
-                last_modified.year().try_into().unwrap(),
-                last_modified.month().try_into().unwrap(),
-                last_modified.day(),
-                last_modified.hour(),
-                last_modified.minute(),
-                last_modified.second(),
-            )
-            .unwrap(),
-        );
+            let file_options = options.last_modified_time(
+                DateTime::from_date_and_time(
+                    last_modified.year().try_into().unwrap(),
+                    last_modified.month().try_into().unwrap(),
+                    last_modified.day(),
+                    last_modified.hour(),
+                    last_modified.minute(),
+                    last_modified.second(),
+                )
+                .unwrap(),
+            );
 
-        if path.is_file() {
-            zip.start_file(&safe_name, file_options).unwrap();
-            let mut f = File::open(path).unwrap();
-            f.read_to_end(&mut buffer).unwrap();
-            zip.write_all(&*buffer).unwrap();
-            buffer.clear();
+            if path.is_file() {
+                zip.start_file(&safe_name, file_options).unwrap();
+                let mut f = File::open(path).unwrap();
+                f.read_to_end(&mut buffer).unwrap();
+                zip.write_all(&*buffer).unwrap();
+                buffer.clear();
+            } else {
+                zip.add_directory(&safe_name, options).unwrap();
+            }
         } else {
-            zip.add_directory(&safe_name, options).unwrap();
+            println!("Save path not found");
+            dbg!(&path);
         }
     }
     zip.finish().unwrap();

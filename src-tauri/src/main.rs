@@ -7,12 +7,12 @@ use async_walkdir::{DirEntry, WalkDir};
 use checks::{check_if_folder_looks_like_pocket, connection_task};
 use clean_fs::find_dotfiles;
 use file_cache::{clear_file_caches, get_file_with_cache};
-use files_from_zip::{copy_file_from_zip, crc32_file_in_zip};
+use files_from_zip::{copy_file_from_zip, crc32_file_in_zip, md5_file_in_zip};
 use firmware::{FirmwareDetails, FirmwareListItem};
 use fs_set_times::{self, set_mtime, SystemTimeSpec};
 use futures::StreamExt;
 use futures_locks::RwLock;
-use hashes::crc32_for_file;
+use hashes::{crc32_for_file, md5_for_file};
 use install_zip::start_zip_task;
 use save_sync_session::start_mister_save_sync_session;
 use saves_zip::{
@@ -51,9 +51,12 @@ struct PocketSyncState(InnerState);
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command(async)]
-async fn open_pocket(state: tauri::State<'_, PocketSyncState>) -> Result<Option<String>, ()> {
+async fn open_pocket(
+    state: tauri::State<'_, PocketSyncState>,
+    app_handle: tauri::AppHandle,
+) -> Result<Option<String>, ()> {
     if let Some(pocket_path) = dialog::blocking::FileDialogBuilder::new().pick_folder() {
-        open_pocket_folder(state, &pocket_path.to_str().unwrap()).await
+        open_pocket_folder(state, &pocket_path.to_str().unwrap(), app_handle).await
     } else {
         Err(())
     }
@@ -63,13 +66,23 @@ async fn open_pocket(state: tauri::State<'_, PocketSyncState>) -> Result<Option<
 async fn open_pocket_folder(
     state: tauri::State<'_, PocketSyncState>,
     pocket_path: &str,
+    app_handle: tauri::AppHandle,
 ) -> Result<Option<String>, ()> {
+    let window = app_handle.get_window("main").unwrap();
+    println!("open_pocket_folder {pocket_path}");
     let pocket_path = PathBuf::from(pocket_path);
     if !check_if_folder_looks_like_pocket(&pocket_path) {
         return Ok(None);
     }
     let mut pocket_path_state = state.0.pocket_path.write().await;
     *pocket_path_state = pocket_path.clone();
+
+    {
+        let window = window.clone();
+        let path_buf = pocket_path.clone();
+        tauri::async_runtime::spawn(async move { connection_task(window, path_buf).await });
+    }
+
     Ok(Some(String::from(pocket_path_state.to_str().unwrap())))
 }
 
@@ -78,23 +91,24 @@ async fn read_binary_file(
     state: tauri::State<'_, PocketSyncState>,
     path: &str,
     app_handle: tauri::AppHandle,
-) -> Result<Vec<u8>, ()> {
+) -> Result<Vec<u8>, String> {
     let pocket_path = state.0.pocket_path.read().await;
     let path = pocket_path.join(path);
 
-    let mut f = if let Some(cache_dir) = app_handle.path_resolver().app_cache_dir() {
+    if let Ok(mut f) = if let Some(cache_dir) = app_handle.path_resolver().app_cache_dir() {
         get_file_with_cache(&path, &cache_dir).await
     } else {
         tokio::fs::File::open(&path).await
+    } {
+        let mut buffer = vec![];
+        f.read_to_end(&mut buffer)
+            .await
+            .expect(&format!("failed to read file: {:?}", path));
+
+        Ok(buffer)
+    } else {
+        Err(format!("No file found: {}", path.display()))
     }
-    .expect(&format!("no file found: {:?}", &path));
-
-    let mut buffer = vec![];
-    f.read_to_end(&mut buffer)
-        .await
-        .expect(&format!("failed to read file: {:?}", path));
-
-    Ok(buffer)
 }
 
 #[tauri::command(async)]
@@ -245,7 +259,7 @@ async fn install_archive_files(
 
     let mut failed_already = HashSet::new();
     let mut progress = progress::ProgressEmitter::start(file_count, &window);
-    let root_files = check_root_files(state).await?;
+    let root_files = check_root_files(state, None).await?;
 
     for file in files {
         let matching_root_files: Vec<_> = root_files
@@ -658,10 +672,12 @@ enum RootFile {
         zip_file: String,
         inner_file: String,
         crc32: u32,
+        md5: String,
     },
     UnZipped {
         file_name: String,
         crc32: u32,
+        md5: String,
     },
 }
 
@@ -670,6 +686,7 @@ mod files_from_zip;
 #[tauri::command(async)]
 async fn check_root_files(
     state: tauri::State<'_, PocketSyncState>,
+    extensions: Option<Vec<&str>>,
 ) -> Result<Vec<RootFile>, String> {
     let pocket_path = state.0.pocket_path.read().await;
     let mut entries = tokio::fs::read_dir(&pocket_path.as_path())
@@ -693,20 +710,48 @@ async fn check_root_files(
                         if files.len() > 0 {
                             let zip_file = String::from(file_name);
                             let inner_file = files[0].clone();
+                            let file_path = PathBuf::from(&inner_file);
+                            if let Some(ext) = file_path.extension() {
+                                match extensions
+                                    .as_ref()
+                                    .and_then(|exts| Some(exts.iter().any(|ex| *ex == ext)))
+                                {
+                                    None | Some(true) => (),
+                                    Some(false) => continue,
+                                }
+                            }
+
                             results.push(RootFile::Zipped {
                                 crc32: crc32_file_in_zip(&pocket_path.join(&zip_file), &inner_file)
+                                    .await?,
+                                md5: md5_file_in_zip(&pocket_path.join(&file_name), &inner_file)
                                     .await?,
                                 zip_file,
                                 inner_file,
                             })
                         }
                     } else {
+                        match extensions
+                            .as_ref()
+                            .and_then(|exts| Some(exts.iter().any(|ex| *ex == ext)))
+                        {
+                            None | Some(true) => (),
+                            Some(false) => continue,
+                        }
+
                         let file_name = String::from(file_name);
+                        let file_path = &pocket_path.join(&file_name);
+
+                        let md5 = md5_for_file(&file_path)
+                            .await
+                            .map_err(|err| err.to_string())?;
+
                         results.push(RootFile::UnZipped {
-                            crc32: crc32_for_file(&pocket_path.join(&file_name))
+                            crc32: crc32_for_file(&file_path)
                                 .await
                                 .map_err(|e| e.to_string())?,
                             file_name,
+                            md5,
                         });
                     }
                 }
@@ -764,10 +809,10 @@ fn start_tasks(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> 
         let window = window.clone();
         tauri::async_runtime::spawn(async move { start_zip_task(window).await });
     }
-    {
-        let window = window.clone();
-        tauri::async_runtime::spawn(async move { connection_task(window).await });
-    }
+    // {
+    //     let window = window.clone();
+    //     tauri::async_runtime::spawn(async move { connection_task(window).await });
+    // }
 
     Ok(())
 }

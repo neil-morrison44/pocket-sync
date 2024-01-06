@@ -1,6 +1,5 @@
 import { Suspense, useMemo, useState } from "react"
 import { useRecoilCallback, useRecoilValue } from "recoil"
-import { useInvalidateFileSystem } from "../../../hooks/invalidation"
 import { pocketPathAtom } from "../../../recoil/atoms"
 import {
   ImagePackImageSelectorFamily,
@@ -36,7 +35,6 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
   >({})
 
   const changeCount = Object.values(selections).filter(Boolean).length
-  const invalidateFS = useInvalidateFileSystem()
   const { t } = useTranslation("platforms")
 
   const applyChanges = useRecoilCallback(
@@ -58,7 +56,6 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
         }
 
         onClose()
-        setTimeout(() => invalidateFS(), 100)
       },
     [selections]
   )

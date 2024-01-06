@@ -1,5 +1,5 @@
 import { useFrame } from "@react-three/fiber"
-import { useEffect, useRef } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import { ShaderMaterial, Vector2 } from "three"
 
 const vertexShader = `
@@ -98,6 +98,14 @@ export const StaticScreen = ({
     }
   }, [])
 
+  const uniforms = useMemo(
+    () => ({
+      u_resolution: { value: new Vector2(160, 144) },
+      u_time: { value: 0.01 },
+    }),
+    []
+  )
+
   useFrame(({ clock, ..._rest }) => {
     frameCount.current += 1
     if (frameCount.current % 5 !== 0) return
@@ -119,6 +127,8 @@ export const StaticScreen = ({
           BLACK_AND_WHITE: blackAndWhiteFragmentShader,
         }[mode]
       }
+      uniforms={uniforms}
+      needsUpdate
     />
   )
 }
