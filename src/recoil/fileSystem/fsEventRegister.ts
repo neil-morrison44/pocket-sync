@@ -2,6 +2,7 @@ import { listen } from "@tauri-apps/api/event"
 import { FSEvent } from "../../types"
 import { splitAsPath } from "../../utils/splitAsPath"
 import { sep } from "@tauri-apps/api/path"
+import { invokeFileExists } from "../../utils/invokes"
 
 let previousPocketPath: string | null = null
 
@@ -37,8 +38,10 @@ class FSEventRegister {
           return
         }
         const changedPaths = events.flatMap(({ paths, type }) => {
-          // @ts-ignore Not sure why TS can't handle this
-          const innerChange = type.modify && type.modify.kind !== "rename"
+          const innerChange = Boolean(
+            // @ts-ignore Not sure why TS can't handle this
+            type.modify && type.modify.kind === "data"
+          )
 
           return paths.map((path) => ({
             path,
@@ -54,14 +57,14 @@ class FSEventRegister {
         previousPocketPath = pocketPath
 
         changedPaths
-          .map(({ path, innerChange }) => {
+          .map(({ path, ...others }) => {
             const node = this.findOrCreateOnCallbackTree(
               path
                 .replace(`${pocketPath}${sep}`, "")
                 .replace(`${pocketPath}`, "")
             )
 
-            return { path, node, innerChange }
+            return { path, node, ...others }
           })
           .filter(
             ({ node }, index, arr) =>
@@ -70,7 +73,7 @@ class FSEventRegister {
           .forEach(({ path, node, innerChange }) => {
             if (this.debug) console.log({ path, node, innerChange })
             if (innerChange) {
-              node.callbacks.forEach((c) => c())
+              this.callCallbacksForNode(node)
               calledAlready.add(node)
             } else {
               this.callAllCallbacksAbove(node, calledAlready)
@@ -82,11 +85,13 @@ class FSEventRegister {
 
   registerFile(path: string, callback: () => void) {
     const node = this.findOrCreateOnCallbackTree(path)
+    if (this.debug) console.log("reg", { path, node })
     node.callbacks.push(callback)
   }
 
   unregisterFile(path: string, callback: () => void) {
     const node = this.findOrCreateOnCallbackTree(path)
+    if (this.debug) console.log("unreg", { path, node })
     node.callbacks = node.callbacks.filter((c) => c !== callback)
   }
 
@@ -103,7 +108,7 @@ class FSEventRegister {
   findOrCreateOnCallbackTree(path: string): TreeNode {
     if (path === "/") return this.callbackTree
 
-    const folders = splitAsPath(path)
+    const folders = splitAsPath(path).map((p) => p.toLowerCase())
     let currentTreeNode = this.callbackTree
     while (folders.length > 0) {
       const folder = folders.shift()
@@ -131,7 +136,9 @@ class FSEventRegister {
   callAllCallbacksAbove(node: TreeNode, calledAlready: Set<TreeNode>) {
     if (calledAlready.has(node)) return
     if (this.debug) console.log("callAllCallbacksAbove: for", node)
-    node.callbacks.forEach((c) => c())
+
+    this.callCallbacksForNode(node)
+
     calledAlready.add(node)
     if (node.parent) this.callAllCallbacksAbove(node.parent, calledAlready)
     // node.children.forEach((child) => this.callAllCallbacksUnder(child))
@@ -140,7 +147,8 @@ class FSEventRegister {
   callAllCallbacksUnder(node: TreeNode, calledAlready: Set<TreeNode>) {
     if (calledAlready.has(node)) return
     if (this.debug) console.log("callAllCallbacksUnder: for", node)
-    node.callbacks.forEach((c) => c())
+    this.callCallbacksForNode(node)
+
     calledAlready.add(node)
     node.children.forEach((child) =>
       this.callAllCallbacksUnder(child, calledAlready)
@@ -150,11 +158,31 @@ class FSEventRegister {
   callAllFolderCallbacks(node: TreeNode, calledAlready: Set<TreeNode>) {
     if (calledAlready.has(node)) return
     if (this.debug) console.log("callAllFolderCallbacks: for", node)
-    node.callbacks.forEach((c) => c())
+    this.callCallbacksForNode(node)
     calledAlready.add(node)
     node.children
       .filter((child) => child.children.length > 0)
       .forEach((child) => this.callAllFolderCallbacks(child, calledAlready))
+  }
+
+  callCallbacksForNode(node: TreeNode) {
+    this.nodeExists(node).then((exists) => {
+      if (!exists) return
+      node.callbacks.forEach((c) => c())
+    })
+  }
+
+  nodeExists(node: TreeNode) {
+    // Sometimes rs-notify will send updates about a file that's been removed
+    let path = node.name
+    let currentNode = node
+
+    while (currentNode.parent && currentNode.parent.name !== "/") {
+      path = `${currentNode.parent.name}/${path}`
+      currentNode = currentNode.parent
+    }
+
+    return invokeFileExists(path)
   }
 }
 

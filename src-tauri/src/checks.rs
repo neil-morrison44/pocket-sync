@@ -40,7 +40,7 @@ pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
     println!("Watching....");
 
     let root_tx = tx.clone();
-    let mut debouncer = new_debouncer(Duration::from_millis(550), None, move |res| {
+    let mut debouncer = new_debouncer(Duration::from_millis(100), None, move |res| {
         root_tx.try_send(DebouncedOrRoot::Debounced(res)).unwrap();
     })
     .unwrap();
