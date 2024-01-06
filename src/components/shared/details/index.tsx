@@ -14,8 +14,6 @@ export const Details = ({
 }: DetailsProps) => {
   const [isOpen, setIsOpen] = useState(openByDefault)
 
-  console.log({ isOpen })
-
   return (
     <div className="details">
       <div className="details__title" onClick={() => setIsOpen((c) => !c)}>
