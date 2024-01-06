@@ -77,7 +77,25 @@
       "save_states_and_sleep": "Save States / Sleep"
     },
     "url": "URL",
-    "version": "Version"
+    "version": "Version",
+    "display_modes_title": "Display Modes",
+    "info_txt_title": "Info.txt",
+    "display_modes": {
+      "crt_trinitron": "CRT Trinitron",
+      "grayscale_lcd": "Grayscale LCD",
+      "original_gb_dmg": "Original GB DMG",
+      "original_gbp": "Original GBP",
+      "original_gbp_light": "Original GBP Light",
+      "reflective_color_lcd": "Reflective Color LCD",
+      "original_gbc_lcd": "Original GBC LCD",
+      "original_gbc_lcd_plus": "Original GBC LCD+",
+      "backlit_color_lcd": "Backlit Color LCD",
+      "original_gba_lcd": "Original GBA LCD",
+      "original_gba_sp_101": "Original GBA SP 101",
+      "original_gg": "Original GG",
+      "original_gg_plus": "Original GG+",
+      "pinball_neon_matrix": "Pinball Neon Matrix"
+    }
   },
   "core_info_required_files": {
     "close": "Close",

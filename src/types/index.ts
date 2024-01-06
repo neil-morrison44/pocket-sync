@@ -11,6 +11,7 @@ export type Screenshot = {
 export type VideoJSON = {
   video: {
     magic: "APF_VER_1"
+    display_modes?: { id: string }[]
     scaler_modes: {
       width: number
       height: number

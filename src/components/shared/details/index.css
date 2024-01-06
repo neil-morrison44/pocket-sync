@@ -1,0 +1,29 @@
+.details{
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+
+.details__title {
+  font-size: 1.25rem;
+  border-bottom: 1px solid white;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  user-select: none;
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-user-select: none;
+
+  &:hover{
+    background-color: rgb(255 255 255 / 10%);
+  }
+
+}
+
+
+.details__content {
+  padding: 15px;
+}

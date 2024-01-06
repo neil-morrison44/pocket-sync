@@ -138,5 +138,18 @@
 }
 
 .core-info__supports--false {
-  opacity: 0.2;
+  opacity: 0.25;
+}
+
+.core-info__supports--button {
+  cursor: pointer;
+
+  &:hover{
+    opacity: 1;
+    filter: brightness(150%);
+  }
+}
+
+.core-info__info-txt {
+  white-space: pre-wrap;
 }

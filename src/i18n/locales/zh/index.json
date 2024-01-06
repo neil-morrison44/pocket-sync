@@ -77,7 +77,8 @@
       "save_states_and_sleep": "即时存档/睡眠"
     },
     "url": "网页地址",
-    "version": "版本"
+    "version": "版本",
+    "display_modes_title": "显示模式"
   },
   "core_info_required_files": {
     "close": "关闭",

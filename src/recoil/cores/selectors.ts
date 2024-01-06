@@ -1,6 +1,8 @@
-import { selector } from "recoil"
+import { selector, selectorFamily } from "recoil"
 import { CoreInfoSelectorFamily, coresListSelector } from "../selectors"
 import { coreInventoryAtom } from "../inventory/atoms"
+import { FileWatchAtomFamily } from "../fileSystem/atoms"
+import { invokeFileExists, invokeReadTextFile } from "../../utils/invokes"
 
 type UpdateInfo = {
   coreName: string
@@ -31,4 +33,23 @@ export const installedCoresWithUpdatesSelector = selector<UpdateInfo[]>({
           latestVersion && installedVersion !== latestVersion
       ) as UpdateInfo[]
   },
+})
+
+export const CoreInfoTxtSelectorFamily = selectorFamily<string, string>({
+  key: "CoreInfoTxtSelectorFamily",
+  get:
+    (coreName) =>
+    async ({ get }) => {
+      const path = `Cores/${coreName}/info.txt`
+
+      get(FileWatchAtomFamily(path))
+
+      const exists = await invokeFileExists(path)
+
+      if (!exists) return ""
+
+      const text = await invokeReadTextFile(path)
+
+      return text
+    },
 })
