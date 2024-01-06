@@ -79,6 +79,7 @@
     "url": "URL",
     "version": "Version",
     "display_modes_title": "Display Modes",
+    "display_mode_warning": "This display mode requires the core to be updated, are you sure you want to turn it on?",
     "info_txt_title": "Info.txt",
     "display_modes": {
       "crt_trinitron": "CRT Trinitron",

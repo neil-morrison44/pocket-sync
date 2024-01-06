@@ -14,6 +14,7 @@ class FSEventRegister {
     callbacks: [],
     parent: null,
   }
+  debug: boolean = false
 
   constructor() {
     this.startListening()
@@ -23,7 +24,7 @@ class FSEventRegister {
     const unlisten = listen<{ events: FSEvent[]; pocket_path: string }>(
       "pocket-fs-event",
       ({ payload }) => {
-        // console.count("fs-event")
+        if (this.debug) console.count("fs-event")
         const { events, pocket_path: pocketPath } = payload
         const calledAlready = new Set<TreeNode>()
 
@@ -35,9 +36,17 @@ class FSEventRegister {
           this.callAllCallbacksUnder(this.callbackTree, calledAlready)
           return
         }
-        const changedPaths = events.flatMap(({ paths }) => paths)
+        const changedPaths = events.flatMap(({ paths, type }) => {
+          // @ts-ignore Not sure why TS can't handle this
+          const innerChange = type.modify && type.modify.kind !== "rename"
 
-        if (previousPocketPath !== pocketPath) {
+          return paths.map((path) => ({
+            path,
+            innerChange,
+          }))
+        })
+
+        if (previousPocketPath && previousPocketPath !== pocketPath) {
           this.callAllCallbacksUnder(this.callbackTree, calledAlready)
           previousPocketPath = pocketPath
           return
@@ -45,18 +54,27 @@ class FSEventRegister {
         previousPocketPath = pocketPath
 
         changedPaths
-          .map((changedPath) => {
+          .map(({ path, innerChange }) => {
             const node = this.findOrCreateOnCallbackTree(
-              changedPath
+              path
                 .replace(`${pocketPath}${sep}`, "")
                 .replace(`${pocketPath}`, "")
             )
 
-            return node
+            return { path, node, innerChange }
           })
-          .filter((node, index, arr) => arr.indexOf(node) === index)
-          .forEach((node) => {
-            this.callAllCallbacksAbove(node, calledAlready)
+          .filter(
+            ({ node }, index, arr) =>
+              arr.findIndex(({ node: n }) => node === n) === index
+          )
+          .forEach(({ path, node, innerChange }) => {
+            if (this.debug) console.log({ path, node, innerChange })
+            if (innerChange) {
+              node.callbacks.forEach((c) => c())
+              calledAlready.add(node)
+            } else {
+              this.callAllCallbacksAbove(node, calledAlready)
+            }
           })
       }
     )
@@ -112,7 +130,7 @@ class FSEventRegister {
 
   callAllCallbacksAbove(node: TreeNode, calledAlready: Set<TreeNode>) {
     if (calledAlready.has(node)) return
-    // console.log("calling callbacks for", node)
+    if (this.debug) console.log("callAllCallbacksAbove: for", node)
     node.callbacks.forEach((c) => c())
     calledAlready.add(node)
     if (node.parent) this.callAllCallbacksAbove(node.parent, calledAlready)
@@ -121,7 +139,7 @@ class FSEventRegister {
 
   callAllCallbacksUnder(node: TreeNode, calledAlready: Set<TreeNode>) {
     if (calledAlready.has(node)) return
-    // console.log("calling callbacks for", node)
+    if (this.debug) console.log("callAllCallbacksUnder: for", node)
     node.callbacks.forEach((c) => c())
     calledAlready.add(node)
     node.children.forEach((child) =>
@@ -131,7 +149,7 @@ class FSEventRegister {
 
   callAllFolderCallbacks(node: TreeNode, calledAlready: Set<TreeNode>) {
     if (calledAlready.has(node)) return
-    // console.log("calling callbacks for", node)
+    if (this.debug) console.log("callAllFolderCallbacks: for", node)
     node.callbacks.forEach((c) => c())
     calledAlready.add(node)
     node.children

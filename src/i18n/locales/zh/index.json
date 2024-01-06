@@ -78,7 +78,8 @@
     },
     "url": "网页地址",
     "version": "版本",
-    "display_modes_title": "显示模式"
+    "display_modes_title": "显示模式",
+    "display_mode_warning": "此显示模式需要更新核心，您确定要打开它吗？"
   },
   "core_info_required_files": {
     "close": "关闭",
