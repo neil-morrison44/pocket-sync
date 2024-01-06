@@ -1,7 +1,7 @@
 import { listen } from "@tauri-apps/api/event"
 import { FSEvent } from "../../types"
 import { splitAsPath } from "../../utils/splitAsPath"
-import { sep } from '@tauri-apps/api/path';
+import { sep } from "@tauri-apps/api/path"
 
 let previousPocketPath: string | null = null
 
@@ -23,7 +23,7 @@ class FSEventRegister {
     const unlisten = listen<{ events: FSEvent[]; pocket_path: string }>(
       "pocket-fs-event",
       ({ payload }) => {
-        console.count("fs-event")
+        // console.count("fs-event")
         const { events, pocket_path: pocketPath } = payload
         const calledAlready = new Set<TreeNode>()
 
@@ -47,7 +47,9 @@ class FSEventRegister {
         changedPaths
           .map((changedPath) => {
             const node = this.findOrCreateOnCallbackTree(
-              changedPath.replace(`${pocketPath}${sep}`, "").replace(`${pocketPath}`, "")
+              changedPath
+                .replace(`${pocketPath}${sep}`, "")
+                .replace(`${pocketPath}`, "")
             )
 
             return node
@@ -110,6 +112,7 @@ class FSEventRegister {
 
   callAllCallbacksAbove(node: TreeNode, calledAlready: Set<TreeNode>) {
     if (calledAlready.has(node)) return
+    // console.log("calling callbacks for", node)
     node.callbacks.forEach((c) => c())
     calledAlready.add(node)
     if (node.parent) this.callAllCallbacksAbove(node.parent, calledAlready)
@@ -118,6 +121,7 @@ class FSEventRegister {
 
   callAllCallbacksUnder(node: TreeNode, calledAlready: Set<TreeNode>) {
     if (calledAlready.has(node)) return
+    // console.log("calling callbacks for", node)
     node.callbacks.forEach((c) => c())
     calledAlready.add(node)
     node.children.forEach((child) =>
@@ -127,6 +131,7 @@ class FSEventRegister {
 
   callAllFolderCallbacks(node: TreeNode, calledAlready: Set<TreeNode>) {
     if (calledAlready.has(node)) return
+    // console.log("calling callbacks for", node)
     node.callbacks.forEach((c) => c())
     calledAlready.add(node)
     node.children
