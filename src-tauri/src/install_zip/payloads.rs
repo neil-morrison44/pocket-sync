@@ -27,6 +27,11 @@ pub enum FromRustPayload {
     ZipInstallFinished {
         error: Option<String>,
     },
+    DownloadProgress {
+        url: String,
+        downloaded: u64,
+        total_size: u64,
+    },
 }
 
 impl FromRustPayload {
@@ -38,6 +43,9 @@ impl FromRustPayload {
             }
             FromRustPayload::ZipInstallFinished { .. } => {
                 window.emit("install-zip-finished", &self)
+            }
+            FromRustPayload::DownloadProgress { .. } => {
+                window.emit("install-zip-download-progress", &self)
             }
         }
     }

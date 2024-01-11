@@ -153,3 +153,30 @@ export const useZipInstallButtons = (allowedFiles: string[] | null) => {
 
   return { confirm, cancel, handleMovedFiles, setHandleMovedFiles }
 }
+
+export const useListenForDownloadProgress = () => {
+  const [isDownloading, setIsDownloading] = useState<boolean>(false)
+  const [downloadProgress, setDownloadProgress] = useState<null | {
+    url: string
+    totalSize: number
+    downloaded: number
+  }>(null)
+
+  ;("install-zip-download-progress")
+
+  useEffect(() => {
+    const unlisten = listen<{
+      url: string
+      total_size: number
+      downloaded: number
+    }>("install-zip-download-progress", ({ payload }) => {
+      setIsDownloading(payload.downloaded !== payload.total_size)
+      setDownloadProgress({ ...payload, totalSize: payload.total_size })
+    })
+    return () => {
+      unlisten.then((l) => l())
+    }
+  }, [])
+
+  return { isDownloading, downloadProgress }
+}
