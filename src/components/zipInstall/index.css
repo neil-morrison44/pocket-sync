@@ -59,3 +59,28 @@
 .zip-install__tree-arrow--collapsed {
   transform: rotate(-90deg);
 }
+
+
+.zip-install__progress-modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  font-size: 1.25rem;
+  height: fit-content;
+  padding-block: 40px;
+
+  /* background-color: var(--light-colour); */
+  border: 5px solid var(--info-colour)
+}
+
+.zip-install__progress-bar-label {
+  word-wrap: break-word;
+  font-weight: bold;
+}
+
+
+.zip-install__progress-bar{
+  width: 100%;
+  accent-color: var(--selection-colour);
+}

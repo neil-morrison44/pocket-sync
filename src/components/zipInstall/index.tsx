@@ -1,6 +1,7 @@
 import { Modal } from "../modal"
 import {
   useAllowedFiles,
+  useListenForDownloadProgress,
   useListenForZipInstall,
   useTree,
   useZipInstallButtons,
@@ -16,10 +17,38 @@ import { confirm as TauriConfirm } from "@tauri-apps/api/dialog"
 
 export const ZipInstall = () => {
   const { installState } = useListenForZipInstall()
+  const { isDownloading, downloadProgress } = useListenForDownloadProgress()
+
+  console.log({ isDownloading, downloadProgress })
+
+  if (isDownloading && downloadProgress)
+    return <ModalProgressBar {...downloadProgress} />
 
   if (!installState) return null
   return <ZipInstallInner {...installState} />
 }
+
+const ModalProgressBar = ({
+  url,
+  totalSize,
+  downloaded,
+}: {
+  url: string
+  totalSize: number
+  downloaded: number
+}) => (
+  <Modal className="zip-install__progress-modal">
+    <label htmlFor="download" className="zip-install__progress-bar-label">
+      {url}
+    </label>
+    <progress
+      id="download"
+      className="zip-install__progress-bar"
+      max={totalSize}
+      value={downloaded}
+    ></progress>
+  </Modal>
+)
 
 const ZipInstallInner = ({
   files,
