@@ -1,3 +1,4 @@
+use log::info;
 use notify::{Config, Event, RecommendedWatcher, RecursiveMode, Watcher};
 use notify_debouncer_full::{new_debouncer, DebouncedEvent};
 use serde::{Deserialize, Serialize};
@@ -37,7 +38,10 @@ pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
 
 pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
     let (tx, mut rx) = mpsc::channel(10);
-    println!("Watching....");
+    info!(
+        "Watching files and folders at {}....",
+        &pocket_path.display()
+    );
 
     let root_tx = tx.clone();
     let mut debouncer = new_debouncer(Duration::from_millis(100), None, move |res| {

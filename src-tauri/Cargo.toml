@@ -54,6 +54,9 @@ time = "0.3.15"
 tokio = { version = "1.28.2", features = ["macros"] }
 walkdir = "2.3.3"
 zip = { version = "0.6.4", features = ["deflate", "time"] }
+tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+log = "^0.4"
+
 
 [features]
 # by default Tauri runs in production mode

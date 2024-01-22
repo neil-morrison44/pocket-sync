@@ -447,6 +447,10 @@
       "ramble": "Enabling this setting will break up files from the archive into smaller chunks. These chunks are then downloaded in parallel, potentially resulting in up to an 8x speedup. However, this method will consume more bandwidth and may be less reliable. If you enable this, please consider <1>supporting the Internet Archive</1>.",
       "title": "Fast Downloads"
     },
+    "logs": {
+      "title": "Logs",
+      "button": "Open Log Folder"
+    },
     "thanks": "Thanks to:"
   },
   "time_ago": {
