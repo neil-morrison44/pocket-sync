@@ -18,6 +18,7 @@ import {
 } from "../../recoil/settings/atoms"
 import { Link } from "../link"
 import { emit } from "@tauri-apps/api/event"
+import { openLogDir } from "../../utils/openLogDir"
 
 export const Settings = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
@@ -190,6 +191,13 @@ export const Settings = () => {
             <button onClick={() => onDisconnect()}>
               {t("disconnect.button")}
             </button>
+          </label>
+        </div>
+
+        <div className="settings__row">
+          <h3 className="settings__row-title">{t("logs.title")}</h3>
+          <label className="settings__checkbox">
+            <button onClick={() => openLogDir()}>{t("logs.button")}</button>
           </label>
         </div>
       </div>

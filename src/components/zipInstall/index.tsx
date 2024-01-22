@@ -19,8 +19,6 @@ export const ZipInstall = () => {
   const { installState } = useListenForZipInstall()
   const { isDownloading, downloadProgress } = useListenForDownloadProgress()
 
-  console.log({ isDownloading, downloadProgress })
-
   if (isDownloading && downloadProgress)
     return <ModalProgressBar {...downloadProgress} />
 

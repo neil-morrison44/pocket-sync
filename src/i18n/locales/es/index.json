@@ -426,6 +426,10 @@
       "ramble": "Al habilitar esta configuración, se dividirán los archivos del archivo en fragmentos más pequeños. Estos fragmentos luego se descargan en paralelo, lo que podría generar una aceleración de hasta 8 veces. Sin embargo, este método consumirá más ancho de banda y puede ser menos confiable. Si habilita esto, considere <1>apoyar Internet Archive</1>.",
       "title": "Descargas rápidas"
     },
+    "logs": {
+      "title": "Registros",
+      "button": "Abrir carpeta de registro"
+    },
     "thanks": "Gracias a:"
   },
   "time_ago": {
