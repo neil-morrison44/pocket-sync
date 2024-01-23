@@ -334,7 +334,6 @@ const UpdateListItem = ({
   onChangeRequiredFiles: (checked: boolean) => void
   onChangePlatformFiles: (checked: boolean) => void
 }) => {
-  console.log(coreName, updateListItem)
   const mainPlatformId = useRecoilValue(
     CoreMainPlatformIdSelectorFamily(coreName)
   )
