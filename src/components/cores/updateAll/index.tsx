@@ -31,6 +31,7 @@ type UpdateAllProps = {
 
 type UpdateListItem = {
   coreName: string
+  update: boolean
   requiredFiles: boolean
   platformFiles: boolean
 }
@@ -55,28 +56,33 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
     return () => setEnableGlobalZipInstall(true)
   }, [setEnableGlobalZipInstall])
 
+  const filteredUpdateList = useMemo(
+    () => updateList.filter(({ update }) => update),
+    [updateList]
+  )
+
   const onFinish = useCallback(() => {
     setStage((currentStage) => {
-      const updateListIndex = updateList.findIndex(
+      const updateListIndex = filteredUpdateList.findIndex(
         ({ coreName }) => currentStage?.coreName === coreName
       )
       if (
         currentStage?.step === "core" &&
-        updateList[updateListIndex].requiredFiles
+        filteredUpdateList[updateListIndex].requiredFiles
       ) {
         return { ...currentStage, step: "files" }
       }
 
-      if (updateListIndex + 1 < updateList.length) {
+      if (updateListIndex + 1 < filteredUpdateList.length) {
         return {
-          coreName: updateList[updateListIndex + 1].coreName,
+          coreName: filteredUpdateList[updateListIndex + 1].coreName,
           step: "core",
         }
       }
 
       return null
     })
-  }, [updateList, setStage])
+  }, [filteredUpdateList, setStage])
 
   useEffect(() => {
     if (stage === null && hasDoneAnUpdateRef.current) {
@@ -87,12 +93,20 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
   }, [onClose, stage])
 
   const coreCount = useMemo(() => {
-    const updateListIndex = updateList.findIndex(
+    const updateListIndex = filteredUpdateList.findIndex(
       ({ coreName }) => stage?.coreName === coreName
     )
 
     return updateListIndex + 1 || 0
-  }, [stage, updateList])
+  }, [stage, filteredUpdateList])
+
+  const checkStatus = useMemo(() => {
+    return {
+      updates: getStatusForList(updateList, "update"),
+      requiredFiles: getStatusForList(updateList, "requiredFiles"),
+      platformFiles: getStatusForList(updateList, "platformFiles"),
+    }
+  }, [updateList])
 
   return (
     <Modal className="update-all">
@@ -103,31 +117,47 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
           <div className="update-all__list-item">
             <label
               className="update-all__list-item-update"
-              onClick={() => setUpdateList([])}
+              onClick={() =>
+                setUpdateList((ul) =>
+                  ul.map((u) => ({
+                    ...u,
+                    update: checkStatus.updates === "none",
+                  }))
+                )
+              }
             >
               {t("heading.update")}
+              <StatusIcon status={checkStatus.updates} />
             </label>
 
             <label
               className="update-all__list-item-required-files"
               onClick={() =>
                 setUpdateList((ul) =>
-                  ul.map((u) => ({ ...u, requiredFiles: false }))
+                  ul.map((u) => ({
+                    ...u,
+                    requiredFiles: checkStatus.requiredFiles === "none",
+                  }))
                 )
               }
             >
               {t("heading.required_files")}
+              <StatusIcon status={checkStatus.requiredFiles} />
             </label>
 
             <label
               className="update-all__list-item-platform-files"
               onClick={() =>
                 setUpdateList((ul) =>
-                  ul.map((u) => ({ ...u, platformFiles: false }))
+                  ul.map((u) => ({
+                    ...u,
+                    platformFiles: checkStatus.platformFiles === "none",
+                  }))
                 )
               }
             >
               {t("heading.platform_files")}
+              <StatusIcon status={checkStatus.platformFiles} />
             </label>
           </div>
           <Suspense
@@ -142,13 +172,16 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
               setUpdateList={setUpdateList}
             />
           </Suspense>
-          {updateList.length > 0 && (
+          {filteredUpdateList.length > 0 && (
             <button
               onClick={() => {
-                setStage({ coreName: updateList[0].coreName, step: "core" })
+                setStage({
+                  coreName: filteredUpdateList[0].coreName,
+                  step: "core",
+                })
               }}
             >
-              {t("buttons.update", { count: updateList.length })}
+              {t("buttons.update", { count: filteredUpdateList.length })}
             </button>
           )}
           <button onClick={onClose}>{t("buttons.close")}</button>
@@ -224,6 +257,7 @@ const UpdateAllList = ({
         coreName,
         requiredFiles: hasArchiveLink,
         platformFiles: true,
+        update: true,
       }))
     )
   }, [coresList, setUpdateList, hasArchiveLink])
@@ -249,20 +283,12 @@ const UpdateAllList = ({
           installedVersion={installedVersion}
           latestVersion={latestVersion}
           onChangeUpdate={(checked) => {
-            setUpdateList((curr) => {
-              if (checked) {
-                return [
-                  ...curr,
-                  {
-                    coreName,
-                    requiredFiles: true,
-                    platformFiles: true,
-                  },
-                ]
-              } else {
-                return curr.filter(({ coreName: cn }) => cn !== coreName)
-              }
-            })
+            setUpdateList((curr) =>
+              curr.map((ui) => {
+                if (ui.coreName !== coreName) return ui
+                return { ...ui, update: checked }
+              })
+            )
           }}
           onChangeRequiredFiles={(checked) => {
             if (!hasArchiveLink) {
@@ -316,11 +342,13 @@ const UpdateListItem = ({
     PlatformInfoSelectorFamily(mainPlatformId)
   )
 
+  if (!updateListItem) return null
+
   return (
     <div
       key={coreName}
       className={`update-all__list-item ${
-        updateListItem === undefined ? "update-all__list-item--no-update" : ""
+        !updateListItem.update ? "update-all__list-item--no-update" : ""
       }`}
     >
       <div className="update-all__list-item-image">
@@ -341,7 +369,7 @@ const UpdateListItem = ({
       <label className="update-all__list-item-update">
         <input
           type="checkbox"
-          checked={updateListItem !== undefined}
+          checked={updateListItem.update}
           onChange={({ target }) => onChangeUpdate(target.checked)}
         ></input>
       </label>
@@ -378,3 +406,23 @@ const ArrowIcon = () => (
     />
   </svg>
 )
+
+const StatusIcon = ({ status }: { status: "all" | "some" | "none" }) => (
+  <div
+    className={`update-all__status-icon update-all__status-icon--${status}`}
+  ></div>
+)
+
+const getStatusForList = (
+  list: UpdateListItem[],
+  property: keyof UpdateListItem
+): "all" | "some" | "none" => {
+  switch (true) {
+    case list.every((l) => l[property]):
+      return "all"
+    case list.some((l) => l[property]):
+      return "some"
+    default:
+      return "none"
+  }
+}
