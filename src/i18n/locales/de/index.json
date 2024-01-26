@@ -76,7 +76,7 @@
         "display_modes_title": "Anzeigemodi",
         "display_mode_warning": "Dieser Anzeigemodus benötigt eine Aktualisierung des Kerns. Trotzdem aktivieren?",
         "display_modes": {
-            "grayscale_lcd": "Graustufen-LCD",
+            "grayscale_lcd": "Greyscale LCD",
             "crt_trinitron": "CRT Trinitron",
             "original_gb_dmg": "Original GB DMG",
             "original_gbp": "Original GBP",
@@ -252,7 +252,8 @@
     "mister_sync": {
         "controls": {
             "back": "Beenden",
-            "search": "Speicherstände suchen"
+            "search": "Speicherstände suchen",
+            "save_mapping": "Spielstandmapping"
         },
         "login": {
             "connect": "Verbinden",
@@ -270,7 +271,8 @@
         },
         "mister": "MiSTer",
         "pocket": "Pocket",
-        "tip_2": "Stellen Sie vor der Übertragung sicher, dass der Spielstand zwischen Pocket und MiSTer kompatibel ist"
+        "tip_2": "Stellen Sie vor der Übertragung sicher, dass der Spielstand zwischen Pocket und MiSTer kompatibel ist",
+        "unsupported": "{platform} ist nicht gemapped"
     },
     "news_feed": {
         "last_updated": "Zuletzt aktualisiert <1></1>",
