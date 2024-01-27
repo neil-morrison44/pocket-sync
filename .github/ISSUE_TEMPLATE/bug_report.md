@@ -27,6 +27,9 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
+**Logs**
+Copy over the log from the folder that opens when you click the "Open Log Folder" button at the bottom of settings.
+
 **Desktop (please complete the following information):**
  - OS: [e.g. Windows]
  - Version [e.g. 11]
