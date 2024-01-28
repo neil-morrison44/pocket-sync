@@ -7,6 +7,8 @@ use tokio::{
     task,
 };
 
+use crate::result_logger::ResultLogger;
+
 #[derive(Clone, Serialize)]
 struct PlainMessage(String);
 
@@ -65,7 +67,7 @@ pub async fn start_mister_save_sync_session(
     );
 
     let mut mister_syncer = MiSTerSaveSync::new(&host, &user, &password);
-    let connected = mister_syncer.connect(&log_tx).await.unwrap();
+    let connected = mister_syncer.connect(&log_tx).await.unwrap_and_log();
 
     {
         let window = window.clone();
@@ -73,7 +75,7 @@ pub async fn start_mister_save_sync_session(
             while let Some(msg) = log_rx.recv().await {
                 window
                     .emit("mister-save-sync-log", PlainMessage(msg))
-                    .unwrap();
+                    .unwrap_and_log();
             }
         })
     };
@@ -94,11 +96,12 @@ pub async fn start_mister_save_sync_session(
                     while let Ok(msg) = message_rx.recv().await {
                         match msg {
                             IncomingMessage::ListPlatformsOnMiSTer => {
-                                let platforms = &mister_syncer.list_platforms().await.unwrap();
+                                let platforms =
+                                    &mister_syncer.list_platforms().await.unwrap_and_log();
 
                                 outbound_message_tx
                                     .send(OutboundMessage::PlatformList(platforms.clone()))
-                                    .unwrap();
+                                    .unwrap_and_log();
                             }
                             IncomingMessage::Find(pocket_save_info) => {
                                 let result = find_mister_save(
@@ -109,16 +112,22 @@ pub async fn start_mister_save_sync_session(
                                 )
                                 .await;
                                 if let Err(err) = result {
-                                    log_tx.send(format!("Error: {}", err)).await.unwrap();
+                                    log_tx
+                                        .send(format!("Error: {}", err))
+                                        .await
+                                        .unwrap_and_log();
                                 }
                             }
                             IncomingMessage::PocketToMiSTer(transfer) => {
-                                let buf = tokio::fs::read(&transfer.from).await.unwrap();
+                                let buf = tokio::fs::read(&transfer.from).await.unwrap_and_log();
                                 if let Err(err) = mister_syncer
                                     .write_save(&transfer.to, Box::new(std::io::Cursor::new(buf)))
                                     .await
                                 {
-                                    log_tx.send(format!("Error: {}", err)).await.unwrap();
+                                    log_tx
+                                        .send(format!("Error: {}", err))
+                                        .await
+                                        .unwrap_and_log();
                                 } else {
                                     log_tx
                                         .send(format!(
@@ -126,20 +135,23 @@ pub async fn start_mister_save_sync_session(
                                             &transfer.from, &transfer.to
                                         ))
                                         .await
-                                        .unwrap();
+                                        .unwrap_and_log();
                                     outbound_message_tx
                                         .send(OutboundMessage::MovedSave(transfer))
-                                        .unwrap();
+                                        .unwrap_and_log();
                                 }
                             }
                             IncomingMessage::MiSTerToPocket(transfer) => {
                                 match mister_syncer.read_save(&transfer.from).await {
                                     Ok(mut mister_file) => {
                                         let mut buf = Vec::new();
-                                        mister_file.read_to_end(&mut buf).unwrap();
+                                        mister_file.read_to_end(&mut buf).unwrap_and_log();
                                         if let Err(err) = tokio::fs::write(&transfer.to, buf).await
                                         {
-                                            log_tx.send(format!("Error: {}", err)).await.unwrap();
+                                            log_tx
+                                                .send(format!("Error: {}", err))
+                                                .await
+                                                .unwrap_and_log();
                                         } else {
                                             log_tx
                                                 .send(format!(
@@ -147,20 +159,26 @@ pub async fn start_mister_save_sync_session(
                                                     &transfer.from, &transfer.to
                                                 ))
                                                 .await
-                                                .unwrap();
+                                                .unwrap_and_log();
                                             outbound_message_tx
                                                 .send(OutboundMessage::MovedSave(transfer))
-                                                .unwrap();
+                                                .unwrap_and_log();
                                         }
                                     }
                                     Err(err) => {
-                                        log_tx.send(format!("Error: {}", err)).await.unwrap();
+                                        log_tx
+                                            .send(format!("Error: {}", err))
+                                            .await
+                                            .unwrap_and_log();
                                     }
                                 }
                             }
                             IncomingMessage::HeartBeat => match mister_syncer.heartbeat().await {
                                 Err(err) => {
-                                    log_tx.send(format!("Error: {}", err)).await.unwrap();
+                                    log_tx
+                                        .send(format!("Error: {}", err))
+                                        .await
+                                        .unwrap_and_log();
                                 }
                                 _ => {}
                             },
@@ -179,16 +197,16 @@ pub async fn start_mister_save_sync_session(
                           msg = outbound_message_rx.recv() => {
                             match msg {
                                 Ok(OutboundMessage::PlatformList(platform_list)) => {
-                                    window.emit("mister-save-sync-platform-list", platform_list).unwrap();
+                                    window.emit("mister-save-sync-platform-list", platform_list).unwrap_and_log();
                                 },
                                 Ok(OutboundMessage::FoundSave(mister_save_info)) => {
                                     println!("Emmiting save");
-                                    window.emit("mister-save-sync-found-save", mister_save_info).unwrap();
+                                    window.emit("mister-save-sync-found-save", mister_save_info).unwrap_and_log();
                                 },
                                 Ok(OutboundMessage::MovedSave(transfer)) => {
                                             window
                                             .emit("mister-save-sync-moved-save", transfer)
-                                            .unwrap();
+                                            .unwrap_and_log();
                                 },
                                 Err(_) => {
                                     break;
@@ -206,10 +224,10 @@ pub async fn start_mister_save_sync_session(
                 window.listen("mister-save-sync-find-save", move |event| {
                     if let Some(payload) = event.payload() {
                         let pocket_save_info: PocketSaveInfo =
-                            serde_json::from_str(payload).unwrap();
+                            serde_json::from_str(payload).unwrap_and_log();
                         message_tx
                             .send(IncomingMessage::Find(pocket_save_info))
-                            .unwrap();
+                            .unwrap_and_log();
                     }
                 })
             };
@@ -219,10 +237,11 @@ pub async fn start_mister_save_sync_session(
                 let window = window.clone();
                 window.listen("mister-save-sync-move-save-to-pocket", move |event| {
                     if let Some(payload) = event.payload() {
-                        let transfer_info: Transfer = serde_json::from_str(payload).unwrap();
+                        let transfer_info: Transfer =
+                            serde_json::from_str(payload).unwrap_and_log();
                         message_tx
                             .send(IncomingMessage::MiSTerToPocket(transfer_info))
-                            .unwrap();
+                            .unwrap_and_log();
                     }
                 })
             };
@@ -231,10 +250,11 @@ pub async fn start_mister_save_sync_session(
                 let window = window.clone();
                 window.listen("mister-save-sync-move-save-to-mister", move |event| {
                     if let Some(payload) = event.payload() {
-                        let transfer_info: Transfer = serde_json::from_str(payload).unwrap();
+                        let transfer_info: Transfer =
+                            serde_json::from_str(payload).unwrap_and_log();
                         message_tx
                             .send(IncomingMessage::PocketToMiSTer(transfer_info))
-                            .unwrap();
+                            .unwrap_and_log();
                     }
                 })
             };
@@ -243,7 +263,7 @@ pub async fn start_mister_save_sync_session(
                 let message_tx = message_tx.clone();
                 let window = window.clone();
                 window.listen("mister-save-sync-heartbeat", move |_| {
-                    message_tx.send(IncomingMessage::HeartBeat).unwrap();
+                    message_tx.send(IncomingMessage::HeartBeat).unwrap_and_log();
                 })
             };
 
@@ -253,7 +273,7 @@ pub async fn start_mister_save_sync_session(
                 window.listen("mister-save-sync-list-platforms", move |_| {
                     message_tx
                         .send(IncomingMessage::ListPlatformsOnMiSTer)
-                        .unwrap();
+                        .unwrap_and_log();
                 })
             };
 
@@ -275,7 +295,7 @@ pub async fn start_mister_save_sync_session(
         let window = window.clone();
         let kill_tx = kill_tx.clone();
         window.once("mister-save-sync-end", move |_| {
-            kill_tx.send(()).unwrap();
+            kill_tx.send(()).unwrap_and_log();
         });
     }
 
@@ -296,7 +316,7 @@ async fn find_mister_save(
             log_tx
                 .send(format!("Error: {}", err.to_string()))
                 .await
-                .unwrap();
+                .unwrap_and_log();
         }
         Ok(FoundSave::Found(found_save_path)) => {
             let timestamp = mister_syncer.read_timestamp(&found_save_path).await?;
@@ -335,7 +355,7 @@ fn mister_save_crc32(mut file: Box<dyn std::io::Read>) -> u32 {
     // this should probably be more async
     // the file should be fully in memory at this point though so it should be fine
     let mut buffer: Vec<u8> = Vec::new();
-    file.read_to_end(&mut buffer).unwrap();
+    file.read_to_end(&mut buffer).unwrap_and_log();
     let checksum = crc32fast::hash(&buffer);
     checksum
 }

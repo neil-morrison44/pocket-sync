@@ -1,12 +1,14 @@
 use md5::{Digest, Md5};
 use std::{error, io::Read, path::PathBuf};
 
+use crate::result_logger::ResultLogger;
+
 pub async fn md5_for_file(file_path: &PathBuf) -> Result<String, Box<dyn error::Error>> {
     let handle = {
         let full_path = file_path.clone();
         tokio::task::spawn_blocking(move || {
             let mut hasher = Md5::new();
-            let mut file = std::fs::File::open(full_path).unwrap();
+            let mut file = std::fs::File::open(full_path).unwrap_and_log();
             let chunk_size = 0x4000;
 
             loop {
@@ -40,7 +42,7 @@ pub async fn crc32_for_file(file_path: &PathBuf) -> Result<u32, Box<dyn error::E
         let full_path = file_path.clone();
         tokio::task::spawn_blocking(move || {
             let mut hasher = crc32fast::Hasher::new();
-            let mut file = std::fs::File::open(full_path).unwrap();
+            let mut file = std::fs::File::open(full_path).unwrap_and_log();
             let chunk_size = 0x4000;
 
             loop {

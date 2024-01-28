@@ -3,6 +3,8 @@ use rayon::prelude::*;
 use reqwest::Url;
 use std::cmp::{max, min};
 
+use crate::result_logger::ResultLogger;
+
 pub async fn turbo_download_file(url: &str, turbo_enabled: bool) -> Result<Option<Bytes>, String> {
     if !turbo_enabled {
         // println!("Turbo downloads disabled, downloading in a single thread");
@@ -38,7 +40,11 @@ pub async fn turbo_download_file(url: &str, turbo_enabled: bool) -> Result<Optio
     }
 
     let content_length = match response.headers().get("Content-Length") {
-        Some(len) => len.to_str().unwrap().parse::<u64>().unwrap(),
+        Some(len) => len
+            .to_str()
+            .unwrap_and_log()
+            .parse::<u64>()
+            .unwrap_and_log(),
         None => {
             println!("Server does not provide content length, downloading in a single thread");
             return Ok(None);
@@ -58,7 +64,9 @@ pub async fn turbo_download_file(url: &str, turbo_enabled: bool) -> Result<Optio
     let file_bytes = tokio::task::spawn_blocking(move || {
         let file_bytes: Vec<_> = ranges
             .par_iter()
-            .map(|(start, end)| dowload_retry_on_timeout(url.clone(), *start, *end).unwrap())
+            .map(|(start, end)| {
+                dowload_retry_on_timeout(url.clone(), *start, *end).unwrap_and_log()
+            })
             .collect();
 
         file_bytes.concat()

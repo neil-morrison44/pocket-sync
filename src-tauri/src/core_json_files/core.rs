@@ -75,12 +75,14 @@ impl Into<CoreDetails> for CoreFile {
 
 #[cfg(test)]
 mod tests {
+    use crate::result_logger::{OptionLogger, ResultLogger};
+
     use super::*;
     use std::error::Error;
     use tempdir::TempDir;
 
     fn core_folder_setup() -> Result<PathBuf, Box<dyn Error>> {
-        let tmp_dir = TempDir::new("core_json_tests").unwrap();
+        let tmp_dir = TempDir::new("core_json_tests").unwrap_and_log();
         let tmp_path = tmp_dir.into_path();
         // Create a temporary JSON file
         let core_temp_file = tmp_path.join("core.json");
@@ -123,7 +125,7 @@ mod tests {
         println!("{:?}", &core_temp_file);
         fs::write(&core_temp_file, json_data)?;
         let core_path = core_temp_file.to_path_buf();
-        Ok(core_path.parent().unwrap().to_path_buf())
+        Ok(core_path.parent().unwrap_and_log().to_path_buf())
     }
 
     #[test]

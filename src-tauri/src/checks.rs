@@ -6,6 +6,8 @@ use std::{path::PathBuf, time::Duration};
 use tauri::Window;
 use tokio::sync::mpsc;
 
+use crate::result_logger::{OptionLogger, ResultLogger};
+
 #[derive(Serialize, Deserialize, Clone)]
 struct FSEventPayload {
     events: Vec<notify::Event>,
@@ -45,14 +47,16 @@ pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
 
     let root_tx = tx.clone();
     let mut debouncer = new_debouncer(Duration::from_millis(100), None, move |res| {
-        root_tx.try_send(DebouncedOrRoot::Debounced(res)).unwrap();
+        root_tx
+            .try_send(DebouncedOrRoot::Debounced(res))
+            .unwrap_and_log();
     })
-    .unwrap();
+    .unwrap_and_log();
 
     debouncer
         .watcher()
         .watch(&pocket_path, RecursiveMode::Recursive)
-        .unwrap();
+        .unwrap_and_log();
 
     // This causes a deadlock on Windows for some reason
     // debouncer
@@ -62,15 +66,17 @@ pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
     let files_tx = tx.clone();
     let mut root_watcher = RecommendedWatcher::new(
         move |res| {
-            files_tx.try_send(DebouncedOrRoot::Root(res)).unwrap();
+            files_tx
+                .try_send(DebouncedOrRoot::Root(res))
+                .unwrap_and_log();
         },
         Config::default(),
     )
-    .unwrap();
+    .unwrap_and_log();
 
     root_watcher
         .watch(&pocket_path, RecursiveMode::NonRecursive)
-        .unwrap();
+        .unwrap_and_log();
 
     let poll_tx = tx.clone();
     let polling_path = pocket_path.clone();
@@ -81,7 +87,7 @@ pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
                 poll_tx
                     .send(DebouncedOrRoot::PolledDisconnect)
                     .await
-                    .unwrap();
+                    .unwrap_and_log();
                 break;
             }
         }
@@ -97,10 +103,10 @@ pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
                         "pocket-fs-event",
                         FSEventPayload {
                             events: events.into_iter().map(|e| e.event).collect::<Vec<_>>(),
-                            pocket_path: String::from(pocket_path.to_str().unwrap()),
+                            pocket_path: String::from(pocket_path.to_str().unwrap_and_log()),
                         },
                     )
-                    .unwrap();
+                    .unwrap_and_log();
             }
             DebouncedOrRoot::Debounced(Err(e)) => println!("watch error: {:?}", e),
             DebouncedOrRoot::Root(Ok(r)) if r.kind.is_remove() => {
@@ -109,7 +115,7 @@ pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
                         "pocket-connection",
                         ConnectionEventPayload { connected: false },
                     )
-                    .unwrap();
+                    .unwrap_and_log();
                 break;
             }
             DebouncedOrRoot::Root(Ok(_)) | DebouncedOrRoot::Root(Err(_)) => {}
@@ -119,7 +125,7 @@ pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
                         "pocket-connection",
                         ConnectionEventPayload { connected: false },
                     )
-                    .unwrap();
+                    .unwrap_and_log();
                 break;
             }
         }
