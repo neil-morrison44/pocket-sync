@@ -1,8 +1,7 @@
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import { useSetRecoilState } from "recoil"
 import { useRecoilSmoothUpdates } from "../../hooks/recoilSmoothUpdates"
 import { useYScrollAsXScroll } from "../../hooks/useYScrollAsXScroll"
-import { newsFeedUpdateAtom } from "../../recoil/newsFeed/atoms"
-import { newsFeedSelector } from "../../recoil/newsFeed/selectors"
+import { newsFeedAtom } from "../../recoil/newsFeed/atoms"
 import { currentViewAtom } from "../../recoil/view/atoms"
 import { Link } from "../link"
 import { useTranslation, Trans } from "react-i18next"
@@ -15,9 +14,11 @@ type NewsFeedProps = {
 }
 
 export const NewsFeed = ({ deepLinks = false }: NewsFeedProps) => {
-  const items = useRecoilSmoothUpdates(newsFeedSelector, [])
+  const { items, lastUpdated } = useRecoilSmoothUpdates(newsFeedAtom, {
+    items: [],
+    lastUpdated: 0,
+  })
   const viewCore = useSetRecoilState(currentViewAtom)
-  const newsfeedLastUpdate = useRecoilValue(newsFeedUpdateAtom)
   const listRef = useYScrollAsXScroll()
   const { t } = useTranslation("news_feed")
 
@@ -33,7 +34,7 @@ export const NewsFeed = ({ deepLinks = false }: NewsFeedProps) => {
         <span className="news-feed__title-last-updated">
           <Trans t={t} i18nKey={"last_updated"}>
             {"_"}
-            <TimeAgo since={newsfeedLastUpdate} />
+            <TimeAgo since={lastUpdated} />
           </Trans>
         </span>
       </div>

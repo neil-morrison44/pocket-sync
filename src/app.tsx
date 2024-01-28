@@ -88,7 +88,11 @@ export const App = () => {
           {t("connect_button")}
         </button>
       </div>
-      <NewsFeed />
+      <Suspense
+        fallback={<div className="news-feed" style={{ flexGrow: 1 }}></div>}
+      >
+        <NewsFeed />
+      </Suspense>
     </div>
   )
 }

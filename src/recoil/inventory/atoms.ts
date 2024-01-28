@@ -1,7 +1,8 @@
 import { atom } from "recoil"
 import { InventoryJSON } from "../../types"
+import { info } from "tauri-plugin-log-api"
 
-const INTERVAL_MINS = 10
+const INTERVAL_MINS = 2.5
 
 const INVENTORY_API =
   "https://openfpga-cores-inventory.github.io/analogue-pocket/api/v2/cores.json"
@@ -25,13 +26,16 @@ export const coreInventoryAtom = atom<InventoryJSON>({
       })
     },
     ({ setSelf }) => {
-      setInterval(async () => {
+      const interval = setInterval(async () => {
+        info("Fetching Inventory")
         const response = await fetch(
           INVENTORY_API + `?cache_bust=${Date.now()}`
         )
         const newJson: InventoryJSON = await response.json()
         setSelf(newJson)
       }, INTERVAL_MINS * 60 * 1000)
+
+      return () => window.clearInterval(interval)
     },
   ],
 })
