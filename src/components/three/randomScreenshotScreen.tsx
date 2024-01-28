@@ -15,19 +15,19 @@ export const RandomScreenshotScreen = ({
   interval = 3000,
 }: RandomScreenshotScreenProps) => {
   const screenshotList = useRecoilValue(screenshotsListSelector)
-  const [randomNudge, setRandomNudge] = useState(0)
+  const [screenshotIndex, setScreenshotIndex] = useState(0)
 
-  const screenshotName = useMemo(() => {
-    randomNudge
-    return screenshotList[Math.floor(Math.random() * screenshotList.length)]
-  }, [screenshotList, randomNudge])
+  const screenshotName = useMemo(
+    () => screenshotList[screenshotIndex],
+    [screenshotList, screenshotIndex]
+  )
 
   useEffect(() => {
     const changeImageInterval = setInterval(
-      () => setRandomNudge(Date.now()),
+      () =>
+        setScreenshotIndex(Math.floor(Math.random() * screenshotList.length)),
       interval
     )
-
     return () => {
       clearInterval(changeImageInterval)
     }

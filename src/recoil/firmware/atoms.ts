@@ -12,10 +12,12 @@ export const allFirmwaresAtom = atom<FirmwareListItem[]>({
   })(),
   effects: [
     ({ setSelf }) => {
-      setInterval(async () => {
+      const interval = setInterval(async () => {
         const newFirmwares = await invokeGetFirmwareVersionsList()
         setSelf(newFirmwares)
       }, INTERVAL_MINS * 60 * 1000)
+
+      return () => clearInterval(interval)
     },
   ],
 })

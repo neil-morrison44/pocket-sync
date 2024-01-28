@@ -75,7 +75,11 @@ export const About = () => {
       </div>
 
       <div className="about__news">
-        <NewsFeed deepLinks />
+        <Suspense
+          fallback={<div className="news-feed" style={{ flexGrow: 1 }}></div>}
+        >
+          <NewsFeed deepLinks />
+        </Suspense>
       </div>
     </div>
   )

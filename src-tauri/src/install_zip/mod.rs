@@ -1,5 +1,6 @@
 use bytes::BytesMut;
 use futures::StreamExt;
+use log::info;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use std::{
@@ -42,6 +43,7 @@ use tauri::WindowEvent::FileDrop;
 use self::payloads::{FromRustPayload, FromTSPayload, PathStatus, ZipInstallProgress};
 
 pub async fn start_zip_task(window: Window) -> () {
+    info!("Zip Task Started");
     let state: tauri::State<PocketSyncState> = window.state();
     let (zip_start_tx, mut zip_start_rx) = tokio::sync::mpsc::channel(32);
 
@@ -56,13 +58,17 @@ pub async fn start_zip_task(window: Window) -> () {
                 }
             }
         });
+        info!("Zip Task listening for file drop");
     }
     {
         let tx = zip_start_tx.clone();
         main_window.listen("install-core", move |event| {
+            info!("Installing Core Event");
             let install: InstallInfo = serde_json::from_str(event.payload().unwrap()).unwrap();
+            info!("Core - {}", &install.core_name);
             tx.try_send(ZipStartAction::InstallCore(install)).unwrap();
         });
+        info!("Zip Task listening for install-core");
     }
 
     loop {
