@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use tokio::io::AsyncWriteExt;
 
-use crate::hashes::md5_for_file;
+use crate::{hashes::md5_for_file, result_logger::ResultLogger};
 
 #[derive(Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -30,14 +30,14 @@ pub async fn get_firmware_json() -> Result<Vec<FirmwareListItem>, reqwest::Error
         .await?
         .text()
         .await?;
-    let items: Vec<FirmwareListItem> = serde_json::from_str(&json_body).unwrap();
+    let items: Vec<FirmwareListItem> = serde_json::from_str(&json_body).unwrap_and_log();
     Ok(items)
 }
 
 pub async fn get_release_notes(version: &str) -> Result<FirmwareDetails, reqwest::Error> {
     let json_url = format!("https://www.analogue.co/support/pocket/firmware/{version}/details");
     let json_body = reqwest::get(json_url).await?.text().await?;
-    let release_details: FirmwareDetails = serde_json::from_str(&json_body).unwrap();
+    let release_details: FirmwareDetails = serde_json::from_str(&json_body).unwrap_and_log();
     Ok(release_details)
 }
 

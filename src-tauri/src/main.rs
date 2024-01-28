@@ -14,7 +14,7 @@ use futures::StreamExt;
 use futures_locks::RwLock;
 use hashes::{crc32_for_file, md5_for_file};
 use install_zip::start_zip_task;
-use log::{debug, error, LevelFilter};
+use log::{debug, error, trace, LevelFilter};
 use save_sync_session::start_mister_save_sync_session;
 use saves_zip::{
     build_save_zip, read_save_zip_list, read_saves_in_folder, read_saves_in_zip,
@@ -22,6 +22,7 @@ use saves_zip::{
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
+use std::fs::File;
 use std::path::PathBuf;
 use std::time::{Duration, SystemTime};
 use std::vec;
@@ -30,6 +31,8 @@ use tauri::{App, Manager, Window};
 use tauri_plugin_log::LogTarget;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use turbo_downloads::turbo_download_file;
+
+use crate::result_logger::{OptionLogger, ResultLogger};
 
 mod checks;
 mod clean_fs;
@@ -40,6 +43,7 @@ mod hashes;
 mod install_zip;
 mod news_feed;
 mod progress;
+mod result_logger;
 mod save_sync_session;
 mod saves_zip;
 mod turbo_downloads;
@@ -58,8 +62,9 @@ async fn open_pocket(
     app_handle: tauri::AppHandle,
 ) -> Result<Option<String>, ()> {
     debug!("Command: open_pocket");
+
     if let Some(pocket_path) = dialog::blocking::FileDialogBuilder::new().pick_folder() {
-        open_pocket_folder(state, &pocket_path.to_str().unwrap(), app_handle).await
+        open_pocket_folder(state, &pocket_path.to_str().unwrap_and_log(), app_handle).await
     } else {
         Err(())
     }
@@ -71,9 +76,8 @@ async fn open_pocket_folder(
     pocket_path: &str,
     app_handle: tauri::AppHandle,
 ) -> Result<Option<String>, ()> {
-    debug!("Command: open_pocket_folder");
-    let window = app_handle.get_window("main").unwrap();
-    println!("open_pocket_folder {pocket_path}");
+    debug!("Command: open_pocket_folder {pocket_path}");
+    let window = app_handle.get_window("main").unwrap_and_log();
     let pocket_path = PathBuf::from(pocket_path);
     if !check_if_folder_looks_like_pocket(&pocket_path) {
         return Ok(None);
@@ -87,7 +91,9 @@ async fn open_pocket_folder(
         tauri::async_runtime::spawn(async move { connection_task(window, path_buf).await });
     }
 
-    Ok(Some(String::from(pocket_path_state.to_str().unwrap())))
+    Ok(Some(String::from(
+        pocket_path_state.to_str().unwrap_and_log(),
+    )))
 }
 
 #[tauri::command(async)]
@@ -155,11 +161,11 @@ async fn file_exists(state: tauri::State<'_, PocketSyncState>, path: &str) -> Re
 async fn save_file(path: &str, buffer: Vec<u8>) -> Result<bool, ()> {
     debug!("Command: save_file - {path}");
     let file_path = PathBuf::from(path);
-    tokio::fs::create_dir_all(file_path.parent().unwrap())
+    tokio::fs::create_dir_all(file_path.parent().unwrap_and_log())
         .await
-        .unwrap();
-    let mut file = tokio::fs::File::create(file_path).await.unwrap();
-    file.write_all(&buffer).await.unwrap();
+        .unwrap_and_log();
+    let mut file = tokio::fs::File::create(file_path).await.unwrap_and_log();
+    file.write_all(&buffer).await.unwrap_and_log();
     Ok(true)
 }
 
@@ -172,16 +178,16 @@ async fn list_files(
     let pocket_path = state.0.pocket_path.read().await;
     let dir_path = pocket_path.join(path);
 
-    if !tokio::fs::try_exists(&dir_path).await.unwrap() {
+    if !tokio::fs::try_exists(&dir_path).await.unwrap_and_log() {
         return Ok(vec![]);
     }
 
-    let mut paths = tokio::fs::read_dir(dir_path).await.unwrap();
+    let mut paths = tokio::fs::read_dir(dir_path).await.unwrap_and_log();
     let mut results: Vec<_> = Vec::new();
 
     while let Ok(Some(entry)) = paths.next_entry().await {
         let file_name = entry.file_name();
-        let file_name = file_name.to_str().unwrap();
+        let file_name = file_name.to_str().unwrap_and_log();
 
         if !file_name.starts_with(".") {
             results.push(String::from(file_name))
@@ -218,7 +224,7 @@ async fn walkdir_list_files(
     }
 
     let mut walker = WalkDir::new(&dir_path);
-    let dir_path_str = &dir_path.to_str().unwrap();
+    let dir_path_str = &dir_path.to_str().unwrap_and_log();
     let mut file_paths = Vec::new();
 
     while let Some(Ok(entry)) = walker.next().await {
@@ -226,7 +232,7 @@ async fn walkdir_list_files(
             Ok(f) => {
                 if f.is_file() && !is_hidden(&entry) {
                     let path = entry.path();
-                    let path_str = path.to_str().unwrap();
+                    let path_str = path.to_str().unwrap_and_log();
                     let relative_path = path_str.replace(dir_path_str, "");
                     if extensions.is_empty() || extensions.iter().any(|ext| path_str.ends_with(ext))
                     {
@@ -250,7 +256,7 @@ async fn uninstall_core(
     let pocket_path = state.0.pocket_path.write().await;
     let core_path = pocket_path.join("Cores").join(core_name);
     if core_path.exists() && core_path.is_dir() {
-        tokio::fs::remove_dir_all(core_path).await.unwrap();
+        tokio::fs::remove_dir_all(core_path).await.unwrap_and_log();
     } else {
         error!("Weird, it's gone already");
     }
@@ -294,7 +300,7 @@ async fn install_archive_files(
 
             if let Some(parent) = new_file_path.parent() {
                 if !parent.exists() {
-                    tokio::fs::create_dir_all(&parent).await.unwrap();
+                    tokio::fs::create_dir_all(&parent).await.unwrap_and_log();
                 }
             }
 
@@ -336,7 +342,7 @@ async fn install_archive_files(
                             failed_already.insert(file.filename);
                             continue;
                         }
-                        Ok(r) => r.bytes().await.unwrap(),
+                        Ok(r) => r.bytes().await.unwrap_and_log(),
                     }
                 }
                 Err(e) => {
@@ -351,18 +357,20 @@ async fn install_archive_files(
 
             if let Some(parent) = new_file_path.parent() {
                 if !parent.exists() {
-                    tokio::fs::create_dir_all(&parent).await.unwrap();
+                    tokio::fs::create_dir_all(&parent).await.unwrap_and_log();
                 }
             }
-            let mut dest = tokio::fs::File::create(&new_file_path).await.unwrap();
+            let mut dest = tokio::fs::File::create(&new_file_path)
+                .await
+                .unwrap_and_log();
             let mut content_cusror = std::io::Cursor::new(content);
             tokio::io::copy(&mut content_cusror, &mut dest)
                 .await
-                .unwrap();
+                .unwrap_and_log();
 
             if let Some(mtime) = file.mtime {
                 let time = SystemTime::UNIX_EPOCH + Duration::from_millis(mtime);
-                set_mtime(&new_file_path, SystemTimeSpec::Absolute(time)).unwrap();
+                set_mtime(&new_file_path, SystemTimeSpec::Absolute(time)).unwrap_and_log();
             }
         }
     }
@@ -383,7 +391,7 @@ async fn backup_saves(
     let pocket_path = state.0.pocket_path.read().await;
     build_save_zip(&pocket_path, save_paths, zip_path, max_count)
         .await
-        .unwrap();
+        .unwrap_and_log();
 
     Ok(true)
 }
@@ -399,7 +407,7 @@ async fn list_backup_saves(backup_path: &str) -> Result<BackupSavesResponse, ()>
         });
     }
 
-    let files = read_save_zip_list(&path).await.unwrap();
+    let files = read_save_zip_list(&path).await.unwrap_and_log();
 
     Ok(BackupSavesResponse {
         files,
@@ -447,7 +455,7 @@ async fn create_folder_if_missing(path: &str) -> Result<bool, ()> {
     debug!("Command: create_folder_if_missing - {path}");
     let folder_path = PathBuf::from(path);
     if !folder_path.exists() {
-        tokio::fs::create_dir_all(path).await.unwrap();
+        tokio::fs::create_dir_all(path).await.unwrap_and_log();
         return Ok(true);
     }
 
@@ -485,9 +493,9 @@ async fn copy_files(copies: Vec<(&str, &str)>, window: Window) -> Result<bool, (
         let origin = PathBuf::from(origin);
         let destination = PathBuf::from(&destination);
 
-        tokio::fs::create_dir_all(destination.parent().unwrap())
+        tokio::fs::create_dir_all(destination.parent().unwrap_and_log())
             .await
-            .unwrap();
+            .unwrap_and_log();
 
         if let Err(err) = tokio::fs::copy(&origin, &destination).await {
             println!("{}", err);
@@ -514,7 +522,7 @@ async fn find_cleanable_files(
     debug!("Command: find_cleanable_files");
     let pocket_path = state.0.pocket_path.read().await;
     let root_path = pocket_path.join(path);
-    let files = find_dotfiles(&root_path).await.unwrap();
+    let files = find_dotfiles(&root_path).await.unwrap_and_log();
 
     Ok(files)
 }
@@ -525,7 +533,7 @@ async fn list_instance_packageable_cores(
 ) -> Result<Vec<String>, ()> {
     debug!("Command: list_instance_packageable_cores");
     let pocket_path = state.0.pocket_path.read().await;
-    Ok(instance_packager::find_cores_with_package_json(&pocket_path).unwrap())
+    Ok(instance_packager::find_cores_with_package_json(&pocket_path).unwrap_and_log())
 }
 
 #[tauri::command]
@@ -547,7 +555,7 @@ async fn run_packager_for_core(
                     message: message,
                 },
             )
-            .unwrap()
+            .unwrap_and_log()
     };
 
     Ok(instance_packager::build_jsons_for_core(
@@ -561,7 +569,7 @@ async fn run_packager_for_core(
             emit_event(String::from(file_name), false, Some(String::from(message)));
         },
     )
-    .unwrap())
+    .unwrap_and_log())
 }
 
 #[tauri::command(async)]
@@ -590,7 +598,7 @@ async fn get_file_metadata(
     state: tauri::State<'_, PocketSyncState>,
     file_path: &str,
 ) -> Result<FileMetadata, String> {
-    debug!("Command: get_file_metadata");
+    trace!("Command: get_file_metadata");
     let pocket_path = state.0.pocket_path.read().await;
     let full_path = pocket_path.join(file_path);
 
@@ -619,7 +627,7 @@ async fn get_file_metadata_mtime_only(
     state: tauri::State<'_, PocketSyncState>,
     file_path: &str,
 ) -> Result<u64, String> {
-    debug!("Command: get_file_metadata_mtime_only");
+    trace!("Command: get_file_metadata_mtime_only");
     let pocket_path = state.0.pocket_path.read().await;
     let full_path = pocket_path.join(file_path);
 
@@ -842,7 +850,7 @@ fn main() {
 }
 
 fn start_tasks(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
-    let window = &app.get_window("main").unwrap();
+    let window = &app.get_window("main").unwrap_and_log();
     {
         let window = window.clone();
         tauri::async_runtime::spawn(async move { start_zip_task(window).await });
