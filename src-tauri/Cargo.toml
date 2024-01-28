@@ -1,9 +1,9 @@
 [package]
 name = "pocket-sync"
-version = "4.3.0"
+version = "4.3.1"
 description = "A GUI tool for doing stuff with the Analogue Pocket"
 authors = ["neil-morrison44"]
-license = ""
+license = "AGPL-3.0-only"
 repository = "https://github.com/neil-morrison44/pocket-sync"
 edition = "2021"
 rust-version = "1.67.0"

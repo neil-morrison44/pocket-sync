@@ -7,6 +7,7 @@ use std::{
     fs,
     io::Cursor,
     path::{Path, PathBuf},
+    time::Duration,
 };
 use tauri::{Manager, Window};
 use tempdir::TempDir;
@@ -45,6 +46,8 @@ use self::payloads::{FromRustPayload, FromTSPayload, PathStatus, ZipInstallProgr
 
 pub async fn start_zip_task(window: Window) -> () {
     info!("Zip Task Started");
+    // Just incase it's a timing issue with the install failing thing
+    tokio::time::sleep(Duration::from_millis(200)).await;
     let state: tauri::State<PocketSyncState> = window.state();
     let (zip_start_tx, mut zip_start_rx) = tokio::sync::mpsc::channel(32);
 

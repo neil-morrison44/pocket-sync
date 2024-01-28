@@ -1,7 +1,7 @@
 {
   "name": "pocket-sync",
   "private": true,
-  "version": "4.3.0",
+  "version": "4.3.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -33,7 +33,7 @@
     "react-markdown": "^9.0.1",
     "recoil": "^0.7.7",
     "remark-gfm": "^4.0.0",
-    "tauri-plugin-log-api": "github:tauri-apps/tauri-plugin-log#v1",
+    "tauri-plugin-log-api": "git+https://github.com/tauri-apps/tauri-plugin-log.git#v1",
     "three": "^0.159.0"
   },
   "devDependencies": {

@@ -22,7 +22,6 @@ use saves_zip::{
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
-use std::fs::File;
 use std::path::PathBuf;
 use std::time::{Duration, SystemTime};
 use std::vec;
@@ -253,13 +252,22 @@ async fn uninstall_core(
     state: tauri::State<'_, PocketSyncState>,
 ) -> Result<bool, ()> {
     debug!("Command: uninstall_core - {core_name}");
-    let pocket_path = state.0.pocket_path.write().await;
-    let core_path = pocket_path.join("Cores").join(core_name);
-    if core_path.exists() && core_path.is_dir() {
-        tokio::fs::remove_dir_all(core_path).await.unwrap_and_log();
-    } else {
-        error!("Weird, it's gone already");
+    let pocket_path = state.0.pocket_path.read().await;
+
+    let paths = vec![
+        pocket_path.join("Cores").join(core_name),
+        pocket_path.join("Presets").join(core_name),
+        pocket_path.join("Settings").join(core_name),
+    ];
+
+    for path in paths {
+        if path.exists() && path.is_dir() {
+            tokio::fs::remove_dir_all(path).await.unwrap_and_log();
+        } else {
+            error!("Weird, it's gone already");
+        }
     }
+
     Ok(true)
 }
 
