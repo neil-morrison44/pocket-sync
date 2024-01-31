@@ -121,7 +121,10 @@ It _should_ catch places where any files in the core differ from what's specifie
 
 ### Donations?
 
-Nah, I'm alright - you should donate to the folks porting / building cores over though.
+If you want to sponsor to help out with on going maintenance / future features / bug fixing then there should be a github sponsorship thing to the right somewhere.
+There's no extra features from being a sponsor, and I don't have plans of adding any.
+
+You should donate to the folks actually porting / building cores first tough, since that's where the fun stuff comes from.
 
 ## Thanks to
 
