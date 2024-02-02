@@ -1,8 +1,8 @@
 {
   "about": {
-    "update_available": "Aktualisierung verfügbar! {version}",
     "app_name": "Pocket Sync",
-    "new_firmware": "Neue Pocket-Firmware v{version} verfügbar"
+    "new_firmware": "Neue Pocket-Firmware v{version} verfügbar",
+    "update_available": "Aktualisierung verfügbar! {version}"
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -26,10 +26,10 @@
       "update": "{count, plural, =0 {none} one {# ausgewählten Kern} other {# ausgewählte Kerne} } aktualisieren",
       "close": "Schließen"
     },
-    "no_updates_found": "Keine Aktualisierung für installierte Kerne gefunden",
     "update": {
-      "title": "Aktualisiere {coreName}: { step, select, core { Kern aktualisieren... } files { erforderliche Dateien herunterladen... } other {on no} }"
-    }
+      "title": "Aktualisiere {coreName}: { step, select, core { Kern aktualisieren... } files { erforderliche Dateien herunterladen... } filecheck { dateien werden überprüft... } other {on no} }"
+    },
+    "no_updates_found": "Keine Aktualisierung für installierte Kerne gefunden"
   },
   "core_info": {
     "author": "Autor",
@@ -43,9 +43,13 @@
     "inputs": "Eingaben",
     "modal": {
       "close": "Schließen",
+      "input_core": "Kern",
       "no_settings_found": "Keine Einstellungen gefunden!",
-      "reset_all": "Alle zurücksetzen",
-      "input_core": "Kern"
+      "reset_all": "Alle zurücksetzen"
+    },
+    "requires_license": {
+      "all": "Warnung, dieser Kern benötigt eine Lizenzdatei zur Ausführung.",
+      "jotego": "Die JOTEGO-Betas benötigen eine JTBETA-Datei aus Patreon in der Unterstützersektion unten.\nDie jtbeta.zip muss im Wurzelverzeichnis der SD-Karte abgelegt werden, damit sie während des „Benötigte Dateien“-Prozesses gefunden und an den richtigen Ort kopiert wird."
     },
     "firmware_too_low": "Dieser Kern benötigt Firmware v{core_firmware}. Die derzeit installierte Version ist v{pocket_firmware}",
     "not_in_inventory": "{coreName} nich im Inventar",
@@ -65,6 +69,7 @@
     "required_files_count": "{count} / {total} Dateien",
     "settings": "Einstellungen",
     "sponsor": "Unterstützen",
+    "supports": "Unterstützungen",
     "supports_items": {
       "cartridges": "Module",
       "dock": "Dock",
@@ -75,12 +80,14 @@
     "version": "Version",
     "display_modes_title": "Anzeigemodi",
     "display_mode_warning": "Dieser Anzeigemodus benötigt eine Aktualisierung des Kerns. Trotzdem aktivieren?",
+    "info_txt_title": "Info.txt",
     "display_modes": {
-      "grayscale_lcd": "Greyscale LCD",
       "crt_trinitron": "CRT Trinitron",
+      "grayscale_lcd": "Greyscale LCD",
       "original_gb_dmg": "Original GB DMG",
       "original_gbp": "Original GBP",
       "original_gbp_light": "Original GBP Light",
+      "reflective_color_lcd": "Reflective Color LCD",
       "original_gbc_lcd": "Original GBC LCD",
       "original_gbc_lcd_plus": "Original GBC LCD+",
       "backlit_color_lcd": "Backlit Color LCD",
@@ -88,18 +95,13 @@
       "original_gba_sp_101": "Original GBA SP 101",
       "original_gg": "Original GG",
       "original_gg_plus": "Original GG+",
-      "pinball_neon_matrix": "Pinball Neon Matrix",
-      "reflective_color_lcd": "Reflective Color LCD"
-    },
-    "info_txt_title": "Info.txt",
-    "requires_license": {
-      "all": "Warnung, dieser Kern benötigt eine Lizenzdatei zur Ausführung.",
-      "jotego": "Die JOTEGO-Betas benötigen eine JTBETA-Datei aus Patreon in der Unterstützersektion unten.\nDie jtbeta.zip muss im Wurzelverzeichnis der SD-Karte abgelegt werden, damit sie während des „Benötigte Dateien“-Prozesses gefunden und an den richtigen Ort kopiert wird."
-    },
-    "supports": "Unterstützungen"
+      "pinball_neon_matrix": "Pinball Neon Matrix"
+    }
   },
   "core_info_required_files": {
+    "close": "Schließen",
     "download_all": "Alle herunterladen",
+    "no_link_tip": "Bitte prüfen Sie die Einstellungssektion für mehr Optionen für benötigte Dateien",
     "skip_alternates_label": "Alternative Dateien überspringen",
     "title": "Benötigte Dateien",
     "file_status": {
@@ -109,11 +111,9 @@
       "ok": "Heruntergeladen",
       "unknown": "Unbekannt",
       "at_root": "Im Wurzelverzeichnis gefunden",
-      "at_root_mismatch": "Datei stimmt nicht überein. Bitte das Wurzelverzeichnis überprüfen",
-      "at_root_match": "Datei verifiziert. Im Wurzelverzeichnis gefunden"
-    },
-    "close": "Schließen",
-    "no_link_tip": "Bitte prüfen Sie die Einstellungssektion für mehr Optionen für benötigte Dateien"
+      "at_root_match": "Datei verifiziert. Im Wurzelverzeichnis gefunden",
+      "at_root_mismatch": "Datei stimmt nicht überein. Bitte das Wurzelverzeichnis überprüfen"
+    }
   },
   "cores": {
     "controls": {
@@ -124,14 +124,14 @@
       "update_all": "Alle aktualisieren",
       "filters_group": "Filter"
     },
-    "installed": "Installiert ({count})",
     "install_tip": "Kerne (oder andere Komponenten in einer ZIP-Datei) können auch durch Ziehen der .zip in dieses Fenster installiert werden",
+    "installed": "Installiert ({count})",
     "not_installed": "Verfügbar ({count})"
   },
   "error": {
+    "report": "Dies kann über GitHub gemeldet werden. Den folgenden Text und eine Anleitung zum Reproduzieren anhängen",
     "retry": "Wiederholen",
-    "title": "Fehler",
-    "report": "Dies kann über GitHub gemeldet werden. Den folgenden Text und eine Anleitung zum Reproduzieren anhängen"
+    "title": "Fehler"
   },
   "fetch": {
     "controls": {
@@ -146,12 +146,12 @@
       "add_extension": "Hinzufügen",
       "add_fetch": "Abruf hinzufügen",
       "archive_name": "Archivname: <i>https://archive.org/details/[dieser Teil hier]</i>",
+      "archive_tip": "Dies funktioniert nicht für Archive mit komprimierten Dateien. Zusätzlich sollten die Dateierweiterungen, die beim Herunterladen der Metadaten-Dateien ignoriert werden sollen, festgelegt werden.",
       "close": "Schließen",
       "destination": "Zielordner",
       "extensions": "Auf Dateierweiterungen beschränken:",
       "origin": "Ursprungsordner",
-      "title": "Neuen Abruf hinzufügen",
-      "archive_tip": "Dies funktioniert nicht für Archive mit komprimierten Dateien. Zusätzlich sollten die Dateierweiterungen, die beim Herunterladen der Metadaten-Dateien ignoriert werden sollen, festgelegt werden."
+      "title": "Neuen Abruf hinzufügen"
     },
     "remove_button": "Entfernen",
     "remove_confirm": "Dieser Vorgang entfernt die Abrufkonfiguration, aber nicht die Dateien. Sind Sie sicher?",
@@ -162,8 +162,10 @@
   },
   "firmware": {
     "current": "Aktuelle Firmware: v{version}",
+    "downloading_firmware": "Firmware herunterladen...",
     "load_firmware": "Auf SD-Karte laden",
     "loaded_firmware": "Firmware {version} befindet sich auf der SD-Karte",
+    "loaded_firmware_info": "Pocket anschließen und einschalten zum Installieren",
     "no_firmware_loaded": "Keine Firmwaredatei zur Installation auf der SD-Karte",
     "options": {
       "latest": "v{version} (aktuell)",
@@ -174,17 +176,15 @@
       "from": "Von ",
       "title": "v{version} Veröffentlichungshinweise:"
     },
-    "remove_button": "Entfernen",
-    "loaded_firmware_info": "Pocket anschließen und einschalten zum Installieren",
-    "downloading_firmware": "Firmware herunterladen..."
+    "remove_button": "Entfernen"
   },
   "games": {
     "controls": {
       "category": "Kategorie",
+      "clean_files": "Dateien bereinigen",
       "instance_json": "Instanz-JSON",
       "refresh": "Aktualisieren",
-      "search": "Suchen",
-      "clean_files": "Dateien bereinigen"
+      "search": "Suchen"
     },
     "item": {
       "game_count": "{count, plural, =0 {Keine Spiele} one {# Spiel} other {# Spiele}}"
@@ -195,16 +195,16 @@
     "import_image": "Bild importieren",
     "remove": "Entfernen",
     "reset": "Zurücksetzen",
-    "save": "Speichern",
     "rotate": "Rotieren",
+    "save": "Speichern",
     "scale": "Skalieren"
   },
   "instance_json": {
+    "available_for": "Automatische instance.json-Dateigenerierung verfügbar für:",
     "close_button": "Schließen",
     "skipped_file": "{file_name} übersprungen",
     "title": "Instanz-JSON-Datei generieren",
-    "wrote_file": "{file_name} geschrieben",
-    "available_for": "Automatische instance.json-Dateigenerierung verfügbar für:"
+    "wrote_file": "{file_name} geschrieben"
   },
   "layout": {
     "cores": "Kerne",
@@ -222,8 +222,8 @@
   "palettes": {
     "buttons": {
       "add_via_code": "Über Code hinzufügen",
-      "back": "Zurück zur Liste",
-      "new": "Neue Palette"
+      "new": "Neue Palette",
+      "back": "Zurück zur Liste"
     },
     "item": {
       "duplicate": "Duplizieren",
@@ -261,18 +261,18 @@
       "password": "Kennwort:",
       "username": "Benutzername:"
     },
+    "mister": "MiSTer",
     "not_found": "Nicht gefunden",
+    "pocket": "Pocket",
     "tip_1": "Der MiSTer-FTP-Server muss aktiviert werden",
+    "tip_2": "Stellen Sie vor der Übertragung sicher, dass der Spielstand zwischen Pocket und MiSTer kompatibel ist",
     "tip_3": "Das Spiel muss auf dem Pocket und dem MiSTer exakt gleich benannt sein, damit der Spielstand gefunden wird.",
+    "unsupported": "{platform} ist nicht gemapped",
     "mapping": {
       "close": "Schließen",
-      "reset": "Auf Standard zurücksetzen",
-      "clear": "Leeren"
-    },
-    "mister": "MiSTer",
-    "pocket": "Pocket",
-    "tip_2": "Stellen Sie vor der Übertragung sicher, dass der Spielstand zwischen Pocket und MiSTer kompatibel ist",
-    "unsupported": "{platform} ist nicht gemapped"
+      "clear": "Leeren",
+      "reset": "Auf Standard zurücksetzen"
+    }
   },
   "news_feed": {
     "last_updated": "Zuletzt aktualisiert <1></1>",
@@ -291,14 +291,14 @@
     "cancel": "Abbrechen",
     "controls": {
       "data_packs": "Datenpakete",
+      "remove_coreless": "Coreless entfernen",
       "image_packs": "Bildpakete",
-      "search": "Suchen",
-      "remove_coreless": "Coreless entfernen"
+      "search": "Suchen"
     },
     "data_packs": {
+      "apply_changes": "{count, plural, =0 {0 Änderungen} one {1 Änderungen} other {# Änderungen}} anwenden",
       "close": "Schließen",
-      "current": "Aktuell",
-      "apply_changes": "{count, plural, =0 {0 Änderungen} one {1 Änderungen} other {# Änderungen}} anwenden"
+      "current": "Aktuell"
     },
     "delete_unused": "{count, plural, one {# ungenutzte Plattform} other {# ungenutzte Plattformen}} löschen?",
     "edit": "Bearbeiten",
@@ -309,25 +309,34 @@
     },
     "save": "Speichern"
   },
+  "progress": {
+    "remaining_time": "Verbleibende Zeit (ungefähr): {remainingTime}"
+  },
   "save_info": {
+    "confirm_restore": "Von Sicherung wiederherstellen?",
     "controls": {
       "back": "Zurück zur Liste",
       "hide_unchanged": "Unveränderte ausblenden",
       "search": "Suchen"
     },
     "current": "Aktuell",
+    "date": "{date, date, short}",
     "newer": "Neuer",
     "older": "Älter",
-    "date": "{date, date, short}",
-    "time": "{date, time, short}",
-    "confirm_restore": "Von Sicherung wiederherstellen?"
+    "time": "{date, time, short}"
   },
   "save_states": {
     "cartridge": "Modul",
+    "confirm_delete": "Sind sie sicher, dass sie {count, plural, =0 {keine Speicherstände} one {einen Speicherstand} other {# Speicherstände}} löschen möchten?",
     "controls": {
       "clear_selection": "Auswahl aufheben",
       "delete_selection": "Ausgewählte löschen ({count})",
       "search": "Suchen"
+    },
+    "count": "( {count} / 128 )",
+    "item": {
+      "date": "{date, date, long}",
+      "time": "{date, time, short}"
     },
     "photos": {
       "title": "Fotoexport",
@@ -341,16 +350,11 @@
         "gb_player": "GB Player",
         "black_and_white": "Schwarz & Weiß"
       }
-    },
-    "count": "( {count} / 128 )",
-    "item": {
-      "date": "{date, date, long}",
-      "time": "{date, time, short}"
-    },
-    "confirm_delete": "Sind sie sicher, dass sie {count, plural, =0 {keine Speicherstände} one {einen Speicherstand} other {# Speicherstände}} löschen möchten?"
+    }
   },
   "saves": {
     "backups": "Sicherungen: {count}",
+    "confirm_delete": "Sind sie sicher, dass Sie dieses Sicherungsziel entfernen möchten?",
     "controls": {
       "add_backup_location": "Sicherungsziel hinzufügen",
       "mister_sync": "MiSTer-Synchronisation"
@@ -358,10 +362,9 @@
     "latest_backup": "Letzte Sicherung: {date, date, long}, {date, time, short}",
     "none": "Fügen Sie oben ein Sicherungsziel hinzu",
     "not_found": "Nicht gefunden",
+    "oldest_backup": "Älteste Sicherung: {date, date, long}, {date, time, short}",
     "remove": "Ort entfernen",
-    "view_saves": "Spielstände anzeigen",
-    "confirm_delete": "Sind sie sicher, dass Sie dieses Sicherungsziel entfernen möchten?",
-    "oldest_backup": "Älteste Sicherung: {date, date, long}, {date, time, short}"
+    "view_saves": "Spielstände anzeigen"
   },
   "screenshot_info": {
     "controls": {
@@ -386,22 +389,22 @@
       "colours": {
         "black": "Schwarz",
         "white": "Weiß",
+        "glow": "Im Dunkeln leuchtend",
         "trans_clear": "Transparent",
         "trans_smoke": "Rauch",
         "trans_blue": "Blau",
         "trans_green": "Grün",
+        "trans_orange": "Orange",
+        "trans_purple": "Violett",
         "trans_red": "Rot",
         "indigo": "Indigo",
-        "trans_purple": "Violett",
         "red": "Rot",
         "green": "Grün",
         "blue": "Blau",
         "yellow": "Gelb",
         "pink": "Pink",
         "orange": "Orange",
-        "silver": "Silber",
-        "glow": "Im Dunkeln leuchtend",
-        "trans_orange": "Orange"
+        "silver": "Silber"
       },
       "classic_label": "Klassisch",
       "transparent_label": "Transparent",
@@ -411,9 +414,9 @@
     },
     "alternate_skip": {
       "checkbox": "Alternative Assets überspringen",
-      "title": "Alternative Assets überspringen",
       "ramble_1": "Diese Einstellung überspring json-Dateien im „_alternatives“-Ordner,\nd.h. Sie erhalten nur die „Haupt“-Titel für die Kerne, welche ihre JSON-Dateien auf diese Weise sortieren.",
-      "ramble_2": "<b>Warnung:</b> wenn diese Option deaktiviert wird, dauert das Installieren von benötigten Dateien <b>deutlich</b> länger."
+      "ramble_2": "<b>Warnung:</b> wenn diese Option deaktiviert wird, dauert das Installieren von benötigten Dateien <b>deutlich</b> länger.",
+      "title": "Alternative Assets überspringen"
     },
     "language": {
       "checkbox": "Always use English (US)",
@@ -426,8 +429,8 @@
     },
     "clear_file_cache": {
       "button": "Dateicache leeren",
-      "title": "Dateicache leeren",
-      "ramble": "Um die USB- und SD-Kartenübertragung zu vereinfachen, werden größere Dateien in das Dateisystem des Computers kopiert und gespeichert.\nFalls Probleme auftreten, versuchen Sie den Dateicache zu leeren."
+      "ramble": "Um die USB- und SD-Kartenübertragung zu vereinfachen, werden größere Dateien in das Dateisystem des Computers kopiert und gespeichert.\nFalls Probleme auftreten, versuchen Sie den Dateicache zu leeren.",
+      "title": "Dateicache leeren"
     },
     "disconnect": {
       "button": "Trennen",
@@ -454,8 +457,8 @@
     "less_than_1_min_ago": "vor weniger als einer Minute"
   },
   "uninstall_core": {
-    "confirm_title": "Kern deinstallieren",
-    "confirm_text": "Dies wird den Kern entfernen, aber keine Spiele, Spielstände, Bibliiothekdaten oder Platforminformationen. Sind Sie sicher?"
+    "confirm_text": "Dies wird den Kern entfernen, aber keine Spiele, Spielstände, Bibliiothekdaten oder Platforminformationen. Sind Sie sicher?",
+    "confirm_title": "Kern deinstallieren"
   },
   "zip_install": {
     "cancel_button": "Abbrechen",
@@ -466,16 +469,13 @@
     "replace": {
       "ok": "Erlauben",
       "cancel": "Überspringen",
-      "title": "Kerne ersetzen?",
-      "text": "{list}\n\nAssets, Speicherstände, etc. werden verschoben und der alte Kern wird entfernt."
+      "text": "{list}\n\nAssets, Speicherstände, etc. werden verschoben und der alte Kern wird entfernt.",
+      "title": "Kerne ersetzen?"
     }
   },
   "version": {
     "update_alt": "Aktualisierung {version} verfügbar",
-    "replaced": "Ersetzt",
-    "replaced_alt": "Ersatz-Kern {Kern} verfügbar"
-  },
-  "progress": {
-    "remaining_time": "Verbleibende Zeit (ungefähr): {remainingTime}"
+    "replaced_alt": "Ersatz-Kern {Kern} verfügbar",
+    "replaced": "Ersetzt"
   }
 }

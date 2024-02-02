@@ -27,7 +27,7 @@
       "close": "关闭"
     },
     "update": {
-      "title": "更新 {coreName}: { step, select, core { 正在更新核心... } files { 正在下载所需文件... } other {on no} }"
+      "title": "更新 {coreName}: { step, select, core { 正在更新核心... } files { 正在下载所需文件... } filecheck { 正在检查文件... } other {on no} }"
     },
     "no_updates_found": "未找到已安装核心的更新"
   },

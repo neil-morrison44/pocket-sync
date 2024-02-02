@@ -27,7 +27,7 @@
       "close": "Cerrar"
     },
     "update": {
-      "title": "Actualizando {coreName}: { step, select, core { actualizando core... } files { descargando archivos requeridos... } other {on no} }"
+      "title": "Actualizando {coreName}: { step, select, core { actualizando core... } files { descargando archivos requeridos... } filecheck { comprobando archivos... } other {on no} }"
     },
     "no_updates_found": "No se encontraron actualizaciones para los núcleos instalados"
   },
