@@ -2954,7 +2954,7 @@ dependencies = [
 
 [[package]]
 name = "pocket-sync"
-version = "4.3.1"
+version = "4.4.0"
 dependencies = [
  "async-walkdir",
  "bytes",
