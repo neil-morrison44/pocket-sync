@@ -2,7 +2,8 @@
   "about": {
     "app_name": "Pocket Sync",
     "new_firmware": "Neue Pocket-Firmware v{version} verfügbar",
-    "update_available": "Aktualisierung verfügbar! {version}"
+    "update_available": "Aktualisierung verfügbar! {version}",
+    "sponsor_link": "Sponsor über GitHub"
   },
   "app": {
     "app_name": "Pocket Sync",
