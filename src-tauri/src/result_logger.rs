@@ -37,6 +37,7 @@ impl<T> OptionLogger<T> for Option<T> {
             None => {
                 let caller = core::panic::Location::caller();
                 error!("called `Option::unwrap_or_log()` on an `None` value, {caller}");
+                logger().flush();
                 panic!("called `Option::unwrap_or_log()` on an `Err` value");
             }
         }
