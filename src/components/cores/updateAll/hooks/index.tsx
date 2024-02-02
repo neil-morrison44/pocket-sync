@@ -1,0 +1,130 @@
+import { useRecoilCallback } from "recoil"
+import { turboDownloadsAtom } from "../../../../recoil/settings/atoms"
+import { useInstallCore } from "../../../../hooks/useInstallCore"
+import { DownloadURLSelectorFamily } from "../../../../recoil/inventory/selectors"
+import { emit, listen } from "@tauri-apps/api/event"
+import { InstallZipEventPayload } from "../../../zipInstall/types"
+import { RequiredFilesWithStatusSelectorFamily } from "../../../../recoil/archive/selectors"
+import { invoke } from "@tauri-apps/api"
+import { PocketSyncConfigSelector } from "../../../../recoil/config/selectors"
+import { useState } from "react"
+
+type UpdateInfo = {
+  coreName: string
+  update: boolean
+  requiredFiles: boolean
+  platformFiles: boolean
+}
+
+type UpdateStage = {
+  coreName: string
+  step: "core" | "filecheck" | "files"
+}
+
+export const useProcessUpdates = () => {
+  const { installCore } = useInstallCore()
+  const [stage, setStage] = useState<UpdateStage | null>(null)
+
+  const processUpdates = useRecoilCallback(
+    ({ snapshot }) =>
+      async (updates: UpdateInfo[]) => {
+        snapshot.retain()
+        const turbo = await snapshot.getPromise(turboDownloadsAtom)
+        const { archive_url: archiveUrl } = await snapshot.getPromise(
+          PocketSyncConfigSelector
+        )
+
+        for (const update of updates) {
+          const coreStartTime = Date.now()
+          const { coreName, platformFiles, requiredFiles } = update
+
+          setStage({ coreName, step: "core" })
+
+          const downloadUrl = await snapshot.getPromise(
+            DownloadURLSelectorFamily(coreName)
+          )
+          if (!downloadUrl) continue
+          installCore(coreName, downloadUrl)
+
+          await new Promise((resolve) => {
+            const unlisten = listen<InstallZipEventPayload>(
+              "install-zip-event",
+              ({ payload }) => {
+                const { files, progress } = payload
+
+                if (progress === null) {
+                  const paths = (files || [])
+                    .filter(({ path }) => {
+                      const isRootTxt =
+                        !path.includes("/") && path.endsWith(".txt")
+                      if (!platformFiles)
+                        return !path.startsWith("Platforms/") && !isRootTxt
+                      return !isRootTxt
+                    })
+                    .map(({ path }) => path)
+
+                  emit("install-confirmation", {
+                    type: "InstallConfirmation",
+                    paths,
+                    handle_moved_files: true,
+                    allow: true,
+                  })
+
+                  resolve(true)
+                  unlisten.then((l) => l())
+                }
+              }
+            )
+          })
+
+          await new Promise((resolve) => {
+            const unlisten = listen<{ error?: string }>(
+              "install-zip-finished",
+              () => {
+                resolve(true)
+                unlisten.then((l) => l())
+              }
+            )
+          })
+
+          await new Promise((resolve) => {
+            const timeTaken = Date.now() - coreStartTime
+            if (timeTaken >= 4e3) {
+              resolve(true)
+            } else {
+              setTimeout(() => resolve(true), 4e3 - timeTaken)
+            }
+          })
+
+          if (requiredFiles && archiveUrl) {
+            setStage({ coreName, step: "filecheck" })
+            const requiredFiles = await snapshot.getPromise(
+              RequiredFilesWithStatusSelectorFamily(coreName)
+            )
+            setStage({ coreName, step: "files" })
+
+            const files = requiredFiles.filter(
+              ({ status }) =>
+                status === "downloadable" ||
+                status === "wrong" ||
+                status === "at_root" ||
+                status === "at_root_match"
+            )
+
+            if (files.length === 0) continue
+
+            const _response = await invoke<boolean>("install_archive_files", {
+              files,
+              archiveUrl,
+              turbo: turbo.enabled,
+            })
+          }
+        }
+
+        setStage(null)
+      },
+    []
+  )
+
+  return { processUpdates, stage }
+}

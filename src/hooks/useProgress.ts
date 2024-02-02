@@ -10,7 +10,7 @@ export const useProgress = (onEnd?: () => void) => {
 
   const [inProgress, setInProgress] = useState(false)
   const [percent, setPercent] = useState(0)
-  const [startTime, setStartTime] = useState(0)
+  const [startTime, setStartTime] = useState(() => Date.now())
 
   const remainingTime = useMemo(() => {
     const currentTime = Date.now()
@@ -19,6 +19,9 @@ export const useProgress = (onEnd?: () => void) => {
     const estimatedTotalTimeMs = elapsedTimeMs / (percent / 100)
     const remainingTimeMs = estimatedTotalTimeMs - elapsedTimeMs
     const remainingTimeSec = Math.round(remainingTimeMs / 1000)
+
+    if (remainingTimeSec === Infinity || Number.isNaN(remainingTimeSec))
+      return "?"
 
     const hours = Math.floor(remainingTimeSec / 3600)
     const minutes = Math.floor((remainingTimeSec % 3600) / 60)

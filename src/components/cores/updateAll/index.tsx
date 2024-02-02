@@ -1,10 +1,9 @@
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil"
 import { Modal } from "../../modal"
 import {
   Dispatch,
   SetStateAction,
   Suspense,
-  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -19,11 +18,13 @@ import { enableGlobalZipInstallAtom } from "../../../recoil/atoms"
 import { NotInstalledCoreInfo } from "../info/notInstalled"
 import { Loader } from "../../loader"
 import { PlatformInfoSelectorFamily } from "../../../recoil/platforms/selectors"
-import { AutoInstallCore } from "./autoInstallCore"
-import { AutoInstallFiles } from "./autoInstallFiles"
+import { CoreInstallProgress } from "./coreInstallProgress"
+import { FileInstallProgress } from "./fileInstallProgress"
 import { useTranslation } from "react-i18next"
 import { message } from "@tauri-apps/api/dialog"
 import { useHasArchiveLink } from "../../../hooks/useHasArchiveLink"
+import { info } from "tauri-plugin-log-api"
+import { useProcessUpdates } from "./hooks"
 
 type UpdateAllProps = {
   onClose: () => void
@@ -36,14 +37,9 @@ type UpdateListItem = {
   platformFiles: boolean
 }
 
-type UpdateStage = {
-  coreName: string
-  step: "core" | "files"
-}
-
 export const UpdateAll = ({ onClose }: UpdateAllProps) => {
   const [updateList, setUpdateList] = useState<UpdateListItem[]>([])
-  const [stage, setStage] = useState<UpdateStage | null>(null)
+  // const [stage, setStage] = useState<UpdateStage | null>(null)
   const { t } = useTranslation("update_all")
   const hasDoneAnUpdateRef = useRef(false)
 
@@ -61,30 +57,10 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
     [updateList]
   )
 
-  const onFinish = useCallback(() => {
-    setStage((currentStage) => {
-      const updateListIndex = filteredUpdateList.findIndex(
-        ({ coreName }) => currentStage?.coreName === coreName
-      )
-      if (
-        currentStage?.step === "core" &&
-        filteredUpdateList[updateListIndex].requiredFiles
-      ) {
-        return { ...currentStage, step: "files" }
-      }
-
-      if (updateListIndex + 1 < filteredUpdateList.length) {
-        return {
-          coreName: filteredUpdateList[updateListIndex + 1].coreName,
-          step: "core",
-        }
-      }
-
-      return null
-    })
-  }, [filteredUpdateList, setStage])
+  const { processUpdates, stage } = useProcessUpdates()
 
   useEffect(() => {
+    info(`Update All ${stage ? `${stage.coreName} - ${stage.step}` : "null"}`)
     if (stage === null && hasDoneAnUpdateRef.current) {
       onClose()
       return
@@ -175,10 +151,7 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
           {filteredUpdateList.length > 0 && (
             <button
               onClick={() => {
-                setStage({
-                  coreName: filteredUpdateList[0].coreName,
-                  step: "core",
-                })
+                processUpdates(filteredUpdateList)
               }}
             >
               {t("buttons.update", { count: filteredUpdateList.length })}
@@ -206,23 +179,10 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
             </Suspense>
           </div>
           <Suspense fallback={<Loader className="loader--no-background" />}>
-            {stage.step === "core" && (
-              <AutoInstallCore
-                key={stage.coreName}
-                coreName={stage.coreName}
-                onFinish={onFinish}
-                platformFiles={
-                  updateList.find(({ coreName: cn }) => cn === stage.coreName)
-                    ?.platformFiles || false
-                }
-              />
-            )}
-            {stage.step === "files" && (
-              <AutoInstallFiles
-                key={stage.coreName}
-                coreName={stage.coreName}
-                onFinish={onFinish}
-              />
+            {stage.step === "core" && <CoreInstallProgress />}
+            {stage.step === "files" && <FileInstallProgress />}
+            {stage.step === "filecheck" && (
+              <Loader className="loader--no-background" />
             )}
           </Suspense>
         </div>
@@ -241,6 +201,28 @@ const UpdateAllList = ({
   const { t } = useTranslation("")
   const unsortedCoresList = useRecoilValue(installedCoresWithUpdatesSelector)
 
+  const getUpdateList = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const list = await snapshot.getPromise(
+          installedCoresWithUpdatesSelector
+        )
+        setUpdateList(
+          list.map(({ coreName }) => ({
+            coreName,
+            requiredFiles: hasArchiveLink,
+            platformFiles: true,
+            update: true,
+          }))
+        )
+      },
+    [setUpdateList]
+  )
+
+  useEffect(() => {
+    getUpdateList()
+  }, [getUpdateList])
+
   const coresList = useMemo(
     () =>
       [...unsortedCoresList].sort((a, b) =>
@@ -251,16 +233,16 @@ const UpdateAllList = ({
 
   const hasArchiveLink = useHasArchiveLink()
 
-  useEffect(() => {
-    setUpdateList(
-      coresList.map(({ coreName }) => ({
-        coreName,
-        requiredFiles: hasArchiveLink,
-        platformFiles: true,
-        update: true,
-      }))
-    )
-  }, [coresList, setUpdateList, hasArchiveLink])
+  // useEffect(() => {
+  //   setUpdateList(
+  //     coresList.map(({ coreName }) => ({
+  //       coreName,
+  //       requiredFiles: hasArchiveLink,
+  //       platformFiles: true,
+  //       update: true,
+  //     }))
+  //   )
+  // }, [coresList, setUpdateList, hasArchiveLink])
 
   if (coresList.length === 0)
     return (

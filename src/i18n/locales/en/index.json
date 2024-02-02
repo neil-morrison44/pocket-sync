@@ -27,7 +27,7 @@
       "close": "Close"
     },
     "update": {
-      "title": "Updating {coreName}: { step, select, core { updating core... } files { downloading Required Files... } other {on no} }"
+      "title": "Updating {coreName}: { step, select, core { updating core... } files { downloading Required Files... } filecheck { checking files... } other {on no} }"
     },
     "no_updates_found": "No updates found for installed cores"
   },
