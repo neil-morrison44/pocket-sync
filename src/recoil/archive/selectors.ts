@@ -26,7 +26,6 @@ export const ArchiveMetadataSelectorFamily = selectorFamily<
       const response = await httpClient.get<{
         files: ArchiveFileMetadata[]
       }>(`https://archive.org/metadata/${archiveName}`, {
-        // timeout: 30,
         responseType: ResponseType.JSON,
       })
 

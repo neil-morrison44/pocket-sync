@@ -39,7 +39,6 @@ type UpdateListItem = {
 
 export const UpdateAll = ({ onClose }: UpdateAllProps) => {
   const [updateList, setUpdateList] = useState<UpdateListItem[]>([])
-  // const [stage, setStage] = useState<UpdateStage | null>(null)
   const { t } = useTranslation("update_all")
   const hasDoneAnUpdateRef = useRef(false)
 
@@ -232,17 +231,6 @@ const UpdateAllList = ({
   )
 
   const hasArchiveLink = useHasArchiveLink()
-
-  // useEffect(() => {
-  //   setUpdateList(
-  //     coresList.map(({ coreName }) => ({
-  //       coreName,
-  //       requiredFiles: hasArchiveLink,
-  //       platformFiles: true,
-  //       update: true,
-  //     }))
-  //   )
-  // }, [coresList, setUpdateList, hasArchiveLink])
 
   if (coresList.length === 0)
     return (
