@@ -58,6 +58,34 @@
   flex-direction: column;
 }
 
+.about__sponsor{
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: flex-end;
+  position: absolute;
+
+  .link{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    will-change: opacity, background-color;
+    opacity: 0.8;
+    font-size: 0.85rem;
+    text-decoration: none;
+    background-color: rgb(255 255 255 / 10%);
+    padding-inline: 5px;
+    border-radius: 50px;
+
+  }
+
+  .link:hover{
+    opacity: 1;
+    background-color: rgb(0 0 0 / 10%);
+  }
+}
+
 .about__news {
   width: 100%;
 }
