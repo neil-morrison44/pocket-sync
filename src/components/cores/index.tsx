@@ -1,4 +1,4 @@
-import { Suspense, useMemo, useState } from "react"
+import { Suspense, useCallback, useMemo, useState } from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import { coreInventoryAtom } from "../../recoil/inventory/atoms"
@@ -31,7 +31,10 @@ export const Cores = () => {
   const { t } = useTranslation("cores")
   const [updateAllOpen, setUpdateAllOpen] = useState(false)
 
-  const categoryList = useRecoilValue(cateogryListselector)
+  const closeUpdateAllCallback = useCallback(
+    () => setUpdateAllOpen(false),
+    [setUpdateAllOpen]
+  )
 
   if (selectedCore) {
     return (
@@ -60,32 +63,40 @@ export const Cores = () => {
           <ControlsCheckbox checked={onlyUpdates} onChange={setOnlyUpdates}>
             {t("controls.updatable")}
           </ControlsCheckbox>
-          <ControlsSelect
-            options={categoryList}
-            selected={filterCategory}
-            onChange={setFilterCategory}
+
+          <Suspense
+            fallback={
+              <label className="controls__item controls__select">
+                {t("controls.category")}
+              </label>
+            }
           >
-            {t("controls.category")}
-          </ControlsSelect>
+            <CategoryFilter
+              filterCategory={filterCategory}
+              setFilterCategory={setFilterCategory}
+            />
+          </Suspense>
         </ControlsGroup>
       </Controls>
 
-      {updateAllOpen && <UpdateAll onClose={() => setUpdateAllOpen(false)} />}
+      {updateAllOpen ? (
+        <UpdateAll onClose={closeUpdateAllCallback} />
+      ) : (
+        <SearchContextProvider
+          query={searchQuery}
+          other={{ onlyUpdates, category: filterCategory }}
+        >
+          <Suspense fallback={<Loader />}>
+            <CoreList
+              onSelect={(core) => {
+                pushScroll()
 
-      <SearchContextProvider
-        query={searchQuery}
-        other={{ onlyUpdates, category: filterCategory }}
-      >
-        <Suspense fallback={<Loader />}>
-          <CoreList
-            onSelect={(core) => {
-              pushScroll()
-
-              setSelectedCore(core)
-            }}
-          />
-        </Suspense>
-      </SearchContextProvider>
+                setSelectedCore(core)
+              }}
+            />
+          </Suspense>
+        </SearchContextProvider>
+      )}
 
       <Tip>{t("install_tip")}</Tip>
     </div>
@@ -142,5 +153,26 @@ const CoreList = ({ onSelect }: { onSelect: (coreid: string) => void }) => {
         ))}
       </Grid>
     </>
+  )
+}
+
+const CategoryFilter = ({
+  filterCategory,
+  setFilterCategory,
+}: {
+  filterCategory: string
+  setFilterCategory: (fc: string) => void
+}) => {
+  const categoryList = useRecoilValue(cateogryListselector)
+
+  const { t } = useTranslation("cores")
+  return (
+    <ControlsSelect
+      options={categoryList}
+      selected={filterCategory}
+      onChange={setFilterCategory}
+    >
+      {t("controls.category")}
+    </ControlsSelect>
   )
 }

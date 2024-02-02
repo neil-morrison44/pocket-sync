@@ -1,4 +1,5 @@
 use log::error;
+use log::logger;
 
 pub trait ResultLogger<T, E> {
     fn unwrap_and_log(self) -> T
@@ -17,6 +18,7 @@ impl<T, E> ResultLogger<T, E> for Result<T, E> {
             Err(e) => {
                 let caller = core::panic::Location::caller();
                 error!("called `Result::unwrap_or_log()` on an `Err` value: {e:?}, {caller}");
+                logger().flush();
                 panic!("called `Result::unwrap_or_log()` on an `Err` value: {e:?}");
             }
         }
