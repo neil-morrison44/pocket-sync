@@ -224,7 +224,13 @@
     "buttons": {
       "add_via_code": "Add via code",
       "new": "New Palette",
-      "back": "Back to list"
+      "back": "Back to list",
+      "palette_town": "Palette Town"
+    },
+    "town": {
+      "title": "Palette Town",
+      "repo_link": "Palettes from <1>github.com/{repo}</1>",
+      "close": "Close"
     },
     "item": {
       "duplicate": "Duplicate",

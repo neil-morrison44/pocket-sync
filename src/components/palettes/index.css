@@ -59,6 +59,8 @@
   font-family: GamePocket, sans-serif;
   flex-grow: 1;
   cursor: pointer;
+  gap: 20px;
+  line-height: 1.1em;
 
   &:hover{
     transform: scale(1.02);
@@ -70,12 +72,14 @@
   width: 100px;
   height: 80px;
   border: 1px solid white;
+  flex-shrink: 0;
 }
 
 .palettes__list-item-buttons {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  flex-shrink: 0;
 }
 
 .palette__grid{

@@ -1,0 +1,38 @@
+.palette-town{
+
+}
+
+.palette-town--list{
+  overflow: auto;
+
+}
+
+
+
+
+.palette-town__item{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+
+  &:hover{
+    scale: 1.1;
+  }
+}
+
+.palette-town__item-name{
+  background-color: var(--info-colour);
+  text-align: center;
+  padding: 4px 8px;
+  border-radius: 5px;
+}
+
+.palette-town__item-name--installed {
+  border: 2px solid var(--selection-colour);
+}
+
+.palette-town__repo-link {
+  margin-block-start: auto;
+}

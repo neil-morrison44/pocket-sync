@@ -191,7 +191,7 @@ export type GithubRelease = {
     name: string
     label: string
     content_type: string
-    size: 1024
+    size: number
   }[]
 }
 
