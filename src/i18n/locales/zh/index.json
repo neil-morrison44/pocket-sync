@@ -207,7 +207,13 @@
     "buttons": {
       "add_via_code": "通过代码添加",
       "new": "新建调色板",
-      "back": "返回列表"
+      "back": "返回列表",
+      "palette_town": "调色板浏览器"
+    },
+    "town": {
+      "title": "调色板浏览器",
+      "repo_link": "调色板来自<1>github.com/{repo}</1>",
+      "close": "关闭"
     },
     "item": {
       "duplicate": "复制",

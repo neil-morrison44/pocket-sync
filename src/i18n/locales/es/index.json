@@ -207,7 +207,13 @@
     "buttons": {
       "add_via_code": "Agregar mediante código",
       "new": "Nueva paleta",
-      "back": "Volver a la lista"
+      "back": "Volver a la lista",
+      "palette_town": "Explorador de paletas"
+    },
+    "town": {
+      "title": "Explorador de paletas",
+      "repo_link": "Paletas de <1>github.com/{repo}</1>",
+      "close": "Cerrar"
     },
     "item": {
       "duplicate": "Duplicar",

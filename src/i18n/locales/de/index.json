@@ -224,7 +224,13 @@
     "buttons": {
       "add_via_code": "Über Code hinzufügen",
       "new": "Neue Palette",
-      "back": "Zurück zur Liste"
+      "back": "Zurück zur Liste",
+      "palette_town": "Palettenstadt"
+    },
+    "town": {
+      "title": "Palettenstadt",
+      "repo_link": "Palettes from <1>github.com/{repo}</1>",
+      "close": "Schließen"
     },
     "item": {
       "duplicate": "Duplizieren",
