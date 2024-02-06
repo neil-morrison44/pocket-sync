@@ -33,7 +33,7 @@
     "react-markdown": "^9.0.1",
     "recoil": "^0.7.7",
     "remark-gfm": "^4.0.0",
-    "tauri-plugin-log-api": "git+https://github.com/tauri-apps/tauri-plugin-log.git#v1",
+    "tauri-plugin-log-api": "https://github.com/tauri-apps/tauri-plugin-log/archive/refs/heads/v1.tar.gz",
     "three": "^0.159.0"
   },
   "devDependencies": {
