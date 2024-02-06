@@ -45,6 +45,8 @@ If this starts happening again let me know & I'll resubmit the app to the Window
 
 The app now supports translations into the user's language & locale for _most_ things in the UI.
 
+[You can now use fink.inlang.com to edit / create translations & submit them as PRs](https://fink.inlang.com/github.com/neil-morrison44/pocket-sync)
+
 If you're fluent in another language and feel like helping out you can find the files in https://github.com/neil-morrison44/pocket-sync/tree/main/src/i18n/locales , just add one for the language (e.g. `en`) then make tweaks on top of it for locale specific things (e.g. `en-US`).
 
 So far I've got translations for Chinese, Spanish & German, thanks to @fevaoctwh, @rayelward, & @auer1329 respectively. Which I've been keeping up to date as I add new features (hopefully well enough).
@@ -80,13 +82,13 @@ It's in the ICU message format, which there are some guides available online for
 - List new cores / updates since the last Pocket was connected (covered by the inventory's newsfeed)
 - Export Game Boy Camera images from the save state
 - "Update All" feature to update multiple installed cores at once
+- GB Palette editor / catalogue
 
 ### Soon
 
 ### Longer term
 
-- Library viewing / editing once that's rolled out to OpenFPGA
-- OpenFPGA video filter features (format dependent)
+- Library viewing / editing if that's ever rolled out to OpenFPGA
 
 ## FAQs
 
