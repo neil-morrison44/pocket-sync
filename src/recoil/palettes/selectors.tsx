@@ -4,7 +4,10 @@ import {
   invokeReadBinaryFile,
   invokeWalkDirListFiles,
 } from "../../utils/invokes"
-import { Palette, rgb } from "../../types"
+import { GithubRelease, Palette, rgb } from "../../types"
+import { ResponseType, fetch, getClient } from "@tauri-apps/api/http"
+import { paletteRepoAtom } from "./atoms"
+import * as zip from "@zip.js/zip.js"
 
 export const palettesListSelector = selector<string[]>({
   key: "palettesListSelector",
@@ -74,5 +77,107 @@ export const PaletteCodeSelectorFamily = selectorFamily<string, string>({
           .map((s) => s.toString(16).padStart(2, "0"))
           .join("") + btoa(name)
       )
+    },
+})
+
+export const palleteZipURLSelector = selector<string | null>({
+  key: "palleteZipURLSelector",
+  get: async ({ get }) => {
+    const repo = get(paletteRepoAtom)
+    const response = await fetch<GithubRelease>(
+      `https://api.github.com/repos/${repo}/releases/latest`,
+      { method: "GET", headers: { "User-Agent": `Pocket Sync` } }
+    )
+
+    const zip = response.data.assets.find((asset) =>
+      asset.name.endsWith(".zip")
+    )
+
+    if (zip) {
+      return zip.browser_download_url
+    } else {
+      return null
+    }
+  },
+})
+
+const palleteZipBlobSelector = selector<Blob | null>({
+  key: "palleteZipBlobSelector",
+  get: async ({ get }) => {
+    const zipUrl = get(palleteZipURLSelector)
+    if (!zipUrl) return null
+
+    const httpClient = await getClient()
+    const fileResponse = await httpClient.get<number[]>(zipUrl, {
+      timeout: 60,
+      responseType: ResponseType.Binary,
+    })
+
+    const fileBlob = new Blob([new Uint8Array(fileResponse.data)], {
+      type: "application/zip",
+    })
+
+    return fileBlob
+  },
+})
+
+export const downloadablePalettesSelector = selector<
+  { name: string; paletteData: Blob; path: string }[] | null
+>({
+  key: "downloadablePalettesSelector",
+  get: async ({ get }) => {
+    const zipBlob = get(palleteZipBlobSelector)
+
+    if (!zipBlob) return null
+
+    const abortController = new AbortController()
+    const entries = await new zip.ZipReader(new zip.BlobReader(zipBlob), {
+      signal: abortController.signal,
+    }).getEntries({})
+
+    return Promise.all(
+      entries
+        .filter((entry) => {
+          const filename = entry.filename.split("/").at(-1) || ""
+          return (
+            filename.endsWith(".pal") &&
+            !filename.startsWith(".") &&
+            entry.getData
+          )
+        })
+        .map(async (entry) => ({
+          name: (entry.filename.split("/").at(-1) as string).replace(
+            ".pal",
+            ""
+          ),
+          // @ts-expect-error
+          paletteData: await entry.getData(new zip.BlobWriter()),
+          path: entry.filename.replace("Assets/gb/common/Palettes/", ""),
+        }))
+    )
+  },
+})
+
+export const DownloadablePaletteColoursSelectorFamily = selectorFamily<
+  Palette,
+  string
+>({
+  key: "DownloadablePaletteColoursSelectorFamily",
+  get:
+    (path: string) =>
+    async ({ get }) => {
+      const downloadablePalettes = get(downloadablePalettesSelector)
+      if (!downloadablePalettes) throw new Error("Attempt to open null palette")
+      const palette = downloadablePalettes.find((p) => p.path === path)
+      if (!palette) throw new Error("Attempt to open missing palette")
+      const data = new Uint8Array(await palette.paletteData.arrayBuffer())
+
+      return {
+        background: parsePalette(data.subarray(0, 12)),
+        obj0: parsePalette(data.subarray(12, 24)),
+        obj1: parsePalette(data.subarray(24, 36)),
+        window: parsePalette(data.subarray(36, 48)),
+        off: Array.from(data.subarray(48, 51)) as rgb,
+      } satisfies Palette
     },
 })

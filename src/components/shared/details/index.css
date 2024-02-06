@@ -23,6 +23,12 @@
 
 }
 
+.details__title--sticky {
+  position: sticky;
+  top: 0;
+  background-color: var(--background-colour);
+}
+
 
 .details__content {
   padding: 15px;

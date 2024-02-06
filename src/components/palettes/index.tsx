@@ -24,6 +24,7 @@ import { Palette, rgb } from "../../types"
 import { splitAsPath } from "../../utils/splitAsPath"
 import { useTranslation } from "react-i18next"
 import { PreviewCanvas } from "./previewCanvas"
+import { PaletteTown } from "./town"
 
 export const Palettes = () => {
   const palettesList = useRecoilValue(palettesListSelector)
@@ -32,6 +33,7 @@ export const Palettes = () => {
     { name: "list" } | { name: "new" } | { name: "selected"; palette: string }
   >({ name: "list" })
   const [codeModalOpen, setCodeModalOpen] = useState(false)
+  const [townOpen, setTownOpen] = useState(false)
 
   const sortedPalettesList = useMemo(
     () => [...palettesList].sort((a, b) => a.localeCompare(b)),
@@ -72,12 +74,17 @@ export const Palettes = () => {
             <ControlsButton onClick={() => setCodeModalOpen(true)}>
               {t("buttons.add_via_code")}
             </ControlsButton>
+            <ControlsButton onClick={() => setTownOpen(true)}>
+              {t("buttons.palette_town")}
+            </ControlsButton>
             <ControlsButton onClick={() => createNewPalette()}>
               {t("buttons.new")}
             </ControlsButton>
           </>
         )}
       </Controls>
+
+      {townOpen && <PaletteTown onClose={() => setTownOpen(false)} />}
 
       {codeModalOpen && (
         <AddViaCodeModal onClose={() => setCodeModalOpen(false)} />

@@ -1,9 +1,15 @@
 import { useRecoilValue } from "recoil"
 import { PaletteColoursSelectorFamily } from "../../recoil/palettes/selectors"
 import { useEffect, useRef } from "react"
+import { Palette } from "../../types"
 
 export const PreviewCanvas = ({ name }: { name: string }) => {
   const paletteColours = useRecoilValue(PaletteColoursSelectorFamily(name))
+
+  return <PreviewCanvasInner palette={paletteColours} />
+}
+
+export const PreviewCanvasInner = ({ palette }: { palette: Palette }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -13,28 +19,28 @@ export const PreviewCanvas = ({ name }: { name: string }) => {
 
     const imageData = context.getImageData(0, 0, 4, 5)
 
-    paletteColours.background
+    palette.background
       .map((v) => [...v, 255])
       .flat()
       .forEach((v, index) => {
         imageData.data[index] = v
       })
 
-    paletteColours.obj0
+    palette.obj0
       .map((v) => [...v, 255])
       .flat()
       .forEach((v, index) => {
         imageData.data[index + 16] = v
       })
 
-    paletteColours.obj1
+    palette.obj1
       .map((v) => [...v, 255])
       .flat()
       .forEach((v, index) => {
         imageData.data[index + 32] = v
       })
 
-    paletteColours.window
+    palette.window
       .map((v) => [...v, 255])
       .flat()
       .forEach((v, index) => {
@@ -42,14 +48,14 @@ export const PreviewCanvas = ({ name }: { name: string }) => {
       })
 
     context.putImageData(imageData, 0, 0)
-    context.fillStyle = `rgb(${paletteColours.off.join(",")})`
+    context.fillStyle = `rgb(${palette.off.join(",")})`
     context.fillRect(0, 4, 4, 1)
   }, [
-    paletteColours.background,
-    paletteColours.obj0,
-    paletteColours.obj1,
-    paletteColours.off,
-    paletteColours.window,
+    palette.background,
+    palette.obj0,
+    palette.obj1,
+    palette.off,
+    palette.window,
   ])
 
   return (
