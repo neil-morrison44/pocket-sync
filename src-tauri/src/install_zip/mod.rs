@@ -18,7 +18,6 @@ mod payloads;
 
 use crate::{
     core_json_files::{core::CoreFile, updaters::UpdatersFile, CoreDetails},
-    result_logger::{OptionLogger, ResultLogger},
     PocketSyncState,
 };
 
@@ -58,7 +57,7 @@ pub async fn start_zip_task(window: Window) -> () {
             if let FileDrop(Dropped(paths)) = event {
                 if paths.len() != 0 {
                     tx.try_send(ZipStartAction::FileDrop(paths.clone()))
-                        .unwrap_and_log();
+                        .unwrap();
                 }
             }
         });
@@ -68,11 +67,9 @@ pub async fn start_zip_task(window: Window) -> () {
         let tx = zip_start_tx.clone();
         main_window.listen("install-core", move |event| {
             info!("Installing Core Event");
-            let install: InstallInfo =
-                serde_json::from_str(event.payload().unwrap_and_log()).unwrap_and_log();
+            let install: InstallInfo = serde_json::from_str(event.payload().unwrap()).unwrap();
             info!("Core - {}", &install.core_name);
-            tx.try_send(ZipStartAction::InstallCore(install))
-                .unwrap_and_log();
+            tx.try_send(ZipStartAction::InstallCore(install)).unwrap();
         });
         info!("Zip Task listening for install-core");
     }
@@ -89,21 +86,21 @@ pub async fn start_zip_task(window: Window) -> () {
                     if !path
                         .file_name()
                         .and_then(|f| f.to_str())
-                        .unwrap_and_log()
+                        .unwrap()
                         .ends_with(".zip")
                     {
                         continue;
                     }
-                    let zip_file = fs::read(&path).unwrap_and_log();
+                    let zip_file = fs::read(&path).unwrap();
                     let cursor = Cursor::new(zip_file);
-                    let archive = zip::ZipArchive::new(cursor).unwrap_and_log();
+                    let archive = zip::ZipArchive::new(cursor).unwrap();
 
                     start_zip_install_flow(
                         archive,
                         Titles {
                             title: String::from(format!(
                                 "Installing {}",
-                                &path.file_name().and_then(|f| f.to_str()).unwrap_and_log()
+                                &path.file_name().and_then(|f| f.to_str()).unwrap()
                             )),
                             installing_title: (String::from("Installing Zip...")),
                         },
@@ -111,25 +108,24 @@ pub async fn start_zip_task(window: Window) -> () {
                         &window,
                     )
                     .await
-                    .unwrap_and_log();
+                    .unwrap();
                 }
             }
             Some(ZipStartAction::InstallCore(install)) => {
                 let pocket_path = state.0.pocket_path.read().await;
-                let response = reqwest::get(&install.zip_url).await.unwrap_and_log();
+                let response = reqwest::get(&install.zip_url).await.unwrap();
                 match response.status() {
                     StatusCode::OK => {
                         let zip_file = {
-                            let total_size = response.content_length().unwrap_and_log();
+                            let total_size = response.content_length().unwrap();
                             let mut downloaded: u64 = 0;
                             let mut stream = response.bytes_stream();
 
-                            let mut file =
-                                BytesMut::with_capacity(total_size.try_into().unwrap_and_log());
+                            let mut file = BytesMut::with_capacity(total_size.try_into().unwrap());
                             while let Some(item) = stream.next().await {
                                 let chunk = item
                                     .or(Err(format!("Error while downloading file")))
-                                    .unwrap_and_log();
+                                    .unwrap();
 
                                 file.extend(&chunk);
                                 let new =
@@ -142,13 +138,13 @@ pub async fn start_zip_task(window: Window) -> () {
                                     total_size,
                                 }
                                 .emit(&main_window)
-                                .unwrap_and_log();
+                                .unwrap();
                             }
                             file
                         };
 
                         let cursor = Cursor::new(zip_file);
-                        let archive = zip::ZipArchive::new(cursor).unwrap_and_log();
+                        let archive = zip::ZipArchive::new(cursor).unwrap();
 
                         match start_zip_install_flow(
                             archive,
@@ -167,7 +163,7 @@ pub async fn start_zip_task(window: Window) -> () {
                                     error: Some(format!("Unable to install core:\n{}", e)),
                                 }
                                 .emit(&main_window)
-                                .unwrap_and_log();
+                                .unwrap();
                             }
                         }
                     }
@@ -176,7 +172,7 @@ pub async fn start_zip_task(window: Window) -> () {
                             error: Some(format!("Unable to download ZIP:\n{}", status)),
                         }
                         .emit(&main_window)
-                        .unwrap_and_log();
+                        .unwrap();
                     }
                 }
             }
@@ -212,10 +208,7 @@ async fn process_core_replacements(
             .map(|d| format!("{}.{}", d.author, d.shortname))
             .collect(),
     };
-    let replace_confirm = confirm_event
-        .wait_for_confirmation(&window)
-        .await
-        .unwrap_and_log();
+    let replace_confirm = confirm_event.wait_for_confirmation(&window).await.unwrap();
 
     let allow = match replace_confirm {
         payloads::FromTSPayload::ReplaceConfirmation { allow } => allow,
@@ -237,7 +230,7 @@ async fn process_core_replacements(
             progress: Some(ZipInstallProgress { value: 1, max: 100 }),
         }
         .emit(&window)
-        .unwrap_and_log();
+        .unwrap();
 
         move_files(
             pocket_path.join(format!(
@@ -250,14 +243,14 @@ async fn process_core_replacements(
             )),
         )
         .await
-        .unwrap_and_log();
+        .unwrap();
 
         move_files(
             pocket_path.join(format!("Assets/{}/common", previous_core.platform_id)),
             pocket_path.join(format!("Assets/{}/common", new_core.platform_id)),
         )
         .await
-        .unwrap_and_log();
+        .unwrap();
 
         move_files(
             pocket_path.join(format!(
@@ -270,14 +263,14 @@ async fn process_core_replacements(
             )),
         )
         .await
-        .unwrap_and_log();
+        .unwrap();
 
         move_files(
             pocket_path.join(format!("Saves/{}/common", previous_core.platform_id)),
             pocket_path.join(format!("Saves/{}/common", new_core.platform_id)),
         )
         .await
-        .unwrap_and_log();
+        .unwrap();
 
         move_files(
             pocket_path.join(format!(
@@ -290,7 +283,7 @@ async fn process_core_replacements(
             )),
         )
         .await
-        .unwrap_and_log();
+        .unwrap();
 
         move_files(
             pocket_path.join(format!(
@@ -303,14 +296,14 @@ async fn process_core_replacements(
             )),
         )
         .await
-        .unwrap_and_log();
+        .unwrap();
 
         tokio::fs::remove_dir_all(pocket_path.join(format!(
             "Cores/{}.{}",
             previous_core.author, previous_core.shortname
         )))
         .await
-        .unwrap_and_log();
+        .unwrap();
     }
 
     // Could also do save states & screenshots here
@@ -342,18 +335,18 @@ async fn move_files(
     let file_moves: Vec<_> = found_files
         .into_iter()
         .map(|p| {
-            let dest_path = dest_folder.join(p.strip_prefix(&origin_folder).unwrap_and_log());
+            let dest_path = dest_folder.join(p.strip_prefix(&origin_folder).unwrap());
             (p, dest_path)
         })
         .collect();
 
     for file_move in file_moves {
         let (from, to) = file_move;
-        tokio::fs::create_dir_all(to.parent().unwrap_and_log())
+        tokio::fs::create_dir_all(to.parent().unwrap())
             .await
-            .unwrap_and_log();
-        tokio::fs::copy(&from, &to).await.unwrap_and_log();
-        tokio::fs::remove_file(&from).await.unwrap_and_log();
+            .unwrap();
+        tokio::fs::copy(&from, &to).await.unwrap();
+        tokio::fs::remove_file(&from).await.unwrap();
     }
 
     Ok(())
@@ -442,7 +435,7 @@ async fn start_zip_install_flow(
             continue;
         }
 
-        tokio::fs::create_dir_all(destination.parent().unwrap_and_log()).await?;
+        tokio::fs::create_dir_all(destination.parent().unwrap()).await?;
         if !source.is_dir() {
             tokio::fs::copy(&source, &destination).await?;
         }
@@ -463,14 +456,14 @@ async fn start_zip_install_flow(
     let cores: Vec<_> = paths
         .iter()
         .filter(|path| path.ends_with("core.json"))
-        .map(|p| p.parent().unwrap_and_log())
+        .map(|p| p.parent().unwrap())
         .collect();
 
     for core_path in cores {
         let full_core_path = pocket_path.join(core_path);
         if let Some(updaters_file) = UpdatersFile::from_core_path(&full_core_path) {
             if let Some(previous) = updaters_file.previous {
-                let new_core = CoreFile::from_core_path(&full_core_path).unwrap_and_log();
+                let new_core = CoreFile::from_core_path(&full_core_path).unwrap();
                 process_core_replacements(&window, &pocket_path, &new_core.into(), &previous).await;
             }
         }

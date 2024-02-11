@@ -3,8 +3,6 @@ use feed_rs::parser;
 use serde::{Deserialize, Serialize};
 use std::time::SystemTime;
 
-use crate::result_logger::{OptionLogger, ResultLogger};
-
 #[derive(Serialize, Deserialize)]
 pub struct FeedItem {
     title: String,
@@ -17,7 +15,7 @@ pub struct FeedItem {
 pub async fn get_feed_json() -> Vec<FeedItem> {
     let now = SystemTime::now()
         .duration_since(SystemTime::UNIX_EPOCH)
-        .unwrap_and_log()
+        .unwrap()
         .as_millis();
 
     let feed_url = format!(
@@ -35,8 +33,8 @@ pub async fn get_feed_json() -> Vec<FeedItem> {
                 println!("Error downloading from {feed_url}: ({})", r.status());
                 return vec![];
             } else {
-                let content = r.bytes().await.unwrap_and_log();
-                let feed = parser::parse(content.reader()).unwrap_and_log();
+                let content = r.bytes().await.unwrap();
+                let feed = parser::parse(content.reader()).unwrap();
 
                 // dbg!(&feed.entries);
 
@@ -48,15 +46,15 @@ pub async fn get_feed_json() -> Vec<FeedItem> {
                             .title
                             .and_then(|t| Some(t.content))
                             .or_else(|| Some(String::from("Unknown")))
-                            .unwrap_and_log();
+                            .unwrap();
 
                         let content = entry
                             .content
                             .and_then(|c| c.body)
                             .or_else(|| Some(String::from("")))
-                            .unwrap_and_log();
+                            .unwrap();
 
-                        let published = entry.published.unwrap_and_log();
+                        let published = entry.published.unwrap();
 
                         let categories: Vec<String> =
                             entry.categories.into_iter().map(|c| c.term).collect();
