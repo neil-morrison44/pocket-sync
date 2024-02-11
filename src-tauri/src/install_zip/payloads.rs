@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
-use crate::result_logger::{OptionLogger, ResultLogger};
-
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct PathStatus {
     pub path: String,
@@ -62,12 +60,12 @@ impl FromRustPayload {
             _ => panic!("Attempt to wait for error confirmation"),
         };
 
-        self.emit(&window).unwrap_and_log();
+        self.emit(&window).unwrap();
         let (tx, rx) = tokio::sync::oneshot::channel();
         window.once(listen_name, move |event| {
             let install_confirm: FromTSPayload =
-                serde_json::from_str(event.payload().unwrap_and_log()).unwrap_and_log();
-            tx.send(install_confirm).unwrap_and_log();
+                serde_json::from_str(event.payload().unwrap()).unwrap();
+            tx.send(install_confirm).unwrap();
         });
 
         let install_confirm = rx.await?;
