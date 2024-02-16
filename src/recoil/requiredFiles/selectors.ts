@@ -72,6 +72,7 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
       const platform_id = get(CoreMainPlatformIdSelectorFamily(coreName))
       const platformIds = get(CoreInfoSelectorFamily(coreName)).core.metadata
         .platform_ids
+      console.log(dataJSON.data.data_slots)
       const requiredCoreFiles = dataJSON.data.data_slots.filter(
         ({ name, required, filename }) => {
           return (
@@ -84,7 +85,7 @@ export const RequiredFileInfoSelectorFamily = selectorFamily<
       const fileInfo = (
         await Promise.all(
           requiredCoreFiles
-            .filter(({ parameters }) => decodeDataParams(parameters).readOnly)
+            // .filter(({ parameters }) => decodeDataParams(parameters).readOnly)
             .map(async ({ filename, alternate_filenames, parameters, md5 }) => {
               const decodedParams = decodeDataParams(parameters)
 
