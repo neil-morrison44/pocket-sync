@@ -43,6 +43,7 @@ pub async fn find_instance_files(core_assets_folder: &PathBuf, include_alts: boo
         }
     }
 
+    instance_files.sort_unstable();
     instance_files
 }
 
