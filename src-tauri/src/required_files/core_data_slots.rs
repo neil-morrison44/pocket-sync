@@ -47,7 +47,8 @@ pub async fn process_core_data(
                 Some(DataSlotFile {
                     name: String::from(filename),
                     path: pocket_path.join(pocket_local_path),
-                    status: DataSlotFileStatus::Exists,
+                    required: data_slot.required,
+                    status: DataSlotFileStatus::NotChecked,
                 })
             }
             None => None,
@@ -59,6 +60,9 @@ pub async fn process_core_data(
 
 #[cfg(test)]
 mod tests {
+    use crate::required_files::parameters_bitmap::SlotParameters;
+    use crate::required_files::IntOrHexString::*;
+
     use super::*;
     use anyhow::Result;
     use std::{fs, io::Write};
@@ -173,22 +177,77 @@ mod tests {
                 DataSlotFile {
                     name: String::from("test.bin"),
                     path: tmp_path.join("Assets/platform_one/common/test.bin"),
-                    status: DataSlotFileStatus::Exists
+                    required: true,
+                    status: DataSlotFileStatus::NotChecked
                 },
                 DataSlotFile {
                     name: String::from("test_2.bin"),
                     path: tmp_path.join("Assets/platform_one/tester.TestCore/test_2.bin"),
-                    status: DataSlotFileStatus::Exists
+                    required: true,
+                    status: DataSlotFileStatus::NotChecked
                 },
                 DataSlotFile {
                     name: String::from("beta.bin"),
                     path: tmp_path.join("Assets/platform_two/common/beta.bin"),
-                    status: DataSlotFileStatus::Exists
+                    required: false,
+                    status: DataSlotFileStatus::NotChecked
                 }
             ]
         );
 
-        assert_eq!(data_slots, vec![]);
+        assert_eq!(
+            data_slots,
+            vec![
+                DataSlot {
+                    name: String::from("Arcade Game"),
+                    id: Int(0),
+                    required: true,
+                    parameters: SlotParameters::from("0x113"),
+                    filename: None,
+                    md5: None
+                },
+                DataSlot {
+                    name: String::from("ROM"),
+                    id: Int(1),
+                    required: true,
+                    parameters: SlotParameters::from("0x108"),
+                    filename: None,
+                    md5: None
+                },
+                DataSlot {
+                    name: String::from("NVRAM"),
+                    id: Int(2),
+                    required: false,
+                    parameters: SlotParameters::from("0x100"),
+                    filename: None,
+                    md5: None
+                },
+                DataSlot {
+                    name: String::from("Test BIN"),
+                    id: Int(6),
+                    required: true,
+                    parameters: SlotParameters::from("0x1"),
+                    filename: Some(String::from("test.bin")),
+                    md5: None
+                },
+                DataSlot {
+                    name: String::from("Test BIN 2"),
+                    id: Int(7),
+                    required: true,
+                    parameters: SlotParameters::from("0x113"),
+                    filename: Some(String::from("test_2.bin")),
+                    md5: None
+                },
+                DataSlot {
+                    name: String::from("JTBETA"),
+                    id: Int(17),
+                    required: false,
+                    parameters: SlotParameters::from("0x1000000"),
+                    filename: Some(String::from("beta.bin")),
+                    md5: None
+                }
+            ]
+        );
         Ok(())
     }
 }

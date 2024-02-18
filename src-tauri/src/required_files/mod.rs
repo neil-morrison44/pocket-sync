@@ -16,7 +16,7 @@ use self::{find_instance_files::find_instance_files, parameters_bitmap::SlotPara
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
-enum IntOrHexString {
+pub enum IntOrHexString {
     Int(u32),
     HexString(String),
 }
@@ -68,13 +68,21 @@ enum DataSlotFileStatus {
     MissingButOnArchive(ArchiveInfo),
     FoundAtRoot(RootFile),
     NotFound,
+    NotChecked,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct DataSlotFile {
     name: String,
     path: PathBuf,
+    required: bool,
     status: DataSlotFileStatus,
+}
+
+impl DataSlotFile {
+    pub fn should_be_downloaded(self: Self) -> bool {
+        self.name.contains("bios") || self.required
+    }
 }
 
 pub async fn required_files_for_core(

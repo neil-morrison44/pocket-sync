@@ -18,6 +18,18 @@ bitflags! {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct SlotParameters(IntOrHexString);
 
+impl From<&str> for SlotParameters {
+    fn from(value: &str) -> Self {
+        SlotParameters(IntOrHexString::HexString(String::from(value)))
+    }
+}
+
+impl From<u32> for SlotParameters {
+    fn from(value: u32) -> Self {
+        SlotParameters(IntOrHexString::Int(value))
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct ParsedParams {
     pub core_specific: bool,
