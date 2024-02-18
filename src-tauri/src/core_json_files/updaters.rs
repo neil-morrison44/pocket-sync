@@ -2,9 +2,16 @@ use super::CoreDetails;
 use serde::{Deserialize, Serialize};
 use std::{fs, path::PathBuf};
 
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct CoreUpdateDetails {
+    pub author: String,
+    pub platform_id: String,
+    pub shortname: String,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UpdatersFile {
-    pub previous: Option<Vec<CoreDetails>>,
+    pub previous: Option<Vec<CoreUpdateDetails>>,
 }
 
 impl UpdatersFile {
@@ -51,7 +58,7 @@ mod tests {
 
         assert_eq!(
             updaters_file.previous,
-            Some(vec![CoreDetails {
+            Some(vec![CoreUpdateDetails {
                 author: String::from("author_name"),
                 platform_id: String::from("platform_id"),
                 shortname: String::from("short_name")

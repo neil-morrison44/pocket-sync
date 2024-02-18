@@ -1,4 +1,5 @@
-use super::CoreDetails;
+use super::{updaters::CoreUpdateDetails, CoreDetails};
+use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::{fs, path::PathBuf};
 
@@ -53,7 +54,7 @@ pub enum CoreFile {
 }
 
 impl CoreFile {
-    pub fn from_core_path(core_path: &PathBuf) -> Result<CoreFile, Box<dyn std::error::Error>> {
+    pub fn from_core_path(core_path: &PathBuf) -> Result<CoreFile> {
         let core_file_path = core_path.join("core.json");
         let file_string = fs::read_to_string(core_file_path)?;
         let file: CoreFile = serde_json::from_str(&file_string)?;
@@ -67,6 +68,23 @@ impl Into<CoreDetails> for CoreFile {
             CoreFile::Core { metadata, .. } => CoreDetails {
                 author: metadata.author,
                 shortname: metadata.shortname,
+                main_platform_id: metadata.platform_ids[0].clone(),
+                platform_ids: metadata
+                    .platform_ids
+                    .into_iter()
+                    .map(|pi| pi.clone())
+                    .collect(),
+            },
+        }
+    }
+}
+
+impl Into<CoreUpdateDetails> for CoreFile {
+    fn into(self) -> CoreUpdateDetails {
+        match self {
+            CoreFile::Core { metadata, .. } => CoreUpdateDetails {
+                author: metadata.author,
+                shortname: metadata.shortname,
                 platform_id: metadata.platform_ids[0].clone(),
             },
         }
@@ -76,10 +94,9 @@ impl Into<CoreDetails> for CoreFile {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::error::Error;
     use tempdir::TempDir;
 
-    fn core_folder_setup() -> Result<PathBuf, Box<dyn Error>> {
+    fn core_folder_setup() -> Result<PathBuf> {
         let tmp_dir = TempDir::new("core_json_tests").unwrap();
         let tmp_path = tmp_dir.into_path();
         // Create a temporary JSON file
@@ -127,7 +144,7 @@ mod tests {
     }
 
     #[test]
-    fn test_from_core_path_and_into_core_details() -> Result<(), Box<dyn Error>> {
+    fn test_from_core_path_and_into_core_details() -> Result<()> {
         let core_folder = core_folder_setup()?;
         let core_file = CoreFile::from_core_path(&core_folder)?;
         dbg!("{:?}", &core_file);
@@ -135,7 +152,7 @@ mod tests {
 
         assert_eq!(core_details.author, "agg23");
         assert_eq!(core_details.shortname, "Arduboy");
-        assert_eq!(core_details.platform_id, "arduboy");
+        assert_eq!(core_details.main_platform_id, "arduboy");
 
         Ok(())
     }

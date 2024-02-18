@@ -38,6 +38,7 @@ import { DisplayModes } from "./displayModes"
 import { SupportsBubble } from "./supportsBubble"
 import { Details } from "../../shared/details"
 import { CoreInfoTxtSelectorFamily } from "../../../recoil/cores/selectors"
+import { invoke } from "@tauri-apps/api"
 
 type CoreInfoProps = {
   coreName: string
@@ -135,6 +136,20 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
       <PlatformImage className="core-info__image" platformId={mainPlatformId} />
 
       <FirmwareWarning coreName={coreName} />
+
+      <button
+        onClick={async () => {
+          console.log("click?")
+          const result = await invoke("find_required_files", {
+            coreId: coreName,
+            includeAlts: false,
+            archiveUrl: "https://archive.org/metadata/openFPGA-Files",
+          })
+          console.log({ result })
+        }}
+      >
+        Core Request
+      </button>
 
       <section className="core-info__info">
         <p>{coreInfo.core.metadata.description}</p>

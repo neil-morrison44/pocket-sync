@@ -57,6 +57,11 @@ zip = { version = "0.6.4", features = ["deflate", "time"] }
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 log = "^0.4"
 log-panics = { version = "2.1.0", features = ["with-backtrace"] }
+anyhow = "1.0.79"
+bitflags = "2.4.2"
+
+[dev-dependencies]
+mockito = { version = "1.1.1", default-features = false }
 
 
 [features]

@@ -15,6 +15,7 @@ use futures_locks::RwLock;
 use hashes::{crc32_for_file, md5_for_file};
 use install_zip::start_zip_task;
 use log::{debug, error, trace, LevelFilter};
+use required_files::{required_files_for_core, DataSlotFile};
 use save_sync_session::start_mister_save_sync_session;
 use saves_zip::{
     build_save_zip, read_save_zip_list, read_saves_in_folder, read_saves_in_zip,
@@ -40,6 +41,7 @@ mod hashes;
 mod install_zip;
 mod news_feed;
 mod progress;
+mod required_files;
 mod save_sync_session;
 mod saves_zip;
 mod turbo_downloads;
@@ -724,6 +726,20 @@ enum RootFile {
 mod files_from_zip;
 
 #[tauri::command(async)]
+async fn find_required_files(
+    state: tauri::State<'_, PocketSyncState>,
+    core_id: &str,
+    include_alts: bool,
+    archive_url: &str,
+) -> Result<Vec<DataSlotFile>, String> {
+    debug!("Command: find_required_files");
+    let pocket_path = state.0.pocket_path.read().await;
+    required_files_for_core(core_id, &pocket_path, include_alts, archive_url)
+        .await
+        .map_err(|err| err.to_string())
+}
+
+#[tauri::command(async)]
 async fn check_root_files(
     state: tauri::State<'_, PocketSyncState>,
     extensions: Option<Vec<&str>>,
@@ -843,7 +859,8 @@ fn main() {
             get_firmware_release_notes,
             download_firmware,
             clear_file_cache,
-            check_root_files
+            check_root_files,
+            find_required_files
         ])
         .setup(|app| {
             log_panics::init();
