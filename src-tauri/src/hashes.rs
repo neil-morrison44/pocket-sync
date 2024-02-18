@@ -1,7 +1,8 @@
+use anyhow::Result;
 use md5::{Digest, Md5};
-use std::{error, io::Read, path::PathBuf};
+use std::{io::Read, path::PathBuf};
 
-pub async fn md5_for_file(file_path: &PathBuf) -> Result<String, Box<dyn error::Error>> {
+pub async fn md5_for_file(file_path: &PathBuf) -> Result<String> {
     let handle = {
         let full_path = file_path.clone();
         tokio::task::spawn_blocking(move || {
@@ -35,7 +36,7 @@ pub async fn md5_for_file(file_path: &PathBuf) -> Result<String, Box<dyn error::
     Ok(hexed_hash)
 }
 
-pub async fn crc32_for_file(file_path: &PathBuf) -> Result<u32, Box<dyn error::Error>> {
+pub async fn crc32_for_file(file_path: &PathBuf) -> Result<u32> {
     let handle = {
         let full_path = file_path.clone();
         tokio::task::spawn_blocking(move || {

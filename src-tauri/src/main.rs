@@ -7,15 +7,16 @@ use async_walkdir::{DirEntry, WalkDir};
 use checks::{check_if_folder_looks_like_pocket, connection_task};
 use clean_fs::find_dotfiles;
 use file_cache::{clear_file_caches, get_file_with_cache};
-use files_from_zip::{copy_file_from_zip, crc32_file_in_zip, md5_file_in_zip};
+use files_from_zip::copy_file_from_zip;
 use firmware::{FirmwareDetails, FirmwareListItem};
 use fs_set_times::{self, set_mtime, SystemTimeSpec};
 use futures::StreamExt;
 use futures_locks::RwLock;
-use hashes::{crc32_for_file, md5_for_file};
+use hashes::crc32_for_file;
 use install_zip::start_zip_task;
 use log::{debug, error, trace, LevelFilter};
 use required_files::{required_files_for_core, DataSlotFile};
+use root_files::RootFile;
 use save_sync_session::start_mister_save_sync_session;
 use saves_zip::{
     build_save_zip, read_save_zip_list, read_saves_in_folder, read_saves_in_zip,
@@ -42,6 +43,7 @@ mod install_zip;
 mod news_feed;
 mod progress;
 mod required_files;
+mod root_files;
 mod save_sync_session;
 mod saves_zip;
 mod turbo_downloads;
@@ -282,7 +284,9 @@ async fn install_archive_files(
 
     let mut failed_already = HashSet::new();
     let mut progress = progress::ProgressEmitter::start(file_count, &window);
-    let root_files = check_root_files(state, None).await?;
+    let root_files = check_root_files(state, None)
+        .await
+        .map_err(|err| err.to_string())?;
 
     for file in files {
         let matching_root_files: Vec<_> = root_files
@@ -316,7 +320,8 @@ async fn install_archive_files(
                     ..
                 } => {
                     copy_file_from_zip(&pocket_path.join(zip_file), &inner_file, &new_file_path)
-                        .await?;
+                        .await
+                        .map_err(|err| err.to_string())?;
                 }
                 RootFile::UnZipped { file_name, .. } => {
                     tokio::fs::copy(pocket_path.join(file_name), new_file_path)
@@ -707,22 +712,6 @@ async fn clear_file_cache(app_handle: tauri::AppHandle) -> Result<(), String> {
     Ok(())
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(tag = "type")]
-enum RootFile {
-    Zipped {
-        zip_file: String,
-        inner_file: String,
-        crc32: u32,
-        md5: String,
-    },
-    UnZipped {
-        file_name: String,
-        crc32: u32,
-        md5: String,
-    },
-}
-
 mod files_from_zip;
 
 #[tauri::command(async)]
@@ -746,77 +735,9 @@ async fn check_root_files(
 ) -> Result<Vec<RootFile>, String> {
     debug!("Command: check_root_files");
     let pocket_path = state.0.pocket_path.read().await;
-    let mut entries = tokio::fs::read_dir(&pocket_path.as_path())
+    root_files::check_root_files(&pocket_path, extensions)
         .await
-        .map_err(|err| err.to_string())?;
-    let mut results: Vec<RootFile> = Vec::new();
-
-    while let Ok(Some(entry)) = entries.next_entry().await {
-        if let Ok(metadata) = entry.metadata().await {
-            if metadata.is_file() {
-                let path = entry.path();
-                if let (Some(ext), Some(file_name)) = (
-                    path.extension().and_then(|s| s.to_str()),
-                    path.file_name().and_then(|s| s.to_str()),
-                ) {
-                    if file_name.starts_with(".") {
-                        continue;
-                    }
-                    if ext == "zip" {
-                        let files = files_from_zip::list_files(&path).await?;
-                        if files.len() > 0 {
-                            let zip_file = String::from(file_name);
-                            let inner_file = files[0].clone();
-                            let file_path = PathBuf::from(&inner_file);
-                            if let Some(ext) = file_path.extension() {
-                                match extensions
-                                    .as_ref()
-                                    .and_then(|exts| Some(exts.iter().any(|ex| *ex == ext)))
-                                {
-                                    None | Some(true) => (),
-                                    Some(false) => continue,
-                                }
-                            }
-
-                            results.push(RootFile::Zipped {
-                                crc32: crc32_file_in_zip(&pocket_path.join(&zip_file), &inner_file)
-                                    .await?,
-                                md5: md5_file_in_zip(&pocket_path.join(&file_name), &inner_file)
-                                    .await?,
-                                zip_file,
-                                inner_file,
-                            })
-                        }
-                    } else {
-                        match extensions
-                            .as_ref()
-                            .and_then(|exts| Some(exts.iter().any(|ex| *ex == ext)))
-                        {
-                            None | Some(true) => (),
-                            Some(false) => continue,
-                        }
-
-                        let file_name = String::from(file_name);
-                        let file_path = &pocket_path.join(&file_name);
-
-                        let md5 = md5_for_file(&file_path)
-                            .await
-                            .map_err(|err| err.to_string())?;
-
-                        results.push(RootFile::UnZipped {
-                            crc32: crc32_for_file(&file_path)
-                                .await
-                                .map_err(|e| e.to_string())?,
-                            file_name,
-                            md5,
-                        });
-                    }
-                }
-            }
-        }
-    }
-
-    Ok(results)
+        .map_err(|err| err.to_string())
 }
 
 fn main() {

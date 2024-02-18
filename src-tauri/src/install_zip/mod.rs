@@ -20,7 +20,6 @@ use crate::{
     core_json_files::{
         core::CoreFile,
         updaters::{CoreUpdateDetails, UpdatersFile},
-        CoreDetails,
     },
     PocketSyncState,
 };

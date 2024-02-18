@@ -18,7 +18,7 @@ struct CoreDataFile {
 pub async fn process_core_data(
     core_id: &str,
     pocket_path: &PathBuf,
-    platform_ids: Vec<&str>,
+    platform_ids: &Vec<String>,
 ) -> Result<(Vec<DataSlotFile>, Vec<DataSlot>)> {
     let file_path = pocket_path.join(format!("Cores/{}/data.json", core_id));
     let file_string = tokio::fs::read_to_string(file_path).await?;
@@ -46,7 +46,7 @@ pub async fn process_core_data(
 
                 Some(DataSlotFile {
                     name: String::from(filename),
-                    path: pocket_path.join(pocket_local_path),
+                    path: PathBuf::from(pocket_local_path),
                     required: data_slot.required,
                     status: DataSlotFileStatus::NotChecked,
                 })
@@ -166,7 +166,7 @@ mod tests {
         let (data_slot_files, data_slots) = process_core_data(
             "tester.TestCore",
             &tmp_path,
-            vec!["platform_one", "platform_two"],
+            &vec![String::from("platform_one"), String::from("platform_two")],
         )
         .await?;
 
@@ -176,19 +176,19 @@ mod tests {
             vec![
                 DataSlotFile {
                     name: String::from("test.bin"),
-                    path: tmp_path.join("Assets/platform_one/common/test.bin"),
+                    path: PathBuf::from("Assets/platform_one/common/test.bin"),
                     required: true,
                     status: DataSlotFileStatus::NotChecked
                 },
                 DataSlotFile {
                     name: String::from("test_2.bin"),
-                    path: tmp_path.join("Assets/platform_one/tester.TestCore/test_2.bin"),
+                    path: PathBuf::from("Assets/platform_one/tester.TestCore/test_2.bin"),
                     required: true,
                     status: DataSlotFileStatus::NotChecked
                 },
                 DataSlotFile {
                     name: String::from("beta.bin"),
-                    path: tmp_path.join("Assets/platform_two/common/beta.bin"),
+                    path: PathBuf::from("Assets/platform_two/common/beta.bin"),
                     required: false,
                     status: DataSlotFileStatus::NotChecked
                 }
