@@ -1,4 +1,3 @@
-use super::CoreDetails;
 use serde::{Deserialize, Serialize};
 use std::{fs, path::PathBuf};
 

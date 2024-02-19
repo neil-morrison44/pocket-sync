@@ -24,6 +24,7 @@ impl InstanceDataSlot {
                 required: core_data_slot.required.clone(),
                 parameters: core_data_slot.parameters.clone(),
                 filename: Some(self.filename.clone()),
+                alternate_filenames: None,
                 md5: self.md5.clone(),
             });
         };
@@ -87,6 +88,7 @@ pub async fn process_instance_data(
                     path: PathBuf::from(pocket_local_path),
                     required: data_slot.required,
                     status: DataSlotFileStatus::NotChecked,
+                    md5: data_slot.md5.clone(),
                 })
             }
             None => None,
@@ -127,7 +129,8 @@ mod tests {
                 "data_slots": [
                   {
                     "id": 1,
-                    "filename": "game.rom"
+                    "filename": "game.rom",
+                    "md5": "abcd"
                   },
                   {
                     "id": 2,
@@ -150,7 +153,7 @@ mod tests {
 
     #[tokio::test]
     async fn for_a_instance_file_with_multiple_things() -> Result<()> {
-        let (tmp_path, instance_file_path) = instance_json_setup()?;
+        let (_tmp_path, instance_file_path) = instance_json_setup()?;
         let data_slot_files = process_instance_data(
             "tester.TestCore",
             &instance_file_path,
@@ -162,6 +165,7 @@ mod tests {
                     required: true,
                     parameters: SlotParameters::from("0x113"),
                     filename: None,
+                    alternate_filenames: None,
                     md5: None,
                 },
                 DataSlot {
@@ -170,6 +174,7 @@ mod tests {
                     required: true,
                     parameters: SlotParameters::from("0x0"),
                     filename: None,
+                    alternate_filenames: None,
                     md5: None,
                 },
                 DataSlot {
@@ -178,7 +183,8 @@ mod tests {
                     required: false,
                     parameters: SlotParameters::from("0x1000000"),
                     filename: Some(String::from("beta.bin")),
-                    md5: None,
+                    alternate_filenames: None,
+                    md5: Some(String::from("1234")),
                 },
             ],
         )
@@ -194,13 +200,15 @@ mod tests {
                         "Assets/platform_one/tester.TestCore/nested/folder/here/game.rom"
                     ),
                     required: true,
-                    status: DataSlotFileStatus::NotChecked
+                    status: DataSlotFileStatus::NotChecked,
+                    md5: Some(String::from("abcd"))
                 },
                 DataSlotFile {
                     name: String::from("game.sav"),
                     path: PathBuf::from("Assets/platform_one/common/nested/folder/here/game.sav"),
                     required: true,
-                    status: DataSlotFileStatus::NotChecked
+                    status: DataSlotFileStatus::NotChecked,
+                    md5: None
                 }
             ]
         );

@@ -27,35 +27,48 @@ pub async fn process_core_data(
 
     let cloned_data_slots = data_slots.clone();
 
-    let files = data_slots
-        .into_iter()
-        .filter_map(|data_slot| match data_slot.filename {
-            Some(filename) => {
-                let params = ParsedParams::from(data_slot.parameters);
+    let files =
+        data_slots
+            .into_iter()
+            .filter_map(|data_slot| match data_slot.filename {
+                Some(filename) => {
+                    let params = ParsedParams::from(data_slot.parameters);
+                    let pocket_local_path = PathBuf::from(format!(
+                        "Assets/{}/{}",
+                        platform_ids[params.platform_index],
+                        (if params.core_specific {
+                            core_id
+                        } else {
+                            "common"
+                        })
+                    ));
 
-                let pocket_local_path = format!(
-                    "Assets/{}/{}/{}",
-                    platform_ids[params.platform_index],
-                    (if params.core_specific {
-                        core_id
-                    } else {
-                        "common"
-                    }),
-                    filename
-                );
+                    let mut slots = vec![DataSlotFile {
+                        name: String::from(&filename),
+                        path: pocket_local_path.join(&filename),
+                        required: data_slot.required,
+                        status: DataSlotFileStatus::NotChecked,
+                        md5: data_slot.md5.clone(),
+                    }];
 
-                // TODO: support alternate_filenames here
+                    if let Some(alternate_filenames) = data_slot.alternate_filenames {
+                        slots.extend(alternate_filenames.into_iter().map(|alt_filename| {
+                            DataSlotFile {
+                                name: String::from(&alt_filename),
+                                path: pocket_local_path.join(&alt_filename),
+                                required: data_slot.required,
+                                status: DataSlotFileStatus::NotChecked,
+                                md5: data_slot.md5.clone(),
+                            }
+                        }))
+                    }
 
-                Some(DataSlotFile {
-                    name: String::from(filename),
-                    path: PathBuf::from(pocket_local_path),
-                    required: data_slot.required,
-                    status: DataSlotFileStatus::NotChecked,
-                })
-            }
-            None => None,
-        })
-        .collect();
+                    Some(slots)
+                }
+                None => None,
+            })
+            .flatten()
+            .collect();
 
     Ok((files, cloned_data_slots))
 }
@@ -135,6 +148,7 @@ mod tests {
                         "required": true,
                         "parameters": "0x113",
                         "filename": "test_2.bin",
+                        "alternate_filenames": ["test_alt_2.bin"],
                         "extensions": [
                             "bin"
                         ],
@@ -180,19 +194,29 @@ mod tests {
                     name: String::from("test.bin"),
                     path: PathBuf::from("Assets/platform_one/common/test.bin"),
                     required: true,
-                    status: DataSlotFileStatus::NotChecked
+                    status: DataSlotFileStatus::NotChecked,
+                    md5: None
                 },
                 DataSlotFile {
                     name: String::from("test_2.bin"),
                     path: PathBuf::from("Assets/platform_one/tester.TestCore/test_2.bin"),
                     required: true,
-                    status: DataSlotFileStatus::NotChecked
+                    status: DataSlotFileStatus::NotChecked,
+                    md5: None
+                },
+                DataSlotFile {
+                    name: String::from("test_alt_2.bin"),
+                    path: PathBuf::from("Assets/platform_one/tester.TestCore/test_alt_2.bin"),
+                    required: true,
+                    status: DataSlotFileStatus::NotChecked,
+                    md5: None
                 },
                 DataSlotFile {
                     name: String::from("beta.bin"),
                     path: PathBuf::from("Assets/platform_two/common/beta.bin"),
                     required: false,
-                    status: DataSlotFileStatus::NotChecked
+                    status: DataSlotFileStatus::NotChecked,
+                    md5: None
                 }
             ]
         );
@@ -206,6 +230,7 @@ mod tests {
                     required: true,
                     parameters: SlotParameters::from("0x113"),
                     filename: None,
+                    alternate_filenames: None,
                     md5: None
                 },
                 DataSlot {
@@ -213,6 +238,7 @@ mod tests {
                     id: Int(1),
                     required: true,
                     parameters: SlotParameters::from("0x108"),
+                    alternate_filenames: None,
                     filename: None,
                     md5: None
                 },
@@ -221,6 +247,7 @@ mod tests {
                     id: Int(2),
                     required: false,
                     parameters: SlotParameters::from("0x100"),
+                    alternate_filenames: None,
                     filename: None,
                     md5: None
                 },
@@ -230,6 +257,7 @@ mod tests {
                     required: true,
                     parameters: SlotParameters::from("0x1"),
                     filename: Some(String::from("test.bin")),
+                    alternate_filenames: None,
                     md5: None
                 },
                 DataSlot {
@@ -238,6 +266,7 @@ mod tests {
                     required: true,
                     parameters: SlotParameters::from("0x113"),
                     filename: Some(String::from("test_2.bin")),
+                    alternate_filenames: Some(vec![String::from("test_alt_2.bin")]),
                     md5: None
                 },
                 DataSlot {
@@ -246,6 +275,7 @@ mod tests {
                     required: false,
                     parameters: SlotParameters::from("0x1000000"),
                     filename: Some(String::from("beta.bin")),
+                    alternate_filenames: None,
                     md5: None
                 }
             ]

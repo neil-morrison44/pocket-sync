@@ -5,9 +5,8 @@ use serde::{Deserialize, Serialize};
 pub struct RawMetadataItem {
     pub name: String,
     pub crc32: Option<String>,
-    md5: Option<String>,
-    mtime: Option<String>,
-    size: Option<String>,
+    pub md5: Option<String>,
+    pub mtime: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -35,7 +34,6 @@ mod tests {
         server_type: ServerType,
     ) -> Result<(String, mockito::Mock, mockito::ServerGuard)> {
         let mut server = mockito::Server::new();
-        let host = server.host_with_port();
         let url = server.url();
 
         let json_body = match server_type {
@@ -89,8 +87,7 @@ mod tests {
                 name: String::from("a_test_file.bin"),
                 crc32: Some(String::from("8049042f")),
                 md5: Some(String::from("f46af2ef83e0d4359e13290208828664")),
-                mtime: Some(String::from("1695137679")),
-                size: Some(String::from("3473472")),
+                mtime: Some(String::from("1695137679"))
             }]
         );
         Ok(())
@@ -107,8 +104,7 @@ mod tests {
                 name: String::from("a_test_file.bin"),
                 crc32: Some(String::from("8049042f")),
                 md5: None,
-                mtime: None,
-                size: None,
+                mtime: None
             }]
         );
         Ok(())

@@ -70,6 +70,7 @@ pub struct DataSlot {
     required: bool,
     parameters: SlotParameters,
     filename: Option<String>,
+    alternate_filenames: Option<Vec<String>>,
     md5: Option<String>,
 }
 
@@ -92,6 +93,7 @@ enum DataSlotFileStatus {
     NeedsUpdateFromArchive(ArchiveInfo),
     MissingButOnArchive(ArchiveInfo),
     FoundAtRoot { root: RootFile },
+    RootNeedsUpdate { root: RootFile },
     NotFound,
     NotChecked,
 }
@@ -102,6 +104,7 @@ pub struct DataSlotFile {
     path: PathBuf,
     required: bool,
     status: DataSlotFileStatus,
+    md5: Option<String>,
 }
 
 impl DataSlotFile {
