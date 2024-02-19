@@ -91,7 +91,7 @@ enum DataSlotFileStatus {
     Exists,
     NeedsUpdateFromArchive(ArchiveInfo),
     MissingButOnArchive(ArchiveInfo),
-    FoundAtRoot(RootFile),
+    FoundAtRoot { root: RootFile },
     NotFound,
     NotChecked,
 }

@@ -32,7 +32,17 @@ pub async fn check_data_file_status(
             exists,
             root_file_hash.get(&data_slot_file.name),
         ) {
-            (_, _, _, Some(root_file)) => DataSlotFileStatus::FoundAtRoot(root_file.clone()),
+            (_, _, false, Some(root_file)) => DataSlotFileStatus::FoundAtRoot {
+                root: root_file.clone(),
+            },
+            (_, _, true, Some(root_file)) => {
+                // TODO: Check the MD5 of the root file vs the data slot and return either exists or
+                // A new one that says the root is out of date
+
+                DataSlotFileStatus::FoundAtRoot {
+                    root: root_file.clone(),
+                }
+            }
             (None, None, true, _) => DataSlotFileStatus::Exists,
             (None, None, false, _) => DataSlotFileStatus::NotFound,
             (None, Some(RawMetadataItem { name, crc32, .. }), false, _)

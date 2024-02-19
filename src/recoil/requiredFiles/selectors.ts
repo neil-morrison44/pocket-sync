@@ -1,9 +1,14 @@
 import { selectorFamily } from "recoil"
-import { RequiredFileInfo, InstanceDataJSON } from "../../types"
+import {
+  RequiredFileInfo,
+  InstanceDataJSON,
+  RequiredFileInfoTwo,
+} from "../../types"
 import { decodeDataParams } from "../../utils/decodeDataParams"
 import {
   invokeFileExists,
   invokeFileMetadata,
+  invokeFindRequiredFiles,
   invokeWalkDirListFiles,
 } from "../../utils/invokes"
 import { readJSONFile } from "../../utils/readJSONFile"
@@ -16,6 +21,7 @@ import {
 } from "../selectors"
 import { mergedDataSlots } from "../../utils/dataSlotsMerge"
 import { FileWatchAtomFamily } from "../fileSystem/atoms"
+import { archiveMetadataUrlSelector } from "../archive/selectors"
 
 const FileInfoSelectorFamily = selectorFamily<
   Omit<RequiredFileInfo, "type">,
@@ -60,11 +66,29 @@ const SingleRequiredFileInfo = selectorFamily<
     },
 })
 
+export const RequiredFileInfoSelectorFamilyTwo = selectorFamily<
+  RequiredFileInfoTwo[],
+  string
+>({
+  key: "RequiredFileInfoSelectorFamilyTwo",
+  get:
+    (coreName) =>
+    async ({ get }) => {
+      const archiveMetadataUrl = get(archiveMetadataUrlSelector)
+      const skipAlternateAssets = get(skipAlternateAssetsSelector)
+      return await invokeFindRequiredFiles(
+        coreName,
+        !skipAlternateAssets,
+        archiveMetadataUrl
+      )
+    },
+})
+
 export const RequiredFileInfoSelectorFamily = selectorFamily<
   RequiredFileInfo[],
   string
 >({
-  key: "DataJSONSelectorFamily",
+  key: "RequiredFileInfoSelectorFamily",
   get:
     (coreName) =>
     async ({ get }) => {

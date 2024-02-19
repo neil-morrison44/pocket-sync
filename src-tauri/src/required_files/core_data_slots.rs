@@ -44,6 +44,8 @@ pub async fn process_core_data(
                     filename
                 );
 
+                // TODO: support alternate_filenames here
+
                 Some(DataSlotFile {
                     name: String::from(filename),
                     path: PathBuf::from(pocket_local_path),

@@ -24,7 +24,7 @@ import { ErrorBoundary } from "../../errorBoundary"
 import { AuthorTag } from "../../shared/authorTag"
 import { CoreInputs } from "./coreInputs"
 import { CoreSettings } from "./coreSettings"
-import { RequiredFileInfoSelectorFamily } from "../../../recoil/requiredFiles/selectors"
+import { RequiredFileInfoSelectorFamilyTwo } from "../../../recoil/requiredFiles/selectors"
 import { Trans, useTranslation } from "react-i18next"
 import { archiveBumpAtom } from "../../../recoil/archive/atoms"
 import { currentViewAtom } from "../../../recoil/view/atoms"
@@ -142,7 +142,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
           console.log("click?")
           const result = await invoke("find_required_files", {
             coreId: coreName,
-            includeAlts: false,
+            includeAlts: true,
             archiveUrl: "https://archive.org/metadata/openFPGA-Files",
           })
           console.log({ result })
@@ -311,7 +311,9 @@ const RequiredFilesButton = ({
   coreName: string
   onClick: () => void
 }) => {
-  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
+  const requiredFiles = useRecoilValue(
+    RequiredFileInfoSelectorFamilyTwo(coreName)
+  )
   const { t } = useTranslation("core_info")
 
   if (requiredFiles.length === 0) return null

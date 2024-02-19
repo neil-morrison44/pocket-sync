@@ -3,6 +3,7 @@ import {
   FileCopy,
   FirmwareInfo,
   RawFeedItem,
+  RequiredFileInfoTwo,
   RootFile,
   SaveZipFile,
 } from "../types"
@@ -189,3 +190,16 @@ export const invokeClearFileCache = async () => await invoke("clear_file_cache")
 
 export const invokeListRootFiles = async (extensions?: string[]) =>
   await invoke<RootFile[]>("check_root_files", { extensions })
+
+export const invokeFindRequiredFiles = async (
+  coreId: string,
+  includeAlts: boolean,
+  archiveUrl: string
+) => {
+  console.log({ coreId, includeAlts, archiveUrl })
+  return await invoke<RequiredFileInfoTwo[]>("find_required_files", {
+    coreId,
+    includeAlts,
+    archiveUrl,
+  })
+}

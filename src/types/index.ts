@@ -66,6 +66,19 @@ export type RequiredFileInfo = {
   md5?: string
 }
 
+export type RequiredFileInfoTwo = {
+  name: string
+  path: string
+  required: boolean
+  status:
+    | { type: "Exists" }
+    | { type: "NotFound" }
+    | { type: "NotChecked" }
+    | { type: "FoundAtRoot"; root: RootFileZipped | RootFileUnZipped }
+    | { type: "MissingButOnArchive"; url: string; crc32: string }
+    | { type: "NeedsUpdateFromArchive"; url: string; crc32: string }
+}
+
 export type PlatformId = string
 export type Category = string
 type AuthorName = string

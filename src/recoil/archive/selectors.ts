@@ -94,6 +94,20 @@ const archiveMetadataSelector = selector<ArchiveFileMetadata[]>({
   },
 })
 
+export const archiveMetadataUrlSelector = selector<string | "">({
+  key: "archiveMetadataUrlSelector",
+  get: ({ get }) => {
+    get(archiveBumpAtom)
+    const config = get(PocketSyncConfigSelector)
+    if (!config.archive_url) return ""
+
+    let url = config.archive_url.replace("download", "metadata")
+    if (url.includes("updater.")) url = url + "/updater.php"
+
+    return url
+  },
+})
+
 export const RequiredFilesWithStatusSelectorFamily = selectorFamily<
   RequiredFileInfo[],
   string

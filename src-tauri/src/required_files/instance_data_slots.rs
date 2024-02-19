@@ -80,6 +80,8 @@ pub async fn process_instance_data(
                     path
                 );
 
+                // TODO: support alternate_filenames here
+
                 Some(DataSlotFile {
                     name: String::from(filename),
                     path: PathBuf::from(pocket_local_path),
