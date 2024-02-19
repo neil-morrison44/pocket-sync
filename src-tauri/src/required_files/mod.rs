@@ -15,6 +15,7 @@ use crate::{
         archive_metadata::get_metadata_from_archive, core_data_slots::process_core_data,
         instance_data_slots::process_instance_data,
     },
+    root_files::{check_root_files, RootFile},
 };
 
 use self::{
@@ -79,18 +80,13 @@ pub struct InstanceDataSlot {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-struct ArchiveInfo {
+pub struct ArchiveInfo {
     url: String,
     crc32: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-enum RootFile {
-    UnZipped(PathBuf),
-    Zipped { zip: PathBuf, file: String },
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[serde(tag = "type")]
 enum DataSlotFileStatus {
     Exists,
     NeedsUpdateFromArchive(ArchiveInfo),
@@ -110,7 +106,11 @@ pub struct DataSlotFile {
 
 impl DataSlotFile {
     pub fn should_be_downloaded(self: &Self) -> bool {
-        !self.name.ends_with(".sav") && (self.name.contains("bios") || self.required)
+        !self.name.ends_with(".sav")
+            && (self.name.contains("bios")
+                || self.name.contains("beta.bin")
+                || self.required
+                || true)
     }
 }
 
@@ -134,9 +134,10 @@ pub async fn required_files_for_core(
         &core_details.main_platform_id, core_id
     ));
 
-    let (instance_files, archive_meta) = tokio::join!(
+    let (instance_files, archive_meta, files_at_root) = tokio::join!(
         find_instance_files(&assets_folder, include_alts),
-        get_metadata_from_archive(archive_url)
+        get_metadata_from_archive(archive_url),
+        check_root_files(&pocket_path, Some(vec!["rom", "bin"]))
     );
 
     let (core_data_slot_files, core_data_slots) =
@@ -153,7 +154,6 @@ pub async fn required_files_for_core(
             let instance_data_slots = process_instance_data(
                 core_id,
                 &instance_file_path,
-                pocket_path,
                 &core_details.platform_ids,
                 &core_data_slots,
             )
@@ -167,8 +167,13 @@ pub async fn required_files_for_core(
         }
     }
 
-    if let Ok(archive_meta) = archive_meta {
-        data_slot_files = check_data_file_status(data_slot_files, archive_meta, pocket_path).await;
+    data_slot_files.sort_unstable_by(|a, b| a.path.partial_cmp(&b.path).unwrap());
+    data_slot_files.dedup();
+
+    if let (Ok(archive_meta), Ok(files_at_root)) = (archive_meta, files_at_root) {
+        data_slot_files =
+            check_data_file_status(data_slot_files, archive_meta, files_at_root, pocket_path)
+                .await?;
     }
 
     Ok(data_slot_files)

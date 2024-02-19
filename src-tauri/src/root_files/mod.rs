@@ -8,7 +8,7 @@ use crate::{
     hashes::{crc32_for_file, md5_for_file},
 };
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(tag = "type")]
 pub enum RootFile {
     Zipped {

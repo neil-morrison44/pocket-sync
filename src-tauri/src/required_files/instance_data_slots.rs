@@ -46,7 +46,6 @@ struct InstanceDataFile {
 pub async fn process_instance_data(
     core_id: &str,
     instance_file_path: &PathBuf,
-    pocket_path: &PathBuf,
     platform_ids: &Vec<String>,
     core_data_slots: &Vec<DataSlot>,
 ) -> Result<Vec<DataSlotFile>> {
@@ -64,17 +63,21 @@ pub async fn process_instance_data(
         .filter_map(|data_slot| match data_slot.filename {
             Some(filename) => {
                 let params = ParsedParams::from(data_slot.parameters);
+                let path = if data_path.len() > 0 {
+                    format!("{data_path}/{filename}")
+                } else {
+                    format!("{filename}")
+                };
 
                 let pocket_local_path = format!(
-                    "Assets/{}/{}/{}/{}",
+                    "Assets/{}/{}/{}",
                     platform_ids[params.platform_index],
                     (if params.core_specific {
                         core_id
                     } else {
                         "common"
                     }),
-                    data_path,
-                    filename
+                    path
                 );
 
                 Some(DataSlotFile {
@@ -144,12 +147,11 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn for_a_complex_core() -> Result<()> {
+    async fn for_a_instance_file_with_multiple_things() -> Result<()> {
         let (tmp_path, instance_file_path) = instance_json_setup()?;
         let data_slot_files = process_instance_data(
             "tester.TestCore",
             &instance_file_path,
-            &tmp_path,
             &vec![String::from("platform_one"), String::from("platform_two")],
             &vec![
                 DataSlot {

@@ -3,8 +3,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct RawMetadataItem {
-    name: String,
-    crc32: Option<String>,
+    pub name: String,
+    pub crc32: Option<String>,
     md5: Option<String>,
     mtime: Option<String>,
     size: Option<String>,
@@ -18,6 +18,7 @@ struct MetadataResponse {
 pub async fn get_metadata_from_archive(url: &str) -> Result<Vec<RawMetadataItem>> {
     let response = reqwest::get(url).await?.text().await?;
     let metadata: MetadataResponse = serde_json::from_str(&response)?;
+
     Ok(metadata.files)
 }
 
