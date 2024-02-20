@@ -1,10 +1,10 @@
-import { invoke } from "@tauri-apps/api"
 import { useCallback } from "react"
 import { useRecoilValue } from "recoil"
 import { PocketSyncConfigSelector } from "../recoil/config/selectors"
-import { RequiredFileInfo } from "../types"
+import { DataSlotFile } from "../types"
 import { useProgress } from "./useProgress"
 import { turboDownloadsAtom } from "../recoil/settings/atoms"
+import { invokeInstallArchiveFiles } from "../utils/invokes"
 
 export const useInstallRequiredFiles = () => {
   const { archive_url } = useRecoilValue(PocketSyncConfigSelector)
@@ -16,16 +16,16 @@ export const useInstallRequiredFiles = () => {
   const turboDownloads = useRecoilValue(turboDownloadsAtom)
 
   const installRequiredFiles = useCallback(
-    async (files: RequiredFileInfo[], other_archive_url?: string) => {
-      const this_archive_url = other_archive_url ?? archive_url
-      if (!this_archive_url)
+    async (files: DataSlotFile[], other_archive_url?: string) => {
+      const archiveUrl = other_archive_url ?? archive_url
+      if (!archiveUrl)
         throw new Error("Attempt to download without an `archive_url` set")
 
-      const _response = await invoke<boolean>("install_archive_files", {
+      const _response = await invokeInstallArchiveFiles(
         files,
-        archiveUrl: this_archive_url,
-        turbo: turboDownloads.enabled,
-      })
+        archiveUrl,
+        turboDownloads.enabled
+      )
     },
     [archive_url, turboDownloads.enabled]
   )

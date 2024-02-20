@@ -105,10 +105,7 @@ export const LoadRequiredFiles = ({
                   installRequiredFiles(
                     requiredFiles.filter(
                       ({ status }) =>
-                        status === "downloadable" ||
-                        status === "wrong" ||
-                        status === "at_root" ||
-                        status === "at_root_match"
+                        status.type !== "Exists" && status.type !== "NotFound"
                     )
                   )
                 }

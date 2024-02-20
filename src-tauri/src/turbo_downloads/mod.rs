@@ -1,47 +1,30 @@
+use anyhow::{Error, Result};
 use bytes::Bytes;
 use rayon::prelude::*;
 use reqwest::Url;
 use std::cmp::{max, min};
 
-pub async fn turbo_download_file(url: &str, turbo_enabled: bool) -> Result<Option<Bytes>, String> {
-    if !turbo_enabled {
-        // println!("Turbo downloads disabled, downloading in a single thread");
-        return Ok(None);
-    }
-    // println!("Turbo downloads enabled, downloading in multiple threads");
-
-    let url = Url::parse(url).map_err(|e| format!("Invalid URL: {}", e))?;
+pub async fn turbo_download_file(url: &str) -> Result<Bytes> {
+    let url = Url::parse(url)?;
     let client = reqwest::Client::new();
-    let request = client.head(url.clone()).build().map_err(|e| {
-        format!(
-            "Error building request to get content length: {}",
-            e.to_string()
-        )
-    })?;
-    let response = client.execute(request).await.map_err(|e| {
-        format!(
-            "Error getting content length from server: {}",
-            e.to_string()
-        )
-    })?;
+    let request = client.head(url.clone()).build()?;
+    let response = client.execute(request).await?;
 
     if !response.status().is_success() {
-        return Err(format!("Error downloading file: {}", response.status()).into());
+        return Err(Error::msg(format!(
+            "Error downloading file: {}",
+            response.status()
+        )));
     }
 
-    match response.headers().contains_key("Accept-Ranges") {
-        false => {
-            println!("Server does not support range requests, downloading in a single thread");
-            return Ok(None);
-        }
-        true => (),
+    if !response.headers().contains_key("Accept-Ranges") {
+        return Err(Error::msg("API doesn't support \"Accept-Ranges\""));
     }
 
     let content_length = match response.headers().get("Content-Length") {
         Some(len) => len.to_str().unwrap().parse::<u64>().unwrap(),
         None => {
-            println!("Server does not provide content length, downloading in a single thread");
-            return Ok(None);
+            return Err(Error::msg("API didn't return \"Content-Length\""));
         }
     };
 
@@ -63,16 +46,11 @@ pub async fn turbo_download_file(url: &str, turbo_enabled: bool) -> Result<Optio
 
         file_bytes.concat()
     })
-    .await
-    .map_err(|e| format!("Error downloading file: {}", e.to_string()))?;
-    Ok(Some(file_bytes.into()))
+    .await?;
+    Ok(file_bytes.into())
 }
 
-fn dowload_retry_on_timeout(
-    url: Url,
-    start: u64,
-    end: u64,
-) -> Result<Bytes, Box<dyn std::error::Error>> {
+fn dowload_retry_on_timeout(url: Url, start: u64, end: u64) -> Result<Bytes> {
     let client = reqwest::blocking::Client::new();
     let mut retry_count = 0;
     loop {

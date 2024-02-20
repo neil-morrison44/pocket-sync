@@ -8,7 +8,7 @@ import {
 } from "../../recoil/archive/selectors"
 import { useInstallRequiredFiles } from "../../hooks/useInstallRequiredFiles"
 import { Progress } from "../progress"
-import { FileCopy, RequiredFileInfo } from "../../types"
+import { FetchFileMetadataWithStatus, FileCopy } from "../../types"
 import { Modal } from "../modal"
 import { useInvalidateConfig } from "../../hooks/invalidation"
 import { Controls } from "../controls"
@@ -174,16 +174,13 @@ const FileSystemStatus = ({
   const files: FileCopy[] = useMemo(
     () =>
       fsFileInfo.map((f) => ({
-        origin: `${f.path}/${f.filename}`,
-        destination: `${pocketPath}/${destination}/${f.filename}`,
+        origin: `${f.path}/${f.name}`,
+        destination: `${pocketPath}/${destination}/${f.name}`,
         mtime: f.mtime,
         exists:
           pocketFileInfo.find(
             (pF) =>
-              pF.filename === f.filename &&
-              pF.mtime &&
-              f.mtime &&
-              pF.mtime >= f.mtime
+              pF.name === f.name && pF.mtime && f.mtime && pF.mtime >= f.mtime
           ) !== undefined,
       })),
     [fsFileInfo, pocketPath, destination, pocketFileInfo]
@@ -250,7 +247,18 @@ const ArchiveOrgItem = ({
               <button
                 onClick={async () => {
                   await installRequiredFiles(
-                    files.filter(({ exists }) => !exists),
+                    files
+                      .filter(({ exists }) => !exists)
+                      .map((f) => ({
+                        name: f.name,
+                        path: `${f.path}/${f.name}`,
+                        required: true,
+                        status: {
+                          type: "MissingButOnArchive",
+                          url: `${f.path}/${f.name}`,
+                          crc32: "",
+                        },
+                      })),
                     `https://archive.org/download/${name}`
                   )
                 }}
@@ -275,7 +283,10 @@ const ArchiveOrgStatus = ({
   name: string
   destination: string
   extensions?: string[]
-  children: (status: FileStatus, files: RequiredFileInfo[]) => ReactNode
+  children: (
+    status: FileStatus,
+    files: FetchFileMetadataWithStatus[]
+  ) => ReactNode
 }) => {
   const metadata = useRecoilValue(
     ArchiveMetadataSelectorFamily({ archiveName: name })
@@ -294,25 +305,23 @@ const ArchiveOrgStatus = ({
     [metadata, extensions]
   )
 
-  // TODO: Fix this, does it actually use required files?
-
-  const files: RequiredFileInfo[] = useMemo(() => {
+  const files: FetchFileMetadataWithStatus[] = useMemo(() => {
     return filteredMetadata.map((m) => {
       const exists =
         fileInfo.find((fi) => {
-          if (comparePaths(m.name.split("/"), splitAsPath(fi.filename))) {
-            // return fi.crc32 && parseInt(m.crc32, 16) === fi.crc32
+          if (
+            comparePaths(m.name.split("/"), [...splitAsPath(fi.path), fi.name])
+          ) {
             return fi.mtime && parseInt(m.mtime) * 1000 <= fi.mtime
           }
           return false
         }) !== undefined
 
       return {
-        filename: m.name,
+        name: m.name,
         path: destination,
         mtime: parseInt(m.mtime) * 1000,
         exists,
-        type: "core",
       }
     })
   }, [filteredMetadata, fileInfo, destination])

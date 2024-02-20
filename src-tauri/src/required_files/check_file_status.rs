@@ -33,7 +33,6 @@ pub async fn check_data_file_status(
     for mut data_slot_file in data_slot_files.iter_mut() {
         let file_path = pocket_path.join(&data_slot_file.path);
         let exists = tokio::fs::try_exists(&file_path).await?;
-
         let path = normalize_path_str(&data_slot_file.path.to_string_lossy());
 
         data_slot_file.status = match (
@@ -45,6 +44,7 @@ pub async fn check_data_file_status(
             (_, _, false, Some(root_file)) => DataSlotFileStatus::FoundAtRoot {
                 root: root_file.clone(),
             },
+
             (_, _, true, Some(root_file)) => {
                 let placed_file_md5 = md5_for_file(&file_path).await?;
                 let root_file_md5 = String::from(match root_file {
@@ -72,19 +72,29 @@ pub async fn check_data_file_status(
                     },
                 }
             }
+
             (None, None, true, _) => DataSlotFileStatus::Exists,
             (None, None, false, _) => DataSlotFileStatus::NotFound,
-            (None, Some(RawMetadataItem { name, crc32, .. }), false, _)
-            | (Some(RawMetadataItem { name, crc32, .. }), None, false, _)
-            | (Some(_), Some(RawMetadataItem { name, crc32, .. }), false, _) => {
+            (None, Some(metadata_item), false, _)
+            | (Some(metadata_item), None, false, _)
+            | (Some(_), Some(metadata_item), false, _) => {
+                let RawMetadataItem {
+                    name, crc32, mtime, ..
+                } = metadata_item;
+
                 DataSlotFileStatus::MissingButOnArchive(ArchiveInfo {
                     url: name.clone(),
                     crc32: crc32.clone().unwrap_or_default(),
+                    mtime: mtime.clone(),
                 })
             }
-            (None, Some(RawMetadataItem { name, crc32, .. }), true, _)
-            | (Some(_), Some(RawMetadataItem { name, crc32, .. }), true, _)
-            | (Some(RawMetadataItem { name, crc32, .. }), None, true, _) => {
+
+            (None, Some(metadata_item), true, _)
+            | (Some(_), Some(metadata_item), true, _)
+            | (Some(metadata_item), None, true, _) => {
+                let RawMetadataItem {
+                    name, crc32, mtime, ..
+                } = metadata_item;
                 let file_crc32 = crc32_for_file(&pocket_path.join(&data_slot_file.path)).await?;
 
                 if let Some(archive_crc32) = &crc32
@@ -97,12 +107,14 @@ pub async fn check_data_file_status(
                         DataSlotFileStatus::NeedsUpdateFromArchive(ArchiveInfo {
                             url: name.clone(),
                             crc32: crc32.clone().unwrap_or_default(),
+                            mtime: mtime.clone(),
                         })
                     }
                 } else {
                     DataSlotFileStatus::NeedsUpdateFromArchive(ArchiveInfo {
                         url: name.clone(),
                         crc32: crc32.clone().unwrap_or_default(),
+                        mtime: mtime.clone(),
                     })
                 }
             }

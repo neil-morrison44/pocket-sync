@@ -3,7 +3,7 @@ import {
   FileCopy,
   FirmwareInfo,
   RawFeedItem,
-  RequiredFileInfo,
+  DataSlotFile,
   RootFile,
   SaveZipFile,
 } from "../types"
@@ -195,11 +195,20 @@ export const invokeFindRequiredFiles = async (
   coreId: string,
   includeAlts: boolean,
   archiveUrl: string
-) => {
-  console.log({ coreId, includeAlts, archiveUrl })
-  return await invoke<RequiredFileInfo[]>("find_required_files", {
+) =>
+  await invoke<DataSlotFile[]>("find_required_files", {
     coreId,
     includeAlts,
     archiveUrl,
   })
-}
+
+export const invokeInstallArchiveFiles = async (
+  files: DataSlotFile[],
+  archiveUrl: string,
+  turbo: boolean
+) =>
+  await invoke<boolean>("install_archive_files", {
+    files,
+    archiveUrl,
+    turbo,
+  })

@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next"
-import { RequiredFileInfo } from "../../../../types"
+import { DataSlotFile } from "../../../../types"
 
 type RequiredFileRowProps = {
-  info: RequiredFileInfo
+  info: DataSlotFile
   hasArchiveLink: boolean
 }
 

@@ -48,7 +48,7 @@ export type DataSlotJSON = {
   md5?: string
 }
 
-export type RequiredFileInfo = {
+export type DataSlotFile = {
   name: string
   path: string
   required: boolean
@@ -242,6 +242,13 @@ export type ArchiveFileMetadata = {
   name: string
   crc32: string
   mtime: string
+}
+
+export type FetchFileMetadataWithStatus = {
+  name: string
+  path: string
+  mtime: number
+  exists: boolean
 }
 
 export type ImagePack = {

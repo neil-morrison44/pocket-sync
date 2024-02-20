@@ -82,13 +82,14 @@ pub struct InstanceDataSlot {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct ArchiveInfo {
-    url: String,
+    pub url: String,
     crc32: String,
+    pub mtime: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(tag = "type")]
-enum DataSlotFileStatus {
+pub enum DataSlotFileStatus {
     Exists,
     NeedsUpdateFromArchive(ArchiveInfo),
     MissingButOnArchive(ArchiveInfo),
@@ -100,10 +101,10 @@ enum DataSlotFileStatus {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct DataSlotFile {
-    name: String,
-    path: PathBuf,
+    pub name: String,
+    pub path: PathBuf,
     required: bool,
-    status: DataSlotFileStatus,
+    pub status: DataSlotFileStatus,
     md5: Option<String>,
 }
 
