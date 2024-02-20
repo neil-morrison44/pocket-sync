@@ -3,7 +3,7 @@ import { useRecoilValue } from "recoil"
 import { useTranslation } from "react-i18next"
 import "./index.css"
 import { WarningIcon } from "./warningIcon"
-import { RequiredFileInfoSelectorFamilyTwo } from "../../../../recoil/requiredFiles/selectors"
+import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles/selectors"
 
 type RequiredFilesProps = {
   coreName: string
@@ -12,9 +12,7 @@ type RequiredFilesProps = {
 }
 
 export const RequiredFiles = ({ coreName, onClick }: RequiredFilesProps) => {
-  const requiredFiles = useRecoilValue(
-    RequiredFileInfoSelectorFamilyTwo(coreName)
-  )
+  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
   const { t } = useTranslation("core_info")
 
   const foundFiles = useMemo(

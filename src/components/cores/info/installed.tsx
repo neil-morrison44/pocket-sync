@@ -24,7 +24,7 @@ import { ErrorBoundary } from "../../errorBoundary"
 import { AuthorTag } from "../../shared/authorTag"
 import { CoreInputs } from "./coreInputs"
 import { CoreSettings } from "./coreSettings"
-import { RequiredFileInfoSelectorFamilyTwo } from "../../../recoil/requiredFiles/selectors"
+import { RequiredFileInfoSelectorFamily } from "../../../recoil/requiredFiles/selectors"
 import { Trans, useTranslation } from "react-i18next"
 import { archiveBumpAtom } from "../../../recoil/archive/atoms"
 import { currentViewAtom } from "../../../recoil/view/atoms"
@@ -38,7 +38,6 @@ import { DisplayModes } from "./displayModes"
 import { SupportsBubble } from "./supportsBubble"
 import { Details } from "../../shared/details"
 import { CoreInfoTxtSelectorFamily } from "../../../recoil/cores/selectors"
-import { invoke } from "@tauri-apps/api"
 
 type CoreInfoProps = {
   coreName: string
@@ -136,20 +135,6 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
       <PlatformImage className="core-info__image" platformId={mainPlatformId} />
 
       <FirmwareWarning coreName={coreName} />
-
-      <button
-        onClick={async () => {
-          console.log("click?")
-          const result = await invoke("find_required_files", {
-            coreId: coreName,
-            includeAlts: true,
-            archiveUrl: "https://archive.org/metadata/openFPGA-Files",
-          })
-          console.log({ result })
-        }}
-      >
-        Core Request
-      </button>
 
       <section className="core-info__info">
         <p>{coreInfo.core.metadata.description}</p>
@@ -311,9 +296,7 @@ const RequiredFilesButton = ({
   coreName: string
   onClick: () => void
 }) => {
-  const requiredFiles = useRecoilValue(
-    RequiredFileInfoSelectorFamilyTwo(coreName)
-  )
+  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
   const { t } = useTranslation("core_info")
 
   if (requiredFiles.length === 0) return null

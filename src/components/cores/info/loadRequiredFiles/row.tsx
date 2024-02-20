@@ -14,16 +14,22 @@ export const RequiredFileRow = ({
 
   return (
     <div
-      key={info.path + info.filename}
+      key={info.path + info.name}
       className={`load-required-files__row load-required-files__row--${
-        info.exists && info.status !== "wrong" ? "exists" : "missing"
+        info.status.type === "Exists" ? "exists" : "missing"
       }`}
     >
-      <div className="load-required-files__row_name">{info.filename}</div>
+      <div className="load-required-files__row_name">{info.name}</div>
       <div>{info.path}</div>
       {hasArchiveLink && (
-        <div>{t(`file_status.${info.status || "unknown"}`)}</div>
+        <div>{t(`file_status.${camelToSnakeCase(info.status.type)}`)}</div>
       )}
     </div>
   )
 }
+
+const camelToSnakeCase = (str: string) =>
+  str
+    .split(/(?=[A-Z])/)
+    .join("_")
+    .toLowerCase()

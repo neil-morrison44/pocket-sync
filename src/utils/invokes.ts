@@ -3,7 +3,7 @@ import {
   FileCopy,
   FirmwareInfo,
   RawFeedItem,
-  RequiredFileInfoTwo,
+  RequiredFileInfo,
   RootFile,
   SaveZipFile,
 } from "../types"
@@ -197,7 +197,7 @@ export const invokeFindRequiredFiles = async (
   archiveUrl: string
 ) => {
   console.log({ coreId, includeAlts, archiveUrl })
-  return await invoke<RequiredFileInfoTwo[]>("find_required_files", {
+  return await invoke<RequiredFileInfo[]>("find_required_files", {
     coreId,
     includeAlts,
     archiveUrl,

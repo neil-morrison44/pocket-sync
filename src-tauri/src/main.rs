@@ -270,6 +270,8 @@ async fn uninstall_core(
     Ok(true)
 }
 
+// TODO: switch this to use the new format DataSlot
+
 #[tauri::command(async)]
 async fn install_archive_files(
     files: Vec<DownloadFile>,

@@ -49,24 +49,6 @@ export type DataSlotJSON = {
 }
 
 export type RequiredFileInfo = {
-  filename: string
-  path: string
-  exists: boolean
-  type: "core" | "instance"
-  crc32?: number
-  mtime?: number
-  status?:
-    | "ok"
-    | "wrong"
-    | "downloadable"
-    | "not_in_archive"
-    | "at_root"
-    | "at_root_match"
-    | "at_root_mismatch"
-  md5?: string
-}
-
-export type RequiredFileInfoTwo = {
   name: string
   path: string
   required: boolean
@@ -75,6 +57,7 @@ export type RequiredFileInfoTwo = {
     | { type: "NotFound" }
     | { type: "NotChecked" }
     | { type: "FoundAtRoot"; root: RootFileZipped | RootFileUnZipped }
+    | { type: "RootNeedsUpdate"; root: RootFileZipped | RootFileUnZipped }
     | { type: "MissingButOnArchive"; url: string; crc32: string }
     | { type: "NeedsUpdateFromArchive"; url: string; crc32: string }
 }

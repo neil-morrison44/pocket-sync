@@ -294,6 +294,8 @@ const ArchiveOrgStatus = ({
     [metadata, extensions]
   )
 
+  // TODO: Fix this, does it actually use required files?
+
   const files: RequiredFileInfo[] = useMemo(() => {
     return filteredMetadata.map((m) => {
       const exists =
