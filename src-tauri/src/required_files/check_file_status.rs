@@ -30,7 +30,7 @@ pub async fn check_data_file_status(
         })
         .collect();
 
-    for mut data_slot_file in data_slot_files.iter_mut() {
+    for data_slot_file in data_slot_files.iter_mut() {
         let file_path = pocket_path.join(&data_slot_file.path);
         let exists = tokio::fs::try_exists(&file_path).await?;
         let path = normalize_path_str(&data_slot_file.path.to_string_lossy());
@@ -274,7 +274,8 @@ mod tests {
                     required: true,
                     status: DataSlotFileStatus::MissingButOnArchive(ArchiveInfo {
                         url: String::from("file_on_archive.bin"),
-                        crc32: String::from("1234")
+                        crc32: String::from("1234"),
+                        mtime: None
                     }),
                     md5: None,
                 },
@@ -286,7 +287,8 @@ mod tests {
                     required: true,
                     status: DataSlotFileStatus::MissingButOnArchive(ArchiveInfo {
                         url: String::from("Assets/platform_one/tester.TestCore/common/file_on_archive_full_path.bin"),
-                        crc32: String::from("1234")
+                        crc32: String::from("1234"),
+                        mtime: None
                     }),
                     md5: None,
                 },
@@ -298,7 +300,8 @@ mod tests {
                     required: true,
                     status: DataSlotFileStatus::NeedsUpdateFromArchive(ArchiveInfo {
                         url: String::from("file_updated_on_archive.bin"),
-                        crc32: String::from("000")
+                        crc32: String::from("000"),
+                        mtime: None
                     }),
                     md5: None,
                 },
@@ -470,7 +473,8 @@ mod tests {
                     url: String::from(
                         "Assets/platform_one/tester.TestCore/common/nested/file_that_exists.bin"
                     ),
-                    crc32: String::from("3610A686")
+                    crc32: String::from("3610A686"),
+                    mtime: None
                 }),
                 md5: None,
             },]
