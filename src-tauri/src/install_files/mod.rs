@@ -7,7 +7,6 @@ use crate::{
     files_from_zip::copy_file_from_zip,
     required_files::{DataSlotFile, DataSlotFileStatus},
     root_files::RootFile,
-    saves_zip::remove_leading_slash,
     turbo_downloads::turbo_download_file,
 };
 use anyhow::Result;
@@ -31,6 +30,8 @@ pub async fn install_file(
                     response.bytes().await?
                 }
             };
+
+            dbg!(&full_url);
 
             let new_file_path = pocket_path.join(&file.path);
             create_parent_folders(&new_file_path).await?;

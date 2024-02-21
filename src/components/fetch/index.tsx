@@ -66,28 +66,30 @@ export const Fetch = () => {
       </Controls>
       {newFetchOpen && <NewFetch onClose={() => setNewFetchOpen(false)} />}
       <div className="fetch__list">
-        {list.map((item, index) => {
-          switch (item.type) {
-            case "archive.org":
-              return (
-                <ArchiveOrgItem
-                  key={item.name}
-                  onRemove={() => removeItem(index)}
-                  {...item}
-                />
-              )
-            case "filesystem":
-              return (
-                <FileSystemItem
-                  key={`${item.path}->${item.destination}`}
-                  onRemove={() => removeItem(index)}
-                  {...item}
-                />
-              )
-            default:
-              return null
-          }
-        })}
+        <Suspense>
+          {list.map((item, index) => {
+            switch (item.type) {
+              case "archive.org":
+                return (
+                  <ArchiveOrgItem
+                    key={item.name}
+                    onRemove={() => removeItem(index)}
+                    {...item}
+                  />
+                )
+              case "filesystem":
+                return (
+                  <FileSystemItem
+                    key={`${item.path}->${item.destination}`}
+                    onRemove={() => removeItem(index)}
+                    {...item}
+                  />
+                )
+              default:
+                return null
+            }
+          })}
+        </Suspense>
       </div>
     </div>
   )
@@ -251,11 +253,11 @@ const ArchiveOrgItem = ({
                       .filter(({ exists }) => !exists)
                       .map((f) => ({
                         name: f.name,
-                        path: `${f.path}/${f.name}`,
+                        path: `${f.path.replace(/^(\/|\\)+/, "")}/${f.name}`,
                         required: true,
                         status: {
                           type: "MissingButOnArchive",
-                          url: `${f.path}/${f.name}`,
+                          url: f.name,
                           crc32: "",
                         },
                       })),
@@ -309,9 +311,7 @@ const ArchiveOrgStatus = ({
     return filteredMetadata.map((m) => {
       const exists =
         fileInfo.find((fi) => {
-          if (
-            comparePaths(m.name.split("/"), [...splitAsPath(fi.path), fi.name])
-          ) {
+          if (comparePaths(m.name.split("/"), [...splitAsPath(fi.name)])) {
             return fi.mtime && parseInt(m.mtime) * 1000 <= fi.mtime
           }
           return false

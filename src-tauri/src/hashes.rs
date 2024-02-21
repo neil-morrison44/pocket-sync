@@ -1,5 +1,4 @@
 use anyhow::Result;
-use log::info;
 use md5::{Digest, Md5};
 use once_cell::sync::Lazy;
 use std::{collections::HashMap, io::Read, path::PathBuf};
@@ -19,7 +18,6 @@ pub async fn md5_for_file(file_path: &PathBuf) -> Result<String> {
     {
         let cache_guard = MD5_HASH_CACHE.read().await;
         if let Some(hash) = cache_guard.get(&(PathBuf::from(&full_path), timestamp)) {
-            info!("MD5 Cache Used");
             return Ok(String::from(hash));
         }
     }
@@ -71,11 +69,8 @@ pub async fn crc32_for_file(file_path: &PathBuf) -> Result<u32> {
     let timestamp = get_mtime_timestamp(&file_path).await?;
 
     {
-        info!("CRC32 Read Lock Requested");
         let cache_guard = CRC32_HASH_CACHE.read().await;
-        info!("CRC32 Read Lock Got");
         if let Some(hash) = cache_guard.get(&(PathBuf::from(&file_path), timestamp)) {
-            info!("CRC32 Cache Used");
             return Ok(hash.clone());
         }
     }
@@ -111,9 +106,7 @@ pub async fn crc32_for_file(file_path: &PathBuf) -> Result<u32> {
     let crc32 = handle.await?;
 
     {
-        info!("CRC32 Write Lock Requested");
         let mut cache_guard = CRC32_HASH_CACHE.write().await;
-        info!("CRC32 Write Lock Got");
         cache_guard.insert((PathBuf::from(&file_path), timestamp), crc32.clone());
     }
 
