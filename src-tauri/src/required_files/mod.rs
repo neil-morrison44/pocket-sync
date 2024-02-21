@@ -99,13 +99,19 @@ pub enum DataSlotFileStatus {
     NotChecked,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct DataSlotFile {
     pub name: String,
     pub path: PathBuf,
     required: bool,
     pub status: DataSlotFileStatus,
     md5: Option<String>,
+}
+
+impl PartialEq for DataSlotFile {
+    fn eq(&self, other: &Self) -> bool {
+        self.path == other.path
+    }
 }
 
 impl DataSlotFile {
@@ -172,6 +178,8 @@ pub async fn required_files_for_core(
     }
 
     data_slot_files.sort_unstable_by(|a, b| a.path.partial_cmp(&b.path).unwrap());
+
+    dbg!(&data_slot_files);
     data_slot_files.dedup();
 
     if let (Ok(archive_meta), Ok(files_at_root)) = (archive_meta, files_at_root) {

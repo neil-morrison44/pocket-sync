@@ -147,7 +147,7 @@ async fn read_text_file(
 
 #[tauri::command(async)]
 async fn file_exists(state: tauri::State<'_, PocketSyncState>, path: &str) -> Result<bool, String> {
-    debug!("Command: file_exists - {path}");
+    trace!("Command: file_exists - {path}");
     let pocket_path = state.0.pocket_path.read().await;
     let path = pocket_path.join(path);
 

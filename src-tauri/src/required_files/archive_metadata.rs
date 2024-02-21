@@ -15,6 +15,9 @@ struct MetadataResponse {
 }
 
 pub async fn get_metadata_from_archive(url: &str) -> Result<Vec<RawMetadataItem>> {
+    if url.len() == 0 {
+        return Ok(vec![]);
+    }
     let response = reqwest::get(url).await?.text().await?;
     let metadata: MetadataResponse = serde_json::from_str(&response)?;
 

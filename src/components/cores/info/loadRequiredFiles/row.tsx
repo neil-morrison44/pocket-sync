@@ -3,13 +3,9 @@ import { DataSlotFile } from "../../../../types"
 
 type RequiredFileRowProps = {
   info: DataSlotFile
-  hasArchiveLink: boolean
 }
 
-export const RequiredFileRow = ({
-  info,
-  hasArchiveLink,
-}: RequiredFileRowProps) => {
+export const RequiredFileRow = ({ info }: RequiredFileRowProps) => {
   const { t } = useTranslation("core_info_required_files")
 
   return (
@@ -21,9 +17,7 @@ export const RequiredFileRow = ({
     >
       <div className="load-required-files__row_name">{info.name}</div>
       <div>{info.path}</div>
-      {hasArchiveLink && (
-        <div>{t(`file_status.${camelToSnakeCase(info.status.type)}`)}</div>
-      )}
+      <div>{t(`file_status.${camelToSnakeCase(info.status.type)}`)}</div>
     </div>
   )
 }

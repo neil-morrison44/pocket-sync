@@ -73,11 +73,7 @@ export const LoadRequiredFiles = ({
         <>
           <div className="load-required-files__files">
             {sortedRequiredFiles.map((r) => (
-              <RequiredFileRow
-                info={r}
-                key={r.path}
-                hasArchiveLink={hasArchiveLink}
-              />
+              <RequiredFileRow info={r} key={r.path} />
             ))}
           </div>
 
