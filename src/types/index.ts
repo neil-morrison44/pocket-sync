@@ -48,22 +48,18 @@ export type DataSlotJSON = {
   md5?: string
 }
 
-export type RequiredFileInfo = {
-  filename: string
+export type DataSlotFile = {
+  name: string
   path: string
-  exists: boolean
-  type: "core" | "instance"
-  crc32?: number
-  mtime?: number
-  status?:
-    | "ok"
-    | "wrong"
-    | "downloadable"
-    | "not_in_archive"
-    | "at_root"
-    | "at_root_match"
-    | "at_root_mismatch"
-  md5?: string
+  required: boolean
+  status:
+    | { type: "Exists" }
+    | { type: "NotFound" }
+    | { type: "NotChecked" }
+    | { type: "FoundAtRoot"; root: RootFileZipped | RootFileUnZipped }
+    | { type: "RootNeedsUpdate"; root: RootFileZipped | RootFileUnZipped }
+    | { type: "MissingButOnArchive"; url: string; crc32: string }
+    | { type: "NeedsUpdateFromArchive"; url: string; crc32: string }
 }
 
 export type PlatformId = string
@@ -246,6 +242,13 @@ export type ArchiveFileMetadata = {
   name: string
   crc32: string
   mtime: string
+}
+
+export type FetchFileMetadataWithStatus = {
+  name: string
+  path: string
+  mtime: number
+  exists: boolean
 }
 
 export type ImagePack = {

@@ -4,10 +4,10 @@ import { useInstallCore } from "../../../../hooks/useInstallCore"
 import { DownloadURLSelectorFamily } from "../../../../recoil/inventory/selectors"
 import { emit, listen } from "@tauri-apps/api/event"
 import { InstallZipEventPayload } from "../../../zipInstall/types"
-import { RequiredFilesWithStatusSelectorFamily } from "../../../../recoil/archive/selectors"
 import { invoke } from "@tauri-apps/api"
 import { PocketSyncConfigSelector } from "../../../../recoil/config/selectors"
 import { useState } from "react"
+import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles/selectors"
 
 type UpdateInfo = {
   coreName: string
@@ -99,16 +99,13 @@ export const useProcessUpdates = () => {
           if (requiredFiles && archiveUrl) {
             setStage({ coreName, step: "filecheck" })
             const requiredFiles = await snapshot.getPromise(
-              RequiredFilesWithStatusSelectorFamily(coreName)
+              RequiredFileInfoSelectorFamily(coreName)
             )
             setStage({ coreName, step: "files" })
 
             const files = requiredFiles.filter(
               ({ status }) =>
-                status === "downloadable" ||
-                status === "wrong" ||
-                status === "at_root" ||
-                status === "at_root_match"
+                status.type !== "Exists" && status.type !== "NotFound"
             )
 
             if (files.length === 0) continue

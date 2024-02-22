@@ -1,29 +1,29 @@
 import { useTranslation } from "react-i18next"
-import { RequiredFileInfo } from "../../../../types"
+import { DataSlotFile } from "../../../../types"
 
 type RequiredFileRowProps = {
-  info: RequiredFileInfo
-  hasArchiveLink: boolean
+  info: DataSlotFile
 }
 
-export const RequiredFileRow = ({
-  info,
-  hasArchiveLink,
-}: RequiredFileRowProps) => {
+export const RequiredFileRow = ({ info }: RequiredFileRowProps) => {
   const { t } = useTranslation("core_info_required_files")
 
   return (
     <div
-      key={info.path + info.filename}
+      key={info.path + info.name}
       className={`load-required-files__row load-required-files__row--${
-        info.exists && info.status !== "wrong" ? "exists" : "missing"
+        info.status.type === "Exists" ? "exists" : "missing"
       }`}
     >
-      <div className="load-required-files__row_name">{info.filename}</div>
+      <div className="load-required-files__row_name">{info.name}</div>
       <div>{info.path}</div>
-      {hasArchiveLink && (
-        <div>{t(`file_status.${info.status || "unknown"}`)}</div>
-      )}
+      <div>{t(`file_status.${camelToSnakeCase(info.status.type)}`)}</div>
     </div>
   )
 }
+
+const camelToSnakeCase = (str: string) =>
+  str
+    .split(/(?=[A-Z])/)
+    .join("_")
+    .toLowerCase()

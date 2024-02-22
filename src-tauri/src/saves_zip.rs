@@ -1,9 +1,10 @@
+use anyhow::Result;
 use async_walkdir::WalkDir;
 use futures::{future::join_all, StreamExt};
+use log::error;
 use serde::{Deserialize, Serialize};
 use std::{
     cmp::{Ord, Ordering},
-    error,
     fs::{self, File},
     io::{Cursor, Read, Write},
     path::{Path, PathBuf},
@@ -63,7 +64,7 @@ pub async fn restore_save_from_zip(
         .unwrap();
 }
 
-pub async fn read_saves_in_zip(zip_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
+pub async fn read_saves_in_zip(zip_path: &PathBuf) -> Result<Vec<SaveZipFile>> {
     let zip_file = tokio::fs::read(zip_path).await.unwrap();
     let cursor = Cursor::new(zip_file);
 
@@ -90,7 +91,7 @@ pub async fn read_saves_in_zip(zip_path: &PathBuf) -> Result<Vec<SaveZipFile>, (
     }
 }
 
-pub async fn read_saves_in_folder(folder_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
+pub async fn read_saves_in_folder(folder_path: &PathBuf) -> Result<Vec<SaveZipFile>> {
     let mut walker = WalkDir::new(&folder_path);
     let mut tasks: Vec<_> = Vec::new();
 
@@ -131,7 +132,7 @@ pub async fn read_saves_in_folder(folder_path: &PathBuf) -> Result<Vec<SaveZipFi
     return Ok(results);
 }
 
-pub async fn read_save_zip_list(dir_path: &PathBuf) -> Result<Vec<SaveZipFile>, ()> {
+pub async fn read_save_zip_list(dir_path: &PathBuf) -> Result<Vec<SaveZipFile>> {
     if !dir_path.exists() {
         return Ok(vec![]);
     }
@@ -165,7 +166,7 @@ pub async fn build_save_zip(
     save_paths: Vec<&str>,
     dir_path: &str,
     max_count: usize,
-) -> Result<(), ()> {
+) -> Result<()> {
     let zip_path = Path::new(dir_path);
     let timestamp = SystemTime::now()
         .duration_since(SystemTime::UNIX_EPOCH)
@@ -211,8 +212,7 @@ pub async fn build_save_zip(
                 zip.add_directory(&safe_name, options).unwrap();
             }
         } else {
-            println!("Save path not found");
-            dbg!(&path);
+            error!("Save path not found {:?}", &path);
         }
     }
     zip.finish().unwrap();
@@ -221,7 +221,7 @@ pub async fn build_save_zip(
     Ok(())
 }
 
-async fn prune_zips(zip_path: &Path, max_count: usize) -> Result<(), Box<dyn error::Error>> {
+async fn prune_zips(zip_path: &Path, max_count: usize) -> Result<()> {
     let mut files = read_save_zip_list(&PathBuf::from(zip_path)).await.unwrap();
     files.sort();
     let last_two: Vec<&SaveZipFile> = files.iter().rev().take(2).collect();

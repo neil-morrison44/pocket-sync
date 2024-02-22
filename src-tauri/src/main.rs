@@ -7,29 +7,30 @@ use async_walkdir::{DirEntry, WalkDir};
 use checks::{check_if_folder_looks_like_pocket, connection_task};
 use clean_fs::find_dotfiles;
 use file_cache::{clear_file_caches, get_file_with_cache};
-use files_from_zip::{copy_file_from_zip, crc32_file_in_zip, md5_file_in_zip};
 use firmware::{FirmwareDetails, FirmwareListItem};
-use fs_set_times::{self, set_mtime, SystemTimeSpec};
 use futures::StreamExt;
 use futures_locks::RwLock;
-use hashes::{crc32_for_file, md5_for_file};
+use hashes::crc32_for_file;
 use install_zip::start_zip_task;
 use log::{debug, error, trace, LevelFilter};
+use required_files::{required_files_for_core, DataSlotFile};
+use root_files::RootFile;
 use save_sync_session::start_mister_save_sync_session;
 use saves_zip::{
     build_save_zip, read_save_zip_list, read_saves_in_folder, read_saves_in_zip,
     remove_leading_slash, restore_save_from_zip, SaveZipFile,
 };
 use serde::{Deserialize, Serialize};
-use std::collections::HashSet;
 use std::path::PathBuf;
-use std::time::{Duration, SystemTime};
+use std::time::SystemTime;
 use std::vec;
 use tauri::api::dialog;
 use tauri::{App, Manager, Window};
 use tauri_plugin_log::LogTarget;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use turbo_downloads::turbo_download_file;
+
+use crate::install_files::install_file;
+use crate::util::get_mtime_timestamp;
 
 mod checks;
 mod clean_fs;
@@ -37,12 +38,16 @@ mod core_json_files;
 mod file_cache;
 mod firmware;
 mod hashes;
+mod install_files;
 mod install_zip;
 mod news_feed;
 mod progress;
+mod required_files;
+mod root_files;
 mod save_sync_session;
 mod saves_zip;
 mod turbo_downloads;
+mod util;
 
 #[derive(Default)]
 struct InnerState {
@@ -142,7 +147,7 @@ async fn read_text_file(
 
 #[tauri::command(async)]
 async fn file_exists(state: tauri::State<'_, PocketSyncState>, path: &str) -> Result<bool, String> {
-    debug!("Command: file_exists - {path}");
+    trace!("Command: file_exists - {path}");
     let pocket_path = state.0.pocket_path.read().await;
     let path = pocket_path.join(path);
 
@@ -268,7 +273,7 @@ async fn uninstall_core(
 
 #[tauri::command(async)]
 async fn install_archive_files(
-    files: Vec<DownloadFile>,
+    files: Vec<DataSlotFile>,
     archive_url: &str,
     turbo: bool,
     state: tauri::State<'_, PocketSyncState>,
@@ -277,103 +282,13 @@ async fn install_archive_files(
     debug!("Command: install_archive_files");
     let pocket_path = state.0.pocket_path.read().await;
     let file_count = files.len();
-
-    let mut failed_already = HashSet::new();
     let mut progress = progress::ProgressEmitter::start(file_count, &window);
-    let root_files = check_root_files(state, None).await?;
 
     for file in files {
-        let matching_root_files: Vec<_> = root_files
-            .iter()
-            .filter(|rf| match rf {
-                RootFile::Zipped {
-                    zip_file: _,
-                    inner_file,
-                    ..
-                } => inner_file == &file.filename,
-                RootFile::UnZipped { file_name, .. } => file_name == &file.filename,
-            })
-            .collect();
-
-        if let Some(matching_root_file) = matching_root_files.first() {
-            progress.emit_progress(&file.filename);
-            let file_path = remove_leading_slash(&file.path);
-            let folder = pocket_path.join(file_path);
-            let new_file_path = folder.join(&file.filename);
-
-            if let Some(parent) = new_file_path.parent() {
-                if !parent.exists() {
-                    tokio::fs::create_dir_all(&parent).await.unwrap();
-                }
-            }
-
-            match matching_root_file {
-                RootFile::Zipped {
-                    zip_file,
-                    inner_file,
-                    ..
-                } => {
-                    copy_file_from_zip(&pocket_path.join(zip_file), &inner_file, &new_file_path)
-                        .await?;
-                }
-                RootFile::UnZipped { file_name, .. } => {
-                    tokio::fs::copy(pocket_path.join(file_name), new_file_path)
-                        .await
-                        .map_err(|err| err.to_string())?;
-                }
-            }
-
-            continue;
-        }
-
-        let full_url = format!("{}/{}", archive_url, file.filename);
-        progress.emit_progress(&file.filename);
-
-        if !failed_already.contains(&file.filename) {
-            let content = match turbo_download_file(&full_url, turbo).await {
-                Ok(Some(c)) => c,
-                Ok(None) => {
-                    let response = reqwest::get(&full_url).await;
-                    match response {
-                        Err(e) => {
-                            println!("Error downloading from {full_url}: ({e})");
-                            failed_already.insert(file.filename);
-                            continue;
-                        }
-                        Ok(r) if r.status() != 200 => {
-                            println!("Unable to find {full_url}, skipping");
-                            failed_already.insert(file.filename);
-                            continue;
-                        }
-                        Ok(r) => r.bytes().await.unwrap(),
-                    }
-                }
-                Err(e) => {
-                    println!("Error downloading from {full_url}: ({e})");
-                    failed_already.insert(file.filename);
-                    continue;
-                }
-            };
-            let file_path = remove_leading_slash(&file.path);
-            let folder = pocket_path.join(file_path);
-            let new_file_path = folder.join(&file.filename);
-
-            if let Some(parent) = new_file_path.parent() {
-                if !parent.exists() {
-                    tokio::fs::create_dir_all(&parent).await.unwrap();
-                }
-            }
-            let mut dest = tokio::fs::File::create(&new_file_path).await.unwrap();
-            let mut content_cusror = std::io::Cursor::new(content);
-            tokio::io::copy(&mut content_cusror, &mut dest)
-                .await
-                .unwrap();
-
-            if let Some(mtime) = file.mtime {
-                let time = SystemTime::UNIX_EPOCH + Duration::from_millis(mtime);
-                set_mtime(&new_file_path, SystemTimeSpec::Absolute(time)).unwrap();
-            }
-        }
+        progress.emit_progress(&file.name);
+        install_file(file, archive_url, turbo, &pocket_path)
+            .await
+            .map_err(|e| e.to_string())?;
     }
 
     progress.end();
@@ -417,24 +332,26 @@ async fn list_backup_saves(backup_path: &str) -> Result<BackupSavesResponse, ()>
 }
 
 #[tauri::command(async)]
-async fn list_saves_in_zip(zip_path: &str) -> Result<Vec<SaveZipFile>, ()> {
+async fn list_saves_in_zip(zip_path: &str) -> Result<Vec<SaveZipFile>, String> {
     debug!("Command: list_saves_in_zip");
     let path = PathBuf::from(zip_path);
     if !path.exists() {
         return Ok(vec![]);
     }
 
-    read_saves_in_zip(&path).await
+    read_saves_in_zip(&path).await.map_err(|e| e.to_string())
 }
 
 #[tauri::command(async)]
 async fn list_saves_on_pocket(
     state: tauri::State<'_, PocketSyncState>,
-) -> Result<Vec<SaveZipFile>, ()> {
+) -> Result<Vec<SaveZipFile>, String> {
     debug!("Command: list_saves_on_pocket");
     let pocket_path = state.0.pocket_path.read().await;
     let saves_path = pocket_path.join("Saves");
-    read_saves_in_folder(&saves_path).await
+    read_saves_in_folder(&saves_path)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[tauri::command(async)]
@@ -632,17 +549,9 @@ async fn get_file_metadata_mtime_only(
     let pocket_path = state.0.pocket_path.read().await;
     let full_path = pocket_path.join(file_path);
 
-    let metadata = tokio::fs::metadata(full_path)
+    get_mtime_timestamp(&full_path)
         .await
-        .and_then(|m| m.modified())
-        .map_err(|err| err.to_string())?;
-
-    let timestamp = metadata
-        .duration_since(SystemTime::UNIX_EPOCH)
-        .and_then(|d| Ok(d.as_secs()))
-        .map_err(|err| err.to_string())?;
-
-    Ok(timestamp)
+        .map_err(|err| err.to_string())
 }
 
 #[tauri::command(async)]
@@ -705,23 +614,21 @@ async fn clear_file_cache(app_handle: tauri::AppHandle) -> Result<(), String> {
     Ok(())
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(tag = "type")]
-enum RootFile {
-    Zipped {
-        zip_file: String,
-        inner_file: String,
-        crc32: u32,
-        md5: String,
-    },
-    UnZipped {
-        file_name: String,
-        crc32: u32,
-        md5: String,
-    },
-}
-
 mod files_from_zip;
+
+#[tauri::command(async)]
+async fn find_required_files(
+    state: tauri::State<'_, PocketSyncState>,
+    core_id: &str,
+    include_alts: bool,
+    archive_url: &str,
+) -> Result<Vec<DataSlotFile>, String> {
+    debug!("Command: find_required_files");
+    let pocket_path = state.0.pocket_path.read().await;
+    required_files_for_core(core_id, &pocket_path, include_alts, archive_url)
+        .await
+        .map_err(|err| err.to_string())
+}
 
 #[tauri::command(async)]
 async fn check_root_files(
@@ -730,77 +637,9 @@ async fn check_root_files(
 ) -> Result<Vec<RootFile>, String> {
     debug!("Command: check_root_files");
     let pocket_path = state.0.pocket_path.read().await;
-    let mut entries = tokio::fs::read_dir(&pocket_path.as_path())
+    root_files::check_root_files(&pocket_path, extensions)
         .await
-        .map_err(|err| err.to_string())?;
-    let mut results: Vec<RootFile> = Vec::new();
-
-    while let Ok(Some(entry)) = entries.next_entry().await {
-        if let Ok(metadata) = entry.metadata().await {
-            if metadata.is_file() {
-                let path = entry.path();
-                if let (Some(ext), Some(file_name)) = (
-                    path.extension().and_then(|s| s.to_str()),
-                    path.file_name().and_then(|s| s.to_str()),
-                ) {
-                    if file_name.starts_with(".") {
-                        continue;
-                    }
-                    if ext == "zip" {
-                        let files = files_from_zip::list_files(&path).await?;
-                        if files.len() > 0 {
-                            let zip_file = String::from(file_name);
-                            let inner_file = files[0].clone();
-                            let file_path = PathBuf::from(&inner_file);
-                            if let Some(ext) = file_path.extension() {
-                                match extensions
-                                    .as_ref()
-                                    .and_then(|exts| Some(exts.iter().any(|ex| *ex == ext)))
-                                {
-                                    None | Some(true) => (),
-                                    Some(false) => continue,
-                                }
-                            }
-
-                            results.push(RootFile::Zipped {
-                                crc32: crc32_file_in_zip(&pocket_path.join(&zip_file), &inner_file)
-                                    .await?,
-                                md5: md5_file_in_zip(&pocket_path.join(&file_name), &inner_file)
-                                    .await?,
-                                zip_file,
-                                inner_file,
-                            })
-                        }
-                    } else {
-                        match extensions
-                            .as_ref()
-                            .and_then(|exts| Some(exts.iter().any(|ex| *ex == ext)))
-                        {
-                            None | Some(true) => (),
-                            Some(false) => continue,
-                        }
-
-                        let file_name = String::from(file_name);
-                        let file_path = &pocket_path.join(&file_name);
-
-                        let md5 = md5_for_file(&file_path)
-                            .await
-                            .map_err(|err| err.to_string())?;
-
-                        results.push(RootFile::UnZipped {
-                            crc32: crc32_for_file(&file_path)
-                                .await
-                                .map_err(|e| e.to_string())?,
-                            file_name,
-                            md5,
-                        });
-                    }
-                }
-            }
-        }
-    }
-
-    Ok(results)
+        .map_err(|err| err.to_string())
 }
 
 fn main() {
@@ -843,7 +682,8 @@ fn main() {
             get_firmware_release_notes,
             download_firmware,
             clear_file_cache,
-            check_root_files
+            check_root_files,
+            find_required_files
         ])
         .setup(|app| {
             log_panics::init();

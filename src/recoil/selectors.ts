@@ -55,14 +55,16 @@ export const CoreMainPlatformIdSelectorFamily = selectorFamily<string, string>({
     },
 })
 
-export const CorePlatformIdSelectorFamily = selectorFamily<string, string>({
-  key: "CorePlatformIdSelectorFamily",
+export const CoreAllPlatformIdsSelectorFamily = selectorFamily<
+  string[],
+  string
+>({
+  key: "CoreAllPlatformIdsSelectorFamily",
   get:
     (coreName: string) =>
     async ({ get }) => {
       const { core } = get(CoreInfoSelectorFamily(coreName))
-      // Hopefully 0 is the one that exists
-      return core.metadata.platform_ids[0]
+      return core.metadata.platform_ids
     },
 })
 

@@ -106,14 +106,13 @@
     "skip_alternates_label": "Alternative Dateien überspringen",
     "title": "Benötigte Dateien",
     "file_status": {
-      "wrong": "Aktualisierbar",
-      "downloadable": "Herunterladbar",
-      "not_in_archive": "Nicht im Archiv",
-      "ok": "Heruntergeladen",
-      "unknown": "Unbekannt",
-      "at_root": "Im Wurzelverzeichnis gefunden",
-      "at_root_match": "Datei verifiziert. Im Wurzelverzeichnis gefunden",
-      "at_root_mismatch": "Datei stimmt nicht überein. Bitte das Wurzelverzeichnis überprüfen"
+      "needs_update_from_archive": "Aktualisierbar",
+      "missing_but_on_archive": "Herunterladbar",
+      "not_found": "Nicht im Archiv",
+      "exists": "Heruntergeladen",
+      "not_checked": "Unbekannt",
+      "found_at_root": "Datei verifiziert. Im Wurzelverzeichnis gefunden",
+      "root_needs_update": "Datei stimmt nicht überein. Bitte das Wurzelverzeichnis überprüfen"
     }
   },
   "cores": {

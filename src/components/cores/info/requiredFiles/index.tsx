@@ -2,8 +2,8 @@ import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { useTranslation } from "react-i18next"
 import "./index.css"
-import { RequiredFilesWithStatusSelectorFamily } from "../../../../recoil/archive/selectors"
 import { WarningIcon } from "./warningIcon"
+import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles/selectors"
 
 type RequiredFilesProps = {
   coreName: string
@@ -12,16 +12,11 @@ type RequiredFilesProps = {
 }
 
 export const RequiredFiles = ({ coreName, onClick }: RequiredFilesProps) => {
-  const requiredFiles = useRecoilValue(
-    RequiredFilesWithStatusSelectorFamily(coreName)
-  )
+  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
   const { t } = useTranslation("core_info")
 
   const foundFiles = useMemo(
-    () =>
-      requiredFiles.filter(
-        ({ exists, status }) => exists && status !== "wrong"
-      ),
+    () => requiredFiles.filter(({ status }) => status.type === "Exists"),
     [requiredFiles]
   )
 

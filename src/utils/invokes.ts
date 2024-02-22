@@ -3,6 +3,7 @@ import {
   FileCopy,
   FirmwareInfo,
   RawFeedItem,
+  DataSlotFile,
   RootFile,
   SaveZipFile,
 } from "../types"
@@ -189,3 +190,25 @@ export const invokeClearFileCache = async () => await invoke("clear_file_cache")
 
 export const invokeListRootFiles = async (extensions?: string[]) =>
   await invoke<RootFile[]>("check_root_files", { extensions })
+
+export const invokeFindRequiredFiles = async (
+  coreId: string,
+  includeAlts: boolean,
+  archiveUrl: string
+) =>
+  await invoke<DataSlotFile[]>("find_required_files", {
+    coreId,
+    includeAlts,
+    archiveUrl,
+  })
+
+export const invokeInstallArchiveFiles = async (
+  files: DataSlotFile[],
+  archiveUrl: string,
+  turbo: boolean
+) =>
+  await invoke<boolean>("install_archive_files", {
+    files,
+    archiveUrl,
+    turbo,
+  })

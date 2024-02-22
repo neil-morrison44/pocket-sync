@@ -1,7 +1,6 @@
 import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { useInstallRequiredFiles } from "../../../../hooks/useInstallRequiredFiles"
-import { RequiredFilesWithStatusSelectorFamily } from "../../../../recoil/archive/selectors"
 import { skipAlternateAssetsSelector } from "../../../../recoil/config/selectors"
 import { Modal } from "../../../modal"
 import { Progress } from "../../../progress"
@@ -12,12 +11,15 @@ import "./index.css"
 import { RequiredFileRow } from "./row"
 import { useUpdateConfig } from "../../../settings/hooks/useUpdateConfig"
 import { useHasArchiveLink } from "../../../../hooks/useHasArchiveLink"
+import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles/selectors"
 
 const STATUS_SORT_ORDER = [
-  "wrong",
-  "downloadable",
-  "ok",
-  "not_in_archive",
+  "RootNeedsUpdate",
+  "FoundAtRoot",
+  "NeedsUpdateFromArchive",
+  "MissingButOnArchive",
+  "NotFound",
+  "Exists",
   undefined,
 ]
 
@@ -30,9 +32,7 @@ export const LoadRequiredFiles = ({
   coreName,
   onClose,
 }: LoadRequiredFilesProps) => {
-  const requiredFiles = useRecoilValue(
-    RequiredFilesWithStatusSelectorFamily(coreName)
-  )
+  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
   const { t } = useTranslation("core_info_required_files")
   const {
     installRequiredFiles,
@@ -48,11 +48,11 @@ export const LoadRequiredFiles = ({
 
   const sortedRequiredFiles = useMemo(() => {
     return [...requiredFiles].sort((a, b) => {
-      if (a.status === b.status) return a.filename.localeCompare(b.filename)
+      if (a.status === b.status) return a.name.localeCompare(b.name)
 
       return (
-        STATUS_SORT_ORDER.indexOf(a.status) -
-        STATUS_SORT_ORDER.indexOf(b.status)
+        STATUS_SORT_ORDER.indexOf(a.status.type) -
+        STATUS_SORT_ORDER.indexOf(b.status.type)
       )
     })
   }, [requiredFiles])
@@ -73,11 +73,7 @@ export const LoadRequiredFiles = ({
         <>
           <div className="load-required-files__files">
             {sortedRequiredFiles.map((r) => (
-              <RequiredFileRow
-                info={r}
-                key={`${r.path}/${r.filename}`}
-                hasArchiveLink={hasArchiveLink}
-              />
+              <RequiredFileRow info={r} key={r.path} />
             ))}
           </div>
 
@@ -105,10 +101,7 @@ export const LoadRequiredFiles = ({
                   installRequiredFiles(
                     requiredFiles.filter(
                       ({ status }) =>
-                        status === "downloadable" ||
-                        status === "wrong" ||
-                        status === "at_root" ||
-                        status === "at_root_match"
+                        status.type !== "Exists" && status.type !== "NotFound"
                     )
                   )
                 }

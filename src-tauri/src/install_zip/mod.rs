@@ -17,7 +17,10 @@ use zip::ZipArchive;
 mod payloads;
 
 use crate::{
-    core_json_files::{core::CoreFile, updaters::UpdatersFile, CoreDetails},
+    core_json_files::{
+        core::CoreFile,
+        updaters::{CoreUpdateDetails, UpdatersFile},
+    },
     PocketSyncState,
 };
 
@@ -184,8 +187,8 @@ pub async fn start_zip_task(window: Window) -> () {
 async fn process_core_replacements(
     window: &Window,
     pocket_path: &PathBuf,
-    new_core: &CoreDetails,
-    previous_cores: &Vec<CoreDetails>,
+    new_core: &CoreUpdateDetails,
+    previous_cores: &Vec<CoreUpdateDetails>,
 ) -> () {
     let installed_previous_cores: Vec<_> = previous_cores
         .iter()
@@ -268,19 +271,6 @@ async fn process_core_replacements(
         move_files(
             pocket_path.join(format!("Saves/{}/common", previous_core.platform_id)),
             pocket_path.join(format!("Saves/{}/common", new_core.platform_id)),
-        )
-        .await
-        .unwrap();
-
-        move_files(
-            pocket_path.join(format!(
-                "Presets/{}.{}",
-                previous_core.author, previous_core.shortname
-            )),
-            pocket_path.join(format!(
-                "Presets/{}.{}",
-                new_core.author, new_core.shortname
-            )),
         )
         .await
         .unwrap();

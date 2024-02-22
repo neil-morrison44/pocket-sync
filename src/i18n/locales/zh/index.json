@@ -89,14 +89,13 @@
     "skip_alternates_label": "跳过次要文件",
     "title": "必要文件",
     "file_status": {
-      "wrong": "可更新",
-      "downloadable": "可下载",
-      "not_in_archive": "未入库",
-      "ok": "已下载",
-      "unknown": "未知",
-      "at_root": "已存在于根目录",
-      "at_root_match": "文件已验证。在根中找到",
-      "at_root_mismatch": "文件不匹配。请检查根目录"
+      "needs_update_from_archive": "可更新",
+      "missing_but_on_archive": "可下载",
+      "not_found": "未入库",
+      "exists": "已下载",
+      "not_checked": "未知",
+      "found_at_root": "文件已验证。在根中找到",
+      "root_needs_update": "文件不匹配。请检查根目录"
     }
   },
   "cores": {

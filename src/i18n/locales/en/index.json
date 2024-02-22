@@ -106,14 +106,13 @@
     "skip_alternates_label": "Skip alternative files",
     "title": "Required Files",
     "file_status": {
-      "wrong": "Updatable",
-      "downloadable": "Downloadable",
-      "not_in_archive": "Not in archive",
-      "ok": "Downloaded",
-      "unknown": "Unknown",
-      "at_root": "Found in root",
-      "at_root_match": "File verified. Found in root",
-      "at_root_mismatch": "File mismatch. Please check the root"
+      "needs_update_from_archive": "Updatable",
+      "missing_but_on_archive": "Downloadable",
+      "not_found": "Not in archive",
+      "exists": "Downloaded",
+      "not_checked": "Unknown",
+      "found_at_root": "File verified. Found in root",
+      "root_needs_update": "File mismatch. Please check the root"
     }
   },
   "cores": {
