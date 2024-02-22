@@ -284,8 +284,6 @@ async fn install_archive_files(
     let file_count = files.len();
     let mut progress = progress::ProgressEmitter::start(file_count, &window);
 
-    dbg!(&files);
-
     for file in files {
         progress.emit_progress(&file.name);
         install_file(file, archive_url, turbo, &pocket_path)
@@ -334,24 +332,26 @@ async fn list_backup_saves(backup_path: &str) -> Result<BackupSavesResponse, ()>
 }
 
 #[tauri::command(async)]
-async fn list_saves_in_zip(zip_path: &str) -> Result<Vec<SaveZipFile>, ()> {
+async fn list_saves_in_zip(zip_path: &str) -> Result<Vec<SaveZipFile>, String> {
     debug!("Command: list_saves_in_zip");
     let path = PathBuf::from(zip_path);
     if !path.exists() {
         return Ok(vec![]);
     }
 
-    read_saves_in_zip(&path).await
+    read_saves_in_zip(&path).await.map_err(|e| e.to_string())
 }
 
 #[tauri::command(async)]
 async fn list_saves_on_pocket(
     state: tauri::State<'_, PocketSyncState>,
-) -> Result<Vec<SaveZipFile>, ()> {
+) -> Result<Vec<SaveZipFile>, String> {
     debug!("Command: list_saves_on_pocket");
     let pocket_path = state.0.pocket_path.read().await;
     let saves_path = pocket_path.join("Saves");
-    read_saves_in_folder(&saves_path).await
+    read_saves_in_folder(&saves_path)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[tauri::command(async)]

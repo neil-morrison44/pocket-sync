@@ -178,8 +178,6 @@ pub async fn required_files_for_core(
     }
 
     data_slot_files.sort_unstable_by(|a, b| a.path.partial_cmp(&b.path).unwrap());
-
-    dbg!(&data_slot_files);
     data_slot_files.dedup();
 
     if let (Ok(archive_meta), Ok(files_at_root)) = (archive_meta, files_at_root) {

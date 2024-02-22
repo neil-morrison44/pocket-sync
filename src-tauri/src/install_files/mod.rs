@@ -30,9 +30,6 @@ pub async fn install_file(
                     response.bytes().await?
                 }
             };
-
-            dbg!(&full_url);
-
             let new_file_path = pocket_path.join(&file.path);
             create_parent_folders(&new_file_path).await?;
 
