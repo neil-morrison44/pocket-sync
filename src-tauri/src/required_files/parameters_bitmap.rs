@@ -20,7 +20,7 @@ pub struct SlotParameters(IntOrHexString);
 
 impl Default for SlotParameters {
     fn default() -> SlotParameters {
-        Self(IntOrHexString::Int(3))
+        Self(IntOrHexString::Int(0))
     }
 }
 
