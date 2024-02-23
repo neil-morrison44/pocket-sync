@@ -1,42 +1,29 @@
 use anyhow::Result;
-use std::sync::Arc;
-use tokio::sync::mpsc;
+use serde::{Deserialize, Serialize};
 use work_unit_group::WorkUnitGroupStatus;
-
 mod work_unit_group;
 
-#[derive(Debug)]
-pub struct ProgressEmitter {
+type EmitCallback<'a> = Box<dyn FnMut(ProgressEvent) + Send + 'a>;
+pub struct ProgressEmitter<'a> {
     work_unit_stack: Vec<WorkUnitGroupStatus>,
-    // channel: Arc<ProgressEvent>,
-    name: String,
     message: Option<ProgressMessage>,
+    emit_callback: EmitCallback<'a>,
 }
 
-impl ProgressEmitter {
-    fn new(name: &str) -> Self {
-
-let channel =
-
-
-
+impl<'a> ProgressEmitter<'a> {
+    pub fn new(callback: EmitCallback<'a>) -> Self {
         ProgressEmitter {
             work_unit_stack: vec![WorkUnitGroupStatus::new(10)],
-            name: String::from(name),
             message: None,
+            emit_callback: callback,
         }
     }
 
-    fn overall_percentage(self: &Self) -> f32 {
-        let mut percent = 0.0;
-        for work_unit in &self.work_unit_stack {
-            let remainder = 1.0 - percent;
-            percent += work_unit.fraction() * remainder;
-        }
-        percent
+    pub fn begin_work_units(self: &mut Self, count: usize) -> () {
+        self.work_unit_stack.push(WorkUnitGroupStatus::new(count));
     }
 
-    fn complete_work_units(self: &mut Self, units: usize) -> () {
+    pub fn complete_work_units(self: &mut Self, units: usize) -> () {
         let mut remaining_units = units;
 
         while let Some(overflow) = self
@@ -48,47 +35,71 @@ let channel =
             self.work_unit_stack.push(WorkUnitGroupStatus::new(10));
         }
 
-        dbg!(&self);
+        self.emit_progress();
+    }
+
+    pub fn set_message(self: &mut Self, token: &str, param: Option<&str>) -> () {
+        self.message = Some(ProgressMessage {
+            token: String::from(token),
+            param: param.and_then(|p| Some(String::from(p))),
+        });
+
+        self.emit_progress();
+    }
+
+    fn emit_progress(self: &mut Self) -> () {
+        let event = ProgressEvent {
+            finished: false,
+            progress: self.overall_percentage(),
+            message: self.message.clone(),
+        };
+
+        (self.emit_callback)(event);
+    }
+
+    fn overall_percentage(self: &Self) -> f32 {
+        let mut percent = 0.0;
+        for work_unit in &self.work_unit_stack {
+            let remainder = 1.0 - percent;
+            percent += work_unit.fraction() * remainder;
+        }
+        percent
     }
 }
 
-#[derive(Debug)]
-struct ProgressMessage {
+impl Drop for ProgressEmitter<'_> {
+    fn drop(&mut self) {
+        let event = ProgressEvent {
+            finished: true,
+            progress: self.overall_percentage(),
+            message: self.message.clone(),
+        };
+        (self.emit_callback)(event);
+    }
+}
+
+impl Default for ProgressEmitter<'_> {
+    fn default() -> Self {
+        Self {
+            work_unit_stack: Default::default(),
+            message: Default::default(),
+            emit_callback: Box::new(|_e| {}),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ProgressMessage {
     token: String,
     param: Option<String>,
 }
 
-pub enum ProgressEvent {
-    Finish,
-    CompleteWorkUnits(usize),
-    BeginWorkUnits(usize),
-    SetMessage(String, Option<String>),
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ProgressEvent {
+    pub finished: bool,
+    pub progress: f32,
+    pub message: Option<ProgressMessage>,
 }
-
-// impl ProgressEmitter<'_> {
-//     pub fn start(name: &str, initial_work_unit_count: usize, window: &'a tauri::Window) -> ProgressEmitter {
-//         let (tx, mut rx) = mpsc::channel<ProgressEvent>(100);
-
-//         let emitter = ProgressEmitter {
-//             window: window,
-//             work_unit_stack: vec![
-//                 WorkUnitGroupStatus
-//             ],
-//             name: String::from(name),
-//             channel: Arc::new(tx),
-//             messages: None
-//         };
-
-//         // window
-//         //     .emit(
-//         //         "progress-start-event",
-//         //         ProgressStartPayload { progress: 0.0 },
-//         //     )
-//         //     .unwrap();
-
-//         return emitter;
-//     }
-// }
 
 #[cfg(test)]
 mod tests {
@@ -96,7 +107,7 @@ mod tests {
 
     #[test]
     fn add_under_count() -> Result<()> {
-        let mut progress_emitter = ProgressEmitter::new("_test_progress");
+        let mut progress_emitter = ProgressEmitter::new(Box::new(|event| {}));
         progress_emitter.complete_work_units(5);
 
         assert_eq!(progress_emitter.overall_percentage(), 0.5);
@@ -105,7 +116,7 @@ mod tests {
 
     #[test]
     fn add_over_count() -> Result<()> {
-        let mut progress_emitter = ProgressEmitter::new("_test_progress");
+        let mut progress_emitter = ProgressEmitter::new(Box::new(|event| {}));
         progress_emitter.complete_work_units(25);
 
         assert_eq!(progress_emitter.overall_percentage(), 0.997);

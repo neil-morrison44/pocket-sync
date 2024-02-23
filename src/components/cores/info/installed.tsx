@@ -38,6 +38,7 @@ import { DisplayModes } from "./displayModes"
 import { SupportsBubble } from "./supportsBubble"
 import { Details } from "../../shared/details"
 import { CoreInfoTxtSelectorFamily } from "../../../recoil/cores/selectors"
+import { ProgressLoader } from "../../loader/progress"
 
 type CoreInfoProps = {
   coreName: string
@@ -187,7 +188,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
                   {t("required_files")}
                   {":"}
                 </strong>
-                {t("please_wait")}
+                <ProgressLoader name="required_files_for_core" />
               </div>
             }
           >

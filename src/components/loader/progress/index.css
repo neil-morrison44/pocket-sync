@@ -1,0 +1,33 @@
+.progress-loader {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+
+
+.progress-loader__bar{
+  width: 100%;
+  height: 15px;
+  display: flex;
+  border-radius: 10px;
+  border: 1px solid white;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  padding: 2px;
+  position: relative;
+  opacity: 0.6;
+
+  &::after{
+    content: "";
+    display: block;
+    border-radius: inherit;
+    background-color: white;
+    width:100%;
+    height: 100%;
+    clip-path: polygon(0 0, var(--percent) 0, var(--percent) 100%, 0 100%);
+    will-change: clip-path;
+    transition: clip-path 0.2s ease-out;
+  }
+}

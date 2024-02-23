@@ -281,17 +281,22 @@ async fn install_archive_files(
 ) -> Result<bool, String> {
     debug!("Command: install_archive_files");
     let pocket_path = state.0.pocket_path.read().await;
-    let file_count = files.len();
-    // let mut progress = progress::ProgressEmitter::start(file_count, &window);
 
+    let mut progress = progress::ProgressEmitter::new(Box::new(|event| {
+        window
+            .emit("progress-event::install_archive_files", event)
+            .unwrap();
+    }));
+
+    progress.begin_work_units(files.len());
     for file in files {
-        // progress.emit_progress(&file.name);
+        progress.set_message("downloading", Some(&file.name));
         install_file(file, archive_url, turbo, &pocket_path)
             .await
             .map_err(|e| e.to_string())?;
-    }
 
-    // progress.end();
+        progress.complete_work_units(1);
+    }
 
     Ok(true)
 }
@@ -622,10 +627,11 @@ async fn find_required_files(
     core_id: &str,
     include_alts: bool,
     archive_url: &str,
+    window: tauri::Window,
 ) -> Result<Vec<DataSlotFile>, String> {
     debug!("Command: find_required_files");
     let pocket_path = state.0.pocket_path.read().await;
-    required_files_for_core(core_id, &pocket_path, include_alts, archive_url)
+    required_files_for_core(core_id, &pocket_path, include_alts, archive_url, window)
         .await
         .map_err(|err| err.to_string())
 }

@@ -11,6 +11,7 @@ use std::path::PathBuf;
 
 use crate::{
     core_json_files::{core::CoreFile, CoreDetails},
+    progress,
     required_files::{
         archive_metadata::get_metadata_from_archive, core_data_slots::process_core_data,
         instance_data_slots::process_instance_data,
@@ -135,6 +136,7 @@ pub async fn required_files_for_core(
     pocket_path: &PathBuf,
     include_alts: bool,
     archive_url: &str,
+    window: tauri::Window,
 ) -> Result<Vec<DataSlotFile>> {
     let core_details: CoreDetails =
         CoreFile::from_core_path(&pocket_path.join(format!("Cores/{}", core_id)))?.into();
@@ -144,14 +146,25 @@ pub async fn required_files_for_core(
         &core_details.main_platform_id, core_id
     ));
 
+    let mut progress = progress::ProgressEmitter::new(Box::new(|event| {
+        window
+            .emit("progress-event::required_files_for_core", event)
+            .unwrap();
+    }));
+
     let (instance_files, archive_meta, files_at_root) = tokio::join!(
         find_instance_files(&assets_folder, include_alts),
         get_metadata_from_archive(archive_url),
         check_root_files(&pocket_path, Some(vec!["rom", "bin"]))
     );
 
+    progress.begin_work_units((instance_files.len() + 1) * 2);
+    progress.set_message("core_file", None);
+
     let (core_data_slot_files, core_data_slots) =
         process_core_data(core_id, pocket_path, &core_details.platform_ids).await?;
+
+    progress.complete_work_units(1);
 
     data_slot_files.extend(
         core_data_slot_files
@@ -161,6 +174,7 @@ pub async fn required_files_for_core(
 
     if !SKIP_INSTANCE_FILES_FOR.contains(&core_id) {
         for instance_file_path in instance_files {
+            progress.set_message("instance_file", Some(&instance_file_path.to_string_lossy()));
             let instance_data_slots = process_instance_data(
                 core_id,
                 &instance_file_path,
@@ -174,16 +188,25 @@ pub async fn required_files_for_core(
                     .into_iter()
                     .filter(|data_slot| data_slot.should_be_downloaded()),
             );
+
+            progress.complete_work_units(1);
         }
     }
 
     data_slot_files.sort_unstable_by(|a, b| a.path.partial_cmp(&b.path).unwrap());
     data_slot_files.dedup();
 
+    progress.begin_work_units(data_slot_files.len());
+
     if let (Ok(archive_meta), Ok(files_at_root)) = (archive_meta, files_at_root) {
-        data_slot_files =
-            check_data_file_status(data_slot_files, archive_meta, files_at_root, pocket_path)
-                .await?;
+        data_slot_files = check_data_file_status(
+            data_slot_files,
+            archive_meta,
+            files_at_root,
+            pocket_path,
+            progress,
+        )
+        .await?;
     }
 
     Ok(data_slot_files)
