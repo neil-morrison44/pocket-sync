@@ -68,6 +68,7 @@ pub struct DataSlot {
     name: String,
     id: IntOrHexString,
     required: bool,
+    #[serde(default)]
     parameters: SlotParameters,
     filename: Option<String>,
     alternate_filenames: Option<Vec<String>>,
