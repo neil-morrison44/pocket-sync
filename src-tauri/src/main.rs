@@ -282,16 +282,16 @@ async fn install_archive_files(
     debug!("Command: install_archive_files");
     let pocket_path = state.0.pocket_path.read().await;
     let file_count = files.len();
-    let mut progress = progress::ProgressEmitter::start(file_count, &window);
+    // let mut progress = progress::ProgressEmitter::start(file_count, &window);
 
     for file in files {
-        progress.emit_progress(&file.name);
+        // progress.emit_progress(&file.name);
         install_file(file, archive_url, turbo, &pocket_path)
             .await
             .map_err(|e| e.to_string())?;
     }
 
-    progress.end();
+    // progress.end();
 
     Ok(true)
 }
@@ -405,7 +405,7 @@ async fn delete_files(
 #[tauri::command(async)]
 async fn copy_files(copies: Vec<(&str, &str)>, window: Window) -> Result<bool, ()> {
     debug!("Command: copy_files");
-    let mut progress = progress::ProgressEmitter::start(copies.len(), &window);
+    // let mut progress = progress::ProgressEmitter::start(copies.len(), &window);
 
     for (origin, destination) in copies {
         let origin = PathBuf::from(origin);
@@ -418,16 +418,16 @@ async fn copy_files(copies: Vec<(&str, &str)>, window: Window) -> Result<bool, (
         if let Err(err) = tokio::fs::copy(&origin, &destination).await {
             println!("{}", err);
         } else {
-            progress.emit_progress(
-                &destination
-                    .file_name()
-                    .and_then(|s| s.to_str())
-                    .unwrap_or("Unknown File"),
-            )
+            // progress.emit_progress(
+            //     &destination
+            //         .file_name()
+            //         .and_then(|s| s.to_str())
+            //         .unwrap_or("Unknown File"),
+            // )
         }
     }
 
-    progress.end();
+    // progress.end();
 
     Ok(true)
 }
