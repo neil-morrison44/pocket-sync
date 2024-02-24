@@ -1,6 +1,6 @@
 import { useRecoilValue } from "recoil"
 import { Modal } from "../modal"
-import { useCallback, useMemo, useState } from "react"
+import { ReactNode, Suspense, useCallback, useMemo, useState } from "react"
 import { FetchType } from "../../types"
 import { open } from "@tauri-apps/api/dialog"
 import { pocketPathAtom } from "../../recoil/atoms"
@@ -8,6 +8,7 @@ import { homeDirSelector } from "../../recoil/selectors"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { useTranslation } from "react-i18next"
 import { Tip } from "../tip"
+import { ArchiveMetadataSelectorFamily } from "../../recoil/archive/selectors"
 
 type NewFetchProps = {
   onClose: () => void
@@ -36,9 +37,12 @@ export const NewFetch = ({ onClose }: NewFetchProps) => {
         <option value="filesystem">{t("types.filesystem")}</option>
         <option value="archive.org">{t("types.archive_org")}</option>
       </select>
-
-      {fetchType === "filesystem" && <NewFetchFileSystem addFetch={addFetch} />}
-      {fetchType === "archive.org" && <NewFetchArchive addFetch={addFetch} />}
+      <div className="fetch__new-content">
+        {fetchType === "filesystem" && (
+          <NewFetchFileSystem addFetch={addFetch} />
+        )}
+        {fetchType === "archive.org" && <NewFetchArchive addFetch={addFetch} />}
+      </div>
 
       <button className="fetch__close-button" onClick={onClose}>
         {t("new.close")}
@@ -129,13 +133,44 @@ const NewFetchArchive = ({ addFetch }: NewFetchTypeProps) => {
 
       <Tip>{t("new.archive_tip")}</Tip>
 
-      {isValid && (
-        <button onClick={() => addFetch(info as FetchType)}>
-          {t("new.add_fetch")}
-        </button>
+      {isValid && info.name && (
+        <Suspense
+          fallback={
+            <div className="fetch__archive-check">
+              {t("new.validating_archive_name", { name: info.name })}
+            </div>
+          }
+        >
+          <CheckArchiveValidity key={info.name} archiveName={info.name}>
+            <button onClick={() => addFetch(info as FetchType)}>
+              {t("new.add_fetch")}
+            </button>
+          </CheckArchiveValidity>
+        </Suspense>
       )}
     </>
   )
+}
+
+const CheckArchiveValidity = ({
+  archiveName,
+  children,
+}: {
+  archiveName: string
+  children: ReactNode
+}) => {
+  const { t } = useTranslation("fetch")
+  const metadata = useRecoilValue(
+    ArchiveMetadataSelectorFamily({ archiveName })
+  )
+
+  if (!metadata)
+    return (
+      <div className="fetch__archive-check">
+        {t("new.invalid_archive_name", { name: archiveName })}
+      </div>
+    )
+  return children
 }
 
 type FolderPickerProps = {

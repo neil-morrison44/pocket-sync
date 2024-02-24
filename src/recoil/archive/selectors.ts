@@ -17,7 +17,7 @@ import { pocketPathAtom } from "../atoms"
 import { FolderWatchAtomFamily } from "../fileSystem/atoms"
 
 export const ArchiveMetadataSelectorFamily = selectorFamily<
-  ArchiveFileMetadata[],
+  null | ArchiveFileMetadata[],
   { archiveName: string }
 >({
   key: "ArchiveMetadataSelectorFamily",
@@ -31,6 +31,8 @@ export const ArchiveMetadataSelectorFamily = selectorFamily<
       }>(`https://archive.org/metadata/${archiveName}`, {
         responseType: ResponseType.JSON,
       })
+
+      if (!response.data?.files) return null
 
       const { files } = response.data
       return files

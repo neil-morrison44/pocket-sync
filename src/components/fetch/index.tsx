@@ -222,7 +222,6 @@ const ArchiveOrgItem = ({
         <div className="fetch__list-item-name">{name}</div>
         <div className="fetch__list-item-destination">{destination}</div>
       </div>
-
       {inProgress && (
         <div className="fetch__status">
           <ProgressLoaderInner
@@ -232,7 +231,6 @@ const ArchiveOrgItem = ({
           />
         </div>
       )}
-
       {!inProgress && (
         <>
           <Suspense fallback={<FileStatus status="waiting" files={[]} />}>
@@ -300,15 +298,15 @@ const ArchiveOrgStatus = ({
     PathFileInfoSelectorFamily({ path: destination })
   )
 
-  const filteredMetadata = useMemo(
-    () =>
-      metadata.filter((m) => {
-        if (!m.crc32) return false
-        if (!extensions || extensions.length === 0) return true
-        return extensions.some((e) => m.name.endsWith(e))
-      }),
-    [metadata, extensions]
-  )
+  const filteredMetadata = useMemo(() => {
+    if (!metadata) return []
+
+    return metadata.filter((m) => {
+      if (!m.crc32) return false
+      if (!extensions || extensions.length === 0) return true
+      return extensions.some((e) => m.name.endsWith(e))
+    })
+  }, [metadata, extensions])
 
   const files: FetchFileMetadataWithStatus[] = useMemo(() => {
     return filteredMetadata.map((m) => {
