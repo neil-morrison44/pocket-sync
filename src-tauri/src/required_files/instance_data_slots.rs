@@ -35,6 +35,7 @@ impl InstanceDataSlot {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct InstanceData {
+    #[serde(default)]
     pub data_path: String,
     pub data_slots: Vec<InstanceDataSlot>,
 }

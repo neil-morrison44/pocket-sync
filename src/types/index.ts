@@ -333,3 +333,12 @@ export type Palette = {
   obj1: [rgb, rgb, rgb, rgb]
   off: rgb
 }
+
+export type ProgressEvent = {
+  finished: boolean
+  progress: number
+  message?: {
+    token: string
+    param?: string
+  }
+}

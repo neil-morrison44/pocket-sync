@@ -281,17 +281,23 @@ async fn install_archive_files(
 ) -> Result<bool, String> {
     debug!("Command: install_archive_files");
     let pocket_path = state.0.pocket_path.read().await;
-    let file_count = files.len();
-    let mut progress = progress::ProgressEmitter::start(file_count, &window);
 
+    let mut progress = progress::ProgressEmitter::new(Box::new(|event| {
+        window
+            .emit("progress-event::install_archive_files", event)
+            .unwrap();
+    }));
+
+    progress.begin_work_units(files.len());
     for file in files {
-        progress.emit_progress(&file.name);
-        install_file(file, archive_url, turbo, &pocket_path)
-            .await
-            .map_err(|e| e.to_string())?;
-    }
+        progress.set_message("downloading", Some(&file.name));
+        let file_name = file.name.clone();
+        if let Err(err) = install_file(file, archive_url, turbo, &pocket_path).await {
+            error!("Error: {} download file {}", err, &file_name);
+        };
 
-    progress.end();
+        progress.complete_work_units(1);
+    }
 
     Ok(true)
 }
@@ -405,29 +411,27 @@ async fn delete_files(
 #[tauri::command(async)]
 async fn copy_files(copies: Vec<(&str, &str)>, window: Window) -> Result<bool, ()> {
     debug!("Command: copy_files");
-    let mut progress = progress::ProgressEmitter::start(copies.len(), &window);
+
+    let mut progress = progress::ProgressEmitter::new(Box::new(|event| {
+        window.emit("progress-event::copy_files", event).unwrap();
+    }));
+
+    progress.begin_work_units(copies.len());
 
     for (origin, destination) in copies {
         let origin = PathBuf::from(origin);
         let destination = PathBuf::from(&destination);
 
-        tokio::fs::create_dir_all(destination.parent().unwrap())
-            .await
-            .unwrap();
-
-        if let Err(err) = tokio::fs::copy(&origin, &destination).await {
-            println!("{}", err);
+        if let Err(err) = match tokio::fs::create_dir_all(destination.parent().unwrap()).await {
+            Ok(_) => tokio::fs::copy(&origin, &destination).await,
+            Err(e) => Err(e),
+        } {
+            error!("{}", err);
         } else {
-            progress.emit_progress(
-                &destination
-                    .file_name()
-                    .and_then(|s| s.to_str())
-                    .unwrap_or("Unknown File"),
-            )
+            progress.complete_work_units(1);
+            progress.set_message("file", Some(&destination.to_string_lossy()));
         }
     }
-
-    progress.end();
 
     Ok(true)
 }
@@ -622,10 +626,11 @@ async fn find_required_files(
     core_id: &str,
     include_alts: bool,
     archive_url: &str,
+    window: tauri::Window,
 ) -> Result<Vec<DataSlotFile>, String> {
     debug!("Command: find_required_files");
     let pocket_path = state.0.pocket_path.read().await;
-    required_files_for_core(core_id, &pocket_path, include_alts, archive_url)
+    required_files_for_core(core_id, &pocket_path, include_alts, archive_url, window)
         .await
         .map_err(|err| err.to_string())
 }

@@ -9,8 +9,8 @@ import { invokeInstallArchiveFiles } from "../utils/invokes"
 export const useInstallRequiredFiles = () => {
   const { archive_url } = useRecoilValue(PocketSyncConfigSelector)
 
-  const { percent, inProgress, lastMessage, remainingTime } = useProgress(
-    () => {}
+  const { percent, inProgress, message, remainingTime } = useProgress(
+    "install_archive_files"
   )
 
   const turboDownloads = useRecoilValue(turboDownloadsAtom)
@@ -34,7 +34,7 @@ export const useInstallRequiredFiles = () => {
     installRequiredFiles,
     percent,
     inProgress,
-    lastMessage,
+    message,
     remainingTime,
   }
 }

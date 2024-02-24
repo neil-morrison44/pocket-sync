@@ -7,9 +7,7 @@ import {
   PathFileInfoSelectorFamily,
 } from "../../recoil/archive/selectors"
 import { useInstallRequiredFiles } from "../../hooks/useInstallRequiredFiles"
-import { Progress } from "../progress"
 import { FetchFileMetadataWithStatus, FileCopy } from "../../types"
-import { Modal } from "../modal"
 import { useInvalidateConfig } from "../../hooks/invalidation"
 import { Controls } from "../controls"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
@@ -23,14 +21,20 @@ import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { confirm } from "@tauri-apps/api/dialog"
 import { useTranslation } from "react-i18next"
 import { ControlsButton } from "../controls/inputs/button"
+import { ProgressLoader, ProgressLoaderInner } from "../loader/progress"
+import { usePreventGlobalZipInstallModal } from "../../hooks/usePreventGlobalZipInstall"
 
-type FileStatus = "complete" | "partial" | "none" | "waiting" | "copying"
+type FileStatus = "complete" | "partial" | "none" | "waiting"
 
 export const Fetch = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
+
+  console.log("render all")
   const updateConfig = useUpdateConfig()
   const [newFetchOpen, setNewFetchOpen] = useState<boolean>(false)
   const { t } = useTranslation("fetch")
+
+  usePreventGlobalZipInstallModal()
 
   const invalidateConfig = useInvalidateConfig()
   const setArchiveBumpAtom = useSetRecoilState(archiveBumpAtom)
@@ -66,30 +70,30 @@ export const Fetch = () => {
       </Controls>
       {newFetchOpen && <NewFetch onClose={() => setNewFetchOpen(false)} />}
       <div className="fetch__list">
-        <Suspense>
-          {list.map((item, index) => {
-            switch (item.type) {
-              case "archive.org":
-                return (
+        {list.map((item, index) => {
+          switch (item.type) {
+            case "archive.org":
+              return (
+                <Suspense key={item.name}>
                   <ArchiveOrgItem
-                    key={item.name}
                     onRemove={() => removeItem(index)}
                     {...item}
                   />
-                )
-              case "filesystem":
-                return (
+                </Suspense>
+              )
+            case "filesystem":
+              return (
+                <Suspense key={`${item.path}->${item.destination}`}>
                   <FileSystemItem
-                    key={`${item.path}->${item.destination}`}
                     onRemove={() => removeItem(index)}
                     {...item}
                   />
-                )
-              default:
-                return null
-            }
-          })}
-        </Suspense>
+                </Suspense>
+              )
+            default:
+              return null
+          }
+        })}
       </div>
     </div>
   )
@@ -105,53 +109,51 @@ const FileSystemItem = ({
   onRemove: () => void
 }) => {
   const [isCopying, setIsCopying] = useState<boolean>(false)
-
-  const { percent, inProgress, lastMessage, remainingTime } =
-    useInstallRequiredFiles()
-
   const { t } = useTranslation("fetch")
+
+  const copy = useCallback(
+    async (files: FileCopy[]) => {
+      setIsCopying(true)
+      await invokeCopyFiles(files.filter(({ exists }) => !exists))
+      setIsCopying(false)
+    },
+    [setIsCopying]
+  )
 
   return (
     <div className="fetch__list-item">
-      {inProgress && (
-        <Modal>
-          <Progress
-            percent={percent}
-            message={lastMessage}
-            remainingTime={remainingTime}
-          />
-        </Modal>
-      )}
-
       <div className="fetch__list-item-info">
         <div className="fetch__list-item-type">{t("types.filesystem")}</div>
         <div className="fetch__list-item-name">{path}</div>
         <div className="fetch__list-item-destination">{destination}</div>
       </div>
 
-      {isCopying && <FileStatus status="copying" files={[]} />}
-      {!isCopying && (
-        <Suspense fallback={<FileStatus status="waiting" files={[]} />}>
-          <FileSystemStatus path={path} destination={destination}>
-            {(status, files) => (
-              <>
-                <FileStatus status={status} files={files} />
-                <button
-                  onClick={async () => {
-                    setIsCopying(true)
-                    await invokeCopyFiles(files.filter(({ exists }) => !exists))
-                    setIsCopying(false)
-                  }}
-                >
-                  {t("fetch_button")}
-                </button>
-              </>
-            )}
-          </FileSystemStatus>
-        </Suspense>
+      {isCopying && (
+        <div className="fetch__status">
+          <ProgressLoader name="copy_files" />
+        </div>
       )}
-
-      <button onClick={onRemove}>{t("remove_button")}</button>
+      {!isCopying && (
+        <>
+          <Suspense fallback={<FileStatus status="waiting" files={[]} />}>
+            <FileSystemStatus path={path} destination={destination}>
+              {(status, files) => (
+                <>
+                  <FileStatus status={status} files={files} />
+                  <button
+                    onClick={() => {
+                      copy(files)
+                    }}
+                  >
+                    {t("fetch_button")}
+                  </button>
+                </>
+              )}
+            </FileSystemStatus>
+          </Suspense>
+          <button onClick={onRemove}>{t("remove_button")}</button>
+        </>
+      )}
     </div>
   )
 }
@@ -209,69 +211,70 @@ const ArchiveOrgItem = ({
   extensions?: string[]
   onRemove: () => void
 }) => {
-  const {
-    installRequiredFiles,
-    percent,
-    inProgress,
-    lastMessage,
-    remainingTime,
-  } = useInstallRequiredFiles()
+  const { installRequiredFiles, inProgress, percent, message } =
+    useInstallRequiredFiles()
   const { t } = useTranslation("fetch")
 
   return (
     <div className="fetch__list-item">
-      {inProgress && (
-        <Modal>
-          <Progress
-            percent={percent}
-            message={lastMessage}
-            remainingTime={remainingTime}
-          />
-        </Modal>
-      )}
-
       <div className="fetch__list-item-info">
         <div className="fetch__list-item-type">{t("types.archive_org")}</div>
         <div className="fetch__list-item-name">{name}</div>
         <div className="fetch__list-item-destination">{destination}</div>
       </div>
 
-      <Suspense fallback={<FileStatus status="waiting" files={[]} />}>
-        <ArchiveOrgStatus
-          name={name}
-          destination={destination}
-          extensions={extensions}
-        >
-          {(status, files) => (
-            <>
-              <FileStatus status={status} files={files} />
+      {inProgress && (
+        <div className="fetch__status">
+          <ProgressLoaderInner
+            percent={percent}
+            message={message}
+            showToken={false}
+          />
+        </div>
+      )}
 
-              <button
-                onClick={async () => {
-                  await installRequiredFiles(
-                    files
-                      .filter(({ exists }) => !exists)
-                      .map((f) => ({
-                        name: f.name,
-                        path: `${f.path.replace(/^(\/|\\)+/, "")}/${f.name}`,
-                        required: true,
-                        status: {
-                          type: "MissingButOnArchive",
-                          url: f.name,
-                          crc32: "",
-                        },
-                      })),
-                    `https://archive.org/download/${name}`
-                  )
-                }}
-              >
-                {t("fetch_button")}
-              </button>
-            </>
-          )}
-        </ArchiveOrgStatus>
-      </Suspense>
-      <button onClick={onRemove}>{t("remove_button")}</button>
+      {!inProgress && (
+        <>
+          <Suspense fallback={<FileStatus status="waiting" files={[]} />}>
+            <ArchiveOrgStatus
+              name={name}
+              destination={destination}
+              extensions={extensions}
+            >
+              {(status, files) => (
+                <>
+                  <FileStatus status={status} files={files} />
+
+                  <button
+                    onClick={async () => {
+                      await installRequiredFiles(
+                        files
+                          .filter(({ exists }) => !exists)
+                          .map((f) => ({
+                            name: f.name,
+                            path: `${f.path.replace(/^(\/|\\)+/, "")}/${
+                              f.name
+                            }`,
+                            required: true,
+                            status: {
+                              type: "MissingButOnArchive",
+                              url: f.name,
+                              crc32: "",
+                            },
+                          })),
+                        `https://archive.org/download/${name}`
+                      )
+                    }}
+                  >
+                    {t("fetch_button")}
+                  </button>
+                </>
+              )}
+            </ArchiveOrgStatus>
+          </Suspense>
+          <button onClick={onRemove}>{t("remove_button")}</button>
+        </>
+      )}
     </div>
   )
 }
@@ -346,7 +349,6 @@ const FileStatus = ({
   const { t } = useTranslation("fetch")
 
   const statusText = useMemo(() => {
-    if (status === "copying") return t("copying")
     if (status === "waiting") return t("loading")
     const count = files.filter(({ exists }) => exists).length
     const total = files.length

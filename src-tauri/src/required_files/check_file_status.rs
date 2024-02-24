@@ -1,6 +1,7 @@
 use super::{archive_metadata::RawMetadataItem, ArchiveInfo, DataSlotFile};
 use crate::{
     hashes::{crc32_for_file, md5_for_file},
+    progress::ProgressEmitter,
     required_files::DataSlotFileStatus,
     root_files::RootFile,
 };
@@ -16,6 +17,7 @@ pub async fn check_data_file_status(
     archive_metadata: Vec<RawMetadataItem>,
     files_at_root: Vec<RootFile>,
     pocket_path: &PathBuf,
+    mut progress_emit: ProgressEmitter<'_>,
 ) -> Result<Vec<DataSlotFile>> {
     let archive_hash: HashMap<_, _> = archive_metadata
         .into_iter()
@@ -31,6 +33,7 @@ pub async fn check_data_file_status(
         .collect();
 
     for data_slot_file in data_slot_files.iter_mut() {
+        progress_emit.set_message("data_slot", Some(&data_slot_file.name));
         let file_path = pocket_path.join(&data_slot_file.path);
         let exists = tokio::fs::try_exists(&file_path).await?;
         let path = normalize_path_str(&data_slot_file.path.to_string_lossy());
@@ -119,6 +122,8 @@ pub async fn check_data_file_status(
                 }
             }
         };
+
+        progress_emit.complete_work_units(1);
     }
 
     Ok(data_slot_files)
@@ -250,8 +255,14 @@ mod tests {
             },
         ];
 
-        let data_slot_files =
-            check_data_file_status(data_slot_files, archive_metadata, vec![], &tmp_path).await?;
+        let data_slot_files = check_data_file_status(
+            data_slot_files,
+            archive_metadata,
+            vec![],
+            &tmp_path,
+            ProgressEmitter::default(),
+        )
+        .await?;
 
         dbg!("{:?}", &data_slot_files);
         assert_eq!(
@@ -376,9 +387,14 @@ mod tests {
             },
         ];
 
-        let data_slot_files =
-            check_data_file_status(data_slot_files, archive_metadata, root_files, &tmp_path)
-                .await?;
+        let data_slot_files = check_data_file_status(
+            data_slot_files,
+            archive_metadata,
+            root_files,
+            &tmp_path,
+            ProgressEmitter::default(),
+        )
+        .await?;
 
         dbg!("{:?}", &data_slot_files);
         assert_eq!(
@@ -456,9 +472,14 @@ mod tests {
 
         let root_files = vec![];
 
-        let data_slot_files =
-            check_data_file_status(data_slot_files, archive_metadata, root_files, &tmp_path)
-                .await?;
+        let data_slot_files = check_data_file_status(
+            data_slot_files,
+            archive_metadata,
+            root_files,
+            &tmp_path,
+            ProgressEmitter::default(),
+        )
+        .await?;
 
         dbg!("{:?}", &data_slot_files);
         assert_eq!(

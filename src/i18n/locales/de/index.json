@@ -138,7 +138,6 @@
       "add_fetch_item": "Neuen Abruf hinzufügen",
       "refresh": "Aktualisieren"
     },
-    "copying": "Dateien kopieren...",
     "fetch_button": "Abruf",
     "file_count": "{count} / {total, plural, one {# Datei} other {# Dateien}}",
     "loading": "lade...",

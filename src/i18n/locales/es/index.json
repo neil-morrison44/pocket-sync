@@ -121,7 +121,6 @@
       "add_fetch_item": "Agregar nueva búsqueda",
       "refresh": "Actualizar"
     },
-    "copying": "Copiando documentos...",
     "fetch_button": "Buscar",
     "file_count": "{count} / {total, plural, one {# Archivo} other {# Archivos}}",
     "loading": "cargando...",

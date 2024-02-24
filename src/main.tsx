@@ -8,11 +8,11 @@ import { I18nProvider } from "./i18n"
 import { RecoilRoot } from "recoil"
 import { Disconnections } from "./components/disconnections"
 
-import { attachConsole, error } from "tauri-plugin-log-api"
+import { error } from "tauri-plugin-log-api"
 
 installPolyfills()
 
-attachConsole()
+// attachConsole()
 
 window.addEventListener("error", (event) => {
   error(`${event.message}`)
