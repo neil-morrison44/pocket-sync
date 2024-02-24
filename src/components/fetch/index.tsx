@@ -23,6 +23,7 @@ import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { confirm } from "@tauri-apps/api/dialog"
 import { useTranslation } from "react-i18next"
 import { ControlsButton } from "../controls/inputs/button"
+import { ProgressLoader } from "../loader/progress"
 
 type FileStatus = "complete" | "partial" | "none" | "waiting" | "copying"
 
@@ -106,7 +107,7 @@ const FileSystemItem = ({
 }) => {
   const [isCopying, setIsCopying] = useState<boolean>(false)
 
-  const { percent, inProgress, lastMessage, remainingTime } =
+  const { percent, inProgress, message, remainingTime } =
     useInstallRequiredFiles()
 
   const { t } = useTranslation("fetch")
@@ -117,7 +118,7 @@ const FileSystemItem = ({
         <Modal>
           <Progress
             percent={percent}
-            message={lastMessage}
+            message={message?.param}
             remainingTime={remainingTime}
           />
         </Modal>
@@ -209,13 +210,8 @@ const ArchiveOrgItem = ({
   extensions?: string[]
   onRemove: () => void
 }) => {
-  const {
-    installRequiredFiles,
-    percent,
-    inProgress,
-    lastMessage,
-    remainingTime,
-  } = useInstallRequiredFiles()
+  const { installRequiredFiles, percent, inProgress, message, remainingTime } =
+    useInstallRequiredFiles()
   const { t } = useTranslation("fetch")
 
   return (
@@ -224,7 +220,7 @@ const ArchiveOrgItem = ({
         <Modal>
           <Progress
             percent={percent}
-            message={lastMessage}
+            message={message?.param}
             remainingTime={remainingTime}
           />
         </Modal>
@@ -346,7 +342,7 @@ const FileStatus = ({
   const { t } = useTranslation("fetch")
 
   const statusText = useMemo(() => {
-    if (status === "copying") return t("copying")
+    if (status === "copying") return <ProgressLoader name="copy_files" />
     if (status === "waiting") return t("loading")
     const count = files.filter(({ exists }) => exists).length
     const total = files.length

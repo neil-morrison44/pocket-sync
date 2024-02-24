@@ -39,7 +39,7 @@ export class ErrorBoundary extends Component<
 
   public render() {
     if (this.state.hasError) {
-      const shouldShowReportTip = !this.state.error?.message.includes(
+      const shouldShowReportTip = !this.state?.error?.message?.includes(
         "GitHub rate limit reached"
       )
 

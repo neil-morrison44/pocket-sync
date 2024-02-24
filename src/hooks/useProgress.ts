@@ -1,15 +1,15 @@
 import { listen } from "@tauri-apps/api/event"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { ProgressEvent } from "../types"
 
-export const useProgress = (onEnd?: () => void) => {
-  const [messageLog, setMessageLog] = useState<string[]>([])
-  const lastMessage = useMemo(() => {
-    if (messageLog.length === 0) return null
-    return messageLog[messageLog.length - 1]
-  }, [messageLog])
+export const useProgress = (name: string, onEnd?: () => void) => {
+  const [percent, setPercent] = useState(0)
+  const [message, setMessage] = useState<null | {
+    token: string
+    param?: string
+  }>(null)
 
   const [inProgress, setInProgress] = useState(false)
-  const [percent, setPercent] = useState(0)
   const [startTime, setStartTime] = useState(() => Date.now())
 
   const remainingTime = useMemo(() => {
@@ -32,45 +32,33 @@ export const useProgress = (onEnd?: () => void) => {
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
   }, [startTime, percent])
 
-  useEffect(() => {
-    const unlisten = listen<ProgressPayload>("progress-start-event", () => {
-      setMessageLog([])
-      setInProgress(true)
-      setPercent(0)
-      setStartTime(Date.now())
-    })
-    return () => {
-      unlisten.then((l) => l())
-    }
-  }, [])
+  const hasStartedRef = useRef(false)
 
   useEffect(() => {
-    const unlisten = listen<ProgressPayload>(
-      "progress-event",
+    const unlisten = listen<ProgressEvent>(
+      `progress-event::${name}`,
       ({ payload }) => {
-        setMessageLog((bl) => [...bl, payload.message])
-        setPercent(payload.progress)
+        setPercent(payload.progress * 100)
+        if (payload.message) setMessage(payload.message)
+
+        if (!hasStartedRef.current) {
+          setInProgress(true)
+          setStartTime(Date.now())
+        }
+
+        hasStartedRef.current = true
+
+        if (payload.finished) {
+          hasStartedRef.current = false
+          setInProgress(false)
+          onEnd?.()
+        }
       }
     )
     return () => {
       unlisten.then((l) => l())
     }
-  }, [])
+  }, [setPercent, onEnd, name])
 
-  useEffect(() => {
-    const unlisten = listen<ProgressPayload>("progress-end-event", () => {
-      setInProgress(false)
-      onEnd?.()
-    })
-    return () => {
-      unlisten.then((l) => l())
-    }
-  }, [onEnd])
-
-  return { messageLog, lastMessage, inProgress, percent, remainingTime }
-}
-
-type ProgressPayload = {
-  message: string
-  progress: number
+  return { message, inProgress, percent, remainingTime }
 }

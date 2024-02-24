@@ -34,13 +34,8 @@ export const LoadRequiredFiles = ({
 }: LoadRequiredFilesProps) => {
   const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
   const { t } = useTranslation("core_info_required_files")
-  const {
-    installRequiredFiles,
-    percent,
-    inProgress,
-    lastMessage,
-    remainingTime,
-  } = useInstallRequiredFiles()
+  const { installRequiredFiles, percent, inProgress, message, remainingTime } =
+    useInstallRequiredFiles()
 
   const skipAlternateAssets = useRecoilValue(skipAlternateAssetsSelector)
   const updateConfig = useUpdateConfig()
@@ -64,7 +59,7 @@ export const LoadRequiredFiles = ({
       {inProgress && (
         <Progress
           percent={percent}
-          message={lastMessage}
+          message={message?.param}
           remainingTime={remainingTime}
         />
       )}

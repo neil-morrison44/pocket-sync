@@ -22,7 +22,7 @@ use saves_zip::{
 };
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use std::time::SystemTime;
+use std::time::{Duration, SystemTime};
 use std::vec;
 use tauri::api::dialog;
 use tauri::{App, Manager, Window};
@@ -291,9 +291,10 @@ async fn install_archive_files(
     progress.begin_work_units(files.len());
     for file in files {
         progress.set_message("downloading", Some(&file.name));
-        install_file(file, archive_url, turbo, &pocket_path)
-            .await
-            .map_err(|e| e.to_string())?;
+        let file_name = file.name.clone();
+        if let Err(err) = install_file(file, archive_url, turbo, &pocket_path).await {
+            error!("Error: {} download file {}", err, &file_name);
+        };
 
         progress.complete_work_units(1);
     }
@@ -410,29 +411,27 @@ async fn delete_files(
 #[tauri::command(async)]
 async fn copy_files(copies: Vec<(&str, &str)>, window: Window) -> Result<bool, ()> {
     debug!("Command: copy_files");
-    // let mut progress = progress::ProgressEmitter::start(copies.len(), &window);
+
+    let mut progress = progress::ProgressEmitter::new(Box::new(|event| {
+        window.emit("progress-event::copy_files", event).unwrap();
+    }));
+
+    progress.begin_work_units(copies.len());
 
     for (origin, destination) in copies {
         let origin = PathBuf::from(origin);
         let destination = PathBuf::from(&destination);
 
-        tokio::fs::create_dir_all(destination.parent().unwrap())
-            .await
-            .unwrap();
-
-        if let Err(err) = tokio::fs::copy(&origin, &destination).await {
-            println!("{}", err);
+        if let Err(err) = match tokio::fs::create_dir_all(destination.parent().unwrap()).await {
+            Ok(_) => tokio::fs::copy(&origin, &destination).await,
+            Err(e) => Err(e),
+        } {
+            error!("{}", err);
         } else {
-            // progress.emit_progress(
-            //     &destination
-            //         .file_name()
-            //         .and_then(|s| s.to_str())
-            //         .unwrap_or("Unknown File"),
-            // )
+            progress.complete_work_units(1);
+            progress.set_message("file", Some(&destination.to_string_lossy()));
         }
     }
-
-    // progress.end();
 
     Ok(true)
 }

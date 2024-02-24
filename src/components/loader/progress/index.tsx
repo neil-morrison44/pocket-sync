@@ -2,6 +2,9 @@ import { listen } from "@tauri-apps/api/event"
 import { useEffect, useState } from "react"
 
 import "./index.css"
+import { ProgressEvent } from "../../../types"
+import { useRecoilValue } from "recoil"
+import { pocketPathAtom } from "../../../recoil/atoms"
 
 type ProgressLoaderProps = {
   name: string
@@ -14,6 +17,8 @@ export const ProgressLoader = ({ name }: ProgressLoaderProps) => {
     token: string
     param?: string
   }>(null)
+
+  const pocketPath = useRecoilValue(pocketPathAtom)
 
   useEffect(() => {
     const unlisten = listen<ProgressEvent>(
@@ -32,18 +37,18 @@ export const ProgressLoader = ({ name }: ProgressLoaderProps) => {
     <div className="progress-loader">
       <div
         className="progress-loader__bar"
-        style={{ "--percent": `${percent}%` }}
+        style={{ "--percent": `${percent.toFixed(2)}%` }}
       ></div>
-      {message && `${message.token} - ${message.param}`}
+      {message && (
+        <div className="progress-loader__info">
+          <div className="progress-loader__info-token">{message.token}</div>
+          {message.param && (
+            <div className="progress-loader__info-param">
+              {message.param?.replace(pocketPath || "", "").replace("//", "/")}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
-}
-
-type ProgressEvent = {
-  finished: boolean
-  progress: number
-  message?: {
-    token: string
-    param?: string
-  }
 }

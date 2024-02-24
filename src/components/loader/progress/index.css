@@ -1,11 +1,9 @@
 .progress-loader {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  width: 100%;
+  gap: 3px;
+  width: 400px;
 }
-
-
 
 .progress-loader__bar{
   width: 100%;
@@ -30,4 +28,20 @@
     will-change: clip-path;
     transition: clip-path 0.2s ease-out;
   }
+}
+
+.progress-loader__info {
+  white-space: nowrap;
+  display: flex;
+  gap: 10px;
+  overflow: hidden;
+  font-size: 1rem;
+}
+
+.progress-loader__info-param {
+  text-overflow: ellipsis clip;
+  text-align: right;
+  overflow: hidden;
+  display: flex;
+  justify-content: flex-end;
 }
