@@ -148,6 +148,8 @@ const ImagePackBlobSelectorFamily = selectorFamily<Blob | null, ImagePack>({
         )
       ).json()) as { assets: [{ name: string; browser_download_url: string }] }
 
+      if (!latestRelease?.assets) return null
+
       const downloadURL = latestRelease.assets.find(({ name }) => {
         if (!name.endsWith(".zip")) return false
         if (variant)

@@ -89,7 +89,7 @@ export const palleteZipURLSelector = selector<string | null>({
       { method: "GET", headers: { "User-Agent": `Pocket Sync` } }
     )
 
-    const zip = response.data.assets.find((asset) =>
+    const zip = (response?.data?.assets || []).find((asset) =>
       asset.name.endsWith(".zip")
     )
 
