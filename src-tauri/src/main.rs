@@ -22,7 +22,7 @@ use saves_zip::{
 };
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use std::time::{Duration, SystemTime};
+use std::time::SystemTime;
 use std::vec;
 use tauri::api::dialog;
 use tauri::{App, Manager, Window};

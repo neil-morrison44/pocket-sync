@@ -6,6 +6,12 @@ import { ProgressEvent } from "../../../types"
 import { useRecoilValue } from "recoil"
 import { pocketPathAtom } from "../../../recoil/atoms"
 
+declare module "react" {
+  interface CSSProperties {
+    [key: `--${string}`]: string | number
+  }
+}
+
 type ProgressLoaderProps = {
   name: string
   showToken?: boolean
