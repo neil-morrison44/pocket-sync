@@ -133,7 +133,9 @@
       "destination": "Carpeta de destino",
       "extensions": "Limitar a extensiones de archivo:",
       "origin": "Carpeta de origen",
-      "title": "Añadir nueva búsqueda"
+      "title": "Añadir nueva búsqueda",
+      "validating_archive_name": "Comprobando el Librerias de Internet \"{name}\"...",
+      "invalid_archive_name": "No se encontró ningún archivo en https://archive.org/details/{name}"
     },
     "remove_button": "Eliminar",
     "remove_confirm": "Esto eliminará la configuración de búsqueda, pero no los archivos. ¿Está seguro?",

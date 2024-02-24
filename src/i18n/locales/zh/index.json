@@ -133,7 +133,9 @@
       "destination": "目标目录",
       "extensions": "限制文件扩展名(类型):",
       "origin": "源目录",
-      "title": "添加新的同步"
+      "title": "添加新的同步",
+      "validating_archive_name": "正在检查存档“{name}”...",
+      "invalid_archive_name": "在 https://archive.org/details/{name} 上找不到存档"
     },
     "remove_button": "移除",
     "remove_confirm": "这一操作将移除选定的同步设置但是并不会删除已经存在的文件，您确定吗?",

@@ -150,7 +150,9 @@
       "destination": "Zielordner",
       "extensions": "Auf Dateierweiterungen beschränken:",
       "origin": "Ursprungsordner",
-      "title": "Neuen Abruf hinzufügen"
+      "title": "Neuen Abruf hinzufügen",
+      "validating_archive_name": "Archiv „{name}“ wird überprüft...",
+      "invalid_archive_name": "Kein Archiv unter https://archive.org/details/{name} gefunden"
     },
     "remove_button": "Entfernen",
     "remove_confirm": "Dieser Vorgang entfernt die Abrufkonfiguration, aber nicht die Dateien. Sind Sie sicher?",
