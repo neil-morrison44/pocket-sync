@@ -150,7 +150,9 @@
       "destination": "Destination Folder",
       "extensions": "Limit to File Extensions:",
       "origin": "Origin Folder",
-      "title": "Add new Fetch"
+      "title": "Add new Fetch",
+      "validating_archive_name": "Checking archive \"{name}\"...",
+      "invalid_archive_name": "No archive found at https://archive.org/details/{name}"
     },
     "remove_button": "Remove",
     "remove_confirm": "This'll remove the fetch configuration, but not the files. Are you sure?",
