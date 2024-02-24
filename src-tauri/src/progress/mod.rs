@@ -1,4 +1,3 @@
-use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use work_unit_group::WorkUnitGroupStatus;
 mod work_unit_group;

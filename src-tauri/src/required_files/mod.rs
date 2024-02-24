@@ -31,6 +31,12 @@ pub enum IntOrHexString {
     HexString(String),
 }
 
+impl Default for IntOrHexString {
+    fn default() -> Self {
+        Self::Int(0)
+    }
+}
+
 impl PartialEq for IntOrHexString {
     fn eq(&self, other: &Self) -> bool {
         let self_int: u32 = self.into();
@@ -67,6 +73,7 @@ impl Into<u32> for &IntOrHexString {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct DataSlot {
     name: String,
+    #[serde(default)]
     id: IntOrHexString,
     required: bool,
     #[serde(default)]
@@ -78,6 +85,7 @@ pub struct DataSlot {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct InstanceDataSlot {
+    #[serde(default)]
     id: IntOrHexString,
     filename: String,
 }

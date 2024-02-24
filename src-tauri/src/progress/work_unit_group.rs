@@ -1,5 +1,3 @@
-use anyhow::Result;
-
 #[derive(Debug)]
 pub struct WorkUnitGroupStatus {
     completed: usize,

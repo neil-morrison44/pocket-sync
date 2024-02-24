@@ -28,8 +28,6 @@ type FileStatus = "complete" | "partial" | "none" | "waiting"
 
 export const Fetch = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
-
-  console.log("render all")
   const updateConfig = useUpdateConfig()
   const [newFetchOpen, setNewFetchOpen] = useState<boolean>(false)
   const { t } = useTranslation("fetch")
