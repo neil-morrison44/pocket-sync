@@ -8,9 +8,13 @@ import { pocketPathAtom } from "../../../recoil/atoms"
 
 type ProgressLoaderProps = {
   name: string
+  showToken?: boolean
 }
 
-export const ProgressLoader = ({ name }: ProgressLoaderProps) => {
+export const ProgressLoader = ({
+  name,
+  showToken = false,
+}: ProgressLoaderProps) => {
   const [percent, setPercent] = useState(0)
 
   const [message, setMessage] = useState<null | {
@@ -18,12 +22,11 @@ export const ProgressLoader = ({ name }: ProgressLoaderProps) => {
     param?: string
   }>(null)
 
-  const pocketPath = useRecoilValue(pocketPathAtom)
-
   useEffect(() => {
     const unlisten = listen<ProgressEvent>(
       `progress-event::${name}`,
       ({ payload }) => {
+        console.log({ payload })
         setPercent(payload.progress * 100)
         if (payload.message) setMessage(payload.message)
       }
@@ -34,6 +37,28 @@ export const ProgressLoader = ({ name }: ProgressLoaderProps) => {
   }, [setPercent, name])
 
   return (
+    <ProgressLoaderInner
+      percent={percent}
+      message={message}
+      showToken={showToken}
+    />
+  )
+}
+
+export const ProgressLoaderInner = ({
+  percent,
+  message,
+  showToken,
+}: {
+  percent: number
+  message: null | {
+    token: string
+    param?: string
+  }
+  showToken: boolean
+}) => {
+  const pocketPath = useRecoilValue(pocketPathAtom)
+  return (
     <div className="progress-loader">
       <div
         className="progress-loader__bar"
@@ -41,7 +66,9 @@ export const ProgressLoader = ({ name }: ProgressLoaderProps) => {
       ></div>
       {message && (
         <div className="progress-loader__info">
-          <div className="progress-loader__info-token">{message.token}</div>
+          {showToken && (
+            <div className="progress-loader__info-token">{message.token}</div>
+          )}
           {message.param && (
             <div className="progress-loader__info-param">
               {message.param?.replace(pocketPath || "", "").replace("//", "/")}

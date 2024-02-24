@@ -121,7 +121,6 @@
       "add_fetch_item": "添加新的同步",
       "refresh": "刷新"
     },
-    "copying": "正在复制文件...",
     "fetch_button": "同步",
     "file_count": "{count} / {total, plural, one {# 文件} other {# 文件}}",
     "loading": "载入中……",

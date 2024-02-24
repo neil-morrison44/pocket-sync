@@ -36,6 +36,7 @@
   gap: 10px;
   overflow: hidden;
   font-size: 1rem;
+  justify-content: center;
 }
 
 .progress-loader__info-param {

@@ -138,7 +138,6 @@
       "add_fetch_item": "Add new fetch",
       "refresh": "Refresh"
     },
-    "copying": "Copying Files...",
     "fetch_button": "Fetch",
     "file_count": "{count} / {total, plural, one {# File} other {# Files}}",
     "loading": "loading...",

@@ -1,4 +1,4 @@
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil"
+import { useRecoilCallback, useRecoilValue } from "recoil"
 import { Modal } from "../../modal"
 import {
   Dispatch,
@@ -14,7 +14,6 @@ import "./index.css"
 import { installedCoresWithUpdatesSelector } from "../../../recoil/cores/selectors"
 import { CoreMainPlatformIdSelectorFamily } from "../../../recoil/selectors"
 import { PlatformImage } from "../platformImage"
-import { enableGlobalZipInstallAtom } from "../../../recoil/atoms"
 import { NotInstalledCoreInfo } from "../info/notInstalled"
 import { Loader } from "../../loader"
 import { PlatformInfoSelectorFamily } from "../../../recoil/platforms/selectors"
@@ -25,6 +24,7 @@ import { message } from "@tauri-apps/api/dialog"
 import { useHasArchiveLink } from "../../../hooks/useHasArchiveLink"
 import { info } from "tauri-plugin-log-api"
 import { useProcessUpdates } from "./hooks"
+import { usePreventGlobalZipInstallModal } from "../../../hooks/usePreventGlobalZipInstall"
 
 type UpdateAllProps = {
   onClose: () => void
@@ -42,14 +42,7 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
   const { t } = useTranslation("update_all")
   const hasDoneAnUpdateRef = useRef(false)
 
-  const setEnableGlobalZipInstall = useSetRecoilState(
-    enableGlobalZipInstallAtom
-  )
-
-  useEffect(() => {
-    setEnableGlobalZipInstall(false)
-    return () => setEnableGlobalZipInstall(true)
-  }, [setEnableGlobalZipInstall])
+  usePreventGlobalZipInstallModal()
 
   const filteredUpdateList = useMemo(
     () => updateList.filter(({ update }) => update),
