@@ -33,6 +33,7 @@ impl WorkUnitGroupStatus {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use anyhow::Result;
 
     #[test]
     fn add_under_count() -> Result<()> {
