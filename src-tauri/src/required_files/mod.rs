@@ -7,7 +7,7 @@ mod parameters_bitmap;
 
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
+use std::{cmp, path::PathBuf};
 
 use crate::{
     core_json_files::{core::CoreFile, CoreDetails},
@@ -202,9 +202,18 @@ pub async fn required_files_for_core(
         }
     }
 
-    data_slot_files.sort_unstable_by(|a, b| a.path.partial_cmp(&b.path).unwrap());
-    data_slot_files.dedup();
+    // Can have multiple files aiming for the same path but only 1 data slot has an MD5, so sort them higher
+    // So that they're the ones left over when the de-duping happens
+    data_slot_files.sort_unstable_by(|a, b| {
+        let comp = a.path.partial_cmp(&b.path).unwrap();
+        match (&a.md5, &b.md5, comp) {
+            (None, Some(_), cmp::Ordering::Equal) => cmp::Ordering::Greater,
+            (Some(_), None, cmp::Ordering::Equal) => cmp::Ordering::Less,
+            _ => comp,
+        }
+    });
 
+    data_slot_files.dedup();
     progress.begin_work_units(data_slot_files.len());
 
     if let (Ok(archive_meta), Ok(files_at_root)) = (archive_meta, files_at_root) {

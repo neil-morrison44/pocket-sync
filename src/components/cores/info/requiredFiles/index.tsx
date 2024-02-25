@@ -15,6 +15,7 @@ export const RequiredFiles = ({ coreName, onClick }: RequiredFilesProps) => {
   const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
   const { t } = useTranslation("core_info")
 
+  console.log({ requiredFiles })
   const foundFiles = useMemo(
     () => requiredFiles.filter(({ status }) => status.type === "Exists"),
     [requiredFiles]

@@ -60,7 +60,6 @@
     },
     "replaced": "This core has been replaced by <1>{replacementCore}</1>",
     "platforms": "Platforms",
-    "please_wait": "Please wait, checking files...",
     "release_date": "Release Date",
     "releases": {
       "release_history": "Release History",
