@@ -44,8 +44,6 @@ export class ErrorBoundary extends Component<
         "GitHub rate limit reached"
       )
 
-      console.log(this.state)
-
       return (
         <div className="error-boundary">
           <h1>
