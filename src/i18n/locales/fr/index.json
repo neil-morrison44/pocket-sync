@@ -1,0 +1,417 @@
+{
+  "about": {
+    "new_firmware": "Nouveau Pocket Firmware v{version} disponible",
+    "update_available": "Mise à jour disponible ! {version}",
+    "sponsor_link": "Parrainer via GitHub"
+  },
+  "app": {
+    "connect_button": "Connecter la Pocket / Carte SD",
+    "not_pocket_tip": "Ce répertoire ne ressemble pas au système de fichier de la Pocket. La carte SD doit être formatée par la Pocket au moins une fois."
+  },
+  "clean_files": {
+    "close_button": "Fermer",
+    "delete_files_button": "Supprimer les fichiers",
+    "files_found": "{count, plural, =0 {Pas de fichier à nettoyer} one {# fichier à nettoyer} other {# fichiers à nettoyer} } found",
+    "title": "Nettoyer les fichiers"
+  },
+  "update_all": {
+    "title": "Tout mettre à jour",
+    "heading": {
+      "update": "Mettre à jour",
+      "required_files": "Installer les fichiers requis",
+      "platform_files": "Remplacer les fichiers de plateforme"
+    },
+    "buttons": {
+      "update": "Mettre à jour {count, plural, =0 {none} one {# cœur sélectionné} other {# cœurs sélectionnés} }",
+      "close": "Fermer"
+    },
+    "update": {
+      "title": "Mise à jour de {coreName}: { step, select, core { mise à jour du cœur... } files { téléchargement des fichiers requis... } filecheck { vérification des fichiers... } other {on no} }"
+    },
+    "no_updates_found": "Aucune mise à jour trouvée pour les cœurs installés"
+  },
+  "core_info": {
+    "author": "Auteur",
+    "controls": {
+      "back": "Retour à la liste",
+      "install": "Installer",
+      "required_files": "Fichiers requis",
+      "uninstall": "Désinstaller",
+      "update": "Mettre à jour"
+    },
+    "inputs": "Contrôles",
+    "modal": {
+      "close": "Fermer",
+      "input_core": "Cœur",
+      "no_settings_found": "Aucune configuration trouvée !",
+      "reset_all": "Tout réinitialiser"
+    },
+    "requires_license": {
+      "all": "Attention : ce cœur nécessite actuellement un fichier de licence pour s'exécuter.",
+      "jotego": "Les bêtas JOTEGO nécessitent un fichier JTBETA de Patreon dans la section Parrainer ci-dessous. Le jtbeta.zip doit être placé à la racine de votre carte SD, puis il sera trouvé et copié au bon endroit lors du processus « Fichiers requis »."
+    },
+    "firmware_too_low": "Ce cœur a besoin du firmware v{core_firmware}, la version actuellement installée est v{pocket_firmware}",
+    "not_in_inventory": "{coreName} ne figure pas dans l'inventaire des cœurs",
+    "platform": {
+      "edit": "Modifier"
+    },
+    "replaced": "Ce cœur a été remplacé par <1>{replacementCore}</1>",
+    "platforms": "Plateformes",
+    "release_date": "Date de sortie",
+    "releases": {
+      "release_history": "Historique des versions",
+      "show_previous": "Afficher les versions précédentes"
+    },
+    "required_files": "Fichiers requis",
+    "required_files_count": "{count} / {total} fichiers",
+    "settings": "Configuration",
+    "sponsor": "Parrainer",
+    "supports": "Supporte",
+    "supports_items": {
+      "cartridges": "Cartouches",
+      "dock_dac": "Dock (Analogique)",
+      "save_states_and_sleep": "États sauvegardés / Veille"
+    },
+    "display_modes_title": "Modes d'affichage",
+    "display_mode_warning": "Ce mode d'affichage nécessite la mise à jour du cœur, êtes-vous sûr de vouloir l'activer ?"
+  },
+  "core_info_required_files": {
+    "close": "Fermer",
+    "download_all": "Tout télécharger",
+    "no_link_tip": "Veuillez consulter la section Configuration pour plus d'options avec les fichiers requis",
+    "skip_alternates_label": "Ignorer les fichiers alternatifs",
+    "title": "Fichiers requis",
+    "file_status": {
+      "needs_update_from_archive": "MàJ possible",
+      "missing_but_on_archive": "Téléchargeable",
+      "not_found": "Pas dans l'archive",
+      "exists": "Téléchargé",
+      "not_checked": "Inconnu",
+      "found_at_root": "Fichier vérifié. Trouvé à la racine",
+      "root_needs_update": "Fichier incorrect. Veuillez vérifier la racine"
+    }
+  },
+  "cores": {
+    "controls": {
+      "category": "Catégorie",
+      "refresh": "Rafraîchir",
+      "search": "Rechercher",
+      "updatable": "MàJ possible",
+      "update_all": "Tout mettre à jour",
+      "filters_group": "Filtres"
+    },
+    "install_tip": "Vous pouvez également installer des cœurs (ou tout autre élément dans un zip) en faisant glisser le .zip dans cette fenêtre",
+    "installed": "Installés ({count})",
+    "not_installed": "Disponibles ({count})"
+  },
+  "error": {
+    "report": "Vous pouvez signaler cela via GitHub, inclure le texte ci-dessous et tout ce que vous venez de faire",
+    "retry": "Réessayer",
+    "title": "Erreur"
+  },
+  "fetch": {
+    "controls": {
+      "refresh": "Rafraîchir"
+    },
+    "file_count": "{count} / {total, plural, one {# Fichier} other {# Fichiers}}",
+    "loading": "chargement...",
+    "new": {
+      "add_extension": "Ajouter",
+      "archive_name": "Nom de l'archive : <i>https://archive.org/details/[ce morceau ici]</i>",
+      "archive_tip": "Cela ne fonctionnera pas pour les archives dans lesquelles les fichiers sont compressés, et vous devriez définir les extensions que vous voulez pour éviter de télécharger les fichiers de métadonnées.",
+      "close": "Fermer",
+      "destination": "Dossier de destination",
+      "extensions": "Limiter aux extensions de fichiers :",
+      "origin": "Dossier d'origine",
+      "validating_archive_name": "Vérification de l'archive \"{name}\"...",
+      "invalid_archive_name": "Aucune archive trouvée sur https://archive.org/details/{name}"
+    },
+    "remove_button": "Supprimer",
+    "types": {
+      "filesystem": "Fichiers locaux"
+    }
+  },
+  "firmware": {
+    "current": "Firmware actuel : v{version}",
+    "downloading_firmware": "Téléchargement du firmware...",
+    "load_firmware": "Charger sur la carte SD",
+    "loaded_firmware": "Le firmware {version} se trouve sur la carte SD",
+    "loaded_firmware_info": "Insérez et allumez la Pocket pour l'installer",
+    "no_firmware_loaded": "Aucun fichier de firmware en attente d'installation sur la carte SD",
+    "options": {
+      "latest": "v{version} (dernière)",
+      "previous_versions": "Versions précédentes"
+    },
+    "release_notes": {
+      "from": "De ",
+      "title": "v{version} Notes de version :"
+    },
+    "remove_button": "Supprimer"
+  },
+  "games": {
+    "controls": {
+      "category": "Catégorie",
+      "clean_files": "Nettoyer les fichiers",
+      "refresh": "Rafraîchir",
+      "search": "Rechercher"
+    },
+    "item": {
+      "game_count": "{count, plural, =0 {Pas de jeu} one {# jeu} other {# jeux}}"
+    }
+  },
+  "image_editor": {
+    "cancel": "Annuler",
+    "import_image": "Importer une image",
+    "remove": "Supprimer",
+    "reset": "Réinitialiser",
+    "rotate": "Faire pivoter",
+    "save": "Sauvegarder",
+    "scale": "Mettre à l'échelle"
+  },
+  "instance_json": {
+    "available_for": "Création automatique de fichier instance.json disponible pour :",
+    "close_button": "Fermer",
+    "skipped_file": "{file_name} ignoré",
+    "title": "Créer des fichiers Instance JSON",
+    "wrote_file": "{file_name} écrit"
+  },
+  "layout": {
+    "cores": "Cœurs",
+    "games": "Jeux",
+    "platforms": "Plateformes",
+    "save_states": "États sauvegardés",
+    "saves": "Sauvegardes",
+    "screenshots": "Captures d'écran",
+    "settings": "Paramètres"
+  },
+  "palettes": {
+    "buttons": {
+      "add_via_code": "Ajouter via le code",
+      "new": "Nouvelle palette",
+      "back": "Retour à la liste"
+    },
+    "town": {
+      "repo_link": "Palettes de <1>github.com/{repo}</1>",
+      "close": "Fermer"
+    },
+    "item": {
+      "duplicate": "Dupliquer",
+      "rename": "Renommer",
+      "copy_code": "Copier le code de partage",
+      "delete": "Supprimer"
+    },
+    "add_via_code": {
+      "title": "Ajouter via le code de partage",
+      "cancel": "Annuler",
+      "add": "Ajouter"
+    },
+    "full": {
+      "inputs": {
+        "background": "Arrière-plan",
+        "window": "fenêtre"
+      },
+      "save": "Sauvegarder",
+      "reset": "Réinitialiser",
+      "emu_credit": "Émulateur GB adapté de <1>roblouie/gameboy-emulator</1>"
+    }
+  },
+  "mister_sync": {
+    "controls": {
+      "back": "Sortir",
+      "search": "Rechercher sauvegardes",
+      "save_mapping": "Association des sauvegardes"
+    },
+    "login": {
+      "connect": "Connecter",
+      "host": "Hôte / Adresse IP :",
+      "password": "Mot de passe :",
+      "username": "Nom d'utilisateur :"
+    },
+    "not_found": "Pas trouvé",
+    "tip_1": "Le FTP du MiSTer doit être activé",
+    "tip_2": "Assurez-vous que la sauvegarde est compatible entre Pocket et MiSTer avant le transfert",
+    "tip_3": "Le jeu doit porter exactement le même nom sur Pocket et MiSTer pour que la sauvegarde soit retrouvée",
+    "unsupported": "{platform} n'est pas associé",
+    "mapping": {
+      "close": "Fermer",
+      "clear": "Effacer",
+      "reset": "Réinitialiser aux valeurs par défaut"
+    }
+  },
+  "news_feed": {
+    "last_updated": "Dernière mise à jour <1></1>",
+    "updates_from": "Mises à jour de <1>OpenFPGA Cores Inventory</1>"
+  },
+  "platform_info": {
+    "controls": {
+      "back": "Retour à la liste"
+    },
+    "cores": "Cœurs",
+    "edit": "Modifier"
+  },
+  "platforms": {
+    "cancel": "Annuler",
+    "controls": {
+      "search": "Rechercher"
+    },
+    "data_packs": {
+      "apply_changes": "Appliquer {count, plural, =0 {0 modification} one {1 modification} other {# modifications}}",
+      "close": "Fermer",
+      "current": "Actuel"
+    },
+    "delete_unused": "Supprimmer {count, plural, one {# plateforme inutilisée} other {# plateformes inutilisées}}?",
+    "edit": "Modifier",
+    "image_packs": {
+      "apply_changes": "Appliquer {count, plural, =0 {0 modification} one {1 modification} other {# modifications}}",
+      "close": "Fermer",
+      "current": "Actuel"
+    },
+    "save": "Sauvegarder"
+  },
+  "progress": {
+    "remaining_time": "Temps restant (environ) : {remainingTime}"
+  },
+  "save_info": {
+    "confirm_restore": "Restorer depuis une sauvegarde ?",
+    "controls": {
+      "back": "Retour à la liste",
+      "hide_unchanged": "Masquer inchangés",
+      "search": "Rechercher"
+    },
+    "current": "Actuel",
+    "newer": "Plus récent",
+    "older": "Plus ancien"
+  },
+  "save_states": {
+    "cartridge": "Cartouche",
+    "confirm_delete": "Êtes-vous sûr de vouloir supprimer {count, plural, =0 {pas d'état sauvegardé} one {un état sauvegardé } other {# états sauvegardés}} ?",
+    "controls": {
+      "clear_selection": "Effacer la sélection",
+      "delete_selection": "Supprimer la sélection ({count})",
+      "search": "Rechercher"
+    },
+    "photos": {
+      "title": "Exportation de photos",
+      "close": "Fermer",
+      "export_selected": "Exporter la sélection",
+      "export_all": "Tout exporter",
+      "colours": {
+        "black_and_white": "Noir & blanc"
+      }
+    }
+  },
+  "saves": {
+    "backups": "Sauvegardes : {count}",
+    "confirm_delete": "Êtes-vous sûr de vouloir supprimer cet emplacement de sauvegarde ?",
+    "controls": {
+      "add_backup_location": "Ajouter un emplacement de sauvegarde"
+    },
+    "latest_backup": "Dernière sauvegarde : {date, date, long}, {date, time, short}",
+    "none": "Ajouter un emplacement de sauvegarde ci-dessus",
+    "not_found": "Pas trouvé",
+    "oldest_backup": "Sauvegarde la plus ancienne : {date, date, long}, {date, time, short}",
+    "remove": "Supprimer l'emplacement",
+    "view_saves": "Voir les sauvegardes"
+  },
+  "screenshot_info": {
+    "controls": {
+      "back": "Retour à la liste",
+      "save": "Sauvegarder",
+      "share": "Partager",
+      "upscaled": "Mis à l'échelle"
+    }
+  },
+  "screenshots": {
+    "controls": {
+      "delete_selected": "Supprimer la sélection ({count})",
+      "export_selected": "Exporter la sélection ({count})",
+      "search": "Rechercher",
+      "select": "Sélectionner"
+    },
+    "no_screenshots": "Une fois que vous aurez pris quelques captures d'écran, elles apparaîtront ici"
+  },
+  "settings": {
+    "3d_pocket": {
+      "title": "Couleur de Pocket :",
+      "colours": {
+        "black": "Noir",
+        "white": "Blanc",
+        "trans_blue": "Bleu",
+        "trans_green": "Vert",
+        "trans_purple": "Violet",
+        "trans_red": "Rouge",
+        "red": "Rouge",
+        "green": "Vert",
+        "blue": "Bleu",
+        "yellow": "Jaune",
+        "pink": "Rose",
+        "silver": "Argent"
+      },
+      "body_label": "Corps",
+      "buttons_label": "Boutons",
+      "match_body": "Même couleur que le corps"
+    },
+    "alternate_skip": {
+      "ramble_1": "Ce paramètre ignorera le traitement des fichiers json dans le dossier « _alternatives », ce qui signifie que vous obtiendrez simplement les titres « principaux » pour les cœurs qui trient leurs fichiers JSON de cette façon.",
+      "ramble_2": "<b>Attention :</b> désactiver cette option signifie que l'installation des fichiers requis prendra <b>beaucoup</b> plus de temps."
+    },
+    "language": {
+      "title": "Langage"
+    },
+    "archive": {
+      "save": "Enregistrer",
+      "title": "Archive ROM et BIOS (fichiers requis)",
+      "warning": "Veuillez vérifier vos lois locales concernant le téléchargement de fichiers ROM et BIOS (arcade) potentiellement protégés par des droits d'auteur. Si cela vous convient, copiez l'URL suivante dans le champ et cliquez sur \"Enregistrer\"."
+    },
+    "clear_file_cache": {
+      "button": "Vider le cache des fichiers",
+      "ramble": "Pour faciliter le transfert via USB et carte SD, les fichiers plus volumineux sont copiés et stockés sur le système de fichiers de votre ordinateur, ce qui ne devrait pas poser de problème, mais si vous rencontrez des problèmes, essayez de vider le cache des fichiers.",
+      "title": "Vider le cache des fichiers"
+    },
+    "disconnect": {
+      "button": "Déconnecter",
+      "ramble": "Retourner à l'écran « Connecter la Pocket » (cela n'éjecte pas la carte SD / la clé USB)",
+      "title": "Déconnecter"
+    },
+    "reconnect": {
+      "checkbox": "Reconnecter à l'ouverture",
+      "ramble": "Tentative de reconnexion à l'emplacement ouvert le plus récemment <1> { ppath }</1> à l'ouverture de l'application, en ignorant le bouton \"Connecter la Pocket\"",
+      "title": "Reconnecter lorsque l'application est ouverte"
+    },
+    "turbo_downloads": {
+      "checkbox": "Activer les téléchargements rapides",
+      "ramble": "L'activation de ce paramètre divisera les fichiers de l'archive en morceaux plus petits. Ces morceaux sont ensuite téléchargés en parallèle, ce qui peut potentiellement entraîner une accélération jusqu'à 8x. Cependant, cette méthode consommera plus de bande passante et peut être moins fiable. Si vous l'activez, pensez à <1>soutenir Internet Archive</1> .",
+      "title": "Téléchargements rapides"
+    },
+    "logs": {
+      "title": "Journaux",
+      "button": "Ouvrir le dossier de journal"
+    },
+    "thanks": "Merci à :"
+  },
+  "time_ago": {
+    "less_than_1_min_ago": "il y a moins d'une minute"
+  },
+  "uninstall_core": {
+    "confirm_text": "Cela supprimera le cœur, mais pas les jeux, les sauvegardes, les données de bibliothèque ou les informations sur la plateforme. Êtes-vous sûr ?",
+    "confirm_title": "Désinstaller le cœur"
+  },
+  "zip_install": {
+    "cancel_button": "Annuler",
+    "confirm_button": "Confirmer",
+    "remove_duplicate": "Supprimer les fichiers doublons",
+    "scanning": "Analyse des fichiers...",
+    "moved_files_info": "Gère les cas où les fichiers ont été déplacés, par exemple les fichiers JSON sont maintenant dans `_alternatives`",
+    "replace": {
+      "ok": "Autoriser",
+      "cancel": "Passer",
+      "text": "{list}\n\nLes Assets, sauvegardes, etc. seront déplacés et l'ancien cœur sera supprimé.",
+      "title": "Remplacer les cœurs ?"
+    }
+  },
+  "version": {
+    "update_alt": "Mise à jour {version} disponible",
+    "replaced_alt": "Cœur de remplacement {core} disponible",
+    "replaced": "Remplacé"
+  }
+}
