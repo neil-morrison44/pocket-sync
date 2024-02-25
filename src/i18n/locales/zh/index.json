@@ -7,7 +7,7 @@
   },
   "app": {
     "app_name": "Pocket Sync",
-    "connect_button": "连接到Pocket",
+    "connect_button": "连接至Pocket/SD卡",
     "not_pocket_tip": "目录无法识别, 请确认SD卡已经由Pocket完成初始化"
   },
   "clean_files": {

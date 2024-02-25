@@ -7,7 +7,7 @@
   },
   "app": {
     "app_name": "Pocket Sync",
-    "connect_button": "Conectar con Pocket",
+    "connect_button": "Conectar al Pocket/tarjeta SD",
     "not_pocket_tip": "Esa carpeta no se parece al sistema de archivos de Pocket. El Pocket debe inicializar la tarjeta SD al menos una vez."
   },
   "clean_files": {
