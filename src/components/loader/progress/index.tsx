@@ -32,7 +32,6 @@ export const ProgressLoader = ({
     const unlisten = listen<ProgressEvent>(
       `progress-event::${name}`,
       ({ payload }) => {
-        console.log({ payload })
         setPercent(payload.progress * 100)
         if (payload.message) setMessage(payload.message)
       }

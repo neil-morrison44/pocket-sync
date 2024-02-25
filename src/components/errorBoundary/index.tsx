@@ -5,6 +5,7 @@ import { Tip } from "../tip"
 import "./index.css"
 import { ViewDebug } from "./viewDebug"
 import { Trans } from "react-i18next"
+import { openLogDir } from "../../utils/openLogDir"
 
 type ErrorBoundaryProps = {
   children?: ReactNode
@@ -43,6 +44,8 @@ export class ErrorBoundary extends Component<
         "GitHub rate limit reached"
       )
 
+      console.log(this.state)
+
       return (
         <div className="error-boundary">
           <h1>
@@ -60,9 +63,17 @@ export class ErrorBoundary extends Component<
           <ViewDebug />
 
           <div className="error-boundary__message">
+            {typeof this.state.error === "string" && this.state.error}
             {this.state.error?.message}
           </div>
           <div className="error-boundary__stack">{this.state.error?.stack}</div>
+
+          <button
+            onClick={() => openLogDir()}
+            style={{ marginBlockEnd: "20px" }}
+          >
+            <Trans i18nKey="settings:logs.button"></Trans>
+          </button>
 
           <button style={{ width: "100%" }} onClick={() => this.clearError()}>
             <Trans i18nKey="error:retry"></Trans>

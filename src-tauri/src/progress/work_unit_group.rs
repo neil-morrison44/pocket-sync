@@ -1,5 +1,3 @@
-use anyhow::Result;
-
 #[derive(Debug)]
 pub struct WorkUnitGroupStatus {
     completed: usize,
@@ -35,6 +33,7 @@ impl WorkUnitGroupStatus {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use anyhow::Result;
 
     #[test]
     fn add_under_count() -> Result<()> {

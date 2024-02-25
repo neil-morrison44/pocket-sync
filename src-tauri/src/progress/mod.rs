@@ -1,4 +1,3 @@
-use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use work_unit_group::WorkUnitGroupStatus;
 mod work_unit_group;
@@ -104,6 +103,7 @@ pub struct ProgressEvent {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use anyhow::Result;
 
     #[test]
     fn add_under_count() -> Result<()> {

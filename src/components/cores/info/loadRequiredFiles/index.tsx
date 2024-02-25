@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { Suspense, useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { useInstallRequiredFiles } from "../../../../hooks/useInstallRequiredFiles"
 import { skipAlternateAssetsSelector } from "../../../../recoil/config/selectors"
@@ -12,6 +12,8 @@ import { RequiredFileRow } from "./row"
 import { useUpdateConfig } from "../../../settings/hooks/useUpdateConfig"
 import { useHasArchiveLink } from "../../../../hooks/useHasArchiveLink"
 import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles/selectors"
+import { DataSlotFile } from "../../../../types"
+import { Loader } from "../../../loader"
 
 const STATUS_SORT_ORDER = [
   "RootNeedsUpdate",
@@ -32,7 +34,6 @@ export const LoadRequiredFiles = ({
   coreName,
   onClose,
 }: LoadRequiredFilesProps) => {
-  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
   const { t } = useTranslation("core_info_required_files")
   const { installRequiredFiles, percent, inProgress, message, remainingTime } =
     useInstallRequiredFiles()
@@ -40,17 +41,6 @@ export const LoadRequiredFiles = ({
   const skipAlternateAssets = useRecoilValue(skipAlternateAssetsSelector)
   const updateConfig = useUpdateConfig()
   const hasArchiveLink = useHasArchiveLink()
-
-  const sortedRequiredFiles = useMemo(() => {
-    return [...requiredFiles].sort((a, b) => {
-      if (a.status === b.status) return a.name.localeCompare(b.name)
-
-      return (
-        STATUS_SORT_ORDER.indexOf(a.status.type) -
-        STATUS_SORT_ORDER.indexOf(b.status.type)
-      )
-    })
-  }, [requiredFiles])
 
   return (
     <Modal className="load-required-files">
@@ -66,12 +56,18 @@ export const LoadRequiredFiles = ({
 
       {!inProgress && (
         <>
-          <div className="load-required-files__files">
-            {sortedRequiredFiles.map((r) => (
-              <RequiredFileRow info={r} key={r.path} />
-            ))}
-          </div>
-
+          <Suspense
+            fallback={
+              <div
+                className="load-required-files__files"
+                style={{ padding: "20px" }}
+              >
+                <Loader className="loader--no-background" />
+              </div>
+            }
+          >
+            <RequiredFilesList coreName={coreName} />
+          </Suspense>
           {!hasArchiveLink && <Tip>{t("no_link_tip")}</Tip>}
 
           <div className="load-required-files__skip-notice">
@@ -91,22 +87,72 @@ export const LoadRequiredFiles = ({
             <button onClick={onClose}>{t("close")}</button>
 
             {hasArchiveLink && (
-              <button
-                onClick={() =>
-                  installRequiredFiles(
-                    requiredFiles.filter(
-                      ({ status }) =>
-                        status.type !== "Exists" && status.type !== "NotFound"
-                    )
-                  )
-                }
-              >
-                {t("download_all")}
-              </button>
+              <Suspense>
+                <RequiredFilesButton
+                  installRequiredFiles={installRequiredFiles}
+                  coreName={coreName}
+                />
+              </Suspense>
             )}
           </div>
         </>
       )}
     </Modal>
+  )
+}
+
+type RequiredFilesButtonProps = {
+  installRequiredFiles: (
+    files: DataSlotFile[],
+    other_archive_url?: string | undefined
+  ) => Promise<void>
+  coreName: string
+}
+
+const RequiredFilesButton = ({
+  installRequiredFiles,
+  coreName,
+}: RequiredFilesButtonProps) => {
+  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
+  const { t } = useTranslation("core_info_required_files")
+  return (
+    <button
+      onClick={() =>
+        installRequiredFiles(
+          requiredFiles.filter(
+            ({ status }) =>
+              status.type !== "Exists" && status.type !== "NotFound"
+          )
+        )
+      }
+    >
+      {t("download_all")}
+    </button>
+  )
+}
+
+type RequiredFilesListProps = {
+  coreName: string
+}
+
+const RequiredFilesList = ({ coreName }: RequiredFilesListProps) => {
+  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
+  const sortedRequiredFiles = useMemo(() => {
+    return [...requiredFiles].sort((a, b) => {
+      if (a.status === b.status) return a.name.localeCompare(b.name)
+
+      return (
+        STATUS_SORT_ORDER.indexOf(a.status.type) -
+        STATUS_SORT_ORDER.indexOf(b.status.type)
+      )
+    })
+  }, [requiredFiles])
+
+  return (
+    <div className="load-required-files__files">
+      {sortedRequiredFiles.map((r) => (
+        <RequiredFileRow info={r} key={r.path} />
+      ))}
+    </div>
   )
 }
