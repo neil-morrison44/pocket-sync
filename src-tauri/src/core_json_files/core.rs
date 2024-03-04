@@ -7,32 +7,14 @@ use std::{fs, path::PathBuf};
 pub struct CoreMetadata {
     platform_ids: Vec<String>,
     shortname: String,
-    description: String,
     author: String,
-    url: String,
     version: String,
-    date_release: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Framework {
     target_product: String,
     version_required: String,
-    sleep_supported: bool,
-    dock: Dock,
-    hardware: Hardware,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Dock {
-    supported: bool,
-    analog_output: bool,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Hardware {
-    link_port: bool,
-    cartridge_adapter: i32,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

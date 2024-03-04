@@ -12,6 +12,7 @@ import { Suspense, useCallback, useState } from "react"
 import { Loader } from "../loader"
 import { invokeDeleteFiles, invokeDownloadFirmware } from "../../utils/invokes"
 import { useTranslation } from "react-i18next"
+import { ProgressLoader } from "../loader/progress"
 
 export const Firmware = () => {
   const currentFirmware = useRecoilValue(currentFirmwareVersionSelector)
@@ -133,7 +134,14 @@ const FirmwareDownloaded = ({ downloading }: FirmwareDownloadedProps) => {
   if (!downloadedFirmware) {
     return (
       <div className="firmware__downloaded">
-        {downloading ? t("downloading_firmware") : t("no_firmware_loaded")}
+        {downloading ? (
+          <div className="firmware__progress">
+            <ProgressLoader name="firmware_download" />
+            {t("downloading_firmware")}
+          </div>
+        ) : (
+          t("no_firmware_loaded")
+        )}
       </div>
     )
   }

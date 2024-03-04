@@ -1,4 +1,3 @@
-use bytes::BytesMut;
 use futures::StreamExt;
 use log::info;
 use reqwest::StatusCode;
@@ -21,6 +20,7 @@ use crate::{
         core::CoreFile,
         updaters::{CoreUpdateDetails, UpdatersFile},
     },
+    util::progress_download,
     PocketSyncState,
 };
 
@@ -119,32 +119,17 @@ pub async fn start_zip_task(window: Window) -> () {
                 let response = reqwest::get(&install.zip_url).await.unwrap();
                 match response.status() {
                     StatusCode::OK => {
-                        let zip_file = {
-                            let total_size = response.content_length().unwrap();
-                            let mut downloaded: u64 = 0;
-                            let mut stream = response.bytes_stream();
-
-                            let mut file = BytesMut::with_capacity(total_size.try_into().unwrap());
-                            while let Some(item) = stream.next().await {
-                                let chunk = item
-                                    .or(Err(format!("Error while downloading file")))
-                                    .unwrap();
-
-                                file.extend(&chunk);
-                                let new =
-                                    std::cmp::min(downloaded + (chunk.len() as u64), total_size);
-                                downloaded = new;
-
-                                FromRustPayload::DownloadProgress {
-                                    url: install.zip_url.clone(),
-                                    downloaded,
-                                    total_size,
-                                }
-                                .emit(&main_window)
-                                .unwrap();
+                        let zip_file = progress_download(response, |total_size, downloaded| {
+                            FromRustPayload::DownloadProgress {
+                                url: install.zip_url.clone(),
+                                downloaded,
+                                total_size,
                             }
-                            file
-                        };
+                            .emit(&main_window)
+                            .unwrap();
+                        })
+                        .await
+                        .unwrap();
 
                         let cursor = Cursor::new(zip_file);
                         let archive = zip::ZipArchive::new(cursor).unwrap();

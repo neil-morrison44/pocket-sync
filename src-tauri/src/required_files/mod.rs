@@ -134,10 +134,11 @@ impl DataSlotFile {
     }
 }
 
-const SKIP_INSTANCE_FILES_FOR: [&str; 3] = [
+const SKIP_INSTANCE_FILES_FOR: [&str; 4] = [
     "Mazamars312.NeoGeo",
     "Mazamars312.NeoGeo_Overdrive",
     "Mazamars312.PC Engine CD",
+    "obsidian.Vectrex",
 ];
 
 pub async fn required_files_for_core(
