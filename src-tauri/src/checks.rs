@@ -1,21 +1,13 @@
 use log::info;
-use notify::{Config, Event, RecommendedWatcher, RecursiveMode, Watcher};
-use notify_debouncer_full::{new_debouncer, DebouncedEvent};
+use notify::{Config, RecommendedWatcher, RecursiveMode, Watcher};
 use serde::{Deserialize, Serialize};
 use std::{path::PathBuf, time::Duration};
 use tauri::Window;
-use tokio::sync::mpsc;
 
 #[derive(Serialize, Deserialize, Clone)]
 struct FSEventPayload {
     events: Vec<notify::Event>,
     pocket_path: String,
-}
-
-enum DebouncedOrRoot {
-    Root(Result<Event, notify::Error>),
-    Debounced(Result<Vec<DebouncedEvent>, Vec<notify::Error>>),
-    PolledDisconnect,
 }
 
 pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
@@ -37,91 +29,48 @@ pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
 }
 
 pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
-    let (tx, mut rx) = mpsc::channel(10);
     info!(
         "Watching files and folders at {}....",
         &pocket_path.display()
     );
 
-    let root_tx = tx.clone();
-    let mut debouncer = new_debouncer(Duration::from_millis(100), None, move |res| {
-        root_tx.try_send(DebouncedOrRoot::Debounced(res)).unwrap();
-    })
-    .unwrap();
-
-    debouncer
-        .watcher()
-        .watch(&pocket_path, RecursiveMode::Recursive)
-        .unwrap();
-
-    // This causes a deadlock on Windows for some reason
-    // debouncer
-    //     .cache()
-    //     .add_root(&pocket_path, RecursiveMode::Recursive);
-
-    let files_tx = tx.clone();
+    let main_window = window.clone();
+    let pocket_path_string = String::from(pocket_path.to_string_lossy());
     let mut root_watcher = RecommendedWatcher::new(
         move |res| {
-            files_tx.try_send(DebouncedOrRoot::Root(res)).unwrap();
+            if let Ok(event) = res {
+                main_window
+                    .emit(
+                        "pocket-fs-event",
+                        FSEventPayload {
+                            events: vec![event],
+                            pocket_path: pocket_path_string.clone(),
+                        },
+                    )
+                    .unwrap();
+            }
         },
         Config::default(),
     )
     .unwrap();
 
     root_watcher
-        .watch(&pocket_path, RecursiveMode::NonRecursive)
+        .watch(&pocket_path, RecursiveMode::Recursive)
         .unwrap();
 
-    let poll_tx = tx.clone();
     let polling_path = pocket_path.clone();
-    tauri::async_runtime::spawn(async move {
-        loop {
-            tokio::time::sleep(Duration::from_secs(1)).await;
-            if !polling_path.exists() {
-                poll_tx
-                    .send(DebouncedOrRoot::PolledDisconnect)
-                    .await
-                    .unwrap();
-                break;
-            }
-        }
-    });
-
     let main_window = window.clone();
-    while let Some(res) = rx.recv().await {
-        match res {
-            DebouncedOrRoot::Debounced(Ok(events)) => {
-                // println!("changed: {:?}", &events);
-                main_window
-                    .emit(
-                        "pocket-fs-event",
-                        FSEventPayload {
-                            events: events.into_iter().map(|e| e.event).collect::<Vec<_>>(),
-                            pocket_path: String::from(pocket_path.to_str().unwrap()),
-                        },
-                    )
-                    .unwrap();
-            }
-            DebouncedOrRoot::Debounced(Err(e)) => println!("watch error: {:?}", e),
-            DebouncedOrRoot::Root(Ok(r)) if r.kind.is_remove() => {
-                main_window
-                    .emit(
-                        "pocket-connection",
-                        ConnectionEventPayload { connected: false },
-                    )
-                    .unwrap();
-                break;
-            }
-            DebouncedOrRoot::Root(Ok(_)) | DebouncedOrRoot::Root(Err(_)) => {}
-            DebouncedOrRoot::PolledDisconnect => {
-                main_window
-                    .emit(
-                        "pocket-connection",
-                        ConnectionEventPayload { connected: false },
-                    )
-                    .unwrap();
-                break;
-            }
+
+    loop {
+        tokio::time::sleep(Duration::from_secs(1)).await;
+        if !polling_path.exists() {
+            main_window
+                .emit(
+                    "pocket-connection",
+                    ConnectionEventPayload { connected: false },
+                )
+                .unwrap();
+            break;
         }
     }
 

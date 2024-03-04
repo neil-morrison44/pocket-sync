@@ -8,6 +8,7 @@ import { GithubRelease, Palette, rgb } from "../../types"
 import { ResponseType, fetch, getClient } from "@tauri-apps/api/http"
 import { paletteRepoAtom } from "./atoms"
 import * as zip from "@zip.js/zip.js"
+import { error } from "tauri-plugin-log-api"
 
 export const palettesListSelector = selector<string[]>({
   key: "palettesListSelector",
@@ -71,11 +72,18 @@ export const PaletteCodeSelectorFamily = selectorFamily<string, string>({
       const path = `Assets/gb/common/palettes${name}`
       get(FileWatchAtomFamily(path))
       const data = await invokeReadBinaryFile(path)
+      let encodedName = "Imported Palette"
+
+      try {
+        encodedName = window.btoa(name)
+      } catch (err) {
+        error(`Palette Code error: ${name} - ${err}`)
+      }
 
       return (
         Array.from(data)
           .map((s) => s.toString(16).padStart(2, "0"))
-          .join("") + btoa(name)
+          .join("") + encodedName
       )
     },
 })

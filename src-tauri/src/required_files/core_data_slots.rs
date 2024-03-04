@@ -7,6 +7,7 @@ use std::path::PathBuf;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct CoreData {
+    #[serde(default)]
     pub data_slots: Vec<DataSlot>,
 }
 

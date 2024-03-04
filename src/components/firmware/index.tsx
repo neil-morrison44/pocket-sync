@@ -12,6 +12,8 @@ import { Suspense, useCallback, useState } from "react"
 import { Loader } from "../loader"
 import { invokeDeleteFiles, invokeDownloadFirmware } from "../../utils/invokes"
 import { useTranslation } from "react-i18next"
+import { ProgressLoader } from "../loader/progress"
+import { message } from "@tauri-apps/api/dialog"
 
 export const Firmware = () => {
   const currentFirmware = useRecoilValue(currentFirmwareVersionSelector)
@@ -97,11 +99,21 @@ const DownloadButton = ({
     if (!firmwareDetails.download_url) return
 
     onDownloadStart()
-    const _result = await invokeDownloadFirmware(
+    const verified = await invokeDownloadFirmware(
       firmwareDetails.download_url,
       firmwareDetails.file_name,
       firmwareDetails.md5
     )
+
+    if (!verified) {
+      // _hopefully_ this never happens, but if users start seeing it I'll bother translating it
+      message(
+        "Firmware verification failed\n\nTry again or download manually",
+        {
+          type: "error",
+        }
+      )
+    }
 
     onDownloadEnd()
   }, [
@@ -133,7 +145,14 @@ const FirmwareDownloaded = ({ downloading }: FirmwareDownloadedProps) => {
   if (!downloadedFirmware) {
     return (
       <div className="firmware__downloaded">
-        {downloading ? t("downloading_firmware") : t("no_firmware_loaded")}
+        {downloading ? (
+          <div className="firmware__progress">
+            <ProgressLoader name="firmware_download" />
+            {t("downloading_firmware")}
+          </div>
+        ) : (
+          t("no_firmware_loaded")
+        )}
       </div>
     )
   }

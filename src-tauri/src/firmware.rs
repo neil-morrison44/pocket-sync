@@ -1,8 +1,9 @@
+use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
+use std::{path::PathBuf, time::Instant};
 use tokio::io::AsyncWriteExt;
 
-use crate::hashes::md5_for_file;
+use crate::{hashes::md5_for_file, progress::ProgressEvent, util::progress_download};
 
 #[derive(Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -44,13 +45,35 @@ pub async fn get_release_notes(version: &str) -> Result<FirmwareDetails, reqwest
 pub async fn download_firmware_file(
     url: &str,
     path: &PathBuf,
-) -> Result<(), Box<dyn std::error::Error>> {
+    window: &tauri::Window,
+) -> Result<()> {
     let response = reqwest::get(url).await?;
-    let bytes = response.bytes().await?;
+    let mut last_message = Instant::now();
+
+    let bytes = progress_download(response, |total_size, downloaded| {
+        let percentage = (downloaded as f32) / (total_size as f32);
+        let now = Instant::now();
+        if now.duration_since(last_message).as_millis() < 16 {
+            return;
+        }
+        last_message = now;
+        window
+            .emit(
+                "progress-event::firmware_download",
+                ProgressEvent {
+                    finished: downloaded == total_size,
+                    progress: percentage,
+                    message: None,
+                },
+            )
+            .unwrap();
+    })
+    .await?;
 
     let mut file = tokio::io::BufWriter::new(tokio::fs::File::create(path).await?);
     file.write_all(&bytes).await?;
     file.flush().await?;
+
     Ok(())
 }
 

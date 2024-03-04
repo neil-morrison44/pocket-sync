@@ -37,6 +37,7 @@ impl InstanceDataSlot {
 struct InstanceData {
     #[serde(default)]
     pub data_path: String,
+    #[serde(default)]
     pub data_slots: Vec<InstanceDataSlot>,
 }
 

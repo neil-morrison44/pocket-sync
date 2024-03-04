@@ -580,31 +580,30 @@ async fn download_firmware(
     md5: &str,
     file_name: &str,
     state: tauri::State<'_, PocketSyncState>,
+    window: tauri::Window,
 ) -> Result<bool, String> {
     debug!("Command: download_firmware");
     let pocket_path = state.0.pocket_path.read().await;
     let file_path = pocket_path.join(file_name);
-    let mut attempts = 0;
 
-    loop {
-        firmware::download_firmware_file(url, &file_path)
+    firmware::download_firmware_file(url, &file_path, &window)
+        .await
+        .map_err(|err| err.to_string())?;
+
+    debug!("firmware downloaded");
+
+    let verify = firmware::verify_firmware_file(&file_path, md5)
+        .await
+        .map_err(|err| err.to_string())?;
+
+    if !verify {
+        debug!("firmware verification failed");
+        tokio::fs::remove_file(&file_path)
             .await
             .map_err(|err| err.to_string())?;
-
-        match (
-            firmware::verify_firmware_file(&file_path, md5)
-                .await
-                .map_err(|err| err.to_string())?,
-            attempts > 3,
-        ) {
-            (true, _) => return Ok(true),
-            (false, true) => return Ok(false),
-            (false, false) => {
-                attempts += 1;
-                continue;
-            }
-        }
     }
+
+    Ok(verify)
 }
 
 #[tauri::command(async)]
