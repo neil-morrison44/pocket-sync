@@ -1,5 +1,5 @@
 import { GithubRelease } from "../../types"
-import { selectorFamily } from "recoil"
+import { selector, selectorFamily } from "recoil"
 import { coreInventoryAtom } from "../inventory/atoms"
 
 export const GithubReleasesSelectorFamily = selectorFamily<
@@ -32,4 +32,19 @@ export const GithubReleasesSelectorFamily = selectorFamily<
 
       return (await response.json()) as GithubRelease[]
     },
+})
+
+export const sponsorCountSelector = selector({
+  key: "sponsorCountSelector",
+  get: async () => {
+    try {
+      const response = await fetch(
+        `https://ghs.vercel.app/sponsors/neil-morrison44`
+      )
+      const { sponsors } = (await response.json()) as { sponsors: string[] }
+      return sponsors.length
+    } catch (err) {
+      return 0
+    }
+  },
 })

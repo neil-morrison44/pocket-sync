@@ -1,7 +1,10 @@
 import { ReactNode, Suspense, useLayoutEffect, useMemo, useRef } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import { useRecoilSmoothUpdatesFirstSuspend } from "../../hooks/recoilSmoothUpdates"
-import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
+import {
+  GithubReleasesSelectorFamily,
+  sponsorCountSelector,
+} from "../../recoil/github/selectors"
 import { AppVersionSelector } from "../../recoil/selectors"
 import { ErrorBoundary } from "../errorBoundary"
 import { Link } from "../link"
@@ -27,6 +30,7 @@ export const About = () => {
 
   const { t } = useTranslation("about")
   const AppVersion = useRecoilValue(AppVersionSelector)
+  const sponsorCount = useRecoilValue(sponsorCountSelector)
   const firmwareUpdateAvailable = useRecoilValue(updateAvailableSelector)
 
   const updateAvailable = useMemo(() => {
@@ -53,7 +57,7 @@ export const About = () => {
               fill="white"
             />
           </svg>
-          {t("sponsor_link")}
+          {t("sponsor_link", { count: sponsorCount })}
         </Link>
       </div>
       <div className="about__top">
