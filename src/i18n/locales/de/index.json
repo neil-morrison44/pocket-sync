@@ -117,11 +117,16 @@
   "cores": {
     "controls": {
       "category": "Kategorie",
+      "sort": "Sortiere nach",
       "refresh": "Aktualisieren",
       "search": "Suchen",
       "updatable": "Aktualisierbar",
       "update_all": "Alle aktualisieren",
-      "filters_group": "Filter"
+      "filters_group": "Filter",
+      "sort_options": {
+        "name": "Name",
+        "last_update": "Letztes Update"
+      }
     },
     "install_tip": "Kerne (oder andere Komponenten in einer ZIP-Datei) können auch durch Ziehen der .zip in dieses Fenster installiert werden",
     "installed": "Installiert ({count})",

@@ -94,11 +94,16 @@
   "cores": {
     "controls": {
       "category": "Catégorie",
+      "sort": "Trier par",
       "refresh": "Rafraîchir",
       "search": "Rechercher",
       "updatable": "MàJ possible",
       "update_all": "Tout mettre à jour",
-      "filters_group": "Filtres"
+      "filters_group": "Filtres",
+      "sort_options": {
+        "name": "Nom",
+        "last_update": "Dernière mise à jour"
+      }
     },
     "install_tip": "Vous pouvez également installer des cœurs (ou tout autre élément dans un zip) en faisant glisser le .zip dans cette fenêtre",
     "installed": "Installés ({count})",

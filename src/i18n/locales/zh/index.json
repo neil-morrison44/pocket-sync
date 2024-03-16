@@ -100,11 +100,16 @@
   "cores": {
     "controls": {
       "category": "类型",
+      "sort": "排序方式",
       "refresh": "刷新",
       "search": "搜索",
       "updatable": "可更新",
       "update_all": "全部更新",
-      "filters_group": "过滤器"
+      "filters_group": "过滤器",
+      "sort_options": {
+        "name": "姓名",
+        "last_update": "最后更新"
+      }
     },
     "install_tip": "您也可以通过拖拽ZIP压缩包到窗口内的方式安装核心或其他内容",
     "installed": "已安装({count})",

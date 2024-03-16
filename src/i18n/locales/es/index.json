@@ -100,11 +100,16 @@
   "cores": {
     "controls": {
       "category": "Categoría",
+      "sort": "Ordenar por",
       "refresh": "Actualizar",
       "search": "Buscar",
       "updatable": "Actualizable",
       "update_all": "Actualizar todo",
-      "filters_group": "Filtros"
+      "filters_group": "Filtros",
+      "sort_options": {
+        "name": "Nombre",
+        "last_update": "Última actualización"
+      }
     },
     "install_tip": "También puedes instalar núcleos (o cualquier otra cosa en un zip) arrastrando el archivo .zip a esta ventana",
     "installed": "Instalado ({count})",
