@@ -15,6 +15,7 @@ import {
 import { Bloom, EffectComposer, N8AO } from "@react-three/postprocessing"
 import { KernelSize } from "postprocessing"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
+import * as THREE from "three"
 
 import envMap from "./small_empty_room_1_1k.hdr"
 import screenAlphaMap from "./screen_alpha.png"

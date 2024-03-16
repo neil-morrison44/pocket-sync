@@ -13,6 +13,7 @@ import { LabeledLine } from "../../../three/labeledLine"
 import { Pocket } from "../../../three/pocket"
 import { useTranslation } from "react-i18next"
 import { ColourContextProviderFromConfig } from "../../../three/colourContext"
+import * as THREE from "three"
 
 const KEY_LINES: {
   [k in InputKey]: { start: THREE.Vector3Tuple; end: THREE.Vector3Tuple }

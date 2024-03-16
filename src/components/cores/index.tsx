@@ -19,6 +19,11 @@ import { ControlsGroup } from "../controls/inputs/group"
 import { ControlsSelect } from "../controls/inputs/select"
 import { ControlsSearch } from "../controls/inputs/search"
 import { UpdateAll } from "./updateAll"
+import { InventoryItem, SortMode } from "../../types"
+import {
+  categoryFilterOptionAtom,
+  sortingOptionAtom,
+} from "../../recoil/cores/atoms"
 
 export const Cores = () => {
   const [selectedCore, setSelectedCore] = useRecoilState(
@@ -27,9 +32,13 @@ export const Cores = () => {
   const { pushScroll, popScroll } = useSaveScroll()
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [onlyUpdates, setOnlyUpdates] = useState(false)
-  const [filterCategory, setFilterCategory] = useState<string>("All")
+  const [filterCategory, setFilterCategory] = useRecoilState(
+    categoryFilterOptionAtom
+  )
   const { t } = useTranslation("cores")
   const [updateAllOpen, setUpdateAllOpen] = useState(false)
+
+  const [sortMode, setSortMode] = useRecoilState(sortingOptionAtom)
 
   const closeUpdateAllCallback = useCallback(
     () => setUpdateAllOpen(false),
@@ -59,6 +68,9 @@ export const Cores = () => {
         <ControlsButton onClick={() => setUpdateAllOpen(true)}>
           {t("controls.update_all")}
         </ControlsButton>
+
+        <SortModeOption sortMode={sortMode} setSortMode={setSortMode} />
+
         <ControlsGroup title={t("controls.filters_group")}>
           <ControlsCheckbox checked={onlyUpdates} onChange={setOnlyUpdates}>
             {t("controls.updatable")}
@@ -88,6 +100,7 @@ export const Cores = () => {
         >
           <Suspense fallback={<Loader />}>
             <CoreList
+              sortMode={sortMode}
               onSelect={(core) => {
                 pushScroll()
 
@@ -103,32 +116,71 @@ export const Cores = () => {
   )
 }
 
-const CoreList = ({ onSelect }: { onSelect: (coreid: string) => void }) => {
+const CoreList = ({
+  onSelect,
+  sortMode,
+}: {
+  sortMode: SortMode
+  onSelect: (coreid: string) => void
+}) => {
   const { t } = useTranslation("cores")
   const coresList = useRecoilValue(coresListSelector)
   const coreInventory = useRecoilValue(coreInventoryAtom)
 
   const notInstalledCores = useMemo(
     () =>
-      coreInventory.data.filter(
-        ({ identifier }) => !coresList.includes(identifier)
-      ),
-    [coresList, coreInventory]
+      coreInventory.data
+        .filter(({ identifier }) => !coresList.includes(identifier))
+        .sort((a, b) => {
+          const dateA = new Date(a.release_date)
+          const dateB = new Date(b.release_date)
+          switch (sortMode) {
+            case "last_update":
+              return dateB.getTime() - dateA.getTime()
+            case "name":
+            default:
+              return a.identifier.localeCompare(b.identifier)
+          }
+        }),
+    [coreInventory.data, coresList, sortMode]
   )
 
-  const sortedList = useMemo(
-    () =>
-      [...coresList].sort((a, b) => {
-        const [authorA, coreA] = a.split(".")
-        const switchedA = `${coreA}.${authorA}`
+  const sortedList = useMemo(() => {
+    switch (sortMode) {
+      case "last_update":
+        return [...coresList].sort((a, b) => {
+          const inventoryItemA = coreInventory.data.find(
+            ({ identifier }) => identifier === a
+          )
+          const inventoryItemB = coreInventory.data.find(
+            ({ identifier }) => identifier === b
+          )
 
-        const [authorB, coreB] = b.split(".")
-        const switchedB = `${coreB}.${authorB}`
+          if (!inventoryItemA || !inventoryItemB) {
+            if (!inventoryItemA && !inventoryItemB) return 0
+            if (inventoryItemA && !inventoryItemB) return -1
+            if (!inventoryItemA && inventoryItemB) return 1
+          }
 
-        return switchedA.localeCompare(switchedB)
-      }),
-    [coresList]
-  )
+          const dateA = new Date((inventoryItemA as InventoryItem).release_date)
+          const dateB = new Date((inventoryItemB as InventoryItem).release_date)
+
+          return dateB.getTime() - dateA.getTime()
+        })
+
+      case "name":
+      default:
+        return [...coresList].sort((a, b) => {
+          const [authorA, coreA] = a.split(".")
+          const switchedA = `${coreA}.${authorA}`
+
+          const [authorB, coreB] = b.split(".")
+          const switchedB = `${coreB}.${authorB}`
+
+          return switchedA.localeCompare(switchedB)
+        })
+    }
+  }, [coreInventory.data, coresList, sortMode])
 
   return (
     <>
@@ -173,6 +225,26 @@ const CategoryFilter = ({
       onChange={setFilterCategory}
     >
       {t("controls.category")}
+    </ControlsSelect>
+  )
+}
+
+const SortModeOption = ({
+  sortMode,
+  setSortMode,
+}: {
+  sortMode: SortMode
+  setSortMode: (sm: SortMode) => void
+}) => {
+  const { t } = useTranslation("cores")
+  return (
+    <ControlsSelect
+      options={["name", "last_update"]}
+      selected={sortMode}
+      onChange={setSortMode}
+      i18nPrefix="cores:controls.sort_options"
+    >
+      {t("controls.sort")}
     </ControlsSelect>
   )
 }
