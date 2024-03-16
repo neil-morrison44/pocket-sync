@@ -2,7 +2,7 @@
   "about": {
     "new_firmware": "Nouveau Pocket Firmware v{version} disponible",
     "update_available": "Mise à jour disponible ! {version}",
-    "sponsor_link": "Parrainer via GitHub"
+    "sponsor_link": "Rejoignez {count, number} personnes en parrainage via GitHub"
   },
   "app": {
     "connect_button": "Connecter la Pocket / Carte SD",

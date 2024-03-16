@@ -3,7 +3,7 @@
     "app_name": "Pocket Sync",
     "new_firmware": "Neue Pocket-Firmware v{version} verfügbar",
     "update_available": "Aktualisierung verfügbar! {version}",
-    "sponsor_link": "Sponsor über GitHub"
+    "sponsor_link": "Schließen Sie sich {count, number} Personen beim Sponsoring über GitHub an"
   },
   "app": {
     "app_name": "Pocket Sync",

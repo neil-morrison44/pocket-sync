@@ -3,7 +3,7 @@
     "app_name": "Pocket Sync",
     "new_firmware": "发现新的Pocket固件 v{version}",
     "update_available": "软件有更新! {version}",
-    "sponsor_link": "通过 GitHub 赞助"
+    "sponsor_link": "通过 GitHub 与 {count, number} 人一起赞助"
   },
   "app": {
     "app_name": "Pocket Sync",
