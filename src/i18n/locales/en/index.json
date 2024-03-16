@@ -117,11 +117,16 @@
   "cores": {
     "controls": {
       "category": "Category",
+      "sort": "Sort by",
       "refresh": "Refresh",
       "search": "Search",
       "updatable": "Updatable",
       "update_all": "Update All",
-      "filters_group": "Filters"
+      "filters_group": "Filters",
+      "sort_options": {
+        "name": "Name",
+        "last_update": "Last update"
+      }
     },
     "install_tip": "You can also install cores (or anything else in a zip) by dragging the .zip into this window",
     "installed": "Installed ({count})",

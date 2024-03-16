@@ -342,3 +342,5 @@ export type ProgressEvent = {
     param?: string
   }
 }
+
+export type SortMode = "name" | "last_update"
