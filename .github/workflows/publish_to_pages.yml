@@ -1,0 +1,45 @@
+name: Publish Pages
+
+on:
+  schedule:
+    - cron: "30 * * * *"
+  workflow_dispatch:
+  push:
+
+jobs:
+  sponsor_count_json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs")
+            const query = `query($user:String!) {
+              user(login:$user) {
+                ... on Sponsorable {
+                  sponsors(first: 10) {
+                    totalCount
+                  }
+                }
+              }
+            }`;
+            const variables = {
+              $user: context.repo.owner,
+            }
+            const result = await github.graphql(query, variables)
+            console.log(result)
+
+            fs.writeFile('./sponsor_count.json', JSON.stringify(result), err => {
+              if (err) {
+                console.error(err);
+              } else {
+                // file written successfully
+              }
+            });
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sponsor-count
+          path: ./sponsor_count.json
