@@ -73,14 +73,14 @@ jobs:
 
               const zipResponse = await github.request(downloadURL.browser_download_url)
 
-              const folderPath = `./image_packs/${pack.owner}/${pack.repository}`
+              const folderPath = `./image_packs/${pack.owner}/${pack.repository/${pack.variant || "pack"}}`
               await io.mkdirP(folderPath);
               const zipBuffer = Buffer.from(zipResponse.data);
-              await fs.writeFile(`${folderPath}/${pack.variant || "pack"}.zip`, zipBuffer);
+              await fs.writeFile(`${folderPath}/pack.zip`, zipBuffer);
             }
 
-      - run: find . -depth -name '*.zip' -execdir /usr/bin/unzip -n {} -d {}\;
-      # - run: find . -depth -name '*.zip' -exec rm {} \;
+      - run: find . -depth -name '*.zip' -execdir /usr/bin/unzip -n {}\;
+      - run: find . -depth -name '*.zip' -exec rm {} \;
 
       - uses: actions/upload-artifact@v4
         with:
