@@ -57,7 +57,7 @@ jobs:
               console.log(latestReleaseResponse)
               const latestRelease = latestReleaseResponse.data
 
-              if (!latestRelease?.assets) return null
+              if (!latestRelease?.assets) continue
 
               const downloadURL = latestRelease.assets.find(({ name }) => {
                 if (!name.endsWith(".zip")) return false
@@ -68,7 +68,9 @@ jobs:
                 return true
               })
 
-              const zipResponse = await github.request(downloadURL)
+              if (!downloadURL) continue
+
+              const zipResponse = await github.request(downloadURL.browser_download_url)
 
               console.log(zipResponse)
               const folderPath = `./image_packs/${pack.owner}/${pack.repository}`
