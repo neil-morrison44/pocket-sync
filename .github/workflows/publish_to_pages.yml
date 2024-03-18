@@ -79,7 +79,7 @@ jobs:
               await fs.writeFile(`${folderPath}/pack.zip`, zipBuffer);
             }
 
-      - run: find . -depth -name '*.zip' -execdir /usr/bin/unzip -n {}\;
+      - run: find . -depth -name '*.zip' -execdir /usr/bin/unzip -n {} \;
       - run: find . -depth -name '*.zip' -exec rm {} \;
 
       - uses: actions/upload-artifact@v4
