@@ -44,9 +44,35 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
+            const fs = require("fs/promises");
             const url = "https://raw.githubusercontent.com/mattpannella/pocket-updater-utility/main/image_packs.json"
-            const packs = await github.request(url)
+            const response = await github.request(url)
+            const packs = JSON.parse(response.data)
             console.log(packs)
+
+            for (let pack in packs){
+              const latestReleaseResponse = await github.request(
+                `https://api.github.com/repos/${pack.owner}/${pack.repository}/releases/latest`
+              )
+              console.log(latestReleaseResponse)
+              const latestRelease = JSON.parse(latestReleaseResponse.data)
+
+              if (!latestRelease?.assets) return null
+
+              const downloadURL = latestRelease.assets.find(({ name }) => {
+                if (!name.endsWith(".zip")) return false
+                if (pack.variant)
+                  return (
+                    name.endsWith(`${pack.variant}.zip`) || name.startsWith(`${pack.variant}_`)
+                  )
+                return true
+              })
+
+              const zipResponse = await github.request(downloadURL)
+              const folderPath = `./image_packs/${pack.owner}/${pack.repository}`
+              await io.mkdirP(folderPath);
+              await fs.writeFile(`${folderPath}/${pack.variant || "pack"}.zip`, zipResponse.data);
+            }
 
       - uses: actions/upload-artifact@v4
         with:
