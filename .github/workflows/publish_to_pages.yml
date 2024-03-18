@@ -80,7 +80,7 @@ jobs:
             }
 
       - run: find . -depth -name '*.zip' -exec /usr/bin/unzip -n {} \;
-      - run: find . -depth -name '*.zip' -exec rm {} \;
+      # - run: find . -depth -name '*.zip' -exec rm {} \;
 
       - uses: actions/upload-artifact@v4
         with:
