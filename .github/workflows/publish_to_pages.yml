@@ -50,7 +50,7 @@ jobs:
             const packs = JSON.parse(response.data)
             console.log(packs)
 
-            for (let pack in packs){
+            for (const pack of packs){
               const latestReleaseResponse = await github.request(
                 `https://api.github.com/repos/${pack.owner}/${pack.repository}/releases/latest`
               )
