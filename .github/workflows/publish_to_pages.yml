@@ -17,7 +17,7 @@ jobs:
         with:
           script: |
             const fs = require("fs")
-            const query = `query() {
+            const query = `query {
               user(login:"${context.repo.owner}") {
                 ... on Sponsorable {
                   sponsors(first: 10) {
