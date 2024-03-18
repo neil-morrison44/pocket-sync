@@ -9,14 +9,8 @@ on:
 jobs:
   sponsor_count_json:
     runs-on: ubuntu-latest
-    permissions: read-all
-
     steps:
-      - uses: actions/checkout@v3
-
       - uses: actions/github-script@v7
-        env:
-          GITHUB_TOKEN: ${{ secrets.SPONSOR_GITHUB_TOKEN }}
         with:
           script: |
             const fs = require("fs")
@@ -44,3 +38,17 @@ jobs:
         with:
           name: sponsor-count
           path: ./sponsor_count.json
+  merged_platform_zips:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const url = "https://raw.githubusercontent.com/mattpannella/pocket-updater-utility/main/image_packs.json"
+            const packs = await github.request(url)
+            console.log(packs)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: image-packs
+          path: ./image_packs
