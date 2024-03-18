@@ -30,7 +30,7 @@ jobs:
             const result = await github.graphql(query, variables)
             console.log(result)
 
-            fs.writeFile('./sponsor_count.json', JSON.stringify(result.data.user), err => {
+            fs.writeFile('./sponsor_count.json', JSON.stringify(result.user), err => {
               if (err) {
                 console.error(err);
               } else {
