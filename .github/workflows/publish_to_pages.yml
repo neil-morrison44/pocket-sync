@@ -55,7 +55,7 @@ jobs:
                 `https://api.github.com/repos/${pack.owner}/${pack.repository}/releases/latest`
               )
               console.log(latestReleaseResponse)
-              const latestRelease = JSON.parse(latestReleaseResponse.data)
+              const latestRelease = latestReleaseResponse.data
 
               if (!latestRelease?.assets) return null
 
