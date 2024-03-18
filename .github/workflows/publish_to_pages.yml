@@ -48,13 +48,11 @@ jobs:
             const url = "https://raw.githubusercontent.com/mattpannella/pocket-updater-utility/main/image_packs.json"
             const response = await github.request(url)
             const packs = JSON.parse(response.data)
-            console.log(packs)
 
             for (const pack of packs){
               const latestReleaseResponse = await github.request(
                 `https://api.github.com/repos/${pack.owner}/${pack.repository}/releases/latest`
               )
-              console.log(latestReleaseResponse)
               const latestRelease = latestReleaseResponse.data
 
               if (!latestRelease?.assets) continue
@@ -72,10 +70,10 @@ jobs:
 
               const zipResponse = await github.request(downloadURL.browser_download_url)
 
-              console.log(zipResponse)
               const folderPath = `./image_packs/${pack.owner}/${pack.repository}`
               await io.mkdirP(folderPath);
-              await fs.writeFile(`${folderPath}/${pack.variant || "pack"}.zip`, zipResponse.data);
+              const zipBuffer = Buffer.from(zipResponse.data);
+              await fs.writeFile(`${folderPath}/${pack.variant || "pack"}.zip`, zipBuffer);
             }
 
       - uses: actions/upload-artifact@v4
