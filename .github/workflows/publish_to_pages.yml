@@ -1,0 +1,88 @@
+name: Publish Pages
+
+on:
+  schedule:
+    - cron: "30 * * * *"
+  workflow_dispatch:
+  push:
+
+jobs:
+  sponsor_count_json:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs")
+            const query = `query {
+              user(login:"${context.repo.owner}") {
+                ... on Sponsorable {
+                  sponsors(first: 10) {
+                    totalCount
+                  }
+                }
+              }
+            }`;
+            const variables = {}
+            const result = await github.graphql(query, variables)
+            console.log(result)
+
+            fs.writeFile('./sponsor_count.json', JSON.stringify(result.user), err => {
+              if (err) {
+                console.error(err);
+              } else {
+                // file written successfully
+              }
+            });
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sponsor-count
+          path: ./sponsor_count.json
+  merged_platform_zips:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs/promises");
+            const url = "https://raw.githubusercontent.com/mattpannella/pocket-updater-utility/main/image_packs.json"
+            const response = await github.request(url)
+            const packs = JSON.parse(response.data)
+
+            await io.mkdirP("./image_packs");
+            await fs.writeFile("./image_packs/index.json", response.data);
+
+            for (const pack of packs){
+              const latestReleaseResponse = await github.request(
+                `https://api.github.com/repos/${pack.owner}/${pack.repository}/releases/latest`
+              )
+              const latestRelease = latestReleaseResponse.data
+
+              if (!latestRelease?.assets) continue
+
+              const downloadURL = latestRelease.assets.find(({ name }) => {
+                if (!name.endsWith(".zip")) return false
+                if (pack.variant)
+                  return (
+                    name.endsWith(`${pack.variant}.zip`) || name.startsWith(`${pack.variant}_`)
+                  )
+                return true
+              })
+
+              if (!downloadURL) continue
+
+              const zipResponse = await github.request(downloadURL.browser_download_url)
+
+              const folderPath = `./image_packs/${pack.owner}/${pack.repository}/${pack.variant || "pack"}`
+              await io.mkdirP(folderPath);
+              const zipBuffer = Buffer.from(zipResponse.data);
+              await fs.writeFile(`${folderPath}/pack.zip`, zipBuffer);
+            }
+
+      - run: find . -depth -name '*.zip' -execdir /usr/bin/unzip -n {} \;
+      - run: find . -depth -name '*.zip' -exec rm {} \;
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: image-packs
+          path: ./image_packs
