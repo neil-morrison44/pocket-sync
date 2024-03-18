@@ -9,6 +9,7 @@ on:
 jobs:
   sponsor_count_json:
     runs-on: ubuntu-latest
+    permissions: read-all
 
     steps:
       - uses: actions/checkout@v3
