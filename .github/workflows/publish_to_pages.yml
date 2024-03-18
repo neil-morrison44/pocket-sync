@@ -49,6 +49,9 @@ jobs:
             const response = await github.request(url)
             const packs = JSON.parse(response.data)
 
+            await io.mkdirP("./image_packs");
+            await fs.writeFile("./image_packs/index.json", response.data);
+
             for (const pack of packs){
               const latestReleaseResponse = await github.request(
                 `https://api.github.com/repos/${pack.owner}/${pack.repository}/releases/latest`
@@ -75,6 +78,8 @@ jobs:
               const zipBuffer = Buffer.from(zipResponse.data);
               await fs.writeFile(`${folderPath}/${pack.variant || "pack"}.zip`, zipBuffer);
             }
+
+      - run: find . -depth -name '*.zip' -exec /usr/bin/unzip -n {} \; -delete
 
       - uses: actions/upload-artifact@v4
         with:
