@@ -17,8 +17,8 @@ jobs:
         with:
           script: |
             const fs = require("fs")
-            const query = `query($user:String!) {
-              user(login:$user) {
+            const query = `query() {
+              user(login:"${context.repo.owner}") {
                 ... on Sponsorable {
                   sponsors(first: 10) {
                     totalCount
@@ -26,13 +26,11 @@ jobs:
                 }
               }
             }`;
-            const variables = {
-              $user: context.repo.owner,
-            }
+            const variables = {}
             const result = await github.graphql(query, variables)
             console.log(result)
 
-            fs.writeFile('./sponsor_count.json', JSON.stringify(result), err => {
+            fs.writeFile('./sponsor_count.json', JSON.stringify(result.data.user), err => {
               if (err) {
                 console.error(err);
               } else {
