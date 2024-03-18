@@ -73,7 +73,7 @@ jobs:
 
               const zipResponse = await github.request(downloadURL.browser_download_url)
 
-              const folderPath = `./image_packs/${pack.owner}/${pack.repository/${pack.variant || "pack"}`
+              const folderPath = `./image_packs/${pack.owner}/${pack.repository}/${pack.variant || "pack"}`
               await io.mkdirP(folderPath);
               const zipBuffer = Buffer.from(zipResponse.data);
               await fs.writeFile(`${folderPath}/pack.zip`, zipBuffer);
