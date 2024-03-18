@@ -6,6 +6,8 @@
 
 A Windows / Mac / Linux GUI to do _stuff_ with the Analogue Pocket.
 
+Built using [Tauri](https://github.com/tauri-apps/tauri)
+
 <img alt="Main Screen" src="./readme_images/main_screen.png" width="100%"/>
 
 <img alt="The Core List" src="./readme_images/cores_list.png" width="50%"/><img alt="SNES core details" src="./readme_images/core_detail.png" width="50%"/>
@@ -85,6 +87,8 @@ It's in the ICU message format, which there are some guides available online for
 - GB Palette editor / catalogue
 
 ### Soon
+
+- Switching to Tauri v2 which should improve Linux performance, allow some awkward bits to be rewritten & allow the Linux / Flatpak builds to use versions of things which aren't end of life. Also enables using features from latest Rust versions.
 
 ### Longer term
 
