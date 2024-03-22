@@ -185,11 +185,15 @@ async fn list_files(
     let mut results: Vec<_> = Vec::new();
 
     while let Ok(Some(entry)) = paths.next_entry().await {
-        let file_name = entry.file_name();
-        let file_name = file_name.to_str().unwrap();
+        let file_type = entry.file_type().await.unwrap();
 
-        if !file_name.starts_with(".") {
-            results.push(String::from(file_name))
+        if file_type.is_file() {
+            let file_name = entry.file_name();
+            let file_name = file_name.to_str().unwrap();
+
+            if !file_name.starts_with(".") {
+                results.push(String::from(file_name))
+            }
         }
     }
 
