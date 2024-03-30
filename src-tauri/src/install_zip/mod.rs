@@ -1,5 +1,6 @@
 use futures::StreamExt;
 use log::info;
+use nestify::nest;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use std::{
@@ -23,24 +24,20 @@ use crate::{
     util::progress_download,
     PocketSyncState,
 };
-
-#[derive(Debug, Serialize, Deserialize)]
-struct InstallInfo {
-    core_name: String,
-    zip_url: String,
-}
-
 struct Titles {
     title: String,
     installing_title: String,
 }
-
-#[derive(Debug)]
+nest! {
+#[derive(Debug, Serialize, Deserialize)]*
 enum ZipStartAction {
     FileDrop(Vec<PathBuf>),
-    InstallCore(InstallInfo),
+    InstallCore(struct InstallInfo {
+        core_name: String,
+        zip_url: String,
+    }),
 }
-
+}
 use tauri::FileDropEvent::Dropped;
 use tauri::WindowEvent::FileDrop;
 

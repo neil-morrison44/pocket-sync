@@ -2,6 +2,7 @@ use crate::required_files::parameters_bitmap::ParsedParams;
 
 use super::{DataSlot, DataSlotFile, DataSlotFileStatus, IntOrHexString};
 use anyhow::Result;
+use nestify::nest;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
@@ -33,18 +34,16 @@ impl InstanceDataSlot {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-struct InstanceData {
-    #[serde(default)]
-    pub data_path: String,
-    #[serde(default)]
-    pub data_slots: Vec<InstanceDataSlot>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
+nest! {
+#[derive(Debug, Serialize, Deserialize)]*
 struct InstanceDataFile {
-    pub instance: InstanceData,
-}
+    pub instance: struct InstanceData {
+        #[serde(default)]
+        pub data_path: String,
+        #[serde(default)]
+        pub data_slots: Vec<InstanceDataSlot>,
+    },
+}}
 
 pub async fn process_instance_data(
     core_id: &str,

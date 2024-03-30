@@ -2,19 +2,18 @@ use crate::required_files::parameters_bitmap::ParsedParams;
 
 use super::{DataSlot, DataSlotFile, DataSlotFileStatus};
 use anyhow::Result;
+use nestify::nest;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
-#[derive(Debug, Serialize, Deserialize)]
-struct CoreData {
-    #[serde(default)]
-    pub data_slots: Vec<DataSlot>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
+nest! {
+#[derive(Debug, Serialize, Deserialize)]*
 struct CoreDataFile {
-    pub data: CoreData,
-}
+    pub data: struct CoreData {
+        #[serde(default)]
+        pub data_slots: Vec<DataSlot>,
+    },
+}}
 
 pub async fn process_core_data(
     core_id: &str,
