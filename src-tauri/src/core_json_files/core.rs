@@ -1,21 +1,8 @@
 use super::{updaters::CoreUpdateDetails, CoreDetails};
 use anyhow::Result;
+use nestify::nest;
 use serde::{Deserialize, Serialize};
 use std::{fs, path::PathBuf};
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct CoreMetadata {
-    platform_ids: Vec<String>,
-    shortname: String,
-    author: String,
-    version: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Framework {
-    target_product: String,
-    version_required: String,
-}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Core {
@@ -24,15 +11,25 @@ pub struct Core {
     filename: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
+nest! {
+#[derive(Debug, Serialize, Deserialize)]*
+#[serde(rename_all = "snake_case")]*
 pub enum CoreFile {
     Core {
         magic: String,
-        metadata: CoreMetadata,
-        framework: Framework,
+        metadata: pub struct CoreMetadata {
+            platform_ids: Vec<String>,
+            shortname: String,
+            author: String,
+            version: String,
+        },
+        framework: pub struct Framework {
+            target_product: String,
+            version_required: String,
+        },
         cores: Vec<Core>,
     },
+}
 }
 
 impl CoreFile {
