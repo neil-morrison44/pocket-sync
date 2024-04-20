@@ -14,6 +14,7 @@ import { Thanks } from "./thanks"
 import { PocketColour } from "../../types"
 import {
   alwaysUseEnglishAtom,
+  keepPlatformDataAtom,
   turboDownloadsAtom,
 } from "../../recoil/settings/atoms"
 import { Link } from "../link"
@@ -27,6 +28,8 @@ export const Settings = () => {
     useRecoilState(alwaysUseEnglishAtom)
 
   const [turboDownloads, setTurboDownloads] = useRecoilState(turboDownloadsAtom)
+  const [keepPlatformData, setKeepPlatformData] =
+    useRecoilState(keepPlatformDataAtom)
   const skipAlternateAssets = useRecoilValue(skipAlternateAssetsSelector)
   const [reconnectWhenOpened, setReconnectWhenOpened] = useRecoilState(
     reconnectWhenOpenedAtom
@@ -112,6 +115,26 @@ export const Settings = () => {
             />
           </label>
         </div>
+
+        <div className="settings__row">
+          <h3 className="settings__row-title">
+            {t("keep_platform_data.title")}
+          </h3>
+          <div className="settings__ramble">
+            {t("keep_platform_data.ramble")}
+          </div>
+          <label className="settings__checkbox">
+            {t("keep_platform_data.checkbox")}
+            <input
+              type="checkbox"
+              checked={keepPlatformData.enabled}
+              onChange={({ target }) =>
+                setKeepPlatformData((t) => ({ ...t, enabled: target.checked }))
+              }
+            />
+          </label>
+        </div>
+
         <div className="settings__row">
           <h3 className="settings__row-title">{t("language.title")}</h3>
 

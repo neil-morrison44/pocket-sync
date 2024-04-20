@@ -19,3 +19,11 @@ export const turboDownloadsAtom = atom<{ enabled: boolean }>({
   }),
   effects: [syncToAppLocalDataEffect("turbo-downloads")],
 })
+
+export const keepPlatformDataAtom = atom<{ enabled: boolean }>({
+  key: "keepPlatformDataAtom",
+  default: syncToAppLocalDataEffectDefault("keep-platform-data", {
+    enabled: true,
+  }),
+  effects: [syncToAppLocalDataEffect("keep-platform-data")],
+})

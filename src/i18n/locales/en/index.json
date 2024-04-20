@@ -453,6 +453,11 @@
       "ramble": "Attempt to reconnect to the most recently opened location <1> { ppath } </1> upon opening the app, skipping the \"Connect to Pocket\" button",
       "title": "Reconnect when the app is opened"
     },
+    "keep_platform_data": {
+      "checkbox": "Keep existing platform files",
+      "ramble": "This will change Update All & single-core updates to not update existing platform data (images & info) by default, turn it on if you've set up custom data.",
+      "title": "Don't Replace Platform Files During Updates"
+    },
     "turbo_downloads": {
       "checkbox": "Enable Fast Downloads",
       "ramble": "Enabling this setting will break up files from the archive into smaller chunks. These chunks are then downloaded in parallel, potentially resulting in up to an 8x speedup. However, this method will consume more bandwidth and may be less reliable. If you enable this, please consider <1>supporting the Internet Archive</1>.",

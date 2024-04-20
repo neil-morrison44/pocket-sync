@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { filterKnownBadFiles } from "../../utils/filterFiles"
 import { FileTreeNode, InstallZipEventPayload } from "./types"
 import { message } from "@tauri-apps/api/dialog"
+import { useRecoilValue } from "recoil"
+import { keepPlatformDataAtom } from "../../recoil/settings/atoms"
 
 export const useListenForZipInstall = () => {
   const [installState, setInstallState] =
@@ -72,14 +74,26 @@ export const useTree = (files: InstallZipEventPayload["files"]) => {
 
 export const useAllowedFiles = (files: InstallZipEventPayload["files"]) => {
   const [allowedFiles, setAllowedFiles] = useState<string[] | null>(null)
+  const keepPlatformData = useRecoilValue(keepPlatformDataAtom)
 
   useEffect(() => {
     setAllowedFiles((f) => {
-      if (f === null && files)
-        return filterKnownBadFiles(files.map(({ path }) => path))
+      if (f === null && files) {
+        const filePaths = files
+          .filter(({ path, exists }) => {
+            return !(
+              path.startsWith("Platforms") &&
+              keepPlatformData.enabled &&
+              exists
+            )
+          })
+          .map(({ path }) => path)
+
+        return filterKnownBadFiles(filePaths)
+      }
       return f
     })
-  }, [files])
+  }, [files, keepPlatformData.enabled])
 
   const toggleFile = useCallback(
     (path: string) => {
