@@ -137,9 +137,10 @@ impl DataSlotFile {
     }
 }
 
-const SKIP_INSTANCE_FILES_FOR: [&str; 4] = [
+const SKIP_INSTANCE_FILES_FOR: [&str; 5] = [
     "Mazamars312.NeoGeo",
     "Mazamars312.NeoGeo_Overdrive",
+    "Mazamars312.NeoGeo_Analogizer",
     "Mazamars312.PC Engine CD",
     "obsidian.Vectrex",
 ];
