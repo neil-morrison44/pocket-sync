@@ -25,6 +25,7 @@ import { useHasArchiveLink } from "../../../hooks/useHasArchiveLink"
 import { info } from "tauri-plugin-log-api"
 import { useProcessUpdates } from "./hooks"
 import { usePreventGlobalZipInstallModal } from "../../../hooks/usePreventGlobalZipInstall"
+import { keepPlatformDataAtom } from "../../../recoil/settings/atoms"
 
 type UpdateAllProps = {
   onClose: () => void
@@ -192,6 +193,7 @@ const UpdateAllList = ({
 }) => {
   const { t } = useTranslation("")
   const unsortedCoresList = useRecoilValue(installedCoresWithUpdatesSelector)
+  const keepPlatformData = useRecoilValue(keepPlatformDataAtom)
 
   const getUpdateList = useRecoilCallback(
     ({ snapshot }) =>
@@ -203,12 +205,12 @@ const UpdateAllList = ({
           list.map(({ coreName }) => ({
             coreName,
             requiredFiles: hasArchiveLink,
-            platformFiles: true,
+            platformFiles: !keepPlatformData.enabled,
             update: true,
           }))
         )
       },
-    [setUpdateList]
+    [setUpdateList, keepPlatformData]
   )
 
   useEffect(() => {
