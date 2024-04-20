@@ -453,6 +453,11 @@
       "ramble": "Tentar reconectar ao local mais recentemente aberto <1> {ppath} </1> ao abrir o aplicativo, pulando o botão \"Conectar ao Pocket\"",
       "title": "Reconectar quando o aplicativo for aberto"
     },
+    "keep_platform_data": {
+      "checkbox": "Mantenha os arquivos de plataforma existentes",
+      "ramble": "Isso mudará Atualizar todas as atualizações de núcleo único para não atualizar os dados da plataforma existente (imagens e informações) por padrão. Ative-o se você configurou dados personalizados.",
+      "title": "Não substitua arquivos de plataforma durante atualizações"
+    },
     "turbo_downloads": {
       "checkbox": "Ativar Downloads Rápidos",
       "ramble": "Ativar esta configuração dividirá os arquivos do arquivo em pedaços menores. Esses pedaços são então baixados em paralelo, potencialmente resultando em uma aceleração de até 8 vezes. No entanto, este método consumirá mais largura de banda e pode ser menos confiável. Se você ativá-lo, por favor, considere <1>apoiar o Internet Archive</1>.",

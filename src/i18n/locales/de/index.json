@@ -453,6 +453,11 @@
       "ramble": "Versucht, die Verbindung zum zuletzt geöffneten Speicherort <1> { ppath } </1> beim Öffnen der App wiederherzustellen und überspringt die „Mit Pocket verbinden“-Schaltfläche",
       "title": "Verbindung beim Öffnen der App wiederherstellen"
     },
+    "keep_platform_data": {
+      "checkbox": "Vorhandene Plattformdateien beibehalten",
+      "ramble": "Dadurch wird die Option „Alle aktualisieren“ und „Einzelkernaktualisierungen“ so geändert, dass vorhandene Plattformdaten (Bilder und Informationen) standardmäßig nicht aktualisiert werden. Aktivieren Sie diese Option, wenn Sie benutzerdefinierte Daten eingerichtet haben.",
+      "title": "Ersetzen Sie bei Updates keine Plattformdateien"
+    },
     "turbo_downloads": {
       "checkbox": "Schnelle Downloads aktivieren",
       "ramble": "Das Aktivieren dieser Einstellung teilt Dateien aus dem Archiv in kleinere Stücke auf. Diese Stücke werden dann parallel heruntergeladen, was in einer Beschleunigung um bis zu Faktor 8 führen kann. Diese Methode wird jedoch mehr Bandbreite benötigen und unzuverlässiger sein. Falls Sie diese Einstellung aktivieren, ziehen Sie es in Betracht <1>das Internetarchiv zu unterstützen</1>.",

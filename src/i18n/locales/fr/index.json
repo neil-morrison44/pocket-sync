@@ -383,6 +383,11 @@
       "ramble": "Tentative de reconnexion à l'emplacement ouvert le plus récemment <1> { ppath }</1> à l'ouverture de l'application, en ignorant le bouton \"Connecter la Pocket\"",
       "title": "Reconnecter lorsque l'application est ouverte"
     },
+    "keep_platform_data": {
+      "checkbox": "Conserver les fichiers de plateforme existants",
+      "ramble": "Cela modifiera Mettre à jour toutes les mises à jour et les mises à jour monocœur pour ne pas mettre à jour les données de plate-forme existantes (images et informations) par défaut, activez-le si vous avez configuré des données personnalisées.",
+      "title": "Ne remplacez pas les fichiers de plate-forme pendant les mises à jour"
+    },
     "turbo_downloads": {
       "checkbox": "Activer les téléchargements rapides",
       "ramble": "L'activation de ce paramètre divisera les fichiers de l'archive en morceaux plus petits. Ces morceaux sont ensuite téléchargés en parallèle, ce qui peut potentiellement entraîner une accélération jusqu'à 8x. Cependant, cette méthode consommera plus de bande passante et peut être moins fiable. Si vous l'activez, pensez à <1>soutenir Internet Archive</1> .",
