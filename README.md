@@ -51,7 +51,15 @@ The app now supports translations into the user's language & locale for _most_ t
 
 If you're fluent in another language and feel like helping out you can find the files in https://github.com/neil-morrison44/pocket-sync/tree/main/src/i18n/locales , just add one for the language (e.g. `en`) then make tweaks on top of it for locale specific things (e.g. `en-US`).
 
-So far I've got translations for Chinese, Spanish, German, & French, thanks to @fevaoctwh, @rayelward, @auer1329, & @f00b4r0 respectively. Which I've been keeping up to date as I add new features (hopefully well enough).
+So far I've got translations for:
+
+- Chinese (@fevaoctwh)
+- Spanish (@rayelward)
+- German (@auer1329)
+- French (@f00b4r0)
+- Portuguese (@reinaldosimoes)
+
+Which I've been keeping up to date as I add new features (hopefully well enough).
 I'd particularly also like a Japanese translation, but any language will be accepted if the translation seems good enough.
 
 It's in the ICU message format, which there are some guides available online for, but the main trick is that the brackets create levels of stuff to change vs leave e.g. `"Change me {leave me {change me}}"` so a "language" which is just english but shouting might have:
