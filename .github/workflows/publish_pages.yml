@@ -1,0 +1,54 @@
+name: Publish Pages
+
+on:
+  schedule:
+    - cron: "0 */2 * * *"
+  workflow_dispatch:
+
+jobs:
+  merged_platform_zips:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npx tsc .github/workflows/scripts/build_platforms_zip.ts --target esnext --module commonjs
+      - run: mv .github/workflows/scripts/build_platforms_zip.js .github/workflows/scripts/build_platforms_zip.cjs
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { buildPlatformZip } = require(".github/workflows/scripts/build_platforms_zip.cjs")
+            await buildPlatformZip({ github })
+      - uses: actions/upload-artifact@v4
+        with:
+          name: platform-zip
+          path: ./merge.zip
+  publish_page:
+    runs-on: ubuntu-latest
+    needs: merged_platform_zips
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: platform-zip
+          path: ./site/merge.zip
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

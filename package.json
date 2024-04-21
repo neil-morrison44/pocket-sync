@@ -37,6 +37,7 @@
     "three": "0.162.0"
   },
   "devDependencies": {
+    "@octokit/rest": "^20.1.0",
     "@tauri-apps/cli": "^1.5.11",
     "@types/jsonlint": "^1.6.3",
     "@types/node": "^20.11.28",
