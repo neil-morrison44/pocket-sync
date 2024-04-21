@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
-      - run: npx tsc .github/workflows/scripts/build_platforms_zip.ts --target esnext --module commonjs
+      - run: npx tsc .github/workflows/scripts/build_platforms_zip.ts --target esnext
       - uses: actions/github-script@v7
         with:
           script: |
