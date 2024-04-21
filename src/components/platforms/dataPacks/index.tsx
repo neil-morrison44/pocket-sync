@@ -144,6 +144,7 @@ const JsonInPack = ({
   const packJson = useRecoilValue(
     DataPackJsonSelectorFamily({ ...pack, platformId })
   )
+  // console.log({ packJson })
   const currentJson = useRecoilValue(PlatformInfoSelectorFamily(platformId))
 
   if (!packJson) return null

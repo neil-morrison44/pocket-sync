@@ -44,7 +44,7 @@ export const CoresForPlatformSelectorFamily = selectorFamily<
     (platformId: PlatformId) =>
     ({ get }) => {
       const coresList = get(coresListSelector)
-      const results = []
+      const results: string[] = []
       for (const coreId of coresList) {
         const coreData = get(CoreInfoSelectorFamily(coreId))
 
@@ -137,46 +137,39 @@ export const imagePackListSelector = selector<ImagePack[]>({
   },
 })
 
-const ImagePackBlobSelectorFamily = selectorFamily<Blob | null, ImagePack>({
-  key: "ImagePackFileSelectorFamily",
-  get:
-    ({ owner, repository, variant }) =>
-    async () => {
-      const latestRelease = (await (
-        await fetch(
-          `https://api.github.com/repos/${owner}/${repository}/releases/latest`
-        )
-      ).json()) as { assets: [{ name: string; browser_download_url: string }] }
+const mergedPlatformFileBlobsSelector = selector<Record<
+  string,
+  Blob | undefined
+> | null>({
+  key: "MergedPlatformFileBlobsSelectorFamily",
+  get: async () => {
+    const platformsZip = await (
+      await fetch(`https://neil-morrison44.github.io/pocket-sync/platforms.zip`)
+    ).blob()
 
-      if (!latestRelease?.assets) return null
+    const abortController = new AbortController()
+    const entries = await new zip.ZipReader(new zip.BlobReader(platformsZip), {
+      signal: abortController.signal,
+    }).getEntries({})
 
-      const downloadURL = latestRelease.assets.find(({ name }) => {
-        if (!name.endsWith(".zip")) return false
-        if (variant)
-          return (
-            name.endsWith(`${variant}.zip`) || name.startsWith(`${variant}_`)
+    // Give the UI a chance before we start chugging through all the entries
+    await new Promise<void>((resolve) => setTimeout(resolve, 10))
+
+    return Object.fromEntries(
+      await Promise.all(
+        entries
+          .filter((e) => e && e.getData)
+          .map((entry) =>
+            // @ts-ignore already filtering out the non-entry ones
+            entry
+              .getData(new zip.BlobWriter(), {})
+              .then((blob) => [entry.filename, blob])
           )
-        return true
-      })
-
-      if (!downloadURL) return null
-
-      const httpClient = await getClient()
-
-      const fileResponse = await httpClient.get<number[]>(
-        downloadURL.browser_download_url,
-        {
-          timeout: 60,
-          responseType: ResponseType.Binary,
-        }
       )
+    )
 
-      const fileBlob = new Blob([new Uint8Array(fileResponse.data)], {
-        type: "application/zip",
-      })
-
-      return fileBlob
-    },
+    // return entries
+  },
 })
 
 export const DataPackJsonSelectorFamily = selectorFamily<
@@ -189,28 +182,17 @@ export const DataPackJsonSelectorFamily = selectorFamily<
   get:
     ({ owner, repository, variant, platformId }) =>
     async ({ get }) => {
-      const zipBlob = get(
-        ImagePackBlobSelectorFamily({ owner, repository, variant })
-      )
+      const fileBlobs = get(mergedPlatformFileBlobsSelector)
+      if (!fileBlobs) return null
 
-      if (!zipBlob) return null
-
-      const abortController = new AbortController()
-      const entries = await new zip.ZipReader(new zip.BlobReader(zipBlob), {
-        signal: abortController.signal,
-      }).getEntries({})
-
-      const platformJsonEntry = entries.find((e) =>
-        e.filename.endsWith(`Platforms/${platformId}.json`)
-      )
-
-      if (!platformJsonEntry || !platformJsonEntry.getData) return null
-      const data = await platformJsonEntry.getData(new zip.BlobWriter(), {})
+      const packPath = `${owner}__${repository}__${variant || "default"}`
+      const data = fileBlobs[`${packPath}/Platforms/${platformId}.json`]
+      if (!data) return null
       const text = await data.text()
-
       let parsed: PlatformInfoJSON | null = null
 
       try {
+        console.log("Parse O")
         parsed = JSON.parse(text)
       } catch (err) {
         console.warn(
@@ -238,23 +220,12 @@ export const ImagePackImageSelectorFamily = selectorFamily<
   get:
     ({ owner, repository, variant, platformId }) =>
     async ({ get }) => {
-      const zipBlob = get(
-        ImagePackBlobSelectorFamily({ owner, repository, variant })
-      )
+      const fileBlobs = get(mergedPlatformFileBlobsSelector)
+      if (!fileBlobs) return null
 
-      if (!zipBlob) return null
-
-      const abortController = new AbortController()
-      const entries = await new zip.ZipReader(new zip.BlobReader(zipBlob), {
-        signal: abortController.signal,
-      }).getEntries({})
-
-      const platformImageEntry = entries.find((e) =>
-        e.filename.endsWith(`Platforms/_images/${platformId}.bin`)
-      )
-
-      if (!platformImageEntry || !platformImageEntry.getData) return null
-      const data = await platformImageEntry.getData(new zip.BlobWriter(), {})
+      const packPath = `${owner}__${repository}__${variant || "default"}`
+      const data = fileBlobs[`${packPath}/Platforms/_images/${platformId}.bin`]
+      if (!data) return null
 
       return {
         imageSrc: renderBinImage(
