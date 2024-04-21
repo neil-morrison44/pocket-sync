@@ -16,11 +16,12 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
-      - run: npx tsc .github/workflows/scripts/build_platforms_zip.ts --target esnext --moduleResolution nodenext --module NodeNext
+      - run: npx tsc .github/workflows/scripts/build_platforms_zip.ts --target esnext --module commonjs
+      - run: mv .github/workflows/scripts/build_platforms_zip.js .github/workflows/scripts/build_platforms_zip.cjs
       - uses: actions/github-script@v7
         with:
           script: |
-            const { buildPlatformZip } = require(".github/workflows/scripts/build_platforms_zip.js")
+            const { buildPlatformZip } = require(".github/workflows/scripts/build_platforms_zip.cjs")
             await buildPlatformZip({ github })
       - uses: actions/upload-artifact@v4
         with:
