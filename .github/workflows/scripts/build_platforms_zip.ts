@@ -84,7 +84,7 @@ export const buildPlatformZip = async ({ github }: { github: Octokit }) => {
 
   const blob = await multiZip.close()
   const buffer = Buffer.from(await blob.arrayBuffer())
-  await writeFile("merge.zip", buffer)
+  await writeFile("platforms.zip", buffer)
 }
 
 // await buildPlatformZip({ github: new Octokit() })
