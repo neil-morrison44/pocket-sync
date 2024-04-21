@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 target
+merge.zip
+.github/workflows/**/*.js
