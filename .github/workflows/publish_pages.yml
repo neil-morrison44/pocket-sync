@@ -42,7 +42,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: platform-zip
-          path: ./site/merge.zip
+          path: ./site
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
