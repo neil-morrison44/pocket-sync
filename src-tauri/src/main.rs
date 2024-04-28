@@ -185,11 +185,45 @@ async fn list_files(
     let mut results: Vec<_> = Vec::new();
 
     while let Ok(Some(entry)) = paths.next_entry().await {
-        let file_name = entry.file_name();
-        let file_name = file_name.to_str().unwrap();
+        let file_type = entry.file_type().await.unwrap();
+        if file_type.is_file() {
+            let file_name = entry.file_name();
+            let file_name = file_name.to_str().unwrap();
 
-        if !file_name.starts_with(".") {
-            results.push(String::from(file_name))
+            if !file_name.starts_with(".") {
+                results.push(String::from(file_name))
+            }
+        }
+    }
+
+    Ok(results)
+}
+
+#[tauri::command(async)]
+async fn list_folders(
+    path: &str,
+    state: tauri::State<'_, PocketSyncState>,
+) -> Result<Vec<String>, ()> {
+    debug!("Command: list_folders - {path}");
+    let pocket_path = state.0.pocket_path.read().await;
+    let dir_path = pocket_path.join(path);
+
+    if !tokio::fs::try_exists(&dir_path).await.unwrap() {
+        return Ok(vec![]);
+    }
+
+    let mut paths = tokio::fs::read_dir(dir_path).await.unwrap();
+    let mut results: Vec<_> = Vec::new();
+
+    while let Ok(Some(entry)) = paths.next_entry().await {
+        let file_type = entry.file_type().await.unwrap();
+        if file_type.is_dir() {
+            let file_name = entry.file_name();
+            let file_name = file_name.to_str().unwrap();
+
+            if !file_name.starts_with(".") {
+                results.push(String::from(file_name))
+            }
         }
     }
 
@@ -660,6 +694,7 @@ fn main() {
             open_pocket,
             open_pocket_folder,
             list_files,
+            list_folders,
             walkdir_list_files,
             read_binary_file,
             read_text_file,

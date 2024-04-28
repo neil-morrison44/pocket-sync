@@ -20,6 +20,11 @@ export const invokeListFiles = async (path: string) =>
     path,
   })
 
+export const invokeListFolders = async (path: string) =>
+  invoke<string[]>("list_folders", {
+    path,
+  })
+
 export const invokeReadTextFile = async (path: string) =>
   invoke<string>("read_text_file", {
     path,

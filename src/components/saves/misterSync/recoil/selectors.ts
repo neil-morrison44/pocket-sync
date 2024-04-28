@@ -1,6 +1,9 @@
 import { emit, listen } from "@tauri-apps/api/event"
 import { selector, selectorFamily } from "recoil"
-import { invokeFileMetadata, invokeListFiles } from "../../../../utils/invokes"
+import {
+  invokeFileMetadata,
+  invokeListFolders,
+} from "../../../../utils/invokes"
 import { SavesInvalidationAtom, saveMappingAtom } from "./atoms"
 
 type MiSTerSaveInfo = {
@@ -76,7 +79,7 @@ export const platformsListMiSTerSelector = selector<string[]>({
 export const platformListPocketSelector = selector<string[]>({
   key: "platformListPocketSelector",
   get: async () => {
-    const platforms = await invokeListFiles("Saves")
+    const platforms = await invokeListFolders("Saves")
     const sorted = [...platforms].sort((a, b) => a.localeCompare(b))
     return sorted
   },
