@@ -6,17 +6,18 @@ import {
 } from "../../recoil/selectors"
 
 import { PlatformInfoSelectorFamily } from "../../recoil/platforms/selectors"
-import { PlatformImage } from "./platformImage"
 
 import "./index.css"
 import { Version } from "./version"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { InventoryItem } from "../../types"
 import { useUpdateAvailable } from "../../hooks/useUpdateAvailable"
-import { KeyIcon } from "./keyIcon"
+import { KeyIcon } from "./icons/keyIcon"
 import { useTranslation } from "react-i18next"
 import { useInventoryItem } from "../../hooks/useInventoryItem"
 import { PlatformInventoryImageSelectorFamily } from "../../recoil/inventory/selectors"
+import { PlatformImage } from "./platformImage"
+import { AnalogizerIcon } from "./icons/AnalogizerIcon"
 
 type CoreItemProps = {
   coreName: string
@@ -73,6 +74,11 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
           </div>
         </div>
         {inventoryItem && inventoryItem.requires_license && <SponsorBanner />}
+        {coreName.endsWith("_Analogizer") && (
+          <div className="cores__item-analogizer">
+            <AnalogizerIcon />
+          </div>
+        )}
       </div>
     </SearchContextSelfHidingConsumer>
   )
@@ -107,11 +113,17 @@ export const NotInstalledCoreItem = ({
     >
       <div className="cores__item cores__item--not-installed" onClick={onClick}>
         <img className="cores__platform-image" src={imageUrl}></img>
+        {identifier.endsWith("_Analogizer") && (
+          <div className="cores__item-analogizer">
+            <AnalogizerIcon />
+          </div>
+        )}
         <div className="cores__info-blurb">
           <div className="cores__info-blurb-name">{platform_id}</div>
           <div className="version">{version}</div>
           <div className="cores__author-tag">
             <img className="cores__author-tag-image" src={authorImageUrl} />
+
             {author}
           </div>
           {requires_license && <SponsorBanner />}

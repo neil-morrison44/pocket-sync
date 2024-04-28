@@ -39,6 +39,7 @@ import { SupportsBubble } from "./supportsBubble"
 import { Details } from "../../shared/details"
 import { CoreInfoTxtSelectorFamily } from "../../../recoil/cores/selectors"
 import { ProgressLoader } from "../../loader/progress"
+import { AnalogizerIcon } from "../icons/AnalogizerIcon"
 
 type CoreInfoProps = {
   coreName: string
@@ -134,6 +135,18 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
       )}
 
       <PlatformImage className="core-info__image" platformId={mainPlatformId} />
+
+      {coreName.endsWith("_Analogizer") && (
+        <div className="core-info__analogizer">
+          <AnalogizerIcon />
+          <div>
+            <Trans t={t} i18nKey={"analogizer"}>
+              {"_"}
+              <Link href={"https://analogizer-fpga.com/en"}>{"_"}</Link>
+            </Trans>
+          </div>
+        </div>
+      )}
 
       <FirmwareWarning coreName={coreName} />
 
