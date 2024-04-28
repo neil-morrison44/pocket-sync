@@ -5,7 +5,7 @@ import { getVersion } from "@tauri-apps/api/app"
 import {
   invokeFileExists,
   invokeFindCleanableFiles,
-  invokeListFiles,
+  invokeListFolders,
   invokeReadBinaryFile,
   invokeWalkDirListFiles,
 } from "../utils/invokes"
@@ -29,7 +29,7 @@ export const coresListSelector = selector<string[]>({
   key: "coresListSelector",
   get: async ({ get }) => {
     get(FolderWatchAtomFamily("Cores"))
-    return await invokeListFiles("Cores")
+    return await invokeListFolders("Cores")
   },
 })
 
