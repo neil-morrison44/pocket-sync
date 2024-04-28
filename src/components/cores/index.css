@@ -27,6 +27,16 @@
   height: 24px;
 }
 
+.cores__item-analogizer{
+  position: absolute;
+  color: rgb(101,156,222);
+  right: 0;
+  top:0;
+  margin: 2px;
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 4px rgba(0,0,0,0.25));
+}
+
 .cores__item {
   display: flex;
   flex-direction: column;

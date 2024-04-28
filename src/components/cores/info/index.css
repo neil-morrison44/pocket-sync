@@ -49,12 +49,16 @@
   }
 }
 
-.core-info__requires-license{
+.core-info__requires-license, .core-info__analogizer{
   background-color: var(--purple-colour);
   white-space: pre-wrap;
   display: flex;
   gap: 12px;
   padding: 12px;
+}
+
+.core-info__analogizer{
+  background-color: rgb(101,156,222);
 }
 
 .core-info__firmware-warning{

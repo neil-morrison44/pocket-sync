@@ -48,6 +48,7 @@
       "no_settings_found": "No settings found!",
       "reset_all": "Reset All"
     },
+    "analogizer": "This core supports the <1>Analogizer-FPGA</1>",
     "requires_license": {
       "all": "Warning - this core currently requires a license file to run.",
       "jotego": "The JOTEGO betas require a JTBETA file from the Patreon in the sponsors section below. \nThe jtbeta.zip should be placed at the root of your SD card then it'll be found & copied to the right place during the \"Required Files\" process."

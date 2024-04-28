@@ -11,10 +11,11 @@ import { ErrorBoundary } from "../../errorBoundary"
 import { Link } from "../../link"
 import { Releases } from "./releases"
 import { SponsorLinks } from "./sponsorLinks"
-import { useTranslation } from "react-i18next"
-import { KeyIcon } from "../keyIcon"
+import { Trans, useTranslation } from "react-i18next"
+import { KeyIcon } from "../icons/keyIcon"
 import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
+import { AnalogizerIcon } from "../icons/AnalogizerIcon"
 
 type NotInstalledCoreInfoProps = {
   onBack: () => void
@@ -81,6 +82,18 @@ export const NotInstalledCoreInfo = ({
                 </div>
               )}
             </>
+          )}
+
+          {coreName.endsWith("_Analogizer") && (
+            <div className="core-info__analogizer">
+              <AnalogizerIcon />
+              <div>
+                <Trans t={t} i18nKey={"analogizer"}>
+                  {"_"}
+                  <Link href={"https://analogizer-fpga.com/en"}>{"_"}</Link>
+                </Trans>
+              </div>
+            </div>
           )}
 
           <div className="core-info__info">
