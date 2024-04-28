@@ -46,6 +46,7 @@
       "no_settings_found": "Aucune configuration trouvée !",
       "reset_all": "Tout réinitialiser"
     },
+    "analogizer": "Ce cœur prend en charge le <1>Analogizer-FPGA</1>",
     "requires_license": {
       "all": "Attention : ce cœur nécessite actuellement un fichier de licence pour s'exécuter.",
       "jotego": "Les bêtas JOTEGO nécessitent un fichier JTBETA de Patreon dans la section Parrainer ci-dessous. Le jtbeta.zip doit être placé à la racine de votre carte SD, puis il sera trouvé et copié au bon endroit lors du processus « Fichiers requis »."

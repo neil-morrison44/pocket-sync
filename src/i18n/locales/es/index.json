@@ -48,6 +48,7 @@
       "no_settings_found": "¡No se encontraron configuraciones!",
       "reset_all": "Resetear todo"
     },
+    "analogizer": "Este núcleo es compatible con el <1>Analogizer-FPGA</1>",
     "requires_license": {
       "all": "Advertencia: este núcleo actualmente requiere un archivo de licencia para ejecutarse.",
       "jotego": "Las betas de JOTEGO requieren un archivo JTBETA del Patreon en la sección de patrocinadores a continuación. \nEl jtbeta.zip debe colocarse en la raíz de su tarjeta SD y luego se encontrará y se copiará en el lugar correcto durante el proceso de \"Archivos necesarios\"."

@@ -48,6 +48,7 @@
       "no_settings_found": "未发现设置文件!",
       "reset_all": "重置所有设置"
     },
+    "analogizer": "该核心支持<1>Analogizer-FPGA</1>",
     "requires_license": {
       "all": "请注意!运行该核心需要取得许可授权",
       "jotego": "JOTEGO betas需要JTBETA许可文件才能运行，可以通过JOTEGO的Patreon页面获取(https://www.patreon.com/jotego)。 \n 如果您取得了许可文件，请将jtbeta.zip放置在SD卡根目录，系统将自动根据必要文件的处理规则进行处理。"

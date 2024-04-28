@@ -48,6 +48,7 @@
       "no_settings_found": "Keine Einstellungen gefunden!",
       "reset_all": "Alle zurücksetzen"
     },
+    "analogizer": "Dieser Kern unterstützt den <1>Analogizer-FPGA</1>",
     "requires_license": {
       "all": "Warnung, dieser Kern benötigt eine Lizenzdatei zur Ausführung.",
       "jotego": "Die JOTEGO-Betas benötigen eine JTBETA-Datei aus Patreon in der Unterstützersektion unten.\nDie jtbeta.zip muss im Wurzelverzeichnis der SD-Karte abgelegt werden, damit sie während des „Benötigte Dateien“-Prozesses gefunden und an den richtigen Ort kopiert wird."
