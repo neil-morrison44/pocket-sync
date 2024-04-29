@@ -1,6 +1,6 @@
 import { selector, selectorFamily } from "recoil"
 import { ImagePack, PlatformId, PlatformInfoJSON } from "../../types"
-import { invokeFileExists, invokeListFolders } from "../../utils/invokes"
+import { invokeFileExists, invokeListFiles } from "../../utils/invokes"
 import { PLATFORM_IMAGE } from "../../values"
 import {
   CoreInfoSelectorFamily,
@@ -17,7 +17,7 @@ export const platformsListSelector = selector<PlatformId[]>({
   key: "platformsListSelector",
   get: async ({ get }) => {
     get(FolderWatchAtomFamily("Platforms"))
-    const platforms = await invokeListFolders("Platforms")
+    const platforms = await invokeListFiles("Platforms")
     return platforms
       .filter((s) => s.endsWith(".json"))
       .map((s) => s.replace(".json", ""))
