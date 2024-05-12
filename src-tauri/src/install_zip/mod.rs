@@ -330,6 +330,11 @@ async fn start_zip_install_flow(
     pocket_path: PathBuf,
     window: &Window,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    let state: tauri::State<PocketSyncState> = window.state();
+
+    let file_locks = state.0.file_locker.find_lock_for(&pocket_path).await;
+    let _write_lock = file_locks.write().await;
+
     let zip_confirm_event = FromRustPayload::InstallZipEvent {
         title: String::from(&titles.title),
         files: Some(get_file_names(&archive, &pocket_path)),
