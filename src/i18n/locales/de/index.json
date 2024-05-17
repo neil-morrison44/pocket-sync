@@ -234,7 +234,7 @@
     },
     "town": {
       "title": "Palettenstadt",
-      "repo_link": "Palettes from <1>github.com/{repo}</1>",
+      "repo_link": "Paletten von <1>github.com/{repo}</1>",
       "close": "Schließen"
     },
     "item": {
@@ -431,8 +431,8 @@
       "title": "Alternative Assets überspringen"
     },
     "language": {
-      "checkbox": "Always use English (US)",
-      "title": "Language"
+      "checkbox": "Immer Englisch (US) verwenden",
+      "title": "Sprache"
     },
     "archive": {
       "save": "Speichern",
