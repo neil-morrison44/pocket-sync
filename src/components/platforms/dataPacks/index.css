@@ -21,6 +21,7 @@
 
 .data-packs__pack-item{
   flex-basis: max-content;
+  line-break: anywhere;
 }
 
 .data-packs__current-item, .data-packs__pack-item{
@@ -39,7 +40,6 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-items: stretch;
-  align-items: stretch;
+  place-items: stretch stretch;
   gap: 20px;
 }
