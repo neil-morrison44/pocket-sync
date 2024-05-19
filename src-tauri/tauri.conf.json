@@ -19,7 +19,8 @@
           "https://raw.githubusercontent.com/*",
           "https://archive.org/*",
           "https://updater.retrodriven.com/*",
-          "https://objects.githubusercontent.com/*"
+          "https://objects.githubusercontent.com/*",
+          "https://neil-morrison44.github.io/*"
         ]
       },
       "fs": {
