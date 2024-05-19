@@ -474,7 +474,7 @@
     "less_than_1_min_ago": "vor weniger als einer Minute"
   },
   "uninstall_core": {
-    "confirm_text": "Dies wird den Kern entfernen, aber keine Spiele, Spielstände, Bibliiothekdaten oder Platforminformationen. Sind Sie sicher?",
+    "confirm_text": "Dies wird den Kern entfernen, aber keine Spiele, Spielstände, Bibliothekdaten oder Platforminformationen. Sind Sie sicher?",
     "confirm_title": "Kern deinstallieren"
   },
   "zip_install": {
