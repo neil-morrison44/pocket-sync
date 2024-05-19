@@ -7,6 +7,7 @@ use async_walkdir::{DirEntry, WalkDir};
 use checks::{check_if_folder_looks_like_pocket, connection_task};
 use clean_fs::find_dotfiles;
 use file_cache::{clear_file_caches, get_file_with_cache};
+use file_locks::FileLocks;
 use firmware::{FirmwareDetails, FirmwareListItem};
 use futures::StreamExt;
 use futures_locks::RwLock;
@@ -21,7 +22,8 @@ use saves_zip::{
     remove_leading_slash, restore_save_from_zip, SaveZipFile,
 };
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+use std::sync::Arc;
 use std::time::SystemTime;
 use std::vec;
 use tauri::api::dialog;
@@ -30,12 +32,13 @@ use tauri_plugin_log::LogTarget;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 use crate::install_files::install_file;
-use crate::util::get_mtime_timestamp;
+use crate::util::{find_common_path, get_mtime_timestamp};
 
 mod checks;
 mod clean_fs;
 mod core_json_files;
 mod file_cache;
+mod file_locks;
 mod firmware;
 mod hashes;
 mod install_files;
@@ -52,6 +55,7 @@ mod util;
 #[derive(Default)]
 struct InnerState {
     pocket_path: RwLock<PathBuf>,
+    file_locker: FileLocks,
 }
 
 struct PocketSyncState(InnerState);
@@ -177,6 +181,9 @@ async fn list_files(
     let pocket_path = state.0.pocket_path.read().await;
     let dir_path = pocket_path.join(path);
 
+    let arc_lock = state.0.file_locker.find_lock_for(&dir_path).await;
+    let _read_lock = arc_lock.read().await;
+
     if !tokio::fs::try_exists(&dir_path).await.unwrap() {
         return Ok(vec![]);
     }
@@ -207,6 +214,9 @@ async fn list_folders(
     debug!("Command: list_folders - {path}");
     let pocket_path = state.0.pocket_path.read().await;
     let dir_path = pocket_path.join(path);
+
+    let arc_lock = state.0.file_locker.find_lock_for(&dir_path).await;
+    let _read_lock = arc_lock.read().await;
 
     if !tokio::fs::try_exists(&dir_path).await.unwrap() {
         return Ok(vec![]);
@@ -243,6 +253,9 @@ async fn walkdir_list_files(
         Some(true) => PathBuf::from(path),
         None | Some(false) => pocket_path.join(remove_leading_slash(path)),
     };
+
+    let arc_lock = state.0.file_locker.find_lock_for(&dir_path).await;
+    let _read_lock = arc_lock.read().await;
 
     if !dir_path.exists() {
         return Ok(vec![]);
@@ -315,6 +328,12 @@ async fn install_archive_files(
 ) -> Result<bool, String> {
     debug!("Command: install_archive_files");
     let pocket_path = state.0.pocket_path.read().await;
+
+    let all_paths: Vec<PathBuf> = files.iter().map(|d| pocket_path.join(&d.path)).collect();
+    let common_dir = find_common_path(&all_paths).unwrap();
+
+    let arc_lock = state.0.file_locker.find_lock_for(&common_dir).await;
+    let _write_lock = arc_lock.write().await;
 
     let mut progress = progress::ProgressEmitter::new(Box::new(|event| {
         window
@@ -663,6 +682,24 @@ async fn find_required_files(
 ) -> Result<Vec<DataSlotFile>, String> {
     debug!("Command: find_required_files");
     let pocket_path = state.0.pocket_path.read().await;
+
+    let core_info: Vec<_> = core_id.split(".").collect();
+    let common_dir_path = pocket_path.join(format!("Assets/{}/common", &core_info.last().unwrap()));
+    let arc_lock = state.0.file_locker.find_lock_for(&common_dir_path).await;
+    let _read_lock = arc_lock.read().await;
+
+    let core_dir_path = pocket_path.join(format!(
+        "Assets/{}/{}",
+        &core_info.last().unwrap(),
+        &core_info.first().unwrap()
+    ));
+
+    let arc_lock = state.0.file_locker.find_lock_for(&common_dir_path).await;
+    let _read_lock = arc_lock.read().await;
+
+    let arc_lock = state.0.file_locker.find_lock_for(&core_dir_path).await;
+    let _read_lock = arc_lock.read().await;
+
     required_files_for_core(core_id, &pocket_path, include_alts, archive_url, window)
         .await
         .map_err(|err| err.to_string())
