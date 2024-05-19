@@ -121,9 +121,8 @@ export const imagePackListSelector = selector<ImagePack[]>({
   get: async () => {
     try {
       const httpClient = await getClient()
-      // TODO: see about getting this moved to the inventory org
       const response = await httpClient.get<ImagePack[]>(
-        "https://raw.githubusercontent.com/mattpannella/pocket-updater-utility/main/image_packs.json",
+        "https://neil-morrison44.github.io/pocket-sync/image_packs.json",
         {
           timeout: 30,
           responseType: ResponseType.JSON,
