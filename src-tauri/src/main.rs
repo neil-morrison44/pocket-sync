@@ -22,8 +22,7 @@ use saves_zip::{
     remove_leading_slash, restore_save_from_zip, SaveZipFile,
 };
 use serde::{Deserialize, Serialize};
-use std::path::{Path, PathBuf};
-use std::sync::Arc;
+use std::path::PathBuf;
 use std::time::SystemTime;
 use std::vec;
 use tauri::api::dialog;

@@ -1,5 +1,9 @@
 import { Suspense, useMemo, useState } from "react"
-import { useRecoilCallback, useRecoilValue } from "recoil"
+import {
+  useRecoilCallback,
+  useRecoilValue,
+  useRecoilValueLoadable,
+} from "recoil"
 import { pocketPathAtom } from "../../../recoil/atoms"
 import {
   ImagePackImageSelectorFamily,
@@ -29,7 +33,13 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
     return allPlatformIds
   }, [allPlatformIds, singlePlatformId])
 
-  const imagePacks = useRecoilValue(imagePackListSelector)
+  const imagePacksLoadable = useRecoilValueLoadable(imagePackListSelector)
+
+  const imagePacks = useMemo(() => {
+    if (imagePacksLoadable.state !== "hasValue") return []
+    return imagePacksLoadable.contents
+  }, [imagePacksLoadable])
+
   const [selections, setSelections] = useState<
     Record<PlatformId, ImagePack | undefined>
   >({})
@@ -77,47 +87,53 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
               }`}
               onClick={() => setSelections((s) => ({ ...s, [pId]: undefined }))}
             >
-              <PlatformName platformId={pId} />
-              <PlatformImage platformId={pId} className="image-packs__image" />
+              <Suspense>
+                <PlatformName platformId={pId} />
+                <PlatformImage
+                  platformId={pId}
+                  className="image-packs__image"
+                />
+              </Suspense>
             </div>
           ))}
         </div>
 
         {imagePacks.map((pack) => (
-          <div
-            key={`${pack.owner}-${pack.repository}-${pack.variant}`}
-            className="image-packs__column"
-          >
-            <div className="image-packs__column-name">
-              <Link
-                href={`https://github.com/${pack.owner}/${pack.repository}`}
-              >
-                <b>{pack.owner}</b>
-                <div title={pack.repository}>{pack.repository}</div>
-                {pack.variant && <small>{pack.variant}</small>}
-              </Link>
-            </div>
+          <Suspense key={`${pack.owner}-${pack.repository}-${pack.variant}`}>
+            <div className="image-packs__column">
+              <div className="image-packs__column-name">
+                <Link
+                  href={`https://github.com/${pack.owner}/${pack.repository}`}
+                >
+                  <b>{pack.owner}</b>
+                  <div title={pack.repository}>{pack.repository}</div>
+                  <small title={pack.variant}>{pack.variant}</small>
+                </Link>
+              </div>
 
-            {platformIds.map((pId) => (
-              <Suspense
-                key={`${pId}-${pack.owner}-${pack.repository}-${pack.variant}`}
-                fallback={
-                  <div className="image-packs__item image-packs__item--missing">
-                    <Loader />
-                  </div>
-                }
-              >
-                <PackColumnItem
-                  {...pack}
-                  platformId={pId}
-                  onClick={() => setSelections((s) => ({ ...s, [pId]: pack }))}
-                  isSelected={
-                    JSON.stringify(selections[pId]) === JSON.stringify(pack)
+              {platformIds.map((pId) => (
+                <Suspense
+                  key={`${pId}-${pack.owner}-${pack.repository}-${pack.variant}`}
+                  fallback={
+                    <div className="image-packs__item image-packs__item--missing">
+                      <Loader />
+                    </div>
                   }
-                />
-              </Suspense>
-            ))}
-          </div>
+                >
+                  <PackColumnItem
+                    {...pack}
+                    platformId={pId}
+                    onClick={() =>
+                      setSelections((s) => ({ ...s, [pId]: pack }))
+                    }
+                    isSelected={
+                      JSON.stringify(selections[pId]) === JSON.stringify(pack)
+                    }
+                  />
+                </Suspense>
+              ))}
+            </div>
+          </Suspense>
         ))}
       </div>
 

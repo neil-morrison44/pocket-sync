@@ -254,7 +254,7 @@ export type FetchFileMetadataWithStatus = {
 export type ImagePack = {
   owner: string
   repository: string
-  variant?: string
+  variant: string
 }
 
 export type RawFeedItem = {

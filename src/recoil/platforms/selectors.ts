@@ -128,9 +128,9 @@ export const imagePackListSelector = selector<ImagePack[]>({
           responseType: ResponseType.JSON,
         }
       )
-
       return response.data
-    } catch (e) {
+    } catch (err) {
+      console.error(err)
       return []
     }
   },
