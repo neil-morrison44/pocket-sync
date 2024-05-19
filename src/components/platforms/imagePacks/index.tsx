@@ -20,6 +20,7 @@ import { useTranslation } from "react-i18next"
 
 import "./index.css"
 import { PlatformName } from "./platformName"
+import { OnlyLoadsWhenShown } from "../../../utils/onlyLoadsWhenShown"
 
 type ImagePacksProps = {
   onClose: () => void
@@ -87,13 +88,15 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
               }`}
               onClick={() => setSelections((s) => ({ ...s, [pId]: undefined }))}
             >
-              <Suspense>
-                <PlatformName platformId={pId} />
-                <PlatformImage
-                  platformId={pId}
-                  className="image-packs__image"
-                />
-              </Suspense>
+              <OnlyLoadsWhenShown height={103}>
+                <Suspense>
+                  <PlatformName platformId={pId} />
+                  <PlatformImage
+                    platformId={pId}
+                    className="image-packs__image"
+                  />
+                </Suspense>
+              </OnlyLoadsWhenShown>
             </div>
           ))}
         </div>
@@ -112,25 +115,29 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
               </div>
 
               {platformIds.map((pId) => (
-                <Suspense
+                <OnlyLoadsWhenShown
                   key={`${pId}-${pack.owner}-${pack.repository}-${pack.variant}`}
-                  fallback={
-                    <div className="image-packs__item image-packs__item--missing">
-                      <Loader />
-                    </div>
-                  }
+                  height={103}
                 >
-                  <PackColumnItem
-                    {...pack}
-                    platformId={pId}
-                    onClick={() =>
-                      setSelections((s) => ({ ...s, [pId]: pack }))
+                  <Suspense
+                    fallback={
+                      <div className="image-packs__item image-packs__item--missing">
+                        <Loader />
+                      </div>
                     }
-                    isSelected={
-                      JSON.stringify(selections[pId]) === JSON.stringify(pack)
-                    }
-                  />
-                </Suspense>
+                  >
+                    <PackColumnItem
+                      {...pack}
+                      platformId={pId}
+                      onClick={() =>
+                        setSelections((s) => ({ ...s, [pId]: pack }))
+                      }
+                      isSelected={
+                        JSON.stringify(selections[pId]) === JSON.stringify(pack)
+                      }
+                    />
+                  </Suspense>
+                </OnlyLoadsWhenShown>
               ))}
             </div>
           </Suspense>
