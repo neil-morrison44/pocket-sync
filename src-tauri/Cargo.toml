@@ -1,6 +1,6 @@
 [package]
 name = "pocket-sync"
-version = "4.8.1"
+version = "4.9.0"
 description = "A GUI tool for doing stuff with the Analogue Pocket"
 authors = ["neil-morrison44"]
 license = "AGPL-3.0"
