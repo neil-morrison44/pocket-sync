@@ -26,6 +26,10 @@ jobs:
         with:
           name: platform-zip
           path: ./platforms.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: image-packs
+          path: ./image_packs.json
   publish_page:
     runs-on: ubuntu-latest
     needs: merged_platform_zips
@@ -42,6 +46,11 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: platform-zip
+          path: ./site
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: image-packs
           path: ./site
 
       - name: Upload Pages artifact
