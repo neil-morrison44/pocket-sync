@@ -4,14 +4,12 @@ import {
   useRecoilValue,
   useRecoilValueLoadable,
 } from "recoil"
-import { pocketPathAtom } from "../../../recoil/atoms"
 import {
   ImagePackImageSelectorFamily,
   imagePackListSelector,
   platformsListSelector,
 } from "../../../recoil/platforms/selectors"
 import { ImagePack, PlatformId } from "../../../types"
-import { invokeSaveFile } from "../../../utils/invokes"
 import { PlatformImage } from "../../cores/platformImage"
 import { Link } from "../../link"
 import { Loader } from "../../loader"
@@ -21,6 +19,7 @@ import { useTranslation } from "react-i18next"
 import "./index.css"
 import { PlatformName } from "./platformName"
 import { OnlyLoadsWhenShown } from "../../../utils/onlyLoadsWhenShown"
+import { invokeSaveMultipleFiles } from "../../../utils/invokes"
 
 type ImagePacksProps = {
   onClose: () => void
@@ -51,8 +50,9 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
   const applyChanges = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        const pocketPath = await snapshot.getPromise(pocketPathAtom)
-        if (!pocketPath) return
+        const paths = []
+        const images = []
+
         for (const platformId in selections) {
           const pack = selections[platformId]
           if (!pack) continue
@@ -60,12 +60,14 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
             ImagePackImageSelectorFamily({ ...pack, platformId })
           )
           if (!image) continue
-          await invokeSaveFile(
-            `${pocketPath}/Platforms/_images/${platformId}.bin`,
-            new Uint8Array(await image.file.arrayBuffer())
-          )
+
+          const imageData = new Uint8Array(await image.file.arrayBuffer())
+
+          paths.push(`Platforms/_images/${platformId}.bin`)
+          images.push(imageData)
         }
 
+        await invokeSaveMultipleFiles(paths, images)
         onClose()
       },
     [selections]

@@ -716,6 +716,30 @@ async fn check_root_files(
         .map_err(|err| err.to_string())
 }
 
+#[tauri::command(async)]
+async fn save_multiple_files(
+    state: tauri::State<'_, PocketSyncState>,
+    paths: Vec<&str>,
+    data: Vec<Vec<u8>>,
+) -> Result<(), String> {
+    debug!("Command: save_multiple_files");
+    let pocket_path = state.0.pocket_path.read().await;
+
+    let all_paths: Vec<PathBuf> = paths.iter().map(|p| pocket_path.join(p)).collect();
+    let common_dir = find_common_path(&all_paths).unwrap();
+
+    let arc_lock = state.0.file_locker.find_lock_for(&common_dir).await;
+    let _write_lock = arc_lock.write().await;
+
+    for (file_path, file_data) in all_paths.iter().zip(data) {
+        tokio::fs::write(file_path, file_data)
+            .await
+            .map_err(|err| err.to_string())?;
+    }
+
+    Ok(())
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(
@@ -758,7 +782,8 @@ fn main() {
             download_firmware,
             clear_file_cache,
             check_root_files,
-            find_required_files
+            find_required_files,
+            save_multiple_files
         ])
         .setup(|app| {
             log_panics::init();

@@ -191,7 +191,6 @@ export const DataPackJsonSelectorFamily = selectorFamily<
       let parsed: PlatformInfoJSON | null = null
 
       try {
-        console.log("Parse O")
         parsed = JSON.parse(text)
       } catch (err) {
         console.warn(

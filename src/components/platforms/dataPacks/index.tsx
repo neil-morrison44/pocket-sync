@@ -10,9 +10,8 @@ import { PlatformId, ImagePack, PlatformInfoJSON } from "../../../types"
 import { Modal } from "../../modal"
 
 import "./index.css"
-import { invokeSaveFile } from "../../../utils/invokes"
-import { pocketPathAtom } from "../../../recoil/atoms"
 import { useTranslation } from "react-i18next"
+import { invokeSaveMultipleFiles } from "../../../utils/invokes"
 
 type DataPacksProps = {
   platformId?: PlatformId
@@ -43,20 +42,23 @@ export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
   const apply = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        const pocketPath = await snapshot.getPromise(pocketPathAtom)
         const selectionEntries = Object.entries(selections)
         const encoder = new TextEncoder()
+
+        const paths = []
+        const jsons = []
+
         for (let index = 0; index < selectionEntries.length; index++) {
           const [platformId, pack] = selectionEntries[index]
           if (!pack) continue
           const packJson = await snapshot.getPromise(
             DataPackJsonSelectorFamily({ ...pack, platformId })
           )
-          await invokeSaveFile(
-            `${pocketPath}/Platforms/${platformId}.json`,
-            encoder.encode(JSON.stringify(packJson, null, 2))
-          )
+          paths.push(`Platforms/${platformId}.json`)
+          jsons.push(encoder.encode(JSON.stringify(packJson, null, 2)))
         }
+
+        await invokeSaveMultipleFiles(paths, jsons)
         onClose()
       },
     [selections]
