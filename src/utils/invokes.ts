@@ -217,3 +217,12 @@ export const invokeInstallArchiveFiles = async (
     archiveUrl,
     turbo,
   })
+
+export const invokeSaveMultipleFiles = async (
+  paths: string[],
+  data: Uint8Array[]
+) =>
+  await invoke<boolean>("save_multiple_files", {
+    paths,
+    data: data.map((d) => Array.from(d)),
+  })
