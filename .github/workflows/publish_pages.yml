@@ -14,6 +14,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+      - run: npm uninstall tauri-plugin-log-api
       - run: npm ci
       - run: npx tsc .github/workflows/scripts/build_platforms_zip.ts --target esnext --module commonjs
       - run: mv .github/workflows/scripts/build_platforms_zip.js .github/workflows/scripts/build_platforms_zip.cjs
