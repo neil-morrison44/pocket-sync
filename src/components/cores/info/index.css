@@ -58,7 +58,7 @@
 }
 
 .core-info__analogizer{
-  background-color: rgb(101,156,222);
+  background-color: rgb(101 156 222);
 }
 
 .core-info__firmware-warning{
@@ -97,6 +97,12 @@
   }
 }
 
+.core-info__info-row--hide-if-null {
+  &:has(>:first-child:last-child){
+    display: none;
+  }
+}
+
 .core-info__info-row--right {
   grid-column: 2;
 }
@@ -105,6 +111,7 @@
   display: grid;
   gap: inherit;
   grid-template-columns: 1fr auto;
+  grid-auto-flow: dense;
 }
 
 .core-info__author-tag {
@@ -156,4 +163,18 @@
 
 .core-info__info-txt {
   white-space: pre-wrap;
+}
+
+
+.core-info__download-graph-bar{
+  display: block;
+  position: absolute;
+  background-color: white;
+  opacity: 0.6;
+  bottom: 0;
+  cursor: pointer;
+
+  &:hover{
+    opacity: 1;
+  }
 }

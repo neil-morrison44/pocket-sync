@@ -184,6 +184,7 @@ export type GithubRelease = {
   published_at: string
   assets: {
     browser_download_url: string
+    download_count: number
     name: string
     label: string
     content_type: string

@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { Suspense, useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { useInstallCore } from "../../../hooks/useInstallCore"
 import { useInventoryItem } from "../../../hooks/useInventoryItem"
@@ -16,6 +16,7 @@ import { KeyIcon } from "../icons/keyIcon"
 import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
 import { AnalogizerIcon } from "../icons/AnalogizerIcon"
+import { DownloadCount } from "./downloadCounts"
 
 type NotInstalledCoreInfoProps = {
   onBack: () => void
@@ -112,6 +113,24 @@ export const NotInstalledCoreInfo = ({
                 </div>
               )}
 
+              <Suspense>
+                <div className="core-info__info-row core-info__info-row--right core-info__info-row--hide-if-null">
+                  <strong>
+                    {t("download_count")}
+                    {":"}
+                  </strong>
+                  <DownloadCount coreName={coreName} />
+                </div>
+              </Suspense>
+
+              <div className="core-info__info-row">
+                <strong>
+                  {t("version")}
+                  {":"}
+                </strong>
+                {inventoryItem.version}
+              </div>
+
               {inventoryItem?.sponsor && (
                 <div className="core-info__info-row core-info__info-row--right">
                   <strong>
@@ -123,14 +142,6 @@ export const NotInstalledCoreInfo = ({
                   </ErrorBoundary>
                 </div>
               )}
-
-              <div className="core-info__info-row">
-                <strong>
-                  {t("version")}
-                  {":"}
-                </strong>
-                {inventoryItem.version}
-              </div>
 
               <div className="core-info__info-row">
                 <strong>

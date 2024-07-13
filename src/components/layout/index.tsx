@@ -1,13 +1,13 @@
-import { Suspense, useCallback, useEffect, useRef } from "react"
+import React, { Suspense, useCallback, useEffect, useRef } from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { currentViewAtom, VIEWS_LIST } from "../../recoil/view/atoms"
 import { About } from "../about"
-import { Cores } from "../cores"
+// import { Cores } from "../cores"
 import { ErrorBoundary } from "../errorBoundary"
 import { Games } from "../games"
 import { Loader } from "../loader"
 import { Platforms } from "../platforms"
-import { Saves } from "../saves"
+// import { Saves } from "../saves"
 import { AutoBackup } from "../saves/autobackup"
 import { SaveStates } from "../saveStates"
 import { Screenshots } from "../screenshots"
@@ -18,7 +18,17 @@ import { Firmware } from "../firmware"
 import { useTranslation } from "react-i18next"
 import { Fetch } from "../fetch"
 import { enableGlobalZipInstallAtom } from "../../recoil/atoms"
-import { Palettes } from "../palettes"
+// import { Palettes } from "../palettes"
+
+const Saves = React.lazy(() =>
+  import("../saves").then((i) => ({ default: i.Saves }))
+)
+const Cores = React.lazy(() =>
+  import("../cores").then((i) => ({ default: i.Cores }))
+)
+const Palettes = React.lazy(() =>
+  import("../palettes").then((i) => ({ default: i.Palettes }))
+)
 
 export const Layout = () => {
   const [viewAndSubview, setViewAndSubview] = useRecoilState(currentViewAtom)
