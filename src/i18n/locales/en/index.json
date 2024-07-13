@@ -70,6 +70,10 @@
     "required_files_count": "{count} / {total} Files",
     "settings": "Settings",
     "sponsor": "Sponsor",
+    "download_count": "Downloads",
+    "download_latest": "{count, number, long} for v{tag}",
+    "download_total": "{count, number, long} all versions",
+    "download_bar_title": "{release}\n{count, number, long} downloads\n{days, number, long} days as latest version",
     "supports": "Supports",
     "supports_items": {
       "cartridges": "Cartridges",

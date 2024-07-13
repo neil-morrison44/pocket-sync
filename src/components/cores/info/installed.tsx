@@ -26,7 +26,6 @@ import { CoreInputs } from "./coreInputs"
 import { CoreSettings } from "./coreSettings"
 import { RequiredFileInfoSelectorFamily } from "../../../recoil/requiredFiles/selectors"
 import { Trans, useTranslation } from "react-i18next"
-import { archiveBumpAtom } from "../../../recoil/archive/atoms"
 import { currentViewAtom } from "../../../recoil/view/atoms"
 import { useReplacementAvailable } from "../../../hooks/useReplacementAvailable"
 import { ControlsBackButton } from "../../controls/inputs/backButton"
@@ -40,6 +39,7 @@ import { Details } from "../../shared/details"
 import { CoreInfoTxtSelectorFamily } from "../../../recoil/cores/selectors"
 import { ProgressLoader } from "../../loader/progress"
 import { AnalogizerIcon } from "../icons/AnalogizerIcon"
+import { DownloadCount } from "./downloadCounts"
 
 type CoreInfoProps = {
   coreName: string
@@ -54,7 +54,6 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   const downloadUrl = useRecoilValue(DownloadURLSelectorFamily(coreName))
 
   const [requiredFilesOpen, setRequiredFilesOpen] = useState(false)
-  const setArchiveBump = useSetRecoilState(archiveBumpAtom)
   const [inputsOpen, setInputsOpen] = useState(false)
   const [coreSettingsOpen, setCoreSettingsOpen] = useState(false)
   const { t } = useTranslation("core_info")
@@ -170,17 +169,15 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             <AuthorTag coreName={coreName} />
           </div>
 
-          {inventoryItem?.sponsor && (
-            <div className="core-info__info-row core-info__info-row--right">
+          <Suspense>
+            <div className="core-info__info-row core-info__info-row--right core-info__info-row--hide-if-null">
               <strong>
-                {t("sponsor")}
+                {t("download_count")}
                 {":"}
               </strong>
-              <ErrorBoundary>
-                <SponsorLinks links={inventoryItem.sponsor} />
-              </ErrorBoundary>
+              <DownloadCount coreName={coreName} />
             </div>
-          )}
+          </Suspense>
 
           {coreInfo.core.metadata.url && (
             <div className="core-info__info-row">
@@ -191,6 +188,18 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
               <Link href={coreInfo.core.metadata.url}>
                 {coreInfo.core.metadata.url}
               </Link>
+            </div>
+          )}
+
+          {inventoryItem?.sponsor && (
+            <div className="core-info__info-row core-info__info-row--right">
+              <strong>
+                {t("sponsor")}
+                {":"}
+              </strong>
+              <ErrorBoundary>
+                <SponsorLinks links={inventoryItem.sponsor} />
+              </ErrorBoundary>
             </div>
           )}
 

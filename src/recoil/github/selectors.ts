@@ -30,6 +30,14 @@ export const GithubReleasesSelectorFamily = selectorFamily<
         )
       }
 
-      return (await response.json()) as GithubRelease[]
+      const releases = (await response.json()) as GithubRelease[]
+
+      const sortedReleases = [...releases].sort((a, b) => {
+        const aDate = new Date(a.published_at)
+        const bDate = new Date(b.published_at)
+        return bDate.getTime() - aDate.getTime()
+      })
+
+      return sortedReleases
     },
 })
