@@ -45,6 +45,10 @@ const ALL_COLOURS: PocketColour[] = [
   "pink",
   "orange",
   "silver",
+  "aluminium_natural",
+  "aluminium_noir",
+  "aluminium_black",
+  "aluminium_indigo",
 ]
 
 export const ColourContextProviderRandomised = ({

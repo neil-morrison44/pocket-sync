@@ -216,6 +216,10 @@ export type PocketColour =
   | "pink"
   | "orange"
   | "silver"
+  | "aluminium_natural"
+  | "aluminium_noir"
+  | "aluminium_black"
+  | "aluminium_indigo"
 
 export type PocketSyncConfig = {
   version: string

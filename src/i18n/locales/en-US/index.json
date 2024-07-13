@@ -1,7 +1,8 @@
 {
   "settings": {
     "3d_pocket": {
-      "title": "Pocket Color:"
+      "title": "Pocket Color:",
+      "aluminium_label": "Aluminum"
     }
   }
 }
