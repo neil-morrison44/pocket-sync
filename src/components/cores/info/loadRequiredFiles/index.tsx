@@ -14,6 +14,7 @@ import { useHasArchiveLink } from "../../../../hooks/useHasArchiveLink"
 import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles/selectors"
 import { DataSlotFile } from "../../../../types"
 import { Loader } from "../../../loader"
+import { JobsStopButton } from "../../../jobs/stop"
 
 const STATUS_SORT_ORDER = [
   "RootNeedsUpdate",
@@ -47,11 +48,14 @@ export const LoadRequiredFiles = ({
       <h2>{t("title")}</h2>
 
       {inProgress && (
-        <Progress
-          percent={percent}
-          message={message?.param}
-          remainingTime={remainingTime}
-        />
+        <>
+          <Progress
+            percent={percent}
+            message={message?.param}
+            remainingTime={remainingTime}
+          />
+          <JobsStopButton jobId="install_archive_files" />
+        </>
       )}
 
       {!inProgress && (

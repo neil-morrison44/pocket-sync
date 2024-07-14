@@ -25,6 +25,8 @@ export const useProcessUpdates = () => {
   const { installCore } = useInstallCore()
   const [stage, setStage] = useState<UpdateStage | null>(null)
 
+  const [abortController] = useState(() => new AbortController())
+
   const processUpdates = useRecoilCallback(
     ({ snapshot }) =>
       async (updates: UpdateInfo[]) => {
@@ -35,7 +37,7 @@ export const useProcessUpdates = () => {
         )
 
         for (const update of updates) {
-          const coreStartTime = Date.now()
+          if (abortController.signal.aborted) break
           const { coreName, platformFiles, requiredFiles } = update
 
           setStage({ coreName, step: "core" })
@@ -87,16 +89,8 @@ export const useProcessUpdates = () => {
             )
           })
 
-          await new Promise((resolve) => {
-            const timeTaken = Date.now() - coreStartTime
-            if (timeTaken >= 4e3) {
-              resolve(true)
-            } else {
-              setTimeout(() => resolve(true), 4e3 - timeTaken)
-            }
-          })
-
           if (requiredFiles && archiveUrl) {
+            if (abortController.signal.aborted) break
             setStage({ coreName, step: "filecheck" })
             const requiredFiles = await snapshot.getPromise(
               RequiredFileInfoSelectorFamily(coreName)
@@ -123,5 +117,5 @@ export const useProcessUpdates = () => {
     []
   )
 
-  return { processUpdates, stage }
+  return { processUpdates, stage, abortController }
 }

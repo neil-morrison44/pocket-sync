@@ -1,0 +1,8 @@
+.jobs__stop-button{
+  background-color: var(--red-colour);
+  width: 100%;
+
+  &:hover,&:focus-visible{
+    filter: brightness(120%);
+  }
+}

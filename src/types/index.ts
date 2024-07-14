@@ -349,3 +349,5 @@ export type ProgressEvent = {
 }
 
 export type SortMode = "name" | "last_update"
+
+export type Job = { id: string; status: "Running" | "Stopping" }
