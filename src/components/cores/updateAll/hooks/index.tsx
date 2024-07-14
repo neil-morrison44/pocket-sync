@@ -91,15 +91,6 @@ export const useProcessUpdates = () => {
             )
           })
 
-          await new Promise((resolve) => {
-            const timeTaken = Date.now() - coreStartTime
-            if (timeTaken >= 4e3) {
-              resolve(true)
-            } else {
-              setTimeout(() => resolve(true), 4e3 - timeTaken)
-            }
-          })
-
           if (requiredFiles && archiveUrl) {
             if (abortController.signal.aborted) break
             setStage({ coreName, step: "filecheck" })
