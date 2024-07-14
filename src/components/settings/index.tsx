@@ -282,6 +282,17 @@ const ColoursList = () => {
           i18nPrefix="3d_pocket.colours"
         />
       </optgroup>
+      <optgroup label={t("3d_pocket.aluminium_label")}>
+        <OptionsList
+          values={[
+            "aluminium_natural",
+            "aluminium_noir",
+            "aluminium_black",
+            "aluminium_indigo",
+          ]}
+          i18nPrefix="3d_pocket.colours"
+        />
+      </optgroup>
     </>
   )
 }

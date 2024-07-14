@@ -420,10 +420,15 @@
         "yellow": "Yellow",
         "pink": "Pink",
         "orange": "Orange",
-        "silver": "Silver"
+        "silver": "Silver",
+        "aluminium_natural": "Natural",
+        "aluminium_noir": "Noir",
+        "aluminium_black": "Black",
+        "aluminium_indigo": "Indigo"
       },
       "classic_label": "Classic",
       "transparent_label": "Transparent",
+      "aluminium_label": "Aluminium",
       "body_label": "Body",
       "buttons_label": "Buttons",
       "match_body": "Match Body"

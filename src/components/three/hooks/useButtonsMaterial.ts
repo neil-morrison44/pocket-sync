@@ -2,29 +2,8 @@ import { useContext, useMemo } from "react"
 import { Color, MeshPhysicalMaterial } from "three"
 import { BodyColourContext, ButtonsColourContext } from "../colourContext"
 import { useNoiseTexture } from "./useNoiseTexture"
-import { PocketColour } from "../../../types"
 import { PerfLevelContext } from "../context/perfLevel"
-
-const COLOUR = {
-  black: "rgb(0,0,0)",
-  white: "rgb(245,245,245)",
-  glow: "rgb(163, 195, 138)",
-  indigo: "rgb(80, 76, 137)",
-  red: "rgb(135, 43, 42)",
-  green: "rgb(6, 138, 100)",
-  blue: "rgb(68, 90, 153)",
-  yellow: "rgb(227, 175, 45)",
-  pink: "rgb(238, 141, 183)",
-  orange: "rgb(236, 159, 74)",
-  silver: "rgb(208, 205, 204)",
-  trans_purple: "rgb(205,175,250)",
-  trans_orange: "rgb(200,130,10)",
-  trans_clear: "rgb(220,220,220)",
-  trans_smoke: "rgb(120,120,120)",
-  trans_red: "rgb(235, 90, 90)",
-  trans_blue: "rgb(110, 100, 255)",
-  trans_green: "rgb(110, 255, 110)",
-} as Record<PocketColour, string>
+import { COLOUR } from "./colours"
 
 export const useButtonsMaterial = (
   bodyMaterial: MeshPhysicalMaterial
@@ -43,7 +22,7 @@ export const useButtonsMaterial = (
     min: 64,
     max: 80,
   })
-  const roughnessMap = useNoiseTexture({ size: 64, min: 230, max: 245 })
+  const roughnessMap = useNoiseTexture({ size: 1024, min: 230, max: 245 })
 
   const metalnessMap = useNoiseTexture({
     size: 64,
@@ -71,6 +50,17 @@ export const useButtonsMaterial = (
       // this causes random glitchy squares for some reason
       // - though it looks better when it's on
       // material.side = DoubleSide
+    } else if (bodyColour.startsWith("aluminium_")) {
+      material.color = new Color(COLOUR[buttonsColour] || "red")
+      material.ior = 1.36
+
+      material.clearcoat = 0
+      material.metalness = 1
+      material.roughness = 0.5
+      material.roughnessMap = roughnessMap
+      material.bumpMap = metalnessMap
+      material.bumpScale = 0.05
+      material.envMapIntensity = 1
     } else {
       material.envMapIntensity = 0.5
       material.color = new Color(COLOUR[buttonsColour] || "red")

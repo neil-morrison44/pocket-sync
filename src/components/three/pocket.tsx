@@ -37,6 +37,7 @@ import { useButtonsMaterial } from "./hooks/useButtonsMaterial"
 import { PerfLevelContext } from "./context/perfLevel"
 import { useRecoilState } from "recoil"
 import { performanceLevelAtom } from "../../recoil/atoms"
+import { platform } from "@tauri-apps/api/os"
 
 type PocketProps = {
   move?: "none" | "spin" | "back-and-forth"
@@ -45,7 +46,13 @@ type PocketProps = {
 }
 
 const SWAY_SPEED = 0.2
-const MAX_PERF_LEVEL = 3
+// Temporary fix to get the Pocket model showing up on Linux again, can be removed in Tauri 2
+let MAX_PERF_LEVEL = 3
+platform().then((p) => {
+  if (p === "linux") {
+    MAX_PERF_LEVEL = 1
+  }
+})
 
 export const Pocket = ({
   move = "none",
