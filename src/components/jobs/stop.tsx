@@ -31,6 +31,7 @@ export const JobsStopButton = ({
   useEffect(() => {
     if (!onStop) return
     if (stoppingJobId && !jobs.map(({ id }) => id).includes(stoppingJobId)) {
+      console.log("onStoP", onStop)
       onStop(stoppingJobId)
       setStoppingJobId(null)
     }

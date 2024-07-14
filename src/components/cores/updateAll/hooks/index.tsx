@@ -6,7 +6,7 @@ import { emit, listen } from "@tauri-apps/api/event"
 import { InstallZipEventPayload } from "../../../zipInstall/types"
 import { invoke } from "@tauri-apps/api"
 import { PocketSyncConfigSelector } from "../../../../recoil/config/selectors"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles/selectors"
 
 type UpdateInfo = {
@@ -25,7 +25,7 @@ export const useProcessUpdates = () => {
   const { installCore } = useInstallCore()
   const [stage, setStage] = useState<UpdateStage | null>(null)
 
-  const abortController = useMemo(() => new AbortController(), [])
+  const [abortController] = useState(() => new AbortController())
 
   const processUpdates = useRecoilCallback(
     ({ snapshot }) =>
@@ -38,8 +38,6 @@ export const useProcessUpdates = () => {
 
         for (const update of updates) {
           if (abortController.signal.aborted) break
-
-          const coreStartTime = Date.now()
           const { coreName, platformFiles, requiredFiles } = update
 
           setStage({ coreName, step: "core" })
