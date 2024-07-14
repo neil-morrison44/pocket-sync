@@ -6,6 +6,7 @@ import {
   DataSlotFile,
   RootFile,
   SaveZipFile,
+  Job,
 } from "../types"
 
 export const invokeOpenPocket = async () => invoke<string | null>("open_pocket")
@@ -226,3 +227,9 @@ export const invokeSaveMultipleFiles = async (
     paths,
     data: data.map((d) => Array.from(d)),
   })
+
+export const invokeGetActiveJobs = async () =>
+  await invoke<Job[]>("get_active_jobs")
+
+export const invokeStopJob = async (jobId: string) =>
+  await invoke<Job[]>("stop_job", { jobId })

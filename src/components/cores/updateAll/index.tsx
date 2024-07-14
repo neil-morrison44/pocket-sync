@@ -26,6 +26,8 @@ import { info } from "tauri-plugin-log-api"
 import { useProcessUpdates } from "./hooks"
 import { usePreventGlobalZipInstallModal } from "../../../hooks/usePreventGlobalZipInstall"
 import { keepPlatformDataAtom } from "../../../recoil/settings/atoms"
+import { JobsStopButton } from "../../jobs/stop"
+import { StopButton } from "../../jobs/button"
 
 type UpdateAllProps = {
   onClose: () => void
@@ -50,7 +52,7 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
     [updateList]
   )
 
-  const { processUpdates, stage } = useProcessUpdates()
+  const { processUpdates, stage, abortController } = useProcessUpdates()
 
   useEffect(() => {
     info(`Update All ${stage ? `${stage.coreName} - ${stage.step}` : "null"}`)
@@ -155,30 +157,43 @@ export const UpdateAll = ({ onClose }: UpdateAllProps) => {
       )}
 
       {stage && (
-        <div className="update-all__step-info">
-          <h3 className="update-all__step-info-title">
-            <span>{t("update.title", { ...stage })}</span>
-            {/* eslint-disable-next-line react/jsx-no-literals */}
-            <span>{`(${coreCount}/${updateList.length})`}</span>
-          </h3>
-          <div>
+        <>
+          <div className="update-all__step-info">
+            <h3 className="update-all__step-info-title">
+              <span>{t("update.title", { ...stage })}</span>
+              {/* eslint-disable-next-line react/jsx-no-literals */}
+              <span>{`(${coreCount}/${updateList.length})`}</span>
+            </h3>
+            <div>
+              <Suspense fallback={<Loader className="loader--no-background" />}>
+                <NotInstalledCoreInfo
+                  coreName={stage.coreName}
+                  onBack={() => {}}
+                  withoutControls
+                  withoutTitle
+                />
+              </Suspense>
+            </div>
             <Suspense fallback={<Loader className="loader--no-background" />}>
-              <NotInstalledCoreInfo
-                coreName={stage.coreName}
-                onBack={() => {}}
-                withoutControls
-                withoutTitle
-              />
+              {stage.step === "core" && <CoreInstallProgress />}
+              {stage.step === "files" && <FileInstallProgress />}
+              {stage.step === "filecheck" && (
+                <Loader className="loader--no-background" />
+              )}
             </Suspense>
           </div>
-          <Suspense fallback={<Loader className="loader--no-background" />}>
-            {stage.step === "core" && <CoreInstallProgress />}
-            {stage.step === "files" && <FileInstallProgress />}
-            {stage.step === "filecheck" && (
-              <Loader className="loader--no-background" />
+
+          <JobsStopButton
+            jobId="install_archive_files"
+            onStop={() => abortController.abort()}
+            noJobsFallback={() => (
+              <StopButton
+                onClick={() => abortController.abort()}
+                status={abortController.signal.aborted ? "Stopping" : "Running"}
+              />
             )}
-          </Suspense>
-        </div>
+          />
+        </>
       )}
     </Modal>
   )

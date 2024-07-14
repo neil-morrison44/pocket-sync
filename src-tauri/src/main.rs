@@ -13,6 +13,7 @@ use futures::StreamExt;
 use futures_locks::RwLock;
 use hashes::crc32_for_file;
 use install_zip::start_zip_task;
+use job_id::{Job, JobState};
 use log::{debug, error, trace, LevelFilter};
 use required_files::{required_files_for_core, DataSlotFile};
 use root_files::RootFile;
@@ -42,6 +43,7 @@ mod firmware;
 mod hashes;
 mod install_files;
 mod install_zip;
+mod job_id;
 mod news_feed;
 mod progress;
 mod required_files;
@@ -55,6 +57,7 @@ mod util;
 struct InnerState {
     pocket_path: RwLock<PathBuf>,
     file_locker: FileLocks,
+    jobs: JobState,
 }
 
 struct PocketSyncState(InnerState);
@@ -326,7 +329,9 @@ async fn install_archive_files(
     window: Window,
 ) -> Result<bool, String> {
     debug!("Command: install_archive_files");
+
     let pocket_path = state.0.pocket_path.read().await;
+    let job_handle = state.0.jobs.start_job("install_archive_files").await;
 
     let all_paths: Vec<PathBuf> = files.iter().map(|d| pocket_path.join(&d.path)).collect();
     let common_dir = find_common_path(&all_paths).unwrap();
@@ -342,6 +347,9 @@ async fn install_archive_files(
 
     progress.begin_work_units(files.len());
     for file in files {
+        if !job_handle.is_alive().await {
+            break;
+        }
         progress.set_message("downloading", Some(&file.name));
         let file_name = file.name.clone();
         if let Err(err) = install_file(file, archive_url, turbo, &pocket_path).await {
@@ -740,6 +748,26 @@ async fn save_multiple_files(
     Ok(())
 }
 
+#[tauri::command(async)]
+async fn get_active_jobs(state: tauri::State<'_, PocketSyncState>) -> Result<Vec<Job>, String> {
+    trace!("Command: get_active_jobs");
+
+    let jobs = state.0.jobs.get_all_jobs().await;
+    Ok(jobs)
+}
+
+#[tauri::command(async)]
+async fn stop_job(job_id: &str, state: tauri::State<'_, PocketSyncState>) -> Result<(), String> {
+    debug!("Command: stop_job");
+    state
+        .0
+        .jobs
+        .stop_job(job_id)
+        .await
+        .map_err(|err| err.to_string())?;
+    Ok(())
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(
@@ -783,7 +811,9 @@ fn main() {
             clear_file_cache,
             check_root_files,
             find_required_files,
-            save_multiple_files
+            save_multiple_files,
+            get_active_jobs,
+            stop_job
         ])
         .setup(|app| {
             log_panics::init();

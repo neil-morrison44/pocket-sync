@@ -503,5 +503,9 @@
     "update_alt": "Update {version} available",
     "replaced_alt": "Replacement core {core} available",
     "replaced": "Replaced"
+  },
+  "jobs": {
+    "Running": "Cancel",
+    "Stopping": "Cancelling..."
   }
 }
