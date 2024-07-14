@@ -1,6 +1,8 @@
 import { useTexture } from "@react-three/drei"
 import { useMemo } from "react"
-import { RepeatWrapping, Texture } from "three"
+import { RepeatWrapping, Texture, Vector2 } from "three"
+
+import { createNoise4D } from "simplex-noise"
 
 type NoiseTextureArgs = {
   size: number
@@ -27,15 +29,34 @@ const generateNoise = (args: NoiseTextureArgs): string => {
 
   const imageData = context.createImageData(size, size)
 
+  const noise4D = createNoise4D()
+
+  const scale = size * size
+
   for (let index = 0; index < imageData.data.length; index += 4) {
-    const rgb = [
-      Math.round(min + Math.random() * (max - min)),
-      Math.round(min + Math.random() * (max - min)),
-      Math.round(min + Math.random() * (max - min)),
-    ] as [number, number, number]
+    const pixelIndex = index / 4
+    const x = pixelIndex % size
+    const y = Math.floor(pixelIndex / size)
+
+    const s = x / scale
+    const t = y / scale
+
+    const radius = size * (2 * Math.PI) // Adjust the radius for correct tiling
+
+    // Convert (x, y) to (s, t) for seamless tiling
+    const nx = radius * Math.cos(2 * Math.PI * s)
+    const ny = radius * Math.sin(2 * Math.PI * s)
+    const nz = radius * Math.cos(2 * Math.PI * t)
+    const nw = radius * Math.sin(2 * Math.PI * t)
+
+    // const shade = (noise4D(x, y, 0, 0) + 1) / 2
+    const shade = (noise4D(nx, ny, nz, nw) + 1) / 2
+    const value = Math.round(min + shade * (max - min))
+    const rgb = [value, value, value] as [number, number, number]
 
     const [r, g, b] = pixelModFunc ? pixelModFunc(rgb) : rgb
 
+    // imageData.data[index] = x < 10 || y < 10 ? 255 : r
     imageData.data[index] = r
     imageData.data[index + 1] = g
     imageData.data[index + 2] = b
@@ -70,6 +91,8 @@ export const useNoiseTexture = ({
   const texture = useTexture(imageUrl)
   texture.wrapS = RepeatWrapping
   texture.wrapT = RepeatWrapping
+
+  texture.repeat = new Vector2(0.25, 0.25)
 
   return texture
 }
