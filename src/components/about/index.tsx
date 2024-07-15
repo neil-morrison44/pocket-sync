@@ -1,4 +1,10 @@
-import { ReactNode, Suspense, useLayoutEffect, useMemo, useRef } from "react"
+import React, {
+  ReactNode,
+  Suspense,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import { useRecoilSmoothUpdatesFirstSuspend } from "../../hooks/recoilSmoothUpdates"
 import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
@@ -6,17 +12,29 @@ import { AppVersionSelector } from "../../recoil/selectors"
 import { ErrorBoundary } from "../errorBoundary"
 import { Link } from "../link"
 import { NewsFeed } from "../newsFeed"
-import { Pocket } from "../three/pocket"
-import { RandomScreenshotScreen } from "../three/randomScreenshotScreen"
 
 import "./index.css"
 import { updateAvailableSelector } from "../../recoil/firmware/selectors"
 import { currentViewAtom } from "../../recoil/view/atoms"
-import { StaticScreen } from "../three/staticScreen"
+
 import { useTranslation } from "react-i18next"
 import { semverCompare } from "../../utils/semverCompare"
 import { ColourContextProviderFromConfig } from "../three/colourContext"
 import { sponsorCountAtom } from "../../recoil/github/atoms"
+
+const Pocket = React.lazy(() =>
+  import("../three/pocket").then((m) => ({ default: m.Pocket }))
+)
+
+const RandomScreenshotScreen = React.lazy(() =>
+  import("../three/randomScreenshotScreen").then((m) => ({
+    default: m.RandomScreenshotScreen,
+  }))
+)
+
+const StaticScreen = React.lazy(() =>
+  import("../three/staticScreen").then((m) => ({ default: m.StaticScreen }))
+)
 
 export const About = () => {
   const selfReleases = useRecoilSmoothUpdatesFirstSuspend(

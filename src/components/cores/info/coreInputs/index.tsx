@@ -1,5 +1,11 @@
 import { OrbitControls } from "@react-three/drei"
-import { ReactElement, Suspense, useEffect, useMemo, useState } from "react"
+import React, {
+  ReactElement,
+  Suspense,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import { useRecoilValue } from "recoil"
 import { Texture } from "three"
 import {
@@ -10,10 +16,13 @@ import { PlatformImageSelectorFamily } from "../../../../recoil/platforms/select
 import { InputKey } from "../../../../types"
 import { Modal } from "../../../modal"
 import { LabeledLine } from "../../../three/labeledLine"
-import { Pocket } from "../../../three/pocket"
 import { useTranslation } from "react-i18next"
 import { ColourContextProviderFromConfig } from "../../../three/colourContext"
 import * as THREE from "three"
+
+const Pocket = React.lazy(() =>
+  import("../../../three/pocket").then((m) => ({ default: m.Pocket }))
+)
 
 const KEY_LINES: {
   [k in InputKey]: { start: THREE.Vector3Tuple; end: THREE.Vector3Tuple }
@@ -101,34 +110,43 @@ export const CoreInputs = ({
         </select>
       )}
       <ColourContextProviderFromConfig>
-        <Pocket
-          screenMaterial={
-            <meshPhysicalMaterial
-              attach="material"
-              map={screenTexture || undefined}
-              emissive={"white"}
-              emissiveMap={screenTexture || undefined}
-              clearcoat={1}
-              envMapIntensity={0.01}
+        <Suspense>
+          <Pocket
+            screenMaterial={
+              <meshPhysicalMaterial
+                attach="material"
+                map={screenTexture || undefined}
+                emissive={"white"}
+                emissiveMap={screenTexture || undefined}
+                clearcoat={1}
+                envMapIntensity={0.01}
+              />
+            }
+          >
+            <OrbitControls
+              maxDistance={42}
+              minDistance={42}
+              enablePan={false}
             />
-          }
-        >
-          <OrbitControls maxDistance={42} minDistance={42} enablePan={false} />
 
-          <Suspense fallback={null}>
-            <GetInputFile coreName={coreName} filePath={chosenInput}>
-              {(inputMappings) => (
-                <>
-                  {inputMappings.map((mapping) => (
-                    <LabeledLine key={mapping.key} {...KEY_LINES[mapping.key]}>
-                      {mapping.name}
-                    </LabeledLine>
-                  ))}
-                </>
-              )}
-            </GetInputFile>
-          </Suspense>
-        </Pocket>
+            <Suspense fallback={null}>
+              <GetInputFile coreName={coreName} filePath={chosenInput}>
+                {(inputMappings) => (
+                  <>
+                    {inputMappings.map((mapping) => (
+                      <LabeledLine
+                        key={mapping.key}
+                        {...KEY_LINES[mapping.key]}
+                      >
+                        {mapping.name}
+                      </LabeledLine>
+                    ))}
+                  </>
+                )}
+              </GetInputFile>
+            </Suspense>
+          </Pocket>
+        </Suspense>
       </ColourContextProviderFromConfig>
 
       <button onClick={onClose}>{t("modal.close")}</button>

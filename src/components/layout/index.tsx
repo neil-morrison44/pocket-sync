@@ -2,23 +2,13 @@ import React, { Suspense, useCallback, useEffect, useRef } from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { currentViewAtom, VIEWS_LIST } from "../../recoil/view/atoms"
 import { About } from "../about"
-// import { Cores } from "../cores"
 import { ErrorBoundary } from "../errorBoundary"
-import { Games } from "../games"
 import { Loader } from "../loader"
-import { Platforms } from "../platforms"
-// import { Saves } from "../saves"
 import { AutoBackup } from "../saves/autobackup"
-import { SaveStates } from "../saveStates"
-import { Screenshots } from "../screenshots"
-import { Settings } from "../settings"
 import { ZipInstall } from "../zipInstall"
 import "./index.css"
-import { Firmware } from "../firmware"
 import { useTranslation } from "react-i18next"
-import { Fetch } from "../fetch"
 import { enableGlobalZipInstallAtom } from "../../recoil/atoms"
-// import { Palettes } from "../palettes"
 
 const Saves = React.lazy(() =>
   import("../saves").then((i) => ({ default: i.Saves }))
@@ -28,6 +18,28 @@ const Cores = React.lazy(() =>
 )
 const Palettes = React.lazy(() =>
   import("../palettes").then((i) => ({ default: i.Palettes }))
+)
+const Fetch = React.lazy(() =>
+  import("../fetch").then((i) => ({ default: i.Fetch }))
+)
+const Screenshots = React.lazy(() =>
+  import("../screenshots").then((i) => ({ default: i.Screenshots }))
+)
+const Settings = React.lazy(() =>
+  import("../settings").then((i) => ({ default: i.Settings }))
+)
+const Games = React.lazy(() =>
+  import("../games").then((i) => ({ default: i.Games }))
+)
+const SaveStates = React.lazy(() =>
+  import("../saveStates").then((i) => ({ default: i.SaveStates }))
+)
+const Platforms = React.lazy(() =>
+  import("../platforms").then((i) => ({ default: i.Platforms }))
+)
+
+const Firmware = React.lazy(() =>
+  import("../firmware").then((i) => ({ default: i.Firmware }))
 )
 
 export const Layout = () => {

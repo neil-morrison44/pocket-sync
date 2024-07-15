@@ -1,7 +1,11 @@
 import { useTranslation } from "react-i18next"
-import { Pocket } from "../three/pocket"
 import { ProgressScreen } from "../three/progressScreen"
 import { ColourContextProviderFromConfig } from "../three/colourContext"
+import React, { Suspense } from "react"
+
+const Pocket = React.lazy(() =>
+  import("../three/pocket").then((m) => ({ default: m.Pocket }))
+)
 
 type ProgressProps = {
   percent: number
@@ -18,12 +22,14 @@ export const Progress = ({
 
   return (
     <ColourContextProviderFromConfig>
-      <Pocket
-        move="back-and-forth"
-        screenMaterial={
-          <ProgressScreen value={percent} max={100} message={message} />
-        }
-      />
+      <Suspense>
+        <Pocket
+          move="back-and-forth"
+          screenMaterial={
+            <ProgressScreen value={percent} max={100} message={message} />
+          }
+        />
+      </Suspense>
       {remainingTime && <div>{t("remaining_time", { remainingTime })}</div>}
     </ColourContextProviderFromConfig>
   )
