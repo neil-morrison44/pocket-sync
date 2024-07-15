@@ -70,6 +70,10 @@
     "required_files_count": "{count} / {total} Dateien",
     "settings": "Einstellungen",
     "sponsor": "Unterstützen",
+    "download_count": "Downloads",
+    "download_latest": "{count, number, long} für v{tag}",
+    "download_total": "{count, number, long} alle Versionen",
+    "download_bar_title": "{release}\n{count, number, long} Downloads\n{days, number, long} Tage als neueste Version",
     "supports": "Unterstützungen",
     "supports_items": {
       "cartridges": "Module",
@@ -416,10 +420,13 @@
         "yellow": "Gelb",
         "pink": "Pink",
         "orange": "Orange",
-        "silver": "Silber"
+        "silver": "Silber",
+        "aluminium_natural": "Natürlich",
+        "aluminium_indigo": "Indigo"
       },
       "classic_label": "Klassisch",
       "transparent_label": "Transparent",
+      "aluminium_label": "Aluminium",
       "body_label": "Gehäuse",
       "buttons_label": "Tasten",
       "match_body": "Gehäuse anpassen"
@@ -494,5 +501,9 @@
     "update_alt": "Aktualisierung {version} verfügbar",
     "replaced_alt": "Ersatz-Kern {Kern} verfügbar",
     "replaced": "Ersetzt"
+  },
+  "jobs": {
+    "Running": "Stornieren",
+    "Stopping": "Abbrechen..."
   }
 }

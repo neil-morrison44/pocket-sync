@@ -67,6 +67,10 @@
     "required_files_count": "{count} / {total} fichiers",
     "settings": "Configuration",
     "sponsor": "Parrainer",
+    "download_count": "Téléchargements",
+    "download_latest": "{count, number, long} pour v{tag}",
+    "download_total": "{count, number, long} toutes les versions",
+    "download_bar_title": "{release}\n{count, number, long} téléchargements\n{days, number, long} jours comme dernière version",
     "supports": "Supporte",
     "supports_items": {
       "cartridges": "Cartouches",
@@ -351,8 +355,11 @@
         "blue": "Bleu",
         "yellow": "Jaune",
         "pink": "Rose",
-        "silver": "Argent"
+        "silver": "Argent",
+        "aluminium_natural": "Naturel",
+        "aluminium_indigo": "Indigo"
       },
+      "aluminium_label": "Aluminium",
       "body_label": "Corps",
       "buttons_label": "Boutons",
       "match_body": "Même couleur que le corps"
@@ -424,5 +431,9 @@
     "update_alt": "Mise à jour {version} disponible",
     "replaced_alt": "Cœur de remplacement {core} disponible",
     "replaced": "Remplacé"
+  },
+  "jobs": {
+    "Running": "Annuler",
+    "Stopping": "Annulation..."
   }
 }

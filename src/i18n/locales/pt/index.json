@@ -70,6 +70,10 @@
     "required_files_count": "{count} / {total} Arquivos",
     "settings": "Configurações",
     "sponsor": "Patrocinador",
+    "download_count": "Descargas",
+    "download_latest": "{count, number, long} para v{tag}",
+    "download_total": "{count, number, long} todas as versões",
+    "download_bar_title": "{release}\n{count, number, long} descargas\n{days, number, long} dias como versão mais recente",
     "supports": "Suporta",
     "supports_items": {
       "cartridges": "Cartuchos",
@@ -416,10 +420,13 @@
         "yellow": "Amarelo",
         "pink": "Rosa",
         "orange": "Laranja",
-        "silver": "Prateado"
+        "silver": "Prateado",
+        "aluminium_natural": "Natural",
+        "aluminium_indigo": "Índigo"
       },
       "classic_label": "Clássico",
       "transparent_label": "Transparente",
+      "aluminium_label": "Alumínio",
       "body_label": "Corpo",
       "buttons_label": "Botões",
       "match_body": "Combinar com o Corpo"
@@ -494,5 +501,9 @@
     "update_alt": "Atualização {version} disponível",
     "replaced_alt": "Núcleo de substituição {core} disponível",
     "replaced": "Substituído"
+  },
+  "jobs": {
+    "Running": "Cancelar",
+    "Stopping": "Cancelando..."
   }
 }

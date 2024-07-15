@@ -70,6 +70,10 @@
     "required_files_count": "{count} / {total} archivos",
     "settings": "Configuración",
     "sponsor": "Patrocinador",
+    "download_count": "Descargas",
+    "download_latest": "{count, number, long} para v{tag}",
+    "download_total": "{count, number, long} todas las versiones",
+    "download_bar_title": "{release}\n{count, number, long} descargas\n{days, number, long} días como última versión",
     "supports": "Soportes",
     "supports_items": {
       "cartridges": "Cartuchos",
@@ -399,10 +403,13 @@
         "yellow": "Amarillo",
         "pink": "Rosa",
         "orange": "Naranja",
-        "silver": "Plata"
+        "silver": "Plata",
+        "aluminium_natural": "Natural",
+        "aluminium_indigo": "Índigo"
       },
       "classic_label": "Clásicos",
       "transparent_label": "Transparente",
+      "aluminium_label": "Aluminio",
       "body_label": "Cuerpo",
       "buttons_label": "Botones",
       "match_body": "Combina el color de la carrocería"
@@ -473,5 +480,9 @@
     "update_alt": "Actualización {version} disponible",
     "replaced_alt": "Núcleo de repuesto {core} disponible",
     "replaced": "Reemplazado"
+  },
+  "jobs": {
+    "Running": "Cancelar",
+    "Stopping": "Cancelado..."
   }
 }

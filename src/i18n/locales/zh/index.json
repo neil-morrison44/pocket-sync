@@ -70,6 +70,10 @@
     "required_files_count": "{count} / {total} 文件",
     "settings": "配置",
     "sponsor": "赞助作者",
+    "download_count": "下载",
+    "download_latest": "v{tag}下载量为{count, number, long}",
+    "download_total": "{count, number, long} 所有版本",
+    "download_bar_title": "{release}\n{count, number, long} 下载\n最新版本 {days, number, long} 天",
     "supports": "支持功能",
     "supports_items": {
       "cartridges": "卡带",
@@ -399,10 +403,13 @@
         "yellow": "黄色",
         "pink": "粉红色",
         "orange": "橙色",
-        "silver": "银色"
+        "silver": "银色",
+        "aluminium_natural": "自然",
+        "aluminium_indigo": "靛青"
       },
       "classic_label": "经典",
       "transparent_label": "透明",
+      "aluminium_label": "铝",
       "body_label": "主体",
       "buttons_label": "按钮",
       "match_body": "匹配机身"
@@ -473,5 +480,9 @@
     "update_alt": "核心有更新版本 {version}",
     "replaced_alt": "有替换核心 {core} 可供使用",
     "replaced": "已替换"
+  },
+  "jobs": {
+    "Running": "取消",
+    "Stopping": "取消正在进行中..."
   }
 }
