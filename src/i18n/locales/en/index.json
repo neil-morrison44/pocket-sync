@@ -101,6 +101,11 @@
       "original_gg": "Original GG",
       "original_gg_plus": "Original GG+",
       "pinball_neon_matrix": "Pinball Neon Matrix"
+    },
+    "jt_analogizer_config": {
+      "title": "Analogizer Config",
+      "video": "Analog Video",
+      "snac": "SNAC Controllers"
     }
   },
   "core_info_required_files": {
