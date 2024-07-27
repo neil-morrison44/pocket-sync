@@ -40,6 +40,7 @@ import { CoreInfoTxtSelectorFamily } from "../../../recoil/cores/selectors"
 import { ProgressLoader } from "../../loader/progress"
 import { AnalogizerIcon } from "../icons/AnalogizerIcon"
 import { DownloadCount } from "./downloadCounts"
+import { JTAnalogizerSettings } from "./jtanalogizer"
 
 type CoreInfoProps = {
   coreName: string
@@ -291,6 +292,10 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             {t("settings")}
           </button>
         </div>
+
+        {coreInfo.core.metadata.platform_ids.includes("jtpatreon") && (
+          <JTAnalogizerSettings coreName={coreName} />
+        )}
 
         <div className="core-info__info-row">
           <Details title={t("info_txt_title")}>

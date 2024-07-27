@@ -351,3 +351,24 @@ export type ProgressEvent = {
 export type SortMode = "name" | "last_update"
 
 export type Job = { id: string; status: "Running" | "Stopping" }
+
+export type JTCrtConfig = {
+  video:
+    | "RBGS (SCART)"
+    | "RGsB"
+    | "YPbPr (Component video)"
+    | "Y/C NTSC (SVideo, Composite video)"
+    | "Y/C PAL (SVideo, Composite video)"
+    | "Scandoubler RGBHV (SCANLINES 0%)"
+    | "Scandoubler RGBHV (SCANLINES 25%)"
+    | "Scandoubler RGBHV (SCANLINES 50%)"
+    | "Scandoubler RGBHV (SCANLINES 75%)"
+    | "Disable Analog Video"
+  snac:
+    | "None"
+    | "DB15 Normal"
+    | "NES"
+    | "SNES"
+    | "PCE 2BTN/6BTN"
+    | "PCE Multitap"
+}

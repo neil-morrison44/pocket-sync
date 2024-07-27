@@ -6,6 +6,7 @@ type DetailsProps = {
   children: ReactNode
   openByDefault?: boolean
   sticky?: boolean
+  renderIcon?: () => ReactNode
 }
 
 export const Details = ({
@@ -13,6 +14,7 @@ export const Details = ({
   children,
   openByDefault = false,
   sticky = false,
+  renderIcon,
 }: DetailsProps) => {
   const [isOpen, setIsOpen] = useState(openByDefault)
 
@@ -22,6 +24,7 @@ export const Details = ({
         className={`details__title ${sticky ? "details__title--sticky" : ""}`}
         onClick={() => setIsOpen((c) => !c)}
       >
+        {renderIcon && renderIcon()}
         {title}
         {isOpen ? <ContractIcon /> : <ExpandIcon />}
       </div>

@@ -1,0 +1,16 @@
+.jt-analogizer__options-title{
+  margin: 0;
+  margin-block-end: 12px;
+
+  &:not(:first-child){
+    margin-block-start: 12px;
+  }
+}
+
+.jt-analogizer__options{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  place-items: flex-start start;
+  justify-content: start;
+}

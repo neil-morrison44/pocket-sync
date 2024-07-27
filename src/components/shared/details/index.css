@@ -12,13 +12,19 @@
   font-weight: bold;
   cursor: pointer;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 12px;
   user-select: none;
   /* stylelint-disable-next-line property-no-vendor-prefix */
   -webkit-user-select: none;
 
   &:hover{
     background-color: rgb(255 255 255 / 10%);
+  }
+
+
+  & > :last-child{
+    margin-inline-start: auto;
   }
 
 }
