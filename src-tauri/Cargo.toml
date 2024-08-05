@@ -56,6 +56,8 @@ tauri-plugin-fs = "2.0.0-rc.0"
 tauri-plugin-http = "2.0.0-rc.0"
 tauri-plugin-os = "2.0.0-rc.0"
 tauri-plugin-shell = "2.0.0-rc.0"
+tauri-plugin-log = "2.0.0-rc.0"
+tauri-plugin-window-state = "2.0.0-rc.0"
 
 [dev-dependencies]
 mockito = { version = "1.1.1", default-features = false }

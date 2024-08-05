@@ -59,6 +59,9 @@
     "fs:default",
     "http:default",
     "os:default",
-    "clipboard-manager:default"
+    "clipboard-manager:default",
+    "log:default",
+    "window-state:allow-restore-state",
+    "window-state:allow-save-window-state"
   ]
 }

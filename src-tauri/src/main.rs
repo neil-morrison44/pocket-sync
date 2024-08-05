@@ -28,7 +28,7 @@ use std::time::SystemTime;
 use std::vec;
 use tauri::{App, Emitter, Manager, Window};
 use tauri_plugin_dialog::DialogExt;
-// use tauri_plugin_log::LogTarget;
+use tauri_plugin_log::{Target, TargetKind};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 use crate::install_files::install_file;
@@ -776,13 +776,17 @@ fn main() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
-        // .plugin(
-        //     tauri_plugin_log::Builder::default()
-        //         .targets([LogTarget::LogDir, LogTarget::Stdout, LogTarget::Webview])
-        //         .level(LevelFilter::Debug)
-        //         .build(),
-        // )
-        // .plugin(tauri_plugin_window_state::Builder::default().build())
+        .plugin(tauri_plugin_window_state::Builder::default().build())
+        .plugin(
+            tauri_plugin_log::Builder::default()
+                .targets([
+                    Target::new(TargetKind::LogDir { file_name: None }),
+                    Target::new(TargetKind::Stdout),
+                    Target::new(TargetKind::Webview),
+                ])
+                .level(LevelFilter::Debug)
+                .build(),
+        )
         .manage(PocketSyncState(Default::default()))
         .invoke_handler(tauri::generate_handler![
             open_pocket,
