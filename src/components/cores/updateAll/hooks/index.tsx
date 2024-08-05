@@ -4,10 +4,10 @@ import { useInstallCore } from "../../../../hooks/useInstallCore"
 import { DownloadURLSelectorFamily } from "../../../../recoil/inventory/selectors"
 import { emit, listen } from "@tauri-apps/api/event"
 import { InstallZipEventPayload } from "../../../zipInstall/types"
-import { invoke } from "@tauri-apps/api"
 import { PocketSyncConfigSelector } from "../../../../recoil/config/selectors"
 import { useState } from "react"
 import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles/selectors"
+import { invoke } from "@tauri-apps/api/core"
 
 type UpdateInfo = {
   coreName: string

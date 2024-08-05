@@ -1,7 +1,9 @@
 use mister_saves_sync::{FoundSave, MiSTerSaveSync, SaveSyncer};
 use serde::{Deserialize, Serialize};
 use std::{error::Error, io::Read, path::PathBuf, sync::Arc};
-use tauri::Window;
+use tauri::Emitter;
+use tauri::Listener;
+use tauri::WebviewWindow;
 use tokio::{
     sync::{broadcast, mpsc},
     task,
@@ -50,7 +52,7 @@ pub async fn start_mister_save_sync_session(
     host: &str,
     user: &str,
     password: &str,
-    window: Window,
+    window: WebviewWindow,
 ) -> Result<bool, Box<dyn Error>> {
     let (log_tx, mut log_rx) = tokio::sync::mpsc::channel(100);
     let (kill_tx, _kill_rx) = tokio::sync::broadcast::channel(1);
@@ -204,13 +206,11 @@ pub async fn start_mister_save_sync_session(
                 let message_tx = message_tx.clone();
                 let window = window.clone();
                 window.listen("mister-save-sync-find-save", move |event| {
-                    if let Some(payload) = event.payload() {
-                        let pocket_save_info: PocketSaveInfo =
-                            serde_json::from_str(payload).unwrap();
-                        message_tx
-                            .send(IncomingMessage::Find(pocket_save_info))
-                            .unwrap();
-                    }
+                    let payload = event.payload();
+                    let pocket_save_info: PocketSaveInfo = serde_json::from_str(payload).unwrap();
+                    message_tx
+                        .send(IncomingMessage::Find(pocket_save_info))
+                        .unwrap();
                 })
             };
 
@@ -218,24 +218,22 @@ pub async fn start_mister_save_sync_session(
                 let message_tx = message_tx.clone();
                 let window = window.clone();
                 window.listen("mister-save-sync-move-save-to-pocket", move |event| {
-                    if let Some(payload) = event.payload() {
-                        let transfer_info: Transfer = serde_json::from_str(payload).unwrap();
-                        message_tx
-                            .send(IncomingMessage::MiSTerToPocket(transfer_info))
-                            .unwrap();
-                    }
+                    let payload = event.payload();
+                    let transfer_info: Transfer = serde_json::from_str(payload).unwrap();
+                    message_tx
+                        .send(IncomingMessage::MiSTerToPocket(transfer_info))
+                        .unwrap();
                 })
             };
             let save_to_mister_listener = {
                 let message_tx = message_tx.clone();
                 let window = window.clone();
                 window.listen("mister-save-sync-move-save-to-mister", move |event| {
-                    if let Some(payload) = event.payload() {
-                        let transfer_info: Transfer = serde_json::from_str(payload).unwrap();
-                        message_tx
-                            .send(IncomingMessage::PocketToMiSTer(transfer_info))
-                            .unwrap();
-                    }
+                    let payload = event.payload();
+                    let transfer_info: Transfer = serde_json::from_str(payload).unwrap();
+                    message_tx
+                        .send(IncomingMessage::PocketToMiSTer(transfer_info))
+                        .unwrap();
                 })
             };
 

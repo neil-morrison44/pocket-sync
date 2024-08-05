@@ -6,7 +6,7 @@ import { ReactNode, useMemo } from "react"
 import { I18nextProvider } from "react-i18next"
 import { useRecoilValue } from "recoil"
 import { alwaysUseEnglishAtom } from "../recoil/settings/atoms"
-import { locale } from "@tauri-apps/api/os"
+import { locale } from "@tauri-apps/plugin-os"
 
 let userLanguage: string | null = null
 

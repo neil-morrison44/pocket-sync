@@ -18,7 +18,7 @@ import { comparePaths } from "../../utils/comparePaths"
 import { splitAsPath } from "../../utils/splitAsPath"
 import { archiveBumpAtom } from "../../recoil/archive/atoms"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
-import { confirm } from "@tauri-apps/api/dialog"
+import { confirm } from "@tauri-apps/plugin-dialog"
 import { useTranslation } from "react-i18next"
 import { ControlsButton } from "../controls/inputs/button"
 import { ProgressLoader, ProgressLoaderInner } from "../loader/progress"
@@ -40,7 +40,7 @@ export const Fetch = () => {
 
   const removeItem = useCallback(
     async (index: number) => {
-      const confirmed = await confirm(t("remove_confirm"), { type: "warning" })
+      const confirmed = await confirm(t("remove_confirm"), { kind: "warning" })
       if (!confirmed) return
       updateConfig("fetches", (fetches) => {
         const clonedFetches = [...(fetches ?? [])]

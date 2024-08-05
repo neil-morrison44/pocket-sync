@@ -4,26 +4,26 @@ import {
   BaseDirectory,
   readTextFile,
   exists,
-} from "@tauri-apps/api/fs"
+} from "@tauri-apps/plugin-fs"
 
 export function syncToAppLocalDataEffect<T>(filename: string): AtomEffect<T> {
   return ({ trigger, onSet, setSelf }) => {
     onSet(async (newValue) => {
       const text = JSON.stringify(newValue)
       await writeTextFile(`${filename}.json`, text, {
-        dir: BaseDirectory.AppLocalData,
+        baseDir: BaseDirectory.AppLocalData,
       })
     })
 
     if (trigger === "get") {
       const read = async () => {
         const fileExists = await exists(`${filename}.json`, {
-          dir: BaseDirectory.AppLocalData,
+          baseDir: BaseDirectory.AppLocalData,
         })
 
         if (fileExists) {
           await readTextFile(`${filename}.json`, {
-            dir: BaseDirectory.AppLocalData,
+            baseDir: BaseDirectory.AppLocalData,
           }).then((text) => {
             try {
               const value = JSON.parse(text) as T
@@ -47,12 +47,12 @@ export async function syncToAppLocalDataEffectDefault<T>(
   initialDefault: T
 ): Promise<T> {
   const fileExists = await exists(`${filename}.json`, {
-    dir: BaseDirectory.AppLocalData,
+    baseDir: BaseDirectory.AppLocalData,
   })
 
   if (fileExists) {
     const text = await readTextFile(`${filename}.json`, {
-      dir: BaseDirectory.AppLocalData,
+      baseDir: BaseDirectory.AppLocalData,
     })
     let value = initialDefault
     try {

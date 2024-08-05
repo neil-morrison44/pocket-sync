@@ -13,7 +13,7 @@ import "./index.css"
 import { useTranslation } from "react-i18next"
 import { useEffect } from "react"
 import { emit, listen } from "@tauri-apps/api/event"
-import { confirm as TauriConfirm } from "@tauri-apps/api/dialog"
+import { confirm as TauriConfirm } from "@tauri-apps/plugin-dialog"
 
 export const ZipInstall = () => {
   const { installState } = useListenForZipInstall()
@@ -68,7 +68,7 @@ const ZipInstallInner = ({
         const allow = await TauriConfirm(
           t("replace.text", { list: payload.previous_core_names.join(",\n") }),
           {
-            type: "warning",
+            kind: "warning",
             title: t("replace.title"),
             cancelLabel: t("replace.cancel"),
             okLabel: t("replace.ok"),

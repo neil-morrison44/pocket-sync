@@ -1,6 +1,7 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::{path::PathBuf, time::Instant};
+use tauri::Emitter;
 use tokio::io::AsyncWriteExt;
 
 use crate::{hashes::md5_for_file, progress::ProgressEvent, util::progress_download};

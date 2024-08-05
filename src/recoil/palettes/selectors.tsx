@@ -5,7 +5,7 @@ import {
   invokeWalkDirListFiles,
 } from "../../utils/invokes"
 import { GithubRelease, Palette, rgb } from "../../types"
-import { ResponseType, fetch, getClient } from "@tauri-apps/api/http"
+import { fetch as TauriFetch } from "@tauri-apps/plugin-http"
 import { paletteRepoAtom } from "./atoms"
 import * as zip from "@zip.js/zip.js"
 import { error } from "tauri-plugin-log-api"
@@ -92,12 +92,14 @@ export const palleteZipURLSelector = selector<string | null>({
   key: "palleteZipURLSelector",
   get: async ({ get }) => {
     const repo = get(paletteRepoAtom)
-    const response = await fetch<GithubRelease>(
+    const response = await TauriFetch(
       `https://api.github.com/repos/${repo}/releases/latest`,
       { method: "GET", headers: { "User-Agent": `Pocket Sync` } }
     )
 
-    const zip = (response?.data?.assets || []).find((asset) =>
+    const data = (await response.json()) as GithubRelease
+
+    const zip = (data?.assets || []).find((asset) =>
       asset.name.endsWith(".zip")
     )
 
@@ -115,13 +117,18 @@ const palleteZipBlobSelector = selector<Blob | null>({
     const zipUrl = get(palleteZipURLSelector)
     if (!zipUrl) return null
 
-    const httpClient = await getClient()
-    const fileResponse = await httpClient.get<number[]>(zipUrl, {
-      timeout: 60,
-      responseType: ResponseType.Binary,
+    console.log({ zipUrl })
+
+    const fileResponse = await TauriFetch(zipUrl, {
+      method: "GET",
+      connectTimeout: 60,
     })
 
-    const fileBlob = new Blob([new Uint8Array(fileResponse.data)], {
+    console.log({ fileResponse })
+
+    const data = await fileResponse.arrayBuffer()
+
+    const fileBlob = new Blob([data], {
       type: "application/zip",
     })
 

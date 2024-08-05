@@ -1,4 +1,4 @@
-import { save } from "@tauri-apps/api/dialog"
+import { save } from "@tauri-apps/plugin-dialog"
 import { useCallback } from "react"
 import { invokeSaveFile } from "../utils/invokes"
 

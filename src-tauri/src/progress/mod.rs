@@ -107,7 +107,7 @@ mod tests {
 
     #[test]
     fn add_under_count() -> Result<()> {
-        let mut progress_emitter = ProgressEmitter::new(Box::new(|event| {}));
+        let mut progress_emitter = ProgressEmitter::new(Box::new(|_event| {}));
         progress_emitter.complete_work_units(5);
 
         assert_eq!(progress_emitter.overall_percentage(), 0.5);
@@ -116,7 +116,7 @@ mod tests {
 
     #[test]
     fn add_over_count() -> Result<()> {
-        let mut progress_emitter = ProgressEmitter::new(Box::new(|event| {}));
+        let mut progress_emitter = ProgressEmitter::new(Box::new(|_event| {}));
         progress_emitter.complete_work_units(25);
 
         assert_eq!(progress_emitter.overall_percentage(), 0.997);

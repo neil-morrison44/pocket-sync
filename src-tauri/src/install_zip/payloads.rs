@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
+use tauri::{Emitter, Listener};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct PathStatus {
@@ -35,7 +36,7 @@ pub enum FromRustPayload {
 }
 
 impl FromRustPayload {
-    pub fn emit(&self, window: &tauri::Window) -> Result<(), tauri::Error> {
+    pub fn emit(&self, window: &tauri::WebviewWindow) -> Result<(), tauri::Error> {
         match self {
             FromRustPayload::InstallZipEvent { .. } => window.emit("install-zip-event", &self),
             FromRustPayload::ReplaceConfirmEvent { .. } => {
@@ -52,7 +53,7 @@ impl FromRustPayload {
 
     pub async fn wait_for_confirmation(
         &self,
-        window: &tauri::Window,
+        window: &tauri::WebviewWindow,
     ) -> Result<FromTSPayload, Box<dyn std::error::Error>> {
         let listen_name = match self {
             FromRustPayload::InstallZipEvent { .. } => "install-confirmation",
@@ -63,8 +64,7 @@ impl FromRustPayload {
         self.emit(&window).unwrap();
         let (tx, rx) = tokio::sync::oneshot::channel();
         window.once(listen_name, move |event| {
-            let install_confirm: FromTSPayload =
-                serde_json::from_str(event.payload().unwrap()).unwrap();
+            let install_confirm: FromTSPayload = serde_json::from_str(event.payload()).unwrap();
             tx.send(install_confirm).unwrap();
         });
 

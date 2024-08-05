@@ -26,9 +26,9 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::time::SystemTime;
 use std::vec;
-use tauri::api::dialog;
-use tauri::{App, Manager, Window};
-use tauri_plugin_log::LogTarget;
+use tauri::{App, Emitter, Manager, Window};
+use tauri_plugin_dialog::DialogExt;
+// use tauri_plugin_log::LogTarget;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 use crate::install_files::install_file;
@@ -70,7 +70,7 @@ async fn open_pocket(
 ) -> Result<Option<String>, ()> {
     debug!("Command: open_pocket");
 
-    if let Some(pocket_path) = dialog::blocking::FileDialogBuilder::new().pick_folder() {
+    if let Some(pocket_path) = app_handle.dialog().file().blocking_pick_folder() {
         open_pocket_folder(state, &pocket_path.to_str().unwrap(), app_handle).await
     } else {
         Err(())
@@ -84,7 +84,7 @@ async fn open_pocket_folder(
     app_handle: tauri::AppHandle,
 ) -> Result<Option<String>, ()> {
     debug!("Command: open_pocket_folder {pocket_path}");
-    let window = app_handle.get_window("main").unwrap();
+    let window = app_handle.get_webview_window("main").unwrap();
     let pocket_path = PathBuf::from(pocket_path);
     if !check_if_folder_looks_like_pocket(&pocket_path) {
         return Ok(None);
@@ -111,7 +111,7 @@ async fn read_binary_file(
     let pocket_path = state.0.pocket_path.read().await;
     let path = pocket_path.join(path);
 
-    if let Ok(mut f) = if let Some(cache_dir) = app_handle.path_resolver().app_cache_dir() {
+    if let Ok(mut f) = if let Ok(cache_dir) = app_handle.path().app_cache_dir() {
         get_file_with_cache(&path, &cache_dir).await
     } else {
         tokio::fs::File::open(&path).await
@@ -137,7 +137,7 @@ async fn read_text_file(
     let pocket_path = state.0.pocket_path.read().await;
     let path = pocket_path.join(path);
 
-    let mut f = if let Some(cache_dir) = app_handle.path_resolver().app_cache_dir() {
+    let mut f = if let Ok(cache_dir) = app_handle.path().app_cache_dir() {
         get_file_with_cache(&path, &cache_dir).await
     } else {
         tokio::fs::File::open(&path).await
@@ -566,7 +566,7 @@ async fn begin_mister_sync_session(
     host: &str,
     user: &str,
     password: &str,
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
 ) -> Result<bool, String> {
     debug!("Command: begin_mister_sync_session");
     match start_mister_save_sync_session(host, user, password, window).await {
@@ -669,7 +669,7 @@ async fn download_firmware(
 #[tauri::command(async)]
 async fn clear_file_cache(app_handle: tauri::AppHandle) -> Result<(), String> {
     debug!("Command: clear_file_cache");
-    if let Some(cache_dir) = app_handle.path_resolver().app_cache_dir() {
+    if let Ok(cache_dir) = app_handle.path().app_cache_dir() {
         clear_file_caches(&cache_dir)
             .await
             .map_err(|err| err.to_string())?
@@ -685,7 +685,7 @@ async fn find_required_files(
     core_id: &str,
     include_alts: bool,
     archive_url: &str,
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
 ) -> Result<Vec<DataSlotFile>, String> {
     debug!("Command: find_required_files");
     let pocket_path = state.0.pocket_path.read().await;
@@ -770,13 +770,19 @@ async fn stop_job(job_id: &str, state: tauri::State<'_, PocketSyncState>) -> Res
 
 fn main() {
     tauri::Builder::default()
-        .plugin(
-            tauri_plugin_log::Builder::default()
-                .targets([LogTarget::LogDir, LogTarget::Stdout, LogTarget::Webview])
-                .level(LevelFilter::Debug)
-                .build(),
-        )
-        .plugin(tauri_plugin_window_state::Builder::default().build())
+        .plugin(tauri_plugin_clipboard_manager::init())
+        .plugin(tauri_plugin_os::init())
+        .plugin(tauri_plugin_http::init())
+        .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_shell::init())
+        // .plugin(
+        //     tauri_plugin_log::Builder::default()
+        //         .targets([LogTarget::LogDir, LogTarget::Stdout, LogTarget::Webview])
+        //         .level(LevelFilter::Debug)
+        //         .build(),
+        // )
+        // .plugin(tauri_plugin_window_state::Builder::default().build())
         .manage(PocketSyncState(Default::default()))
         .invoke_handler(tauri::generate_handler![
             open_pocket,
@@ -824,7 +830,7 @@ fn main() {
 }
 
 fn start_tasks(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
-    let window = &app.get_window("main").unwrap();
+    let window = &app.get_webview_window("main").unwrap();
     {
         let window = window.clone();
         tauri::async_runtime::spawn(async move { start_zip_task(window).await });

@@ -13,7 +13,7 @@ import { Loader } from "../loader"
 import { invokeDeleteFiles, invokeDownloadFirmware } from "../../utils/invokes"
 import { useTranslation } from "react-i18next"
 import { ProgressLoader } from "../loader/progress"
-import { message } from "@tauri-apps/api/dialog"
+import { message } from "@tauri-apps/plugin-dialog"
 
 export const Firmware = () => {
   const currentFirmware = useRecoilValue(currentFirmwareVersionSelector)
@@ -110,7 +110,7 @@ const DownloadButton = ({
       message(
         "Firmware verification failed\n\nTry again or download manually",
         {
-          type: "error",
+          kind: "error",
         }
       )
     }

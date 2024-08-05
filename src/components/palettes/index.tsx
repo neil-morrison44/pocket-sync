@@ -10,7 +10,7 @@ import { Controls } from "../controls"
 import { ControlsButton } from "../controls/inputs/button"
 import { PaletteFull } from "./paletteFull"
 import { ControlsBackButton } from "../controls/inputs/backButton"
-import { writeText } from "@tauri-apps/api/clipboard"
+import { writeText } from "@tauri-apps/plugin-clipboard-manager"
 import { Modal } from "../modal"
 import {
   invokeCopyFiles,

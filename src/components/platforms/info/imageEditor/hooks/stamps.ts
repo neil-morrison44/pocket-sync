@@ -1,5 +1,5 @@
-import { open, OpenDialogOptions } from "@tauri-apps/api/dialog"
-import { readBinaryFile } from "@tauri-apps/api/fs"
+import { open, OpenDialogOptions } from "@tauri-apps/plugin-dialog"
+import { readFile } from "@tauri-apps/plugin-fs"
 import { Dispatch, RefObject, SetStateAction, useCallback } from "react"
 import { useEffect } from "react"
 import { ImageInfo } from "../types"
@@ -10,7 +10,7 @@ export const useSetCurrentImageAsStamp = (
   setImageStamps: Dispatch<SetStateAction<ImageInfo[]>>
 ) => {
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       if (imageStamps.length !== 0) return
       const image = new Image()
       image.src = currentImageSrc
@@ -136,10 +136,15 @@ export const useAddNewImageCallback = (
         },
       ],
     }
-    const imagePath = await open(options)
+    const imageOpen = await open(options)
+
+    if (!imageOpen?.path) return
+
+    const imagePath = imageOpen?.path
 
     if (!imagePath || Array.isArray(imagePath)) return
-    const imageData = await readBinaryFile(imagePath)
+
+    const imageData = await readFile(imagePath)
 
     const [name] = imagePath.split("/").reverse()
     const file = new File([imageData], name)

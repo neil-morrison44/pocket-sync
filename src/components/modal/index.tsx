@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from "react"
-import { WebviewWindow } from "@tauri-apps/api/window"
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow"
 import "./index.css"
 
 type ModalProps = {

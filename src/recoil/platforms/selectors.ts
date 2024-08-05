@@ -9,7 +9,7 @@ import {
 } from "../selectors"
 import * as zip from "@zip.js/zip.js"
 import { renderBinImage } from "../../utils/renderBinImage"
-import { getClient, ResponseType } from "@tauri-apps/api/http"
+import { fetch as tauriFecth } from "@tauri-apps/plugin-http"
 import { readJSONFile } from "../../utils/readJSONFile"
 import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
 
@@ -120,15 +120,16 @@ export const imagePackListSelector = selector<ImagePack[]>({
   key: "imagePackListSelector",
   get: async () => {
     try {
-      const httpClient = await getClient()
-      const response = await httpClient.get<ImagePack[]>(
+      const response = await tauriFecth(
         "https://neil-morrison44.github.io/pocket-sync/image_packs.json",
         {
-          timeout: 30,
-          responseType: ResponseType.JSON,
+          method: "GET",
+          connectTimeout: 30,
         }
       )
-      return response.data
+
+      const packs = (await response.json()) as ImagePack[]
+      return packs
     } catch (err) {
       console.error(err)
       return []

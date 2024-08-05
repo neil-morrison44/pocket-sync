@@ -1,8 +1,8 @@
-import { open } from "@tauri-apps/api/dialog"
+import { open } from "@tauri-apps/plugin-dialog"
 import { useRecoilCallback } from "recoil"
 import { PhotoExportImageSelectorFamily } from "../../../../recoil/saveStates/selectors"
 import { invokeSaveFile } from "../../../../utils/invokes"
-import { open as openFolder } from "@tauri-apps/api/shell"
+import { open as openFolder } from "@tauri-apps/plugin-shell"
 
 export const useExportPhotos = () => {
   return useRecoilCallback(

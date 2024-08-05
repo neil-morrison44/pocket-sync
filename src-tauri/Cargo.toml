@@ -6,12 +6,12 @@ authors = ["neil-morrison44"]
 license = "AGPL-3.0"
 repository = "https://github.com/neil-morrison44/pocket-sync"
 edition = "2021"
-rust-version = "1.67.0"
+rust-version = "1.80.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.1", features = [] }
+tauri-build = { version = "2.0.0-rc", features = [] }
 
 [dependencies]
 async-walkdir = "0.2.0"
@@ -33,34 +33,29 @@ notify-debouncer-full = { version = "0.3.1" }
 num_cpus = "1.16.0"
 openfpga-instance-packager = { git = "https://github.com/neil-morrison44/openfpga-instance-packager", tag = "v0.3.1" }
 rayon = "1.8.0"
-reqwest = { version = "0.11.18", features = ["blocking"] }
+reqwest = { version = "0.11.18", features = ["blocking", "stream"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-tauri = { version = "1.5.2", features = [
-  "clipboard-write-text",
-  "dialog-all",
-  "fs-exists",
-  "fs-read-file",
-  "fs-write-file",
-  "http-request",
-  "os-all",
-  "path-all",
-  "shell-open",
-  "updater",
-] }
-tauri-plugin-window-state = "0.1.0"
+tauri = { version = "2.0.0-rc", features = [] }
+# tauri-plugin-window-state = "0.1.0"
 tempdir = "0.3.7"
 time = "0.3.15"
 tokio = { version = "1.28.2", features = ["macros"] }
 walkdir = "2.3.3"
 zip = { version = "0.6.4", features = ["deflate", "time"] }
-tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+# tauri-plugin-log = { version = "2.0.0-rc.0" }
 log = "^0.4"
 log-panics = { version = "2.1.0", features = ["with-backtrace"] }
 anyhow = "1.0.79"
 bitflags = "2.4.2"
 once_cell = "1.19.0"
 nestify = "0.3.2"
+tauri-plugin-clipboard-manager = "2.1.0-beta.7"
+tauri-plugin-dialog = "2.0.0-rc.0"
+tauri-plugin-fs = "2.0.0-rc.0"
+tauri-plugin-http = "2.0.0-rc.0"
+tauri-plugin-os = "2.0.0-rc.0"
+tauri-plugin-shell = "2.0.0-rc.0"
 
 [dev-dependencies]
 mockito = { version = "1.1.1", default-features = false }

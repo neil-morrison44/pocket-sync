@@ -9,7 +9,7 @@ use std::{
     path::{Path, PathBuf},
     time::Duration,
 };
-use tauri::{Manager, Window};
+use tauri::{Listener, Manager, WebviewWindow};
 use tempdir::TempDir;
 use walkdir::WalkDir;
 use zip::ZipArchive;
@@ -38,12 +38,12 @@ enum ZipStartAction {
     }),
 }
 }
-use tauri::FileDropEvent::Dropped;
-use tauri::WindowEvent::FileDrop;
+use tauri::DragDropEvent::Drop;
+use tauri::WindowEvent::DragDrop;
 
 use self::payloads::{FromRustPayload, FromTSPayload, PathStatus, ZipInstallProgress};
 
-pub async fn start_zip_task(window: Window) -> () {
+pub async fn start_zip_task(window: WebviewWindow) -> () {
     info!("Zip Task Started");
     // Just incase it's a timing issue with the install failing thing
     tokio::time::sleep(Duration::from_millis(200)).await;
@@ -54,7 +54,7 @@ pub async fn start_zip_task(window: Window) -> () {
     {
         let tx = zip_start_tx.clone();
         main_window.on_window_event(move |event| {
-            if let FileDrop(Dropped(paths)) = event {
+            if let DragDrop(Drop { paths, position: _ }) = event {
                 if paths.len() != 0 {
                     tx.try_send(ZipStartAction::FileDrop(paths.clone()))
                         .unwrap();
@@ -67,7 +67,7 @@ pub async fn start_zip_task(window: Window) -> () {
         let tx = zip_start_tx.clone();
         main_window.listen("install-core", move |event| {
             info!("Installing Core Event");
-            let install: InstallInfo = serde_json::from_str(event.payload().unwrap()).unwrap();
+            let install: InstallInfo = serde_json::from_str(event.payload()).unwrap();
             info!("Core - {}", &install.core_name);
             tx.try_send(ZipStartAction::InstallCore(install)).unwrap();
         });
@@ -167,7 +167,7 @@ pub async fn start_zip_task(window: Window) -> () {
 }
 
 async fn process_core_replacements(
-    window: &Window,
+    window: &WebviewWindow,
     pocket_path: &PathBuf,
     new_core: &CoreUpdateDetails,
     previous_cores: &Vec<CoreUpdateDetails>,
@@ -328,7 +328,7 @@ async fn start_zip_install_flow(
     mut archive: ZipArchive<impl std::io::Read + std::io::Seek + std::marker::Send + 'static>,
     titles: Titles,
     pocket_path: PathBuf,
-    window: &Window,
+    window: &WebviewWindow,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let state: tauri::State<PocketSyncState> = window.state();
 

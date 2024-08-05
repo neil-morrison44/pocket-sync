@@ -2,7 +2,7 @@ import { emit, listen } from "@tauri-apps/api/event"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { filterKnownBadFiles } from "../../utils/filterFiles"
 import { FileTreeNode, InstallZipEventPayload } from "./types"
-import { message } from "@tauri-apps/api/dialog"
+import { message } from "@tauri-apps/plugin-dialog"
 import { useRecoilValue } from "recoil"
 import { keepPlatformDataAtom } from "../../recoil/settings/atoms"
 
@@ -25,7 +25,7 @@ export const useListenForZipInstall = () => {
       "install-zip-finished",
       ({ payload }) => {
         if (payload.error)
-          message(payload.error, { title: "Error", type: "error" })
+          message(payload.error, { title: "Error", kind: "error" })
 
         setInstallState(null)
       }

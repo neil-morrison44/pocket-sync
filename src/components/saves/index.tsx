@@ -3,7 +3,7 @@ import { useRecoilValue } from "recoil"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { Controls } from "../controls"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
-import { open } from "@tauri-apps/api/dialog"
+import { open } from "@tauri-apps/plugin-dialog"
 
 import "./index.css"
 import { SavesItem } from "./item"
