@@ -114,14 +114,6 @@
   grid-auto-flow: dense;
 }
 
-.core-info__author-tag {
-  display: inline-flex;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-  image-rendering: pixelated;
-}
-
 .core-info__supports-bubbles {
   display: flex;
   flex-wrap: wrap;

@@ -13,6 +13,7 @@ import { PlatformInfo } from "./info"
 import { PlatformItem } from "./item"
 
 import "./index.css"
+import "../cores/index.css"
 import { selectedSubviewSelector } from "../../recoil/view/selectors"
 import { ImagePacks } from "./imagePacks"
 import { useTranslation } from "react-i18next"

@@ -124,7 +124,7 @@ export const imagePackListSelector = selector<ImagePack[]>({
         "https://neil-morrison44.github.io/pocket-sync/image_packs.json",
         {
           method: "GET",
-          connectTimeout: 30,
+          connectTimeout: 30e3,
         }
       )
 

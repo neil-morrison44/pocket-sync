@@ -121,7 +121,7 @@ const palleteZipBlobSelector = selector<Blob | null>({
 
     const fileResponse = await TauriFetch(zipUrl, {
       method: "GET",
-      connectTimeout: 60,
+      connectTimeout: 60e3,
     })
 
     console.log({ fileResponse })
