@@ -1,0 +1,491 @@
+{
+  "about": {
+    "app_name": "Pocket Sync",
+    "new_firmware": "新しい Pocket ファームウェア v{version} が利用可能です",
+    "update_available": "アップデートが利用可能です! {version}",
+    "sponsor_link": "GitHubで {count, number} 人と一緒にスポンサーになろう"
+  },
+  "app": {
+    "app_name": "Pocket Sync",
+    "connect_button": "Pocket / SD Card に接続",
+    "not_pocket_tip": "このフォルダに Pocket システムファイルが存在しないようです、SD Card を少なくとも一度 Pocket に挿入する必要があります"
+  },
+  "clean_files": {
+    "close_button": "閉じる",
+    "delete_files_button": "ファイルを削除",
+    "files_found": "{count, plural, =0 {消去できるファイルはありません} one {# 個のファイルを消去できます} other {# 個のファイルを消去できます} }",
+    "title": "クリーンアップ"
+  },
+  "update_all": {
+    "title": "すべてをアップデート",
+    "heading": {
+      "update": "アップデート",
+      "required_files": "必要なファイルをインストール",
+      "platform_files": "プラットフォームファイルを置き換え"
+    },
+    "buttons": {
+      "update": "{count, plural, =0 {なし} one {# 選択されたコアをアップデート} other {# 個の選択されたコアをアップデート} }",
+      "close": "閉じる"
+    },
+    "update": {
+      "title": "{coreName} をアップデート中: { step, select, core { コアをアップデート中... } files { 必要なファイルをダウンロード中... } filecheck { ファイルを確認中... } other { on no } }"
+    },
+    "no_updates_found": "インストール済みのコアに適用できるアップデートを見つかりませんでした"
+  },
+  "core_info": {
+    "author": "作者",
+    "controls": {
+      "back": "リストに戻る",
+      "install": "インストール",
+      "required_files": "必要なファイル",
+      "uninstall": "アンインストール",
+      "update": "アップデート"
+    },
+    "inputs": "Inputs",
+    "modal": {
+      "close": "閉じる",
+      "input_core": "コア",
+      "no_settings_found": "設定ファイルが見つかりません!",
+      "reset_all": "すべてをリセット"
+    },
+    "analogizer": "このコアは <1>Analogizer-FPGA</1> をサポートしています",
+    "requires_license": {
+      "all": "注意 - このコアを実行するにはライセンスファイルが必要です",
+      "jotego": "JOTEGO betas を実行するには JTBETA ライセンスファイルが必要です、JOTEGO の Patreon ページから手に入れることができます。\n手に入れたら jtbeta.zip を SD Card のルートに配置してください。「必要なファイル」を実行するとシステムが適切な場所にコピーします。"
+    },
+    "firmware_too_low": "このコアにはファームウェア v{core_firmware} が必要です、現在インストールされているバージョンは v{pocket_firmware} です",
+    "not_in_inventory": "{coreName} はインベントリにありません",
+    "platform": {
+      "edit": "編集",
+      "wikipedia": "Wikipedia"
+    },
+    "replaced": "このコアは <1>{replacementCore}</1> に置き換えられました",
+    "platforms": "プラットフォーム",
+    "release_date": "リリース日",
+    "releases": {
+      "release_history": "履歴",
+      "show_previous": "過去のバージョンを表示"
+    },
+    "required_files": "必要なファイル",
+    "required_files_count": "{count} / {total} ファイル",
+    "settings": "Settings",
+    "sponsor": "スポンサー",
+    "download_count": "Downloads",
+    "download_latest": "{count, number, long} for v{tag}",
+    "download_total": "{count, number, long} 全てのバージョン",
+    "download_bar_title": "{release}\n{count, number, long} downloads\n最新バージョンとして{days, number, long} 日間",
+    "supports": "サポート",
+    "supports_items": {
+      "cartridges": "カートリッジ",
+      "dock": "Dock",
+      "dock_dac": "Dock (Analog)",
+      "save_states_and_sleep": "セーブステート / スリープ"
+    },
+    "url": "URL",
+    "version": "バージョン",
+    "display_modes_title": "Display Modes",
+    "display_mode_warning": "この Display Mode を適用するにはコアのアップデートが必要です、それでも有効にしますか？"
+  },
+  "core_info_required_files": {
+    "close": "閉じる",
+    "download_all": "すべてをダウンロード",
+    "no_link_tip": "必要なファイルのオプションについては、Settings 画面より確認してください",
+    "skip_alternates_label": "代替ファイルをスキップ",
+    "title": "必要なファイル",
+    "file_status": {
+      "needs_update_from_archive": "アップデート可能",
+      "missing_but_on_archive": "ダウンロード可能",
+      "not_found": "archive にありません",
+      "exists": "ダウンロード済み",
+      "not_checked": "不明",
+      "found_at_root": "ファイル確認。ルートに配置されています",
+      "root_needs_update": "ファイル不一致。ルートを確認してください"
+    }
+  },
+  "cores": {
+    "controls": {
+      "category": "カテゴリ",
+      "sort": "ソード",
+      "refresh": "更新",
+      "search": "検索",
+      "updatable": "アップデート可能",
+      "update_all": "すべてをアップデート",
+      "filters_group": "フィルタ",
+      "sort_options": {
+        "name": "名前",
+        "last_update": "最新アップデート"
+      }
+    },
+    "install_tip": "コア（またはその他の ZIP ファイル）をこのウィンドウにドラッグしてインストールすることもできます",
+    "installed": "インストール済み ({count})",
+    "not_installed": "利用可能 ({count})"
+  },
+  "error": {
+    "report": "GitHubでエラーを報告できます。報告する際は以下のテキストと直前のアクションを含めてください",
+    "retry": "再試行",
+    "title": "エラー"
+  },
+  "fetch": {
+    "controls": {
+      "add_fetch_item": "同期項目を追加",
+      "refresh": "更新"
+    },
+    "fetch_button": "同期",
+    "file_count": "{count} / {total, plural, one {# ファイル} other {# ファイル}}",
+    "loading": "読み込み中...",
+    "new": {
+      "add_extension": "追加",
+      "add_fetch": "同期項目を追加",
+      "archive_name": "ソース: <i>https://archive.org/details/[this bit here]</i>",
+      "archive_tip": "この設定はファイルがzip形式のアーカイブでは機能しません。メタデータファイルのダウンロードを避けるため、拡張子を確認してください。",
+      "close": "閉じる",
+      "destination": "保存先",
+      "extensions": "拡張子を限定:",
+      "origin": "ソースフォルダ",
+      "title": "新規同期項目",
+      "validating_archive_name": "archive {name} を確認中...",
+      "invalid_archive_name": "https://archive.org/details/{name} に archive を見つかりませんでした"
+    },
+    "remove_button": "削除",
+    "remove_confirm": "この操作は同期設定を削除しますが、ファイルは削除されません。実行しますか？",
+    "types": {
+      "archive_org": "archive.org ファイル",
+      "filesystem": "ローカルファイル"
+    }
+  },
+  "firmware": {
+    "current": "使用中のファームウェア: v{version}",
+    "downloading_firmware": "ファームウェアをダウンロード中...",
+    "load_firmware": "SD Card に書き込む",
+    "loaded_firmware": "ファームウェア {version} が SD Card に配置されています",
+    "loaded_firmware_info": "Pocket に挿入し、電源を入れるとインストールされます",
+    "no_firmware_loaded": "SD Card にインストール待ちのファームウェアファイルがありません",
+    "options": {
+      "latest": "v{version} (最新)",
+      "older": "v{version} ({date, date, short})",
+      "previous_versions": "以前のバージョン"
+    },
+    "release_notes": {
+      "from": "提供元 ",
+      "title": "v{version} リリースノート:"
+    },
+    "remove_button": "削除"
+  },
+  "games": {
+    "controls": {
+      "category": "カテゴリ",
+      "clean_files": "クリーンアップ",
+      "instance_json": "Instance JSON",
+      "refresh": "更新",
+      "search": "検索"
+    },
+    "item": {
+      "game_count": "{count, plural, =0 {ゲームなし} one {# 個のゲーム} other {# 個のゲーム}}"
+    }
+  },
+  "image_editor": {
+    "cancel": "キャンセル",
+    "import_image": "画像をインポート",
+    "remove": "削除",
+    "reset": "リセット",
+    "rotate": "回転",
+    "save": "保存",
+    "scale": "スケール"
+  },
+  "instance_json": {
+    "available_for": "以下のコアは自動的にinstance.jsonファイルを作成できます:",
+    "close_button": "閉じる",
+    "skipped_file": "{file_name} をスキップしました",
+    "title": "Instance JSON作成",
+    "wrote_file": "{file_name} を書き込みました"
+  },
+  "layout": {
+    "cores": "コア",
+    "fetch": "Fetch",
+    "firmware": "Firmware",
+    "palettes": "Palettes",
+    "games": "Games",
+    "platforms": "Platforms",
+    "pocket_sync": "Pocket Sync",
+    "save_states": "Save States",
+    "saves": "Saves",
+    "screenshots": "Screenshots",
+    "settings": "Settings"
+  },
+  "palettes": {
+    "buttons": {
+      "add_via_code": "コードで追加",
+      "new": "新規パレット",
+      "back": "リストに戻る",
+      "palette_town": "パレットギャラリー"
+    },
+    "town": {
+      "title": "パレットギャラリー",
+      "repo_link": "<1>github.com/{repo}</1> からのパレット",
+      "close": "閉じる"
+    },
+    "item": {
+      "duplicate": "複製",
+      "rename": "名称変更",
+      "copy_code": "共有コードをコピー",
+      "delete": "削除"
+    },
+    "add_via_code": {
+      "title": "共有コードで追加",
+      "cancel": "キャンセル",
+      "add": "追加"
+    },
+    "full": {
+      "inputs": {
+        "background": "背景",
+        "obj0": "Obj0",
+        "obj1": "Obj1",
+        "window": "window",
+        "off": "LCD オフ"
+      },
+      "save": "保存",
+      "reset": "リセット",
+      "emu_credit": "GB エミュレータは <1>roblouie/gameboy-emulator</1> をもとに作成されています"
+    }
+  },
+  "mister_sync": {
+    "controls": {
+      "back": "終了",
+      "search": "セーブを検索",
+      "save_mapping": "マッピングを保存"
+    },
+    "login": {
+      "connect": "接続",
+      "host": "Host / IP Address:",
+      "password": "Password:",
+      "username": "Username:"
+    },
+    "mister": "MiSTer",
+    "not_found": "見つかりませんでした",
+    "pocket": "Pocket",
+    "tip_1": "MiSTer で FTP を有効にする必要があります",
+    "tip_2": "転送する前に、セーブが Pocket と MiSTer 間で互換性があることを確認してください",
+    "tip_3": "セーブを見つけるには、ゲームのファイル名が Pocket と MiSTer で完全に一致している必要があります",
+    "unsupported": "{platform} がサポートされていません",
+    "mapping": {
+      "close": "閉じる",
+      "clear": "クリア",
+      "reset": "初期値にリセット"
+    }
+  },
+  "news_feed": {
+    "last_updated": "最新アップデート",
+    "updates_from": "<1>OpenFPGA Cores Inventory</1> からの最新情報"
+  },
+  "platform_info": {
+    "controls": {
+      "back": "リストに戻る",
+      "data_packs": "データパック",
+      "image_packs": "イメージパック"
+    },
+    "cores": "コア",
+    "edit": "編集"
+  },
+  "platforms": {
+    "cancel": "キャンセル",
+    "controls": {
+      "data_packs": "データパック",
+      "remove_coreless": "コアがない項目を削除",
+      "image_packs": "イメージパック",
+      "search": "検索"
+    },
+    "data_packs": {
+      "apply_changes": "{count, plural, =0 {変更なし} one {1 件の変更を適用} other {# 件の変更を適用}}",
+      "close": "閉じる",
+      "current": "既存"
+    },
+    "delete_unused": "{count, plural, one {# 個の未使用プラットフォーム} other {# 個の未使用プラットフォーム}}を削除しますか？",
+    "edit": "編集",
+    "image_packs": {
+      "apply_changes": "{count, plural, =0 {変更なし} one {1 件の変更を適用} other {# 件の変更を適用}}",
+      "close": "閉じる",
+      "current": "既存"
+    },
+    "save": "保存"
+  },
+  "progress": {
+    "remaining_time": "残り時間: 約 {remainingTime}"
+  },
+  "save_info": {
+    "confirm_restore": "バックアップから復元しますか？",
+    "controls": {
+      "back": "リストに戻る",
+      "hide_unchanged": "変更なしの項目を非表示",
+      "search": "検索"
+    },
+    "current": "既存",
+    "date": "{date, date, short}",
+    "newer": "新しい",
+    "older": "古い",
+    "time": "{date, time, short}"
+  },
+  "save_states": {
+    "cartridge": "カートリッジ",
+    "confirm_delete": "{count, plural, =0 {セーブステートがありません} one {1 個のセーブステートを削除します} other {# 個のセーブステートを削除します}}、よろしいですか？",
+    "controls": {
+      "clear_selection": "選択をクリア",
+      "delete_selection": "選択項目を削除 ({count})",
+      "search": "検索"
+    },
+    "count": "( {count} / 128 )",
+    "item": {
+      "date": "{date, date, long}",
+      "time": "{date, time, short}"
+    },
+    "photos": {
+      "title": "画像エクスポート",
+      "palette": "パレット",
+      "custom": "カスタム",
+      "close": "閉じる",
+      "export_selected": "選択項目をエクスポート",
+      "export_all": "すべてをエクスポート",
+      "colours": {
+        "gb": "GB",
+        "gb_player": "GB Player",
+        "black_and_white": "Black & White"
+      }
+    }
+  },
+  "saves": {
+    "backups": "バックアップ: {count}",
+    "confirm_delete": "このバックアップ保存先を削除してもよろしいですか？",
+    "controls": {
+      "add_backup_location": "バックアップの保存先を追加",
+      "mister_sync": "MiSTer Sync"
+    },
+    "latest_backup": "最新バックアップ: {date, date, long}, {date, time, short}",
+    "none": "上のバックアップ保存先を追加",
+    "not_found": "見つかりませんでした",
+    "oldest_backup": "最古のバックアップ: {date, date, long}, {date, time, short}",
+    "remove": "保存先を削除",
+    "view_saves": "セーブを表示"
+  },
+  "screenshot_info": {
+    "controls": {
+      "back": "リストに戻る",
+      "save": "保存",
+      "share": "共有",
+      "upscaled": "超解像"
+    }
+  },
+  "screenshots": {
+    "controls": {
+      "delete_selected": "選択項目を削除 ({count})",
+      "export_selected": "選択項目をエクスポート ({count})",
+      "search": "検索",
+      "select": "選択"
+    },
+    "no_screenshots": "スクリーンショットを保存すると、ここに表示されます"
+  },
+  "settings": {
+    "3d_pocket": {
+      "title": "Pocket Color:",
+      "colours": {
+        "black": "Black",
+        "white": "White",
+        "glow": "Glow in the Dark",
+        "trans_clear": "Clear",
+        "trans_smoke": "Smoke",
+        "trans_blue": "Blue",
+        "trans_green": "Green",
+        "trans_orange": "Orange",
+        "trans_purple": "Purple",
+        "trans_red": "Red",
+        "indigo": "Indigo",
+        "red": "Red",
+        "green": "Green",
+        "blue": "Blue",
+        "yellow": "Yellow",
+        "pink": "Pink",
+        "orange": "Orange",
+        "silver": "Silver",
+        "aluminium_natural": "Natural",
+        "aluminium_indigo": "Indigo"
+      },
+      "classic_label": "Classic",
+      "transparent_label": "Transparent",
+      "aluminium_label": "Aluminium",
+      "body_label": "Body",
+      "buttons_label": "Buttons",
+      "match_body": "Match Body"
+    },
+    "alternate_skip": {
+      "checkbox": "代替アセットをスキップ",
+      "ramble_1": "この設定は「_alternatives」フォルダ内の JSON ファイルの処理をスキップします。\nこれにより、優先的なコアリソースのみが処理されるようになります。",
+      "ramble_2": "<b>注意:</b> これをオフにすると、必須ファイルのインストールに<b>かなり</b>時間がかかります。",
+      "title": "代替アセットをスキップ"
+    },
+    "language": {
+      "title": "言語"
+    },
+    "archive": {
+      "save": "保存",
+      "title": "ROM & BIOS アーカイブ (必要なファイル)",
+      "warning": "著作権で保護されている可能性のある（アーケード）ROM & BIOSファイルのダウンロードについて、お住いの地域の法律を確認してください。\nこれに同意する場合のみ、以下のURLを入力欄にコピーして「保存」をクリックしてください。"
+    },
+    "clear_file_cache": {
+      "button": "キャッシュをクリア",
+      "ramble": "USB & SD Card の転送品質も保つため、大きなファイルはPCのファイルシステムに一時的にコピー＆保存されます。\n問題が発生した場合はキャッシュをクリアしてみてください。",
+      "title": "キャッシュをクリア"
+    },
+    "disconnect": {
+      "button": "切断",
+      "ramble": "「Pocketに接続」画面に戻ります (これにより SD Card / USB ドライブがファイルシステムより取り出されることはありません)",
+      "title": "切断"
+    },
+    "reconnect": {
+      "checkbox": "開いたときに再接続",
+      "ramble": "アプリを開くときに、「Pocketに接続」画面をスキップして最後に開いたフォルダ <1> { ppath } </1> への再接続を試みます。",
+      "title": "開いたときに再接続"
+    },
+    "keep_platform_data": {
+      "checkbox": "既存のプラットフォームファイルを保持",
+      "ramble": "これの設定により、「すべてをアップデート」と各コアのアップデートで、既存のプラットフォームファイルを更新しないように変更されます。設定をカスタマイズしている場合はオンにしてください。",
+      "title": "アップデート時にプラットフォームファイルを置き換えない"
+    },
+    "turbo_downloads": {
+      "checkbox": "高速ダウンロードを有効化",
+      "ramble": "この設定を有効にすると、ダウンロードする際にアーカイブからのファイルを小さなブロックに分割します。これらのブロックは並行してダウンロードされ、最大8倍の高速化が可能です。ただし、この方法ではより多くの帯域幅を消費し、信頼性も低下する可能性があります。有効にする場合は、<1>archive.orgのサポート</1>をご検討ください。",
+      "title": "高速ダウンロードを有効化"
+    },
+    "logs": {
+      "title": "ログ",
+      "button": "ログフォルダを開く"
+    },
+    "thanks": "Thanks to:"
+  },
+  "time_ago": {
+    "less_than_1_min_ago": "1 分以内"
+  },
+  "uninstall_core": {
+    "confirm_text": "この操作によりコアは削除されますが、ゲーム、セーブ、ライブラリデータ、プラットフォーム情報は削除されません。よろしいですか？",
+    "confirm_title": "コアをアンインストール"
+  },
+  "zip_install": {
+    "cancel_button": "キャンセル",
+    "confirm_button": "確認",
+    "remove_duplicate": "重複するファイルを削除",
+    "scanning": "ファイルをスキャン中...",
+    "moved_files_info": "ファイルが移動された場合（例：JSON ファイルが「_alternatives」に移動）の処理を行う",
+    "replace": {
+      "ok": "許可",
+      "cancel": "スキップ",
+      "text": "{list}\\n\\nアセット、セーブなどのファイルが移動され、古いコアは削除されます。",
+      "title": "コアを置き換えますか？"
+    }
+  },
+  "version": {
+    "update_alt": "アップデート {version} が利用可能です",
+    "replaced_alt": "置き換えコア {core} が利用可能です",
+    "replaced": "置き換え済み"
+  },
+  "jobs": {
+    "Running": "キャンセル",
+    "Stopping": "キャンセル中..."
+  }
+}

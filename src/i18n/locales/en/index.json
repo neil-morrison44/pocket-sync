@@ -427,9 +427,9 @@
         "orange": "Orange",
         "silver": "Silver",
         "aluminium_natural": "Natural",
+        "aluminium_indigo": "Indigo",
         "aluminium_noir": "Noir",
-        "aluminium_black": "Black",
-        "aluminium_indigo": "Indigo"
+        "aluminium_black": "Black"
       },
       "classic_label": "Classic",
       "transparent_label": "Transparent",
