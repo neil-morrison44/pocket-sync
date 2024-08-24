@@ -1,13 +1,13 @@
 {
   "$schema": "https://inlang.com/schema/project-settings",
-  "sourceLanguageTag": "ja",
+  "sourceLanguageTag": "en",
   "languageTags": [
-    "ja",
-    "de",
     "en",
+    "de",
     "en-US",
     "es",
     "fr",
+    "ja",
     "pt",
     "zh"
   ],
