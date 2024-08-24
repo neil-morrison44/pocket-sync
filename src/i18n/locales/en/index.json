@@ -445,8 +445,8 @@
       "title": "Skip Alternate Assets"
     },
     "language": {
-      "checkbox": "Always use English (US)",
-      "title": "Language"
+      "title": "Language",
+      "checkbox": "Always use English (US)"
     },
     "archive": {
       "save": "Save",

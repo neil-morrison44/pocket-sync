@@ -438,8 +438,8 @@
       "title": "Ignorar Ativos Alternativos"
     },
     "language": {
-      "checkbox": "Sempre usar Inglês (EUA)",
-      "title": "Idioma"
+      "title": "Idioma",
+      "checkbox": "Sempre usar Inglês (EUA)"
     },
     "archive": {
       "save": "Guardar",

@@ -200,7 +200,7 @@
     "wrote_file": "{file_name} を書き込みました"
   },
   "layout": {
-    "cores": "コア",
+    "cores": "Cores",
     "fetch": "Fetch",
     "firmware": "Firmware",
     "palettes": "Palettes",
