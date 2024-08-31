@@ -13,6 +13,8 @@ import { AUTHOUR_IMAGE } from "../values"
 import { readJSONFile } from "../utils/readJSONFile"
 import { path } from "@tauri-apps/api"
 import { FileWatchAtomFamily, FolderWatchAtomFamily } from "./fileSystem/atoms"
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow"
+import { getCurrentWindow, Window } from "@tauri-apps/api/window"
 
 export const DataJSONSelectorFamily = selectorFamily<DataJSON, string>({
   key: "DataJSONSelectorFamily",
@@ -176,4 +178,9 @@ export const CleanableFilesSelectorFamily = selectorFamily<string[], string>({
 export const homeDirSelector = selector<string>({
   key: "homeDirSelector",
   get: () => path.homeDir(),
+})
+
+export const mainWindowSelector = selector<Window>({
+  key: "mainWindowSelector",
+  get: async () => await getCurrentWindow(),
 })

@@ -770,6 +770,7 @@ async fn stop_job(job_id: &str, state: tauri::State<'_, PocketSyncState>) -> Res
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_http::init())

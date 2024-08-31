@@ -62,6 +62,7 @@
     "clipboard-manager:default",
     "log:default",
     "window-state:allow-restore-state",
-    "window-state:allow-save-window-state"
+    "window-state:allow-save-window-state",
+    "updater:default"
   ]
 }
