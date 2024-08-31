@@ -28,7 +28,7 @@
       "close": "Schließen"
     },
     "update": {
-      "title": "Aktualisiere {coreName}: { step, select, core { Kern aktualisieren... } files { erforderliche Dateien herunterladen... } filecheck { dateien werden überprüft... } other {on no} }"
+      "title": "Aktualisiere {coreName}: { step, select, core { Kern aktualisieren... } files { erforderliche Dateien herunterladen... } filecheck { Dateien werden überprüft... } other {on no} }"
     },
     "no_updates_found": "Keine Aktualisierung für installierte Kerne gefunden"
   },
@@ -51,10 +51,10 @@
     "analogizer": "Dieser Kern unterstützt den <1>Analogizer-FPGA</1>",
     "requires_license": {
       "all": "Warnung, dieser Kern benötigt eine Lizenzdatei zur Ausführung.",
-      "jotego": "Die JOTEGO-Betas benötigen eine JTBETA-Datei aus Patreon in der Unterstützersektion unten.\nDie jtbeta.zip muss im Wurzelverzeichnis der SD-Karte abgelegt werden, damit sie während des „Benötigte Dateien“-Prozesses gefunden und an den richtigen Ort kopiert wird."
+      "jotego": "Die JOTEGO-Betas benötigen eine JTBETA-Datei von Patreon in der Unterstützersektion unten.\nDie jtbeta.zip muss im Wurzelverzeichnis der SD-Karte abgelegt werden, damit sie während des „Benötigte Dateien“-Prozesses gefunden und an den richtigen Ort kopiert wird."
     },
     "firmware_too_low": "Dieser Kern benötigt Firmware v{core_firmware}. Die derzeit installierte Version ist v{pocket_firmware}",
-    "not_in_inventory": "{coreName} nich im Inventar",
+    "not_in_inventory": "{coreName} nicht im Inventar",
     "platform": {
       "edit": "Bearbeiten",
       "wikipedia": "Wikipedia"
@@ -343,7 +343,7 @@
   },
   "save_states": {
     "cartridge": "Modul",
-    "confirm_delete": "Sind sie sicher, dass sie {count, plural, =0 {keine Speicherstände} one {einen Speicherstand} other {# Speicherstände}} löschen möchten?",
+    "confirm_delete": "Sind Sie sicher, dass sie {count, plural, =0 {keine Speicherstände} one {einen Speicherstand} other {# Speicherstände}} löschen möchten?",
     "controls": {
       "clear_selection": "Auswahl aufheben",
       "delete_selection": "Ausgewählte löschen ({count})",
@@ -392,12 +392,12 @@
   },
   "screenshots": {
     "controls": {
-      "delete_selected": "Ausgewählte löschen ({count})",
-      "export_selected": "Ausgewählte exportieren ({count})",
+      "delete_selected": "Auswahl löschen ({count})",
+      "export_selected": "Auswahl exportieren ({count})",
       "search": "Suchen",
       "select": "Auswählen"
     },
-    "no_screenshots": "Sobald Sie Screenshots erstellen, erscheinen diese hier"
+    "no_screenshots": "Sobald Sie Bildschirmfotos erstellen, erscheinen diese hier"
   },
   "settings": {
     "3d_pocket": {
@@ -444,7 +444,7 @@
     "archive": {
       "save": "Speichern",
       "title": "ROM & BIOS-Archiv (Benötigte Dateien)",
-      "warning": "Bitte überprüfen Sie ihre lokalen Gesetzt bezüglich des Herunterladens von möglicherweise urheberrechtlich geschützten (Arcade-) ROM & BIOS-Dateien.\nFalls das für Sie in Ordnung ist, kopieren Sie die folgende URL in die Eingabe und klicken Sie „Speichern“."
+      "warning": "Bitte überprüfen Sie ihre lokalen Gesetze bezüglich des Herunterladens von möglicherweise urheberrechtlich geschützten (Arcade-) ROM & BIOS-Dateien.\nFalls das für Sie in Ordnung ist, kopieren Sie die folgende URL in die Eingabe und klicken Sie „Speichern“."
     },
     "clear_file_cache": {
       "button": "Dateicache leeren",
@@ -481,7 +481,7 @@
     "less_than_1_min_ago": "vor weniger als einer Minute"
   },
   "uninstall_core": {
-    "confirm_text": "Dies wird den Kern entfernen, aber keine Spiele, Spielstände, Bibliothekdaten oder Platforminformationen. Sind Sie sicher?",
+    "confirm_text": "Dies entfernt nur den Kern. Spiele, Spielstände, Bibliothek-Daten oder Plattforminformationen werden nicht entfernt. Sind Sie sicher?",
     "confirm_title": "Kern deinstallieren"
   },
   "zip_install": {
@@ -503,7 +503,7 @@
     "replaced": "Ersetzt"
   },
   "jobs": {
-    "Running": "Stornieren",
-    "Stopping": "Abbrechen..."
+    "Running": "Abbrechen",
+    "Stopping": "Breche ab..."
   }
 }
