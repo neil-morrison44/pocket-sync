@@ -100,7 +100,15 @@
       "original_gba_sp_101": "Original GBA SP 101",
       "original_gg": "Original GG",
       "original_gg_plus": "Original GG+",
-      "pinball_neon_matrix": "Pinball Neon Matrix"
+      "original_ngp": "Original NGP",
+      "original_ngpc": "Original NGPC",
+      "original_ngpc_plus": "Original NGPC+",
+      "turboexpress": "TurboExpress",
+      "pc_engine_lt": "PC Engine LT",
+      "original_lynx": "Original Lynx",
+      "original_lynx_plus": "Original Lynx+",
+      "pinball_neon_matrix": "Pinball Neon Matrix",
+      "vacuum_fluorescent": "Vacuum Fluorescent"
     }
   },
   "core_info_required_files": {

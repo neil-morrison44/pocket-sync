@@ -28,7 +28,15 @@ const DISPLAY_MODES = {
   original_gba_sp_101: { id: 0x42, requiresCoreResponse: false },
   original_gg: { id: 0x51, requiresCoreResponse: false },
   original_gg_plus: { id: 0x52, requiresCoreResponse: false },
+  original_ngp: { id: 0x61, requiresCoreResponse: false },
+  original_ngpc: { id: 0x62, requiresCoreResponse: false },
+  original_ngpc_plus: { id: 0x63, requiresCoreResponse: false },
+  turboexpress: { id: 0x71, requiresCoreResponse: false },
+  pc_engine_lt: { id: 0x72, requiresCoreResponse: false },
+  original_lynx: { id: 0x81, requiresCoreResponse: false },
+  original_lynx_plus: { id: 0x82, requiresCoreResponse: false },
   pinball_neon_matrix: { id: 0xe0, requiresCoreResponse: false },
+  vacuum_fluorescent: { id: 0xe1, requiresCoreResponse: false },
 }
 
 export const DisplayModes = ({ coreName }: DisplayModesProps) => {
