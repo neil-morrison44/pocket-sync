@@ -438,8 +438,8 @@
       "title": "Alternative Assets überspringen"
     },
     "language": {
-      "checkbox": "Immer Englisch (US) verwenden",
-      "title": "Sprache"
+      "title": "Sprache",
+      "checkbox": "Immer Englisch (US) verwenden"
     },
     "archive": {
       "save": "Speichern",

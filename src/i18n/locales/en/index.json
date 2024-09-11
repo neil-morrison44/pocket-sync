@@ -427,9 +427,9 @@
         "orange": "Orange",
         "silver": "Silver",
         "aluminium_natural": "Natural",
+        "aluminium_indigo": "Indigo",
         "aluminium_noir": "Noir",
-        "aluminium_black": "Black",
-        "aluminium_indigo": "Indigo"
+        "aluminium_black": "Black"
       },
       "classic_label": "Classic",
       "transparent_label": "Transparent",
@@ -445,8 +445,8 @@
       "title": "Skip Alternate Assets"
     },
     "language": {
-      "checkbox": "Always use English (US)",
-      "title": "Language"
+      "title": "Language",
+      "checkbox": "Always use English (US)"
     },
     "archive": {
       "save": "Save",

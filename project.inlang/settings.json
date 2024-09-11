@@ -1,7 +1,16 @@
 {
   "$schema": "https://inlang.com/schema/project-settings",
   "sourceLanguageTag": "en",
-  "languageTags": ["en", "en-US", "es", "zh", "de", "fr", "pt"],
+  "languageTags": [
+    "en",
+    "de",
+    "en-US",
+    "es",
+    "fr",
+    "ja",
+    "pt",
+    "zh"
+  ],
   "modules": [
     "https://cdn.jsdelivr.net/npm/@inlang/plugin-i18next@4/dist/index.js",
     "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-empty-pattern@latest/dist/index.js",
@@ -10,6 +19,10 @@
     "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-without-source@latest/dist/index.js"
   ],
   "plugin.inlang.i18next": {
-    "pathPattern": "./src/i18n/locales/{languageTag}/index.json"
+    "pathPattern": "./src/i18n/locales/{languageTag}/index.json",
+    "variableReferencePattern": [
+      "{{",
+      "}}"
+    ]
   }
 }

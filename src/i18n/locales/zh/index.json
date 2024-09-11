@@ -420,6 +420,9 @@
       "ramble_2": "<b>警告:</b> 关闭此选项可能导致安装时间<b>显著延长</b> ",
       "title": "跳过可选资源"
     },
+    "language": {
+      "title": "语言"
+    },
     "archive": {
       "save": "保存",
       "title": "游戏ROM & BIOS 资料库 (必要文件)",
