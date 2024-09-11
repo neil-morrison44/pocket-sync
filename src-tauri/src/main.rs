@@ -70,10 +70,12 @@ async fn open_pocket(
 ) -> Result<Option<String>, ()> {
     debug!("Command: open_pocket");
 
-    if let Some(pocket_path) = app_handle.dialog().file().blocking_pick_folder() {
+    if let Some(tauri_plugin_dialog::FilePath::Path(pocket_path)) =
+        app_handle.dialog().file().blocking_pick_folder()
+    {
         open_pocket_folder(state, &pocket_path.to_str().unwrap(), app_handle).await
     } else {
-        Err(())
+        Ok(None)
     }
 }
 
