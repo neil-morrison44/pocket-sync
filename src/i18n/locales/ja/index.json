@@ -405,7 +405,12 @@
         "orange": "Orange",
         "silver": "Silver",
         "aluminium_natural": "Natural",
-        "aluminium_indigo": "Indigo"
+        "aluminium_indigo": "Indigo",
+        "gbc_dandelion": "タンポポ",
+        "gbc_teal": "ティール",
+        "gbc_grape": "グレープ",
+        "gbc_berry": "ベリー",
+        "gbc_gold": "金"
       },
       "classic_label": "Classic",
       "transparent_label": "Transparent",

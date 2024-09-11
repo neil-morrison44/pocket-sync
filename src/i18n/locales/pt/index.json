@@ -430,7 +430,12 @@
         "orange": "Laranja",
         "silver": "Prateado",
         "aluminium_natural": "Natural",
-        "aluminium_indigo": "Índigo"
+        "aluminium_indigo": "Índigo",
+        "gbc_dandelion": "Dente-de-leão",
+        "gbc_teal": "Cerceta",
+        "gbc_grape": "Uva",
+        "gbc_berry": "Baga",
+        "gbc_gold": "Ouro"
       },
       "classic_label": "Clássico",
       "transparent_label": "Transparente",

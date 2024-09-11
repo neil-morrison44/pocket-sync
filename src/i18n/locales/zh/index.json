@@ -405,7 +405,12 @@
         "orange": "橙色",
         "silver": "银色",
         "aluminium_natural": "自然",
-        "aluminium_indigo": "靛青"
+        "aluminium_indigo": "靛青",
+        "gbc_dandelion": "蒲公英",
+        "gbc_teal": "深青色",
+        "gbc_grape": "葡萄",
+        "gbc_berry": "浆果",
+        "gbc_gold": "金子"
       },
       "classic_label": "经典",
       "transparent_label": "透明",

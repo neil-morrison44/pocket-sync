@@ -357,7 +357,12 @@
         "pink": "Rose",
         "silver": "Argent",
         "aluminium_natural": "Naturel",
-        "aluminium_indigo": "Indigo"
+        "aluminium_indigo": "Indigo",
+        "gbc_dandelion": "Pissenlit",
+        "gbc_teal": "Sarcelle",
+        "gbc_grape": "Raisin",
+        "gbc_berry": "Baie",
+        "gbc_gold": "Or"
       },
       "aluminium_label": "Aluminium",
       "body_label": "Corps",
