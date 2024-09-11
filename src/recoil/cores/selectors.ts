@@ -79,7 +79,7 @@ export const JT_ANALOGIZER_SNAC_OPTIONS: [number, JTCrtConfig["snac"]][] = [
   [0x01, "DB15 Normal"],
   [0x02, "NES"],
   [0x03, "SNES"],
-  [0x04, "PCE 2BTN/6BTN"],
+  [0x05, "PCE 2BTN/6BTN"],
   [0x06, "PCE Multitap"],
 ] as const
 

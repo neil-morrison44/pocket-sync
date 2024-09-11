@@ -49,6 +49,12 @@ const ALL_COLOURS: PocketColour[] = [
   "aluminium_noir",
   "aluminium_black",
   "aluminium_indigo",
+  "gbc_kiwi",
+  "gbc_dandelion",
+  "gbc_teal",
+  "gbc_grape",
+  "gbc_berry",
+  "gbc_gold",
 ]
 
 export const ColourContextProviderRandomised = ({
