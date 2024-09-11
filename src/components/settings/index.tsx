@@ -293,6 +293,19 @@ const ColoursList = () => {
           i18nPrefix="3d_pocket.colours"
         />
       </optgroup>
+      <optgroup label={t("3d_pocket.gbc_label")}>
+        <OptionsList
+          values={[
+            "gbc_kiwi",
+            "gbc_dandelion",
+            "gbc_teal",
+            "gbc_grape",
+            "gbc_berry",
+            "gbc_gold",
+          ]}
+          i18nPrefix="3d_pocket.colours"
+        />
+      </optgroup>
     </>
   )
 }
