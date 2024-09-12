@@ -1,7 +1,7 @@
 {
   "name": "pocket-sync",
   "private": true,
-  "version": "4.12.0",
+  "version": "4.12.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -26,6 +26,7 @@
     "html-react-parser": "^5.1.8",
     "i18next": "^23.10.1",
     "i18next-icu": "^2.3.0",
+    "mdast-util-gfm-autolink-literal": "^2.0.0",
     "postprocessing": "^6.35.2",
     "r3f-perf": "^7.1.2",
     "react": "^18.2.0",
