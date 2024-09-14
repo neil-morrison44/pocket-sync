@@ -182,7 +182,7 @@ pub async fn start_mister_save_sync_session(
                                     window.emit("mister-save-sync-platform-list", platform_list).unwrap();
                                 },
                                 Ok(OutboundMessage::FoundSave(mister_save_info)) => {
-                                    println!("Emmiting save");
+                                    println!("Emitting save");
                                     window.emit("mister-save-sync-found-save", mister_save_info).unwrap();
                                 },
                                 Ok(OutboundMessage::MovedSave(transfer)) => {
