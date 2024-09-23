@@ -286,7 +286,7 @@
     },
     "login": {
       "connect": "Connect",
-      "host": "Máy chủ / Địa chỉ IP:",
+      "host": "Host / IP Address:",
       "password": "Password:",
       "username": "Username:"
     },
