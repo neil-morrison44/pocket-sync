@@ -286,7 +286,7 @@
     },
     "login": {
       "connect": "Connect",
-      "host": "Host / IP Address:",
+      "host": "Máy chủ / Địa chỉ IP:",
       "password": "Password:",
       "username": "Username:"
     },
@@ -436,22 +436,22 @@
         "silver": "Silver",
         "aluminium_natural": "Natural",
         "aluminium_indigo": "Indigo",
-        "aluminium_noir": "Noir",
-        "aluminium_black": "Black",
-        "gbc_kiwi": "Kiwi",
         "gbc_dandelion": "Dandelion",
         "gbc_teal": "Teal",
         "gbc_grape": "Grape",
         "gbc_berry": "Berry",
-        "gbc_gold": "Gold"
+        "gbc_gold": "Gold",
+        "aluminium_noir": "Noir",
+        "aluminium_black": "Black",
+        "gbc_kiwi": "Kiwi"
       },
       "classic_label": "Classic",
       "transparent_label": "Transparent",
       "aluminium_label": "Aluminium",
-      "gbc_label": "GBC",
       "body_label": "Body",
       "buttons_label": "Buttons",
-      "match_body": "Match Body"
+      "match_body": "Match Body",
+      "gbc_label": "GBC"
     },
     "alternate_skip": {
       "checkbox": "Skip Alternate Assets",
