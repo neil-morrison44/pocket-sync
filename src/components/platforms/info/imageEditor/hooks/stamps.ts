@@ -136,13 +136,9 @@ export const useAddNewImageCallback = (
         },
       ],
     }
-    const imageOpen = await open(options)
+    const imagePath = await open(options)
 
-    if (!imageOpen?.path) return
-
-    const imagePath = imageOpen?.path
-
-    if (!imagePath || Array.isArray(imagePath)) return
+    if (!imagePath) return
 
     const imageData = await readFile(imagePath)
 
