@@ -11,7 +11,7 @@ jobs:
         include:
           - platform: macos-latest
             target: universal-apple-darwin
-          - platform: ubuntu-20.04
+          - platform: ubuntu-latest
             target: x86_64-unknown-linux-gnu
           - platform: windows-latest
             target: x86_64-pc-windows-msvc
