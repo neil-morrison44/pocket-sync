@@ -15,6 +15,8 @@ import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
 import { ControlsSelect } from "../controls/inputs/select"
 
+import "../cores/index.css"
+
 export const Games = () => {
   const coresList = useRecoilValue(coresListSelector)
   const [searchQuery, setSearchQuery] = useState<string>("")

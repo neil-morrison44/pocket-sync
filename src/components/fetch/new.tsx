@@ -2,7 +2,7 @@ import { useRecoilValue } from "recoil"
 import { Modal } from "../modal"
 import { ReactNode, Suspense, useCallback, useMemo, useState } from "react"
 import { FetchType } from "../../types"
-import { open } from "@tauri-apps/api/dialog"
+import { open } from "@tauri-apps/plugin-dialog"
 import { pocketPathAtom } from "../../recoil/atoms"
 import { homeDirSelector } from "../../recoil/selectors"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
@@ -197,7 +197,7 @@ const FolderPicker = ({
       defaultPath: fileIsOnPocket ? pocketPath : homeDir,
     })
 
-    if (path && !(path instanceof Array)) {
+    if (path) {
       onChange(fileIsOnPocket ? path.replace(pocketPath, "") : path)
     }
   }, [fileIsOnPocket, homeDir, onChange, pocketPath])

@@ -2,7 +2,7 @@ use log::info;
 use notify::{Config, RecommendedWatcher, RecursiveMode, Watcher};
 use serde::{Deserialize, Serialize};
 use std::{path::PathBuf, time::Duration};
-use tauri::Window;
+use tauri::{Emitter, WebviewWindow};
 
 #[derive(Serialize, Deserialize, Clone)]
 struct FSEventPayload {
@@ -28,7 +28,7 @@ pub fn check_if_folder_looks_like_pocket(path: &PathBuf) -> bool {
     return true;
 }
 
-pub async fn connection_task(window: Window, pocket_path: PathBuf) -> () {
+pub async fn connection_task(window: WebviewWindow, pocket_path: PathBuf) -> () {
     info!(
         "Watching files and folders at {}....",
         &pocket_path.display()

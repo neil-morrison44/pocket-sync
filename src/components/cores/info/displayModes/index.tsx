@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next"
 import { pocketPathAtom } from "../../../../recoil/atoms"
 import { VideoJSON } from "../../../../types"
 import { invokeSaveFile } from "../../../../utils/invokes"
-import { confirm } from "@tauri-apps/api/dialog"
+import { confirm } from "@tauri-apps/plugin-dialog"
 
 type DisplayModesProps = {
   coreName: string

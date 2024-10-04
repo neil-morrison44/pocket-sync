@@ -12,7 +12,8 @@ import {
   invokeListRootFiles,
   invokeWalkDirListFiles,
 } from "../../utils/invokes"
-import { ResponseType, getClient } from "@tauri-apps/api/http"
+import { fetch as tauriFecth } from "@tauri-apps/plugin-http"
+
 import { pocketPathAtom } from "../atoms"
 import { FolderWatchAtomFamily } from "../fileSystem/atoms"
 
@@ -25,17 +26,19 @@ export const ArchiveMetadataSelectorFamily = selectorFamily<
     ({ archiveName }) =>
     async ({ get }) => {
       get(archiveBumpAtom)
-      const httpClient = await getClient()
-      const response = await httpClient.get<{
-        files: ArchiveFileMetadata[]
-      }>(`https://archive.org/metadata/${archiveName}`, {
-        responseType: ResponseType.JSON,
-      })
+      const response = await tauriFecth(
+        `https://archive.org/metadata/${archiveName}`,
+        {
+          method: "GET",
+        }
+      )
 
-      if (!response.data?.files) return null
+      const data = (await response.json()) as {
+        files?: ArchiveFileMetadata[]
+      }
 
-      const { files } = response.data
-      return files
+      if (!data.files) return null
+      return data.files
     },
 })
 

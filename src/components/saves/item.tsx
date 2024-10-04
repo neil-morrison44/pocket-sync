@@ -1,4 +1,4 @@
-import { confirm } from "@tauri-apps/api/dialog"
+import { confirm } from "@tauri-apps/plugin-dialog"
 import { useCallback } from "react"
 import { useRecoilValue } from "recoil"
 import { BackupZipsSelectorFamily } from "../../recoil/saves/selectors"

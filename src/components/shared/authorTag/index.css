@@ -1,0 +1,7 @@
+.author-tag {
+  display: inline-flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  image-rendering: pixelated;
+}

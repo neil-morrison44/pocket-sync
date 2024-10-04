@@ -2,102 +2,68 @@
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist"
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
   },
-  "package": {
-    "productName": "Pocket Sync",
-    "version": "4.12.1"
-  },
-  "tauri": {
-    "allowlist": {
-      "http": {
-        "request": true,
-        "scope": [
-          "https://github.com/*",
-          "https://api.github.com/*",
-          "https://raw.githubusercontent.com/*",
-          "https://archive.org/*",
-          "https://updater.retrodriven.com/*",
-          "https://objects.githubusercontent.com/*",
-          "https://neil-morrison44.github.io/*"
-        ]
-      },
-      "fs": {
-        "readFile": true,
-        "exists": true,
-        "writeFile": true,
-        "scope": ["$APPLOCALDATA/*"]
-      },
-      "dialog": {
-        "all": true
-      },
-      "os": {
-        "all": true
-      },
-      "path": {
-        "all": true
-      },
-      "shell": {
-        "open": ""
-      },
-      "clipboard": {
-        "writeText": true
-      }
+  "bundle": {
+    "active": true,
+    "category": "Utility",
+    "copyright": "",
+    "targets": ["deb", "appimage", "nsis", "app", "dmg"],
+    "externalBin": [],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
     },
-    "bundle": {
-      "active": true,
-      "category": "Utility",
-      "copyright": "",
+    "longDescription": "",
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": null,
+      "minimumSystemVersion": "11"
+    },
+    "resources": [],
+    "shortDescription": "",
+    "linux": {
       "deb": {
         "depends": []
-      },
-      "externalBin": [],
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "identifier": "today.neil.pocket-sync",
-      "longDescription": "",
-      "macOS": {
-        "entitlements": null,
-        "exceptionDomain": "",
-        "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null,
-        "minimumSystemVersion": "11"
-      },
-      "resources": [],
-      "shortDescription": "",
-      "targets": ["deb", "appimage", "nsis", "app", "dmg", "updater"],
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": ""
       }
     },
-    "security": {
-      "csp": null
-    },
+    "createUpdaterArtifacts": "v1Compatible"
+  },
+  "productName": "Pocket Sync",
+  "version": "4.12.1",
+  "identifier": "today.neil.pocket-sync",
+  "plugins": {
     "updater": {
-      "active": true,
-      "dialog": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVEQzEwQTA4MUMwQTk0OEEKUldTS2xBb2NDQXJCN1VXbjJHZVZhTkpvcDJTTHcxRXFRd3F4S2dMcS9yc1NJZ2xxbFMvZFJWUS8K",
       "endpoints": [
         "https://github.com/neil-morrison44/pocket-sync/releases/latest/download/latest.json"
       ]
-    },
+    }
+  },
+  "app": {
     "windows": [
       {
         "fullscreen": false,
-        "height": 680,
+        "height": 880,
         "resizable": true,
         "title": "Pocket Sync",
-        "width": 880
+        "width": 1080
       }
-    ]
+    ],
+    "security": {
+      "csp": null
+    }
   }
 }

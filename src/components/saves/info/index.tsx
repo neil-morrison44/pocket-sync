@@ -14,7 +14,7 @@ import {
 import { PlatformId, SaveZipFile } from "../../../types"
 import { invokeRestoreZip } from "../../../utils/invokes"
 import { Controls } from "../../controls"
-import { ask } from "@tauri-apps/api/dialog"
+import { ask } from "@tauri-apps/plugin-dialog"
 import { useSaveScroll } from "../../../hooks/useSaveScroll"
 import { useInvalidateSaveFiles } from "../../../hooks/invalidation"
 import { splitAsPath } from "../../../utils/splitAsPath"

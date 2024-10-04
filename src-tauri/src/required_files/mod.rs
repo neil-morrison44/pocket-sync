@@ -8,6 +8,7 @@ mod parameters_bitmap;
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::{cmp, path::PathBuf};
+use tauri::Emitter;
 
 use crate::{
     core_json_files::{core::CoreFile, CoreDetails},
@@ -150,7 +151,7 @@ pub async fn required_files_for_core(
     pocket_path: &PathBuf,
     include_alts: bool,
     archive_url: &str,
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
 ) -> Result<Vec<DataSlotFile>> {
     let core_details: CoreDetails =
         CoreFile::from_core_path(&pocket_path.join(format!("Cores/{}", core_id)))?.into();

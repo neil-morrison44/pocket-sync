@@ -1,5 +1,5 @@
 import { useCallback } from "react"
-import { ask } from "@tauri-apps/api/dialog"
+import { ask } from "@tauri-apps/plugin-dialog"
 import { invokeUninstallCore } from "../utils/invokes"
 import { useTranslation } from "react-i18next"
 
@@ -10,7 +10,7 @@ export const useUninstallCore = () => {
     async (coreName: string) => {
       const sure = await ask(t("confirm_text"), {
         title: t("confirm_title"),
-        type: "warning",
+        kind: "warning",
       })
 
       if (!sure) return

@@ -11,7 +11,13 @@ import { useTranslation } from "react-i18next"
 
 import "./index.css"
 
-const HARD_TO_FIND_THINGS = ["Asteroids", "Genesis", "Dominos", "Green Beret"]
+const HARD_TO_FIND_THINGS = [
+  "Asteroids",
+  "Genesis",
+  "Dominos",
+  "Green Beret",
+  "Lynx",
+]
 
 type CorePlatformInfoProps = {
   platformId: PlatformId
