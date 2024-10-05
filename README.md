@@ -59,6 +59,7 @@ So far I've got translations for:
 - French (@f00b4r0)
 - Portuguese (@reinaldosimoes)
 - Japanese (@bigmoonur)
+- Vietnamese (@anh-tuan)
 
 Which I've been keeping up to date as I add new features (hopefully well enough).
 I'd particularly also like a Japanese translation, but any language will be accepted if the translation seems good enough.
