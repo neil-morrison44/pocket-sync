@@ -131,7 +131,7 @@ impl DataSlotFile {
             && (self.name.contains("bios")
                 || self.name.contains("beta.bin")
                 || self.required
-                // Setthing this to `true` has it try to download all files
+                // Setting this to `true` has it try to download all files
                 // even if they're not marked as required
                 // can't find why that made sense
                 || false)

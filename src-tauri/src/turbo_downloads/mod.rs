@@ -41,7 +41,7 @@ pub async fn turbo_download_file(url: &str) -> Result<Bytes> {
     let file_bytes = tokio::task::spawn_blocking(move || {
         let file_bytes: Vec<_> = ranges
             .par_iter()
-            .map(|(start, end)| dowload_retry_on_timeout(url.clone(), *start, *end).unwrap())
+            .map(|(start, end)| download_retry_on_timeout(url.clone(), *start, *end).unwrap())
             .collect();
 
         file_bytes.concat()
@@ -50,7 +50,7 @@ pub async fn turbo_download_file(url: &str) -> Result<Bytes> {
     Ok(file_bytes.into())
 }
 
-fn dowload_retry_on_timeout(url: Url, start: u64, end: u64) -> Result<Bytes> {
+fn download_retry_on_timeout(url: Url, start: u64, end: u64) -> Result<Bytes> {
     let client = reqwest::blocking::Client::new();
     let mut retry_count = 0;
     loop {
