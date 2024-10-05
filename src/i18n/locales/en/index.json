@@ -468,6 +468,12 @@
       "title": "ROM & BIOS archive (Required Files)",
       "warning": "Please check with your local laws around the downloading of potentially copyrighted (arcade) ROM & BIOS files.\nIf you are comfortable with this, copy the following url into the input and hit \"save\"."
     },
+    "patreon_keys": {
+      "title": "Patreon Keys",
+      "update": "Get Keys",
+      "ramble": "For cores that require an unlock key via an active Patreon membership",
+      "placeholder": "Patreon email"
+    },
     "clear_file_cache": {
       "button": "Clear file cache",
       "ramble": "To help with USB & SD card transfer larger files are copied & stored on your computer's file system,\nwhich should be fine but if you're running into issues try clearing the file cache.",

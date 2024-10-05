@@ -170,7 +170,7 @@ pub async fn required_files_for_core(
     let (instance_files, archive_meta, files_at_root) = tokio::join!(
         find_instance_files(&assets_folder, include_alts),
         get_metadata_from_archive(archive_url),
-        check_root_files(&pocket_path, Some(vec!["rom", "bin"]))
+        check_root_files(&pocket_path, Some(vec!["rom", "bin", "key"]))
     );
 
     progress.begin_work_units((instance_files.len() + 1) * 2);

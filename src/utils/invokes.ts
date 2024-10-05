@@ -233,3 +233,12 @@ export const invokeGetActiveJobs = async () =>
 
 export const invokeStopJob = async (jobId: string) =>
   await invoke<Job[]>("stop_job", { jobId })
+
+export const invokePatreonKeys = async (
+  email: string,
+  urls: { url: string; id: string }[]
+) =>
+  await invoke<void>("update_patreon_keys", {
+    email,
+    urls: urls.map(({ url, id }) => [url, id]),
+  })
