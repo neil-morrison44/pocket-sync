@@ -274,7 +274,7 @@ export type RawFeedItem = {
   link: string
   published: number
   content: string
-  categories: ["feed", AuthorName, string, "new" | "update"]
+  categories: [string, string, string]
 }
 
 export type FeedItem = {

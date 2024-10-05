@@ -6,14 +6,14 @@ const INTERVAL_MINS = 5
 
 const convertRaw = (items: RawFeedItem[]) => {
   return items.map(({ title, categories, content, link, published }) => {
-    const [_, author, shortname, type] = categories
+    const [_a, _b, coreName] = categories
 
     return {
       title,
       content,
       published: new Date(published),
-      coreName: `${author}.${shortname}`,
-      type,
+      coreName,
+      type: "update" as const,
       link,
     }
   })
