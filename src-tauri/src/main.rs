@@ -17,7 +17,6 @@ use job_id::{Job, JobState};
 use log::{debug, error, trace, LevelFilter};
 use required_files::{required_files_for_core, DataSlotFile};
 use reqwest::header::CONTENT_DISPOSITION;
-use reqwest::StatusCode;
 use root_files::RootFile;
 use save_sync_session::start_mister_save_sync_session;
 use saves_zip::{
@@ -28,7 +27,6 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::time::SystemTime;
 use std::vec;
-use tauri::http::response;
 use tauri::{App, Emitter, Manager, Window};
 use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_log::{Target, TargetKind};

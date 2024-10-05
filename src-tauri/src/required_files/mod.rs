@@ -130,6 +130,7 @@ impl DataSlotFile {
         !self.name.ends_with(".sav")
             && (self.name.contains("bios")
                 || self.name.contains("beta.bin")
+                || self.name.contains("coinop.key")
                 || self.required
                 // Setting this to `true` has it try to download all files
                 // even if they're not marked as required

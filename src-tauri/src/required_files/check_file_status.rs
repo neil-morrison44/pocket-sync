@@ -57,6 +57,9 @@ pub async fn check_data_file_status(
                 let data_slot_file_md5 = data_slot_file.md5.clone();
 
                 match (data_slot_file_md5, placed_file_md5, root_file_md5) {
+                    (None, placed_md5, root_file_md5) if root_file_md5 == placed_md5 => {
+                        DataSlotFileStatus::Exists
+                    }
                     (Some(slot_md5), placed_md5, _) if slot_md5 == placed_md5 => {
                         DataSlotFileStatus::Exists
                     }
