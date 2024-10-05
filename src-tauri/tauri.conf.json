@@ -42,7 +42,6 @@
     "createUpdaterArtifacts": "v1Compatible"
   },
   "productName": "Pocket Sync",
-  "version": "4.12.1",
   "identifier": "today.neil.pocket-sync",
   "plugins": {
     "updater": {
