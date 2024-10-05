@@ -208,7 +208,7 @@ impl SaveSyncer for MiSTerSaveSync {
         ftp_stream.cwd(parent_path).await?;
         let file_name = path.file_name().and_then(|f| f.to_str()).unwrap();
         let modtime = ftp_stream.mdtm(&file_name).await?;
-        return Ok(modtime.timestamp_millis() as u64);
+        return Ok(modtime.and_utc().timestamp_millis() as u64);
     }
 
     async fn list_platforms(

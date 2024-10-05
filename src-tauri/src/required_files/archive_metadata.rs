@@ -33,10 +33,10 @@ mod tests {
         RD,
     }
 
-    fn setup_server(
+    async fn setup_server(
         server_type: ServerType,
     ) -> Result<(String, mockito::Mock, mockito::ServerGuard)> {
-        let mut server = mockito::Server::new();
+        let mut server = mockito::Server::new_async().await;
         let url = server.url();
 
         let json_body = match server_type {
@@ -81,7 +81,7 @@ mod tests {
 
     #[tokio::test]
     async fn archive_org_url() -> Result<()> {
-        let (url, _mock, _server) = setup_server(ServerType::IA)?;
+        let (url, _mock, _server) = setup_server(ServerType::IA).await?;
         let items = get_metadata_from_archive(&url).await?;
         dbg!("{:?}", &items);
         assert_eq!(
@@ -98,7 +98,7 @@ mod tests {
 
     #[tokio::test]
     async fn retrodriven_url() -> Result<()> {
-        let (url, _mock, _server) = setup_server(ServerType::RD)?;
+        let (url, _mock, _server) = setup_server(ServerType::RD).await?;
         let items = get_metadata_from_archive(&url).await?;
         dbg!("{:?}", &items);
         assert_eq!(
