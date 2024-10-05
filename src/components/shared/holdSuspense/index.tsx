@@ -17,7 +17,6 @@ export const HoldSuspense = ({ children }: HoldSuspendProps) => {
 
     // Create an observer instance linked to the callback function
     const observer = new MutationObserver((mutationList) => {
-      console.log({ mutationList })
       const html = container.innerHTML
       if (html) htmlRef.current = html
     })

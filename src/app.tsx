@@ -48,7 +48,6 @@ export const App = () => {
 
   const onOpenPocket = useCallback(async () => {
     const result = await invokeOpenPocket()
-    console.log({ result })
 
     setView({ view: "Pocket Sync", selected: null })
     setPocketPath(result)

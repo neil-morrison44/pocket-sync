@@ -785,17 +785,13 @@ async fn update_patreon_keys(
     let pocket_path = state.0.pocket_path.read().await;
 
     for (url, id) in urls {
-        dbg!(&url, &id);
         let event_key = format!("patreon_keys:{id}");
-        dbg!(&event_key);
 
         window
             .emit(&event_key, PatreonKeyStatus::InProgress)
             .unwrap();
 
         let full_url = format!("{url}{email}");
-
-        dbg!(&full_url);
 
         let client = reqwest::Client::new();
         let response = client
@@ -805,8 +801,6 @@ async fn update_patreon_keys(
             .await
             .map_err(|err| err.to_string())
             .unwrap();
-
-        dbg!(&response);
 
         match response.status().is_success() {
             true => {
