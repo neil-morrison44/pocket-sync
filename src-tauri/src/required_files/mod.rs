@@ -6,6 +6,7 @@ mod instance_data_slots;
 mod parameters_bitmap;
 
 use anyhow::Result;
+use log::error;
 use serde::{Deserialize, Serialize};
 use std::{cmp, path::PathBuf};
 use tauri::Emitter;
@@ -223,15 +224,48 @@ pub async fn required_files_for_core(
     data_slot_files.dedup();
     progress.begin_work_units(data_slot_files.len());
 
-    if let (Ok(archive_meta), Ok(files_at_root)) = (archive_meta, files_at_root) {
-        data_slot_files = check_data_file_status(
-            data_slot_files,
-            archive_meta,
-            files_at_root,
-            pocket_path,
-            progress,
-        )
-        .await?;
+    match (archive_meta, files_at_root) {
+        (Ok(archive_meta), Ok(files_at_root)) => {
+            data_slot_files = check_data_file_status(
+                data_slot_files,
+                archive_meta,
+                files_at_root,
+                pocket_path,
+                progress,
+            )
+            .await?;
+        }
+        (Ok(archive_meta), Err(err)) => {
+            error!("root file error {}", err.to_string());
+
+            data_slot_files = check_data_file_status(
+                data_slot_files,
+                archive_meta,
+                vec![],
+                pocket_path,
+                progress,
+            )
+            .await?;
+        }
+        (Err(err), Ok(files_at_root)) => {
+            error!("archive metadata error {}", err.to_string());
+
+            data_slot_files = check_data_file_status(
+                data_slot_files,
+                vec![],
+                files_at_root,
+                pocket_path,
+                progress,
+            )
+            .await?;
+        }
+        (Err(err_a), Err(err_b)) => {
+            error!(
+                "both archive & root files error: {}, \n {}",
+                err_a.to_string(),
+                err_b.to_string()
+            );
+        }
     }
 
     Ok(data_slot_files)

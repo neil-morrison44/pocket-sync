@@ -51,7 +51,7 @@ pub async fn check_root_files(
                             if let Some(ext) = file_path.extension() {
                                 match extensions
                                     .as_ref()
-                                    .and_then(|exts| Some(exts.iter().any(|ex| *ex == ext)))
+                                    .and_then(|exts| Some(exts.iter().any(|&ex| ex == ext)))
                                 {
                                     None | Some(true) => (),
                                     Some(false) => continue,
@@ -70,7 +70,7 @@ pub async fn check_root_files(
                     } else {
                         match extensions
                             .as_ref()
-                            .and_then(|exts| Some(exts.iter().any(|ex| *ex == ext)))
+                            .and_then(|exts| Some(exts.iter().any(|&ex| ex == ext)))
                         {
                             None | Some(true) => (),
                             Some(false) => continue,
@@ -78,7 +78,6 @@ pub async fn check_root_files(
 
                         let file_name = String::from(file_name);
                         let file_path = &pocket_path.join(&file_name);
-
                         let md5 = md5_for_file(&file_path).await?;
 
                         results.push(RootFile::UnZipped {
