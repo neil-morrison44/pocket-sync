@@ -8,7 +8,7 @@ import { useUpdateConfig } from "./hooks/useUpdateConfig"
 
 import "./index.css"
 import { reconnectWhenOpenedAtom } from "../../recoil/atoms"
-import { invokeClearFileCache } from "../../utils/invokes"
+import { invokeClearFileCache, invokePatreonKeys } from "../../utils/invokes"
 import { useTranslation, Trans } from "react-i18next"
 import { Thanks } from "./thanks"
 import { PocketColour } from "../../types"
@@ -20,10 +20,16 @@ import {
 import { Link } from "../link"
 import { emit } from "@tauri-apps/api/event"
 import { openLogDir } from "../../utils/openLogDir"
+import { PatreonKeys } from "./patreonKeys"
+import { patreonKeyListSelector } from "../../recoil/settings/selectors"
 
 export const Settings = () => {
   const config = useRecoilValue(PocketSyncConfigSelector)
   const [archiveUrlInput, setArchiveUrl] = useState(config.archive_url || "")
+
+  const [patreonEmailInput, setPatreonEmail] = useState(
+    config.patreon_email || ""
+  )
   const [alwaysUseEnglish, setAlwaysUseEnglish] =
     useRecoilState(alwaysUseEnglishAtom)
 
@@ -40,6 +46,8 @@ export const Settings = () => {
     () => emit("pocket-connection", { connetcted: false }),
     []
   )
+
+  const patreonUrls = useRecoilValue(patreonKeyListSelector)
 
   return (
     <div className="settings">
@@ -95,6 +103,32 @@ export const Settings = () => {
               {t("archive.save")}
             </button>
           </div>
+        </div>
+        <div className="settings__row">
+          <h3 className="settings__row-title">{t("patreon_keys.title")}</h3>
+          <div className="settings__ramble">{t("patreon_keys.ramble")}</div>
+          <div className="settings__text-input-and-save">
+            <input
+              type="text"
+              className="settings__text-input"
+              placeholder={t("patreon_keys.placeholder")}
+              value={patreonEmailInput}
+              onChange={({ target }) => setPatreonEmail(target.value)}
+            />
+            <button
+              onClick={() => {
+                updateConfig("patreon_email", patreonEmailInput)
+
+                invokePatreonKeys(
+                  patreonEmailInput,
+                  patreonUrls.map(({ url, id }) => ({ url, id }))
+                )
+              }}
+            >
+              {t("patreon_keys.update")}
+            </button>
+          </div>
+          <PatreonKeys />
         </div>
         <div className="settings__row">
           <h3 className="settings__row-title">{t("turbo_downloads.title")}</h3>

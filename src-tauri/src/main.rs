@@ -16,6 +16,8 @@ use install_zip::start_zip_task;
 use job_id::{Job, JobState};
 use log::{debug, error, trace, LevelFilter};
 use required_files::{required_files_for_core, DataSlotFile};
+use reqwest::header::CONTENT_DISPOSITION;
+use reqwest::StatusCode;
 use root_files::RootFile;
 use save_sync_session::start_mister_save_sync_session;
 use saves_zip::{
@@ -26,10 +28,12 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::time::SystemTime;
 use std::vec;
+use tauri::http::response;
 use tauri::{App, Emitter, Manager, Window};
 use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_log::{Target, TargetKind};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use util::progress_download;
 
 use crate::install_files::install_file;
 use crate::util::{find_common_path, get_mtime_timestamp};
@@ -770,6 +774,91 @@ async fn stop_job(job_id: &str, state: tauri::State<'_, PocketSyncState>) -> Res
     Ok(())
 }
 
+#[tauri::command(async)]
+async fn update_patreon_keys(
+    email: &str,
+    urls: Vec<(&str, &str)>,
+    state: tauri::State<'_, PocketSyncState>,
+    window: tauri::WebviewWindow,
+) -> Result<(), String> {
+    debug!("Command: update_patreon_keys");
+    let pocket_path = state.0.pocket_path.read().await;
+
+    for (url, id) in urls {
+        dbg!(&url, &id);
+        let event_key = format!("patreon_keys:{id}");
+        dbg!(&event_key);
+
+        window
+            .emit(&event_key, PatreonKeyStatus::InProgress)
+            .unwrap();
+
+        let full_url = format!("{url}{email}");
+
+        dbg!(&full_url);
+
+        let client = reqwest::Client::new();
+        let response = client
+            .get(full_url)
+            .header(reqwest::header::USER_AGENT, "PocketSync/1.0")
+            .send()
+            .await
+            .map_err(|err| err.to_string())
+            .unwrap();
+
+        dbg!(&response);
+
+        match response.status().is_success() {
+            true => {
+                let filename = &response
+                    .headers()
+                    .get(CONTENT_DISPOSITION)
+                    .and_then(|header_value| {
+                        header_value.to_str().ok().and_then(|content_disposition| {
+                            content_disposition.split(';').find_map(|part| {
+                                let part = part.trim();
+                                if part.starts_with("filename=") {
+                                    Some(
+                                        part.trim_start_matches("filename=")
+                                            .trim_matches('"')
+                                            .to_string(),
+                                    )
+                                } else {
+                                    None
+                                }
+                            })
+                        })
+                    })
+                    .ok_or("no filename")?;
+
+                let file = progress_download(response, |total_size, downloaded| {
+                    let percent = total_size as f64 / downloaded as f64;
+
+                    window
+                        .emit(&event_key, PatreonKeyStatus::Downloading(percent))
+                        .unwrap();
+                })
+                .await
+                .map_err(|err| err.to_string())?;
+
+                let path = pocket_path.join(filename);
+
+                tokio::fs::write(path, file)
+                    .await
+                    .map_err(|err| err.to_string())?;
+
+                window.emit(&event_key, PatreonKeyStatus::Valid).unwrap();
+            }
+            false => {
+                debug!("Failed to get keys for {id}");
+                window.emit(&event_key, PatreonKeyStatus::Invalid).unwrap();
+            }
+        }
+    }
+
+    Ok(())
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
@@ -826,7 +915,8 @@ fn main() {
             find_required_files,
             save_multiple_files,
             get_active_jobs,
-            stop_job
+            stop_job,
+            update_patreon_keys
         ])
         .setup(|app| {
             log_panics::init();
@@ -869,4 +959,12 @@ struct InstancePackageEventPayload {
 struct FileMetadata {
     timestamp_secs: u64,
     crc32: u32,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum PatreonKeyStatus {
+    InProgress,
+    Downloading(f64),
+    Valid,
+    Invalid,
 }
