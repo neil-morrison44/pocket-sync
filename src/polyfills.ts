@@ -25,4 +25,18 @@ export const installPolyfills = () => {
       writable: true,
     })
   }
+
+  // Not sure why but this causes a crash on load on Linux
+  if (!screen.orientation){
+
+    Object.defineProperty(screen, "orientation", {value: {
+  addEventListener: () => {},
+  removeEventListener: () => {}
+
+      },      configurable: true,
+      enumerable: false,
+      writable: true,
+    })}
+
+  
 }
