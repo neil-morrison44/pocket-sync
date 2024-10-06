@@ -26,3 +26,4 @@ dist-ssr
 target
 platforms.zip
 .github/workflows/**/*.js
+src-tauri/gen
