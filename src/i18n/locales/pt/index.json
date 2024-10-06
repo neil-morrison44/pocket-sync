@@ -458,6 +458,12 @@
       "title": "Arquivo ROM & BIOS (Arquivos Necessários)",
       "warning": "Por favor, verifique as leis locais sobre o download de arquivos ROM & BIOS de arcade potencialmente protegidos por direitos autorais.\nSe você estiver confortável com isso, copie a seguinte url no campo de entrada e clique em \"Guardar\"."
     },
+    "patreon_keys": {
+      "title": "Chaves do Patreon",
+      "update": "Obter chaves",
+      "ramble": "Para núcleos que exigem uma chave de desbloqueio por meio de uma assinatura ativa do Patreon",
+      "placeholder": "E-mail do Patreon"
+    },
     "clear_file_cache": {
       "button": "Limpar cache de arquivos",
       "ramble": "Para ajudar com a transferência de arquivos grandes via USB & cartão SD, arquivos maiores são copiados e armazenados no sistema de arquivos do seu computador,\no que deve ser bom, mas se você estiver enfrentando problemas, tente limpar o cache de arquivos.",

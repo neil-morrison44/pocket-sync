@@ -465,6 +465,12 @@
       "title": "Lưu trữ ROM & BIOS (Các tập tin bắt buộc)",
       "warning": "Vui lòng kiểm tra luật pháp địa phương của bạn xung quanh việc tải xuống các tệp ROM & BIOS có thể cần bản quyền (arcade).\nNếu bạn thấy thoải mái với điều này, hãy sao chép url sau vào đầu vào và nhấn \"lưu\"."
     },
+    "patreon_keys": {
+      "title": "Chìa khóa Patreon",
+      "update": "Nhận chìa khóa",
+      "ramble": "Đối với các lõi yêu cầu khóa mở khóa thông qua tư cách thành viên Patreon đang hoạt động",
+      "placeholder": "Email Patreon"
+    },
     "clear_file_cache": {
       "button": "Xóa bộ nhớ đệm tập tin",
       "ramble": "Để hỗ trợ việc chuyển dữ liệu qua USB và thẻ SD, các tệp lớn hơn sẽ được sao chép và lưu trữ trên hệ thống tệp của máy tính,\nđiều này sẽ ổn nhưng nếu bạn gặp sự cố, hãy thử xóa bộ nhớ đệm tệp.",

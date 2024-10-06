@@ -433,6 +433,12 @@
       "title": "游戏ROM & BIOS 资料库 (必要文件)",
       "warning": "请您自行评估所处地区针对数字版权保护的法律法规风险。\n若您确认使用资料库，请复制下面的链接到文本框并点击 \"保存\"。"
     },
+    "patreon_keys": {
+      "title": "Patreon 钥匙",
+      "update": "获取密钥",
+      "ramble": "对于需要通过有效的 Patreon 会员资格解锁密钥的核心",
+      "placeholder": "Patreon 电子邮件"
+    },
     "clear_file_cache": {
       "button": "清除文件缓存",
       "ramble": "为确保USB和SD卡资料传输效果，较大的文件会被缓存于您的电脑中，\n如果碰到相关问题，可以尝试清除文件缓存进行修复。",

@@ -458,6 +458,12 @@
       "title": "ROM & BIOS-Archiv (Benötigte Dateien)",
       "warning": "Bitte überprüfen Sie ihre lokalen Gesetze bezüglich des Herunterladens von möglicherweise urheberrechtlich geschützten (Arcade-) ROM & BIOS-Dateien.\nFalls das für Sie in Ordnung ist, kopieren Sie die folgende URL in die Eingabe und klicken Sie „Speichern“."
     },
+    "patreon_keys": {
+      "title": "Patreon-Schlüssel",
+      "update": "Schlüssel abrufen",
+      "ramble": "Für Kerne, die einen Freischaltschlüssel über eine aktive Patreon-Mitgliedschaft benötigen",
+      "placeholder": "Patreon-E-Mail"
+    },
     "clear_file_cache": {
       "button": "Dateicache leeren",
       "ramble": "Um die USB- und SD-Kartenübertragung zu vereinfachen, werden größere Dateien in das Dateisystem des Computers kopiert und gespeichert.\nFalls Probleme auftreten, versuchen Sie den Dateicache zu leeren.",

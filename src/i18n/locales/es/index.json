@@ -430,6 +430,12 @@
       "title": "Libreria ROM y BIOS (Archivos requeridos)",
       "warning": "Por favor consulte las leyes locales sobre la descarga de archivos ROM y BIOS potencialmente protegidos por derechos de autor (arcade).\nSi se siente cómodo con esto, copie la siguiente URL en la entrada y presione 'guardar'."
     },
+    "patreon_keys": {
+      "title": "Claves de Patreon",
+      "update": "Obtener claves",
+      "ramble": "Para núcleos que requieren una clave de desbloqueo a través de una membresía activa de Patreon",
+      "placeholder": "Correo electrónico de Patreon"
+    },
     "clear_file_cache": {
       "button": "Borrar caché de archivos",
       "ramble": "Para ayudar con la transferencia de tarjetas USB y SD, los archivos más grandes se copian y almacenan en el sistema de archivos de su computadora,\nLo cual debería estar bien, pero si tiene problemas, intente borrar el caché del archivo.",
