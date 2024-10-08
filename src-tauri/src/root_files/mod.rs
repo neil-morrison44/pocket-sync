@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use anyhow::Result;
+use log::error;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -43,7 +44,12 @@ pub async fn check_root_files(
                         continue;
                     }
                     if ext == "zip" {
-                        let files = files_from_zip::list_files(&path).await?;
+                        let files = files_from_zip::list_files(&path)
+                            .await
+                            .unwrap_or_else(|err| {
+                                error!("Unzip error: {}", err.to_string());
+                                vec![]
+                            });
                         if files.len() > 0 {
                             let zip_file = String::from(file_name);
                             let inner_file = files[0].clone();
