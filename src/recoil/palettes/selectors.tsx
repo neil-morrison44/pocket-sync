@@ -8,7 +8,7 @@ import { GithubRelease, Palette, rgb } from "../../types"
 import { fetch as TauriFetch } from "@tauri-apps/plugin-http"
 import { paletteRepoAtom } from "./atoms"
 import * as zip from "@zip.js/zip.js"
-import { error } from "tauri-plugin-log-api"
+import { error } from "@tauri-apps/plugin-log"
 
 export const palettesListSelector = selector<string[]>({
   key: "palettesListSelector",

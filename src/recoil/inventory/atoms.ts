@@ -1,6 +1,6 @@
 import { atom } from "recoil"
 import { InventoryJSON } from "../../types"
-import { info } from "tauri-plugin-log-api"
+import { info } from "@tauri-apps/plugin-log"
 
 const INTERVAL_MINS = 2.5
 
