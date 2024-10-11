@@ -8,7 +8,8 @@ import { I18nProvider } from "./i18n"
 import { RecoilRoot } from "recoil"
 import { Disconnections } from "./components/disconnections"
 
-import { error } from "tauri-plugin-log-api"
+import { error } from "@tauri-apps/plugin-log"
+import { AutoUpdate } from "./components/autoUpdate"
 
 installPolyfills()
 
@@ -24,6 +25,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <I18nProvider>
         <App />
         <Disconnections />
+        <AutoUpdate />
       </I18nProvider>
     </RecoilRoot>
   </React.StrictMode>

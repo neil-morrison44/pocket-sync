@@ -1,7 +1,7 @@
 {
   "name": "pocket-sync",
   "private": true,
-  "version": "5.0.2",
+  "version": "5.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -24,6 +24,7 @@
     "@tauri-apps/plugin-http": "^2.0.0",
     "@tauri-apps/plugin-log": "^2.0.0",
     "@tauri-apps/plugin-os": "^2.0.0",
+    "@tauri-apps/plugin-process": "^2.0.0",
     "@tauri-apps/plugin-shell": "^2.0.0",
     "@tauri-apps/plugin-updater": "^2.0.0",
     "@types/three": "0.169.0",
@@ -44,7 +45,6 @@
     "recoil": "^0.7.7",
     "remark-gfm": "^4.0.0",
     "simplex-noise": "^4.0.3",
-    "tauri-plugin-log-api": "https://github.com/tauri-apps/tauri-plugin-log/archive/refs/heads/v1.tar.gz",
     "three": "0.169.0"
   },
   "devDependencies": {
