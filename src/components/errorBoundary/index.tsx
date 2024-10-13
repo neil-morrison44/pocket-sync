@@ -1,4 +1,4 @@
-import { Component, ErrorInfo, ReactNode } from "react"
+import { Component, ErrorInfo, ReactNode, Suspense } from "react"
 import { Link } from "../link"
 import { Tip } from "../tip"
 
@@ -71,10 +71,12 @@ export class ErrorBoundary extends Component<
           <div className="error-boundary__buttons">
             {this.state.error && (
               <NulledErrorBoundary>
-                <RepairButton
-                  error={this.state.error}
-                  onFinishRepair={() => this.clearError()}
-                />
+                <Suspense>
+                  <RepairButton
+                    error={this.state.error}
+                    onFinishRepair={() => this.clearError()}
+                  />
+                </Suspense>
               </NulledErrorBoundary>
             )}
             <button onClick={() => openLogDir()}>
