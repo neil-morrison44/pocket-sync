@@ -35,7 +35,7 @@
     "html-react-parser": "^5.1.18",
     "i18next": "^23.15.2",
     "i18next-icu": "^2.3.0",
-    "mdast-util-gfm-autolink-literal": "2.0.1",
+    "mdast-util-gfm-autolink-literal": "2.0.0",
     "postprocessing": "^6.36.3",
     "r3f-perf": "^7.2.2",
     "react": "^18.3.1",
