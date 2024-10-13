@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useMemo, useState } from "react"
+import React, { ReactElement, useCallback, useMemo, useState } from "react"
 import { PlatformId } from "../../types"
 import { useInstallCore } from "../../hooks/useInstallCore"
 import { useRecoilValue } from "recoil"
@@ -9,16 +9,25 @@ import { emit, once } from "@tauri-apps/api/event"
 import { RepairIcon } from "./repairIcon"
 import { Trans } from "react-i18next"
 
+const CORE_FILE_REGEX = /Cores[\/\\]([^\/\\]+)[\/\\]/
+const PLATFORM_FILE_REGEX = /Platforms[\/\\]([^\/\\]+)\.json/
+
 type RepairButtonProps = {
   error: Error
   onFinishRepair: () => void
 }
 
-type RepairableCause = {
-  type: "missing_platform"
-  platform_id: PlatformId
-  repairable: true
-}
+type RepairableCause =
+  | {
+      type: "missing_platform"
+      platform_id: PlatformId
+      repairable: true
+    }
+  | {
+      repairable: true
+      type: "json_error"
+      path: string
+    }
 
 export const RepairButton = ({
   error,
@@ -42,24 +51,81 @@ export const RepairButton = ({
   switch (repairableCause.type) {
     case "missing_platform":
       return (
-        <RepairMissingPlatform
-          platformId={repairableCause.platform_id}
-          onFinishRepair={onFinishRepair}
-        />
+        <GetCoresForPlatform platformId={repairableCause.platform_id}>
+          {(coreName) => (
+            <GetDownloadURLForCore coreName={coreName}>
+              {(downloadUrl) => (
+                <RepairRedownloadFiles
+                  coreName={coreName}
+                  downloadUrl={downloadUrl}
+                  paths={[`platforms/${repairableCause.platform_id}.json`]}
+                  onFinishRepair={onFinishRepair}
+                />
+              )}
+            </GetDownloadURLForCore>
+          )}
+        </GetCoresForPlatform>
       )
+    case "json_error": {
+      const path = repairableCause.path
+
+      if (path.startsWith("Cores")) {
+        const coreMatch = path.match(CORE_FILE_REGEX)
+        if (!coreMatch) return null
+        const coreName = coreMatch[1]
+
+        return (
+          <GetDownloadURLForCore coreName={coreName}>
+            {(downloadUrl) => (
+              <RepairRedownloadFiles
+                coreName={coreName}
+                downloadUrl={downloadUrl}
+                paths={[path]}
+                onFinishRepair={onFinishRepair}
+              />
+            )}
+          </GetDownloadURLForCore>
+        )
+      } else if (path.startsWith("Platforms")) {
+        const platformMatch = path.match(PLATFORM_FILE_REGEX)
+        console.log({ path, platformMatch })
+        if (!platformMatch) return null
+        const platformId = platformMatch[1]
+
+        return (
+          <GetCoresForPlatform platformId={platformId}>
+            {(coreName) => (
+              <GetDownloadURLForCore coreName={coreName}>
+                {(downloadUrl) => (
+                  <RepairRedownloadFiles
+                    coreName={coreName}
+                    downloadUrl={downloadUrl}
+                    paths={[`platforms/${platformId}.json`]}
+                    onFinishRepair={onFinishRepair}
+                  />
+                )}
+              </GetDownloadURLForCore>
+            )}
+          </GetCoresForPlatform>
+        )
+      }
+      return null
+    }
 
     default:
       return null
   }
 }
 
-const RepairMissingPlatform = ({
-  platformId,
-  onFinishRepair,
-}: {
+type GetCoresForPlatformProps = {
   platformId: PlatformId
-  onFinishRepair: () => void
-}): ReactElement => {
+  children: (coreName: string) => ReactElement
+}
+
+const GetCoresForPlatform = ({
+  children,
+  platformId,
+}: GetCoresForPlatformProps): ReactElement | null => {
   const coresForPlatform = useRecoilValue(
     CoresForPlatformSelectorFamily(platformId)
   )
@@ -67,33 +133,43 @@ const RepairMissingPlatform = ({
   return (
     <>
       {coresForPlatform.map((coreName) => (
-        <RepairMissingPlatformInner
-          key={coreName}
-          coreName={coreName}
-          platformId={platformId}
-          onFinishRepair={onFinishRepair}
-        />
+        <React.Fragment key={coreName}>{children(coreName)}</React.Fragment>
       ))}
     </>
   )
 }
 
-type RepairMissingPlatformInner = {
+type GetDownloadURLForCoreProps = {
   coreName: string
-  platformId: PlatformId
+  children: (downloadUrl: string) => ReactElement
+}
+
+const GetDownloadURLForCore = ({
+  children,
+  coreName,
+}: GetDownloadURLForCoreProps): ReactElement | null => {
+  const downloadUrl = useRecoilValue(DownloadURLSelectorFamily(coreName))
+
+  if (!downloadUrl) return null
+  return <>{children(downloadUrl)}</>
+}
+
+type RepairRedownloadFilesProps = {
+  coreName: string
+  downloadUrl: string
+  paths: string[]
   onFinishRepair: () => void
 }
 
 // Would be easy to convert this to a generic "missing file" one if more missing file bugs come in
-const RepairMissingPlatformInner = ({
+const RepairRedownloadFiles = ({
   coreName,
-  platformId,
+  downloadUrl,
+  paths,
   onFinishRepair,
-}: RepairMissingPlatformInner): ReactElement | null => {
+}: RepairRedownloadFilesProps): ReactElement | null => {
   const [isRepairing, setIsRepairing] = useState(false)
   usePreventGlobalZipInstallModal()
-
-  const downloadUrl = useRecoilValue(DownloadURLSelectorFamily(coreName))
 
   const callback = useCallback(async () => {
     setIsRepairing(true)
@@ -111,7 +187,7 @@ const RepairMissingPlatformInner = ({
 
     await emit("install-confirmation", {
       type: "InstallConfirmation",
-      paths: [`platforms/${platformId}.json`],
+      paths,
       handle_moved_files: false,
       allow: true,
     })
@@ -126,7 +202,7 @@ const RepairMissingPlatformInner = ({
     await new Promise((resolve) => window.setTimeout(resolve, 2e3))
 
     onFinishRepair()
-  }, [coreName, platformId, onFinishRepair, setIsRepairing])
+  }, [coreName, paths, onFinishRepair, setIsRepairing])
 
   if (!downloadUrl) return null
 
@@ -150,7 +226,7 @@ const RepairMissingPlatformInner = ({
       <div>
         <Trans
           i18nKey="error:repair:fixes:redownload_file"
-          values={{ path: `Platforms/${platformId}.json`, coreName }}
+          values={{ path: paths.join(", "), coreName }}
           components={{
             pre: <pre style={{ display: "inline" }} />,
             bold: <strong />,
