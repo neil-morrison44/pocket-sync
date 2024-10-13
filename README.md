@@ -95,10 +95,11 @@ It's in the ICU message format, which there are some guides available online for
 - Export Game Boy Camera images from the save state
 - "Update All" feature to update multiple installed cores at once
 - GB Palette editor / catalogue
+- Switched to Tauri v2
+- Auto-Repair button for some common issues causing errors
+- New icons by @AbFarid
 
 ### Soon
-
-- Switching to Tauri v2 which should improve Linux performance, allow some awkward bits to be rewritten & allow the Linux / Flatpak builds to use versions of things which aren't end of life. Also enables using features from latest Rust versions.
 
 ### Longer term
 
