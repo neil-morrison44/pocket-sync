@@ -148,7 +148,14 @@
   "error": {
     "report": "Dies kann über GitHub gemeldet werden. Den folgenden Text und eine Anleitung zum Reproduzieren anhängen",
     "retry": "Wiederholen",
-    "title": "Fehler"
+    "title": "Fehler",
+    "repair": {
+      "title": "Reparieren",
+      "in_progress": "Reparieren...",
+      "fixes": {
+        "redownload_file": "Erneut herunterladen <pre>{path}</pre> aus <bold>{coreName}</bold>"
+      }
+    }
   },
   "fetch": {
     "controls": {

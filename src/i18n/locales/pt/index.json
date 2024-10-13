@@ -148,7 +148,14 @@
   "error": {
     "report": "Você pode reportar isso via GitHub inclua o texto abaixo e qualquer coisa que você acabou de fazer",
     "retry": "Tentar Novamente",
-    "title": "Erro"
+    "title": "Erro",
+    "repair": {
+      "title": "Reparar",
+      "in_progress": "Reparando...",
+      "fixes": {
+        "redownload_file": "Baixar novamente <pre>{path}</pre> de <bold>{coreName}</bold>"
+      }
+    }
   },
   "fetch": {
     "controls": {

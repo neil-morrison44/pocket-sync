@@ -123,7 +123,14 @@
   "error": {
     "report": "您可以通过GitHub报告错误信息（含错误信息和错误发生的描述性文字）",
     "retry": "重试",
-    "title": "错误"
+    "title": "错误",
+    "repair": {
+      "title": "维修",
+      "in_progress": "正在修复...",
+      "fixes": {
+        "redownload_file": "重新下载 <pre>{path}</pre>从 <bold>{coreName}</bold>"
+      }
+    }
   },
   "fetch": {
     "controls": {

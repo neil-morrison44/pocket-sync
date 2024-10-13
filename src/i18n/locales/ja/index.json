@@ -123,7 +123,14 @@
   "error": {
     "report": "GitHubでエラーを報告できます。報告する際は以下のテキストと直前のアクションを含めてください",
     "retry": "再試行",
-    "title": "エラー"
+    "title": "エラー",
+    "repair": {
+      "title": "修理",
+      "in_progress": "修理...",
+      "fixes": {
+        "redownload_file": "再ダウンロード <pre>{path}</pre> から <bold>{coreName}</bold>"
+      }
+    }
   },
   "fetch": {
     "controls": {
