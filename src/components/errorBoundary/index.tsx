@@ -1,4 +1,4 @@
-import { Component, ErrorInfo, ReactNode } from "react"
+import { Component, ErrorInfo, ReactNode, Suspense } from "react"
 import { Link } from "../link"
 import { Tip } from "../tip"
 
@@ -6,6 +6,8 @@ import "./index.css"
 import { ViewDebug } from "./viewDebug"
 import { Trans } from "react-i18next"
 import { openLogDir } from "../../utils/openLogDir"
+import { RepairButton } from "./repair"
+import { NulledErrorBoundary } from "./nulledBoundary"
 
 type ErrorBoundaryProps = {
   children?: ReactNode
@@ -66,16 +68,25 @@ export class ErrorBoundary extends Component<
           </div>
           <div className="error-boundary__stack">{this.state.error?.stack}</div>
 
-          <button
-            onClick={() => openLogDir()}
-            style={{ marginBlockEnd: "20px" }}
-          >
-            <Trans i18nKey="settings:logs.button"></Trans>
-          </button>
+          <div className="error-boundary__buttons">
+            {this.state.error && (
+              <NulledErrorBoundary>
+                <Suspense>
+                  <RepairButton
+                    error={this.state.error}
+                    onFinishRepair={() => this.clearError()}
+                  />
+                </Suspense>
+              </NulledErrorBoundary>
+            )}
+            <button onClick={() => openLogDir()}>
+              <Trans i18nKey="settings:logs.button"></Trans>
+            </button>
 
-          <button style={{ width: "100%" }} onClick={() => this.clearError()}>
-            <Trans i18nKey="error:retry"></Trans>
-          </button>
+            <button onClick={() => this.clearError()}>
+              <Trans i18nKey="error:retry"></Trans>
+            </button>
+          </div>
         </div>
       )
     }

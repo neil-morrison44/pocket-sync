@@ -16,3 +16,47 @@
   flex-grow: 1;
   overflow: auto;
 }
+
+.error-boundary__buttons{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.error-boundary__repair-button{
+  font-size: 1.1rem;
+  background-color: var(--green-colour);
+  text-shadow: 0 0 2px rgb(0 0 0 / 80%);
+  border: 2px solid white;
+  animation: border-pulse 2s linear infinite;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  max-width: 100%;
+}
+
+@keyframes border-pulse {
+  0%, 100% {
+    border-color: white;
+  }
+
+  50% {
+    border-color: transparent;
+  }
+}
+
+.error-boundary__repair-button-title{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.2em;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.error-boundary__repair-button-title--in-progress{
+  grid-column: 1 / span 3;
+}
