@@ -88,7 +88,6 @@ export const RepairButton = ({
         )
       } else if (path.startsWith("Platforms")) {
         const platformMatch = path.match(PLATFORM_FILE_REGEX)
-        console.log({ path, platformMatch })
         if (!platformMatch) return null
         const platformId = platformMatch[1]
 
