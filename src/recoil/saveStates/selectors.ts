@@ -69,6 +69,7 @@ export const ReadSavForStaSelectorFamily = selectorFamily<Uint8Array, string>({
 })
 
 const PHOTO_OFFSET = 0x2000
+const PHOTO_OFFSET_23_PLUS = 0x2001
 const PHOTO_SIZE = 0x1000
 
 const SIZE_LARGE = 0xe00
@@ -84,6 +85,7 @@ export const PhotoExportImageSelectorFamily = selectorFamily<
   get:
     ({ path, index }) =>
     async ({ get }) => {
+      const saveMetadata = get(SaveStateMetadataSelectorFamily(path))
       const saveData = get(ReadSavForStaSelectorFamily(path))
       const canvas = document.createElement("canvas")
       canvas.width = 128
@@ -93,7 +95,17 @@ export const PhotoExportImageSelectorFamily = selectorFamily<
       if (!context) throw new Error("Failed to get Canvas")
       const tileImageData = context.getImageData(0, 0, 8, 8)
 
-      const photos = saveData.slice(PHOTO_OFFSET + PHOTO_SIZE * index)
+      // The word "Magic" appears in the RAM at a known location
+      // Can check if it's there or not to find out if it's the new save state format or the older one
+      const magicSlice = saveData.slice(0x02fca, 0x02fce + 1)
+      const magicWord = Array.from(magicSlice)
+        .map((v) => String.fromCharCode(v))
+        .join("")
+        .trim()
+      const isMagic = magicWord === "Magic"
+      const photoOffset = isMagic ? PHOTO_OFFSET : PHOTO_OFFSET_23_PLUS
+
+      const photos = saveData.slice(photoOffset + PHOTO_SIZE * index)
       const large = photos.slice(0, SIZE_LARGE)
       const colourMap = get(PhotoColourMapAtom)
 

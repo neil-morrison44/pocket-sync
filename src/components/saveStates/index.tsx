@@ -79,10 +79,12 @@ export const SaveStates = () => {
       </Controls>
 
       {isExportingPhotos && (
-        <PhotoExportModal
-          path={isExportingPhotos}
-          onClose={() => setIsExportingPhotos(null)}
-        />
+        <Suspense>
+          <PhotoExportModal
+            path={isExportingPhotos}
+            onClose={() => setIsExportingPhotos(null)}
+          />
+        </Suspense>
       )}
 
       <div className="save-states__list">
