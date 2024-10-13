@@ -59,19 +59,22 @@ const RepairMissingPlatform = ({
 }: {
   platformId: PlatformId
   onFinishRepair: () => void
-}): ReactElement | null => {
+}): ReactElement => {
   const coresForPlatform = useRecoilValue(
     CoresForPlatformSelectorFamily(platformId)
   )
 
-  if (coresForPlatform.length === 0) return null
-
   return (
-    <RepairMissingPlatformInner
-      coreName={coresForPlatform[0]}
-      platformId={platformId}
-      onFinishRepair={onFinishRepair}
-    />
+    <>
+      {coresForPlatform.map((coreName) => (
+        <RepairMissingPlatformInner
+          key={coreName}
+          coreName={coreName}
+          platformId={platformId}
+          onFinishRepair={onFinishRepair}
+        />
+      ))}
+    </>
   )
 }
 
