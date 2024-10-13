@@ -85,7 +85,6 @@ export const PhotoExportImageSelectorFamily = selectorFamily<
   get:
     ({ path, index }) =>
     async ({ get }) => {
-      const saveMetadata = get(SaveStateMetadataSelectorFamily(path))
       const saveData = get(ReadSavForStaSelectorFamily(path))
       const canvas = document.createElement("canvas")
       canvas.width = 128
