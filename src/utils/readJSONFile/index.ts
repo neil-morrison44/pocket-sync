@@ -8,7 +8,14 @@ export const readJSONFile = async <T>(fileName: string) => {
     return parse(jsonText) as T
   } catch (err: unknown) {
     // @ts-ignore
-    err.message = `${fileName} \n ${err.message}`
-    throw err
+    const newError = new Error(`${fileName} \n ${err.message}`)
+
+    newError.cause = {
+      repairable: true,
+      type: "json_error",
+      path: fileName,
+    }
+
+    throw newError
   }
 }
