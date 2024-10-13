@@ -81,7 +81,14 @@ export const PlatformInfoSelectorFamily = selectorFamily<
       const path = `Platforms/${platformId}.json`
       get(FileWatchAtomFamily(path))
       const exists = await invokeFileExists(path)
-      if (!exists) throw new Error(`Attempt to read platform_id ${platformId}`)
+      if (!exists)
+        throw new Error(`Missing File: ${path}`, {
+          cause: {
+            type: "missing_platform",
+            platform_id: platformId,
+            repairable: true,
+          },
+        })
       return readJSONFile<PlatformInfoJSON>(path)
     },
 })
