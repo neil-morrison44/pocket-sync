@@ -46,7 +46,7 @@ Starting with macOS Catalina, Apple requires apps distributed outside the App St
 
     ![Apple could not verify "Pocket Sync"](./readme_images/macos_not_opened.png)
 
-    **Important**: This message must be displayed at least once to allow a new option to appear in system settings
+    >**Important**: This message must be displayed at least once to allow a new option to appear in system settings
 
 5. Open "System Settings" (click  in upper left -> click "System Settings").
 6. Scroll to "Privacy & Security".
