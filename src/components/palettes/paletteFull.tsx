@@ -200,7 +200,7 @@ const GameboyEmu = ({ game, palette }: GameboyEmuProps) => {
       context.putImageData(imageData, 0, 0)
     })
 
-    gameboy.loadGame(gameData.buffer)
+    gameboy.loadGame(gameData.buffer as ArrayBuffer)
     applyPalette(palette)
     gameboy.run()
     return () => gameboy.stop()
