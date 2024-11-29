@@ -465,6 +465,11 @@
       "title": "Arquivo ROM & BIOS (Arquivos Necessários)",
       "warning": "Por favor, verifique as leis locais sobre o download de arquivos ROM & BIOS de arcade potencialmente protegidos por direitos autorais.\nSe você estiver confortável com isso, copie a seguinte url no campo de entrada e clique em \"Guardar\"."
     },
+    "github_token": {
+      "title": "Token do Github",
+      "remove": "Remover",
+      "ramble": "Se você estiver tendo problemas com o limite de taxa do GitHub, adicione um token PAT abaixo.\nO token PAT não deve ter nenhum escopo definido e é armazenado no seu computador, e não no cartão SD do Pocket."
+    },
     "patreon_keys": {
       "title": "Chaves do Patreon",
       "update": "Obter chaves",

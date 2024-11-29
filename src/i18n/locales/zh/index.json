@@ -440,6 +440,11 @@
       "title": "游戏ROM & BIOS 资料库 (必要文件)",
       "warning": "请您自行评估所处地区针对数字版权保护的法律法规风险。\n若您确认使用资料库，请复制下面的链接到文本框并点击 \"保存\"。"
     },
+    "github_token": {
+      "title": "Github 代币",
+      "remove": "消除",
+      "ramble": "如果您遇到 GitHub 速率限制问题，请在下面添加 PAT 令牌。\nPAT 令牌不应设置任何范围，并且存储在您的计算机上而不是 Pocket 的 SD 卡上。"
+    },
     "patreon_keys": {
       "title": "Patreon 钥匙",
       "update": "获取密钥",

@@ -388,6 +388,11 @@
       "title": "Archive ROM et BIOS (fichiers requis)",
       "warning": "Veuillez vérifier vos lois locales concernant le téléchargement de fichiers ROM et BIOS (arcade) potentiellement protégés par des droits d'auteur. Si cela vous convient, copiez l'URL suivante dans le champ et cliquez sur \"Enregistrer\"."
     },
+    "github_token": {
+      "title": "Jeton Github",
+      "remove": "Retirer",
+      "ramble": "Si vous rencontrez des problèmes avec la limite de débit de GitHub, ajoutez un jeton PAT ci-dessous.\nLe jeton PAT ne doit avoir aucune portée définie et est stocké sur votre ordinateur plutôt que sur la carte SD du Pocket."
+    },
     "patreon_keys": {
       "title": "Clés Patreon",
       "update": "Obtenir les clés",

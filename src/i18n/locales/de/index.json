@@ -465,6 +465,11 @@
       "title": "ROM & BIOS-Archiv (Benötigte Dateien)",
       "warning": "Bitte überprüfen Sie ihre lokalen Gesetze bezüglich des Herunterladens von möglicherweise urheberrechtlich geschützten (Arcade-) ROM & BIOS-Dateien.\nFalls das für Sie in Ordnung ist, kopieren Sie die folgende URL in die Eingabe und klicken Sie „Speichern“."
     },
+    "github_token": {
+      "title": "Github-Token",
+      "remove": "Entfernen",
+      "ramble": "Wenn Sie Probleme mit der GitHub-Ratenbegrenzung haben, fügen Sie unten ein PAT-Token hinzu.\nFür das PAT-Token sollten keine Bereiche festgelegt sein, und es wird auf Ihrem Computer und nicht auf der SD-Karte des Pocket gespeichert."
+    },
     "patreon_keys": {
       "title": "Patreon-Schlüssel",
       "update": "Schlüssel abrufen",

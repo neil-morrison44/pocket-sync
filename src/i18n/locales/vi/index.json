@@ -472,6 +472,11 @@
       "title": "Lưu trữ ROM & BIOS (Các tập tin bắt buộc)",
       "warning": "Vui lòng kiểm tra luật pháp địa phương của bạn xung quanh việc tải xuống các tệp ROM & BIOS có thể cần bản quyền (arcade).\nNếu bạn thấy thoải mái với điều này, hãy sao chép url sau vào đầu vào và nhấn \"lưu\"."
     },
+    "github_token": {
+      "title": "Mã thông báo Github",
+      "remove": "Di dời",
+      "ramble": "Nếu bạn gặp sự cố với giới hạn tốc độ GitHub, hãy thêm mã thông báo PAT bên dưới.\nMã thông báo PAT không được thiết lập bất kỳ phạm vi nào và được lưu trữ trên máy tính của bạn thay vì trên thẻ SD của Pocket."
+    },
     "patreon_keys": {
       "title": "Chìa khóa Patreon",
       "update": "Nhận chìa khóa",

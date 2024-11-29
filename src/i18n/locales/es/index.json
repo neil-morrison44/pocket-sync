@@ -437,6 +437,11 @@
       "title": "Libreria ROM y BIOS (Archivos requeridos)",
       "warning": "Por favor consulte las leyes locales sobre la descarga de archivos ROM y BIOS potencialmente protegidos por derechos de autor (arcade).\nSi se siente cómodo con esto, copie la siguiente URL en la entrada y presione 'guardar'."
     },
+    "github_token": {
+      "title": "Token de Github",
+      "remove": "Eliminar",
+      "ramble": "Si tienes problemas con el límite de velocidad de GitHub, agrega un token PAT a continuación.\nEl token PAT no debe tener ningún alcance establecido y se almacena en su computadora en lugar de en la tarjeta SD de Pocket."
+    },
     "patreon_keys": {
       "title": "Claves de Patreon",
       "update": "Obtener claves",
