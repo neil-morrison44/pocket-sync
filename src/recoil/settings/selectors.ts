@@ -1,5 +1,6 @@
 import { selector } from "recoil"
 import { PatreonKeyInfo } from "../../types"
+import { githubTokenAtom } from "./atoms"
 
 export const patreonKeyListSelector = selector<PatreonKeyInfo[]>({
   key: "patreonKeyListSelector",
@@ -9,5 +10,14 @@ export const patreonKeyListSelector = selector<PatreonKeyInfo[]>({
     )
 
     return response.json()
+  },
+})
+
+export const githubHeadersSelector = selector<Record<string, string>>({
+  key: "githubHeadersSelector",
+  get: ({ get }) => {
+    const githubToken = get(githubTokenAtom)
+    if (!githubToken.value) return {} as Record<string, string>
+    return { Authorization: `Bearer ${githubToken.value}` }
   },
 })

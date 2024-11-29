@@ -27,3 +27,11 @@ export const keepPlatformDataAtom = atom<{ enabled: boolean }>({
   }),
   effects: [syncToAppLocalDataEffect("keep-platform-data")],
 })
+
+export const githubTokenAtom = atom<{ value: string | null }>({
+  key: "githubTokenAtom",
+  default: syncToAppLocalDataEffectDefault("github-token-atom", {
+    value: null,
+  }),
+  effects: [syncToAppLocalDataEffect("github-token-atom")],
+})

@@ -35,6 +35,7 @@ enum ZipStartAction {
     InstallCore(struct InstallInfo {
         core_name: String,
         zip_url: String,
+        github_token: Option<String>
     }),
 }
 }
@@ -113,7 +114,13 @@ pub async fn start_zip_task(window: WebviewWindow) -> () {
             }
             Some(ZipStartAction::InstallCore(install)) => {
                 let pocket_path = state.0.pocket_path.read().await;
-                let response = reqwest::get(&install.zip_url).await.unwrap();
+                let client = reqwest::Client::new();
+                let mut request = client.get(&install.zip_url);
+                if let Some(github_token) = install.github_token {
+                    request = request.header("Authorization", format!("Bearer {github_token}"))
+                }
+                let response = request.send().await.unwrap();
+
                 match response.status() {
                     StatusCode::OK => {
                         let zip_file = progress_download(response, |total_size, downloaded| {

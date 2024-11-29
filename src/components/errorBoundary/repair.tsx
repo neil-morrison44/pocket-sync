@@ -8,6 +8,7 @@ import { usePreventGlobalZipInstallModal } from "../../hooks/usePreventGlobalZip
 import { emit, once } from "@tauri-apps/api/event"
 import { RepairIcon } from "./repairIcon"
 import { Trans } from "react-i18next"
+import { githubTokenAtom } from "../../recoil/settings/atoms"
 
 const CORE_FILE_REGEX = /Cores[\/\\]([^\/\\]+)[\/\\]/
 const PLATFORM_FILE_REGEX = /Platforms[\/\\]([^\/\\]+)\.json/
@@ -168,6 +169,7 @@ const RepairRedownloadFiles = ({
   onFinishRepair,
 }: RepairRedownloadFilesProps): ReactElement | null => {
   const [isRepairing, setIsRepairing] = useState(false)
+  const githubToken = useRecoilValue(githubTokenAtom)
   usePreventGlobalZipInstallModal()
 
   const callback = useCallback(async () => {
@@ -175,6 +177,7 @@ const RepairRedownloadFiles = ({
     await emit("install-core", {
       core_name: coreName,
       zip_url: downloadUrl,
+      github_token: githubToken.value,
     })
 
     await (() => {
