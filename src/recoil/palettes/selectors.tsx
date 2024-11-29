@@ -9,6 +9,7 @@ import { fetch as TauriFetch } from "@tauri-apps/plugin-http"
 import { paletteRepoAtom } from "./atoms"
 import * as zip from "@zip.js/zip.js"
 import { error } from "@tauri-apps/plugin-log"
+import { githubHeadersSelector } from "../settings/selectors"
 
 export const palettesListSelector = selector<string[]>({
   key: "palettesListSelector",
@@ -92,9 +93,14 @@ export const palleteZipURLSelector = selector<string | null>({
   key: "palleteZipURLSelector",
   get: async ({ get }) => {
     const repo = get(paletteRepoAtom)
+    const headers = get(githubHeadersSelector)
+
     const response = await TauriFetch(
       `https://api.github.com/repos/${repo}/releases/latest`,
-      { method: "GET", headers: { "User-Agent": `Pocket Sync` } }
+      {
+        method: "GET",
+        headers,
+      }
     )
 
     const data = (await response.json()) as GithubRelease
