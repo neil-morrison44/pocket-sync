@@ -68,7 +68,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: tauri-apps/tauri-action@v0.5.15
+      - uses: tauri-apps/tauri-action@v0.5.16
         if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -82,7 +82,7 @@ jobs:
           releaseId: ${{ steps.get_release.outputs.id }}
           args: --target ${{ matrix.target }}
 
-      - uses: tauri-apps/tauri-action@v0.5.15
+      - uses: tauri-apps/tauri-action@v0.5.16
         if: matrix.platform != 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
