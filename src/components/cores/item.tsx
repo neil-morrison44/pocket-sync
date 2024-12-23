@@ -18,6 +18,7 @@ import { useInventoryItem } from "../../hooks/useInventoryItem"
 import { PlatformInventoryImageSelectorFamily } from "../../recoil/inventory/selectors"
 import { PlatformImage } from "./platformImage"
 import { AnalogizerIcon } from "./icons/AnalogizerIcon"
+import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 
 type CoreItemProps = {
   coreName: string
@@ -99,9 +100,12 @@ export const NotInstalledCoreItem = ({
     PlatformInventoryImageSelectorFamily(platform_id)
   )
 
+  const config = useRecoilValue(PocketSyncConfigSelector)
   const authorImageUrl = `https://openfpga-cores-inventory.github.io/analogue-pocket/assets/images/authors/${identifier}.png`
-
   const [author] = identifier.split(".")
+
+  if (config.hidden_cores && config.hidden_cores.includes(identifier))
+    return null
 
   return (
     <SearchContextSelfHidingConsumer

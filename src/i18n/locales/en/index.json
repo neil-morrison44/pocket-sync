@@ -39,7 +39,8 @@
       "install": "Install",
       "required_files": "Required Files",
       "uninstall": "Uninstall",
-      "update": "Update"
+      "update": "Update",
+      "hide_core": "Hide Core"
     },
     "inputs": "Inputs",
     "modal": {
@@ -68,6 +69,7 @@
     },
     "required_files": "Required Files",
     "required_files_count": "{count} / {total} Files",
+    "hide_core_confirm": "This will hide the core from the list, hidden cores can be managed in Settings",
     "settings": "Settings",
     "sponsor": "Sponsor",
     "download_count": "Downloads",
@@ -514,6 +516,11 @@
     "logs": {
       "title": "Logs",
       "button": "Open Log Folder"
+    },
+    "hidden_cores": {
+      "title": "Hidden Cores",
+      "ramble": "These cores are hidden from the list of available uninstalled cores, if installed they are not hidden. \nYou can hide cores from their info pages.",
+      "button": "Clear hidden cores list"
     },
     "thanks": "Thanks to:"
   },

@@ -9,6 +9,7 @@ import { ZipInstall } from "../zipInstall"
 import "./index.css"
 import { useTranslation } from "react-i18next"
 import { enableGlobalZipInstallAtom } from "../../recoil/atoms"
+import { useRefHeight } from "../../hooks/useRefHeight"
 
 const Saves = React.lazy(() =>
   import("../saves").then((i) => ({ default: i.Saves }))
@@ -71,6 +72,7 @@ export const Layout = () => {
   }, [])
 
   const { view } = viewAndSubview
+  const [contentRef, heightRef] = useRefHeight()
 
   return (
     <div className="layout" ref={layoutRef}>
@@ -93,18 +95,20 @@ export const Layout = () => {
       </div>
       <div className="layout__content">
         <ErrorBoundary>
-          <Suspense fallback={<Loader fullHeight />}>
-            {view === "Screenshots" && <Screenshots />}
-            {view === "Cores" && <Cores />}
-            {view === "Pocket Sync" && <About />}
-            {view === "Settings" && <Settings />}
-            {view === "Games" && <Games />}
-            {view === "Saves" && <Saves />}
-            {view === "Save States" && <SaveStates />}
-            {view === "Firmware" && <Firmware />}
-            {view === "Platforms" && <Platforms />}
-            {view === "Palettes" && <Palettes />}
-            {view === "Fetch" && <Fetch />}
+          <Suspense fallback={<Loader heightRef={heightRef} />}>
+            <div ref={contentRef}>
+              {view === "Screenshots" && <Screenshots />}
+              {view === "Cores" && <Cores />}
+              {view === "Pocket Sync" && <About />}
+              {view === "Settings" && <Settings />}
+              {view === "Games" && <Games />}
+              {view === "Saves" && <Saves />}
+              {view === "Save States" && <SaveStates />}
+              {view === "Firmware" && <Firmware />}
+              {view === "Platforms" && <Platforms />}
+              {view === "Palettes" && <Palettes />}
+              {view === "Fetch" && <Fetch />}
+            </div>
           </Suspense>
         </ErrorBoundary>
       </div>

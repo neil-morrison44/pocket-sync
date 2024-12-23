@@ -236,6 +236,7 @@ export type PocketSyncConfig = {
   skipAlternateAssets?: boolean
   fetches?: FetchType[]
   patreon_email?: string
+  hidden_cores?: string[]
 }
 
 export type SaveConfig = {
