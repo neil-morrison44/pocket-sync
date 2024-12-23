@@ -1,5 +1,5 @@
 import { Suspense, useMemo, useState } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   PlatformInfoSelectorFamily,
   PlatformImageSelectorFamily,
@@ -26,8 +26,12 @@ type PlatformInfoProps = {
 
 export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
   const [imageEditorOpen, setImageEditorOpen] = useState(false)
-  const { platform } = useRecoilValue(PlatformInfoSelectorFamily(id))
-  const platformImage = useRecoilValue(PlatformImageSelectorFamily(id))
+  const { platform } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PlatformInfoSelectorFamily(id)
+  )
+  const platformImage = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PlatformImageSelectorFamily(id)
+  )
   const { t } = useTranslation("platform_info")
 
   const category = useMemo(
@@ -35,7 +39,7 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
     [platform.category]
   )
 
-  const cats = useRecoilValue(allCategoriesSelector)
+  const cats = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(allCategoriesSelector)
   const [imagePacksOpen, setImagePacksOpen] = useState(false)
   const [dataPacksOpen, setDataPacksOpen] = useState(false)
   const updateValue = useUpdatePlatformValue(id)

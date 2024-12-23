@@ -1,5 +1,5 @@
 import { Fragment, Suspense, useCallback, useMemo, useState } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { AllSaveStatesSelector } from "../../recoil/saveStates/selectors"
 import { SaveStateItem } from "./item"
 import { Loader } from "../loader"
@@ -17,7 +17,9 @@ import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
 
 export const SaveStates = () => {
-  const allSaveStates = useRecoilValue(AllSaveStatesSelector)
+  const allSaveStates = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    AllSaveStatesSelector
+  )
   const [selectedStates, setSelectedStates] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const { t } = useTranslation("save_states")

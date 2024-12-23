@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   DataJSONSelectorFamily,
   WalkDirSelectorFamily,
@@ -17,8 +17,10 @@ export const GameCount = ({
   coreName,
   extensions,
 }: GameCountProps) => {
-  const data = useRecoilValue(DataJSONSelectorFamily(coreName))
-  const files = useRecoilValue(
+  const data = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    DataJSONSelectorFamily(coreName)
+  )
+  const files = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     WalkDirSelectorFamily({ path: `Assets/${platformId}`, extensions })
   )
   const { t } = useTranslation("games")

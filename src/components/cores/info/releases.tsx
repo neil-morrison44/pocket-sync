@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { InventoryItem } from "../../../types"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -22,7 +22,7 @@ export const Releases = ({ inventoryItem }: ReleasesProps) => {
   const { t } = useTranslation("core_info")
   const [showAll, setShowAll] = useState(false)
 
-  const githubReleases = useRecoilValue(
+  const githubReleases = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     GithubReleasesSelectorFamily({
       owner: inventoryItem.repository.owner,
       repo: inventoryItem.repository.name,

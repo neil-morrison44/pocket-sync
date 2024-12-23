@@ -1,6 +1,6 @@
 import { listen } from "@tauri-apps/api/event"
 import { useEffect, useState } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { instancePackagerCoresListSelector } from "../../../recoil/games/selectors"
 import { invokeRunPackagerForCore } from "../../../utils/invokes"
 import { Modal } from "../../modal"
@@ -14,7 +14,9 @@ type InstanceJsonProps = {
 }
 
 export const InstanceJson = ({ onClose }: InstanceJsonProps) => {
-  const coresList = useRecoilValue(instancePackagerCoresListSelector)
+  const coresList = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    instancePackagerCoresListSelector
+  )
   const buildLog = useBuildLog()
   const { t } = useTranslation("instance_json")
 

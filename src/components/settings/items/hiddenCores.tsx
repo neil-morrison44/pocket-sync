@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
 import { useUpdateConfig } from "../hooks/useUpdateConfig"
 import { useTranslation } from "react-i18next"
@@ -6,7 +6,9 @@ import { useTranslation } from "react-i18next"
 export const HiddenCores = () => {
   const updateConfig = useUpdateConfig()
   const { t } = useTranslation("settings")
-  const config = useRecoilValue(PocketSyncConfigSelector)
+  const config = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PocketSyncConfigSelector
+  )
   const hiddenCores = config.hidden_cores ?? []
 
   const hasHiddenCores = hiddenCores.length !== 0

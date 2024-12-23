@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   PlatformImageSelectorFamily,
   PlatformInfoSelectorFamily,
@@ -13,8 +13,12 @@ type PlatformItemProps = {
 }
 
 export const PlatformItem = ({ id, onClick }: PlatformItemProps) => {
-  const { platform } = useRecoilValue(PlatformInfoSelectorFamily(id))
-  const platformImage = useRecoilValue(PlatformImageSelectorFamily(id))
+  const { platform } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PlatformInfoSelectorFamily(id)
+  )
+  const platformImage = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PlatformImageSelectorFamily(id)
+  )
 
   const category = useMemo(
     () => platform.category || "Uncategorised",

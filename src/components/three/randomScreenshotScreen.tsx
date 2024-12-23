@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   screenshotsListSelector,
   SingleScreenshotImageSelectorFamily,
@@ -14,7 +14,9 @@ type RandomScreenshotScreenProps = {
 export const RandomScreenshotScreen = ({
   interval = 3000,
 }: RandomScreenshotScreenProps) => {
-  const screenshotList = useRecoilValue(screenshotsListSelector)
+  const screenshotList = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    screenshotsListSelector
+  )
   const [screenshotIndex, setScreenshotIndex] = useState(0)
 
   const screenshotName = useMemo(
@@ -39,7 +41,9 @@ export const RandomScreenshotScreen = ({
 
 const ScreenshotScreen = ({ name }: { name: string }) => {
   const materialRef = useRef<MeshPhysicalMaterial | null>(null)
-  const image = useRecoilValue(SingleScreenshotImageSelectorFamily(name))
+  const image = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    SingleScreenshotImageSelectorFamily(name)
+  )
 
   useEffect(() => {
     if (!image || !materialRef.current) return

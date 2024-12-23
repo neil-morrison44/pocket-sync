@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { FirmwareDetailsSelectorFamily } from "../../../recoil/firmware/selectors"
 import { useTranslation } from "react-i18next"
 import parse, { Element, domToReact } from "html-react-parser"
@@ -11,7 +11,7 @@ type FirmwareReleaseNotesProp = {
 }
 
 export const FirmwareReleaseNotes = ({ version }: FirmwareReleaseNotesProp) => {
-  const firmwareDetails = useRecoilValue(
+  const firmwareDetails = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     FirmwareDetailsSelectorFamily({ version })
   )
   const { t } = useTranslation("firmware")

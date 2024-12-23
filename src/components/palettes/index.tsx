@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   PaletteCodeSelectorFamily,
   palettesListSelector,
@@ -27,7 +27,8 @@ import { PreviewCanvas } from "./previewCanvas"
 import { PaletteTown } from "./town"
 
 export const Palettes = () => {
-  const palettesList = useRecoilValue(palettesListSelector)
+  const palettesList =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(palettesListSelector)
   const { t } = useTranslation("palettes")
   const [mode, setMode] = useState<
     { name: "list" } | { name: "new" } | { name: "selected"; palette: string }
@@ -119,8 +120,10 @@ export const PaletteListItem = ({
   name: string
   onClick: () => void
 }) => {
-  const paletteCode = useRecoilValue(PaletteCodeSelectorFamily(name))
-  const pocketPath = useRecoilValue(pocketPathAtom)
+  const paletteCode = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PaletteCodeSelectorFamily(name)
+  )
+  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
   const [interimName, setInterimName] = useState(() => name.replace(".pal", ""))
   const { t } = useTranslation("palettes")
   const [renameMode, setRenameMode] = useState(false)
@@ -216,7 +219,7 @@ export const PaletteListItem = ({
 
 const AddViaCodeModal = ({ onClose }: { onClose: () => void }) => {
   const [inputedCode, setInputedCode] = useState("")
-  const pocketPath = useRecoilValue(pocketPathAtom)
+  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
   const { t } = useTranslation("palettes")
 
   const parsedPalette = useMemo<{

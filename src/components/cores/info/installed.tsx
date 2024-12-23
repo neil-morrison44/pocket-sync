@@ -1,4 +1,7 @@
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import {
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+  useSetRecoilState,
+} from "recoil"
 import {
   CoreInfoSelectorFamily,
   CoreMainPlatformIdSelectorFamily,
@@ -48,11 +51,15 @@ type CoreInfoProps = {
 }
 
 export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
-  const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
+  const coreInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    CoreInfoSelectorFamily(coreName)
+  )
   const uninstall = useUninstallCore()
   const { installCore } = useInstallCore()
   const inventoryItem = useInventoryItem(coreName)
-  const downloadUrl = useRecoilValue(DownloadURLSelectorFamily(coreName))
+  const downloadUrl = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    DownloadURLSelectorFamily(coreName)
+  )
 
   const [requiredFilesOpen, setRequiredFilesOpen] = useState(false)
   const [inputsOpen, setInputsOpen] = useState(false)
@@ -65,7 +72,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
     setViewAndSubview({ view: "Cores", selected: replacementCore })
   }, [replacementCore, setViewAndSubview])
 
-  const mainPlatformId = useRecoilValue(
+  const mainPlatformId = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     CoreMainPlatformIdSelectorFamily(coreName)
   )
 
@@ -324,7 +331,9 @@ const RequiredFilesButton = ({
   coreName: string
   onClick: () => void
 }) => {
-  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
+  const requiredFiles = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    RequiredFileInfoSelectorFamily(coreName)
+  )
   const { t } = useTranslation("core_info")
 
   if (requiredFiles.length === 0) return null
@@ -336,8 +345,12 @@ const RequiredFilesButton = ({
 }
 
 const FirmwareWarning = ({ coreName }: { coreName: string }) => {
-  const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
-  const currentFirmware = useRecoilValue(currentFirmwareVersionSelector)
+  const coreInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    CoreInfoSelectorFamily(coreName)
+  )
+  const currentFirmware = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    currentFirmwareVersionSelector
+  )
   const setViewAndSubview = useSetRecoilState(currentViewAtom)
   const { t } = useTranslation("core_info")
 
@@ -370,6 +383,8 @@ const FirmwareWarning = ({ coreName }: { coreName: string }) => {
 }
 
 const InfoTxt = ({ coreName }: { coreName: string }) => {
-  const infoTxt = useRecoilValue(CoreInfoTxtSelectorFamily(coreName))
+  const infoTxt = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    CoreInfoTxtSelectorFamily(coreName)
+  )
   return <div className="core-info__info-txt">{infoTxt}</div>
 }

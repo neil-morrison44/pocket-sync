@@ -1,8 +1,8 @@
 import { Suspense, useMemo, useState } from "react"
 import {
   useRecoilCallback,
-  useRecoilValue,
-  useRecoilValueLoadable,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+  useRecoilValueLoadable_TRANSITION_SUPPORT_UNSTABLE,
 } from "recoil"
 import {
   ImagePackImageSelectorFamily,
@@ -27,13 +27,17 @@ type ImagePacksProps = {
 }
 
 export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
-  const allPlatformIds = useRecoilValue(platformsListSelector)
+  const allPlatformIds = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    platformsListSelector
+  )
   const platformIds = useMemo(() => {
     if (singlePlatformId) return [singlePlatformId]
     return allPlatformIds
   }, [allPlatformIds, singlePlatformId])
 
-  const imagePacksLoadable = useRecoilValueLoadable(imagePackListSelector)
+  const imagePacksLoadable = useRecoilValueLoadable_TRANSITION_SUPPORT_UNSTABLE(
+    imagePackListSelector
+  )
 
   const imagePacks = useMemo(() => {
     if (imagePacksLoadable.state !== "hasValue") return []
@@ -170,7 +174,7 @@ const PackColumnItem = ({
   onClick,
   isSelected,
 }: PackColumnItemProps) => {
-  const imagePackImage = useRecoilValue(
+  const imagePackImage = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     ImagePackImageSelectorFamily({ owner, repository, variant, platformId })
   )
 

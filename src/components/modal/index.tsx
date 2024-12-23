@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from "react"
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow"
 import "./index.css"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { mainWindowSelector } from "../../recoil/selectors"
 
 type ModalProps = {
@@ -11,7 +11,8 @@ type ModalProps = {
 
 export const Modal = ({ children, className }: ModalProps) => {
   const [wrapperHeight, setWrapperHeight] = useState(0)
-  const mainViewWindow = useRecoilValue(mainWindowSelector)
+  const mainViewWindow =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(mainWindowSelector)
 
   useEffect(() => {
     if (!mainViewWindow) return

@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { Texture } from "three"
 import {
   ListPresetInputsSelectorFamily,
@@ -46,9 +46,11 @@ export const CoreInputs = ({
   onClose: () => void
   platformId: string
 }) => {
-  const platformImage = useRecoilValue(PlatformImageSelectorFamily(platformId))
+  const platformImage = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PlatformImageSelectorFamily(platformId)
+  )
   const { t } = useTranslation("core_info")
-  const presetInputList = useRecoilValue(
+  const presetInputList = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     ListPresetInputsSelectorFamily(coreName)
   )
 
@@ -169,7 +171,7 @@ const GetInputFile = ({
     }[]
   ) => ReactElement
 }) => {
-  const presetInput = useRecoilValue(
+  const presetInput = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     PresetInputSelectorFamily({ coreName, filePath })
   )
 

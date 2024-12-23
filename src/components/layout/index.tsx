@@ -1,5 +1,14 @@
-import React, { Suspense, useCallback, useEffect, useRef } from "react"
-import { useRecoilState, useRecoilValue } from "recoil"
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useTransition,
+} from "react"
+import {
+  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 import { currentViewAtom, VIEWS_LIST } from "../../recoil/view/atoms"
 import { About } from "../about"
 import { ErrorBoundary } from "../errorBoundary"
@@ -9,7 +18,6 @@ import { ZipInstall } from "../zipInstall"
 import "./index.css"
 import { useTranslation } from "react-i18next"
 import { enableGlobalZipInstallAtom } from "../../recoil/atoms"
-import { useRefHeight } from "../../hooks/useRefHeight"
 
 const Saves = React.lazy(() =>
   import("../saves").then((i) => ({ default: i.Saves }))
@@ -44,14 +52,20 @@ const Firmware = React.lazy(() =>
 )
 
 export const Layout = () => {
-  const [viewAndSubview, setViewAndSubview] = useRecoilState(currentViewAtom)
-  const enableGlobalZipInstall = useRecoilValue(enableGlobalZipInstallAtom)
+  const [viewAndSubview, setViewAndSubview] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(currentViewAtom)
+  const enableGlobalZipInstall = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    enableGlobalZipInstallAtom
+  )
   const { t } = useTranslation("layout")
+  const [isPending, startTransition] = useTransition()
 
   const changeView = useCallback(
     (viewName: (typeof VIEWS_LIST)[number]) => {
-      setViewAndSubview({ view: viewName, selected: null })
-      window.scrollTo({ top: 0 })
+      startTransition(() => {
+        setViewAndSubview({ view: viewName, selected: null })
+        window.scrollTo({ top: 0 })
+      })
     },
     [setViewAndSubview]
   )
@@ -72,7 +86,6 @@ export const Layout = () => {
   }, [])
 
   const { view } = viewAndSubview
-  const [contentRef, heightRef] = useRefHeight()
 
   return (
     <div className="layout" ref={layoutRef}>
@@ -92,11 +105,12 @@ export const Layout = () => {
             {t(v.toLowerCase().replace(/\s/g, "_"))}
           </div>
         ))}
+        {isPending && <Loader />}
       </div>
       <div className="layout__content">
         <ErrorBoundary>
-          <Suspense fallback={<Loader heightRef={heightRef} />}>
-            <div ref={contentRef}>
+          <Suspense fallback={<Loader fullHeight />}>
+            <div>
               {view === "Screenshots" && <Screenshots />}
               {view === "Cores" && <Cores />}
               {view === "Pocket Sync" && <About />}

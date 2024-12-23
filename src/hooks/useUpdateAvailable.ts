@@ -1,11 +1,14 @@
 import { useMemo } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { coreInventoryAtom } from "../recoil/inventory/atoms"
 import { CoreInfoSelectorFamily } from "../recoil/selectors"
 
 export const useUpdateAvailable = (coreName: string) => {
-  const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
-  const coreInventory = useRecoilValue(coreInventoryAtom)
+  const coreInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    CoreInfoSelectorFamily(coreName)
+  )
+  const coreInventory =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(coreInventoryAtom)
 
   return useMemo<string | null>(() => {
     const inventoryCore = coreInventory.data.find(

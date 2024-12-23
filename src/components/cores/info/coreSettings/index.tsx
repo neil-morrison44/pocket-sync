@@ -1,6 +1,9 @@
 import { Loader } from "@react-three/drei"
 import { Suspense, useCallback, useState } from "react"
-import { useRecoilState, useRecoilValue } from "recoil"
+import {
+  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 import { PersistInteractFileAtomFamily } from "../../../../recoil/coreSettings/atoms"
 import {
   EMPTY_PERSIST,
@@ -25,7 +28,7 @@ export const CoreSettings = ({
   coreName: string
   onClose: () => void
 }) => {
-  const interactFileList = useRecoilValue(
+  const interactFileList = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     ListPresetInteractSelectorFamily(coreName)
   )
   const [chosenInteractFile, setChosenInteractFile] = useState("core")
@@ -67,12 +70,13 @@ const InteractSettings = ({
   filePath: "core" | string
   onClose: () => void
 }) => {
-  const interactJSON = useRecoilValue(
+  const interactJSON = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     PresetInteractFileSelectorFamily({ coreName, filePath })
   )
-  const [persistJSON, setPersistJSON] = useRecoilState(
-    PersistInteractFileAtomFamily({ coreName, filePath })
-  )
+  const [persistJSON, setPersistJSON] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(
+      PersistInteractFileAtomFamily({ coreName, filePath })
+    )
   const { t } = useTranslation("core_info")
 
   const updateValue = useCallback(

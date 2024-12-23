@@ -1,5 +1,8 @@
 import { Suspense, useCallback, useMemo, useState } from "react"
-import { useRecoilState, useRecoilValue } from "recoil"
+import {
+  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import { coreInventoryAtom } from "../../recoil/inventory/atoms"
 import { cateogryListselector } from "../../recoil/inventory/selectors"
@@ -26,19 +29,18 @@ import {
 } from "../../recoil/cores/atoms"
 
 export const Cores = () => {
-  const [selectedCore, setSelectedCore] = useRecoilState(
-    selectedSubviewSelector
-  )
+  const [selectedCore, setSelectedCore] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(selectedSubviewSelector)
   const { pushScroll, popScroll } = useSaveScroll()
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [onlyUpdates, setOnlyUpdates] = useState(false)
-  const [filterCategory, setFilterCategory] = useRecoilState(
-    categoryFilterOptionAtom
-  )
+  const [filterCategory, setFilterCategory] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(categoryFilterOptionAtom)
   const { t } = useTranslation("cores")
   const [updateAllOpen, setUpdateAllOpen] = useState(false)
 
-  const [sortMode, setSortMode] = useRecoilState(sortingOptionAtom)
+  const [sortMode, setSortMode] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(sortingOptionAtom)
 
   const closeUpdateAllCallback = useCallback(
     () => setUpdateAllOpen(false),
@@ -103,7 +105,6 @@ export const Cores = () => {
               sortMode={sortMode}
               onSelect={(core) => {
                 pushScroll()
-
                 setSelectedCore(core)
               }}
             />
@@ -124,8 +125,10 @@ const CoreList = ({
   onSelect: (coreid: string) => void
 }) => {
   const { t } = useTranslation("cores")
-  const coresList = useRecoilValue(coresListSelector)
-  const coreInventory = useRecoilValue(coreInventoryAtom)
+  const coresList =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(coresListSelector)
+  const coreInventory =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(coreInventoryAtom)
 
   const notInstalledCores = useMemo(
     () =>
@@ -185,7 +188,7 @@ const CoreList = ({
   return (
     <>
       <h2>{t("installed", { count: sortedList.length })}</h2>
-      <Grid>
+      <Grid placeholderItemHeight={160}>
         {sortedList.map((core) => (
           <Suspense fallback={<Loader title={core} height={160} />} key={core}>
             <CoreItem coreName={core} onClick={() => onSelect(core)} />
@@ -215,7 +218,8 @@ const CategoryFilter = ({
   filterCategory: string
   setFilterCategory: (fc: string) => void
 }) => {
-  const categoryList = useRecoilValue(cateogryListselector)
+  const categoryList =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(cateogryListselector)
 
   const { t } = useTranslation("cores")
   return (

@@ -1,6 +1,6 @@
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { useCallback } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { BackupZipsSelectorFamily } from "../../recoil/saves/selectors"
 import { SaveConfig } from "../../types"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
@@ -12,7 +12,7 @@ type SavesItemProps = {
 }
 
 export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
-  const { files, exists } = useRecoilValue(
+  const { files, exists } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     BackupZipsSelectorFamily(config.backup_location)
   )
 

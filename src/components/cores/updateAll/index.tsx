@@ -1,4 +1,7 @@
-import { useRecoilCallback, useRecoilValue } from "recoil"
+import {
+  useRecoilCallback,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 import { Modal } from "../../modal"
 import {
   Dispatch,
@@ -207,8 +210,11 @@ const UpdateAllList = ({
   setUpdateList: Dispatch<SetStateAction<UpdateListItem[]>>
 }) => {
   const { t } = useTranslation("")
-  const unsortedCoresList = useRecoilValue(installedCoresWithUpdatesSelector)
-  const keepPlatformData = useRecoilValue(keepPlatformDataAtom)
+  const unsortedCoresList = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    installedCoresWithUpdatesSelector
+  )
+  const keepPlatformData =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(keepPlatformDataAtom)
 
   const getUpdateList = useRecoilCallback(
     ({ snapshot }) =>
@@ -314,11 +320,11 @@ const UpdateListItem = ({
   onChangeRequiredFiles: (checked: boolean) => void
   onChangePlatformFiles: (checked: boolean) => void
 }) => {
-  const mainPlatformId = useRecoilValue(
+  const mainPlatformId = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     CoreMainPlatformIdSelectorFamily(coreName)
   )
 
-  const platformInfo = useRecoilValue(
+  const platformInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     PlatformInfoSelectorFamily(mainPlatformId)
   )
 

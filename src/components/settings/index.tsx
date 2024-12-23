@@ -1,5 +1,8 @@
 import { useCallback, useState } from "react"
-import { useRecoilState, useRecoilValue } from "recoil"
+import {
+  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 import {
   PocketSyncConfigSelector,
   skipAlternateAssetsSelector,
@@ -27,22 +30,26 @@ import { HiddenCores } from "./items/hiddenCores"
 import { GithubToken } from "./items/githubToken"
 
 export const Settings = () => {
-  const config = useRecoilValue(PocketSyncConfigSelector)
+  const config = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PocketSyncConfigSelector
+  )
   const [archiveUrlInput, setArchiveUrl] = useState(config.archive_url || "")
 
   const [patreonEmailInput, setPatreonEmail] = useState(
     config.patreon_email || ""
   )
   const [alwaysUseEnglish, setAlwaysUseEnglish] =
-    useRecoilState(alwaysUseEnglishAtom)
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(alwaysUseEnglishAtom)
 
-  const [turboDownloads, setTurboDownloads] = useRecoilState(turboDownloadsAtom)
+  const [turboDownloads, setTurboDownloads] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(turboDownloadsAtom)
   const [keepPlatformData, setKeepPlatformData] =
-    useRecoilState(keepPlatformDataAtom)
-  const skipAlternateAssets = useRecoilValue(skipAlternateAssetsSelector)
-  const [reconnectWhenOpened, setReconnectWhenOpened] = useRecoilState(
-    reconnectWhenOpenedAtom
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(keepPlatformDataAtom)
+  const skipAlternateAssets = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    skipAlternateAssetsSelector
   )
+  const [reconnectWhenOpened, setReconnectWhenOpened] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(reconnectWhenOpenedAtom)
   const updateConfig = useUpdateConfig()
   const { t } = useTranslation("settings")
   const onDisconnect = useCallback(
@@ -50,7 +57,9 @@ export const Settings = () => {
     []
   )
 
-  const patreonUrls = useRecoilValue(patreonKeyListSelector)
+  const patreonUrls = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    patreonKeyListSelector
+  )
 
   return (
     <div className="settings">

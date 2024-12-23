@@ -1,10 +1,10 @@
 import { Palette } from "../../../types"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { pocketPathAtom } from "../../../recoil/atoms"
 import { invokeSaveFile } from "../../../utils/invokes"
 
 export const useSavePalette = () => {
-  const pocketPath = useRecoilValue(pocketPathAtom)
+  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
 
   return async (palette: Palette, name: string) => {
     const data = new Uint8Array(56)

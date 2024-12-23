@@ -11,7 +11,7 @@ use std::{
     time::SystemTime,
 };
 use tempdir::TempDir;
-use zip::{result::ZipError, write::FileOptions, DateTime};
+use zip::{result::ZipError, write::SimpleFileOptions, DateTime};
 
 use crate::hashes::crc32_for_file;
 
@@ -177,7 +177,7 @@ pub async fn build_save_zip(
     let zip_file = File::create(zip_file_path).unwrap();
 
     let mut zip = zip::ZipWriter::new(zip_file);
-    let options = FileOptions::default()
+    let options = SimpleFileOptions::default()
         .compression_method(zip::CompressionMethod::Deflated)
         .unix_permissions(0o755);
 

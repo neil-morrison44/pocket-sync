@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { Controls } from "../controls"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
@@ -19,9 +19,11 @@ export const Saves = () => {
   const [selectedSaveBackup, setSelectedSavebackup] = useState<number | null>(
     null
   )
-  const allSaves = useRecoilValue(AllSavesSelector)
+  const allSaves = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(AllSavesSelector)
   const updateConfig = useUpdateConfig()
-  const { saves } = useRecoilValue(PocketSyncConfigSelector)
+  const { saves } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PocketSyncConfigSelector
+  )
   const { t } = useTranslation("saves")
 
   const [misterSync, setMisterSync] = useState(false)

@@ -1,7 +1,7 @@
 import React, { ReactElement, useCallback, useMemo, useState } from "react"
 import { PlatformId } from "../../types"
 import { useInstallCore } from "../../hooks/useInstallCore"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { CoresForPlatformSelectorFamily } from "../../recoil/platforms/selectors"
 import { DownloadURLSelectorFamily } from "../../recoil/inventory/selectors"
 import { usePreventGlobalZipInstallModal } from "../../hooks/usePreventGlobalZipInstall"
@@ -126,7 +126,7 @@ const GetCoresForPlatform = ({
   children,
   platformId,
 }: GetCoresForPlatformProps): ReactElement | null => {
-  const coresForPlatform = useRecoilValue(
+  const coresForPlatform = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     CoresForPlatformSelectorFamily(platformId)
   )
 
@@ -148,7 +148,9 @@ const GetDownloadURLForCore = ({
   children,
   coreName,
 }: GetDownloadURLForCoreProps): ReactElement | null => {
-  const downloadUrl = useRecoilValue(DownloadURLSelectorFamily(coreName))
+  const downloadUrl = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    DownloadURLSelectorFamily(coreName)
+  )
 
   if (!downloadUrl) return null
   return <>{children(downloadUrl)}</>
@@ -169,7 +171,8 @@ const RepairRedownloadFiles = ({
   onFinishRepair,
 }: RepairRedownloadFilesProps): ReactElement | null => {
   const [isRepairing, setIsRepairing] = useState(false)
-  const githubToken = useRecoilValue(githubTokenAtom)
+  const githubToken =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(githubTokenAtom)
   usePreventGlobalZipInstallModal()
 
   const callback = useCallback(async () => {

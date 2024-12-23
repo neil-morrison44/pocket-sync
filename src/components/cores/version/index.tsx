@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { CoreInfoSelectorFamily } from "../../../recoil/selectors"
 
 import "./index.css"
@@ -11,7 +11,9 @@ type VersionProps = {
 }
 
 export const Version = ({ coreName }: VersionProps) => {
-  const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
+  const coreInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    CoreInfoSelectorFamily(coreName)
+  )
   const updateAvailable = useUpdateAvailable(coreName)
   const replaceAvailable = useReplacementAvailable(coreName)
   const { t } = useTranslation("version")

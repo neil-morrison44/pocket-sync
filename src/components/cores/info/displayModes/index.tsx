@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { VideoJSONSelectorFamily } from "../../../../recoil/screenshots/selectors"
 import { useCallback, useMemo } from "react"
 import { SupportsBubble } from "../supportsBubble"
@@ -40,8 +40,10 @@ const DISPLAY_MODES = {
 }
 
 export const DisplayModes = ({ coreName }: DisplayModesProps) => {
-  const videoJson = useRecoilValue(VideoJSONSelectorFamily(coreName))
-  const pocketPath = useRecoilValue(pocketPathAtom)
+  const videoJson = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    VideoJSONSelectorFamily(coreName)
+  )
+  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
 
   const { t } = useTranslation("core_info")
 

@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   CoreAuthorImageSelectorFamily,
   CoreInfoSelectorFamily,
@@ -26,12 +26,16 @@ type CoreItemProps = {
 }
 
 export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
-  const { core } = useRecoilValue(CoreInfoSelectorFamily(coreName))
-  const imageSrc = useRecoilValue(CoreAuthorImageSelectorFamily(coreName))
-  const mainPlatformId = useRecoilValue(
+  const { core } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    CoreInfoSelectorFamily(coreName)
+  )
+  const imageSrc = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    CoreAuthorImageSelectorFamily(coreName)
+  )
+  const mainPlatformId = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     CoreMainPlatformIdSelectorFamily(coreName)
   )
-  const { platform } = useRecoilValue(
+  const { platform } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     PlatformInfoSelectorFamily(mainPlatformId)
   )
   const canUpdate = useUpdateAvailable(coreName)
@@ -96,11 +100,13 @@ export const NotInstalledCoreItem = ({
 }: NotInstalledCoreItemProps) => {
   const { platform_id, identifier, platform, requires_license, version } =
     inventoryItem
-  const imageUrl = useRecoilValue(
+  const imageUrl = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     PlatformInventoryImageSelectorFamily(platform_id)
   )
 
-  const config = useRecoilValue(PocketSyncConfigSelector)
+  const config = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PocketSyncConfigSelector
+  )
   const authorImageUrl = `https://openfpga-cores-inventory.github.io/analogue-pocket/assets/images/authors/${identifier}.png`
   const [author] = identifier.split(".")
 

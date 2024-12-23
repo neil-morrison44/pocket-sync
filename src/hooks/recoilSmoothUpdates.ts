@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react"
-import { RecoilValue, useRecoilValueLoadable } from "recoil"
+import {
+  RecoilValue,
+  useRecoilValueLoadable_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 
 export const useRecoilSmoothUpdates = <T, D>(
   atomOrSelector: RecoilValue<T>,
   fallback: D
 ): T | D => {
   const [smoothedValue, setSmoothedValue] = useState<T | D>(fallback)
-  const loadable = useRecoilValueLoadable(atomOrSelector)
+  const loadable =
+    useRecoilValueLoadable_TRANSITION_SUPPORT_UNSTABLE(atomOrSelector)
 
   useEffect(() => {
     const inner = async () => {
@@ -21,7 +25,8 @@ export const useRecoilSmoothUpdates = <T, D>(
 export const useRecoilSmoothUpdatesFirstSuspend = <T>(
   atomOrSelector: RecoilValue<T>
 ): T => {
-  const loadable = useRecoilValueLoadable(atomOrSelector)
+  const loadable =
+    useRecoilValueLoadable_TRANSITION_SUPPORT_UNSTABLE(atomOrSelector)
   const [smoothedValue, setSmoothedValue] = useState<T>(() => {
     if (loadable.state !== "hasValue") throw loadable.toPromise()
     return loadable.getValue()

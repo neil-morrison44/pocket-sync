@@ -1,5 +1,5 @@
 import { ReactElement, useMemo } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { SingleScreenshotSelectorFamily } from "../../recoil/screenshots/selectors"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 
@@ -14,7 +14,9 @@ export const Screenshot = ({
   selected,
   onClick,
 }: ScreenshotProps): ReactElement => {
-  const screenshot = useRecoilValue(SingleScreenshotSelectorFamily(fileName))
+  const screenshot = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    SingleScreenshotSelectorFamily(fileName)
+  )
   if (screenshot === null) throw new Error(`Null file ${fileName}`)
 
   const blob = useMemo(() => URL.createObjectURL(screenshot.file), [screenshot])

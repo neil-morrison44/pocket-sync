@@ -1,5 +1,8 @@
 import { Suspense, useMemo, useState } from "react"
-import { useRecoilCallback, useRecoilValue } from "recoil"
+import {
+  useRecoilCallback,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 import { fileSystemInvalidationAtom } from "../../recoil/atoms"
 import { cateogryListselector } from "../../recoil/inventory/selectors"
 import { coresListSelector } from "../../recoil/selectors"
@@ -18,7 +21,8 @@ import { ControlsSelect } from "../controls/inputs/select"
 import "../cores/index.css"
 
 export const Games = () => {
-  const coresList = useRecoilValue(coresListSelector)
+  const coresList =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(coresListSelector)
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [filterCategory, setFilterCategory] = useState<string>("All")
   const [cleanFilesOpen, setCleanFilesOpen] = useState(false)
@@ -43,7 +47,8 @@ export const Games = () => {
     [coresList]
   )
 
-  const categoryList = useRecoilValue(cateogryListselector)
+  const categoryList =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(cateogryListselector)
 
   return (
     <div>

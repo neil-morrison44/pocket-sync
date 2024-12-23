@@ -1,5 +1,5 @@
 import { Suspense, useMemo } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { useInstallRequiredFiles } from "../../../../hooks/useInstallRequiredFiles"
 import { skipAlternateAssetsSelector } from "../../../../recoil/config/selectors"
 import { Modal } from "../../../modal"
@@ -39,7 +39,9 @@ export const LoadRequiredFiles = ({
   const { installRequiredFiles, percent, inProgress, message, remainingTime } =
     useInstallRequiredFiles()
 
-  const skipAlternateAssets = useRecoilValue(skipAlternateAssetsSelector)
+  const skipAlternateAssets = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    skipAlternateAssetsSelector
+  )
   const updateConfig = useUpdateConfig()
   const hasArchiveLink = useHasArchiveLink()
 
@@ -117,7 +119,9 @@ const RequiredFilesButton = ({
   installRequiredFiles,
   coreName,
 }: RequiredFilesButtonProps) => {
-  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
+  const requiredFiles = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    RequiredFileInfoSelectorFamily(coreName)
+  )
   const { t } = useTranslation("core_info_required_files")
   return (
     <button
@@ -140,7 +144,9 @@ type RequiredFilesListProps = {
 }
 
 const RequiredFilesList = ({ coreName }: RequiredFilesListProps) => {
-  const requiredFiles = useRecoilValue(RequiredFileInfoSelectorFamily(coreName))
+  const requiredFiles = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    RequiredFileInfoSelectorFamily(coreName)
+  )
   const sortedRequiredFiles = useMemo(() => {
     return [...requiredFiles].sort((a, b) => {
       if (a.status === b.status) return a.name.localeCompare(b.name)

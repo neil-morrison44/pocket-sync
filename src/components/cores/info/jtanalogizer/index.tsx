@@ -1,4 +1,7 @@
-import { useRecoilState, useRecoilValue } from "recoil"
+import {
+  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 import { DataJSONSelectorFamily } from "../../../../recoil/selectors"
 import { Suspense, useMemo } from "react"
 import {
@@ -20,7 +23,9 @@ type JTAnalogizerSettingsProps = {
 export const JTAnalogizerSettings = ({
   coreName,
 }: JTAnalogizerSettingsProps) => {
-  const coreData = useRecoilValue(DataJSONSelectorFamily(coreName))
+  const coreData = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    DataJSONSelectorFamily(coreName)
+  )
   const hasCRTConfig = useMemo(
     () =>
       coreData.data.data_slots.find(
@@ -40,7 +45,8 @@ export const JTAnalogizerSettings = ({
 
 const JTAnalogizerSettingsInner = () => {
   const { t } = useTranslation("core_info")
-  const [crtConfig, setCrtConfig] = useRecoilState(JTCRTConfigSelector)
+  const [crtConfig, setCrtConfig] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(JTCRTConfigSelector)
 
   return (
     <Details

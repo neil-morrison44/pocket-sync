@@ -1,6 +1,10 @@
 import "./font.css"
 import "./app.css"
-import { RecoilRoot, useRecoilState, useSetRecoilState } from "recoil"
+import {
+  RecoilRoot,
+  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
+  useSetRecoilState,
+} from "recoil"
 import { pocketPathAtom, reconnectWhenOpenedAtom } from "./recoil/atoms"
 import { Layout } from "./components/layout"
 import React, {
@@ -22,10 +26,10 @@ const Pocket = React.lazy(() =>
 )
 
 export const App = () => {
-  const [pocketPath, setPocketPath] = useRecoilState(pocketPathAtom)
-  const [reconnectWhenOpened, setReconnectWhenOpened] = useRecoilState(
-    reconnectWhenOpenedAtom
-  )
+  const [pocketPath, setPocketPath] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
+  const [reconnectWhenOpened, setReconnectWhenOpened] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(reconnectWhenOpenedAtom)
   const setView = useSetRecoilState(currentViewAtom)
   const [attempts, setAttempts] = useState(0)
   const { t } = useTranslation("app")

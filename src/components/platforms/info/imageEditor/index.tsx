@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { ImageBinSrcSelectorFamily } from "../../../../recoil/selectors"
 import { Modal } from "../../../modal"
 import { invokeSaveFile } from "../../../../utils/invokes"
@@ -30,10 +30,10 @@ export const ImageEditor = ({
   width,
   height,
 }: ImageEditorProps) => {
-  const currentImageSrc = useRecoilValue(
+  const currentImageSrc = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     ImageBinSrcSelectorFamily({ path, width, height })
   )
-  const pocketPath = useRecoilValue(pocketPathAtom)
+  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
   const [selectedStampIndex, setSelectedStampIndex] = useState(0)
   const [imageStamps, setImageStamps] = useState<ImageInfo[]>([])
   const canvasRef = useRef<HTMLCanvasElement>(null)

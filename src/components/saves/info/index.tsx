@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   AllBackupZipsFilesSelectorFamily,
   pocketSavesFilesListSelector,
@@ -33,11 +33,13 @@ export const SaveInfo = ({
 }) => {
   const invalidateSaveFileList = useInvalidateSaveFiles()
   const [searchQuery, setSearchQuery] = useState("")
-  const zipFilesInfo = useRecoilValue(
+  const zipFilesInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     AllBackupZipsFilesSelectorFamily(backupPath)
   )
   const [hideOnlyCurrent, setHideOnlyCurrent] = useState(true)
-  const pocketSaves = useRecoilValue(pocketSavesFilesListSelector)
+  const pocketSaves = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    pocketSavesFilesListSelector
+  )
   const { popScroll, pushScroll } = useSaveScroll()
   const { t } = useTranslation("save_info")
 
