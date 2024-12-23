@@ -160,3 +160,33 @@
     --percent: 360deg;
   }
 }
+
+.settings__items-input-list{
+  background-color: var(--light-colour);
+  padding: 10px;
+  border-radius: 5px;
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-height: 20px;
+}
+
+.settings__items-input-item{
+  background-color: var(--info-colour);
+  padding: 5px 10px;
+  border-radius: inherit;
+  display: flex;
+  cursor: pointer;
+
+  &:hover{
+    transform: scale(1.05);
+  }
+
+  &::after{
+    content: "x";
+    font-family: monospace;
+    font-size: 1.1rem;
+    margin-inline-start: 5px;
+  }
+}

@@ -21,6 +21,7 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
         archive_url: null,
         saves: [],
         skipAlternateAssets: true,
+        hidden_cores: [],
       } satisfies PocketSyncConfig
     }
 
@@ -32,6 +33,7 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
         archive_url: null,
         saves: [],
         skipAlternateAssets: true,
+        hidden_cores: [],
       } satisfies PocketSyncConfig
       const encoder = new TextEncoder()
       await invokeSaveFile(

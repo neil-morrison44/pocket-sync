@@ -1,5 +1,5 @@
 import { Suspense, useMemo } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilCallback, useRecoilValue } from "recoil"
 import { useInstallCore } from "../../../hooks/useInstallCore"
 import { useInventoryItem } from "../../../hooks/useInventoryItem"
 import {
@@ -17,6 +17,9 @@ import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
 import { AnalogizerIcon } from "../icons/AnalogizerIcon"
 import { DownloadCount } from "./downloadCounts"
+import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
+import { useUpdateConfig } from "../../settings/hooks/useUpdateConfig"
+import { confirm } from "@tauri-apps/plugin-dialog"
 
 type NotInstalledCoreInfoProps = {
   onBack: () => void
@@ -52,6 +55,7 @@ export const NotInstalledCoreInfo = ({
           <ControlsBackButton onClick={onBack}>
             {t("controls.back")}
           </ControlsBackButton>
+          <HideCoreButton onBack={onBack} coreName={coreName} />
           {download_url && (
             <ControlsButton
               onClick={() => {
@@ -158,5 +162,33 @@ export const NotInstalledCoreInfo = ({
         </>
       )}
     </div>
+  )
+}
+
+type HideCoreButtonProps = {
+  coreName: string
+  onBack: () => void
+}
+
+const HideCoreButton = ({ coreName, onBack }: HideCoreButtonProps) => {
+  const updateConfig = useUpdateConfig()
+  const { t } = useTranslation("core_info")
+
+  const onClick = useRecoilCallback(({ snapshot }) => async () => {
+    const config = await snapshot.getPromise(PocketSyncConfigSelector)
+    const currentlyHidden = config.hidden_cores ?? []
+
+    if (currentlyHidden.length === 0) {
+      const allow = await confirm(t("hide_core_confirm"))
+      if (!allow) return
+    }
+
+    await updateConfig("hidden_cores", [...currentlyHidden, coreName])
+
+    onBack()
+  })
+
+  return (
+    <ControlsButton onClick={onClick}>{t("controls.hide_core")}</ControlsButton>
   )
 }
