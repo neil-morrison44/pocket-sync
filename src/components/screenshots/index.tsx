@@ -1,5 +1,8 @@
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react"
-import { useRecoilState, useRecoilValue } from "recoil"
+import {
+  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 import { screenshotsListSelector } from "../../recoil/screenshots/selectors"
 import { Screenshot } from "./item"
 
@@ -19,13 +22,17 @@ import { ControlsButton } from "../controls/inputs/button"
 import { ControlsCheckbox } from "../controls/inputs/checkbox"
 
 export const Screenshots = () => {
-  const [selected, setSelected] = useRecoilState(selectedSubviewSelector)
+  const [selected, setSelected] = useRecoilState_TRANSITION_SUPPORT_UNSTABLE(
+    selectedSubviewSelector
+  )
   const [searchQuery, setSearchQuery] = useState("")
   const [selectMode, setSelectMode] = useState(false)
   const [selectedScreenshots, setSelectedScreenshots] = useState<string[]>([])
   const { t } = useTranslation("screenshots")
 
-  const screenshots = useRecoilValue(screenshotsListSelector)
+  const screenshots = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    screenshotsListSelector
+  )
   const exportMulti = useMultiExport()
   const { pushScroll, popScroll } = useSaveScroll()
 

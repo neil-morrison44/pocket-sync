@@ -1,5 +1,9 @@
 import { Suspense, useMemo, useState } from "react"
-import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil"
+import {
+  useRecoilCallback,
+  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import {
   platformsListSelector,
@@ -25,13 +29,14 @@ import { ControlsButton } from "../controls/inputs/button"
 
 export const Platforms = () => {
   const [searchQuery, setSearchQuery] = useState("")
-  const platformIds = useRecoilValue(platformsListSelector)
+  const platformIds = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    platformsListSelector
+  )
   const { pushScroll, popScroll } = useSaveScroll()
   const { t } = useTranslation("platforms")
 
-  const [selectedPlatform, setSelectedPlatform] = useRecoilState(
-    selectedSubviewSelector
-  )
+  const [selectedPlatform, setSelectedPlatform] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(selectedSubviewSelector)
 
   const sortedPlatformIds = useMemo(
     () => [...platformIds].sort((a, b) => a.localeCompare(b)),
@@ -99,9 +104,9 @@ export const Platforms = () => {
       {dataPacksOpen && <DataPacks onClose={() => setDataPacksOpen(false)} />}
 
       <SearchContextProvider query={searchQuery}>
-        <Grid>
+        <Grid placeholderItemHeight={200}>
           {sortedPlatformIds.map((id) => (
-            <Suspense fallback={<Loader title={id} />} key={id}>
+            <Suspense fallback={<Loader title={id} height={200} />} key={id}>
               <PlatformItem
                 id={id}
                 onClick={() => {

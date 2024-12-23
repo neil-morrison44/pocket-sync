@@ -1,5 +1,5 @@
 import { useCallback } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { useInvalidateConfig } from "../../../hooks/invalidation"
 import { pocketPathAtom } from "../../../recoil/atoms"
 import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
@@ -7,8 +7,10 @@ import { PocketSyncConfig } from "../../../types"
 import { invokeSaveFile } from "../../../utils/invokes"
 
 export const useUpdateConfig = () => {
-  const currentConfig = useRecoilValue(PocketSyncConfigSelector)
-  const pocketPath = useRecoilValue(pocketPathAtom)
+  const currentConfig = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PocketSyncConfigSelector
+  )
+  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
   const invalidateConfigSelector = useInvalidateConfig()
 
   return useCallback(

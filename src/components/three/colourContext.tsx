@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useEffect, useState } from "react"
 import { PocketColour } from "../../types"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 
 export const BodyColourContext = createContext<PocketColour>("black")
@@ -90,7 +90,9 @@ export const ColourContextProviderFromConfig = ({
 }: {
   children: ReactNode
 }) => {
-  const { colour, button_colour } = useRecoilValue(PocketSyncConfigSelector)
+  const { colour, button_colour } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PocketSyncConfigSelector
+  )
   return (
     <ColourContextProvider body={colour} buttons={button_colour ?? colour}>
       {children}

@@ -1,5 +1,8 @@
 import { Suspense, useMemo } from "react"
-import { useRecoilCallback, useRecoilValue } from "recoil"
+import {
+  useRecoilCallback,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 import { useInstallCore } from "../../../hooks/useInstallCore"
 import { useInventoryItem } from "../../../hooks/useInventoryItem"
 import {
@@ -42,8 +45,10 @@ export const NotInstalledCoreInfo = ({
     return `https://github.com/${inventoryItem.repository.owner}/${inventoryItem.repository.name}`
   }, [inventoryItem])
 
-  const download_url = useRecoilValue(DownloadURLSelectorFamily(coreName))
-  const imageUrl = useRecoilValue(
+  const download_url = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    DownloadURLSelectorFamily(coreName)
+  )
+  const imageUrl = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     PlatformInventoryImageSelectorFamily(inventoryItem?.platform_id)
   )
   const { installCore } = useInstallCore()

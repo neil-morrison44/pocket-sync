@@ -1,5 +1,8 @@
 import { Suspense, useCallback, useEffect, useState } from "react"
-import { useRecoilState, useRecoilValue } from "recoil"
+import {
+  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 import {
   ImageDimensionsSelectorFamily,
   SingleScreenshotSelectorFamily,
@@ -24,10 +27,13 @@ type ScreenshotInfoProps = {
 }
 
 export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
-  const [imageMode, setImageMode] = useRecoilState(imageModeAtom)
-  const screenshot = useRecoilValue(SingleScreenshotSelectorFamily(fileName))
+  const [imageMode, setImageMode] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(imageModeAtom)
+  const screenshot = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    SingleScreenshotSelectorFamily(fileName)
+  )
   if (screenshot === null) throw new Error(`Null file ${fileName}`)
-  const videoJson = useRecoilValue(
+  const videoJson = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     VideoJSONSelectorFamily(`${screenshot.author}.${screenshot.core}`)
   )
   const upscaler = useUpscaler()
@@ -123,7 +129,9 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
 }
 
 const ImageDimensions = ({ imageSrc }: { imageSrc: string }) => {
-  const size = useRecoilValue(ImageDimensionsSelectorFamily(imageSrc))
+  const size = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    ImageDimensionsSelectorFamily(imageSrc)
+  )
   return (
     // eslint-disable-next-line react/jsx-no-literals
     <span className="screenshot-info__dimensions">{`(${size.width}px x ${size.height}px)`}</span>

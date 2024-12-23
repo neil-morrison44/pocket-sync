@@ -1,4 +1,7 @@
-import { useRecoilState, useRecoilValue } from "recoil"
+import {
+  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 import { Modal } from "../../../modal"
 import {
   platformListPocketSelector,
@@ -23,7 +26,8 @@ type SaveMappingProps = {
 }
 
 export const SaveMapping = ({ onClose }: SaveMappingProps) => {
-  const [joins, setJoins] = useRecoilState(saveMappingAtom)
+  const [joins, setJoins] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(saveMappingAtom)
   const { t } = useTranslation("mister_sync")
 
   return (
@@ -55,8 +59,12 @@ type PlatformsListProps = {
 }
 
 const PlatformsList = ({ joins, setJoins }: PlatformsListProps) => {
-  const misterPlatforms = useRecoilValue(platformsListMiSTerSelector)
-  const pocketPlatforms = useRecoilValue(platformListPocketSelector)
+  const misterPlatforms = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    platformsListMiSTerSelector
+  )
+  const pocketPlatforms = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    platformListPocketSelector
+  )
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   const canvasMousePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })

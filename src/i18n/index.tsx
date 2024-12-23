@@ -4,7 +4,7 @@ import { initReactI18next } from "react-i18next"
 import resources from "virtual:i18next-loader"
 import { ReactNode, useMemo } from "react"
 import { I18nextProvider } from "react-i18next"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { alwaysUseEnglishAtom } from "../recoil/settings/atoms"
 import { locale } from "@tauri-apps/plugin-os"
 
@@ -19,7 +19,8 @@ export const I18nProvider = ({
   localeOverride,
   children,
 }: I18nProviderProps) => {
-  const alwaysUseEnglish = useRecoilValue(alwaysUseEnglishAtom)
+  const alwaysUseEnglish =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(alwaysUseEnglishAtom)
 
   const i18nInstance = useMemo(() => {
     i18n

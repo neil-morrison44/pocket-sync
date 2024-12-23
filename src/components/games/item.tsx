@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { pocketPathAtom } from "../../recoil/atoms"
 import {
   CoreInfoSelectorFamily,
@@ -15,8 +15,10 @@ import { PlatformInfoSelectorFamily } from "../../recoil/platforms/selectors"
 import { DataSlotJSON } from "../../types"
 
 export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
-  const data = useRecoilValue(DataJSONSelectorFamily(coreName))
-  const pocketPath = useRecoilValue(pocketPathAtom)
+  const data = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    DataJSONSelectorFamily(coreName)
+  )
+  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
   const romsSlot = useMemo<DataSlotJSON | undefined>(
     () =>
       data.data.data_slots.filter(
@@ -30,9 +32,13 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
     [romsSlot?.parameters]
   )
 
-  const { core } = useRecoilValue(CoreInfoSelectorFamily(coreName))
+  const { core } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    CoreInfoSelectorFamily(coreName)
+  )
   const platformId = core.metadata.platform_ids[decodedParams.platformIndex]
-  const { platform } = useRecoilValue(PlatformInfoSelectorFamily(platformId))
+  const { platform } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PlatformInfoSelectorFamily(platformId)
+  )
 
   const path = useMemo(() => {
     if (!romsSlot) return ""

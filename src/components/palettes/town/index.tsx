@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { Modal } from "../../modal"
 import {
   DownloadablePaletteColoursSelectorFamily,
@@ -22,9 +22,12 @@ type PaletteTownProps = {
 }
 
 export const PaletteTown = ({ onClose }: PaletteTownProps) => {
-  const repo = useRecoilValue(paletteRepoAtom)
-  const palettes = useRecoilValue(downloadablePalettesSelector)
-  const palettesList = useRecoilValue(palettesListSelector)
+  const repo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(paletteRepoAtom)
+  const palettes = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    downloadablePalettesSelector
+  )
+  const palettesList =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(palettesListSelector)
   const { t } = useTranslation("palettes")
 
   const undashedPalettesList = useMemo(
@@ -106,7 +109,7 @@ type PaletteItemProps = {
 }
 
 const PaletteItem = ({ name, path, installed }: PaletteItemProps) => {
-  const paletteData = useRecoilValue(
+  const paletteData = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     DownloadablePaletteColoursSelectorFamily(path)
   )
   const savePalette = useSavePalette()

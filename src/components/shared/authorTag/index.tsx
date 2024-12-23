@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   CoreInfoSelectorFamily,
   CoreAuthorImageSelectorFamily,
@@ -7,8 +7,12 @@ import {
 import "./index.css"
 
 export const AuthorTag = ({ coreName }: { coreName: string }) => {
-  const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
-  const authorImageSrc = useRecoilValue(CoreAuthorImageSelectorFamily(coreName))
+  const coreInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    CoreInfoSelectorFamily(coreName)
+  )
+  const authorImageSrc = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    CoreAuthorImageSelectorFamily(coreName)
+  )
 
   return (
     <div className="author-tag">

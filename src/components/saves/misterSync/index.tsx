@@ -7,7 +7,10 @@ import {
   useMemo,
   useState,
 } from "react"
-import { useRecoilState, useRecoilValue } from "recoil"
+import {
+  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 import { useBEM } from "../../../hooks/useBEM"
 import { AllSavesSelector } from "../../../recoil/saves/selectors"
 import { invokeBeginMisterSaveSyncSession } from "../../../utils/invokes"
@@ -42,7 +45,8 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
   const [selectedSave, setSelectedSave] = useState<string | null>(null)
 
   const [query, setQuery] = useState("")
-  const [creds, setCreds] = useRecoilState(MiSTerCredsAtom)
+  const [creds, setCreds] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(MiSTerCredsAtom)
 
   const { t } = useTranslation("mister_sync")
 
@@ -171,18 +175,18 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
     return [platform, file]
   }, [path])
 
-  const misterPlatforms = useRecoilValue(
+  const misterPlatforms = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     MiSTerPlatformsForPocketPlatformSelectorFamily(platform)
   )
 
-  const misterSaveInfo = useRecoilValue(
+  const misterSaveInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     MiSTerSaveInfoSelectorFamily({ platforms: misterPlatforms, file })
   )
-  const pocketSaveInfo = useRecoilValue(
+  const pocketSaveInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     FileMetadataSelectorFamily({ filePath: path })
   )
 
-  const pocketPath = useRecoilValue(pocketPathAtom)
+  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
 
   useEffect(() => {
     if (misterSaveInfo?.crc32 === pocketSaveInfo.crc32) {
@@ -341,7 +345,7 @@ type SavesListProps = {
 }
 
 const SavesList = ({ onSelect, query }: SavesListProps) => {
-  const allSaves = useRecoilValue(AllSavesSelector)
+  const allSaves = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(AllSavesSelector)
 
   const filteredSaves = useMemo(() => {
     if (query.length === 0) return allSaves

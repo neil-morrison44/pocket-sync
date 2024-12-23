@@ -1,8 +1,9 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { coreInventoryAtom } from "../recoil/inventory/atoms"
 
 export const useInventoryItem = (coreName: string) => {
-  const coreInventory = useRecoilValue(coreInventoryAtom)
+  const coreInventory =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(coreInventoryAtom)
   const inventoryItem = coreInventory.data.find(
     ({ identifier }) => identifier === coreName
   )

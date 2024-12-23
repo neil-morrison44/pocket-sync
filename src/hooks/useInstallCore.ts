@@ -1,10 +1,11 @@
 import { useCallback } from "react"
 import { emit } from "@tauri-apps/api/event"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { githubTokenAtom } from "../recoil/settings/atoms"
 
 export const useInstallCore = () => {
-  const githubToken = useRecoilValue(githubTokenAtom)
+  const githubToken =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(githubTokenAtom)
 
   const installCore = useCallback(
     async (coreName: string, zipUrl: string) => {

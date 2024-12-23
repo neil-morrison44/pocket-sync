@@ -1,7 +1,10 @@
 import { ReactNode, Suspense, useCallback, useMemo, useState } from "react"
 
 import "./index.css"
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import {
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+  useSetRecoilState,
+} from "recoil"
 import {
   ArchiveMetadataSelectorFamily,
   PathFileInfoSelectorFamily,
@@ -27,7 +30,9 @@ import { usePreventGlobalZipInstallModal } from "../../hooks/usePreventGlobalZip
 type FileStatus = "complete" | "partial" | "none" | "waiting"
 
 export const Fetch = () => {
-  const config = useRecoilValue(PocketSyncConfigSelector)
+  const config = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PocketSyncConfigSelector
+  )
   const updateConfig = useUpdateConfig()
   const [newFetchOpen, setNewFetchOpen] = useState<boolean>(false)
   const { t } = useTranslation("fetch")
@@ -165,11 +170,11 @@ const FileSystemStatus = ({
   destination: string
   children: (status: FileStatus, files: FileCopy[]) => ReactNode
 }) => {
-  const pocketPath = useRecoilValue(pocketPathAtom)
-  const pocketFileInfo = useRecoilValue(
+  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
+  const pocketFileInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     PathFileInfoSelectorFamily({ path: destination })
   )
-  const fsFileInfo = useRecoilValue(
+  const fsFileInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     PathFileInfoSelectorFamily({ path, offPocket: true })
   )
 
@@ -289,10 +294,10 @@ const ArchiveOrgStatus = ({
     files: FetchFileMetadataWithStatus[]
   ) => ReactNode
 }) => {
-  const metadata = useRecoilValue(
+  const metadata = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     ArchiveMetadataSelectorFamily({ archiveName: name })
   )
-  const fileInfo = useRecoilValue(
+  const fileInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     PathFileInfoSelectorFamily({ path: destination })
   )
 

@@ -1,5 +1,8 @@
 import { useMemo } from "react"
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import {
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+  useSetRecoilState,
+} from "recoil"
 import {
   PlatformExistsSelectorFamily,
   PlatformInfoSelectorFamily,
@@ -24,7 +27,9 @@ type CorePlatformInfoProps = {
 }
 
 export const CorePlatformInfo = ({ platformId }: CorePlatformInfoProps) => {
-  const fileExists = useRecoilValue(PlatformExistsSelectorFamily(platformId))
+  const fileExists = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PlatformExistsSelectorFamily(platformId)
+  )
 
   if (fileExists) return <CorePlatformInfoExists platformId={platformId} />
 
@@ -38,7 +43,9 @@ export const CorePlatformInfo = ({ platformId }: CorePlatformInfoProps) => {
 export const CorePlatformInfoExists = ({
   platformId,
 }: CorePlatformInfoProps) => {
-  const { platform } = useRecoilValue(PlatformInfoSelectorFamily(platformId))
+  const { platform } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PlatformInfoSelectorFamily(platformId)
+  )
   const setViewAndSubview = useSetRecoilState(currentViewAtom)
   const { t } = useTranslation("core_info")
 

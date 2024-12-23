@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { useInventoryItem } from "../../../../hooks/useInventoryItem"
 import { GithubReleasesSelectorFamily } from "../../../../recoil/github/selectors"
 import { GithubRelease, InventoryItem } from "../../../../types"
@@ -27,7 +27,7 @@ const DownloadCountInner = ({
   const { t } = useTranslation("core_info")
 
   const { owner, name: repo } = inventoryItem.repository
-  const githubReleases = useRecoilValue(
+  const githubReleases = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     GithubReleasesSelectorFamily({
       owner,
       repo,

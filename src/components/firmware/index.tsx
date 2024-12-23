@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   FirmwareDetailsSelectorFamily,
   currentFirmwareVersionSelector,
@@ -16,10 +16,18 @@ import { ProgressLoader } from "../loader/progress"
 import { message } from "@tauri-apps/plugin-dialog"
 
 export const Firmware = () => {
-  const currentFirmware = useRecoilValue(currentFirmwareVersionSelector)
-  const latestFirmware = useRecoilValue(latestFirmwareSelector)
-  const firmwares = useRecoilValue(previousFirmwareListSelector)
-  const downloadedFirmware = useRecoilValue(downloadedFirmwareSelector)
+  const currentFirmware = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    currentFirmwareVersionSelector
+  )
+  const latestFirmware = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    latestFirmwareSelector
+  )
+  const firmwares = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    previousFirmwareListSelector
+  )
+  const downloadedFirmware = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    downloadedFirmwareSelector
+  )
   const [selectedFirmware, setSelectedFirmware] = useState(
     latestFirmware.version
   )
@@ -91,7 +99,7 @@ const DownloadButton = ({
 }: DownloadButtonProps) => {
   const { t } = useTranslation("firmware")
 
-  const firmwareDetails = useRecoilValue(
+  const firmwareDetails = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     FirmwareDetailsSelectorFamily({ version })
   )
 
@@ -133,7 +141,9 @@ type FirmwareDownloadedProps = {
 }
 
 const FirmwareDownloaded = ({ downloading }: FirmwareDownloadedProps) => {
-  const downloadedFirmware = useRecoilValue(downloadedFirmwareSelector)
+  const downloadedFirmware = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    downloadedFirmwareSelector
+  )
   const { t } = useTranslation("firmware")
 
   const onRemove = useCallback(async () => {

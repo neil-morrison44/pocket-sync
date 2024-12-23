@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { Modal } from "../modal"
 import { ReactNode, Suspense, useCallback, useMemo, useState } from "react"
 import { FetchType } from "../../types"
@@ -160,7 +160,7 @@ const CheckArchiveValidity = ({
   children: ReactNode
 }) => {
   const { t } = useTranslation("fetch")
-  const metadata = useRecoilValue(
+  const metadata = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     ArchiveMetadataSelectorFamily({ archiveName })
   )
 
@@ -186,8 +186,8 @@ const FolderPicker = ({
   fileIsOnPocket = false,
   onChange,
 }: FolderPickerProps) => {
-  const pocketPath = useRecoilValue(pocketPathAtom)
-  const homeDir = useRecoilValue(homeDirSelector)
+  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
+  const homeDir = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(homeDirSelector)
   if (!pocketPath) throw new Error("Missing PocketPath")
 
   const onClick = useCallback(async () => {

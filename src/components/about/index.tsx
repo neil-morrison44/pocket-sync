@@ -5,7 +5,10 @@ import React, {
   useMemo,
   useRef,
 } from "react"
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import {
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+  useSetRecoilState,
+} from "recoil"
 import { useRecoilSmoothUpdatesFirstSuspend } from "../../hooks/recoilSmoothUpdates"
 import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
 import { AppVersionSelector } from "../../recoil/selectors"
@@ -45,9 +48,12 @@ export const About = () => {
   )
 
   const { t } = useTranslation("about")
-  const AppVersion = useRecoilValue(AppVersionSelector)
+  const AppVersion =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(AppVersionSelector)
 
-  const firmwareUpdateAvailable = useRecoilValue(updateAvailableSelector)
+  const firmwareUpdateAvailable = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    updateAvailableSelector
+  )
 
   const updateAvailable = useMemo(() => {
     return semverCompare(selfReleases[0].tag_name, AppVersion)
@@ -111,7 +117,8 @@ export const About = () => {
 }
 
 const SponsorLink = () => {
-  const sponsorCount = useRecoilValue(sponsorCountAtom)
+  const sponsorCount =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(sponsorCountAtom)
   const { t } = useTranslation("about")
 
   return (

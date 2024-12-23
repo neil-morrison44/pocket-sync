@@ -1,5 +1,8 @@
 import { useMemo, useState } from "react"
-import { useRecoilCallback, useRecoilValue } from "recoil"
+import {
+  useRecoilCallback,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil"
 import {
   DataPackJsonSelectorFamily,
   PlatformInfoSelectorFamily,
@@ -19,8 +22,12 @@ type DataPacksProps = {
 }
 
 export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
-  const imagePacks = useRecoilValue(imagePackListSelector)
-  const platformIds = useRecoilValue(platformsListSelector)
+  const imagePacks = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    imagePackListSelector
+  )
+  const platformIds = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    platformsListSelector
+  )
   const { t } = useTranslation("platforms")
 
   const sortedPlatformIds = useMemo(() => {
@@ -111,7 +118,9 @@ const CurrentJSON = ({
   onClick: () => void
 }) => {
   const { t } = useTranslation("platforms")
-  const currentJson = useRecoilValue(PlatformInfoSelectorFamily(platformId))
+  const currentJson = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PlatformInfoSelectorFamily(platformId)
+  )
   const { platform } = currentJson
 
   return (
@@ -143,11 +152,13 @@ const JsonInPack = ({
   selected: boolean
   onClick: () => void
 }) => {
-  const packJson = useRecoilValue(
+  const packJson = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     DataPackJsonSelectorFamily({ ...pack, platformId })
   )
   // console.log({ packJson })
-  const currentJson = useRecoilValue(PlatformInfoSelectorFamily(platformId))
+  const currentJson = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PlatformInfoSelectorFamily(platformId)
+  )
 
   if (!packJson) return null
   if (comparePlatforms(packJson, currentJson)) return null

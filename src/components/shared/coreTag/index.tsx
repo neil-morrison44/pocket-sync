@@ -1,4 +1,7 @@
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import {
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+  useSetRecoilState,
+} from "recoil"
 import { CoreInfoSelectorFamily } from "../../../recoil/selectors"
 import { currentViewAtom } from "../../../recoil/view/atoms"
 import { AuthorTag } from "../authorTag"
@@ -12,7 +15,9 @@ export const CoreTag = ({
   coreName: string
   onClick?: () => void
 }) => {
-  const coreInfo = useRecoilValue(CoreInfoSelectorFamily(coreName))
+  const coreInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    CoreInfoSelectorFamily(coreName)
+  )
   const viewCore = useSetRecoilState(currentViewAtom)
 
   return (
