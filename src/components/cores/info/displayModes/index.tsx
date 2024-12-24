@@ -9,6 +9,7 @@ import { pocketPathAtom } from "../../../../recoil/atoms"
 import { VideoJSON } from "../../../../types"
 import { invokeSaveFile } from "../../../../utils/invokes"
 import { confirm } from "@tauri-apps/plugin-dialog"
+import { DraggableList } from "../../../shared/draggableList"
 
 type DisplayModesProps = {
   coreName: string
@@ -93,10 +94,21 @@ export const DisplayModes = ({ coreName }: DisplayModesProps) => {
     [activeModes, videoJson.video, pocketPath, coreName, t]
   )
 
+  const sortedDisplayModes = useMemo(() => {
+    return Object.entries(DISPLAY_MODES).sort((a, b) => {
+      const aid = a[1].id
+      const bid = b[1].id
+      if (activeModes.includes(aid) && !activeModes.includes(bid)) return -1
+      if (!activeModes.includes(aid) && activeModes.includes(bid)) return 1
+      if (!activeModes.includes(aid) && !activeModes.includes(bid)) return 0
+      return activeModes.indexOf(a[1].id) - activeModes.indexOf(b[1].id)
+    })
+  }, [activeModes])
+
   return (
     <div className="core-info__display-modes-list">
-      {Object.entries(DISPLAY_MODES).map(
-        ([name, { id, requiresCoreResponse }]) => {
+      <DraggableList onMove={(start, end) => console.log(start, end)}>
+        {sortedDisplayModes.map(([name, { id, requiresCoreResponse }]) => {
           return (
             <SupportsBubble
               supports={activeModes.includes(id)}
@@ -106,8 +118,8 @@ export const DisplayModes = ({ coreName }: DisplayModesProps) => {
               {t(`display_modes.${name}`)}
             </SupportsBubble>
           )
-        }
-      )}
+        })}
+      </DraggableList>
     </div>
   )
 }
