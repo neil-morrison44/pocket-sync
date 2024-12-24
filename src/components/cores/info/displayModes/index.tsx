@@ -9,6 +9,8 @@ import { pocketPathAtom } from "../../../../recoil/atoms"
 import { VideoJSON } from "../../../../types"
 import { invokeSaveFile } from "../../../../utils/invokes"
 import { confirm } from "@tauri-apps/plugin-dialog"
+import { WarningIcon } from "../requiredFiles/warningIcon"
+import { Tip } from "../../../tip"
 
 type DisplayModesProps = {
   coreName: string
@@ -93,6 +95,8 @@ export const DisplayModes = ({ coreName }: DisplayModesProps) => {
     [activeModes, videoJson.video, pocketPath, coreName, t]
   )
 
+  const tooManyModes = activeModes.length > 16
+
   return (
     <div className="core-info__display-modes-list">
       {Object.entries(DISPLAY_MODES).map(
@@ -107,6 +111,11 @@ export const DisplayModes = ({ coreName }: DisplayModesProps) => {
             </SupportsBubble>
           )
         }
+      )}
+      {tooManyModes && (
+        <Tip warning>
+          {t("display_modes_limit", { count: activeModes.length })}
+        </Tip>
       )}
     </div>
   )

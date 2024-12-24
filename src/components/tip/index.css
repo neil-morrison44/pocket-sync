@@ -19,3 +19,13 @@
     height: 1.1em;
   }
 }
+
+.tip--warning {
+  background-color: var( --red-colour);
+  font-weight: bold;
+
+  &::before {
+    font-size: 1.25rem;
+    content: "!";
+  }
+}
