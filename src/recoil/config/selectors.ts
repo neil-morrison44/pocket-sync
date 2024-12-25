@@ -34,6 +34,7 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
         saves: [],
         skipAlternateAssets: true,
         hidden_cores: [],
+        gb_palette_convert: true,
       } satisfies PocketSyncConfig
       const encoder = new TextEncoder()
       await invokeSaveFile(
