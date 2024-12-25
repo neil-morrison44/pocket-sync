@@ -1,10 +1,17 @@
 import { Palette } from "../../../types"
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { pocketPathAtom } from "../../../recoil/atoms"
-import { invokeSaveFile } from "../../../utils/invokes"
+import {
+  invokeConvertSinglePalFile,
+  invokeSaveFile,
+} from "../../../utils/invokes"
+import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
 
 export const useSavePalette = () => {
   const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
+  const config = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    PocketSyncConfigSelector
+  )
 
   return async (palette: Palette, name: string) => {
     const data = new Uint8Array(56)
@@ -43,6 +50,8 @@ export const useSavePalette = () => {
     data[54] = 0x47
     data[55] = 0x42
 
-    await invokeSaveFile(`${pocketPath}/Assets/gb/common/palettes${name}`, data)
+    const path = `${pocketPath}/Assets/gb/common/palettes${name}`
+    await invokeSaveFile(path, data)
+    if (config.gb_palette_convert) await invokeConvertSinglePalFile(path)
   }
 }

@@ -237,6 +237,7 @@ export type PocketSyncConfig = {
   fetches?: FetchType[]
   patreon_email?: string
   hidden_cores?: string[]
+  gb_palette_convert?: boolean
 }
 
 export type SaveConfig = {

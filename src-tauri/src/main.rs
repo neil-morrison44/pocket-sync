@@ -47,6 +47,7 @@ mod install_files;
 mod install_zip;
 mod job_id;
 mod news_feed;
+mod palettes;
 mod progress;
 mod required_files;
 mod root_files;
@@ -851,6 +852,55 @@ async fn update_patreon_keys(
     Ok(())
 }
 
+#[tauri::command(async)]
+async fn downconvert_all_pal_files(
+    state: tauri::State<'_, PocketSyncState>,
+    window: tauri::WebviewWindow,
+) -> Result<(), String> {
+    debug!("Command: downconvert_all_pal_files");
+    let pocket_path = state.0.pocket_path.read().await;
+    let palette_path = PathBuf::from(&pocket_path.as_path()).join("Assets/gb/common/palettes");
+
+    let mut progress = progress::ProgressEmitter::new(Box::new(|event| {
+        window
+            .emit("progress-event::downconvert_all_pal_files", event)
+            .unwrap();
+    }));
+
+    let pal_files = palettes::find_all_pal_files(&palette_path)
+        .await
+        .map_err(|err| err.to_string())?;
+
+    progress.begin_work_units(pal_files.len());
+
+    for pal_file in pal_files {
+        palettes::down_convert_pal_to_gbp(&pal_file)
+            .await
+            .map_err(|err| err.to_string())?;
+        progress.complete_work_units(1);
+    }
+
+    Ok(())
+}
+
+#[tauri::command(async)]
+async fn downconvert_single_pal_file(
+    pal_file_path: String,
+    state: tauri::State<'_, PocketSyncState>,
+    window: tauri::WebviewWindow,
+) -> Result<(), String> {
+    debug!("Command: downconvert_single_pal_file");
+    let pal_file_path = PathBuf::from(pal_file_path);
+    let pocket_path = state.0.pocket_path.read().await;
+    let palette_path = PathBuf::from(&pocket_path.as_path()).join("Assets/gb/common/palettes");
+
+    palettes::down_convert_pal_to_gbp(&pal_file_path)
+        .await
+        .map_err(|err| err.to_string())?;
+
+    Ok(())
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_log::Builder::new().build())
@@ -910,7 +960,9 @@ fn main() {
             save_multiple_files,
             get_active_jobs,
             stop_job,
-            update_patreon_keys
+            update_patreon_keys,
+            downconvert_all_pal_files,
+            downconvert_single_pal_file
         ])
         .setup(|app| {
             log_panics::init();
