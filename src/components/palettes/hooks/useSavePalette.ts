@@ -3,7 +3,6 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { pocketPathAtom } from "../../../recoil/atoms"
 import {
   invokeConvertSinglePalFile,
-  invokeConvertSinglePalFiles,
   invokeSaveFile,
 } from "../../../utils/invokes"
 import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
