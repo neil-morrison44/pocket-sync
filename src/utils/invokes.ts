@@ -242,3 +242,9 @@ export const invokePatreonKeys = async (
     email,
     urls: urls.map(({ url, id }) => [url, id]),
   })
+
+export const invokeConvertAllPalFiles = async () =>
+  await invoke<void>("downconvert_all_pal_files")
+
+export const invokeConvertSinglePalFile = async (path: string) =>
+  await invoke<void>("downconvert_single_pal_file", { palFilePath: path })

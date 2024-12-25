@@ -17,7 +17,6 @@ import { Thanks } from "./thanks"
 import { PocketColour } from "../../types"
 import {
   alwaysUseEnglishAtom,
-  githubTokenAtom,
   keepPlatformDataAtom,
   turboDownloadsAtom,
 } from "../../recoil/settings/atoms"
@@ -28,6 +27,7 @@ import { PatreonKeys } from "./patreonKeys"
 import { patreonKeyListSelector } from "../../recoil/settings/selectors"
 import { HiddenCores } from "./items/hiddenCores"
 import { GithubToken } from "./items/githubToken"
+import { GBPalettesConversion } from "./items/gbPalettes"
 
 export const Settings = () => {
   const config = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
@@ -126,6 +126,9 @@ export const Settings = () => {
               placeholder={t("patreon_keys.placeholder")}
               value={patreonEmailInput}
               onChange={({ target }) => setPatreonEmail(target.value)}
+              spellCheck={false}
+              autoCapitalize="off"
+              autoCorrect="off"
             />
             <button
               onClick={() => {
@@ -214,6 +217,8 @@ export const Settings = () => {
             />
           </label>
         </div>
+
+        <GBPalettesConversion />
 
         <div className="settings__row">
           <h3 className="settings__row-title">{t("reconnect.title")}</h3>

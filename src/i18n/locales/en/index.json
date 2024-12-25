@@ -523,6 +523,11 @@
       "ramble": "These cores are hidden from the list of available uninstalled cores, if installed they are not hidden. \nYou can hide cores from their info pages.",
       "button": "Clear hidden cores list"
     },
+    "gb_palettes_conversion": {
+      "title": "GB Palettes Formats",
+      "ramble": "Duplicate the .pal files into .gbp files. Copies the 4 colours used for the background into the new .gbp files.\nToggling will create a .gbp file for every .pal file in /Assets/gb/common/palettes",
+      "checkbox": "Enable automatic .gbp files"
+    },
     "thanks": "Thanks to:"
   },
   "time_ago": {

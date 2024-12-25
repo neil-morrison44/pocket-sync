@@ -5,6 +5,7 @@ import "./index.css"
 import { ProgressEvent } from "../../../types"
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { pocketPathAtom } from "../../../recoil/atoms"
+import { useProgress } from "../../../hooks/useProgress"
 
 declare module "react" {
   interface CSSProperties {
@@ -15,31 +16,17 @@ declare module "react" {
 type ProgressLoaderProps = {
   name: string
   showToken?: boolean
+  hideUntilProgress?: boolean
 }
 
 export const ProgressLoader = ({
   name,
   showToken = false,
+  hideUntilProgress = false,
 }: ProgressLoaderProps) => {
-  const [percent, setPercent] = useState(0)
+  const { message, percent, inProgress } = useProgress(name)
 
-  const [message, setMessage] = useState<null | {
-    token: string
-    param?: string
-  }>(null)
-
-  useEffect(() => {
-    const unlisten = listen<ProgressEvent>(
-      `progress-event::${name}`,
-      ({ payload }) => {
-        setPercent(payload.progress * 100)
-        if (payload.message) setMessage(payload.message)
-      }
-    )
-    return () => {
-      unlisten.then((l) => l())
-    }
-  }, [setPercent, name])
+  if (hideUntilProgress && !inProgress) return null
 
   return (
     <ProgressLoaderInner

@@ -190,3 +190,7 @@
     margin-inline-start: 5px;
   }
 }
+
+.settings__progress-bar{
+  width: 80%;
+}
