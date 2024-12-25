@@ -84,7 +84,8 @@
     "url": "URL",
     "version": "Versión",
     "display_modes_title": "Modos de visualización",
-    "display_mode_warning": "Este modo de visualización requiere que se actualice el núcleo, ¿está seguro de que desea activarlo?"
+    "display_mode_warning": "Este modo de visualización requiere que se actualice el núcleo, ¿está seguro de que desea activarlo?",
+    "display_modes_limit": "Los núcleos solo admiten hasta 16 modos de visualización, ha seleccionado {count}"
   },
   "core_info_required_files": {
     "close": "Cerrar",
@@ -476,6 +477,16 @@
     "logs": {
       "title": "Registros",
       "button": "Abrir carpeta de registro"
+    },
+    "hidden_cores": {
+      "title": "Núcleos ocultos",
+      "ramble": "Estos núcleos están ocultos en la lista de núcleos desinstalados disponibles; si están instalados, no están ocultos.\nPuedes ocultar núcleos de sus páginas de información.",
+      "button": "Limpiar la lista de núcleos ocultos"
+    },
+    "gb_palettes_conversion": {
+      "title": "Formatos de paletas GB",
+      "ramble": "Duplica los archivos .pal en archivos .gbp. Copia los 4 colores utilizados para el fondo en los nuevos archivos .gbp.\nAl alternar se creará un archivo .gbp para cada archivo .pal en /Assets/gb/common/palettes",
+      "checkbox": "Habilitar archivos .gbp automáticos"
     },
     "thanks": "Gracias a:"
   },

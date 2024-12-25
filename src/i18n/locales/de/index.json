@@ -86,6 +86,7 @@
     "display_modes_title": "Anzeigemodi",
     "display_mode_warning": "Dieser Anzeigemodus benötigt eine Aktualisierung des Kerns. Trotzdem aktivieren?",
     "info_txt_title": "Info.txt",
+    "display_modes_limit": "Kerne unterstützen nur bis zu 16 Anzeigemodi, Sie haben {count} ausgewählt",
     "display_modes": {
       "crt_trinitron": "CRT Trinitron",
       "grayscale_lcd": "Greyscale LCD",
@@ -504,6 +505,16 @@
     "logs": {
       "title": "Protokolle",
       "button": "Protokollordner öffnen"
+    },
+    "hidden_cores": {
+      "title": "Versteckte Kerne",
+      "ramble": "Diese Kerne werden aus der Liste der verfügbaren, nicht installierten Kerne ausgeblendet. Wenn sie installiert sind, werden sie nicht ausgeblendet.\nSie können Kerne von ihren Infoseiten ausblenden.",
+      "button": "Liste der versteckten Kerne löschen"
+    },
+    "gb_palettes_conversion": {
+      "title": "GB Palettenformate",
+      "ramble": "Duplizieren Sie die .pal-Dateien in .gbp-Dateien. Kopiert die 4 für den Hintergrund verwendeten Farben in die neuen .gbp-Dateien.\nDurch Umschalten wird für jede .pal-Datei in /Assets/gb/common/palettes eine .gbp-Datei erstellt.",
+      "checkbox": "Automatische .gbp-Dateien aktivieren"
     },
     "thanks": "Danksagungen:"
   },

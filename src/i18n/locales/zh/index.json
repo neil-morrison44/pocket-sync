@@ -84,7 +84,8 @@
     "url": "网页地址",
     "version": "版本",
     "display_modes_title": "显示模式",
-    "display_mode_warning": "此显示模式需要更新核心，您确定要打开它吗？"
+    "display_mode_warning": "此显示模式需要更新核心，您确定要打开它吗？",
+    "display_modes_limit": "核心仅支持最多 16 种显示模式，您已选择 {count} 种"
   },
   "core_info_required_files": {
     "close": "关闭",
@@ -479,6 +480,16 @@
     "logs": {
       "title": "日志",
       "button": "打开日志文件夹"
+    },
+    "hidden_cores": {
+      "title": "隐藏核心",
+      "ramble": "这些核心在可用的未安装核心列表中隐藏，如果已安装则不会被隐藏。<inlang-LineFeed>您可以从其信息页面中隐藏核心。",
+      "button": "清除隐藏核心列表"
+    },
+    "gb_palettes_conversion": {
+      "title": "GB 调色板格式",
+      "ramble": "将 .pal 文件复制到 .gbp 文件中。将背景使用的 4 种颜色复制到新的 .gbp 文件中。\n切换将为 /Assets/gb/common/palettes 中的每个 .pal 文件创建一个 .gbp 文件",
+      "checkbox": "启用自动 .gbp 文件"
     },
     "thanks": "鸣谢:"
   },

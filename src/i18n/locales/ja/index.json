@@ -84,7 +84,8 @@
     "url": "URL",
     "version": "バージョン",
     "display_modes_title": "Display Modes",
-    "display_mode_warning": "この Display Mode を適用するにはコアのアップデートが必要です、それでも有効にしますか？"
+    "display_mode_warning": "この Display Mode を適用するにはコアのアップデートが必要です、それでも有効にしますか？",
+    "display_modes_limit": "コアは最大 16 個の表示モードのみをサポートします。{count} 個が選択されています"
   },
   "core_info_required_files": {
     "close": "閉じる",
@@ -479,6 +480,16 @@
     "logs": {
       "title": "ログ",
       "button": "ログフォルダを開く"
+    },
+    "hidden_cores": {
+      "title": "隠されたコア",
+      "ramble": "これらのコアは、利用可能なアンインストール済みコアのリストからは非表示になりますが、インストールされている場合は非表示になりません。<inlang-LineFeed>情報ページからコアを非表示にすることができます。",
+      "button": "非表示のコアリストをクリア"
+    },
+    "gb_palettes_conversion": {
+      "title": "GB パレット形式",
+      "ramble": ".pal ファイルを .gbp ファイルに複製します。背景に使用されている 4 色を新しい .gbp ファイルにコピーします。\n切り替えると、/Assets/gb/common/palettes 内の各 .pal ファイルに対して .gbp ファイルが作成されます。",
+      "checkbox": "自動 .gbp ファイルを有効にする"
     },
     "thanks": "Thanks to:"
   },

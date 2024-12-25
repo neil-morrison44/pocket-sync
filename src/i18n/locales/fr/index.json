@@ -78,7 +78,8 @@
       "save_states_and_sleep": "États sauvegardés / Veille"
     },
     "display_modes_title": "Modes d'affichage",
-    "display_mode_warning": "Ce mode d'affichage nécessite la mise à jour du cœur, êtes-vous sûr de vouloir l'activer ?"
+    "display_mode_warning": "Ce mode d'affichage nécessite la mise à jour du cœur, êtes-vous sûr de vouloir l'activer ?",
+    "display_modes_limit": "Les cœurs ne prennent en charge que jusqu'à 16 modes d'affichage, vous avez sélectionné {count}"
   },
   "core_info_required_files": {
     "close": "Fermer",
@@ -427,6 +428,16 @@
     "logs": {
       "title": "Journaux",
       "button": "Ouvrir le dossier de journal"
+    },
+    "hidden_cores": {
+      "title": "Noyaux cachés",
+      "ramble": "Ces cœurs sont masqués dans la liste des cœurs désinstallés disponibles ; s'ils sont installés, ils ne sont pas masqués.\nVous pouvez masquer les cœurs de leurs pages d’informations.",
+      "button": "Effacer la liste des noyaux cachés"
+    },
+    "gb_palettes_conversion": {
+      "title": "Formats des palettes GB",
+      "ramble": "Dupliquez les fichiers .pal dans les fichiers .gbp. Copiez les 4 couleurs utilisées pour l'arrière-plan dans les nouveaux fichiers .gbp.\nLe basculement créera un fichier .gbp pour chaque fichier .pal dans /Assets/gb/common/palettes",
+      "checkbox": "Activer les fichiers .gbp automatiques"
     },
     "thanks": "Merci à :"
   },

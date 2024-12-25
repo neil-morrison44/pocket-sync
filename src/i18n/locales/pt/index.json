@@ -86,6 +86,7 @@
     "display_modes_title": "Modos de Exibição",
     "display_mode_warning": "Este modo de exibição requer que o núcleo seja atualizado, tem certeza de que deseja ativá-lo?",
     "info_txt_title": "Info.txt",
+    "display_modes_limit": "Os núcleos suportam apenas até 16 modos de exibição, você selecionou {count}",
     "display_modes": {
       "crt_trinitron": "CRT Trinitron",
       "grayscale_lcd": "LCD em Escala de Cinza",
@@ -504,6 +505,16 @@
     "logs": {
       "title": "Registros",
       "button": "Abrir Pasta de Registros"
+    },
+    "hidden_cores": {
+      "title": "Núcleos Ocultos",
+      "ramble": "Esses núcleos ficam ocultos da lista de núcleos desinstalados disponíveis; se instalados, eles não ficam ocultos.\nVocê pode ocultar núcleos de suas páginas de informações.",
+      "button": "Limpar lista de núcleos ocultos"
+    },
+    "gb_palettes_conversion": {
+      "title": "Formatos de paletas GB",
+      "ramble": "Duplique os arquivos .pal em arquivos .gbp. Copie as 4 cores usadas para o fundo nos novos arquivos .gbp.\nA alternância criará um arquivo .gbp para cada arquivo .pal em /Assets/gb/common/palettes",
+      "checkbox": "Habilitar arquivos .gbp automáticos"
     },
     "thanks": "Agradecimentos a:"
   },

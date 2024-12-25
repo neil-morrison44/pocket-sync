@@ -86,6 +86,7 @@
     "display_modes_title": "Chế độ Hiển thị",
     "display_mode_warning": "Chế độ hiển thị này yêu cầu phải cập nhật core, bạn có chắc chắn muốn bật nó không?",
     "info_txt_title": "Info.txt",
+    "display_modes_limit": "Lõi chỉ hỗ trợ tối đa 16 chế độ hiển thị, bạn đã chọn {count}",
     "display_modes": {
       "crt_trinitron": "CRT Trinitron",
       "grayscale_lcd": "LCD Trắng đen",
@@ -511,6 +512,16 @@
     "logs": {
       "title": "Logs",
       "button": "Mở thư mục Log"
+    },
+    "hidden_cores": {
+      "title": "Lõi ẩn",
+      "ramble": "Các lõi này bị ẩn khỏi danh sách các lõi đã gỡ cài đặt có sẵn, nhưng nếu đã cài đặt thì chúng sẽ không bị ẩn.\nBạn có thể ẩn lõi khỏi trang thông tin của chúng.",
+      "button": "Xóa danh sách lõi ẩn"
+    },
+    "gb_palettes_conversion": {
+      "title": "Định dạng GB Palettes",
+      "ramble": "Sao chép các tệp .pal thành các tệp .gbp. Sao chép 4 màu được sử dụng cho nền vào các tệp .gbp mới.\nChuyển đổi sẽ tạo một tệp .gbp cho mỗi tệp .pal trong /Assets/gb/common/palettes",
+      "checkbox": "Bật tệp .gbp tự động"
     },
     "thanks": "Cảm ơn:"
   },

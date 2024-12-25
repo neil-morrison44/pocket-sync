@@ -3,6 +3,9 @@
     "3d_pocket": {
       "title": "Pocket Color:",
       "aluminium_label": "Aluminum"
+    },
+    "gb_palettes_conversion": {
+      "ramble": "Duplicate the .pal files into .gbp files. Copies the 4 colors used for the background into the new .gbp files.\nToggling will create a .gbp file for every .pal file in /Assets/gb/common/palettes"
     }
   }
 }
