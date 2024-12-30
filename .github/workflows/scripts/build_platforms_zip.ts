@@ -19,6 +19,8 @@ export const buildPlatformZip = async ({ github }: { github: Octokit }) => {
     owner: string
     repository: string
     variant: string
+    data_platforms: string[]
+    image_platforms: string[]
   }[] = []
 
   for (const pack of packs) {
@@ -44,11 +46,6 @@ export const buildPlatformZip = async ({ github }: { github: Octokit }) => {
     for (const variant of variants) {
       const name = variant.name.replace(".zip", "")
 
-      imagePackOutput.push({
-        ...pack,
-        variant: name,
-      })
-
       const downloadURL = variant.browser_download_url
       if (!downloadURL) continue
 
@@ -64,12 +61,14 @@ export const buildPlatformZip = async ({ github }: { github: Octokit }) => {
 
       const packPath = `${pack.owner}__${pack.repository}__${name}`
 
+      const dataPacks: string[] = []
       for (const entry of entries.filter((entry) =>
         entry.filename.endsWith(".json")
       )) {
         if (!entry.getData) return
         const [file, ..._] = entry.filename.split("/").reverse()
         const filename = `${packPath}/Platforms/${file}`
+        dataPacks.push(file.replace(".json", ""))
         const dataBlob = await entry.getData(new zip.BlobWriter(), {})
         try {
           await multiZip.add(filename, new zip.BlobReader(dataBlob))
@@ -79,12 +78,14 @@ export const buildPlatformZip = async ({ github }: { github: Octokit }) => {
         }
       }
 
+      const imagePacks: string[] = []
       for (const entry of entries.filter((entry) =>
         entry.filename.endsWith(".bin")
       )) {
         if (!entry.getData) return
         const [file, ..._] = entry.filename.split("/").reverse()
         const filename = `${packPath}/Platforms/_images/${file}`
+        imagePacks.push(file.replace(".bin", ""))
         const dataBlob = await entry.getData(new zip.BlobWriter(), {})
         try {
           await multiZip.add(filename, new zip.BlobReader(dataBlob))
@@ -93,6 +94,13 @@ export const buildPlatformZip = async ({ github }: { github: Octokit }) => {
           console.error(err)
         }
       }
+
+      imagePackOutput.push({
+        ...pack,
+        variant: name,
+        data_platforms: dataPacks,
+        image_platforms: imagePacks,
+      })
     }
   }
 
