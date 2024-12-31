@@ -1,4 +1,11 @@
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react"
+import {
+  startTransition,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import {
   useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
   useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
@@ -54,7 +61,7 @@ export const Screenshots = () => {
       if (newIndex < 0) newIndex = sortedScreenshots.length - 1
       if (newIndex >= sortedScreenshots.length) newIndex = 0
 
-      setSelected(sortedScreenshots[newIndex])
+      startTransition(() => setSelected(sortedScreenshots[newIndex]))
     },
     [setSelected, selected, sortedScreenshots]
   )
@@ -80,7 +87,7 @@ export const Screenshots = () => {
         ></div>
         <div
           className="screenshots__button screenshots__button--next"
-          onClick={() => changeSelectedImage(-1)}
+          onClick={() => changeSelectedImage(1)}
         ></div>
         <ScreenshotInfo
           fileName={selected}

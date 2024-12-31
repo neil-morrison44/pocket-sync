@@ -81,13 +81,13 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
       <div>
         <div className="platform__image-editable">
           <img
-            className="core-info__image"
+            className="platform-info__image"
             onClick={() => setImageEditorOpen(true)}
             src={platformImage}
           />
           <div className="platform__image-edit">{t("edit")}</div>
         </div>
-        <div className="cores__info-blurb">
+        <div className="platform__info-blurb">
           <Editable
             initialValue={platform.name}
             type="freetext"

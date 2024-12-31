@@ -211,12 +211,14 @@ export const invokeFindRequiredFiles = async (
 export const invokeInstallArchiveFiles = async (
   files: DataSlotFile[],
   archiveUrl: string,
-  turbo: boolean
+  turbo: boolean,
+  jobId?: string
 ) =>
   await invoke<boolean>("install_archive_files", {
     files,
     archiveUrl,
     turbo,
+    jobId,
   })
 
 export const invokeSaveMultipleFiles = async (

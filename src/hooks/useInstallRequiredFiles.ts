@@ -6,14 +6,13 @@ import { useProgress } from "./useProgress"
 import { turboDownloadsAtom } from "../recoil/settings/atoms"
 import { invokeInstallArchiveFiles } from "../utils/invokes"
 
-export const useInstallRequiredFiles = () => {
+export const useInstallRequiredFiles = (jobId = "install_archive_files") => {
   const { archive_url } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     PocketSyncConfigSelector
   )
 
-  const { percent, inProgress, message, remainingTime } = useProgress(
-    "install_archive_files"
-  )
+  const { percent, inProgress, message, remainingTime } = useProgress(jobId)
+  console.log({ percent })
 
   const turboDownloads =
     useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(turboDownloadsAtom)
@@ -27,7 +26,8 @@ export const useInstallRequiredFiles = () => {
       const _response = await invokeInstallArchiveFiles(
         files,
         archiveUrl,
-        turboDownloads.enabled
+        turboDownloads.enabled,
+        jobId
       )
     },
     [archive_url, turboDownloads.enabled]

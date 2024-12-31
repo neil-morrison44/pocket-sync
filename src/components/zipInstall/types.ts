@@ -4,6 +4,7 @@ export type FileTreeNode = {
   exists: boolean
   is_dir: boolean
   children: FileTreeNode[]
+  parent: FileTreeNode | null
 }
 
 export type InstallZipEventPayload = {

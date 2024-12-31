@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next"
 import { useEffect } from "react"
 import { emit, listen } from "@tauri-apps/api/event"
 import { confirm as TauriConfirm } from "@tauri-apps/plugin-dialog"
+import { GroupedFiles } from "./groupedFiles"
 
 export const ZipInstall = () => {
   const { installState } = useListenForZipInstall()
@@ -54,7 +55,10 @@ const ZipInstallInner = ({
   title,
 }: InstallZipEventPayload) => {
   const tree = useTree(files)
-  const { allowedFiles, toggleFile, toggleDir } = useAllowedFiles(files)
+  const { allowedFiles, toggleFile, toggleDir, toggleFiles } = useAllowedFiles(
+    files,
+    tree
+  )
   const { confirm, cancel, handleMovedFiles, setHandleMovedFiles } =
     useZipInstallButtons(allowedFiles)
 
@@ -99,6 +103,13 @@ const ZipInstallInner = ({
   return (
     <Modal>
       <h2 className="zip-install__title">{title}</h2>
+      {tree && (
+        <GroupedFiles
+          tree={tree}
+          toggleFiles={toggleFiles}
+          allowedFiles={allowedFiles}
+        />
+      )}
       <div className="zip-install__paths">
         {!tree && <p>{t("scanning")}</p>}
         {tree &&

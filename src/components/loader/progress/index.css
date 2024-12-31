@@ -5,6 +5,12 @@
   width: 400px;
 }
 
+@property --percent {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 40%;
+}
+
 .progress-loader__bar{
   width: 100%;
   height: 15px;

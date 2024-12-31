@@ -47,6 +47,8 @@ export const Cores = () => {
     [setUpdateAllOpen]
   )
 
+  console.log({ searchQuery })
+
   if (selectedCore) {
     return (
       <CoreInfo
