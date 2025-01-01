@@ -538,6 +538,12 @@
     "confirm_title": "Uninstall Core"
   },
   "zip_install": {
+    "grouped_files": {
+      "item": "{name} - {count, number, short} Files",
+      "cores": "Multiple Cores in Zip",
+      "platforms": "Platform files",
+      "other": "Other"
+    },
     "cancel_button": "Cancel",
     "confirm_button": "Confirm",
     "remove_duplicate": "Remove duplicate existing files",

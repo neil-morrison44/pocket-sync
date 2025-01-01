@@ -54,7 +54,7 @@ export const ProgressLoaderInner = ({
     <div className="progress-loader">
       <div
         className="progress-loader__bar"
-        style={{ "--percent": `${percent.toFixed(2)}%` }}
+        style={{ "--percent": `${percent.toFixed(0)}%` }}
       ></div>
       {message && (
         <div className="progress-loader__info">

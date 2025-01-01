@@ -269,6 +269,8 @@ export type ImagePack = {
   owner: string
   repository: string
   variant: string
+  image_platforms: string[]
+  data_platforms: string[]
 }
 
 export type RawFeedItem = {

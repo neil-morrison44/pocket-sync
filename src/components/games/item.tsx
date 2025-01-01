@@ -14,6 +14,8 @@ import { SearchContextSelfHidingConsumer } from "../search/context"
 import { PlatformInfoSelectorFamily } from "../../recoil/platforms/selectors"
 import { DataSlotJSON } from "../../types"
 
+const NOT_REQUIRED_BUT_MAYBE_GAME_NAMES = /(^slot)/i
+
 export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
   const data = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     DataJSONSelectorFamily(coreName)
@@ -22,9 +24,11 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
   const romsSlot = useMemo<DataSlotJSON | undefined>(
     () =>
       data.data.data_slots.filter(
-        ({ required, extensions }) => required && extensions
+        ({ required, name, extensions }) =>
+          (required || name?.match(NOT_REQUIRED_BUT_MAYBE_GAME_NAMES)) &&
+          extensions
       )[0],
-    [data]
+    [data, coreName]
   )
 
   const decodedParams = useMemo(

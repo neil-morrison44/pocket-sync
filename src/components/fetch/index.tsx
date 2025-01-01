@@ -214,8 +214,11 @@ const ArchiveOrgItem = ({
   extensions?: string[]
   onRemove: () => void
 }) => {
+  console.log({ name })
   const { installRequiredFiles, inProgress, percent, message } =
-    useInstallRequiredFiles()
+    useInstallRequiredFiles(
+      `install_archive_files-${btoa(name).replaceAll("=", "")}`
+    )
   const { t } = useTranslation("fetch")
 
   return (

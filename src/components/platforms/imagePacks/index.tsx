@@ -41,7 +41,17 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
 
   const imagePacks = useMemo(() => {
     if (imagePacksLoadable.state !== "hasValue") return []
-    return imagePacksLoadable.contents
+
+    if (singlePlatformId) {
+      return imagePacksLoadable.contents.filter(({ image_platforms }) =>
+        image_platforms.includes(singlePlatformId)
+      )
+    }
+
+    const sorted = [...imagePacksLoadable.contents]
+    return sorted.sort(
+      (a, b) => b.image_platforms.length - a.image_platforms.length
+    )
   }, [imagePacksLoadable])
 
   const [selections, setSelections] = useState<
@@ -76,6 +86,8 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
       },
     [selections]
   )
+
+  console.log({ imagePacks })
 
   return (
     <Modal className="image-packs">

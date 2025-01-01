@@ -1,5 +1,11 @@
 import { emit, listen } from "@tauri-apps/api/event"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import { filterKnownBadFiles } from "../../utils/filterFiles"
 import { FileTreeNode, InstallZipEventPayload } from "./types"
 import { message } from "@tauri-apps/plugin-dialog"
@@ -61,10 +67,19 @@ export const useTree = (files: InstallZipEventPayload["files"]) => {
             exists: curr.exists,
             is_dir: index !== fileBits.length - 1,
             children: [],
+            parent: null,
           })
         }
 
         treeNode = treeNode.find(({ name }) => name === element)?.children || []
+      }
+
+      const toBeParented = [...newTree]
+      while (true) {
+        const node = toBeParented.pop()
+        if (!node) break
+        node.children.forEach((child) => (child.parent = node))
+        toBeParented.push(...node.children)
       }
 
       return newTree
@@ -72,10 +87,15 @@ export const useTree = (files: InstallZipEventPayload["files"]) => {
   }, [files])
 }
 
-export const useAllowedFiles = (files: InstallZipEventPayload["files"]) => {
+export const useAllowedFiles = (
+  files: InstallZipEventPayload["files"],
+  tree: FileTreeNode[] | null
+) => {
   const [allowedFiles, setAllowedFiles] = useState<string[] | null>(null)
   const keepPlatformData =
     useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(keepPlatformDataAtom)
+
+  const flattenedTree = useFlattenedTree(tree)
 
   useEffect(() => {
     setAllowedFiles((f) => {
@@ -96,17 +116,66 @@ export const useAllowedFiles = (files: InstallZipEventPayload["files"]) => {
     })
   }, [files, keepPlatformData.enabled])
 
+  const removeEmptyDirs = (allowed: string[]): string[] => {
+    console.log({ flattenedTree })
+    return allowed
+      .map((path) => flattenedTree.find(({ full }) => path == full))
+      .filter((n): n is FileTreeNode => n !== undefined)
+      .filter(
+        (n) => !n.is_dir || (n.is_dir && !hasAnyActiveChildren(n, allowed))
+      )
+      .map(({ full }) => full)
+  }
+
+  const hasAnyActiveChildren = (
+    node: FileTreeNode,
+    allowed: string[]
+  ): boolean => {
+    console.log(node, allowed)
+    return (
+      allowedFiles?.includes(node.full) ||
+      node.children.some((c) => hasAnyActiveChildren(c, allowed))
+    )
+  }
+
   const toggleFile = useCallback(
     (path: string) => {
-      setAllowedFiles((f) => {
-        if (!f) return f
+      startTransition(() =>
+        setAllowedFiles((f) => {
+          if (!f) return f
 
-        if (f.includes(path)) {
-          return f.filter((p) => p !== path)
-        } else {
-          return [...f, path]
-        }
-      })
+          if (f.includes(path)) {
+            return removeEmptyDirs(f.filter((p) => p !== path))
+          } else {
+            return [...f, path]
+          }
+        })
+      )
+    },
+    [setAllowedFiles, tree]
+  )
+
+  const toggleFiles = useCallback(
+    (paths: string[]) => {
+      startTransition(() =>
+        setAllowedFiles((f) => {
+          if (!f) return f
+          const allAllowed = paths.every((path) => f.includes(path))
+
+          if (allAllowed) {
+            // remove them all
+
+            console.log(
+              f.filter((p) => !paths.includes(p)),
+              removeEmptyDirs(f.filter((p) => !paths.includes(p)))
+            )
+            return removeEmptyDirs(f.filter((p) => !paths.includes(p)))
+          } else {
+            // Add them all
+            return Array.from(new Set([...f, ...paths]))
+          }
+        })
+      )
     },
     [setAllowedFiles]
   )
@@ -142,7 +211,7 @@ export const useAllowedFiles = (files: InstallZipEventPayload["files"]) => {
     [setAllowedFiles]
   )
 
-  return { allowedFiles, toggleFile, toggleDir }
+  return { allowedFiles, toggleFile, toggleDir, toggleFiles }
 }
 
 export const useZipInstallButtons = (allowedFiles: string[] | null) => {
@@ -195,3 +264,22 @@ export const useListenForDownloadProgress = () => {
 
   return { isDownloading, downloadProgress }
 }
+
+export const useFlattenedTree = (tree: FileTreeNode[] | null) =>
+  useMemo<FileTreeNode[]>(() => {
+    if (!tree) return []
+    const files: FileTreeNode[] = []
+    const toBeProcessed = [...tree]
+
+    while (toBeProcessed.length > 0) {
+      const file = toBeProcessed.pop()
+      if (!file) continue
+      if (file.is_dir) {
+        toBeProcessed.push(...file.children)
+      } else {
+        files.push(file)
+      }
+    }
+
+    return files
+  }, [tree])

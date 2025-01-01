@@ -84,3 +84,39 @@
   width: 100%;
   accent-color: var(--selection-colour);
 }
+
+.zip-install__cores-list {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.zip-install__cores-label{
+  background-color: #0f0f0f98;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #0f0f0f98;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.zip-install__cores-list{
+  margin-block-end: 10px;
+}
+
+.zip-install__cores-label:hover{
+  opacity: 1;
+}
+
+.zip-install__cores-checkbox{
+  display: none;
+}
+
+.zip-install__cores-label:has(.zip-install__cores-checkbox:checked) {
+  opacity: 1;
+  border: 1px solid var(--selection-colour);
+}
+
+.zip-install__cores-title{
+  margin-block-end: 5px;
+}

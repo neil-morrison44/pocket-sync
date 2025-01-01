@@ -29,10 +29,6 @@ export const Games = () => {
   const [instanceJsonOpen, setInstanceJsonOpen] = useState(false)
   const { t } = useTranslation("games")
 
-  const refresh = useRecoilCallback(({ set }) => () => {
-    set(fileSystemInvalidationAtom, Date.now())
-  })
-
   const sortedList = useMemo(
     () =>
       [...coresList].sort((a, b) => {
@@ -55,11 +51,9 @@ export const Games = () => {
       {cleanFilesOpen && (
         <CleanFilesModal onClose={() => setCleanFilesOpen(false)} />
       )}
-
       {instanceJsonOpen && (
         <InstanceJson onClose={() => setInstanceJsonOpen(false)} />
       )}
-
       <Controls>
         <ControlsSearch
           value={searchQuery}
@@ -71,9 +65,6 @@ export const Games = () => {
         </ControlsButton>
         <ControlsButton onClick={() => setInstanceJsonOpen(true)}>
           {t("controls.instance_json")}
-        </ControlsButton>
-        <ControlsButton onClick={refresh}>
-          {t("controls.refresh")}
         </ControlsButton>
         <ControlsSelect
           options={categoryList}

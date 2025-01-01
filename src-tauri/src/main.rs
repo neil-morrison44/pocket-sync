@@ -329,6 +329,7 @@ async fn uninstall_core(
 async fn install_archive_files(
     files: Vec<DataSlotFile>,
     archive_url: &str,
+    job_id: Option<&str>,
     turbo: bool,
     state: tauri::State<'_, PocketSyncState>,
     window: Window,
@@ -336,7 +337,8 @@ async fn install_archive_files(
     debug!("Command: install_archive_files");
 
     let pocket_path = state.0.pocket_path.read().await;
-    let job_handle = state.0.jobs.start_job("install_archive_files").await;
+    let job_id = job_id.unwrap_or("install_archive_files");
+    let job_handle = state.0.jobs.start_job(job_id).await;
 
     let all_paths: Vec<PathBuf> = files.iter().map(|d| pocket_path.join(&d.path)).collect();
     let common_dir = find_common_path(&all_paths).unwrap();
@@ -346,7 +348,7 @@ async fn install_archive_files(
 
     let mut progress = progress::ProgressEmitter::new(Box::new(|event| {
         window
-            .emit("progress-event::install_archive_files", event)
+            .emit(&format!("progress-event::{job_id}"), event)
             .unwrap();
     }));
 
@@ -884,15 +886,9 @@ async fn downconvert_all_pal_files(
 }
 
 #[tauri::command(async)]
-async fn downconvert_single_pal_file(
-    pal_file_path: String,
-    state: tauri::State<'_, PocketSyncState>,
-    window: tauri::WebviewWindow,
-) -> Result<(), String> {
+async fn downconvert_single_pal_file(pal_file_path: String) -> Result<(), String> {
     debug!("Command: downconvert_single_pal_file");
     let pal_file_path = PathBuf::from(pal_file_path);
-    let pocket_path = state.0.pocket_path.read().await;
-    let palette_path = PathBuf::from(&pocket_path.as_path()).join("Assets/gb/common/palettes");
 
     palettes::down_convert_pal_to_gbp(&pal_file_path)
         .await

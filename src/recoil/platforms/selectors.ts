@@ -218,7 +218,7 @@ export const DataPackJsonSelectorFamily = selectorFamily<
 
 export const ImagePackImageSelectorFamily = selectorFamily<
   { imageSrc: string; file: Blob } | null,
-  ImagePack & {
+  Omit<ImagePack, "image_platforms" | "data_platforms"> & {
     platformId: PlatformId
   }
 >({
