@@ -1,0 +1,17 @@
+name: Add Release to Changelog
+on:
+  release:
+    types: [published]
+
+jobs:
+  changelog:
+    name: Update changelog
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: rhysd/changelog-from-release/action@v3
+        with:
+          file: CHANGELOG.md
+          header: "# Changelog\n <!--- This file is auto-generated from releases --->\n"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_summary_template: "update changelog for %s changes"
