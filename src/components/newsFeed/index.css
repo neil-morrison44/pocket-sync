@@ -62,6 +62,7 @@
   text-align: left;
   font-family: GamePocket;
   font-size: 18px;
+  line-break: anywhere;
 }
 
 .news-feed__item-published {
