@@ -1,8 +1,17 @@
 import { GithubRelease } from "../../types"
-import { selectorFamily } from "recoil"
+import { selector, selectorFamily } from "recoil"
 import { coreInventoryAtom } from "../inventory/atoms"
-import { githubTokenAtom } from "../settings/atoms"
 import { githubHeadersSelector } from "../settings/selectors"
+
+export const pocketSyncChangelogSelector = selector<string>({
+  key: "pocketSyncChangelogSelector",
+  get: async () => {
+    const response = await fetch(
+      "https://raw.githubusercontent.com/neil-morrison44/pocket-sync/refs/heads/main/CHANGELOG.md"
+    )
+    return response.text()
+  },
+})
 
 export const GithubReleasesSelectorFamily = selectorFamily<
   GithubRelease[],
@@ -14,7 +23,6 @@ export const GithubReleasesSelectorFamily = selectorFamily<
     async ({ get }) => {
       if (!latest) get(coreInventoryAtom)
       const headers = get(githubHeadersSelector)
-
       const response = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/releases`,
         { headers }

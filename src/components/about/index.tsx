@@ -4,6 +4,7 @@ import React, {
   useLayoutEffect,
   useMemo,
   useRef,
+  useState,
 } from "react"
 import {
   useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
@@ -24,6 +25,7 @@ import { useTranslation } from "react-i18next"
 import { semverCompare } from "../../utils/semverCompare"
 import { ColourContextProviderFromConfig } from "../three/colourContext"
 import { sponsorCountAtom } from "../../recoil/github/atoms"
+import { Changelog } from "./changelog"
 
 const Pocket = React.lazy(() =>
   import("../three/pocket").then((m) => ({ default: m.Pocket }))
@@ -40,6 +42,7 @@ const StaticScreen = React.lazy(() =>
 )
 
 export const About = () => {
+  const [changelogOpen, setChangelogOpen] = useState<boolean>(false)
   const selfReleases = useRecoilSmoothUpdatesFirstSuspend(
     GithubReleasesSelectorFamily({
       owner: "neil-morrison44",
@@ -64,8 +67,12 @@ export const About = () => {
 
   return (
     <div className="about">
+      {changelogOpen && <Changelog onClose={() => setChangelogOpen(false)} />}
       <div className="about__sponsor">
         <Suspense>
+          <div className="link" onClick={() => setChangelogOpen(true)}>
+            {t("whats_new")}
+          </div>
           <SponsorLink />
         </Suspense>
       </div>
@@ -74,7 +81,6 @@ export const About = () => {
           <SillyTitleEffect>{t("app_name")}</SillyTitleEffect>
           {version}
         </div>
-
         {firmwareUpdateAvailable && (
           <div
             className="about__update-link"
