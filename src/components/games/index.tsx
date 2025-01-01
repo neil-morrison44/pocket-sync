@@ -51,11 +51,9 @@ export const Games = () => {
       {cleanFilesOpen && (
         <CleanFilesModal onClose={() => setCleanFilesOpen(false)} />
       )}
-
       {instanceJsonOpen && (
         <InstanceJson onClose={() => setInstanceJsonOpen(false)} />
       )}
-
       <Controls>
         <ControlsSearch
           value={searchQuery}
