@@ -1,5 +1,6 @@
 name: Add Release to Changelog
 on:
+  workflow_dispatch:
   release:
     types: [published]
 
@@ -12,6 +13,6 @@ jobs:
       - uses: rhysd/changelog-from-release/action@v3
         with:
           file: CHANGELOG.md
-          header: "# Changelog\n <!--- This file is auto-generated from releases --->\n"
+          header: "# Changelog"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           commit_summary_template: "update changelog for %s changes"
