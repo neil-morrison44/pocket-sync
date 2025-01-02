@@ -1,9 +1,11 @@
 import { MutableRefObject } from "react"
 import "./index.css"
+import { useBEM } from "../../hooks/useBEM"
 
 type LoaderProps = {
   className?: string
   fullHeight?: boolean
+  grow?: boolean
   title?: string
   height?: number
   heightRef?: MutableRefObject<number>
@@ -11,7 +13,8 @@ type LoaderProps = {
 
 export const Loader = ({
   className,
-  fullHeight,
+  fullHeight = false,
+  grow = false,
   height,
   title = "",
   heightRef,
@@ -19,11 +22,17 @@ export const Loader = ({
   const heightValue = heightRef ? heightRef.current : height
   const heightPx = heightValue ? `${heightValue}px` : undefined
 
+  const loaderClassName = useBEM({
+    block: "loader",
+    modifiers: {
+      full: fullHeight,
+      grow,
+    },
+  })
+
   return (
     <div
-      className={`loader ${className || ""} ${
-        fullHeight ? "loader--full" : ""
-      }`}
+      className={`${loaderClassName} ${className || ""}`}
       title={title}
       style={{ height: heightPx }}
     ></div>

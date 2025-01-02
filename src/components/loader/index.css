@@ -11,6 +11,10 @@
   height: 100vh;
 }
 
+.loader--grow {
+  flex-grow: 1;
+}
+
 .loader--no-background {
   background-color: transparent;
 }
