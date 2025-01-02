@@ -4,18 +4,20 @@ import {
   getBinaryMetadata,
   getCartridgeBinaryMetadata,
 } from "../../utils/getBinaryMetadata"
-import {
-  invokeReadBinaryFile,
-  invokeWalkDirListFiles,
-} from "../../utils/invokes"
+import { invokeReadBinaryFile } from "../../utils/invokes"
 import { PhotoColourMapAtom } from "./atoms"
 import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { WalkDirSelectorFamily } from "../selectors"
 
 export const AllSaveStatesSelector = selector<string[]>({
   key: "AllSaveStatesSelector",
   get: async ({ get }) => {
-    get(FolderWatchAtomFamily("Memories/Save States"))
-    const saves = await invokeWalkDirListFiles("Memories/Save States", [".sta"])
+    const saves = get(
+      WalkDirSelectorFamily({
+        path: "Memories/Save States",
+        extensions: [".sta"],
+      })
+    )
     return saves.map((f) => f.replace(/^\//g, ""))
   },
 })

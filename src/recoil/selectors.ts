@@ -13,7 +13,6 @@ import { AUTHOUR_IMAGE } from "../values"
 import { readJSONFile } from "../utils/readJSONFile"
 import { path } from "@tauri-apps/api"
 import { FileWatchAtomFamily, FolderWatchAtomFamily } from "./fileSystem/atoms"
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow"
 import { getCurrentWindow, Window } from "@tauri-apps/api/window"
 
 export const DataJSONSelectorFamily = selectorFamily<DataJSON, string>({
@@ -114,11 +113,11 @@ export const AppVersionSelector = selector<string>({
 
 export const WalkDirSelectorFamily = selectorFamily<
   string[],
-  { path: string; extensions: string[]; offPocket?: boolean }
+  { path: string; extensions?: string[]; offPocket?: boolean }
 >({
   key: "WalkDirSelectorFamily",
   get:
-    ({ path, extensions, offPocket = false }) =>
+    ({ path, extensions = [], offPocket = false }) =>
     async ({ get }) => {
       get(FolderWatchAtomFamily(path))
       const files = await invokeWalkDirListFiles(path, extensions, offPocket)

@@ -1,18 +1,19 @@
 import { selector, selectorFamily } from "recoil"
 import { SaveZipFile } from "../../types"
 import {
-  invokeWalkDirListFiles,
   invokeListBackupSaves,
   invokeListSavesInZip,
   invokeListSavesOnPocket,
 } from "../../utils/invokes"
 import { FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { WalkDirSelectorFamily } from "../selectors"
 
 export const AllSavesSelector = selector<string[]>({
   key: "AllSavesSelector",
   get: async ({ get }) => {
-    get(FolderWatchAtomFamily("Saves"))
-    const saves = await invokeWalkDirListFiles(`Saves`, [".sav"])
+    const saves = get(
+      WalkDirSelectorFamily({ path: "Saves", extensions: [".sav"] })
+    )
     return saves.map((f) => f.replace(/^\//g, ""))
   },
 })

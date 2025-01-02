@@ -8,6 +8,7 @@ import {
   SaveZipFile,
   Job,
 } from "../types"
+import { debug } from "@tauri-apps/plugin-log"
 
 export const invokeOpenPocket = async () => invoke<string | null>("open_pocket")
 
@@ -152,6 +153,17 @@ export const invokeFileMTime = async (filePath: string) => {
     filePath,
   })
   return mtime * 1000
+}
+
+export const invokeFilesMTime = async (filePaths: string[]) => {
+  const mtime = await invoke<(number | null)[]>("find_mtime_for_files", {
+    fullFilePaths: filePaths,
+  })
+
+  return mtime.map((mtime, index) => ({
+    path: filePaths[index],
+    mtime: mtime ? mtime * 1000 : null,
+  }))
 }
 
 export const invokeGetFirmwareVersionsList = async () => {

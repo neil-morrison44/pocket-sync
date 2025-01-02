@@ -1,8 +1,8 @@
 import { selectorFamily } from "recoil"
 import { InteractJSON, InteractPersistJSON } from "../../types/interact"
-import { invokeWalkDirListFiles } from "../../utils/invokes"
 import { readJSONFile } from "../../utils/readJSONFile"
 import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { WalkDirSelectorFamily } from "../selectors"
 
 const CoreInteractFileSelectorFamily = selectorFamily<InteractJSON, string>({
   key: "CoreInteractFileSelectorFamily",
@@ -32,7 +32,9 @@ export const ListPresetInteractSelectorFamily = selectorFamily<
     async ({ get }) => {
       const path = `Presets/${coreName}/Interact`
       get(FolderWatchAtomFamily(path))
-      const inputFiles = invokeWalkDirListFiles(path, ["json"])
+      const inputFiles = get(
+        WalkDirSelectorFamily({ path, extensions: ["json"] })
+      )
       return inputFiles
     },
 })

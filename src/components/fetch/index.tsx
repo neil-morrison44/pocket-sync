@@ -26,6 +26,8 @@ import { useTranslation } from "react-i18next"
 import { ControlsButton } from "../controls/inputs/button"
 import { ProgressLoader, ProgressLoaderInner } from "../loader/progress"
 import { usePreventGlobalZipInstallModal } from "../../hooks/usePreventGlobalZipInstall"
+import { FetchInfoSelectorFamily } from "../../recoil/fetch/selectors"
+import { debug } from "@tauri-apps/plugin-log"
 
 type FileStatus = "complete" | "partial" | "none" | "waiting"
 
@@ -170,13 +172,10 @@ const FileSystemStatus = ({
   destination: string
   children: (status: FileStatus, files: FileCopy[]) => ReactNode
 }) => {
-  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
-  const pocketFileInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PathFileInfoSelectorFamily({ path: destination })
-  )
-  const fsFileInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PathFileInfoSelectorFamily({ path, offPocket: true })
-  )
+  const { pocketPath, pocketFileInfo, fsFileInfo } =
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+      FetchInfoSelectorFamily({ origin: path, destination })
+    )
 
   const files: FileCopy[] = useMemo(
     () =>

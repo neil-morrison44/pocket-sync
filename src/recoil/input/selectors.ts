@@ -1,8 +1,8 @@
 import { selectorFamily } from "recoil"
 import { InputJSON } from "../../types"
-import { invokeWalkDirListFiles } from "../../utils/invokes"
 import { readJSONFile } from "../../utils/readJSONFile"
 import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { WalkDirSelectorFamily } from "../selectors"
 
 const CoreInputSelectorFamily = selectorFamily<InputJSON, string>({
   key: "CoreInputSelectorFamily",
@@ -21,10 +21,7 @@ export const ListPresetInputsSelectorFamily = selectorFamily<string[], string>({
     (coreName: string) =>
     async ({ get }) => {
       const path = `Presets/${coreName}/Input`
-      get(FolderWatchAtomFamily(path))
-      const inputFiles = invokeWalkDirListFiles(path, ["json"])
-
-      return inputFiles
+      return get(WalkDirSelectorFamily({ path, extensions: ["json"] }))
     },
 })
 
