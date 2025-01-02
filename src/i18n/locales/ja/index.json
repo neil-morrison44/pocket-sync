@@ -3,7 +3,9 @@
     "app_name": "Pocket Sync",
     "new_firmware": "新しい Pocket ファームウェア v{version} が利用可能です",
     "update_available": "アップデートが利用可能です! {version}",
-    "sponsor_link": "GitHubで {count, number} 人と一緒にスポンサーになろう"
+    "sponsor_link": "GitHubで {count, number} 人と一緒にスポンサーになろう",
+    "whats_new": "新着情報？",
+    "close_changelog": "近い"
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -501,6 +503,12 @@
     "confirm_title": "コアをアンインストール"
   },
   "zip_install": {
+    "grouped_files": {
+      "item": "{name} - {count, number, short} ファイル",
+      "cores": "Zip 内の複数のコア",
+      "platforms": "プラットフォームファイル",
+      "other": "他の"
+    },
     "cancel_button": "キャンセル",
     "confirm_button": "確認",
     "remove_duplicate": "重複するファイルを削除",

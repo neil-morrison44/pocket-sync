@@ -3,7 +3,9 @@
     "app_name": "Pocket Sync",
     "new_firmware": "Neue Pocket-Firmware v{version} verfügbar",
     "update_available": "Aktualisierung verfügbar! {version}",
-    "sponsor_link": "Schließen Sie sich {count, number} Personen beim Sponsoring über GitHub an"
+    "sponsor_link": "Schließen Sie sich {count, number} Personen beim Sponsoring über GitHub an",
+    "whats_new": "Was ist neu?",
+    "close_changelog": "Schließen"
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -526,6 +528,11 @@
     "confirm_title": "Kern deinstallieren"
   },
   "zip_install": {
+    "grouped_files": {
+      "cores": "Mehrere Kerne in Zip",
+      "platforms": "Plattformdateien",
+      "other": "Andere"
+    },
     "cancel_button": "Abbrechen",
     "confirm_button": "Bestätigen",
     "remove_duplicate": "Doppelte Dateien entfernen",

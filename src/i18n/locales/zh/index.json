@@ -3,7 +3,9 @@
     "app_name": "Pocket Sync",
     "new_firmware": "发现新的Pocket固件 v{version}",
     "update_available": "软件有更新! {version}",
-    "sponsor_link": "通过 GitHub 与 {count, number} 人一起赞助"
+    "sponsor_link": "通过 GitHub 与 {count, number} 人一起赞助",
+    "whats_new": "什么是新的？",
+    "close_changelog": "关闭"
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -501,6 +503,12 @@
     "confirm_title": "卸载核心"
   },
   "zip_install": {
+    "grouped_files": {
+      "item": "{name} - {count, number, short} 文件",
+      "cores": "Zip 中的多个核心",
+      "platforms": "平台文件",
+      "other": "其他"
+    },
     "cancel_button": "取消",
     "confirm_button": "确认",
     "remove_duplicate": "移除已存在的重复文件",

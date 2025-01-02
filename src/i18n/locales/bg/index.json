@@ -3,7 +3,9 @@
     "app_name": "Pocket Sync",
     "new_firmware": "Наличен е нов Pocket фърмуер версия {version}",
     "update_available": "Наличен е ъпдейт! {version}",
-    "sponsor_link": "Включи се към {count, number} човека, спонсори чрез GitHub"
+    "sponsor_link": "Включи се към {count, number} човека, спонсори чрез GitHub",
+    "whats_new": "какво ново",
+    "close_changelog": "Затвори"
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -538,6 +540,12 @@
     "confirm_title": "Деинсталирай ядро"
   },
   "zip_install": {
+    "grouped_files": {
+      "item": "{name} - {count, number, short} Файлове",
+      "cores": "Множество ядра в Zip",
+      "platforms": "Платформени файлове",
+      "other": "други"
+    },
     "cancel_button": "Откажи",
     "confirm_button": "Потвърди",
     "remove_duplicate": "Премахни дублирани съществуващи файлове",

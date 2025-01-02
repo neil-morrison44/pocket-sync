@@ -3,7 +3,9 @@
     "app_name": "Pocket Sync",
     "new_firmware": "Phiên bản Phần mềm Pocket mới v{version}",
     "update_available": "Có bản cập nhật! {version}",
-    "sponsor_link": "Tham gia cùng {count, number} người tài trợ thông qua GitHub"
+    "sponsor_link": "Tham gia cùng {count, number} người tài trợ thông qua GitHub",
+    "whats_new": "Có gì mới?",
+    "close_changelog": "Đóng"
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -533,6 +535,12 @@
     "confirm_title": "Gỡ cài đặt Core"
   },
   "zip_install": {
+    "grouped_files": {
+      "item": "{name} - {count, number, short} Tệp",
+      "cores": "Nhiều lõi trong Zip",
+      "platforms": "Các tập tin nền tảng",
+      "other": "Khác"
+    },
     "cancel_button": "Hủy bỏ",
     "confirm_button": "Xác nhận",
     "remove_duplicate": "Xóa các tập tin trùng lặp hiện có",

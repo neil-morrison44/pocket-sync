@@ -3,7 +3,9 @@
     "app_name": "Pocket Sync",
     "new_firmware": "Nova versão do firmware Pocket v{version} disponível",
     "update_available": "Atualização Disponível! {version}",
-    "sponsor_link": "Junte-se a {count, number} pessoas a patrocinar via GitHub"
+    "sponsor_link": "Junte-se a {count, number} pessoas a patrocinar via GitHub",
+    "whats_new": "O que há de novo?",
+    "close_changelog": "Fechar"
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -526,6 +528,12 @@
     "confirm_title": "Desinstalar Núcleo"
   },
   "zip_install": {
+    "grouped_files": {
+      "item": "{name} - {count, number, short} Arquivos",
+      "cores": "Vários núcleos em Zip",
+      "platforms": "Arquivos de plataforma",
+      "other": "Outro"
+    },
     "cancel_button": "Cancelar",
     "confirm_button": "Confirmar",
     "remove_duplicate": "Remover arquivos duplicados existentes",

@@ -2,7 +2,9 @@
   "about": {
     "new_firmware": "Nouveau Pocket Firmware v{version} disponible",
     "update_available": "Mise à jour disponible ! {version}",
-    "sponsor_link": "Rejoignez {count, number} personnes en parrainage via GitHub"
+    "sponsor_link": "Rejoignez {count, number} personnes en parrainage via GitHub",
+    "whats_new": "Quoi de neuf?",
+    "close_changelog": "Fermer"
   },
   "app": {
     "connect_button": "Connecter la Pocket / Carte SD",
@@ -449,6 +451,12 @@
     "confirm_title": "Désinstaller le cœur"
   },
   "zip_install": {
+    "grouped_files": {
+      "item": "{name} - {count, number, short} Fichiers",
+      "cores": "Plusieurs cœurs dans ZIP",
+      "platforms": "Fichiers de plate-forme",
+      "other": "Autre"
+    },
     "cancel_button": "Annuler",
     "confirm_button": "Confirmer",
     "remove_duplicate": "Supprimer les fichiers doublons",
