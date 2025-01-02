@@ -9,7 +9,7 @@ use clean_fs::find_dotfiles;
 use file_cache::{clear_file_caches, get_file_with_cache};
 use file_locks::FileLocks;
 use firmware::{FirmwareDetails, FirmwareListItem};
-use futures::StreamExt;
+use futures::stream::{self, StreamExt};
 use futures_locks::RwLock;
 use hashes::crc32_for_file;
 use install_zip::start_zip_task;
@@ -476,7 +476,11 @@ async fn delete_files(
 }
 
 #[tauri::command(async)]
-async fn copy_files(copies: Vec<(&str, &str)>, window: Window) -> Result<bool, ()> {
+async fn copy_files(
+    copies: Vec<(&str, &str)>,
+    window: Window,
+    state: tauri::State<'_, PocketSyncState>,
+) -> Result<bool, ()> {
     debug!("Command: copy_files");
 
     let mut progress = progress::ProgressEmitter::new(Box::new(|event| {
@@ -484,6 +488,14 @@ async fn copy_files(copies: Vec<(&str, &str)>, window: Window) -> Result<bool, (
     }));
 
     progress.begin_work_units(copies.len());
+
+    let all_dests: Vec<PathBuf> = copies
+        .iter()
+        .map(|(_source, dest)| PathBuf::from(dest))
+        .collect();
+    let common_dir = find_common_path(&all_dests).unwrap();
+    let arc_lock = state.0.file_locker.find_lock_for(&common_dir).await;
+    let _write_lock = arc_lock.write().await;
 
     for (origin, destination) in copies {
         let origin = PathBuf::from(origin);
@@ -897,6 +909,28 @@ async fn downconvert_single_pal_file(pal_file_path: String) -> Result<(), String
     Ok(())
 }
 
+#[tauri::command(async)]
+async fn find_mtime_for_files(full_file_paths: Vec<PathBuf>) -> Result<Vec<Option<u64>>, String> {
+    debug!("Command: find_mtime_for_files - {}", full_file_paths.len());
+    let paths_stream = stream::iter(full_file_paths);
+
+    let results = paths_stream
+        .map(|full_path| async move {
+            match get_mtime_timestamp(&full_path).await {
+                Ok(mtime) => Some(mtime),
+                Err(err) => {
+                    eprintln!("Error processing {:?}: {}", full_path, err);
+                    None // Return None for errors
+                }
+            }
+        })
+        .buffered(100)
+        .collect::<Vec<Option<u64>>>()
+        .await;
+
+    Ok(results)
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_log::Builder::new().build())
@@ -958,7 +992,8 @@ fn main() {
             stop_job,
             update_patreon_keys,
             downconvert_all_pal_files,
-            downconvert_single_pal_file
+            downconvert_single_pal_file,
+            find_mtime_for_files
         ])
         .setup(|app| {
             log_panics::init();

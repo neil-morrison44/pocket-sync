@@ -1,23 +1,19 @@
 import { selector, selectorFamily } from "recoil"
 import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
-import {
-  invokeReadBinaryFile,
-  invokeWalkDirListFiles,
-} from "../../utils/invokes"
+import { invokeReadBinaryFile } from "../../utils/invokes"
 import { GithubRelease, Palette, rgb } from "../../types"
 import { fetch as TauriFetch } from "@tauri-apps/plugin-http"
 import { paletteRepoAtom } from "./atoms"
 import * as zip from "@zip.js/zip.js"
 import { error } from "@tauri-apps/plugin-log"
 import { githubHeadersSelector } from "../settings/selectors"
+import { WalkDirSelectorFamily } from "../selectors"
 
 export const palettesListSelector = selector<string[]>({
   key: "palettesListSelector",
   get: async ({ get }) => {
     const path = "Assets/gb/common/palettes"
-    get(FolderWatchAtomFamily(path))
-    const platforms = await invokeWalkDirListFiles(path, ["pal"])
-    return platforms
+    return get(WalkDirSelectorFamily({ path, extensions: ["pal"] }))
   },
 })
 

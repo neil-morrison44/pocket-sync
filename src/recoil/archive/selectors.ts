@@ -9,13 +9,15 @@ import { archiveBumpAtom } from "./atoms"
 import {
   invokeFileExists,
   invokeFileMTime,
+  invokeFilesMTime,
   invokeListRootFiles,
-  invokeWalkDirListFiles,
 } from "../../utils/invokes"
 import { fetch as tauriFecth } from "@tauri-apps/plugin-http"
 
 import { pocketPathAtom } from "../atoms"
 import { FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { WalkDirSelectorFamily } from "../selectors"
+import { debug } from "@tauri-apps/plugin-log"
 
 export const ArchiveMetadataSelectorFamily = selectorFamily<
   null | ArchiveFileMetadata[],
@@ -52,27 +54,24 @@ export const PathFileInfoSelectorFamily = selectorFamily<
     async ({ get }) => {
       get(FolderWatchAtomFamily(path))
       const pocketPath = get(pocketPathAtom)
-      const fileList = await invokeWalkDirListFiles(path, [], offPocket)
+      const fileList = get(
+        WalkDirSelectorFamily({ path, extensions: [], offPocket })
+      )
 
-      const all = await Promise.all(
-        fileList.map(async (filename) => {
-          const fullPath = offPocket
+      const mtimes = await invokeFilesMTime(
+        fileList.map((filename) => {
+          return offPocket
             ? `${path}/${filename}`
             : `${pocketPath}/${path}/${filename}`
-
-          const exists = await invokeFileExists(fullPath)
-          const mtime = exists ? await invokeFileMTime(fullPath) : 0
-
-          return {
-            name: filename,
-            path,
-            exists,
-            mtime,
-          }
         })
       )
 
-      return all
+      return mtimes.map(({ mtime }, index) => ({
+        name: fileList[index],
+        path,
+        exists: mtime !== null,
+        mtime: mtime || 0,
+      }))
     },
 })
 
