@@ -1,0 +1,237 @@
+{
+  "about": {
+    "app_name": "Pocket Sync",
+    "new_firmware": "Yeni Pocket Firmware versiyonu {version} kullanılabilir",
+    "update_available": "Güncellemeler Hazır! {version}",
+    "sponsor_link": "GitHub üzerinden sponsorlukta bulunan {count, number} kişiye katılın",
+    "whats_new": "Yenilikler",
+    "close_changelog": "Kapat"
+  },
+  "app": {
+    "app_name": "Pocket Sync",
+    "connect_button": "Pocket / SD Karta bağlan",
+    "not_pocket_tip": "Bu dosya Pocket dosya sistemi gibi görünmüyor. SD Kartınızın en az bir kez Pocket ile beraber çalıştırılması gerek."
+  },
+  "clean_files": {
+    "close_button": "Kapat",
+    "delete_files_button": "Dosyaları Sil",
+    "files_found": "{count, plural, =0 {Silinebilir dosya yok} one {# silinebilr dosya} other {# silinebilir dosyalar} } found",
+    "title": "Dsoyaları Temizle"
+  },
+  "update_all": {
+    "title": "Hepsini Güncelle",
+    "heading": {
+      "update": "Güncelle",
+      "required_files": "Gerekli Dosyaları Yükle",
+      "platform_files": "Platform Dosyalarını Değiştir"
+    },
+    "buttons": {
+      "update": "Güncelle {count, plural, =0 {none} one {# seçilmiş çekirdek} other {# seçilmiş çekirdekler} }",
+      "close": "Kapat"
+    },
+    "update": {
+      "title": "{coreName} Güncelleniyor: { step, select, core { çekirdek güncelleniyor... } files { gerekli dosyalar indiriliyor... } filecheck { dosyalar kontrol ediliyor... } other {on no} }"
+    },
+    "no_updates_found": "Yüklenmiş çekirdekler için güncelleme bulunamadı"
+  },
+  "core_info": {
+    "author": "Geliştirici",
+    "controls": {
+      "back": "Listeye geri dön",
+      "install": "Yükle",
+      "required_files": "Gerekli Dosyalar",
+      "uninstall": "Sil",
+      "update": "Güncelle",
+      "hide_core": "Çekirdeği Gizle"
+    },
+    "inputs": "Kontroller",
+    "modal": {
+      "close": "Kapat",
+      "input_core": "Çekirdek",
+      "no_settings_found": "Ayarlar bulnamadı!",
+      "reset_all": "Her şeyi sıfırla"
+    },
+    "analogizer": "Bu çekirdek <1>Analogizer-FPGA</1> destekler",
+    "requires_license": {
+      "all": "Uyarı - Bu çekirdeğin çalışması için bir lisans dosyası gerekiyor.",
+      "jotego": "JOTEGO betaları aşağıdaki sponsorlar bölümündeki Patreon'dan bir JTBETA dosyası gerektirir.\njtbeta.zip, SD kartınızın köküne yerleştirilmelidir, ardından \"Gerekli Dosyalar\" işlemi sırasında bulunacak ve doğru yere kopyalanacaktır."
+    },
+    "firmware_too_low": "Bu çekirdeğin v{core_firmware} yazılımına ihtiyacı var, şu anda yüklü sürüm v{pocket_firmware}",
+    "not_in_inventory": "{coreName} çekirdek envanterinde değil",
+    "platform": {
+      "edit": "Düzenle",
+      "wikipedia": "Vikipedi"
+    },
+    "replaced": "Bu çekirdek <1>{replacementCore</1> ile değiştirildi",
+    "platforms": "Platformlar",
+    "release_date": "Yayın tarihi",
+    "releases": {
+      "release_history": "Yayın geçmişi",
+      "show_previous": "Eski yayınları göster"
+    },
+    "required_files": "Gerekli Dosyalar",
+    "required_files_count": "{count} / {total} Dosyalar",
+    "hide_core_confirm": "Bu, çekirdeği listeden gizleyecektir, gizli çekirdekler Ayarlar'dan değiştirilebilir",
+    "settings": "Ayarlar",
+    "sponsor": "Destek Ol",
+    "download_count": "İndirmeler",
+    "download_latest": "{count, number, long} v{tag} için",
+    "download_total": "{count, number, long} tüm versiyonlar",
+    "download_bar_title": "{release}\n{count, number, long} indirme\n{days, number, long} gün son sürüm olarak",
+    "supports": "Destekler",
+    "supports_items": {
+      "cartridges": "Kasetler",
+      "dock": "Dock",
+      "dock_dac": "Dock {Analog}",
+      "save_states_and_sleep": "Kayıtlar / Uyku"
+    },
+    "url": "URL",
+    "version": "Versiyon",
+    "display_modes_title": "Görüntüleme Modları",
+    "display_mode_warning": "Bu görüntüleme modu çekirdeğin güncellenmesini gerektiriyor, bunu açmak istediğinizden emin misiniz?",
+    "info_txt_title": "Info.txt",
+    "display_modes_limit": "Çekirdekler yalnızca 16 görüntüleme moduna kadar destekler, {count} tane seçtiniz",
+    "display_modes": {
+      "crt_trinitron": "CRT Trinitron",
+      "grayscale_lcd": "Siyah Beyaz LCD",
+      "original_gb_dmg": "Orijinal GB DMG",
+      "original_gbp": "Orijinal GBP",
+      "original_gbp_light": "Orijinal GBP Light",
+      "reflective_color_lcd": "Reflective Color LCD",
+      "original_gbc_lcd": "Orijinal GBC LCD",
+      "original_gbc_lcd_plus": "Orijinal GBC LCD+",
+      "backlit_color_lcd": "Arka Aydınlatmalı Renkli LCD",
+      "original_gba_lcd": "Orijinal GBA LCD",
+      "original_gba_sp_101": "Orijinal GBA SP 101",
+      "original_gg": "Orijinal GG",
+      "original_gg_plus": "Orijinal GG+",
+      "original_ngp": "Orijinal NGP",
+      "original_ngpc": "Orijinal NGPC",
+      "original_ngpc_plus": "Orijinal NGPC+",
+      "turboexpress": "TurboExpress",
+      "pc_engine_lt": "PC Engine LT",
+      "original_lynx": "Original Lynx",
+      "original_lynx_plus": "Original Lynx+",
+      "pinball_neon_matrix": "Pinball Neon Matrix",
+      "vacuum_fluorescent": "Vacuum Fluorescent"
+    },
+    "jt_analogizer_config": {
+      "title": "Analogizer Config",
+      "video": "Analog Video",
+      "snac": "SNAC Kontrolleri"
+    }
+  },
+  "core_info_required_files": {
+    "close": "Kapat",
+    "download_all": "Hepsini İndir",
+    "no_link_tip": "Gerekli dosyalarla daha fazla seçenek için lütfen Ayarlar bölümüne bakın",
+    "skip_alternates_label": "Alternatif dosyaları atla",
+    "title": "Gerekli Dosyalar",
+    "file_status": {
+      "needs_update_from_archive": "Güncellenebilir",
+      "missing_but_on_archive": "İndirilebilir",
+      "not_found": "Arşivde değil",
+      "exists": "İndirilmiş",
+      "not_checked": "Bilinmeyen",
+      "found_at_root": "Dosya doğrulandı. Kökte bulundu",
+      "root_needs_update": "Dosya uyumsuzluğu. Lütfen kökü kontrol edin"
+    }
+  },
+  "cores": {
+    "controls": {
+      "category": "Kategori",
+      "sort": "Sırala",
+      "refresh": "Yenile",
+      "search": "Ara",
+      "updatable": "Güncellenebilir",
+      "update_all": "Hepsini Güncelle",
+      "filters_group": "Filtreler",
+      "sort_options": {
+        "name": "İsim",
+        "last_update": "Son güncelleme"
+      }
+    },
+    "install_tip": ".zip dosyasını bu pencereye sürükleyerek çekirdekleri (veya zip dosyasındaki başka herhangi bir şeyi) de yükleyebilirsiniz",
+    "installed": "Yüklenmiş ({count})",
+    "not_installed": "Kullanılabilir ({count})"
+  },
+  "error": {
+    "report": "Bunu GitHub üzerinden bildirebilir, aşağıdaki metni ve az önce yaptığınız her şeyi ekleyebilirsiniz",
+    "retry": "Yeniden dene",
+    "title": "Hata",
+    "repair": {
+      "title": "Onar",
+      "in_progress": "Onarılıyor...",
+      "fixes": {
+        "redownload_file": "<pre>{path</pre> öğesini <bold>{coreName</bold> öğesinden yeniden indirin"
+      }
+    }
+  },
+  "fetch": {
+    "controls": {
+      "add_fetch_item": "Yeni getirme ekle",
+      "refresh": "Yenile"
+    },
+    "fetch_button": "Getir",
+    "file_count": "{count} / {total, plural, one {# Dosya} other {# Dosyalar}}",
+    "loading": "yükleniyor...",
+    "new": {
+      "add_extension": "Ekle",
+      "add_fetch": "Getirme ekle",
+      "archive_name": "Arşiv adı: <i>https://archive.org/details/[this bit here]</i>",
+      "archive_tip": "Bu, dosyaların sıkıştırılmış olduğu arşivler için işe yaramayacaktır ve meta veri dosyalarının indirilmesini istemediğiniz uzantıları ayarlamalısınız.",
+      "close": "Kapat",
+      "destination": "Hedef Klasör",
+      "extensions": "Dosya Uzantılarının Sınırı:",
+      "origin": "Kaynak Klasör",
+      "title": "Yeni getirme ekle",
+      "validating_archive_name": "\"{name}\" arşivi kontrol ediliyor...",
+      "invalid_archive_name": "https://archive.org/details/{name} adresinde arşiv bulunamadı"
+    },
+    "remove_button": "Kaldır",
+    "remove_confirm": "Bu getirme yapılandırmasını kaldıracak, ancak dosyaları kaldırmayacak. Emin misiniz?",
+    "types": {
+      "archive_org": "İnternet Arşivi",
+      "filesystem": "Yerel Dosyalar"
+    }
+  },
+  "firmware": {
+    "current": "Mevcut Aygıt Yazılımı: v{version}",
+    "downloading_firmware": "Aygıt yazılımı İndiriliyor...",
+    "load_firmware": "SD Karta yükle",
+    "loaded_firmware": "{Version} aygıt yazılımı SD karttadır",
+    "loaded_firmware_info": "Pocket'ı takın ve kurmak için açın",
+    "no_firmware_loaded": "SD kartta yüklenmeyi bekleyen bir aygıt yazılımı dosyası yok",
+    "options": {
+      "latest": "v{version} (latest)",
+      "older": "v{version} ({date, date, short})",
+      "previous_versions": "Önceki Versiyonlar"
+    },
+    "release_notes": {
+      "from": "Kaynak",
+      "title": "v{version} Sürüm Notları:"
+    },
+    "remove_button": "Kaldır"
+  },
+  "games": {
+    "controls": {
+      "category": "Kategori",
+      "clean_files": "Dosyaları Temizle",
+      "instance_json": "Instance JSON",
+      "refresh": "Yenile",
+      "search": "Ara"
+    },
+    "item": {
+      "game_count": "{count, plural, =0 {Oyun yok} one {# Oyun} other {# Oyunlar}}"
+    }
+  },
+  "image_editor": {
+    "cancel": "İptal",
+    "import_image": "Resim İçe Aktar",
+    "remove": "Kaldır",
+    "reset": "Sıfırla",
+    "rotate": "Döndür",
+    "save": "Kaydet",
+    "scale": "Ölçekle"
+  }
+}
