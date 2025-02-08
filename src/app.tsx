@@ -20,6 +20,8 @@ import { NewsFeed } from "./components/newsFeed"
 import { currentViewAtom } from "./recoil/view/atoms"
 import { useTranslation } from "react-i18next"
 import { ColourContextProviderRandomised } from "./components/three/colourContext"
+import { pocketPathAtom as jotaiPocketPathAtom } from "./jotai/general"
+import { useAtom } from "jotai"
 
 const Pocket = React.lazy(() =>
   import("./components/three/pocket").then((m) => ({ default: m.Pocket }))
@@ -28,6 +30,7 @@ const Pocket = React.lazy(() =>
 export const App = () => {
   const [pocketPath, setPocketPath] =
     useRecoilState_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
+  const [jotaiPocketPath, setJotaiPocketPath] = useAtom(jotaiPocketPathAtom)
   const [reconnectWhenOpened, setReconnectWhenOpened] =
     useRecoilState_TRANSITION_SUPPORT_UNSTABLE(reconnectWhenOpenedAtom)
   const setView = useSetRecoilState(currentViewAtom)
@@ -43,6 +46,7 @@ export const App = () => {
       invokeOpenPocketFolder(reconnectWhenOpened.path).then((result) => {
         if (result) {
           setView({ view: "Pocket Sync", selected: null })
+          setJotaiPocketPath(result)
           setPocketPath(result)
         }
       })
@@ -55,6 +59,7 @@ export const App = () => {
 
     setView({ view: "Pocket Sync", selected: null })
     setPocketPath(result)
+    setJotaiPocketPath(result)
     if (result === null) {
       setAttempts((a) => a + 1)
     } else {

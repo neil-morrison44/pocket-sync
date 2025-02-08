@@ -24,8 +24,11 @@ import { currentViewAtom } from "../../recoil/view/atoms"
 import { useTranslation } from "react-i18next"
 import { semverCompare } from "../../utils/semverCompare"
 import { ColourContextProviderFromConfig } from "../three/colourContext"
-import { sponsorCountAtom } from "../../recoil/github/atoms"
+// import { sponsorCountAtom } from "../../recoil/github/atoms"
 import { Changelog } from "./changelog"
+import { useAtom, useAtomValue } from "jotai"
+import { sponsorCountAtom } from "../../jotai/github"
+import { pocketSyncConfigAtom } from "../../jotai/config"
 
 const Pocket = React.lazy(() =>
   import("../three/pocket").then((m) => ({ default: m.Pocket }))
@@ -57,6 +60,8 @@ export const About = () => {
   const firmwareUpdateAvailable = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     updateAvailableSelector
   )
+
+  const config = useAtomValue(pocketSyncConfigAtom)
 
   const updateAvailable = useMemo(() => {
     return semverCompare(selfReleases[0].tag_name, AppVersion)
@@ -132,8 +137,8 @@ export const About = () => {
 }
 
 const SponsorLink = () => {
-  const sponsorCount =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(sponsorCountAtom)
+  // const sponsorCount =  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(sponsorCountAtom)
+  const sponsorCount = useAtomValue(sponsorCountAtom)
   const { t } = useTranslation("about")
 
   return (
