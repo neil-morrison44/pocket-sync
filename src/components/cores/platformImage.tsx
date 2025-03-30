@@ -13,5 +13,5 @@ export const PlatformImage = ({
   const imageSrc = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     PlatformImageSelectorFamily(platformId)
   )
-  return <img className={className} src={imageSrc} />
+  return <img className={className} src={imageSrc} width="521" height="165" />
 }

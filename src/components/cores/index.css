@@ -1,5 +1,7 @@
 .cores__platform-image {
   width: 100%;
+  height: auto;
+  background-color: white;
 }
 
 .cores__info-blurb {

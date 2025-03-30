@@ -122,7 +122,12 @@ export const NotInstalledCoreItem = ({
       }}
     >
       <div className="cores__item cores__item--not-installed" onClick={onClick}>
-        <img className="cores__platform-image" src={imageUrl}></img>
+        <img
+          className="cores__platform-image"
+          src={imageUrl}
+          height="165"
+          width="521"
+        ></img>
         {identifier.endsWith("_Analogizer") && (
           <div className="cores__item-analogizer">
             <AnalogizerIcon />
