@@ -8,7 +8,7 @@ import {
 } from "../../recoil/firmware/selectors"
 import "./index.css"
 import { FirmwareReleaseNotes } from "./releaseNotes"
-import { Suspense, useCallback, useState } from "react"
+import { Suspense, useCallback, useState, useTransition } from "react"
 import { Loader } from "../loader"
 import { invokeDeleteFiles, invokeDownloadFirmware } from "../../utils/invokes"
 import { useTranslation } from "react-i18next"
@@ -34,6 +34,8 @@ export const Firmware = () => {
   const [isDownloading, setIsDownloading] = useState(false)
   const { t } = useTranslation("firmware")
 
+  const [_isTransitioning, startTransition] = useTransition()
+
   return (
     <div className="firmware">
       <div className="firmware__current">
@@ -46,7 +48,9 @@ export const Firmware = () => {
         <select
           className="firmware__select"
           value={selectedFirmware}
-          onChange={({ target }) => setSelectedFirmware(target.value)}
+          onChange={({ target }) =>
+            startTransition(() => setSelectedFirmware(target.value))
+          }
         >
           <option value={latestFirmware.version}>
             {t("options.latest", { version: latestFirmware.version })}
@@ -67,8 +71,12 @@ export const Firmware = () => {
             <DownloadButton
               key={selectedFirmware}
               version={selectedFirmware}
-              onDownloadStart={() => setIsDownloading(true)}
-              onDownloadEnd={() => setIsDownloading(false)}
+              onDownloadStart={() =>
+                startTransition(() => setIsDownloading(true))
+              }
+              onDownloadEnd={() =>
+                startTransition(() => setIsDownloading(false))
+              }
             />
           </Suspense>
         )}

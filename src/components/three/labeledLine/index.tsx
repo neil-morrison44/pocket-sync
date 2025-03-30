@@ -11,7 +11,7 @@ type LabeledLineProps = {
 }
 
 export const LabeledLine = ({ start, end, children }: LabeledLineProps) => {
-  const ref = useRef<THREE.Line | null>()
+  const ref = useRef<THREE.Line | null>(null)
   const { colour } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     PocketSyncConfigSelector
   )
