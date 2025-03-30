@@ -78,8 +78,12 @@ export const NotInstalledCoreInfo = ({
           {!withoutTitle && (
             <h3 className="core-info__title">{inventoryItem.platform_id}</h3>
           )}
-          <img className="core-info__image" src={imageUrl} />
-
+          <img
+            className="core-info__image"
+            src={imageUrl}
+            height="165"
+            width="521"
+          />
           {inventoryItem.requires_license && (
             <>
               <div className="core-info__requires-license">

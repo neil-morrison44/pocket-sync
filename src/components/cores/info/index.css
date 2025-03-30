@@ -6,7 +6,9 @@
 
 .core-info__image {
   width: 100%;
+  height: auto;
   image-rendering: pixelated;
+  background-color: white;
 }
 
 .core-info__title {
