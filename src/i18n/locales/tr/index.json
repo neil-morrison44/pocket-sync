@@ -90,6 +90,7 @@
     "display_modes_title": "Görüntüleme Modları",
     "display_mode_warning": "Bu görüntüleme modu çekirdeğin güncellenmesini gerektiriyor, bunu açmak istediğinizden emin misiniz?",
     "info_txt_title": "Info.txt",
+    "previous_version": "Önceki versiyonlar",
     "display_modes_limit": "Çekirdekler yalnızca 16 görüntüleme moduna kadar destekler, {count} tane seçtiniz",
     "display_modes": {
       "crt_trinitron": "CRT Trinitron",

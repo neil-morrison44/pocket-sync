@@ -88,6 +88,7 @@
     "display_modes_title": "Anzeigemodi",
     "display_mode_warning": "Dieser Anzeigemodus benötigt eine Aktualisierung des Kerns. Trotzdem aktivieren?",
     "info_txt_title": "Info.txt",
+    "previous_version": "Vorherige Versionen",
     "display_modes_limit": "Kerne unterstützen nur bis zu 16 Anzeigemodi, Sie haben {count} ausgewählt",
     "display_modes": {
       "crt_trinitron": "CRT Trinitron",

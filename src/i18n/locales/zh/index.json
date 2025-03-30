@@ -87,6 +87,7 @@
     "version": "版本",
     "display_modes_title": "显示模式",
     "display_mode_warning": "此显示模式需要更新核心，您确定要打开它吗？",
+    "previous_version": "先前版本",
     "display_modes_limit": "核心仅支持最多 16 种显示模式，您已选择 {count} 种"
   },
   "core_info_required_files": {

@@ -87,6 +87,7 @@
     "version": "Versión",
     "display_modes_title": "Modos de visualización",
     "display_mode_warning": "Este modo de visualización requiere que se actualice el núcleo, ¿está seguro de que desea activarlo?",
+    "previous_version": "Versiones anteriores",
     "display_modes_limit": "Los núcleos solo admiten hasta 16 modos de visualización, ha seleccionado {count}"
   },
   "core_info_required_files": {

@@ -87,6 +87,7 @@
     "version": "バージョン",
     "display_modes_title": "Display Modes",
     "display_mode_warning": "この Display Mode を適用するにはコアのアップデートが必要です、それでも有効にしますか？",
+    "previous_version": "以前のバージョン",
     "display_modes_limit": "コアは最大 16 個の表示モードのみをサポートします。{count} 個が選択されています"
   },
   "core_info_required_files": {

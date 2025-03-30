@@ -90,6 +90,7 @@
     "display_modes_title": "Режими на екран",
     "display_mode_warning": "Този режим на екрана изисква обновление на ядрото, сигурни ли сте, че искате да го включите?",
     "info_txt_title": "Info.txt",
+    "previous_version": "Предишни версии",
     "display_modes_limit": "Ядрата поддържат максимално 16 режима на екрана, избрали сте {count}",
     "display_modes": {
       "crt_trinitron": "CRT Тринитрон",

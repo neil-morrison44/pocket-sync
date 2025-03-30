@@ -88,6 +88,7 @@
     "display_modes_title": "Chế độ Hiển thị",
     "display_mode_warning": "Chế độ hiển thị này yêu cầu phải cập nhật core, bạn có chắc chắn muốn bật nó không?",
     "info_txt_title": "Info.txt",
+    "previous_version": "Phiên bản trước",
     "display_modes_limit": "Lõi chỉ hỗ trợ tối đa 16 chế độ hiển thị, bạn đã chọn {count}",
     "display_modes": {
       "crt_trinitron": "CRT Trinitron",

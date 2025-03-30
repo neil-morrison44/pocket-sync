@@ -88,6 +88,7 @@
     "display_modes_title": "Modos de Exibição",
     "display_mode_warning": "Este modo de exibição requer que o núcleo seja atualizado, tem certeza de que deseja ativá-lo?",
     "info_txt_title": "Info.txt",
+    "previous_version": "Versões anteriores",
     "display_modes_limit": "Os núcleos suportam apenas até 16 modos de exibição, você selecionou {count}",
     "display_modes": {
       "crt_trinitron": "CRT Trinitron",
