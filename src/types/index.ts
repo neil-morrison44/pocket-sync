@@ -156,7 +156,7 @@ export type InventoryItem = {
     funding: {
       github?: string[]
       patreon?: string[]
-      custon?: string[]
+      custom?: string[]
     }
   }
   releases: {
