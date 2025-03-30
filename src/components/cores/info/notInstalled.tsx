@@ -23,6 +23,7 @@ import { DownloadCount } from "./downloadCounts"
 import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
 import { useUpdateConfig } from "../../settings/hooks/useUpdateConfig"
 import { confirm } from "@tauri-apps/plugin-dialog"
+import { InstallOlderVersion } from "./installOlderVersion"
 
 type NotInstalledCoreInfoProps = {
   onBack: () => void
@@ -169,6 +170,9 @@ export const NotInstalledCoreInfo = ({
                 </strong>
                 {date_release}
               </div>
+            </div>
+            <div className="core-info__info-row">
+              <InstallOlderVersion coreName={coreName} />
             </div>
             {inventoryItem.repository.platform === "github" && (
               <Releases inventoryItem={inventoryItem} />

@@ -172,3 +172,18 @@
     opacity: 1;
   }
 }
+
+.core-info__previous-select{
+  font-size: 1.5rem;
+  min-width: 25vw;
+  accent-color: var(--selection-colour);
+}
+
+.core-info__previous-install-button{
+  background-color: var(--selection-colour);
+  margin-left: 12px;
+
+  &:active{
+    transform: scale(0.95);
+  }
+}

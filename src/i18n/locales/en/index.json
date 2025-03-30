@@ -90,6 +90,7 @@
     "display_modes_title": "Display Modes",
     "display_mode_warning": "This display mode requires the core to be updated, are you sure you want to turn it on?",
     "info_txt_title": "Info.txt",
+    "previous_version": "Previous versions",
     "display_modes_limit": "Cores only support up to 16 display modes, you have {count} selected",
     "display_modes": {
       "crt_trinitron": "CRT Trinitron",

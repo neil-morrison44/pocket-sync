@@ -44,6 +44,7 @@ import { ProgressLoader } from "../../loader/progress"
 import { AnalogizerIcon } from "../icons/AnalogizerIcon"
 import { DownloadCount } from "./downloadCounts"
 import { JTAnalogizerSettings } from "./jtanalogizer"
+import { InstallOlderVersion } from "./installOlderVersion"
 
 type CoreInfoProps = {
   coreName: string
@@ -310,6 +311,10 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
           <Details title={t("info_txt_title")}>
             <InfoTxt coreName={coreName} />
           </Details>
+        </div>
+
+        <div className="core-info__info-row">
+          <InstallOlderVersion coreName={coreName} />
         </div>
 
         <div className="core-info__info-row">
