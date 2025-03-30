@@ -189,7 +189,9 @@ async fn list_files(
     let dir_path = pocket_path.join(path);
 
     let arc_lock = state.0.file_locker.find_lock_for(&dir_path).await;
+    trace!("list_files lock requested");
     let _read_lock = arc_lock.read().await;
+    trace!("list_files lock granted");
 
     if !tokio::fs::try_exists(&dir_path).await.unwrap() {
         return Ok(vec![]);
@@ -665,6 +667,9 @@ async fn download_firmware(
     let pocket_path = state.0.pocket_path.read().await;
     let file_path = pocket_path.join(file_name);
 
+    let arc_lock = state.0.file_locker.find_lock_for(&pocket_path).await;
+    let _write_lock = arc_lock.write().await;
+
     firmware::download_firmware_file(url, &file_path, &window)
         .await
         .map_err(|err| err.to_string())?;
@@ -681,6 +686,8 @@ async fn download_firmware(
             .await
             .map_err(|err| err.to_string())?;
     }
+
+    debug!("firmware verified");
 
     Ok(verify)
 }
