@@ -69,6 +69,7 @@ So far I've got translations for:
 - Japanese (@bigmoonur)
 - Vietnamese (@anh-tuan)
 - Bulgarian (@toto99303)
+- Turkish (@sujade)
 
 Which I've been keeping up to date as I add new features (hopefully well enough).
 It's in the ICU message format, which there are some guides available online for, but the main trick is that the brackets create levels of stuff to change vs leave e.g. `"Change me {leave me {change me}}"` so a "language" which is just english but shouting might have:
