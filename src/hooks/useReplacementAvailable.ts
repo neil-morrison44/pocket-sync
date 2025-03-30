@@ -7,9 +7,9 @@ export const useReplacementAvailable = (coreName: string) => {
     useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(coreInventoryAtom)
 
   return useMemo<string | null>(() => {
-    const inventoryCore = coreInventory.data.find(
-      ({ identifier }) => identifier === coreName
+    const inventoryCore = coreInventory.cores.data.find(({ releases }) =>
+      releases[0].updaters?.previous?.includes(coreName)
     )
-    return inventoryCore?.replaced_by || null
-  }, [coreInventory.data, coreName])
+    return inventoryCore?.id || null
+  }, [coreInventory.cores.data, coreName])
 }

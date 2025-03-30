@@ -26,13 +26,13 @@ export const installedCoresWithUpdatesSelector = selector<UpdateInfo[]>({
     return installedCores
       .map((coreName) => {
         const coreInfo = get(CoreInfoSelectorFamily(coreName))
-        const inventoryItem = coreInventory.data.find(
-          ({ identifier }) => coreName === identifier
+        const inventoryItem = coreInventory.cores.data.find(
+          ({ id }) => coreName === id
         )
         return {
           coreName,
           installedVersion: coreInfo.core.metadata.version,
-          latestVersion: inventoryItem?.version,
+          latestVersion: inventoryItem?.releases[0].core.metadata.version,
         }
       })
       .filter(

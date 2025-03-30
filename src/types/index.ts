@@ -133,43 +133,54 @@ export type InputJSON = {
   }
 }
 
+export type InventoryPlatformsJSON = {
+  data: {
+    id: PlatformId
+    category: string
+    name: string
+    manufacturer: string
+    year: number
+  }[]
+}
+
 export type InventoryJSON = {
   data: InventoryItem[]
 }
 
 export type InventoryItem = {
-  replaced_by?: string
-  replaces?: string[]
-
-  identifier: string
-  platform_id: PlatformId
-
-  requires_license: boolean
-
+  id: string
   repository: {
     platform: "github" | string
     owner: string
     name: string
-  }
-  release_date: string
-  download_url: string
-  version: Semver | string
-  sponsor?: {
-    [k: string]: [string] | string
-  }
-  platform: {
-    category: string
-    name: string
-    manufacturer: string
-    year: number
-  }
-  assets: [
-    {
-      platform: PlatformId
-      filename?: string
-      extensions?: string[]
+    funding: {
+      github?: string[]
+      patreon?: string[]
+      custon?: string[]
     }
-  ]
+  }
+  releases: {
+    download_url: string
+    requires_license: boolean
+    core: Pick<CoreInfoJSON["core"], "metadata" | "framework">
+    data: {
+      data_slots: {
+        name: string
+        filename: string
+        parameters: {
+          core_specific_file: boolean
+          instance_json: boolean
+          platform_index: number
+        }
+      }[]
+    }
+    updaters?: UpdatersJSON
+  }[]
+}
+
+export type UpdatersJSON = {
+  license?: { filename: string }
+  previous?: string[]
 }
 
 export type GithubRelease = {

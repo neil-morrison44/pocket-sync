@@ -48,8 +48,17 @@ export const NotInstalledCoreInfo = ({
   const download_url = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     DownloadURLSelectorFamily(coreName)
   )
+
+  const latestRelease = inventoryItem?.releases[0]
+  const platform_id = latestRelease?.core.metadata.platform_ids[0]
+  const requires_license = latestRelease?.updaters?.license
+
+  const version = latestRelease?.core.metadata.version
+  const date_release = latestRelease?.core.metadata.date_release
+  const funding = inventoryItem?.repository.funding
+
   const imageUrl = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PlatformInventoryImageSelectorFamily(inventoryItem?.platform_id)
+    PlatformInventoryImageSelectorFamily(platform_id)
   )
   const { installCore } = useInstallCore()
 
@@ -75,22 +84,21 @@ export const NotInstalledCoreInfo = ({
       {!inventoryItem && <div>{t("not_in_inventory", { coreName })}</div>}
       {inventoryItem && (
         <>
-          {!withoutTitle && (
-            <h3 className="core-info__title">{inventoryItem.platform_id}</h3>
-          )}
+          {!withoutTitle && <h3 className="core-info__title">{platform_id}</h3>}
           <img
             className="core-info__image"
             src={imageUrl}
             height="165"
             width="521"
           />
-          {inventoryItem.requires_license && (
+
+          {requires_license && (
             <>
               <div className="core-info__requires-license">
                 <KeyIcon />
                 {t("requires_license.all")}
               </div>
-              {inventoryItem.identifier.startsWith("jotego") && (
+              {inventoryItem.id.startsWith("jotego") && (
                 <div className="core-info__requires-license">
                   {t("requires_license.jotego")}
                 </div>
@@ -112,9 +120,7 @@ export const NotInstalledCoreInfo = ({
 
           <div className="core-info__info">
             <div className="core-info__info-grid">
-              <div className="core-info__info-row">
-                {inventoryItem.identifier}
-              </div>
+              <div className="core-info__info-row">{inventoryItem.id}</div>
 
               {url && (
                 <div className="core-info__info-row">
@@ -141,17 +147,17 @@ export const NotInstalledCoreInfo = ({
                   {t("version")}
                   {":"}
                 </strong>
-                {inventoryItem.version}
+                {version}
               </div>
 
-              {inventoryItem?.sponsor && (
+              {funding && (
                 <div className="core-info__info-row core-info__info-row--right">
                   <strong>
                     {t("sponsor")}
                     {":"}
                   </strong>
                   <ErrorBoundary>
-                    <SponsorLinks links={inventoryItem.sponsor} />
+                    <SponsorLinks links={funding} />
                   </ErrorBoundary>
                 </div>
               )}
@@ -161,7 +167,7 @@ export const NotInstalledCoreInfo = ({
                   {t("release_date")}
                   {":"}
                 </strong>
-                {inventoryItem.release_date}
+                {date_release}
               </div>
             </div>
             {inventoryItem.repository.platform === "github" && (

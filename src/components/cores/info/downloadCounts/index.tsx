@@ -27,11 +27,13 @@ const DownloadCountInner = ({
   const { t } = useTranslation("core_info")
 
   const { owner, name: repo } = inventoryItem.repository
+  const latestTag = inventoryItem.releases[0].core.metadata.version
+
   const githubReleases = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     GithubReleasesSelectorFamily({
       owner,
       repo,
-      latest: inventoryItem.version,
+      latest: latestTag,
     })
   )
 
@@ -45,8 +47,6 @@ const DownloadCountInner = ({
     if (!latest) return 0
     return latest.download_count
   }, [githubReleases, owner])
-
-  const latestTag = inventoryItem.version
 
   const totalCount = useMemo(() => {
     return githubReleases

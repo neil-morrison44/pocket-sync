@@ -11,13 +11,13 @@ export const useUpdateAvailable = (coreName: string) => {
     useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(coreInventoryAtom)
 
   return useMemo<string | null>(() => {
-    const inventoryCore = coreInventory.data.find(
-      ({ identifier }) => identifier === coreName
+    const inventoryCore = coreInventory.cores.data.find(
+      ({ id }) => id === coreName
     )
 
-    if (!inventoryCore?.version) return null
+    if (!inventoryCore?.releases[0].core.metadata.version) return null
 
-    const { version } = inventoryCore
+    const { version } = inventoryCore.releases[0].core.metadata
     const metadataVersion = coreInfo.core.metadata.version
 
     if (version !== metadataVersion) {
@@ -28,5 +28,5 @@ export const useUpdateAvailable = (coreName: string) => {
     }
 
     return null
-  }, [coreInfo.core.metadata.version, coreInventory.data, coreName])
+  }, [coreInfo.core.metadata.version, coreInventory.cores.data, coreName])
 }

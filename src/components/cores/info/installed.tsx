@@ -76,6 +76,8 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
     CoreMainPlatformIdSelectorFamily(coreName)
   )
 
+  const funding = inventoryItem?.repository.funding
+
   return (
     <div className="core-info">
       <Controls>
@@ -199,14 +201,14 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             </div>
           )}
 
-          {inventoryItem?.sponsor && (
+          {funding && (
             <div className="core-info__info-row core-info__info-row--right">
               <strong>
                 {t("sponsor")}
                 {":"}
               </strong>
               <ErrorBoundary>
-                <SponsorLinks links={inventoryItem.sponsor} />
+                <SponsorLinks links={funding} />
               </ErrorBoundary>
             </div>
           )}
