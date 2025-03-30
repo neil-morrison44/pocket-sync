@@ -1,17 +1,18 @@
 {
   "$schema": "https://inlang.com/schema/project-settings",
-  "sourceLanguageTag": "en",
+  "sourceLanguageTag": "tr",
   "languageTags": [
+    "tr",
+    "bg",
     "de",
-    "en-US",
     "en",
+    "en-US",
     "es",
     "fr",
     "ja",
     "pt",
     "vi",
-    "zh",
-    "bg"
+    "zh"
   ],
   "modules": [
     "https://cdn.jsdelivr.net/npm/@inlang/plugin-i18next@4/dist/index.js",
@@ -22,6 +23,9 @@
   ],
   "plugin.inlang.i18next": {
     "pathPattern": "./src/i18n/locales/{languageTag}/index.json",
-    "variableReferencePattern": ["{{", "}}"]
+    "variableReferencePattern": [
+      "{{",
+      "}}"
+    ]
   }
 }
