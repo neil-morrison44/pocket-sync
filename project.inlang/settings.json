@@ -1,16 +1,16 @@
 {
   "$schema": "https://inlang.com/schema/project-settings",
-  "sourceLanguageTag": "tr",
+  "sourceLanguageTag": "en",
   "languageTags": [
-    "tr",
     "bg",
     "de",
-    "en",
     "en-US",
+    "en",
     "es",
     "fr",
     "ja",
     "pt",
+    "tr",
     "vi",
     "zh"
   ],
@@ -23,9 +23,6 @@
   ],
   "plugin.inlang.i18next": {
     "pathPattern": "./src/i18n/locales/{languageTag}/index.json",
-    "variableReferencePattern": [
-      "{{",
-      "}}"
-    ]
+    "variableReferencePattern": ["{{", "}}"]
   }
 }
