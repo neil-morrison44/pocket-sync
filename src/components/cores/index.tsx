@@ -47,8 +47,6 @@ export const Cores = () => {
     [setUpdateAllOpen]
   )
 
-  console.log({ searchQuery })
-
   if (selectedCore) {
     return (
       <CoreInfo
@@ -134,31 +132,31 @@ const CoreList = ({
 
   const notInstalledCores = useMemo(
     () =>
-      coreInventory.data
-        .filter(({ identifier }) => !coresList.includes(identifier))
+      coreInventory.cores.data
+        .filter(({ id }) => !coresList.includes(id))
         .sort((a, b) => {
-          const dateA = new Date(a.release_date)
-          const dateB = new Date(b.release_date)
+          const dateA = new Date(a.releases[0].core.metadata.date_release)
+          const dateB = new Date(b.releases[0].core.metadata.date_release)
           switch (sortMode) {
             case "last_update":
               return dateB.getTime() - dateA.getTime()
             case "name":
             default:
-              return a.identifier.localeCompare(b.identifier)
+              return a.id.localeCompare(b.id)
           }
         }),
-    [coreInventory.data, coresList, sortMode]
+    [coreInventory.cores.data, coresList, sortMode]
   )
 
   const sortedList = useMemo(() => {
     switch (sortMode) {
       case "last_update":
         return [...coresList].sort((a, b) => {
-          const inventoryItemA = coreInventory.data.find(
-            ({ identifier }) => identifier === a
+          const inventoryItemA = coreInventory.cores.data.find(
+            ({ id }) => id === a
           )
-          const inventoryItemB = coreInventory.data.find(
-            ({ identifier }) => identifier === b
+          const inventoryItemB = coreInventory.cores.data.find(
+            ({ id }) => id === b
           )
 
           if (!inventoryItemA || !inventoryItemB) {
@@ -167,8 +165,16 @@ const CoreList = ({
             if (!inventoryItemA && inventoryItemB) return 1
           }
 
-          const dateA = new Date((inventoryItemA as InventoryItem).release_date)
-          const dateB = new Date((inventoryItemB as InventoryItem).release_date)
+          const dateA = new Date(
+            (
+              inventoryItemA as InventoryItem
+            ).releases[0].core.metadata.date_release
+          )
+          const dateB = new Date(
+            (
+              inventoryItemB as InventoryItem
+            ).releases[0].core.metadata.date_release
+          )
 
           return dateB.getTime() - dateA.getTime()
         })
@@ -185,7 +191,7 @@ const CoreList = ({
           return switchedA.localeCompare(switchedB)
         })
     }
-  }, [coreInventory.data, coresList, sortMode])
+  }, [coreInventory.cores.data, coresList, sortMode])
 
   return (
     <>
@@ -201,10 +207,10 @@ const CoreList = ({
       <h2>{t("not_installed", { count: notInstalledCores.length })}</h2>
       <Grid>
         {notInstalledCores.map((item) => (
-          <Suspense fallback={<Loader />} key={item.identifier}>
+          <Suspense fallback={<Loader />} key={item.id}>
             <NotInstalledCoreItem
               inventoryItem={item}
-              onClick={() => onSelect(item.identifier)}
+              onClick={() => onSelect(item.id)}
             />
           </Suspense>
         ))}

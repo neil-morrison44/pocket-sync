@@ -5,11 +5,14 @@ import { Link } from "../../../link"
 import "./index.css"
 
 type SponsorLinkProps = {
-  links: Required<InventoryItem>["sponsor"]
+  links: Required<InventoryItem>["repository"]["funding"]
 }
 
 export const SponsorLinks = ({ links }: SponsorLinkProps) => {
-  const sponsorTypes = useMemo(() => Object.keys(links || {}), [links])
+  const sponsorTypes = useMemo(
+    () => Object.keys(links || {}) as ("github" | "custom" | "patreon")[],
+    [links]
+  )
 
   return (
     <div className="sponsor-links">

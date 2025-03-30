@@ -15,7 +15,10 @@ import { useUpdateAvailable } from "../../hooks/useUpdateAvailable"
 import { KeyIcon } from "./icons/keyIcon"
 import { useTranslation } from "react-i18next"
 import { useInventoryItem } from "../../hooks/useInventoryItem"
-import { PlatformInventoryImageSelectorFamily } from "../../recoil/inventory/selectors"
+import {
+  CorePlatformSelectorFamily,
+  PlatformInventoryImageSelectorFamily,
+} from "../../recoil/inventory/selectors"
 import { PlatformImage } from "./platformImage"
 import { AnalogizerIcon } from "./icons/AnalogizerIcon"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
@@ -40,6 +43,8 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
   )
   const canUpdate = useUpdateAvailable(coreName)
   const inventoryItem = useInventoryItem(coreName)
+
+  console.log({ mainPlatformId, platform })
 
   return (
     <SearchContextSelfHidingConsumer
@@ -78,7 +83,9 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
             {core.metadata.author}
           </div>
         </div>
-        {inventoryItem && inventoryItem.requires_license && <SponsorBanner />}
+        {inventoryItem && inventoryItem.releases[0].updaters?.license && (
+          <SponsorBanner />
+        )}
         {coreName.endsWith("_Analogizer") && (
           <div className="cores__item-analogizer">
             <AnalogizerIcon />
@@ -98,10 +105,17 @@ export const NotInstalledCoreItem = ({
   inventoryItem,
   onClick,
 }: NotInstalledCoreItemProps) => {
-  const { platform_id, identifier, platform, requires_license, version } =
-    inventoryItem
+  const { id: identifier } = inventoryItem
+  const version = inventoryItem.releases[0].core.metadata.version
+  const platform_id = inventoryItem.releases[0].core.metadata.platform_ids[0]
+  const requires_license = inventoryItem.releases[0].updaters?.license
+
   const imageUrl = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     PlatformInventoryImageSelectorFamily(platform_id)
+  )
+
+  const platform = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    CorePlatformSelectorFamily(platform_id)
   )
 
   const config = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
@@ -118,7 +132,7 @@ export const NotInstalledCoreItem = ({
       fields={[platform_id, identifier, inventoryItem.repository?.owner || ""]}
       otherFn={({ category }) => {
         if (category === "All") return true
-        return category === platform.category
+        return category === platform?.category
       }}
     >
       <div className="cores__item cores__item--not-installed" onClick={onClick}>

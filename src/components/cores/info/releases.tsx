@@ -26,7 +26,7 @@ export const Releases = ({ inventoryItem }: ReleasesProps) => {
     GithubReleasesSelectorFamily({
       owner: inventoryItem.repository.owner,
       repo: inventoryItem.repository.name,
-      latest: inventoryItem.version,
+      latest: inventoryItem.releases[0].core.metadata.version,
     })
   )
 

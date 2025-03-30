@@ -1,7 +1,23 @@
 import { selector, selectorFamily } from "recoil"
-import { Category, PlatformId } from "../../types"
+import { Category, PlatformId, PlatformInfoJSON } from "../../types"
 import { allCategoriesSelector } from "../platforms/selectors"
 import { coreInventoryAtom } from "./atoms"
+
+export const CorePlatformSelectorFamily = selectorFamily<
+  PlatformInfoJSON["platform"] | null,
+  PlatformId
+>({
+  key: "CorePlatformSelectorFamily",
+  get:
+    (platformId: PlatformId) =>
+    ({ get }) => {
+      const inventory = get(coreInventoryAtom)
+      const platform = inventory.platforms.data.find(
+        ({ id }) => id === platformId
+      )
+      return platform ?? null
+    },
+})
 
 export const DownloadURLSelectorFamily = selectorFamily<string | null, string>({
   key: "DownloadURLSelectorFamily",
@@ -9,13 +25,11 @@ export const DownloadURLSelectorFamily = selectorFamily<string | null, string>({
     (coreName: string) =>
     async ({ get }) => {
       const inventory = get(coreInventoryAtom)
-      const inventoryItem = inventory.data.find(
-        ({ identifier }) => coreName === identifier
+      const inventoryItem = inventory.cores.data.find(
+        ({ id: identifier }) => coreName === identifier
       )
-      if (!inventoryItem || inventoryItem.repository.platform !== "github")
-        return null
-
-      return inventoryItem.download_url
+      if (!inventoryItem) return null
+      return inventoryItem.releases[0].download_url
     },
 })
 
@@ -26,7 +40,7 @@ export const cateogryListselector = selector<Category[]>({
     const deviceCategories = get(allCategoriesSelector)
 
     const cateogrySet = new Set([
-      ...inventory.data.map(({ platform }) => platform.category),
+      ...inventory.platforms.data.map(({ category }) => category),
       ...deviceCategories,
     ])
 
