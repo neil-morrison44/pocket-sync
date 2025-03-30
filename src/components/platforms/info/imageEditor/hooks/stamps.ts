@@ -31,7 +31,7 @@ export const useSetCurrentImageAsStamp = (
 }
 
 export const useCanvasToDragStamps = (
-  canvasRef: RefObject<HTMLCanvasElement>,
+  canvasRef: RefObject<HTMLCanvasElement | null>,
   setImageStamps: Dispatch<SetStateAction<ImageInfo[]>>,
   selectedStampIndex: number
 ) => {
@@ -64,7 +64,7 @@ export const useCanvasToDragStamps = (
 }
 
 export const useRenderStamps = (
-  canvasRef: RefObject<HTMLCanvasElement>,
+  canvasRef: RefObject<HTMLCanvasElement | null>,
   width: number,
   height: number,
   imageStamps: ImageInfo[]
