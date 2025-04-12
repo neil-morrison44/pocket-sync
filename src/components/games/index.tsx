@@ -1,9 +1,5 @@
 import { Suspense, useMemo, useState } from "react"
-import {
-  useRecoilCallback,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
-import { fileSystemInvalidationAtom } from "../../recoil/atoms"
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { cateogryListselector } from "../../recoil/inventory/selectors"
 import { coresListSelector } from "../../recoil/selectors"
 import { Controls } from "../controls"
@@ -80,7 +76,7 @@ export const Games = () => {
       >
         <Grid>
           {sortedList.map((core) => (
-            <Suspense fallback={<Loader height={130} />} key={core}>
+            <Suspense key={core} fallback={<Loader key={core} height={130} />}>
               <CoreFolderItem coreName={core} />
             </Suspense>
           ))}

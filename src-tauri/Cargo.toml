@@ -14,7 +14,7 @@ rust-version = "1.80.0"
 tauri-build = { version = "2.1.0", features = [] }
 
 [dependencies]
-async-walkdir = "2.1.0"
+async-walkdir = "0.2.0"
 bytes = "1.10.1"
 crc32fast = "1.4.2"
 feed-rs = "2.3.1"
@@ -71,4 +71,4 @@ default = ["custom-protocol"]
 custom-protocol = ["tauri/custom-protocol"]
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
-tauri-plugin-updater = "2.6.1"
+tauri-plugin-updater = "2.7.0"
