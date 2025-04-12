@@ -1,4 +1,12 @@
 # Changelog
+<a id="v5.6.2"></a>
+# [v5.6.2 - like v5.6.1 but with the version number actually updated...](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.6.2) - 2025-04-12
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.6.1...v5.6.2
+
+[Changes][v5.6.2]
+
+
 <a id="v5.6.1"></a>
 # [v5.6.1 - Potential fix for Linux issues](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.6.1) - 2025-04-12
 
@@ -1644,6 +1652,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v5.6.2]: https://github.com/neil-morrison44/pocket-sync/compare/v5.6.1...v5.6.2
 [v5.6.1]: https://github.com/neil-morrison44/pocket-sync/compare/v5.6.0...v5.6.1
 [v5.6.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.5.0...v5.6.0
 [v5.5.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.4.0...v5.5.0
