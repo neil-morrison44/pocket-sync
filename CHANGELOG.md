@@ -1,4 +1,16 @@
 # Changelog
+<a id="v5.6.1"></a>
+# [v5.6.1 - Potential fix for Linux issues](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.6.1) - 2025-04-12
+
+## What's Changed
+* Reverts the `async_walkdir` update by [@neil-morrison44](https://github.com/neil-morrison44) in [#381](https://github.com/neil-morrison44/pocket-sync/pull/381)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.6.0...v5.6.1
+
+[Changes][v5.6.1]
+
+
 <a id="v5.6.0"></a>
 # [v5.6.0 - Inventory V3, roll cores back to previous versions, Turkish translation, also uses React 19](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.6.0) - 2025-03-30
 
@@ -1632,6 +1644,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v5.6.1]: https://github.com/neil-morrison44/pocket-sync/compare/v5.6.0...v5.6.1
 [v5.6.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.5.0...v5.6.0
 [v5.5.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.4.0...v5.5.0
 [v5.4.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.3.0...v5.4.0
