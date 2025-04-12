@@ -44,8 +44,6 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
   const canUpdate = useUpdateAvailable(coreName)
   const inventoryItem = useInventoryItem(coreName)
 
-  console.log({ mainPlatformId, platform })
-
   return (
     <SearchContextSelfHidingConsumer
       fields={[
