@@ -1,4 +1,3 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { VideoJSONSelectorFamily } from "../../../../recoil/screenshots/selectors"
 import { useCallback, useMemo } from "react"
 import { SupportsBubble } from "../supportsBubble"
@@ -11,6 +10,7 @@ import { invokeSaveFile } from "../../../../utils/invokes"
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { WarningIcon } from "../requiredFiles/warningIcon"
 import { Tip } from "../../../tip"
+import { useAtomValue } from "jotai"
 
 type DisplayModesProps = {
   coreName: string
@@ -42,10 +42,8 @@ const DISPLAY_MODES = {
 }
 
 export const DisplayModes = ({ coreName }: DisplayModesProps) => {
-  const videoJson = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    VideoJSONSelectorFamily(coreName)
-  )
-  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
+  const videoJson = useAtomValue(VideoJSONSelectorFamily(coreName))
+  const pocketPath = useAtomValue(pocketPathAtom)
 
   const { t } = useTranslation("core_info")
 

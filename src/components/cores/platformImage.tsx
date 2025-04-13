@@ -1,6 +1,6 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { PlatformImageSelectorFamily } from "../../recoil/platforms/selectors"
 import { PlatformId } from "../../types"
+import { useAtomValue } from "jotai"
 
 type PlatformImageProps = {
   platformId: PlatformId
@@ -10,8 +10,6 @@ export const PlatformImage = ({
   platformId,
   className,
 }: PlatformImageProps) => {
-  const imageSrc = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PlatformImageSelectorFamily(platformId)
-  )
+  const imageSrc = useAtomValue(PlatformImageSelectorFamily(platformId))
   return <img className={className} src={imageSrc} width="521" height="165" />
 }

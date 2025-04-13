@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { pocketPathAtom } from "../../recoil/atoms"
 import {
   CoreInfoSelectorFamily,
@@ -13,14 +13,13 @@ import { open } from "@tauri-apps/plugin-shell"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { PlatformInfoSelectorFamily } from "../../recoil/platforms/selectors"
 import { DataSlotJSON } from "../../types"
+import { useAtomValue } from "jotai"
 
 const NOT_REQUIRED_BUT_MAYBE_GAME_NAMES = /(^slot)/i
 
 export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
-  const data = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    DataJSONSelectorFamily(coreName)
-  )
-  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
+  const data = useAtomValue(DataJSONSelectorFamily(coreName))
+  const pocketPath = useAtomValue(pocketPathAtom)
   const romsSlot = useMemo<DataSlotJSON | undefined>(
     () =>
       data.data.data_slots.filter(
@@ -36,13 +35,9 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
     [romsSlot?.parameters]
   )
 
-  const { core } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    CoreInfoSelectorFamily(coreName)
-  )
+  const { core } = useAtomValue(CoreInfoSelectorFamily(coreName))
   const platformId = core.metadata.platform_ids[decodedParams.platformIndex]
-  const { platform } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PlatformInfoSelectorFamily(platformId)
-  )
+  const { platform } = useAtomValue(PlatformInfoSelectorFamily(platformId))
 
   const path = useMemo(() => {
     if (!romsSlot) return ""

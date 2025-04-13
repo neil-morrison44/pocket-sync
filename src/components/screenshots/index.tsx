@@ -6,10 +6,6 @@ import {
   useMemo,
   useState,
 } from "react"
-import {
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
 import { screenshotsListSelector } from "../../recoil/screenshots/selectors"
 import { Screenshot } from "./item"
 
@@ -27,19 +23,16 @@ import { useTranslation } from "react-i18next"
 import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
 import { ControlsCheckbox } from "../controls/inputs/checkbox"
+import { useAtom, useAtomValue } from "jotai"
 
 export const Screenshots = () => {
-  const [selected, setSelected] = useRecoilState_TRANSITION_SUPPORT_UNSTABLE(
-    selectedSubviewSelector
-  )
+  const [selected, setSelected] = useAtom(selectedSubviewSelector)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectMode, setSelectMode] = useState(false)
   const [selectedScreenshots, setSelectedScreenshots] = useState<string[]>([])
   const { t } = useTranslation("screenshots")
 
-  const screenshots = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    screenshotsListSelector
-  )
+  const screenshots = useAtomValue(screenshotsListSelector)
   const exportMulti = useMultiExport()
   const { pushScroll, popScroll } = useSaveScroll()
 

@@ -1,10 +1,11 @@
-import { atom } from "recoil"
+import { atomWithRefresh } from "jotai/utils"
 import { FeedItem, RawFeedItem } from "../../types"
 import { invokeGetNewsFeed } from "../../utils/invokes"
+import { withAtomEffect } from "jotai-effect"
 
 const INTERVAL_MINS = 5
 
-const convertRaw = (items: RawFeedItem[]) => {
+const convertRaw = (items: RawFeedItem[]): FeedItem[] => {
   return items.map(({ title, categories, content, link, published }) => {
     const [_a, _b, coreName] = categories
 
@@ -19,24 +20,15 @@ const convertRaw = (items: RawFeedItem[]) => {
   })
 }
 
-export const newsFeedAtom = atom<{ items: FeedItem[]; lastUpdated: number }>({
-  key: "newsFeedAtom",
-  default: (async () => {
-    return {
-      items: convertRaw(await invokeGetNewsFeed()),
-      lastUpdated: Date.now(),
-    }
-  })(),
-  effects: [
-    ({ setSelf }) => {
-      const interval = setInterval(async () => {
-        setSelf({
-          items: convertRaw(await invokeGetNewsFeed()),
-          lastUpdated: Date.now(),
-        })
-      }, INTERVAL_MINS * 60 * 1000)
+const baseNewsFeedAtom = atomWithRefresh(async (_get) => ({
+  items: convertRaw(await invokeGetNewsFeed()),
+  lastUpdated: Date.now(),
+}))
 
-      return () => window.clearInterval(interval)
-    },
-  ],
+export const newsFeedAtom = withAtomEffect(baseNewsFeedAtom, (_get, set) => {
+  const interval = setInterval(async () => {
+    set(baseNewsFeedAtom)
+  }, INTERVAL_MINS * 60 * 1000)
+
+  return () => clearInterval(interval)
 })

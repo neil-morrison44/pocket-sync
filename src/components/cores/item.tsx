@@ -1,4 +1,3 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   CoreAuthorImageSelectorFamily,
   CoreInfoSelectorFamily,
@@ -22,6 +21,7 @@ import {
 import { PlatformImage } from "./platformImage"
 import { AnalogizerIcon } from "./icons/AnalogizerIcon"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
+import { useAtomValue } from "jotai"
 
 type CoreItemProps = {
   coreName: string
@@ -29,18 +29,12 @@ type CoreItemProps = {
 }
 
 export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
-  const { core } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    CoreInfoSelectorFamily(coreName)
-  )
-  const imageSrc = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    CoreAuthorImageSelectorFamily(coreName)
-  )
-  const mainPlatformId = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const { core } = useAtomValue(CoreInfoSelectorFamily(coreName))
+  const imageSrc = useAtomValue(CoreAuthorImageSelectorFamily(coreName))
+  const mainPlatformId = useAtomValue(
     CoreMainPlatformIdSelectorFamily(coreName)
   )
-  const { platform } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PlatformInfoSelectorFamily(mainPlatformId)
-  )
+  const { platform } = useAtomValue(PlatformInfoSelectorFamily(mainPlatformId))
   const canUpdate = useUpdateAvailable(coreName)
   const inventoryItem = useInventoryItem(coreName)
 
@@ -108,17 +102,13 @@ export const NotInstalledCoreItem = ({
   const platform_id = inventoryItem.releases[0].core.metadata.platform_ids[0]
   const requires_license = inventoryItem.releases[0].updaters?.license
 
-  const imageUrl = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const imageUrl = useAtomValue(
     PlatformInventoryImageSelectorFamily(platform_id)
   )
 
-  const platform = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    CorePlatformSelectorFamily(platform_id)
-  )
+  const platform = useAtomValue(CorePlatformSelectorFamily(platform_id))
 
-  const config = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PocketSyncConfigSelector
-  )
+  const config = useAtomValue(PocketSyncConfigSelector)
   const authorImageUrl = `https://openfpga-cores-inventory.github.io/analogue-pocket/assets/images/authors/${identifier}.png`
   const [author] = identifier.split(".")
 

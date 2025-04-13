@@ -1,5 +1,5 @@
 import { Suspense, useMemo } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { useInstallRequiredFiles } from "../../../../hooks/useInstallRequiredFiles"
 import { skipAlternateAssetsSelector } from "../../../../recoil/config/selectors"
 import { Modal } from "../../../modal"
@@ -15,6 +15,7 @@ import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles
 import { DataSlotFile } from "../../../../types"
 import { Loader } from "../../../loader"
 import { JobsStopButton } from "../../../jobs/stop"
+import { useAtomValue } from "jotai"
 
 const STATUS_SORT_ORDER = [
   "RootNeedsUpdate",
@@ -39,9 +40,7 @@ export const LoadRequiredFiles = ({
   const { installRequiredFiles, percent, inProgress, message, remainingTime } =
     useInstallRequiredFiles()
 
-  const skipAlternateAssets = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    skipAlternateAssetsSelector
-  )
+  const skipAlternateAssets = useAtomValue(skipAlternateAssetsSelector)
   const updateConfig = useUpdateConfig()
   const hasArchiveLink = useHasArchiveLink()
 
@@ -119,9 +118,7 @@ const RequiredFilesButton = ({
   installRequiredFiles,
   coreName,
 }: RequiredFilesButtonProps) => {
-  const requiredFiles = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    RequiredFileInfoSelectorFamily(coreName)
-  )
+  const requiredFiles = useAtomValue(RequiredFileInfoSelectorFamily(coreName))
   const { t } = useTranslation("core_info_required_files")
   return (
     <button
@@ -144,9 +141,7 @@ type RequiredFilesListProps = {
 }
 
 const RequiredFilesList = ({ coreName }: RequiredFilesListProps) => {
-  const requiredFiles = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    RequiredFileInfoSelectorFamily(coreName)
-  )
+  const requiredFiles = useAtomValue(RequiredFileInfoSelectorFamily(coreName))
   const sortedRequiredFiles = useMemo(() => {
     return [...requiredFiles].sort((a, b) => {
       if (a.status === b.status) return a.name.localeCompare(b.name)

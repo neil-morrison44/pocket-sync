@@ -1,9 +1,5 @@
 import { Suspense, useCallback, useEffect, useState } from "react"
 import {
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
-import {
   ImageDimensionsSelectorFamily,
   SingleScreenshotSelectorFamily,
 } from "../../recoil/screenshots/selectors"
@@ -20,6 +16,7 @@ import { ControlsBackButton } from "../controls/inputs/backButton"
 import { ControlsButton } from "../controls/inputs/button"
 import { ControlsCheckbox } from "../controls/inputs/checkbox"
 import { imageModeAtom } from "../../recoil/screenshots/atom"
+import { useAtom, useAtomValue } from "jotai"
 
 type ScreenshotInfoProps = {
   fileName: string
@@ -27,13 +24,10 @@ type ScreenshotInfoProps = {
 }
 
 export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
-  const [imageMode, setImageMode] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(imageModeAtom)
-  const screenshot = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    SingleScreenshotSelectorFamily(fileName)
-  )
+  const [imageMode, setImageMode] = useAtom(imageModeAtom)
+  const screenshot = useAtomValue(SingleScreenshotSelectorFamily(fileName))
   if (screenshot === null) throw new Error(`Null file ${fileName}`)
-  const videoJson = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const videoJson = useAtomValue(
     VideoJSONSelectorFamily(`${screenshot.author}.${screenshot.core}`)
   )
   const upscaler = useUpscaler()
@@ -129,9 +123,7 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
 }
 
 const ImageDimensions = ({ imageSrc }: { imageSrc: string }) => {
-  const size = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    ImageDimensionsSelectorFamily(imageSrc)
-  )
+  const size = useAtomValue(ImageDimensionsSelectorFamily(imageSrc))
   return (
     // eslint-disable-next-line react/jsx-no-literals
     <span className="screenshot-info__dimensions">{`(${size.width}px x ${size.height}px)`}</span>

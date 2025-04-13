@@ -1,6 +1,8 @@
-import { atom } from "recoil"
+import { atom } from "jotai"
 import { InventoryJSON, InventoryPlatformsJSON } from "../../types"
 import { info } from "@tauri-apps/plugin-log"
+import { atomWithRefresh } from "jotai/utils"
+import { withAtomEffect } from "jotai-effect"
 
 const INTERVAL_MINS = 2.5
 
@@ -24,29 +26,17 @@ const getInventoryInfo = async () => {
   return { cores, platforms }
 }
 
-export const coreInventoryAtom = atom<{
-  cores: InventoryJSON
-  platforms: InventoryPlatformsJSON
-}>({
-  key: "coreInventoryAtom",
-  default: (async () => {
-    return await getInventoryInfo()
-  })(),
-  effects: [
-    ({ onSet, setSelf }) => {
-      onSet(async (_a, _b, _isReset) => {
-        // isReset should work here but it doesn't seem to
-        // so instead do this for any outside set
-        setSelf(await getInventoryInfo())
-      })
-    },
-    ({ setSelf }) => {
-      const interval = setInterval(async () => {
-        info("Fetching Inventory")
-        setSelf(await getInventoryInfo())
-      }, INTERVAL_MINS * 60 * 1000)
+const coreInventoryAtomBase = atomWithRefresh(
+  async (_get) => await getInventoryInfo()
+)
 
-      return () => window.clearInterval(interval)
-    },
-  ],
-})
+export const coreInventoryAtom = withAtomEffect(
+  coreInventoryAtomBase,
+  (_get, set) => {
+    const interval = setInterval(async () => {
+      set(coreInventoryAtomBase)
+    }, INTERVAL_MINS * 60 * 1000)
+
+    return () => clearInterval(interval)
+  }
+)

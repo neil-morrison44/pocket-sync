@@ -1,9 +1,5 @@
 import { Loader } from "@react-three/drei"
 import { Suspense, useCallback, useState } from "react"
-import {
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
 import { PersistInteractFileAtomFamily } from "../../../../recoil/coreSettings/atoms"
 import {
   EMPTY_PERSIST,
@@ -20,6 +16,8 @@ import { Tip } from "../../../tip"
 import { useTranslation } from "react-i18next"
 
 import "./index.css"
+import { useAtom, useAtomValue } from "jotai"
+import { useAtomCallback } from "jotai/utils"
 
 export const CoreSettings = ({
   coreName,
@@ -28,7 +26,7 @@ export const CoreSettings = ({
   coreName: string
   onClose: () => void
 }) => {
-  const interactFileList = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const interactFileList = useAtomValue(
     ListPresetInteractSelectorFamily(coreName)
   )
   const [chosenInteractFile, setChosenInteractFile] = useState("core")
@@ -70,13 +68,12 @@ const InteractSettings = ({
   filePath: "core" | string
   onClose: () => void
 }) => {
-  const interactJSON = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const interactJSON = useAtomValue(
     PresetInteractFileSelectorFamily({ coreName, filePath })
   )
-  const [persistJSON, setPersistJSON] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(
-      PersistInteractFileAtomFamily({ coreName, filePath })
-    )
+  const [persistJSON, setPersistJSON] = useAtom(
+    PersistInteractFileAtomFamily({ coreName, filePath })
+  )
   const { t } = useTranslation("core_info")
 
   const updateValue = useCallback(
@@ -85,22 +82,21 @@ const InteractSettings = ({
       type: "radio" | "check" | "slider_u32" | "list" | "number_u32",
       val: string | number
     ) => {
-      setPersistJSON((current): InteractPersistJSON => {
-        const clonedVariables = [...current.interact_persist.variables]
-        const newVariables = [
-          ...clonedVariables.filter(({ id: oid }) => id !== oid),
-          { id, type, val },
-        ]
+      const current = persistJSON
+      const clonedVariables = [...current.interact_persist.variables]
+      const newVariables = [
+        ...clonedVariables.filter(({ id: oid }) => id !== oid),
+        { id, type, val },
+      ]
 
-        return {
-          interact_persist: {
-            ...current.interact_persist,
-            variables: newVariables,
-          },
-        }
+      setPersistJSON({
+        interact_persist: {
+          ...current.interact_persist,
+          variables: newVariables,
+        },
       })
     },
-    [setPersistJSON]
+    [persistJSON]
   )
 
   const updateRadioButton = useCallback(
@@ -123,27 +119,27 @@ const InteractSettings = ({
         })
         .map(({ id }) => id)
 
-      setPersistJSON((current): InteractPersistJSON => {
-        const clonedVariables = [...current.interact_persist.variables]
-        const newVariables = [
-          ...clonedVariables.filter(
-            ({ id: oid }) => !(otherIds.includes(oid) || oid === id)
-          ),
-          ...clonedVariables
-            .filter(({ id: oid }) => otherIds.includes(oid))
-            .map((v) => ({ ...v, val: 0 })),
+      const current = persistJSON
 
-          { id: id, type: "radio", val: 1 } as const,
-        ]
-        return {
-          interact_persist: {
-            ...current.interact_persist,
-            variables: newVariables,
-          },
-        }
+      const clonedVariables = [...current.interact_persist.variables]
+      const newVariables = [
+        ...clonedVariables.filter(
+          ({ id: oid }) => !(otherIds.includes(oid) || oid === id)
+        ),
+        ...clonedVariables
+          .filter(({ id: oid }) => otherIds.includes(oid))
+          .map((v) => ({ ...v, val: 0 })),
+
+        { id: id, type: "radio", val: 1 } as const,
+      ]
+      setPersistJSON({
+        interact_persist: {
+          ...current.interact_persist,
+          variables: newVariables,
+        },
       })
     },
-    [interactJSON.interact.variables, setPersistJSON]
+    [interactJSON.interact.variables, setPersistJSON, persistJSON]
   )
 
   return (

@@ -35,8 +35,9 @@ import { BodyColourContext } from "./colourContext"
 import { useBodyMaterial } from "./hooks/useBodyMaterial"
 import { useButtonsMaterial } from "./hooks/useButtonsMaterial"
 import { PerfLevelContext } from "./context/perfLevel"
-import { useRecoilState_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { performanceLevelAtom } from "../../recoil/atoms"
+import { useAtom } from "jotai"
 
 type PocketProps = {
   move?: "none" | "spin" | "back-and-forth"
@@ -52,15 +53,14 @@ export const Pocket = ({
   screenMaterial,
   children,
 }: PocketProps) => {
-  const [perfLevel, setPerfLevel] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(performanceLevelAtom)
+  const [perfLevel, setPerfLevel] = useAtom(performanceLevelAtom)
   const seenPerfLevelsRef = useRef(new Array<number>())
   const dprScale = [0.5, 0.75, 1, 1][perfLevel]
 
   const setAndStorePerfLevel = useCallback(
     (updater: (currVal: number) => number) => {
-      setPerfLevel((curr) => {
-        const newValue = updater(curr)
+      setPerfLevel(async (curr) => {
+        const newValue = updater(await curr)
         seenPerfLevelsRef.current.push(newValue)
         return newValue
       })

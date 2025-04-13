@@ -1,8 +1,4 @@
 import {
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-  useSetRecoilState,
-} from "recoil"
-import {
   CoreInfoSelectorFamily,
   CoreMainPlatformIdSelectorFamily,
 } from "../../../recoil/selectors"
@@ -45,6 +41,7 @@ import { AnalogizerIcon } from "../icons/AnalogizerIcon"
 import { DownloadCount } from "./downloadCounts"
 import { JTAnalogizerSettings } from "./jtanalogizer"
 import { InstallOlderVersion } from "./installOlderVersion"
+import { useAtomValue, useSetAtom } from "jotai"
 
 type CoreInfoProps = {
   coreName: string
@@ -52,28 +49,24 @@ type CoreInfoProps = {
 }
 
 export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
-  const coreInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    CoreInfoSelectorFamily(coreName)
-  )
+  const coreInfo = useAtomValue(CoreInfoSelectorFamily(coreName))
   const uninstall = useUninstallCore()
   const { installCore } = useInstallCore()
   const inventoryItem = useInventoryItem(coreName)
-  const downloadUrl = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    DownloadURLSelectorFamily(coreName)
-  )
+  const downloadUrl = useAtomValue(DownloadURLSelectorFamily(coreName))
 
   const [requiredFilesOpen, setRequiredFilesOpen] = useState(false)
   const [inputsOpen, setInputsOpen] = useState(false)
   const [coreSettingsOpen, setCoreSettingsOpen] = useState(false)
   const { t } = useTranslation("core_info")
-  const setViewAndSubview = useSetRecoilState(currentViewAtom)
+  const setViewAndSubview = useSetAtom(currentViewAtom)
   const replacementCore = useReplacementAvailable(coreName)
 
   const goToReplacement = useCallback(() => {
     setViewAndSubview({ view: "Cores", selected: replacementCore })
   }, [replacementCore, setViewAndSubview])
 
-  const mainPlatformId = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const mainPlatformId = useAtomValue(
     CoreMainPlatformIdSelectorFamily(coreName)
   )
 
@@ -338,9 +331,7 @@ const RequiredFilesButton = ({
   coreName: string
   onClick: () => void
 }) => {
-  const requiredFiles = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    RequiredFileInfoSelectorFamily(coreName)
-  )
+  const requiredFiles = useAtomValue(RequiredFileInfoSelectorFamily(coreName))
   const { t } = useTranslation("core_info")
 
   if (requiredFiles.length === 0) return null
@@ -352,13 +343,9 @@ const RequiredFilesButton = ({
 }
 
 const FirmwareWarning = ({ coreName }: { coreName: string }) => {
-  const coreInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    CoreInfoSelectorFamily(coreName)
-  )
-  const currentFirmware = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    currentFirmwareVersionSelector
-  )
-  const setViewAndSubview = useSetRecoilState(currentViewAtom)
+  const coreInfo = useAtomValue(CoreInfoSelectorFamily(coreName))
+  const currentFirmware = useAtomValue(currentFirmwareVersionSelector)
+  const setViewAndSubview = useSetAtom(currentViewAtom)
   const { t } = useTranslation("core_info")
 
   const firmwareTooLow = useMemo(() => {
@@ -390,8 +377,6 @@ const FirmwareWarning = ({ coreName }: { coreName: string }) => {
 }
 
 const InfoTxt = ({ coreName }: { coreName: string }) => {
-  const infoTxt = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    CoreInfoTxtSelectorFamily(coreName)
-  )
+  const infoTxt = useAtomValue(CoreInfoTxtSelectorFamily(coreName))
   return <div className="core-info__info-txt">{infoTxt}</div>
 }

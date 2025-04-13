@@ -1,4 +1,3 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { Modal } from "../modal"
 import { ReactNode, Suspense, useCallback, useMemo, useState } from "react"
 import { FetchType } from "../../types"
@@ -9,6 +8,7 @@ import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { useTranslation } from "react-i18next"
 import { Tip } from "../tip"
 import { ArchiveMetadataSelectorFamily } from "../../recoil/archive/selectors"
+import { useAtomValue } from "jotai"
 
 type NewFetchProps = {
   onClose: () => void
@@ -160,9 +160,7 @@ const CheckArchiveValidity = ({
   children: ReactNode
 }) => {
   const { t } = useTranslation("fetch")
-  const metadata = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    ArchiveMetadataSelectorFamily({ archiveName })
-  )
+  const metadata = useAtomValue(ArchiveMetadataSelectorFamily({ archiveName }))
 
   if (!metadata)
     return (
@@ -186,8 +184,8 @@ const FolderPicker = ({
   fileIsOnPocket = false,
   onChange,
 }: FolderPickerProps) => {
-  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
-  const homeDir = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(homeDirSelector)
+  const pocketPath = useAtomValue(pocketPathAtom)
+  const homeDir = useAtomValue(homeDirSelector)
   if (!pocketPath) throw new Error("Missing PocketPath")
 
   const onClick = useCallback(async () => {

@@ -1,4 +1,3 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { InventoryItem } from "../../../types"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -8,6 +7,7 @@ import { GithubReleasesSelectorFamily } from "../../../recoil/github/selectors"
 import { useTranslation } from "react-i18next"
 
 import "./releases.css"
+import { useAtomValue } from "jotai"
 
 type ReleasesProps = {
   inventoryItem: InventoryItem
@@ -22,7 +22,7 @@ export const Releases = ({ inventoryItem }: ReleasesProps) => {
   const { t } = useTranslation("core_info")
   const [showAll, setShowAll] = useState(false)
 
-  const githubReleases = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const githubReleases = useAtomValue(
     GithubReleasesSelectorFamily({
       owner: inventoryItem.repository.owner,
       repo: inventoryItem.repository.name,

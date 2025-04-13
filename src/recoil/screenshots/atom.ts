@@ -1,6 +1,3 @@
-import { atom } from "recoil"
+import { atom } from "jotai"
 
-export const imageModeAtom = atom<"raw" | "upscaled">({
-  key: "imageModeAtom",
-  default: "upscaled",
-})
+export const imageModeAtom = atom<"raw" | "upscaled">("upscaled")

@@ -1,7 +1,3 @@
-import {
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
 import { Modal } from "../../../modal"
 import {
   platformListPocketSelector,
@@ -20,14 +16,21 @@ import {
 import "./index.css"
 import { DEFAULT_MISTER_SAVE_MAPPING, saveMappingAtom } from "../recoil/atoms"
 import { useTranslation } from "react-i18next"
+import {
+  Atom,
+  PrimitiveAtom,
+  Setter,
+  useAtom,
+  useAtomValue,
+  useSetAtom,
+} from "jotai"
 
 type SaveMappingProps = {
   onClose: () => void
 }
 
 export const SaveMapping = ({ onClose }: SaveMappingProps) => {
-  const [joins, setJoins] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(saveMappingAtom)
+  const [joins, setJoins] = useAtom(saveMappingAtom)
   const { t } = useTranslation("mister_sync")
 
   return (
@@ -37,7 +40,7 @@ export const SaveMapping = ({ onClose }: SaveMappingProps) => {
           <div>{t("pocket")}</div>
           <div>{t("mister")}</div>
         </div>
-        <PlatformsList joins={joins} setJoins={setJoins} />
+        <PlatformsList joins={joins} />
       </Suspense>
       <button onClick={() => setJoins(DEFAULT_MISTER_SAVE_MAPPING)}>
         {t("mapping.reset")}
@@ -55,16 +58,12 @@ type SourceAndPlatform = {
 
 type PlatformsListProps = {
   joins: { pocket: string; mister: string }[]
-  setJoins: Dispatch<SetStateAction<{ pocket: string; mister: string }[]>>
 }
 
-const PlatformsList = ({ joins, setJoins }: PlatformsListProps) => {
-  const misterPlatforms = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    platformsListMiSTerSelector
-  )
-  const pocketPlatforms = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    platformListPocketSelector
-  )
+const PlatformsList = ({ joins }: PlatformsListProps) => {
+  const misterPlatforms = useAtomValue(platformsListMiSTerSelector)
+  const pocketPlatforms = useAtomValue(platformListPocketSelector)
+  const setJoins = useSetAtom(saveMappingAtom)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   const canvasMousePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
@@ -136,10 +135,13 @@ const PlatformsList = ({ joins, setJoins }: PlatformsListProps) => {
               Math.abs(pocketPositions[b] - y)
           )[0]
 
-          setJoins((current) => [
-            ...current,
-            { pocket: closestPlatform, mister: newJoinOrigin.platform },
-          ])
+          setJoins(async (current) => {
+            const curr = await current
+            return [
+              ...curr,
+              { pocket: closestPlatform, mister: newJoinOrigin.platform },
+            ]
+          })
         }
 
         if (
@@ -154,10 +156,13 @@ const PlatformsList = ({ joins, setJoins }: PlatformsListProps) => {
               Math.abs(misterPositions[b] - y)
           )[0]
 
-          setJoins((current) => [
-            ...current,
-            { pocket: newJoinOrigin.platform, mister: closestPlatform },
-          ])
+          setJoins(async (current) => {
+            const curr = await current
+            return [
+              ...curr,
+              { pocket: newJoinOrigin.platform, mister: closestPlatform },
+            ]
+          })
         }
 
         setNewJoinOrigin(null)

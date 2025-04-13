@@ -1,10 +1,11 @@
 import { useMemo } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import {
   DataJSONSelectorFamily,
   WalkDirSelectorFamily,
 } from "../../recoil/selectors"
 import { useTranslation } from "react-i18next"
+import { useAtomValue } from "jotai"
 
 type GameCountProps = {
   platformId: string
@@ -17,10 +18,8 @@ export const GameCount = ({
   coreName,
   extensions,
 }: GameCountProps) => {
-  const data = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    DataJSONSelectorFamily(coreName)
-  )
-  const files = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const data = useAtomValue(DataJSONSelectorFamily(coreName))
+  const files = useAtomValue(
     WalkDirSelectorFamily({ path: `Assets/${platformId}`, extensions })
   )
   const { t } = useTranslation("games")

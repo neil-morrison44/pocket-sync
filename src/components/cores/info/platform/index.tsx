@@ -1,9 +1,5 @@
 import { useMemo } from "react"
 import {
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-  useSetRecoilState,
-} from "recoil"
-import {
   PlatformExistsSelectorFamily,
   PlatformInfoSelectorFamily,
 } from "../../../../recoil/platforms/selectors"
@@ -13,6 +9,7 @@ import { Link } from "../../../link"
 import { useTranslation } from "react-i18next"
 
 import "./index.css"
+import { useAtomValue, useSetAtom } from "jotai"
 
 const HARD_TO_FIND_THINGS = [
   "Asteroids",
@@ -27,9 +24,7 @@ type CorePlatformInfoProps = {
 }
 
 export const CorePlatformInfo = ({ platformId }: CorePlatformInfoProps) => {
-  const fileExists = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PlatformExistsSelectorFamily(platformId)
-  )
+  const fileExists = useAtomValue(PlatformExistsSelectorFamily(platformId))
 
   if (fileExists) return <CorePlatformInfoExists platformId={platformId} />
 
@@ -43,10 +38,8 @@ export const CorePlatformInfo = ({ platformId }: CorePlatformInfoProps) => {
 export const CorePlatformInfoExists = ({
   platformId,
 }: CorePlatformInfoProps) => {
-  const { platform } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PlatformInfoSelectorFamily(platformId)
-  )
-  const setViewAndSubview = useSetRecoilState(currentViewAtom)
+  const { platform } = useAtomValue(PlatformInfoSelectorFamily(platformId))
+  const setViewAndSubview = useSetAtom(currentViewAtom)
   const { t } = useTranslation("core_info")
 
   const wikiLink = useMemo(() => {

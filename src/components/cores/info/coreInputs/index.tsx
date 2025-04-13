@@ -6,7 +6,6 @@ import React, {
   useMemo,
   useState,
 } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { Texture } from "three"
 import {
   ListPresetInputsSelectorFamily,
@@ -19,6 +18,7 @@ import { LabeledLine } from "../../../three/labeledLine"
 import { useTranslation } from "react-i18next"
 import { ColourContextProviderFromConfig } from "../../../three/colourContext"
 import * as THREE from "three"
+import { useAtomValue } from "jotai"
 
 const Pocket = React.lazy(() =>
   import("../../../three/pocket").then((m) => ({ default: m.Pocket }))
@@ -46,13 +46,9 @@ export const CoreInputs = ({
   onClose: () => void
   platformId: string
 }) => {
-  const platformImage = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PlatformImageSelectorFamily(platformId)
-  )
+  const platformImage = useAtomValue(PlatformImageSelectorFamily(platformId))
   const { t } = useTranslation("core_info")
-  const presetInputList = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    ListPresetInputsSelectorFamily(coreName)
-  )
+  const presetInputList = useAtomValue(ListPresetInputsSelectorFamily(coreName))
 
   const [chosenInput, setChosenInput] = useState("core")
   const [screenTexture, setScreenTexture] = useState<Texture | undefined>()
@@ -171,7 +167,7 @@ const GetInputFile = ({
     }[]
   ) => ReactElement
 }) => {
-  const presetInput = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const presetInput = useAtomValue(
     PresetInputSelectorFamily({ coreName, filePath })
   )
 

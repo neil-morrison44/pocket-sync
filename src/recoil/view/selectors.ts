@@ -1,24 +1,19 @@
-import { DefaultValue, selector } from "recoil"
 import { currentViewAtom } from "./atoms"
+import { atom } from "jotai"
 
-export const selectedSubviewSelector = selector<string | null>({
-  key: "selectedSubviewSelector",
-  get: ({ get }) => {
+export const selectedSubviewSelector = atom(
+  (get) => get(currentViewAtom).selected,
+  (get, set, newValue?: string | null) => {
     const currentView = get(currentViewAtom)
-    return currentView.selected
-  },
-  set: ({ set, get }, newValue) => {
-    const currentView = get(currentViewAtom)
-
-    if (newValue instanceof DefaultValue) {
+    if (!newValue) {
       set(currentViewAtom, { ...currentView, selected: null })
     } else if (
       currentView.view === "Platforms" ||
       currentView.view === "Screenshots" ||
       currentView.view === "Cores"
     ) {
-      // @ts-ignore
-      set(currentViewAtom, { ...currentView, selected: newValue })
+      // @ts-expect-error
+      set(currentViewAtom, { ...currentView, selected: newValue ?? null })
     }
-  },
-})
+  }
+)

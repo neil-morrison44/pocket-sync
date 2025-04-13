@@ -1,17 +1,14 @@
 import { useCallback } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
-import { useInvalidateConfig } from "../../../hooks/invalidation"
+
 import { pocketPathAtom } from "../../../recoil/atoms"
 import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
 import { PocketSyncConfig } from "../../../types"
 import { invokeSaveFile } from "../../../utils/invokes"
+import { useAtomValue } from "jotai"
 
 export const useUpdateConfig = () => {
-  const currentConfig = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PocketSyncConfigSelector
-  )
-  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
-  const invalidateConfigSelector = useInvalidateConfig()
+  const currentConfig = useAtomValue(PocketSyncConfigSelector)
+  const pocketPath = useAtomValue(pocketPathAtom)
 
   return useCallback(
     async <T extends keyof PocketSyncConfig>(
@@ -36,9 +33,7 @@ export const useUpdateConfig = () => {
         `${pocketPath}/pocket-sync.json`,
         encoder.encode(JSON.stringify(newConfig, null, 2))
       )
-
-      setTimeout(() => invalidateConfigSelector(), 500)
     },
-    [currentConfig, invalidateConfigSelector, pocketPath]
+    [currentConfig, pocketPath]
   )
 }

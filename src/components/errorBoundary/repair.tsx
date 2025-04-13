@@ -1,7 +1,6 @@
 import React, { ReactElement, useCallback, useMemo, useState } from "react"
 import { PlatformId } from "../../types"
 import { useInstallCore } from "../../hooks/useInstallCore"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { CoresForPlatformSelectorFamily } from "../../recoil/platforms/selectors"
 import { DownloadURLSelectorFamily } from "../../recoil/inventory/selectors"
 import { usePreventGlobalZipInstallModal } from "../../hooks/usePreventGlobalZipInstall"
@@ -9,6 +8,7 @@ import { emit, once } from "@tauri-apps/api/event"
 import { RepairIcon } from "./repairIcon"
 import { Trans } from "react-i18next"
 import { githubTokenAtom } from "../../recoil/settings/atoms"
+import { useAtomValue } from "jotai"
 
 const CORE_FILE_REGEX = /Cores[\/\\]([^\/\\]+)[\/\\]/
 const PLATFORM_FILE_REGEX = /Platforms[\/\\]([^\/\\]+)\.json/
@@ -126,7 +126,7 @@ const GetCoresForPlatform = ({
   children,
   platformId,
 }: GetCoresForPlatformProps): ReactElement | null => {
-  const coresForPlatform = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const coresForPlatform = useAtomValue(
     CoresForPlatformSelectorFamily(platformId)
   )
 
@@ -148,9 +148,7 @@ const GetDownloadURLForCore = ({
   children,
   coreName,
 }: GetDownloadURLForCoreProps): ReactElement | null => {
-  const downloadUrl = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    DownloadURLSelectorFamily(coreName)
-  )
+  const downloadUrl = useAtomValue(DownloadURLSelectorFamily(coreName))
 
   if (!downloadUrl) return null
   return <>{children(downloadUrl)}</>
@@ -171,8 +169,7 @@ const RepairRedownloadFiles = ({
   onFinishRepair,
 }: RepairRedownloadFilesProps): ReactElement | null => {
   const [isRepairing, setIsRepairing] = useState(false)
-  const githubToken =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(githubTokenAtom)
+  const githubToken = useAtomValue(githubTokenAtom)
   usePreventGlobalZipInstallModal()
 
   const callback = useCallback(async () => {

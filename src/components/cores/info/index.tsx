@@ -1,7 +1,7 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { coresListSelector } from "../../../recoil/selectors"
 import { InstalledCoreInfo } from "./installed"
 import { NotInstalledCoreInfo } from "./notInstalled"
+import { useAtomValue } from "jotai"
 
 type CoreInfoProps = {
   coreName: string
@@ -9,8 +9,7 @@ type CoreInfoProps = {
 }
 
 export const CoreInfo = (props: CoreInfoProps) => {
-  const coresList =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(coresListSelector)
+  const coresList = useAtomValue(coresListSelector)
 
   if (coresList.includes(props.coreName)) {
     return <InstalledCoreInfo {...props} />

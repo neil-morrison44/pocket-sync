@@ -1,37 +1,38 @@
-import { atom } from "recoil"
-import {
-  syncToAppLocalDataEffect,
-  syncToAppLocalDataEffectDefault,
-} from "../effects"
+import { atomWithStorage } from "jotai/utils"
+import { createAppLocalStorage } from "../../utils/jotai"
 
-export const alwaysUseEnglishAtom = atom<{ value: boolean }>({
-  key: "alwaysUseEnglishAtom",
-  default: syncToAppLocalDataEffectDefault("only-use-english", {
+export const alwaysUseEnglishAtom = atomWithStorage<{ value: boolean }>(
+  "only-use-english",
+  {
     value: false,
-  }),
-  effects: [syncToAppLocalDataEffect("only-use-english")],
-})
+  },
+  createAppLocalStorage(),
+  { getOnInit: true }
+)
 
-export const turboDownloadsAtom = atom<{ enabled: boolean }>({
-  key: "turboDownloadsAtom",
-  default: syncToAppLocalDataEffectDefault("turbo-downloads", {
+export const turboDownloadsAtom = atomWithStorage<{ enabled: boolean }>(
+  "turbo-downloads",
+  {
     enabled: false,
-  }),
-  effects: [syncToAppLocalDataEffect("turbo-downloads")],
-})
+  },
+  createAppLocalStorage(),
+  { getOnInit: true }
+)
 
-export const keepPlatformDataAtom = atom<{ enabled: boolean }>({
-  key: "keepPlatformDataAtom",
-  default: syncToAppLocalDataEffectDefault("keep-platform-data", {
+export const keepPlatformDataAtom = atomWithStorage<{ enabled: boolean }>(
+  "keep-platform-data",
+  {
     enabled: true,
-  }),
-  effects: [syncToAppLocalDataEffect("keep-platform-data")],
-})
+  },
+  createAppLocalStorage(),
+  { getOnInit: true }
+)
 
-export const githubTokenAtom = atom<{ value: string | null }>({
-  key: "githubTokenAtom",
-  default: syncToAppLocalDataEffectDefault("github-token-atom", {
+export const githubTokenAtom = atomWithStorage<{ value: null | string }>(
+  "github-token-atom",
+  {
     value: null,
-  }),
-  effects: [syncToAppLocalDataEffect("github-token-atom")],
-})
+  },
+  createAppLocalStorage(),
+  { getOnInit: true }
+)

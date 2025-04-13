@@ -1,9 +1,4 @@
-import { Suspense, useMemo, useState } from "react"
-import {
-  useRecoilCallback,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-  useRecoilValueLoadable_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
+import { Suspense, useCallback, useMemo, useState } from "react"
 import {
   ImagePackImageSelectorFamily,
   imagePackListSelector,
@@ -20,6 +15,8 @@ import "./index.css"
 import { PlatformName } from "./platformName"
 import { OnlyLoadsWhenShown } from "../../../utils/onlyLoadsWhenShown"
 import { invokeSaveMultipleFiles } from "../../../utils/invokes"
+import { useAtomValue } from "jotai"
+import { loadable, useAtomCallback } from "jotai/utils"
 
 type ImagePacksProps = {
   onClose: () => void
@@ -27,28 +24,24 @@ type ImagePacksProps = {
 }
 
 export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
-  const allPlatformIds = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    platformsListSelector
-  )
+  const allPlatformIds = useAtomValue(platformsListSelector)
   const platformIds = useMemo(() => {
     if (singlePlatformId) return [singlePlatformId]
     return allPlatformIds
   }, [allPlatformIds, singlePlatformId])
 
-  const imagePacksLoadable = useRecoilValueLoadable_TRANSITION_SUPPORT_UNSTABLE(
-    imagePackListSelector
-  )
+  const imagePacksLoadable = useAtomValue(loadable(imagePackListSelector))
 
   const imagePacks = useMemo(() => {
-    if (imagePacksLoadable.state !== "hasValue") return []
+    if (imagePacksLoadable.state !== "hasData") return []
 
     if (singlePlatformId) {
-      return imagePacksLoadable.contents.filter(({ image_platforms }) =>
+      return imagePacksLoadable.data.filter(({ image_platforms }) =>
         image_platforms.includes(singlePlatformId)
       )
     }
 
-    const sorted = [...imagePacksLoadable.contents]
+    const sorted = [...imagePacksLoadable.data]
     return sorted.sort(
       (a, b) => b.image_platforms.length - a.image_platforms.length
     )
@@ -61,16 +54,16 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
   const changeCount = Object.values(selections).filter(Boolean).length
   const { t } = useTranslation("platforms")
 
-  const applyChanges = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
+  const applyChanges = useAtomCallback(
+    useCallback(
+      async (get, set) => {
         const paths = []
         const images = []
 
         for (const platformId in selections) {
           const pack = selections[platformId]
           if (!pack) continue
-          const image = await snapshot.getPromise(
+          const image = await get(
             ImagePackImageSelectorFamily({ ...pack, platformId })
           )
           if (!image) continue
@@ -84,10 +77,9 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
         await invokeSaveMultipleFiles(paths, images)
         onClose()
       },
-    [selections]
+      [selections]
+    )
   )
-
-  console.log({ imagePacks })
 
   return (
     <Modal className="image-packs">
@@ -186,7 +178,7 @@ const PackColumnItem = ({
   onClick,
   isSelected,
 }: PackColumnItemProps) => {
-  const imagePackImage = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const imagePackImage = useAtomValue(
     ImagePackImageSelectorFamily({ owner, repository, variant, platformId })
   )
 

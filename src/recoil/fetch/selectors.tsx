@@ -1,33 +1,32 @@
-import { selectorFamily } from "recoil"
 import { FetchFileMetadataWithStatus } from "../../types"
 import { pocketPathAtom } from "../atoms"
 import { PathFileInfoSelectorFamily } from "../archive/selectors"
-import { debug } from "@tauri-apps/plugin-log"
+import { atomFamilyDeepEqual } from "../../utils/jotai"
+import { atom, Atom } from "jotai"
 
-export const FetchInfoSelectorFamily = selectorFamily<
-  {
-    pocketPath: string
-    pocketFileInfo: FetchFileMetadataWithStatus[]
-    fsFileInfo: FetchFileMetadataWithStatus[]
-  },
-  { origin: string; destination: string }
->({
-  key: "FetchInfoSelectorFamily",
-  get:
-    ({ origin, destination }) =>
-    ({ get }) => {
-      const pocketPath = get(pocketPathAtom) || ""
-      const pocketFileInfo = get(
-        PathFileInfoSelectorFamily({ path: destination })
-      )
-      const fsFileInfo = get(
-        PathFileInfoSelectorFamily({ path: origin, offPocket: true })
-      )
+export const FetchInfoSelectorFamily = atomFamilyDeepEqual<
+  { origin: string; destination: string },
+  Atom<
+    Promise<{
+      pocketPath: string
+      pocketFileInfo: FetchFileMetadataWithStatus[]
+      fsFileInfo: FetchFileMetadataWithStatus[]
+    }>
+  >
+>(({ origin, destination }) =>
+  atom(async (get) => {
+    const pocketPath = (await get(pocketPathAtom)) || ""
+    const pocketFileInfo = await get(
+      PathFileInfoSelectorFamily({ path: destination })
+    )
+    const fsFileInfo = await get(
+      PathFileInfoSelectorFamily({ path: origin, offPocket: true })
+    )
 
-      return {
-        pocketPath,
-        pocketFileInfo,
-        fsFileInfo,
-      }
-    },
-})
+    return {
+      pocketPath,
+      pocketFileInfo,
+      fsFileInfo,
+    }
+  })
+)

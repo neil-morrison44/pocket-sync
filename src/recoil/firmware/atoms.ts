@@ -1,23 +1,20 @@
-import { atom } from "recoil"
-import { FirmwareListItem } from "../../types"
 import { invokeGetFirmwareVersionsList } from "../../utils/invokes"
+import { atomWithRefresh } from "jotai/utils"
+import { withAtomEffect } from "jotai-effect"
 
 const INTERVAL_MINS = 60
 
-export const allFirmwaresAtom = atom<FirmwareListItem[]>({
-  key: "allFirmwaresSelector",
-  default: (async () => {
-    const firmwares = await invokeGetFirmwareVersionsList()
-    return firmwares
-  })(),
-  effects: [
-    ({ setSelf }) => {
-      const interval = setInterval(async () => {
-        const newFirmwares = await invokeGetFirmwareVersionsList()
-        setSelf(newFirmwares)
-      }, INTERVAL_MINS * 60 * 1000)
+const baseAllFirmwaresAtom = atomWithRefresh(
+  async (_get) => await invokeGetFirmwareVersionsList()
+)
 
-      return () => clearInterval(interval)
-    },
-  ],
-})
+export const allFirmwaresAtom = withAtomEffect(
+  baseAllFirmwaresAtom,
+  (_get, set) => {
+    const interval = setInterval(async () => {
+      set(allFirmwaresAtom)
+    }, INTERVAL_MINS * 60 * 1000)
+
+    return () => clearInterval(interval)
+  }
+)

@@ -1,16 +1,12 @@
 import "./font.css"
 import "./app.css"
-import {
-  RecoilRoot,
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useSetRecoilState,
-} from "recoil"
 import { pocketPathAtom, reconnectWhenOpenedAtom } from "./recoil/atoms"
 import { Layout } from "./components/layout"
 import React, {
   Suspense,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react"
@@ -20,20 +16,18 @@ import { NewsFeed } from "./components/newsFeed"
 import { currentViewAtom } from "./recoil/view/atoms"
 import { useTranslation } from "react-i18next"
 import { ColourContextProviderRandomised } from "./components/three/colourContext"
-import { pocketPathAtom as jotaiPocketPathAtom } from "./jotai/general"
-import { useAtom } from "jotai"
+import { createStore, Provider, useAtom, useSetAtom } from "jotai"
 
 const Pocket = React.lazy(() =>
   import("./components/three/pocket").then((m) => ({ default: m.Pocket }))
 )
 
 export const App = () => {
-  const [pocketPath, setPocketPath] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
-  const [jotaiPocketPath, setJotaiPocketPath] = useAtom(jotaiPocketPathAtom)
-  const [reconnectWhenOpened, setReconnectWhenOpened] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(reconnectWhenOpenedAtom)
-  const setView = useSetRecoilState(currentViewAtom)
+  const [pocketPath, setPocketPath] = useAtom(pocketPathAtom)
+  const [reconnectWhenOpened, setReconnectWhenOpened] = useAtom(
+    reconnectWhenOpenedAtom
+  )
+  const setView = useSetAtom(currentViewAtom)
   const [attempts, setAttempts] = useState(0)
   const { t } = useTranslation("app")
   const reconnectRef = useRef<boolean>(false)
@@ -46,7 +40,6 @@ export const App = () => {
       invokeOpenPocketFolder(reconnectWhenOpened.path).then((result) => {
         if (result) {
           setView({ view: "Pocket Sync", selected: null })
-          setJotaiPocketPath(result)
           setPocketPath(result)
         }
       })
@@ -59,7 +52,6 @@ export const App = () => {
 
     setView({ view: "Pocket Sync", selected: null })
     setPocketPath(result)
-    setJotaiPocketPath(result)
     if (result === null) {
       setAttempts((a) => a + 1)
     } else {
@@ -70,14 +62,9 @@ export const App = () => {
 
   if (pocketPath) {
     return (
-      <RecoilRoot
-        key={pocketPath}
-        initializeState={(snapshot) => {
-          snapshot.set(pocketPathAtom, pocketPath)
-        }}
-      >
+      <Suspense>
         <Layout />
-      </RecoilRoot>
+      </Suspense>
     )
   }
 

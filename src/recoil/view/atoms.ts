@@ -1,4 +1,4 @@
-import { atom } from "recoil"
+import { atom } from "jotai"
 
 export const VIEWS_LIST = [
   "Pocket Sync",
@@ -28,9 +28,6 @@ type ViewAndSubview =
     }
 
 export const currentViewAtom = atom<ViewAndSubview>({
-  key: "currentViewAtom",
-  default: {
-    view: "Pocket Sync",
-    selected: null,
-  },
+  view: "Pocket Sync",
+  selected: null,
 })

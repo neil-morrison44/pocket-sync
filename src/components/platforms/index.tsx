@@ -1,9 +1,4 @@
-import { Suspense, useMemo, useState } from "react"
-import {
-  useRecoilCallback,
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
+import { Suspense, useCallback, useMemo, useState } from "react"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import {
   platformsListSelector,
@@ -26,17 +21,18 @@ import { invokeDeleteFiles } from "../../utils/invokes"
 import { DataPacks } from "./dataPacks"
 import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
+import { useAtom, useAtomValue } from "jotai"
+import { useAtomCallback } from "jotai/utils"
 
 export const Platforms = () => {
   const [searchQuery, setSearchQuery] = useState("")
-  const platformIds = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    platformsListSelector
-  )
+  const platformIds = useAtomValue(platformsListSelector)
   const { pushScroll, popScroll } = useSaveScroll()
   const { t } = useTranslation("platforms")
 
-  const [selectedPlatform, setSelectedPlatform] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(selectedSubviewSelector)
+  const [selectedPlatform, setSelectedPlatform] = useAtom(
+    selectedSubviewSelector
+  )
 
   const sortedPlatformIds = useMemo(
     () => [...platformIds].sort((a, b) => a.localeCompare(b)),
@@ -46,26 +42,22 @@ export const Platforms = () => {
   const [imagePacksOpen, setImagePacksOpen] = useState(false)
   const [dataPacksOpen, setDataPacksOpen] = useState(false)
 
-  const removeCorelessPlatforms = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
-        const platformsWithoutCores = await snapshot.getPromise(
-          platformsWithoutCoresSelector
-        )
+  const removeCorelessPlatforms = useAtomCallback(
+    useCallback(async (get, set) => {
+      const platformsWithoutCores = await get(platformsWithoutCoresSelector)
 
-        const confirmation = await confirm(
-          t("delete_unused", { count: platformsWithoutCores.length })
-        )
+      const confirmation = await confirm(
+        t("delete_unused", { count: platformsWithoutCores.length })
+      )
 
-        if (confirmation && platformsWithoutCores.length > 0) {
-          await invokeDeleteFiles(
-            platformsWithoutCores.map(
-              (platformId) => `Platforms/${platformId}.json`
-            )
+      if (confirmation && platformsWithoutCores.length > 0) {
+        await invokeDeleteFiles(
+          platformsWithoutCores.map(
+            (platformId) => `Platforms/${platformId}.json`
           )
-        }
-      },
-    []
+        )
+      }
+    }, [])
   )
 
   if (selectedPlatform)

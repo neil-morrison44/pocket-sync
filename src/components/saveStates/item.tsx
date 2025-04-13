@@ -3,10 +3,11 @@ import {
   SaveStateImageSelectorFamily,
   SaveStateMetadataSelectorFamily,
 } from "../../recoil/saveStates/selectors"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { parse } from "date-fns"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { useTranslation } from "react-i18next"
+import { useAtomValue } from "jotai"
 
 type SaveStateItemProps = {
   path: string
@@ -23,12 +24,8 @@ export const SaveStateItem = ({
   onClick,
   onExportPhotos,
 }: SaveStateItemProps) => {
-  const metadata = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    SaveStateMetadataSelectorFamily(path)
-  )
-  const imageSrc = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    SaveStateImageSelectorFamily(path)
-  )
+  const metadata = useAtomValue(SaveStateMetadataSelectorFamily(path))
+  const imageSrc = useAtomValue(SaveStateImageSelectorFamily(path))
   const date = useSaveStateDate(path)
   const { t } = useTranslation("save_states")
 

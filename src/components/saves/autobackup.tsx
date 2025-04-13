@@ -1,15 +1,13 @@
 import { useEffect, useRef } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { AllSavesSelector } from "../../recoil/saves/selectors"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { invokeBackupSaves, invokeFileExists } from "../../utils/invokes"
+import { useAtomValue } from "jotai"
 
 export const AutoBackup = () => {
   const hasBackedUpRef = useRef<boolean>(false)
-  const allSaves = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(AllSavesSelector)
-  const { saves } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PocketSyncConfigSelector
-  )
+  const allSaves = useAtomValue(AllSavesSelector)
+  const { saves } = useAtomValue(PocketSyncConfigSelector)
 
   useEffect(() => {
     if (hasBackedUpRef.current) return

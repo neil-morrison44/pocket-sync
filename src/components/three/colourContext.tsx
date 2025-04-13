@@ -1,7 +1,8 @@
 import { ReactNode, createContext, useEffect, useState } from "react"
 import { PocketColour } from "../../types"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
+import { useAtomValue } from "jotai"
 
 export const BodyColourContext = createContext<PocketColour>("black")
 export const ButtonsColourContext = createContext<PocketColour>("black")
@@ -90,9 +91,7 @@ export const ColourContextProviderFromConfig = ({
 }: {
   children: ReactNode
 }) => {
-  const { colour, button_colour } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PocketSyncConfigSelector
-  )
+  const { colour, button_colour } = useAtomValue(PocketSyncConfigSelector)
   return (
     <ColourContextProvider body={colour} buttons={button_colour ?? colour}>
       {children}

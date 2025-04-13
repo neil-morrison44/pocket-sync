@@ -1,11 +1,12 @@
 import { useMemo } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import {
   PlatformImageSelectorFamily,
   PlatformInfoSelectorFamily,
 } from "../../recoil/platforms/selectors"
 import { PlatformId } from "../../types"
 import { SearchContextSelfHidingConsumer } from "../search/context"
+import { useAtomValue } from "jotai"
 
 type PlatformItemProps = {
   id: PlatformId
@@ -13,12 +14,8 @@ type PlatformItemProps = {
 }
 
 export const PlatformItem = ({ id, onClick }: PlatformItemProps) => {
-  const { platform } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PlatformInfoSelectorFamily(id)
-  )
-  const platformImage = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PlatformImageSelectorFamily(id)
-  )
+  const { platform } = useAtomValue(PlatformInfoSelectorFamily(id))
+  const platformImage = useAtomValue(PlatformImageSelectorFamily(id))
 
   const category = useMemo(
     () => platform.category || "Uncategorised",

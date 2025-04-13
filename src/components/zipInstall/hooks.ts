@@ -9,8 +9,9 @@ import {
 import { filterKnownBadFiles } from "../../utils/filterFiles"
 import { FileTreeNode, InstallZipEventPayload } from "./types"
 import { message } from "@tauri-apps/plugin-dialog"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { keepPlatformDataAtom } from "../../recoil/settings/atoms"
+import { useAtomValue } from "jotai"
 
 export const useListenForZipInstall = () => {
   const [installState, setInstallState] =
@@ -92,9 +93,7 @@ export const useAllowedFiles = (
   tree: FileTreeNode[] | null
 ) => {
   const [allowedFiles, setAllowedFiles] = useState<string[] | null>(null)
-  const keepPlatformData =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(keepPlatformDataAtom)
-
+  const keepPlatformData = useAtomValue(keepPlatformDataAtom)
   const flattenedTree = useFlattenedTree(tree)
 
   useEffect(() => {

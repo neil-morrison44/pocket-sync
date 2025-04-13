@@ -1,14 +1,13 @@
-import { selector } from "recoil"
 import { PocketSyncConfig } from "../../types"
 import { invokeFileExists, invokeSaveFile } from "../../utils/invokes"
 import { readJSONFile } from "../../utils/readJSONFile"
 import { pocketPathAtom } from "../atoms"
 import { AppVersionSelector } from "../selectors"
 import { FileWatchAtomFamily } from "../fileSystem/atoms"
+import { atom } from "jotai"
 
-export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
-  key: "PocketSyncConfigSelector",
-  get: async ({ get }) => {
+export const PocketSyncConfigSelector = atom<Promise<PocketSyncConfig>>(
+  async (get) => {
     const pocketPath = get(pocketPathAtom)
     const file = "pocket-sync.json"
     const path = `${pocketPath}/${file}`
@@ -16,7 +15,7 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
 
     if (!pocketPath) {
       return {
-        version: get(AppVersionSelector),
+        version: await get(AppVersionSelector),
         colour: Math.random() > 0.5 ? "white" : "black",
         archive_url: null,
         saves: [],
@@ -28,7 +27,7 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
     const exists = await invokeFileExists(file)
     if (!exists) {
       const defaultConfig = {
-        version: get(AppVersionSelector),
+        version: await get(AppVersionSelector),
         colour: "black",
         archive_url: null,
         saves: [],
@@ -44,16 +43,15 @@ export const PocketSyncConfigSelector = selector<PocketSyncConfig>({
     }
 
     return readJSONFile<PocketSyncConfig>(file)
-  },
-})
+  }
+)
 
-export const skipAlternateAssetsSelector = selector<boolean>({
-  key: "skipAlternateAssetsSelector",
-  get: ({ get }) => {
-    const config = get(PocketSyncConfigSelector)
+export const skipAlternateAssetsSelector = atom<Promise<boolean>>(
+  async (get) => {
+    const config = await get(PocketSyncConfigSelector)
 
     return (
       config.skipAlternateAssets === undefined || config.skipAlternateAssets
     )
-  },
-})
+  }
+)

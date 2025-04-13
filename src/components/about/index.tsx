@@ -6,11 +6,6 @@ import React, {
   useRef,
   useState,
 } from "react"
-import {
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-  useSetRecoilState,
-} from "recoil"
-import { useRecoilSmoothUpdatesFirstSuspend } from "../../hooks/recoilSmoothUpdates"
 import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
 import { AppVersionSelector } from "../../recoil/selectors"
 import { ErrorBoundary } from "../errorBoundary"
@@ -24,11 +19,9 @@ import { currentViewAtom } from "../../recoil/view/atoms"
 import { useTranslation } from "react-i18next"
 import { semverCompare } from "../../utils/semverCompare"
 import { ColourContextProviderFromConfig } from "../three/colourContext"
-// import { sponsorCountAtom } from "../../recoil/github/atoms"
 import { Changelog } from "./changelog"
-import { useAtom, useAtomValue } from "jotai"
-import { sponsorCountAtom } from "../../jotai/github"
-import { pocketSyncConfigAtom } from "../../jotai/config"
+import { useAtomValue, useSetAtom } from "jotai"
+import { sponsorCountAtom } from "../../recoil/github/atoms"
 
 const Pocket = React.lazy(() =>
   import("../three/pocket").then((m) => ({ default: m.Pocket }))
@@ -46,7 +39,7 @@ const StaticScreen = React.lazy(() =>
 
 export const About = () => {
   const [changelogOpen, setChangelogOpen] = useState<boolean>(false)
-  const selfReleases = useRecoilSmoothUpdatesFirstSuspend(
+  const selfReleases = useAtomValue(
     GithubReleasesSelectorFamily({
       owner: "neil-morrison44",
       repo: "pocket-sync",
@@ -54,20 +47,14 @@ export const About = () => {
   )
 
   const { t } = useTranslation("about")
-  const AppVersion =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(AppVersionSelector)
-
-  const firmwareUpdateAvailable = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    updateAvailableSelector
-  )
-
-  const config = useAtomValue(pocketSyncConfigAtom)
+  const AppVersion = useAtomValue(AppVersionSelector)
+  const firmwareUpdateAvailable = useAtomValue(updateAvailableSelector)
 
   const updateAvailable = useMemo(() => {
     return semverCompare(selfReleases[0].tag_name, AppVersion)
   }, [selfReleases, AppVersion])
 
-  const setCurrentView = useSetRecoilState(currentViewAtom)
+  const setCurrentView = useSetAtom(currentViewAtom)
   const version = `v${AppVersion}`
 
   return (
@@ -137,7 +124,6 @@ export const About = () => {
 }
 
 const SponsorLink = () => {
-  // const sponsorCount =  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(sponsorCountAtom)
   const sponsorCount = useAtomValue(sponsorCountAtom)
   const { t } = useTranslation("about")
 

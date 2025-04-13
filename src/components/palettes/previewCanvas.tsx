@@ -1,12 +1,10 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { PaletteColoursSelectorFamily } from "../../recoil/palettes/selectors"
 import { useEffect, useRef } from "react"
 import { Palette } from "../../types"
+import { useAtomValue } from "jotai"
 
 export const PreviewCanvas = ({ name }: { name: string }) => {
-  const paletteColours = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PaletteColoursSelectorFamily(name)
-  )
+  const paletteColours = useAtomValue(PaletteColoursSelectorFamily(name))
 
   return <PreviewCanvasInner palette={paletteColours} />
 }

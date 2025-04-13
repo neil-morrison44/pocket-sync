@@ -1,4 +1,5 @@
-import { atom } from "recoil"
+import { withAtomEffect } from "jotai-effect"
+import { atomWithRefresh } from "jotai/utils"
 
 const INTERVAL_MINS = 15
 
@@ -14,17 +15,17 @@ const getSponsorCount = async () => {
   }
 }
 
-export const sponsorCountAtom = atom<number>({
-  key: "sponsorCountAtom",
-  default: getSponsorCount(),
-  effects: [
-    ({ setSelf }) => {
-      const interval = setInterval(async () => {
-        const newCount = await getSponsorCount()
-        setSelf(newCount)
-      }, INTERVAL_MINS * 60 * 1000)
+const baseSponsorCountAtom = atomWithRefresh(
+  async (_get) => await getSponsorCount()
+)
 
-      return () => clearInterval(interval)
-    },
-  ],
-})
+export const sponsorCountAtom = withAtomEffect(
+  baseSponsorCountAtom,
+  (_get, set) => {
+    const interval = setInterval(async () => {
+      set(baseSponsorCountAtom)
+    }, INTERVAL_MINS * 60 * 1000)
+
+    return () => clearInterval(interval)
+  }
+)

@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { Controls } from "../controls"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
@@ -14,16 +13,15 @@ import { SaveConfig } from "../../types"
 import { MisterSync } from "./misterSync"
 import { useTranslation } from "react-i18next"
 import { ControlsButton } from "../controls/inputs/button"
+import { useAtomValue } from "jotai"
 
 export const Saves = () => {
   const [selectedSaveBackup, setSelectedSavebackup] = useState<number | null>(
     null
   )
-  const allSaves = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(AllSavesSelector)
+  const allSaves = useAtomValue(AllSavesSelector)
   const updateConfig = useUpdateConfig()
-  const { saves } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PocketSyncConfigSelector
-  )
+  const { saves } = useAtomValue(PocketSyncConfigSelector)
   const { t } = useTranslation("saves")
 
   const [misterSync, setMisterSync] = useState(false)

@@ -1,9 +1,5 @@
 import { useCallback, useState } from "react"
 import {
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
-import {
   PocketSyncConfigSelector,
   skipAlternateAssetsSelector,
 } from "../../recoil/config/selectors"
@@ -28,28 +24,23 @@ import { patreonKeyListSelector } from "../../recoil/settings/selectors"
 import { HiddenCores } from "./items/hiddenCores"
 import { GithubToken } from "./items/githubToken"
 import { GBPalettesConversion } from "./items/gbPalettes"
+import { useAtom, useAtomValue } from "jotai"
 
 export const Settings = () => {
-  const config = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PocketSyncConfigSelector
-  )
+  const config = useAtomValue(PocketSyncConfigSelector)
   const [archiveUrlInput, setArchiveUrl] = useState(config.archive_url || "")
 
   const [patreonEmailInput, setPatreonEmail] = useState(
     config.patreon_email || ""
   )
-  const [alwaysUseEnglish, setAlwaysUseEnglish] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(alwaysUseEnglishAtom)
+  const [alwaysUseEnglish, setAlwaysUseEnglish] = useAtom(alwaysUseEnglishAtom)
 
-  const [turboDownloads, setTurboDownloads] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(turboDownloadsAtom)
-  const [keepPlatformData, setKeepPlatformData] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(keepPlatformDataAtom)
-  const skipAlternateAssets = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    skipAlternateAssetsSelector
+  const [turboDownloads, setTurboDownloads] = useAtom(turboDownloadsAtom)
+  const [keepPlatformData, setKeepPlatformData] = useAtom(keepPlatformDataAtom)
+  const skipAlternateAssets = useAtomValue(skipAlternateAssetsSelector)
+  const [reconnectWhenOpened, setReconnectWhenOpened] = useAtom(
+    reconnectWhenOpenedAtom
   )
-  const [reconnectWhenOpened, setReconnectWhenOpened] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(reconnectWhenOpenedAtom)
   const updateConfig = useUpdateConfig()
   const { t } = useTranslation("settings")
   const onDisconnect = useCallback(
@@ -57,9 +48,7 @@ export const Settings = () => {
     []
   )
 
-  const patreonUrls = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    patreonKeyListSelector
-  )
+  const patreonUrls = useAtomValue(patreonKeyListSelector)
 
   return (
     <div className="settings">

@@ -1,4 +1,3 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   PaletteCodeSelectorFamily,
   palettesListSelector,
@@ -25,10 +24,10 @@ import { splitAsPath } from "../../utils/splitAsPath"
 import { useTranslation } from "react-i18next"
 import { PreviewCanvas } from "./previewCanvas"
 import { PaletteTown } from "./town"
+import { useAtomValue } from "jotai"
 
 export const Palettes = () => {
-  const palettesList =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(palettesListSelector)
+  const palettesList = useAtomValue(palettesListSelector)
   const { t } = useTranslation("palettes")
   const [mode, setMode] = useState<
     { name: "list" } | { name: "new" } | { name: "selected"; palette: string }
@@ -120,10 +119,8 @@ export const PaletteListItem = ({
   name: string
   onClick: () => void
 }) => {
-  const paletteCode = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PaletteCodeSelectorFamily(name)
-  )
-  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
+  const paletteCode = useAtomValue(PaletteCodeSelectorFamily(name))
+  const pocketPath = useAtomValue(pocketPathAtom)
   const [interimName, setInterimName] = useState(() => name.replace(".pal", ""))
   const { t } = useTranslation("palettes")
   const [renameMode, setRenameMode] = useState(false)
@@ -219,7 +216,7 @@ export const PaletteListItem = ({
 
 const AddViaCodeModal = ({ onClose }: { onClose: () => void }) => {
   const [inputedCode, setInputedCode] = useState("")
-  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
+  const pocketPath = useAtomValue(pocketPathAtom)
   const { t } = useTranslation("palettes")
 
   const parsedPalette = useMemo<{

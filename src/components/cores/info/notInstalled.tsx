@@ -1,8 +1,5 @@
-import { Suspense, useMemo } from "react"
-import {
-  useRecoilCallback,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
+import { Suspense, useCallback, useMemo } from "react"
+
 import { useInstallCore } from "../../../hooks/useInstallCore"
 import { useInventoryItem } from "../../../hooks/useInventoryItem"
 import {
@@ -24,6 +21,8 @@ import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
 import { useUpdateConfig } from "../../settings/hooks/useUpdateConfig"
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { InstallOlderVersion } from "./installOlderVersion"
+import { useAtomValue } from "jotai"
+import { useAtomCallback } from "jotai/utils"
 
 type NotInstalledCoreInfoProps = {
   onBack: () => void
@@ -46,9 +45,7 @@ export const NotInstalledCoreInfo = ({
     return `https://github.com/${inventoryItem.repository.owner}/${inventoryItem.repository.name}`
   }, [inventoryItem])
 
-  const download_url = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    DownloadURLSelectorFamily(coreName)
-  )
+  const download_url = useAtomValue(DownloadURLSelectorFamily(coreName))
 
   const latestRelease = inventoryItem?.releases[0]
   const platform_id = latestRelease?.core.metadata.platform_ids[0]
@@ -58,7 +55,7 @@ export const NotInstalledCoreInfo = ({
   const date_release = latestRelease?.core.metadata.date_release
   const funding = inventoryItem?.repository.funding
 
-  const imageUrl = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const imageUrl = useAtomValue(
     PlatformInventoryImageSelectorFamily(platform_id)
   )
   const { installCore } = useInstallCore()
@@ -193,19 +190,21 @@ const HideCoreButton = ({ coreName, onBack }: HideCoreButtonProps) => {
   const updateConfig = useUpdateConfig()
   const { t } = useTranslation("core_info")
 
-  const onClick = useRecoilCallback(({ snapshot }) => async () => {
-    const config = await snapshot.getPromise(PocketSyncConfigSelector)
-    const currentlyHidden = config.hidden_cores ?? []
+  const onClick = useAtomCallback(
+    useCallback(async (get, _set) => {
+      const config = await get(PocketSyncConfigSelector)
+      const currentlyHidden = config.hidden_cores ?? []
 
-    if (currentlyHidden.length === 0) {
-      const allow = await confirm(t("hide_core_confirm"))
-      if (!allow) return
-    }
+      if (currentlyHidden.length === 0) {
+        const allow = await confirm(t("hide_core_confirm"))
+        if (!allow) return
+      }
 
-    await updateConfig("hidden_cores", [...currentlyHidden, coreName])
+      await updateConfig("hidden_cores", [...currentlyHidden, coreName])
 
-    onBack()
-  })
+      onBack()
+    }, [])
+  )
 
   return (
     <ControlsButton onClick={onClick}>{t("controls.hide_core")}</ControlsButton>

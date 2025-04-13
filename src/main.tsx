@@ -5,7 +5,6 @@ import { App } from "./app"
 import "./style.css"
 import { installPolyfills } from "./polyfills"
 import { I18nProvider } from "./i18n"
-import { RecoilRoot } from "recoil"
 import { Disconnections } from "./components/disconnections"
 
 import { error } from "@tauri-apps/plugin-log"
@@ -21,12 +20,10 @@ window.addEventListener("error", (event) => {
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <RecoilRoot>
-      <I18nProvider>
-        <App />
-        <Disconnections />
-        <AutoUpdate />
-      </I18nProvider>
-    </RecoilRoot>
+    <I18nProvider>
+      <App />
+      <Disconnections />
+      <AutoUpdate />
+    </I18nProvider>
   </React.StrictMode>
 )
