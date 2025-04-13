@@ -9,6 +9,7 @@ import { Disconnections } from "./components/disconnections"
 
 import { error } from "@tauri-apps/plugin-log"
 import { AutoUpdate } from "./components/autoUpdate"
+import { createStore, Provider } from "jotai"
 
 installPolyfills()
 
@@ -18,12 +19,16 @@ window.addEventListener("error", (event) => {
   error(`${event.message}`)
 })
 
+const jotaiStore = createStore()
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <I18nProvider>
-      <App />
-      <Disconnections />
-      <AutoUpdate />
+      <Provider store={jotaiStore}>
+        <App />
+        {/* <Disconnections /> */}
+        <AutoUpdate />
+      </Provider>
     </I18nProvider>
   </React.StrictMode>
 )

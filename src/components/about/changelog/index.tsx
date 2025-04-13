@@ -26,6 +26,8 @@ export const Changelog = ({ onClose }: { onClose: () => void }) => {
 const ChangelogInner = () => {
   const changelogMarkdown = useAtomValue(pocketSyncChangelogSelector)
 
+  // console.log({ changelogMarkdown })
+
   const tidiedChangelog = useMemo(() => {
     return changelogMarkdown
       .replace(/\*\*Full Changelog\*\*: ([^\n]+)/gi, "")

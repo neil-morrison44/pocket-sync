@@ -31,6 +31,8 @@ export const GithubReleasesSelectorFamily = atomFamilyDeepEqual<
       response.headers.get("x-ratelimit-remaining") || "60"
     )
 
+    console.log({ remainingRateLimit })
+
     if (remainingRateLimit < 1) {
       const timeTillReset = parseInt(
         response.headers.get("x-ratelimit-reset") || "0"

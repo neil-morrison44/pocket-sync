@@ -1,5 +1,6 @@
 import React, {
   ReactNode,
+  startTransition,
   Suspense,
   useLayoutEffect,
   useMemo,
@@ -59,10 +60,18 @@ export const About = () => {
 
   return (
     <div className="about">
-      {changelogOpen && <Changelog onClose={() => setChangelogOpen(false)} />}
+      {changelogOpen && (
+        <Changelog
+          onClose={() => startTransition(() => setChangelogOpen(false))}
+        />
+      )}
       <div className="about__sponsor">
         <Suspense>
-          <div className="link" onClick={() => setChangelogOpen(true)}>
+          <div
+            className="link"
+            onClick={() => startTransition(() => setChangelogOpen(true))}
+            // onClick={() => setChangelogOpen(true)}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
