@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import { ReactNode, startTransition } from "react"
 import { useTranslation } from "react-i18next"
 
 type ControlsSelectProps<T extends string> = {
@@ -23,7 +23,9 @@ export const ControlsSelect = <T extends string>({
       {children}
       <select
         value={selected}
-        onChange={({ target }) => onChange(target.value as T)}
+        onChange={({ target }) =>
+          startTransition(() => onChange(target.value as T))
+        }
       >
         {options.map((v) => (
           <option value={v} key={v}>

@@ -16,11 +16,10 @@ export const pocketSyncChangelogSelector = atom<Promise<string>>(
 )
 
 export const GithubReleasesSelectorFamily = atomFamilyDeepEqual<
-  { owner: string; repo: string; latest?: string },
+  { owner: string; repo: string },
   Atom<Promise<GithubRelease[]>>
->(({ owner, repo, latest }) =>
+>(({ owner, repo }) =>
   atom(async (get, { signal }) => {
-    if (!latest) await get(coreInventoryAtom)
     const headers = await get(githubHeadersSelector)
     const response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/releases`,
@@ -30,8 +29,6 @@ export const GithubReleasesSelectorFamily = atomFamilyDeepEqual<
     const remainingRateLimit = parseInt(
       response.headers.get("x-ratelimit-remaining") || "60"
     )
-
-    console.log({ remainingRateLimit })
 
     if (remainingRateLimit < 1) {
       const timeTillReset = parseInt(

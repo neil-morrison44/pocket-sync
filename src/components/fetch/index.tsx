@@ -205,7 +205,6 @@ const ArchiveOrgItem = ({
   extensions?: string[]
   onRemove: () => void
 }) => {
-  console.log({ name })
   const { installRequiredFiles, inProgress, percent, message } =
     useInstallRequiredFiles(
       `install_archive_files-${btoa(name).replaceAll("=", "")}`

@@ -11,6 +11,7 @@ import { confirm } from "@tauri-apps/plugin-dialog"
 import { WarningIcon } from "../requiredFiles/warningIcon"
 import { Tip } from "../../../tip"
 import { useAtomValue } from "jotai"
+import { useSmoothedAtomValue } from "../../../../utils/jotai"
 
 type DisplayModesProps = {
   coreName: string
@@ -42,9 +43,8 @@ const DISPLAY_MODES = {
 }
 
 export const DisplayModes = ({ coreName }: DisplayModesProps) => {
-  const videoJson = useAtomValue(VideoJSONSelectorFamily(coreName))
+  const videoJson = useSmoothedAtomValue(VideoJSONSelectorFamily(coreName))
   const pocketPath = useAtomValue(pocketPathAtom)
-
   const { t } = useTranslation("core_info")
 
   const activeModes = useMemo(() => {

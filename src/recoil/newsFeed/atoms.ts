@@ -26,9 +26,9 @@ const baseNewsFeedAtom = atomWithRefresh(async (_get) => ({
 }))
 
 export const newsFeedAtom = withAtomEffect(baseNewsFeedAtom, (_get, set) => {
-  const interval = setInterval(async () => {
-    set(baseNewsFeedAtom)
-  }, INTERVAL_MINS * 60 * 1000)
-
+  const interval = setInterval(
+    () => set(baseNewsFeedAtom),
+    INTERVAL_MINS * 60 * 1000
+  )
   return () => clearInterval(interval)
 })

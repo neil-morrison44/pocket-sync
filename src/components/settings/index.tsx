@@ -25,6 +25,7 @@ import { HiddenCores } from "./items/hiddenCores"
 import { GithubToken } from "./items/githubToken"
 import { GBPalettesConversion } from "./items/gbPalettes"
 import { useAtom, useAtomValue } from "jotai"
+import { useSmoothedAtom, useSmoothedAtomValue } from "../../utils/jotai"
 
 export const Settings = () => {
   const config = useAtomValue(PocketSyncConfigSelector)
@@ -33,12 +34,14 @@ export const Settings = () => {
   const [patreonEmailInput, setPatreonEmail] = useState(
     config.patreon_email || ""
   )
-  const [alwaysUseEnglish, setAlwaysUseEnglish] = useAtom(alwaysUseEnglishAtom)
-
-  const [turboDownloads, setTurboDownloads] = useAtom(turboDownloadsAtom)
-  const [keepPlatformData, setKeepPlatformData] = useAtom(keepPlatformDataAtom)
-  const skipAlternateAssets = useAtomValue(skipAlternateAssetsSelector)
-  const [reconnectWhenOpened, setReconnectWhenOpened] = useAtom(
+  const [alwaysUseEnglish, setAlwaysUseEnglish] =
+    useSmoothedAtom(alwaysUseEnglishAtom)
+  const [turboDownloads, setTurboDownloads] =
+    useSmoothedAtom(turboDownloadsAtom)
+  const [keepPlatformData, setKeepPlatformData] =
+    useSmoothedAtom(keepPlatformDataAtom)
+  const skipAlternateAssets = useSmoothedAtomValue(skipAlternateAssetsSelector)
+  const [reconnectWhenOpened, setReconnectWhenOpened] = useSmoothedAtom(
     reconnectWhenOpenedAtom
   )
   const updateConfig = useUpdateConfig()
@@ -48,7 +51,7 @@ export const Settings = () => {
     []
   )
 
-  const patreonUrls = useAtomValue(patreonKeyListSelector)
+  const patreonUrls = useSmoothedAtomValue(patreonKeyListSelector)
 
   return (
     <div className="settings">
@@ -148,7 +151,10 @@ export const Settings = () => {
               type="checkbox"
               checked={turboDownloads.enabled}
               onChange={({ target }) =>
-                setTurboDownloads((t) => ({ ...t, enabled: target.checked }))
+                setTurboDownloads({
+                  ...turboDownloads,
+                  enabled: target.checked,
+                })
               }
             />
           </label>
@@ -167,7 +173,10 @@ export const Settings = () => {
               type="checkbox"
               checked={keepPlatformData.enabled}
               onChange={({ target }) =>
-                setKeepPlatformData((t) => ({ ...t, enabled: target.checked }))
+                setKeepPlatformData({
+                  ...keepPlatformData,
+                  enabled: target.checked,
+                })
               }
             />
           </label>
@@ -228,10 +237,10 @@ export const Settings = () => {
               type="checkbox"
               checked={reconnectWhenOpened.enable}
               onChange={({ target }) => {
-                setReconnectWhenOpened((r) => ({
-                  ...r,
+                setReconnectWhenOpened({
+                  ...reconnectWhenOpened,
                   enable: target.checked,
-                }))
+                })
               }}
             />
           </label>

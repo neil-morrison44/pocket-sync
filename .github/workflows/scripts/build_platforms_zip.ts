@@ -73,7 +73,6 @@ export const buildPlatformZip = async ({ github }: { github: Octokit }) => {
         try {
           await multiZip.add(filename, new zip.BlobReader(dataBlob))
         } catch (err) {
-          console.log(filename)
           console.error(err)
         }
       }
@@ -90,7 +89,6 @@ export const buildPlatformZip = async ({ github }: { github: Octokit }) => {
         try {
           await multiZip.add(filename, new zip.BlobReader(dataBlob))
         } catch (err) {
-          console.log(filename)
           console.error(err)
         }
       }

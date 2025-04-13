@@ -108,7 +108,7 @@ export const CoreInputs = ({
         </select>
       )}
       <ColourContextProviderFromConfig>
-        <Suspense>
+        <Suspense fallback={<div>{"Suspending?"}</div>}>
           <Pocket
             screenMaterial={
               <meshPhysicalMaterial

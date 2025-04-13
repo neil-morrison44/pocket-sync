@@ -1,8 +1,7 @@
 import { listen } from "@tauri-apps/api/event"
 import { atom } from "jotai"
 import { withAtomEffect } from "jotai-effect"
-import { atomWithStorage } from "jotai/utils"
-import { createAppLocalStorage } from "../../../../utils/jotai"
+import { atomWithAppLocalStorage } from "../../../../utils/jotai"
 
 const BaseSavesInvalidationAtom = atom<number>(0)
 
@@ -17,18 +16,11 @@ export const SavesInvalidationAtom = withAtomEffect(
   }
 )
 
-export const MiSTerCredsAtom = atomWithStorage(
-  "mister_creds",
-  {
-    host: "",
-    user: "root",
-    password: "1",
-  },
-  createAppLocalStorage(),
-  {
-    getOnInit: true,
-  }
-)
+export const MiSTerCredsAtom = atomWithAppLocalStorage("mister_creds", {
+  host: "",
+  user: "root",
+  password: "1",
+})
 
 export type MiSTerSaveJoin = { pocket: string; mister: string }
 
@@ -81,11 +73,7 @@ export const DEFAULT_MISTER_SAVE_MAPPING = [
   { pocket: "gamete", mister: "Gamate" },
 ] satisfies MiSTerSaveJoin[]
 
-export const saveMappingAtom = atomWithStorage<MiSTerSaveJoin[]>(
+export const saveMappingAtom = atomWithAppLocalStorage<MiSTerSaveJoin[]>(
   "mister_save_mapping",
-  DEFAULT_MISTER_SAVE_MAPPING,
-  createAppLocalStorage(),
-  {
-    getOnInit: true,
-  }
+  DEFAULT_MISTER_SAVE_MAPPING
 )

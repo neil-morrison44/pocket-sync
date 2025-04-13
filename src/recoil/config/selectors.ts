@@ -42,6 +42,7 @@ export const PocketSyncConfigSelector = atom<Promise<PocketSyncConfig>>(
       )
     }
 
+    console.log(file)
     return readJSONFile<PocketSyncConfig>(file)
   }
 )

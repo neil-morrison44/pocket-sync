@@ -1,4 +1,10 @@
-import { Suspense, useCallback, useMemo, useState } from "react"
+import {
+  startTransition,
+  Suspense,
+  useCallback,
+  useMemo,
+  useState,
+} from "react"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import { coreInventoryAtom } from "../../recoil/inventory/atoms"
 import { cateogryListselector } from "../../recoil/inventory/selectors"
@@ -24,6 +30,7 @@ import {
   sortingOptionAtom,
 } from "../../recoil/cores/atoms"
 import { useAtom, useAtomValue } from "jotai"
+import { useSmoothedAtomValue } from "../../utils/jotai"
 
 export const Cores = () => {
   const [selectedCore, setSelectedCore] = useAtom(selectedSubviewSelector)
@@ -87,7 +94,9 @@ export const Cores = () => {
       </Controls>
 
       {updateAllOpen ? (
-        <UpdateAll onClose={closeUpdateAllCallback} />
+        <Suspense>
+          <UpdateAll onClose={closeUpdateAllCallback} />
+        </Suspense>
       ) : (
         <SearchContextProvider
           query={searchQuery}
@@ -98,7 +107,7 @@ export const Cores = () => {
               sortMode={sortMode}
               onSelect={(core) => {
                 pushScroll()
-                setSelectedCore(core)
+                startTransition(() => setSelectedCore(core))
               }}
             />
           </Suspense>
@@ -119,7 +128,7 @@ const CoreList = ({
 }) => {
   const { t } = useTranslation("cores")
   const coresList = useAtomValue(coresListSelector)
-  const coreInventory = useAtomValue(coreInventoryAtom)
+  const coreInventory = useSmoothedAtomValue(coreInventoryAtom)
 
   const notInstalledCores = useMemo(
     () =>

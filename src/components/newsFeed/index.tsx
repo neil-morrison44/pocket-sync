@@ -6,14 +6,15 @@ import { useTranslation, Trans } from "react-i18next"
 
 import "./index.css"
 import { TimeAgo } from "./timeAgo"
-import { useAtomValue, useSetAtom } from "jotai"
+import { useSetAtom } from "jotai"
+import { useSmoothedAtomValue } from "../../utils/jotai"
 
 type NewsFeedProps = {
   deepLinks?: boolean
 }
 
 export const NewsFeed = ({ deepLinks = false }: NewsFeedProps) => {
-  const { items, lastUpdated } = useAtomValue(newsFeedAtom)
+  const { items, lastUpdated } = useSmoothedAtomValue(newsFeedAtom)
   const viewCore = useSetAtom(currentViewAtom)
   const listRef = useYScrollAsXScroll()
   const { t } = useTranslation("news_feed")

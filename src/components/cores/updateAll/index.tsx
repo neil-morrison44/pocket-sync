@@ -214,7 +214,7 @@ const UpdateAllList = ({
 
   const getUpdateList = useAtomCallback(
     useCallback(
-      (get, _set) => async () => {
+      async (get, _set) => {
         const list = await get(installedCoresWithUpdatesSelector)
         setUpdateList(
           list.map(({ coreName }) => ({

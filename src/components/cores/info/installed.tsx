@@ -13,7 +13,13 @@ import { Releases } from "./releases"
 import { Version } from "../version"
 import { useUninstallCore } from "../../../hooks/useUninstallCore"
 import { useInstallCore } from "../../../hooks/useInstallCore"
-import { Suspense, useCallback, useMemo, useState } from "react"
+import {
+  startTransition,
+  Suspense,
+  useCallback,
+  useMemo,
+  useState,
+} from "react"
 import { CorePlatformInfo } from "./platform"
 import { Loader } from "../../loader"
 import { SponsorLinks } from "./sponsorLinks"
@@ -42,6 +48,7 @@ import { DownloadCount } from "./downloadCounts"
 import { JTAnalogizerSettings } from "./jtanalogizer"
 import { InstallOlderVersion } from "./installOlderVersion"
 import { useAtomValue, useSetAtom } from "jotai"
+import { useSmoothedAtomValue } from "../../../utils/jotai"
 
 type CoreInfoProps = {
   coreName: string
@@ -49,11 +56,9 @@ type CoreInfoProps = {
 }
 
 export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
-  const coreInfo = useAtomValue(CoreInfoSelectorFamily(coreName))
+  const coreInfo = useSmoothedAtomValue(CoreInfoSelectorFamily(coreName))
   const uninstall = useUninstallCore()
-  const { installCore } = useInstallCore()
   const inventoryItem = useInventoryItem(coreName)
-  const downloadUrl = useAtomValue(DownloadURLSelectorFamily(coreName))
 
   const [requiredFilesOpen, setRequiredFilesOpen] = useState(false)
   const [inputsOpen, setInputsOpen] = useState(false)
@@ -66,7 +71,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
     setViewAndSubview({ view: "Cores", selected: replacementCore })
   }, [replacementCore, setViewAndSubview])
 
-  const mainPlatformId = useAtomValue(
+  const mainPlatformId = useSmoothedAtomValue(
     CoreMainPlatformIdSelectorFamily(coreName)
   )
 
@@ -90,11 +95,9 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             }}
           />
         </Suspense>
-        {downloadUrl && (
-          <ControlsButton onClick={() => installCore(coreName, downloadUrl)}>
-            {t("controls.update")}
-          </ControlsButton>
-        )}
+        <Suspense>
+          <DownloadButton coreName={coreName} />
+        </Suspense>
       </Controls>
 
       {requiredFilesOpen && (
@@ -113,11 +116,13 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
       )}
 
       {inputsOpen && (
-        <CoreInputs
-          coreName={coreName}
-          onClose={() => setInputsOpen(false)}
-          platformId={mainPlatformId}
-        />
+        <Suspense>
+          <CoreInputs
+            coreName={coreName}
+            onClose={() => setInputsOpen(false)}
+            platformId={mainPlatformId}
+          />
+        </Suspense>
       )}
 
       {coreSettingsOpen && (
@@ -317,10 +322,27 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
         </div>
 
         {inventoryItem && inventoryItem.repository.platform === "github" && (
-          <Releases inventoryItem={inventoryItem} />
+          <Suspense fallback={<div></div>}>
+            <Releases inventoryItem={inventoryItem} />
+          </Suspense>
         )}
       </section>
     </div>
+  )
+}
+
+const DownloadButton = ({ coreName }: { coreName: string }) => {
+  const { t } = useTranslation("core_info")
+  const { installCore } = useInstallCore()
+  const downloadUrl = useAtomValue(DownloadURLSelectorFamily(coreName))
+
+  if (!downloadUrl) return null
+  return (
+    <ControlsButton
+      onClick={() => startTransition(() => installCore(coreName, downloadUrl))}
+    >
+      {t("controls.update")}
+    </ControlsButton>
   )
 }
 

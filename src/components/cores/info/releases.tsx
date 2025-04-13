@@ -1,13 +1,14 @@
 import { InventoryItem } from "../../../types"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
-import { useState } from "react"
+import { Suspense, useMemo, useState } from "react"
 import { Link } from "../../link"
 import { GithubReleasesSelectorFamily } from "../../../recoil/github/selectors"
 import { useTranslation } from "react-i18next"
 
 import "./releases.css"
 import { useAtomValue } from "jotai"
+import { loadable } from "jotai/utils"
 
 type ReleasesProps = {
   inventoryItem: InventoryItem
@@ -19,16 +20,16 @@ export const Releases = ({ inventoryItem }: ReleasesProps) => {
   if (inventoryItem.repository.platform !== "github") {
     throw new Error("Can't show non-github releases")
   }
-  const { t } = useTranslation("core_info")
-  const [showAll, setShowAll] = useState(false)
 
   const githubReleases = useAtomValue(
     GithubReleasesSelectorFamily({
       owner: inventoryItem.repository.owner,
       repo: inventoryItem.repository.name,
-      latest: inventoryItem.releases[0].core.metadata.version,
     })
   )
+
+  const { t } = useTranslation("core_info")
+  const [showAll, setShowAll] = useState(false)
 
   return (
     <div>

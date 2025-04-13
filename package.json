@@ -47,7 +47,7 @@
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.0",
     "simplex-noise": "^4.0.3",
-    "three": "0.175.0"
+    "three": "0.174.0"
   },
   "devDependencies": {
     "@octokit/rest": "^21.1.1",

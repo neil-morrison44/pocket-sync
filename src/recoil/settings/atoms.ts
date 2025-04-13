@@ -1,38 +1,27 @@
-import { atomWithStorage } from "jotai/utils"
-import { createAppLocalStorage } from "../../utils/jotai"
+import { atomWithAppLocalStorage } from "../../utils/jotai"
 
-export const alwaysUseEnglishAtom = atomWithStorage<{ value: boolean }>(
+export const alwaysUseEnglishAtom = atomWithAppLocalStorage<{ value: boolean }>(
   "only-use-english",
   {
     value: false,
-  },
-  createAppLocalStorage(),
-  { getOnInit: true }
+  }
 )
 
-export const turboDownloadsAtom = atomWithStorage<{ enabled: boolean }>(
+export const turboDownloadsAtom = atomWithAppLocalStorage<{ enabled: boolean }>(
   "turbo-downloads",
   {
     enabled: false,
-  },
-  createAppLocalStorage(),
-  { getOnInit: true }
+  }
 )
 
-export const keepPlatformDataAtom = atomWithStorage<{ enabled: boolean }>(
-  "keep-platform-data",
-  {
-    enabled: true,
-  },
-  createAppLocalStorage(),
-  { getOnInit: true }
-)
+export const keepPlatformDataAtom = atomWithAppLocalStorage<{
+  enabled: boolean
+}>("keep-platform-data", {
+  enabled: true,
+})
 
-export const githubTokenAtom = atomWithStorage<{ value: null | string }>(
-  "github-token-atom",
-  {
-    value: null,
-  },
-  createAppLocalStorage(),
-  { getOnInit: true }
-)
+export const githubTokenAtom = atomWithAppLocalStorage<{
+  value: null | string
+}>("github-token-atom", {
+  value: null,
+})

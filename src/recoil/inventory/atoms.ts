@@ -33,10 +33,10 @@ const coreInventoryAtomBase = atomWithRefresh(
 export const coreInventoryAtom = withAtomEffect(
   coreInventoryAtomBase,
   (_get, set) => {
-    const interval = setInterval(async () => {
-      set(coreInventoryAtomBase)
-    }, INTERVAL_MINS * 60 * 1000)
-
+    const interval = setInterval(
+      () => set(coreInventoryAtomBase),
+      INTERVAL_MINS * 60 * 1000
+    )
     return () => clearInterval(interval)
   }
 )

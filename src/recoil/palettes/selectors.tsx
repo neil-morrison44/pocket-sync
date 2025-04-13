@@ -111,25 +111,25 @@ export const palleteZipURLSelector = atom<Promise<string | null>>(
   }
 )
 
-const palleteZipBlobSelector = atom<Promise<Blob | null>>(async (get) => {
-  const zipUrl = await get(palleteZipURLSelector)
-  if (!zipUrl) return null
+const palleteZipBlobSelector = atom<Promise<Blob | null>>(
+  async (get, { signal }) => {
+    const zipUrl = await get(palleteZipURLSelector)
+    if (!zipUrl) return null
 
-  const fileResponse = await TauriFetch(zipUrl, {
-    method: "GET",
-    connectTimeout: 60e3,
-  })
+    const fileResponse = await TauriFetch(zipUrl, {
+      method: "GET",
+      connectTimeout: 60e3,
+      signal,
+    })
 
-  console.log({ fileResponse })
+    const data = await fileResponse.arrayBuffer()
+    const fileBlob = new Blob([data], {
+      type: "application/zip",
+    })
 
-  const data = await fileResponse.arrayBuffer()
-
-  const fileBlob = new Blob([data], {
-    type: "application/zip",
-  })
-
-  return fileBlob
-})
+    return fileBlob
+  }
+)
 
 export const downloadablePalettesSelector = atom<
   Promise<{ name: string; paletteData: Blob; path: string }[] | null>

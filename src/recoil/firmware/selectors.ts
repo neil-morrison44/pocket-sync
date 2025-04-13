@@ -76,8 +76,10 @@ export const downloadedFirmwareSelector = atom<Promise<string | null>>(
 
 export const updateAvailableSelector = atom<Promise<string | null>>(
   async (get) => {
-    const latestFirmware = await get(latestFirmwareSelector)
-    const currentFirmware = await get(currentFirmwareVersionSelector)
+    const [latestFirmware, currentFirmware] = await Promise.all([
+      get(latestFirmwareSelector),
+      get(currentFirmwareVersionSelector),
+    ])
 
     if (currentFirmware.version !== latestFirmware.version)
       return latestFirmware.version

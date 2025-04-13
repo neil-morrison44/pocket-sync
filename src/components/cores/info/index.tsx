@@ -1,7 +1,7 @@
 import { coresListSelector } from "../../../recoil/selectors"
+import { useSmoothedAtomValue } from "../../../utils/jotai"
 import { InstalledCoreInfo } from "./installed"
 import { NotInstalledCoreInfo } from "./notInstalled"
-import { useAtomValue } from "jotai"
 
 type CoreInfoProps = {
   coreName: string
@@ -9,7 +9,7 @@ type CoreInfoProps = {
 }
 
 export const CoreInfo = (props: CoreInfoProps) => {
-  const coresList = useAtomValue(coresListSelector)
+  const coresList = useSmoothedAtomValue(coresListSelector)
 
   if (coresList.includes(props.coreName)) {
     return <InstalledCoreInfo {...props} />
