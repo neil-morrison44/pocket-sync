@@ -24,11 +24,10 @@ import { patreonKeyListSelector } from "../../recoil/settings/selectors"
 import { HiddenCores } from "./items/hiddenCores"
 import { GithubToken } from "./items/githubToken"
 import { GBPalettesConversion } from "./items/gbPalettes"
-import { useAtom, useAtomValue } from "jotai"
 import { useSmoothedAtom, useSmoothedAtomValue } from "../../utils/jotai"
 
 export const Settings = () => {
-  const config = useAtomValue(PocketSyncConfigSelector)
+  const config = useSmoothedAtomValue(PocketSyncConfigSelector)
   const [archiveUrlInput, setArchiveUrl] = useState(config.archive_url || "")
 
   const [patreonEmailInput, setPatreonEmail] = useState(

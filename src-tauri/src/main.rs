@@ -116,6 +116,9 @@ async fn read_binary_file(
     let pocket_path = state.0.pocket_path.read().await;
     let path = pocket_path.join(path);
 
+    let arc_lock = state.0.file_locker.find_lock_for(&path).await;
+    let _read_lock = arc_lock.read().await;
+
     if let Ok(mut f) = if let Ok(cache_dir) = app_handle.path().app_cache_dir() {
         get_file_with_cache(&path, &cache_dir).await
     } else {
@@ -141,6 +144,9 @@ async fn read_text_file(
     debug!("Command: read_text_file - {path}");
     let pocket_path = state.0.pocket_path.read().await;
     let path = pocket_path.join(path);
+
+    let arc_lock = state.0.file_locker.find_lock_for(&path).await;
+    let _read_lock = arc_lock.read().await;
 
     let mut f = if let Ok(cache_dir) = app_handle.path().app_cache_dir() {
         get_file_with_cache(&path, &cache_dir).await
@@ -168,14 +174,20 @@ async fn file_exists(state: tauri::State<'_, PocketSyncState>, path: &str) -> Re
 }
 
 #[tauri::command(async)]
-async fn save_file(path: &str, buffer: Vec<u8>) -> Result<bool, ()> {
+async fn save_file(
+    path: &str,
+    buffer: Vec<u8>,
+    state: tauri::State<'_, PocketSyncState>,
+) -> Result<bool, ()> {
     debug!("Command: save_file - {path}");
     let file_path = PathBuf::from(path);
-    tokio::fs::create_dir_all(file_path.parent().unwrap())
-        .await
-        .unwrap();
+    let folder_path = file_path.parent().unwrap();
+    let arc_lock = state.0.file_locker.find_lock_for(&file_path).await;
+    let _write_lock = arc_lock.write().await;
+    tokio::fs::create_dir_all(&folder_path).await.unwrap();
     let mut file = tokio::fs::File::create(file_path).await.unwrap();
     file.write_all(&buffer).await.unwrap();
+    file.flush().await.unwrap();
     Ok(true)
 }
 

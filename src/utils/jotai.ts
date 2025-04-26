@@ -49,8 +49,7 @@ export const atomWithAppLocalStorage = <T>(
     },
     async (_get, set, newValue: T) => {
       set(baseAtom, newValue)
-
-      const text = JSON.stringify(newValue)
+      const text = JSON.stringify(newValue, null, 2)
       await writeTextFile(`${fileName}.json`, text, {
         baseDir: BaseDirectory.AppLocalData,
       })

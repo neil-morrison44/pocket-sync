@@ -58,8 +58,8 @@ export const Layout = () => {
   const changeView = useCallback(
     (viewName: (typeof VIEWS_LIST)[number]) => {
       startTransition(() => {
-        setViewAndSubview({ view: viewName, selected: null })
         window.scrollTo({ top: 0 })
+        setViewAndSubview({ view: viewName, selected: null })
       })
     },
     [setViewAndSubview]
