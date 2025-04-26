@@ -64,24 +64,17 @@ export const useSmoothedAtomValue = <T>(atom: Atom<Promise<T>>) => {
     })
   }, [store, atom])
 
+  useEffect(() => {
+    store.get(atom).then((value) => startTransition(() => setState(value)))
+  }, [atom])
+
   return state
 }
 
 export const useSmoothedAtom = <T>(
   atom: WritableAtom<Promise<T>, [T], Promise<void>>
 ) => {
-  const store = useStore()
-  const [firstProm] = useState(() => store.get(atom))
-  const value = use(firstProm)
-  const [state, setState] = useState<T>(value)
-
-  useEffect(() => {
-    store.sub(atom, async () => {
-      const value = await store.get(atom)
-      startTransition(() => setState(value))
-    })
-  }, [store, atom])
-
   const setThing = useSetAtom(atom)
-  return [state, setThing] as const
+  const value = useSmoothedAtomValue(atom)
+  return [value, setThing] as const
 }
