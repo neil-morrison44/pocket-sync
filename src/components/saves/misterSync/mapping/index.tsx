@@ -24,13 +24,14 @@ import {
   useAtomValue,
   useSetAtom,
 } from "jotai"
+import { useSetAtomFnSet, useSmoothedAtom } from "../../../../utils/jotai"
 
 type SaveMappingProps = {
   onClose: () => void
 }
 
 export const SaveMapping = ({ onClose }: SaveMappingProps) => {
-  const [joins, setJoins] = useAtom(saveMappingAtom)
+  const [joins, setJoins] = useSmoothedAtom(saveMappingAtom)
   const { t } = useTranslation("mister_sync")
 
   return (
@@ -63,7 +64,7 @@ type PlatformsListProps = {
 const PlatformsList = ({ joins }: PlatformsListProps) => {
   const misterPlatforms = useAtomValue(platformsListMiSTerSelector)
   const pocketPlatforms = useAtomValue(platformListPocketSelector)
-  const setJoins = useSetAtom(saveMappingAtom)
+  const setJoins = useSetAtomFnSet(saveMappingAtom)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   const canvasMousePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })

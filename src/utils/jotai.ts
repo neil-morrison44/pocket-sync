@@ -86,25 +86,39 @@ export const useSmoothedAtom = <T>(
   return [value, setThing] as const
 }
 
+export const useSetAtomFnSet = <T>(
+  atom: WritableAtom<Promise<T>, [T], Promise<void>>
+) => {
+  const setAtom = useAtomCallback(
+    useCallback(
+      async (
+        get,
+        set,
+        updater: ((current: T) => T) | ((current: T) => Promise<T>) | T
+      ) => {
+        switch (typeof updater) {
+          case "function": {
+            const currentValue = await get(atom)
+            // @ts-expect-error have checked it's a function...
+            const newValue = await updater(currentValue)
+            set(atom, newValue)
+            break
+          }
+          default: {
+            set(atom, updater)
+          }
+        }
+      },
+      []
+    )
+  )
+  return setAtom
+}
+
 export const useAtomFnSet = <T>(
   atom: WritableAtom<Promise<T>, [T], Promise<void>>
 ) => {
   const value = useAtomValue(atom)
-  const setAtom = useAtomCallback(
-    useCallback(async (get, set, updater: ((current: T) => T) | T) => {
-      switch (typeof updater) {
-        case "function": {
-          const currentValue = await get(atom)
-          // @ts-expect-error have checked it's a function...
-          const newValue = updater(currentValue)
-          set(atom, newValue)
-          break
-        }
-        default: {
-          set(atom, updater)
-        }
-      }
-    }, [])
-  )
+  const setAtom = useSetAtomFnSet(atom)
   return [value, setAtom] as const
 }

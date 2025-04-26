@@ -74,7 +74,9 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
 
   useEffect(() => {
     return () => {
-      if (connected) emit("mister-save-sync-end")
+      if (connected) {
+        emit("mister-save-sync-end")
+      }
     }
   }, [connected])
 
@@ -107,7 +109,11 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
         {selectedSave && <SaveStatus key={selectedSave} path={selectedSave} />}
       </Suspense>
       <div className="mister-sync__content">
-        {connected && <SavesList onSelect={setSelectedSave} query={query} />}
+        {connected && (
+          <Suspense>
+            <SavesList onSelect={setSelectedSave} query={query} />
+          </Suspense>
+        )}
         {connecting && <Loader />}
         {!connected && !connecting && (
           <>
