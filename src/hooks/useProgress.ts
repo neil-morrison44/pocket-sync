@@ -1,5 +1,5 @@
 import { listen } from "@tauri-apps/api/event"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { startTransition, useEffect, useMemo, useRef, useState } from "react"
 import { ProgressEvent } from "../types"
 
 export const useProgress = (name: string, onEnd?: () => void) => {
@@ -38,21 +38,23 @@ export const useProgress = (name: string, onEnd?: () => void) => {
     const unlisten = listen<ProgressEvent>(
       `progress-event::${name}`,
       ({ payload }) => {
-        setPercent(payload.progress * 100)
-        if (payload.message) setMessage(payload.message)
+        startTransition(() => {
+          setPercent(payload.progress * 100)
+          if (payload.message) setMessage(payload.message)
 
-        if (!hasStartedRef.current) {
-          setInProgress(true)
-          setStartTime(Date.now())
-        }
+          if (!hasStartedRef.current) {
+            setInProgress(true)
+            setStartTime(Date.now())
+          }
 
-        hasStartedRef.current = true
+          hasStartedRef.current = true
 
-        if (payload.finished) {
-          hasStartedRef.current = false
-          setInProgress(false)
-          onEnd?.()
-        }
+          if (payload.finished) {
+            hasStartedRef.current = false
+            setInProgress(false)
+            onEnd?.()
+          }
+        })
       }
     )
     return () => {

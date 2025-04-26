@@ -2,6 +2,7 @@ import { Modal } from "../../modal"
 import {
   Dispatch,
   SetStateAction,
+  startTransition,
   Suspense,
   useCallback,
   useEffect,
@@ -43,7 +44,13 @@ type UpdateListItem = {
 }
 
 export const UpdateAll = ({ onClose }: UpdateAllProps) => {
-  const [updateList, setUpdateList] = useState<UpdateListItem[]>([])
+  const [updateList, setUpdateListRaw] = useState<UpdateListItem[]>([])
+
+  const setUpdateList = useCallback(
+    (...args: Parameters<typeof setUpdateListRaw>) =>
+      startTransition(() => setUpdateListRaw(...args)),
+    [setUpdateListRaw]
+  )
   const { t } = useTranslation("update_all")
   const hasDoneAnUpdateRef = useRef(false)
 
