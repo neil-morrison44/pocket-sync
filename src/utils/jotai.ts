@@ -4,10 +4,17 @@ import {
   readTextFile,
   writeTextFile,
 } from "@tauri-apps/plugin-fs"
-import { atomFamily, loadable, unwrap } from "jotai/utils"
+import { atomFamily, loadable, unwrap, useAtomCallback } from "jotai/utils"
 import deepEqual from "fast-deep-equal/es6"
-import { Atom, atom, WritableAtom, useSetAtom, useStore } from "jotai"
-import { startTransition, use, useEffect, useState } from "react"
+import {
+  Atom,
+  atom,
+  WritableAtom,
+  useSetAtom,
+  useStore,
+  useAtomValue,
+} from "jotai"
+import { startTransition, use, useCallback, useEffect, useState } from "react"
 import { withAtomEffect } from "jotai-effect"
 
 export const atomFamilyDeepEqual: typeof atomFamily = (initAtom, areEqual) =>
@@ -77,4 +84,27 @@ export const useSmoothedAtom = <T>(
   const setThing = useSetAtom(atom)
   const value = useSmoothedAtomValue(atom)
   return [value, setThing] as const
+}
+
+export const useAtomFnSet = <T>(
+  atom: WritableAtom<Promise<T>, [T], Promise<void>>
+) => {
+  const value = useAtomValue(atom)
+  const setAtom = useAtomCallback(
+    useCallback(async (get, set, updater: ((current: T) => T) | T) => {
+      switch (typeof updater) {
+        case "function": {
+          const currentValue = await get(atom)
+          // @ts-expect-error have checked it's a function...
+          const newValue = updater(currentValue)
+          set(atom, newValue)
+          break
+        }
+        default: {
+          set(atom, updater)
+        }
+      }
+    }, [])
+  )
+  return [value, setAtom] as const
 }

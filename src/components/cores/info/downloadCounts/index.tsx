@@ -33,7 +33,6 @@ const DownloadCountInner = ({
     GithubReleasesSelectorFamily({
       owner,
       repo,
-      latest: latestTag,
     })
   )
 

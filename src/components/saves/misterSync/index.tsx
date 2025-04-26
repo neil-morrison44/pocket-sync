@@ -31,6 +31,7 @@ import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
 import { ControlsSearch } from "../../controls/inputs/search"
 import { useAtom, useAtomValue } from "jotai"
+import { useAtomFnSet } from "../../../utils/jotai"
 
 type MisterSyncProps = {
   onClose: () => void
@@ -42,7 +43,7 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
   const [selectedSave, setSelectedSave] = useState<string | null>(null)
 
   const [query, setQuery] = useState("")
-  const [creds, setCreds] = useAtom(MiSTerCredsAtom)
+  const [creds, setCreds] = useAtomFnSet(MiSTerCredsAtom)
 
   const { t } = useTranslation("mister_sync")
 

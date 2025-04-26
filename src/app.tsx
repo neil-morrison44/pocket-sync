@@ -17,6 +17,7 @@ import { currentViewAtom } from "./recoil/view/atoms"
 import { useTranslation } from "react-i18next"
 import { ColourContextProviderRandomised } from "./components/three/colourContext"
 import { createStore, Provider, useAtom, useSetAtom } from "jotai"
+import { useAtomFnSet } from "./utils/jotai"
 
 const Pocket = React.lazy(() =>
   import("./components/three/pocket").then((m) => ({ default: m.Pocket }))
@@ -24,7 +25,7 @@ const Pocket = React.lazy(() =>
 
 export const App = () => {
   const [pocketPath, setPocketPath] = useAtom(pocketPathAtom)
-  const [reconnectWhenOpened, setReconnectWhenOpened] = useAtom(
+  const [reconnectWhenOpened, setReconnectWhenOpened] = useAtomFnSet(
     reconnectWhenOpenedAtom
   )
   const setView = useSetAtom(currentViewAtom)
