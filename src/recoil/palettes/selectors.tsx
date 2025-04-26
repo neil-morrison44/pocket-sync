@@ -87,7 +87,6 @@ export const palleteZipURLSelector = atom<Promise<string | null>>(
   async (get, { signal }) => {
     const repo = get(paletteRepoAtom)
     const headers = await get(githubHeadersSelector)
-
     const response = await TauriFetch(
       `https://api.github.com/repos/${repo}/releases/latest`,
       {
@@ -96,9 +95,7 @@ export const palleteZipURLSelector = atom<Promise<string | null>>(
         signal,
       }
     )
-
     const data = (await response.json()) as GithubRelease
-
     const zip = (data?.assets || []).find((asset) =>
       asset.name.endsWith(".zip")
     )
@@ -126,21 +123,18 @@ const palleteZipBlobSelector = atom<Promise<Blob | null>>(
     const fileBlob = new Blob([data], {
       type: "application/zip",
     })
-
     return fileBlob
   }
 )
 
 export const downloadablePalettesSelector = atom<
   Promise<{ name: string; paletteData: Blob; path: string }[] | null>
->(async (get) => {
+>(async (get, { signal }) => {
   const zipBlob = await get(palleteZipBlobSelector)
-
   if (!zipBlob) return null
 
-  const abortController = new AbortController()
   const entries = await new zip.ZipReader(new zip.BlobReader(zipBlob), {
-    signal: abortController.signal,
+    signal,
   }).getEntries({})
 
   return Promise.all(

@@ -74,7 +74,11 @@ export const Palettes = () => {
             <ControlsButton onClick={() => setCodeModalOpen(true)}>
               {t("buttons.add_via_code")}
             </ControlsButton>
-            <ControlsButton onClick={() => setTownOpen(true)}>
+            <ControlsButton
+              onClick={() => {
+                setTownOpen(true)
+              }}
+            >
               {t("buttons.palette_town")}
             </ControlsButton>
             <ControlsButton onClick={() => createNewPalette()}>
@@ -84,7 +88,11 @@ export const Palettes = () => {
         )}
       </Controls>
 
-      {townOpen && <PaletteTown onClose={() => setTownOpen(false)} />}
+      {townOpen && (
+        <Suspense>
+          <PaletteTown onClose={() => setTownOpen(false)} />
+        </Suspense>
+      )}
 
       {codeModalOpen && (
         <AddViaCodeModal onClose={() => setCodeModalOpen(false)} />

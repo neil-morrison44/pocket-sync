@@ -71,8 +71,8 @@ export const PaletteTown = ({ onClose }: PaletteTownProps) => {
         {groupedPalettes &&
           Object.entries(groupedPalettes).map(([folder, palettes]) => (
             <Details title={folder} key={folder} sticky>
-              <Suspense fallback={<Loader />}>
-                <Grid>
+              <Grid>
+                <Suspense fallback={<Loader className="palette-town__item" />}>
                   {palettes?.map(({ name, path, installed }) => (
                     <PaletteItem
                       key={path}
@@ -81,8 +81,8 @@ export const PaletteTown = ({ onClose }: PaletteTownProps) => {
                       installed={installed}
                     />
                   ))}
-                </Grid>
-              </Suspense>
+                </Suspense>
+              </Grid>
             </Details>
           ))}
       </div>

@@ -26,7 +26,6 @@ export const atomWithAppLocalStorage = <T>(
       const fileExists = await exists(`${fileName}.json`, {
         baseDir: BaseDirectory.AppLocalData,
       })
-      console.log({ fileExists })
       if (!fileExists) return initialValue
 
       const text = await readTextFile(`${fileName}.json`, {
@@ -39,8 +38,6 @@ export const atomWithAppLocalStorage = <T>(
       } catch (err) {
         console.log(`Error Reading Config File ${fileName}, ${err} \n ${text}`)
       }
-
-      console.log({ value })
       return value
     },
     async (_get, set, newValue: T) => {
