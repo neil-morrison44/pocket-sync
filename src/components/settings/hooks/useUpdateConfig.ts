@@ -7,28 +7,25 @@ import { invokeSaveFile } from "../../../utils/invokes"
 import { Getter, Setter } from "jotai"
 import { useAtomCallback } from "jotai/utils"
 
-export const useUpdateConfig = () => {
-  return useAtomCallback(
-    useCallback(
-      async <T extends keyof PocketSyncConfig>(
-        get: Getter,
-        set: Setter,
-        key: T,
-        value:
-          | PocketSyncConfig[T]
-          | ((current: PocketSyncConfig[T]) => PocketSyncConfig[T])
-      ) => {
-        const currentConfig = await get(PocketSyncConfigSelector)
-        const newValue =
-          typeof value == "function" ? value(currentConfig[key]) : value
-        const newConfig = {
-          ...currentConfig,
-          [key]: newValue,
-        } as PocketSyncConfig
+type updateConfigFn = <T extends keyof PocketSyncConfig>(
+  key: T,
+  value:
+    | PocketSyncConfig[T]
+    | ((current: PocketSyncConfig[T]) => PocketSyncConfig[T])
+) => void
 
-        startTransition(() => set(PocketSyncConfigSelector, newConfig))
-      },
-      []
-    )
+export const useUpdateConfig = (): updateConfigFn => {
+  return useAtomCallback(
+    useCallback(async (get, set, key, value) => {
+      const currentConfig = await get(PocketSyncConfigSelector)
+      const newValue =
+        typeof value == "function" ? value(currentConfig[key]) : value
+      const newConfig = {
+        ...currentConfig,
+        [key]: newValue,
+      } as PocketSyncConfig
+
+      startTransition(() => set(PocketSyncConfigSelector, newConfig))
+    }, [])
   )
 }

@@ -7,7 +7,11 @@ import {
   PathFileInfoSelectorFamily,
 } from "../../recoil/archive/selectors"
 import { useInstallRequiredFiles } from "../../hooks/useInstallRequiredFiles"
-import { FetchFileMetadataWithStatus, FileCopy } from "../../types"
+import {
+  FetchFileMetadataWithStatus,
+  FileCopy,
+  PocketSyncConfig,
+} from "../../types"
 import { Controls } from "../controls"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { NewFetch } from "./new"
@@ -44,7 +48,9 @@ export const Fetch = () => {
       const confirmed = await confirm(t("remove_confirm"), { kind: "warning" })
       if (!confirmed) return
       updateConfig("fetches", (fetches) => {
-        const clonedFetches = [...(fetches ?? [])]
+        const clonedFetches = [
+          ...((fetches as PocketSyncConfig["fetches"]) ?? []),
+        ]
         clonedFetches.splice(index, 1)
         return clonedFetches
       })
