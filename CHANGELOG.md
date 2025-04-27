@@ -1,4 +1,19 @@
 # Changelog
+<a id="v5.7.0"></a>
+# [v5.7.0 - big internal data management stability changes & QOL improvements](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.7.0) - 2025-04-27
+
+Should fix the linux issues (by resetting most Tauri things to their previous known good version), and hopefully the Flatpak issue...
+Moving from Recoil (which isn't maintained anymore) to Jotai (which is) is a massive change, but I think I've tested the app enough.
+
+## What's Changed
+* Swaps completely from Recoil to Jotai by [@neil-morrison44](https://github.com/neil-morrison44) in [#372](https://github.com/neil-morrison44/pocket-sync/pull/372)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.6.2...v5.7.0
+
+[Changes][v5.7.0]
+
+
 <a id="v5.6.2"></a>
 # [v5.6.2 - like v5.6.1 but with the version number actually updated...](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.6.2) - 2025-04-12
 
@@ -1652,6 +1667,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v5.7.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.6.2...v5.7.0
 [v5.6.2]: https://github.com/neil-morrison44/pocket-sync/compare/v5.6.1...v5.6.2
 [v5.6.1]: https://github.com/neil-morrison44/pocket-sync/compare/v5.6.0...v5.6.1
 [v5.6.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.5.0...v5.6.0
