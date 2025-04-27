@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import {
   AllBackupZipsFilesSelectorFamily,
   pocketSavesFilesListSelector,
@@ -16,13 +16,13 @@ import { invokeRestoreZip } from "../../../utils/invokes"
 import { Controls } from "../../controls"
 import { ask } from "@tauri-apps/plugin-dialog"
 import { useSaveScroll } from "../../../hooks/useSaveScroll"
-import { useInvalidateSaveFiles } from "../../../hooks/invalidation"
 import { splitAsPath } from "../../../utils/splitAsPath"
 import { PlatformLabel } from "./platformLabel"
 import { useTranslation } from "react-i18next"
 import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsCheckbox } from "../../controls/inputs/checkbox"
 import { ControlsSearch } from "../../controls/inputs/search"
+import { useAtomValue } from "jotai"
 
 export const SaveInfo = ({
   backupPath,
@@ -31,15 +31,12 @@ export const SaveInfo = ({
   backupPath: string
   onBack: () => void
 }) => {
-  const invalidateSaveFileList = useInvalidateSaveFiles()
   const [searchQuery, setSearchQuery] = useState("")
-  const zipFilesInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const zipFilesInfo = useAtomValue(
     AllBackupZipsFilesSelectorFamily(backupPath)
   )
   const [hideOnlyCurrent, setHideOnlyCurrent] = useState(true)
-  const pocketSaves = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    pocketSavesFilesListSelector
-  )
+  const pocketSaves = useAtomValue(pocketSavesFilesListSelector)
   const { popScroll, pushScroll } = useSaveScroll()
   const { t } = useTranslation("save_info")
 
@@ -107,10 +104,9 @@ export const SaveInfo = ({
       if (yes) {
         await invokeRestoreZip(zipPath, savefile)
         pushScroll()
-        invalidateSaveFileList()
       }
     },
-    [backupPath, invalidateSaveFileList, pushScroll, t]
+    [backupPath, pushScroll, t]
   )
 
   const gridStyling = useMemo<CSSProperties>(() => {

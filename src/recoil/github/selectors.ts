@@ -1,55 +1,53 @@
 import { GithubRelease } from "../../types"
-import { selector, selectorFamily } from "recoil"
 import { coreInventoryAtom } from "../inventory/atoms"
 import { githubHeadersSelector } from "../settings/selectors"
+import { Atom, atom } from "jotai"
+import { atomFamily } from "jotai/utils"
+import { atomFamilyDeepEqual } from "../../utils/jotai"
 
-export const pocketSyncChangelogSelector = selector<string>({
-  key: "pocketSyncChangelogSelector",
-  get: async () => {
+export const pocketSyncChangelogSelector = atom<Promise<string>>(
+  async (_get, { signal }) => {
     const response = await fetch(
-      "https://raw.githubusercontent.com/neil-morrison44/pocket-sync/refs/heads/main/CHANGELOG.md"
+      "https://raw.githubusercontent.com/neil-morrison44/pocket-sync/refs/heads/main/CHANGELOG.md",
+      { signal }
     )
     return response.text()
-  },
-})
+  }
+)
 
-export const GithubReleasesSelectorFamily = selectorFamily<
-  GithubRelease[],
-  { owner: string; repo: string; latest?: string }
->({
-  key: "GithubReleasesSelectorFamily",
-  get:
-    ({ owner, repo, latest }) =>
-    async ({ get }) => {
-      if (!latest) get(coreInventoryAtom)
-      const headers = get(githubHeadersSelector)
-      const response = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/releases`,
-        { headers }
+export const GithubReleasesSelectorFamily = atomFamilyDeepEqual<
+  { owner: string; repo: string },
+  Atom<Promise<GithubRelease[]>>
+>(({ owner, repo }) =>
+  atom(async (get, { signal }) => {
+    const headers = await get(githubHeadersSelector)
+    const response = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/releases`,
+      { headers, signal }
+    )
+
+    const remainingRateLimit = parseInt(
+      response.headers.get("x-ratelimit-remaining") || "60"
+    )
+
+    if (remainingRateLimit < 1) {
+      const timeTillReset = parseInt(
+        response.headers.get("x-ratelimit-reset") || "0"
       )
-
-      const remainingRateLimit = parseInt(
-        response.headers.get("x-ratelimit-remaining") || "60"
+      const resetDate = new Date(timeTillReset * 1000)
+      throw new Error(
+        `GitHub rate limit reached, retry after ${resetDate.toLocaleString()}`
       )
+    }
 
-      if (remainingRateLimit < 1) {
-        const timeTillReset = parseInt(
-          response.headers.get("x-ratelimit-reset") || "0"
-        )
-        const resetDate = new Date(timeTillReset * 1000)
-        throw new Error(
-          `GitHub rate limit reached, retry after ${resetDate.toLocaleString()}`
-        )
-      }
+    const releases = (await response.json()) as GithubRelease[]
 
-      const releases = (await response.json()) as GithubRelease[]
+    const sortedReleases = [...releases].sort((a, b) => {
+      const aDate = new Date(a.published_at)
+      const bDate = new Date(b.published_at)
+      return bDate.getTime() - aDate.getTime()
+    })
 
-      const sortedReleases = [...releases].sort((a, b) => {
-        const aDate = new Date(a.published_at)
-        const bDate = new Date(b.published_at)
-        return bDate.getTime() - aDate.getTime()
-      })
-
-      return sortedReleases
-    },
-})
+    return sortedReleases
+  })
+)

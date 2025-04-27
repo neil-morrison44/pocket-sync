@@ -1,31 +1,30 @@
-import { atomFamily } from "recoil"
 import { registerFilePath } from "./fsEventRegister"
+import { Atom, atom } from "jotai"
+import { atomFamily } from "jotai/utils"
+import { withAtomEffect } from "jotai-effect"
 
-export const FileWatchAtomFamily = atomFamily<number, string>({
-  key: "FileWatchAtomFamily",
-  default: Date.now(),
-
-  effects: (path) => [
-    ({ setSelf }) => {
+export const FileWatchAtomFamily = atomFamily<string, Atom<number>>(
+  (path: string) => {
+    const baseAtom = atom(Date.now())
+    return withAtomEffect(baseAtom, (_get, set) => {
       const unregister = registerFilePath(path, () => {
-        setSelf(Date.now())
-      })
-      return () => unregister()
-    },
-  ],
-})
-
-export const FolderWatchAtomFamily = atomFamily<number, string>({
-  key: "FolderWatchAtomFamily",
-  default: Date.now(),
-
-  effects: (path) => [
-    ({ setSelf }) => {
-      const unregister = registerFilePath(path, () => {
-        setSelf(Date.now())
+        set(baseAtom, Date.now())
       })
 
       return () => unregister()
-    },
-  ],
-})
+    })
+  }
+)
+
+export const FolderWatchAtomFamily = atomFamily<string, Atom<number>>(
+  (path: string) => {
+    const baseAtom = atom(Date.now())
+    return withAtomEffect(baseAtom, (_get, set) => {
+      const unregister = registerFilePath(path, () => {
+        set(baseAtom, Date.now())
+      })
+
+      return () => unregister()
+    })
+  }
+)

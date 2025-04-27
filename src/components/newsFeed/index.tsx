@@ -1,5 +1,3 @@
-import { useSetRecoilState } from "recoil"
-import { useRecoilSmoothUpdates } from "../../hooks/recoilSmoothUpdates"
 import { useYScrollAsXScroll } from "../../hooks/useYScrollAsXScroll"
 import { newsFeedAtom } from "../../recoil/newsFeed/atoms"
 import { currentViewAtom } from "../../recoil/view/atoms"
@@ -8,17 +6,16 @@ import { useTranslation, Trans } from "react-i18next"
 
 import "./index.css"
 import { TimeAgo } from "./timeAgo"
+import { useSetAtom } from "jotai"
+import { useSmoothedAtomValue } from "../../utils/jotai"
 
 type NewsFeedProps = {
   deepLinks?: boolean
 }
 
 export const NewsFeed = ({ deepLinks = false }: NewsFeedProps) => {
-  const { items, lastUpdated } = useRecoilSmoothUpdates(newsFeedAtom, {
-    items: [],
-    lastUpdated: 0,
-  })
-  const viewCore = useSetRecoilState(currentViewAtom)
+  const { items, lastUpdated } = useSmoothedAtomValue(newsFeedAtom)
+  const viewCore = useSetAtom(currentViewAtom)
   const listRef = useYScrollAsXScroll()
   const { t } = useTranslation("news_feed")
 

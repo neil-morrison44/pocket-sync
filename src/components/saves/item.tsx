@@ -1,10 +1,11 @@
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { useCallback } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { BackupZipsSelectorFamily } from "../../recoil/saves/selectors"
 import { SaveConfig } from "../../types"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { useTranslation } from "react-i18next"
+import { useAtomValue } from "jotai"
 
 type SavesItemProps = {
   config: SaveConfig
@@ -12,7 +13,7 @@ type SavesItemProps = {
 }
 
 export const SavesItem = ({ config, onClickRestore }: SavesItemProps) => {
-  const { files, exists } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const { files, exists } = useAtomValue(
     BackupZipsSelectorFamily(config.backup_location)
   )
 

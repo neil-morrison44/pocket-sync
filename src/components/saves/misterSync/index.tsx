@@ -7,10 +7,6 @@ import {
   useMemo,
   useState,
 } from "react"
-import {
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
 import { useBEM } from "../../../hooks/useBEM"
 import { AllSavesSelector } from "../../../recoil/saves/selectors"
 import { invokeBeginMisterSaveSyncSession } from "../../../utils/invokes"
@@ -34,6 +30,8 @@ import { SaveMapping } from "./mapping"
 import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
 import { ControlsSearch } from "../../controls/inputs/search"
+import { useAtom, useAtomValue } from "jotai"
+import { useAtomFnSet } from "../../../utils/jotai"
 
 type MisterSyncProps = {
   onClose: () => void
@@ -45,8 +43,7 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
   const [selectedSave, setSelectedSave] = useState<string | null>(null)
 
   const [query, setQuery] = useState("")
-  const [creds, setCreds] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(MiSTerCredsAtom)
+  const [creds, setCreds] = useAtomFnSet(MiSTerCredsAtom)
 
   const { t } = useTranslation("mister_sync")
 
@@ -77,7 +74,9 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
 
   useEffect(() => {
     return () => {
-      if (connected) emit("mister-save-sync-end")
+      if (connected) {
+        emit("mister-save-sync-end")
+      }
     }
   }, [connected])
 
@@ -110,7 +109,11 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
         {selectedSave && <SaveStatus key={selectedSave} path={selectedSave} />}
       </Suspense>
       <div className="mister-sync__content">
-        {connected && <SavesList onSelect={setSelectedSave} query={query} />}
+        {connected && (
+          <Suspense>
+            <SavesList onSelect={setSelectedSave} query={query} />
+          </Suspense>
+        )}
         {connecting && <Loader />}
         {!connected && !connecting && (
           <>
@@ -175,18 +178,18 @@ const SaveStatus = ({ path }: SaveStatusProps) => {
     return [platform, file]
   }, [path])
 
-  const misterPlatforms = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const misterPlatforms = useAtomValue(
     MiSTerPlatformsForPocketPlatformSelectorFamily(platform)
   )
 
-  const misterSaveInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const misterSaveInfo = useAtomValue(
     MiSTerSaveInfoSelectorFamily({ platforms: misterPlatforms, file })
   )
-  const pocketSaveInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const pocketSaveInfo = useAtomValue(
     FileMetadataSelectorFamily({ filePath: path })
   )
 
-  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
+  const pocketPath = useAtomValue(pocketPathAtom)
 
   useEffect(() => {
     if (misterSaveInfo?.crc32 === pocketSaveInfo.crc32) {
@@ -345,7 +348,7 @@ type SavesListProps = {
 }
 
 const SavesList = ({ onSelect, query }: SavesListProps) => {
-  const allSaves = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(AllSavesSelector)
+  const allSaves = useAtomValue(AllSavesSelector)
 
   const filteredSaves = useMemo(() => {
     if (query.length === 0) return allSaves

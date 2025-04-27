@@ -1,6 +1,6 @@
 import { listen } from "@tauri-apps/api/event"
 import { useEffect, useState } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { instancePackagerCoresListSelector } from "../../../recoil/games/selectors"
 import { invokeRunPackagerForCore } from "../../../utils/invokes"
 import { Modal } from "../../modal"
@@ -8,15 +8,14 @@ import { CoreTag } from "../../shared/coreTag"
 
 import "./index.css"
 import { useTranslation } from "react-i18next"
+import { useAtomValue } from "jotai"
 
 type InstanceJsonProps = {
   onClose: () => void
 }
 
 export const InstanceJson = ({ onClose }: InstanceJsonProps) => {
-  const coresList = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    instancePackagerCoresListSelector
-  )
+  const coresList = useAtomValue(instancePackagerCoresListSelector)
   const buildLog = useBuildLog()
   const { t } = useTranslation("instance_json")
 

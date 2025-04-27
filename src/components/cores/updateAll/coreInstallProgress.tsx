@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { startTransition, useEffect, useMemo, useRef, useState } from "react"
 import { InstallZipEventPayload } from "../../zipInstall/types"
 import { listen } from "@tauri-apps/api/event"
 import { Progress } from "../../progress"
@@ -14,7 +14,7 @@ export const CoreInstallProgress = () => {
   useEffect(() => {
     const unlisten = listen<InstallZipEventPayload>(
       "install-zip-event",
-      ({ payload }) => setInstallState(payload)
+      ({ payload }) => startTransition(() => setInstallState(payload))
     )
     return () => {
       unlisten.then((l) => l())

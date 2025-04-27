@@ -1,12 +1,10 @@
-import {
-  useRecoilCallback,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
 import { Modal } from "../../modal"
 import {
   Dispatch,
   SetStateAction,
+  startTransition,
   Suspense,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -31,6 +29,8 @@ import { usePreventGlobalZipInstallModal } from "../../../hooks/usePreventGlobal
 import { keepPlatformDataAtom } from "../../../recoil/settings/atoms"
 import { JobsStopButton } from "../../jobs/stop"
 import { StopButton } from "../../jobs/button"
+import { useAtomValue } from "jotai"
+import { useAtomCallback } from "jotai/utils"
 
 type UpdateAllProps = {
   onClose: () => void
@@ -44,7 +44,13 @@ type UpdateListItem = {
 }
 
 export const UpdateAll = ({ onClose }: UpdateAllProps) => {
-  const [updateList, setUpdateList] = useState<UpdateListItem[]>([])
+  const [updateList, setUpdateListRaw] = useState<UpdateListItem[]>([])
+
+  const setUpdateList = useCallback(
+    (...args: Parameters<typeof setUpdateListRaw>) =>
+      startTransition(() => setUpdateListRaw(...args)),
+    [setUpdateListRaw]
+  )
   const { t } = useTranslation("update_all")
   const hasDoneAnUpdateRef = useRef(false)
 
@@ -210,18 +216,13 @@ const UpdateAllList = ({
   setUpdateList: Dispatch<SetStateAction<UpdateListItem[]>>
 }) => {
   const { t } = useTranslation("")
-  const unsortedCoresList = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    installedCoresWithUpdatesSelector
-  )
-  const keepPlatformData =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(keepPlatformDataAtom)
+  const unsortedCoresList = useAtomValue(installedCoresWithUpdatesSelector)
+  const keepPlatformData = useAtomValue(keepPlatformDataAtom)
 
-  const getUpdateList = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
-        const list = await snapshot.getPromise(
-          installedCoresWithUpdatesSelector
-        )
+  const getUpdateList = useAtomCallback(
+    useCallback(
+      async (get, _set) => {
+        const list = await get(installedCoresWithUpdatesSelector)
         setUpdateList(
           list.map(({ coreName }) => ({
             coreName,
@@ -231,7 +232,8 @@ const UpdateAllList = ({
           }))
         )
       },
-    [setUpdateList, keepPlatformData]
+      [setUpdateList, keepPlatformData]
+    )
   )
 
   useEffect(() => {
@@ -320,13 +322,11 @@ const UpdateListItem = ({
   onChangeRequiredFiles: (checked: boolean) => void
   onChangePlatformFiles: (checked: boolean) => void
 }) => {
-  const mainPlatformId = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const mainPlatformId = useAtomValue(
     CoreMainPlatformIdSelectorFamily(coreName)
   )
 
-  const platformInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PlatformInfoSelectorFamily(mainPlatformId)
-  )
+  const platformInfo = useAtomValue(PlatformInfoSelectorFamily(mainPlatformId))
 
   if (!updateListItem) return null
 

@@ -1,37 +1,27 @@
-import { atom } from "recoil"
-import {
-  syncToAppLocalDataEffect,
-  syncToAppLocalDataEffectDefault,
-} from "../effects"
+import { atomWithAppLocalStorage } from "../../utils/jotai"
 
-export const alwaysUseEnglishAtom = atom<{ value: boolean }>({
-  key: "alwaysUseEnglishAtom",
-  default: syncToAppLocalDataEffectDefault("only-use-english", {
+export const alwaysUseEnglishAtom = atomWithAppLocalStorage<{ value: boolean }>(
+  "only-use-english",
+  {
     value: false,
-  }),
-  effects: [syncToAppLocalDataEffect("only-use-english")],
-})
+  }
+)
 
-export const turboDownloadsAtom = atom<{ enabled: boolean }>({
-  key: "turboDownloadsAtom",
-  default: syncToAppLocalDataEffectDefault("turbo-downloads", {
+export const turboDownloadsAtom = atomWithAppLocalStorage<{ enabled: boolean }>(
+  "turbo-downloads",
+  {
     enabled: false,
-  }),
-  effects: [syncToAppLocalDataEffect("turbo-downloads")],
+  }
+)
+
+export const keepPlatformDataAtom = atomWithAppLocalStorage<{
+  enabled: boolean
+}>("keep-platform-data", {
+  enabled: true,
 })
 
-export const keepPlatformDataAtom = atom<{ enabled: boolean }>({
-  key: "keepPlatformDataAtom",
-  default: syncToAppLocalDataEffectDefault("keep-platform-data", {
-    enabled: true,
-  }),
-  effects: [syncToAppLocalDataEffect("keep-platform-data")],
-})
-
-export const githubTokenAtom = atom<{ value: string | null }>({
-  key: "githubTokenAtom",
-  default: syncToAppLocalDataEffectDefault("github-token-atom", {
-    value: null,
-  }),
-  effects: [syncToAppLocalDataEffect("github-token-atom")],
+export const githubTokenAtom = atomWithAppLocalStorage<{
+  value: null | string
+}>("github-token-atom", {
+  value: null,
 })

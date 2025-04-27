@@ -1,11 +1,10 @@
-import { useRecoilState_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { githubTokenAtom } from "../../../recoil/settings/atoms"
 import { useTranslation } from "react-i18next"
+import { useAtom } from "jotai"
 
 export const GithubToken = () => {
   const { t } = useTranslation("settings")
-  const [githubToken, setGithubToken] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(githubTokenAtom)
+  const [githubToken, setGithubToken] = useAtom(githubTokenAtom)
 
   return (
     <div className="settings__row">

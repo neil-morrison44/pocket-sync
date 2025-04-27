@@ -1,10 +1,10 @@
 import { useMemo } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { coreInventoryAtom } from "../recoil/inventory/atoms"
+import { useAtomValue } from "jotai"
+import { useSmoothedAtomValue } from "../utils/jotai"
 
 export const useReplacementAvailable = (coreName: string) => {
-  const coreInventory =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(coreInventoryAtom)
+  const coreInventory = useSmoothedAtomValue(coreInventoryAtom)
 
   return useMemo<string | null>(() => {
     const inventoryCore = coreInventory.cores.data.find(({ releases }) =>

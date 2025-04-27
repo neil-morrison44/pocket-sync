@@ -1,21 +1,15 @@
 import { useCallback } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { PocketSyncConfigSelector } from "../recoil/config/selectors"
 import { DataSlotFile } from "../types"
 import { useProgress } from "./useProgress"
 import { turboDownloadsAtom } from "../recoil/settings/atoms"
 import { invokeInstallArchiveFiles } from "../utils/invokes"
+import { useAtomValue } from "jotai"
 
 export const useInstallRequiredFiles = (jobId = "install_archive_files") => {
-  const { archive_url } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PocketSyncConfigSelector
-  )
-
+  const { archive_url } = useAtomValue(PocketSyncConfigSelector)
   const { percent, inProgress, message, remainingTime } = useProgress(jobId)
-  console.log({ percent })
-
-  const turboDownloads =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(turboDownloadsAtom)
+  const turboDownloads = useAtomValue(turboDownloadsAtom)
 
   const installRequiredFiles = useCallback(
     async (files: DataSlotFile[], other_archive_url?: string) => {

@@ -1,17 +1,17 @@
 import { ReactNode, Suspense, useCallback, useMemo, useState } from "react"
 
 import "./index.css"
-import {
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-  useSetRecoilState,
-} from "recoil"
+
 import {
   ArchiveMetadataSelectorFamily,
   PathFileInfoSelectorFamily,
 } from "../../recoil/archive/selectors"
 import { useInstallRequiredFiles } from "../../hooks/useInstallRequiredFiles"
-import { FetchFileMetadataWithStatus, FileCopy } from "../../types"
-import { useInvalidateConfig } from "../../hooks/invalidation"
+import {
+  FetchFileMetadataWithStatus,
+  FileCopy,
+  PocketSyncConfig,
+} from "../../types"
 import { Controls } from "../controls"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { NewFetch } from "./new"
@@ -28,21 +28,19 @@ import { ProgressLoader, ProgressLoaderInner } from "../loader/progress"
 import { usePreventGlobalZipInstallModal } from "../../hooks/usePreventGlobalZipInstall"
 import { FetchInfoSelectorFamily } from "../../recoil/fetch/selectors"
 import { debug } from "@tauri-apps/plugin-log"
+import { useAtom, useAtomValue, useSetAtom } from "jotai"
 
 type FileStatus = "complete" | "partial" | "none" | "waiting"
 
 export const Fetch = () => {
-  const config = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PocketSyncConfigSelector
-  )
+  const config = useAtomValue(PocketSyncConfigSelector)
   const updateConfig = useUpdateConfig()
   const [newFetchOpen, setNewFetchOpen] = useState<boolean>(false)
   const { t } = useTranslation("fetch")
 
   usePreventGlobalZipInstallModal()
 
-  const invalidateConfig = useInvalidateConfig()
-  const setArchiveBumpAtom = useSetRecoilState(archiveBumpAtom)
+  const setArchiveBumpAtom = useSetAtom(archiveBumpAtom)
   const list = config.fetches || []
 
   const removeItem = useCallback(
@@ -66,7 +64,6 @@ export const Fetch = () => {
         </ControlsButton>
         <ControlsButton
           onClick={() => {
-            invalidateConfig()
             setArchiveBumpAtom((c) => c + 1)
           }}
         >
@@ -172,10 +169,9 @@ const FileSystemStatus = ({
   destination: string
   children: (status: FileStatus, files: FileCopy[]) => ReactNode
 }) => {
-  const { pocketPath, pocketFileInfo, fsFileInfo } =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-      FetchInfoSelectorFamily({ origin: path, destination })
-    )
+  const { pocketPath, pocketFileInfo, fsFileInfo } = useAtomValue(
+    FetchInfoSelectorFamily({ origin: path, destination })
+  )
 
   const files: FileCopy[] = useMemo(
     () =>
@@ -213,7 +209,6 @@ const ArchiveOrgItem = ({
   extensions?: string[]
   onRemove: () => void
 }) => {
-  console.log({ name })
   const { installRequiredFiles, inProgress, percent, message } =
     useInstallRequiredFiles(
       `install_archive_files-${btoa(name).replaceAll("=", "")}`
@@ -296,10 +291,10 @@ const ArchiveOrgStatus = ({
     files: FetchFileMetadataWithStatus[]
   ) => ReactNode
 }) => {
-  const metadata = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const metadata = useAtomValue(
     ArchiveMetadataSelectorFamily({ archiveName: name })
   )
-  const fileInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const fileInfo = useAtomValue(
     PathFileInfoSelectorFamily({ path: destination })
   )
 

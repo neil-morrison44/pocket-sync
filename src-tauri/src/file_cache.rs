@@ -1,3 +1,4 @@
+use log::trace;
 use std::hash::{Hash, Hasher};
 use std::{path::PathBuf, time::SystemTime};
 use tokio::fs::create_dir;
@@ -15,6 +16,7 @@ pub async fn clear_file_caches(cache_dir: &PathBuf) -> io::Result<()> {
 
 pub async fn get_file_with_cache(path: &PathBuf, cache_dir: &PathBuf) -> io::Result<File> {
     let file = tokio::fs::File::open(&path).await?;
+    file.sync_all().await?;
     let metadata = file.metadata().await?;
     let file_cache_dir = cache_dir.join(FILE_CACHE_FOLDER);
 
@@ -25,11 +27,14 @@ pub async fn get_file_with_cache(path: &PathBuf, cache_dir: &PathBuf) -> io::Res
             {
                 Some(existing_config_path)
             } else {
+                trace!("Writing to Cache");
                 write_to_cache(path, modified, &file_cache_dir).await
             };
 
             if let Some(cache_path) = cache_path {
                 let cached_file = tokio::fs::File::open(&cache_path).await?;
+                cached_file.sync_all().await?;
+                trace!("Returning cached file {cache_path:?}");
                 return Ok(cached_file);
             }
         }

@@ -1,17 +1,16 @@
 import { Palette } from "../../../types"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { pocketPathAtom } from "../../../recoil/atoms"
 import {
   invokeConvertSinglePalFile,
   invokeSaveFile,
 } from "../../../utils/invokes"
 import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
+import { useAtomValue } from "jotai"
 
 export const useSavePalette = () => {
-  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
-  const config = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PocketSyncConfigSelector
-  )
+  const pocketPath = useAtomValue(pocketPathAtom)
+  const config = useAtomValue(PocketSyncConfigSelector)
 
   return async (palette: Palette, name: string) => {
     const data = new Uint8Array(56)

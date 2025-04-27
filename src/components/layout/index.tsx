@@ -5,10 +5,7 @@ import React, {
   useRef,
   useTransition,
 } from "react"
-import {
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
+
 import { currentViewAtom, VIEWS_LIST } from "../../recoil/view/atoms"
 import { About } from "../about"
 import { ErrorBoundary } from "../errorBoundary"
@@ -18,6 +15,7 @@ import { ZipInstall } from "../zipInstall"
 import "./index.css"
 import { useTranslation } from "react-i18next"
 import { enableGlobalZipInstallAtom } from "../../recoil/atoms"
+import { useAtom, useAtomValue } from "jotai"
 
 const Saves = React.lazy(() =>
   import("../saves").then((i) => ({ default: i.Saves }))
@@ -52,19 +50,16 @@ const Firmware = React.lazy(() =>
 )
 
 export const Layout = () => {
-  const [viewAndSubview, setViewAndSubview] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(currentViewAtom)
-  const enableGlobalZipInstall = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    enableGlobalZipInstallAtom
-  )
+  const [viewAndSubview, setViewAndSubview] = useAtom(currentViewAtom)
+  const enableGlobalZipInstall = useAtomValue(enableGlobalZipInstallAtom)
   const { t } = useTranslation("layout")
   const [isPending, startTransition] = useTransition()
 
   const changeView = useCallback(
     (viewName: (typeof VIEWS_LIST)[number]) => {
       startTransition(() => {
-        setViewAndSubview({ view: viewName, selected: null })
         window.scrollTo({ top: 0 })
+        setViewAndSubview({ view: viewName, selected: null })
       })
     },
     [setViewAndSubview]

@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from "react"
+import { ReactNode, startTransition, useEffect } from "react"
 
 type ControlsBackButtonProps = {
   children: ReactNode
@@ -24,7 +24,7 @@ export const ControlsBackButton = ({
     <div
       role="button"
       className="controls__item controls__button controls__button--back"
-      onClick={onClick}
+      onClick={() => startTransition(onClick)}
     >
       <BackIcon />
       {children}

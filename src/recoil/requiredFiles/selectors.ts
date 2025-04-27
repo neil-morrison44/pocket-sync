@@ -1,28 +1,26 @@
-import { selectorFamily } from "recoil"
 import { DataSlotFile } from "../../types"
 import { invokeFindRequiredFiles } from "../../utils/invokes"
 import { skipAlternateAssetsSelector } from "../config/selectors"
 import { archiveMetadataUrlSelector } from "../archive/selectors"
 import { FolderWatchAtomFamily } from "../fileSystem/atoms"
 import { CoreAllPlatformIdsSelectorFamily } from "../selectors"
+import { atom, Atom } from "jotai"
+import { atomFamily } from "jotai/utils"
 
-export const RequiredFileInfoSelectorFamily = selectorFamily<
-  DataSlotFile[],
-  string
->({
-  key: "RequiredFileInfoSelectorFamily",
-  get:
-    (coreName) =>
-    async ({ get }) => {
-      const platformIds = get(CoreAllPlatformIdsSelectorFamily(coreName))
-      platformIds.forEach((pid) => get(FolderWatchAtomFamily(`Assets/${pid}`)))
+export const RequiredFileInfoSelectorFamily = atomFamily<
+  string,
+  Atom<Promise<DataSlotFile[]>>
+>((coreName) =>
+  atom(async (get) => {
+    const platformIds = await get(CoreAllPlatformIdsSelectorFamily(coreName))
+    platformIds.forEach((pid) => get(FolderWatchAtomFamily(`Assets/${pid}`)))
 
-      const archiveMetadataUrl = get(archiveMetadataUrlSelector)
-      const skipAlternateAssets = get(skipAlternateAssetsSelector)
-      return await invokeFindRequiredFiles(
-        coreName,
-        !skipAlternateAssets,
-        archiveMetadataUrl
-      )
-    },
-})
+    const archiveMetadataUrl = await get(archiveMetadataUrlSelector)
+    const skipAlternateAssets = await get(skipAlternateAssetsSelector)
+    return await invokeFindRequiredFiles(
+      coreName,
+      !skipAlternateAssets,
+      archiveMetadataUrl
+    )
+  })
+)

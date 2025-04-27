@@ -1,16 +1,12 @@
 import "./font.css"
 import "./app.css"
-import {
-  RecoilRoot,
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useSetRecoilState,
-} from "recoil"
 import { pocketPathAtom, reconnectWhenOpenedAtom } from "./recoil/atoms"
 import { Layout } from "./components/layout"
 import React, {
   Suspense,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react"
@@ -20,17 +16,20 @@ import { NewsFeed } from "./components/newsFeed"
 import { currentViewAtom } from "./recoil/view/atoms"
 import { useTranslation } from "react-i18next"
 import { ColourContextProviderRandomised } from "./components/three/colourContext"
+import { createStore, Provider, useAtom, useSetAtom } from "jotai"
+import { useAtomFnSet } from "./utils/jotai"
+import { ErrorBoundary } from "./components/errorBoundary"
 
 const Pocket = React.lazy(() =>
   import("./components/three/pocket").then((m) => ({ default: m.Pocket }))
 )
 
 export const App = () => {
-  const [pocketPath, setPocketPath] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
-  const [reconnectWhenOpened, setReconnectWhenOpened] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(reconnectWhenOpenedAtom)
-  const setView = useSetRecoilState(currentViewAtom)
+  const [pocketPath, setPocketPath] = useAtom(pocketPathAtom)
+  const [reconnectWhenOpened, setReconnectWhenOpened] = useAtomFnSet(
+    reconnectWhenOpenedAtom
+  )
+  const setView = useSetAtom(currentViewAtom)
   const [attempts, setAttempts] = useState(0)
   const { t } = useTranslation("app")
   const reconnectRef = useRef<boolean>(false)
@@ -65,14 +64,9 @@ export const App = () => {
 
   if (pocketPath) {
     return (
-      <RecoilRoot
-        key={pocketPath}
-        initializeState={(snapshot) => {
-          snapshot.set(pocketPathAtom, pocketPath)
-        }}
-      >
+      <Suspense>
         <Layout />
-      </RecoilRoot>
+      </Suspense>
     )
   }
 
@@ -81,9 +75,11 @@ export const App = () => {
       <h1>{t("app_name")}</h1>
 
       <Suspense fallback={<div style={{ flexGrow: 1 }}></div>}>
-        <ColourContextProviderRandomised changeInterval={15000}>
-          <Pocket move="spin" />
-        </ColourContextProviderRandomised>
+        <ErrorBoundary>
+          <ColourContextProviderRandomised changeInterval={15000}>
+            <Pocket move="spin" />
+          </ColourContextProviderRandomised>
+        </ErrorBoundary>
       </Suspense>
 
       {attempts > 0 && <Tip>{t("not_pocket_tip")}</Tip>}

@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { pocketPathAtom } from "../../../recoil/atoms"
 import { CleanableFilesSelectorFamily } from "../../../recoil/selectors"
 import { invokeDeleteFiles } from "../../../utils/invokes"
@@ -8,6 +8,7 @@ import { Modal } from "../../modal"
 
 import "./index.css"
 import { useTranslation } from "react-i18next"
+import { useAtomValue } from "jotai"
 
 type CleanFilesModalProp = {
   onClose: () => void
@@ -18,13 +19,9 @@ export const CleanFilesModal = ({
   onClose,
   path = "Assets",
 }: CleanFilesModalProp) => {
-  const cleanableFiles = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    CleanableFilesSelectorFamily(path)
-  )
+  const cleanableFiles = useAtomValue(CleanableFilesSelectorFamily(path))
   const [deleteInprogress, setDeleteInProgress] = useState(false)
-  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    pocketPathAtom
-  ) as string
+  const pocketPath = useAtomValue(pocketPathAtom)
   const { t } = useTranslation("clean_files")
 
   const files = useMemo(() => {

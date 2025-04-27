@@ -1,6 +1,5 @@
 import { Suspense, useMemo } from "react"
 import { Modal } from "../../modal"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { pocketSyncChangelogSelector } from "../../../recoil/github/selectors"
 
 import ReactMarkdown from "react-markdown"
@@ -8,6 +7,7 @@ import remarkGfm from "remark-gfm"
 import { Link } from "../../link"
 import { Loader } from "../../loader"
 import { useTranslation } from "react-i18next"
+import { useAtomValue } from "jotai"
 
 export const Changelog = ({ onClose }: { onClose: () => void }) => {
   const { t } = useTranslation("about")
@@ -24,9 +24,7 @@ export const Changelog = ({ onClose }: { onClose: () => void }) => {
 }
 
 const ChangelogInner = () => {
-  const changelogMarkdown = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    pocketSyncChangelogSelector
-  )
+  const changelogMarkdown = useAtomValue(pocketSyncChangelogSelector)
 
   const tidiedChangelog = useMemo(() => {
     return changelogMarkdown

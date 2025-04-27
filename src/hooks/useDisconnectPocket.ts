@@ -1,18 +1,15 @@
 import { useCallback } from "react"
-import { useInvalidateConfig, useInvalidateSaveFiles } from "./invalidation"
-import { useSetRecoilState } from "recoil"
 import { pocketPathAtom } from "../recoil/atoms"
+import { useSetAtom } from "jotai"
+import { configChangesAtom } from "../recoil/config/selectors"
 
 export const useDisconnectPocket = () => {
-  const invalidateConfig = useInvalidateConfig()
-  const invalidateSaves = useInvalidateSaveFiles()
-  const setPocketPath = useSetRecoilState(pocketPathAtom)
+  const setPocketPath = useSetAtom(pocketPathAtom)
+  const setConfigChanges = useSetAtom(configChangesAtom)
 
   return useCallback(async () => {
     setPocketPath(null)
+    setConfigChanges(null)
     await new Promise((resolve) => setTimeout(resolve, 50))
-
-    invalidateConfig()
-    invalidateSaves()
-  }, [invalidateConfig, invalidateSaves, setPocketPath])
+  }, [setPocketPath])
 }

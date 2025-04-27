@@ -1,5 +1,4 @@
 import { Suspense, useMemo, useState } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   PlatformInfoSelectorFamily,
   PlatformImageSelectorFamily,
@@ -18,6 +17,7 @@ import { DataPacks } from "../dataPacks"
 import { useTranslation } from "react-i18next"
 import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
+import { useAtomValue } from "jotai"
 
 type PlatformInfoProps = {
   id: PlatformId
@@ -26,12 +26,8 @@ type PlatformInfoProps = {
 
 export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
   const [imageEditorOpen, setImageEditorOpen] = useState(false)
-  const { platform } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PlatformInfoSelectorFamily(id)
-  )
-  const platformImage = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PlatformImageSelectorFamily(id)
-  )
+  const { platform } = useAtomValue(PlatformInfoSelectorFamily(id))
+  const platformImage = useAtomValue(PlatformImageSelectorFamily(id))
   const { t } = useTranslation("platform_info")
 
   const category = useMemo(
@@ -39,7 +35,7 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
     [platform.category]
   )
 
-  const cats = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(allCategoriesSelector)
+  const cats = useAtomValue(allCategoriesSelector)
   const [imagePacksOpen, setImagePacksOpen] = useState(false)
   const [dataPacksOpen, setDataPacksOpen] = useState(false)
   const updateValue = useUpdatePlatformValue(id)

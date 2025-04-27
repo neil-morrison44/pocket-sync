@@ -1,6 +1,3 @@
-import { atom } from "recoil"
+import { atom } from "jotai"
 
-export const archiveBumpAtom = atom<number>({
-  key: "archiveBumpAtom",
-  default: 0,
-})
+export const archiveBumpAtom = atom<number>(0)

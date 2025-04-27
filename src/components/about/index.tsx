@@ -1,16 +1,12 @@
 import React, {
   ReactNode,
+  startTransition,
   Suspense,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react"
-import {
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-  useSetRecoilState,
-} from "recoil"
-import { useRecoilSmoothUpdatesFirstSuspend } from "../../hooks/recoilSmoothUpdates"
 import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
 import { AppVersionSelector } from "../../recoil/selectors"
 import { ErrorBoundary } from "../errorBoundary"
@@ -24,8 +20,9 @@ import { currentViewAtom } from "../../recoil/view/atoms"
 import { useTranslation } from "react-i18next"
 import { semverCompare } from "../../utils/semverCompare"
 import { ColourContextProviderFromConfig } from "../three/colourContext"
-import { sponsorCountAtom } from "../../recoil/github/atoms"
 import { Changelog } from "./changelog"
+import { useAtomValue, useSetAtom } from "jotai"
+import { sponsorCountAtom } from "../../recoil/github/atoms"
 
 const Pocket = React.lazy(() =>
   import("../three/pocket").then((m) => ({ default: m.Pocket }))
@@ -43,34 +40,23 @@ const StaticScreen = React.lazy(() =>
 
 export const About = () => {
   const [changelogOpen, setChangelogOpen] = useState<boolean>(false)
-  const selfReleases = useRecoilSmoothUpdatesFirstSuspend(
-    GithubReleasesSelectorFamily({
-      owner: "neil-morrison44",
-      repo: "pocket-sync",
-    })
-  )
-
   const { t } = useTranslation("about")
-  const AppVersion =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(AppVersionSelector)
-
-  const firmwareUpdateAvailable = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    updateAvailableSelector
-  )
-
-  const updateAvailable = useMemo(() => {
-    return semverCompare(selfReleases[0].tag_name, AppVersion)
-  }, [selfReleases, AppVersion])
-
-  const setCurrentView = useSetRecoilState(currentViewAtom)
+  const AppVersion = useAtomValue(AppVersionSelector)
   const version = `v${AppVersion}`
 
   return (
     <div className="about">
-      {changelogOpen && <Changelog onClose={() => setChangelogOpen(false)} />}
+      {changelogOpen && (
+        <Changelog
+          onClose={() => startTransition(() => setChangelogOpen(false))}
+        />
+      )}
       <div className="about__sponsor">
         <Suspense>
-          <div className="link" onClick={() => setChangelogOpen(true)}>
+          <div
+            className="link"
+            onClick={() => startTransition(() => setChangelogOpen(true))}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
@@ -90,34 +76,28 @@ export const About = () => {
           <SillyTitleEffect>{t("app_name")}</SillyTitleEffect>
           {version}
         </div>
-        {firmwareUpdateAvailable && (
-          <div
-            className="about__update-link"
-            onClick={() => setCurrentView({ view: "Firmware", selected: null })}
-          >
-            {t("new_firmware", {
-              version: firmwareUpdateAvailable,
-            })}
-          </div>
-        )}
+        <Suspense>
+          <FirmwareUpdateAvailable />
+        </Suspense>
 
-        {updateAvailable && (
-          <Link href={selfReleases[0].html_url} className="about__update-link">
-            {t("update_available", { version: selfReleases[0].tag_name })}
-          </Link>
-        )}
-        <ErrorBoundary>
-          <ColourContextProviderFromConfig>
-            <Pocket
-              move="back-and-forth"
-              screenMaterial={
-                <Suspense fallback={<StaticScreen />}>
-                  <RandomScreenshotScreen />
-                </Suspense>
-              }
-            />
-          </ColourContextProviderFromConfig>
-        </ErrorBoundary>
+        <Suspense>
+          <AppUpdateAvailable />
+        </Suspense>
+
+        <Suspense fallback={<div className="three-pocket"></div>}>
+          <ErrorBoundary>
+            <ColourContextProviderFromConfig>
+              <Pocket
+                move="back-and-forth"
+                screenMaterial={
+                  <Suspense fallback={<StaticScreen />}>
+                    <RandomScreenshotScreen />
+                  </Suspense>
+                }
+              />
+            </ColourContextProviderFromConfig>
+          </ErrorBoundary>
+        </Suspense>
       </div>
 
       <div className="about__news">
@@ -131,9 +111,53 @@ export const About = () => {
   )
 }
 
+const FirmwareUpdateAvailable = () => {
+  const { t } = useTranslation("about")
+  const firmwareUpdateAvailable = useAtomValue(updateAvailableSelector)
+  const setCurrentView = useSetAtom(currentViewAtom)
+
+  return (
+    <div
+      className="about__update-link"
+      onClick={() =>
+        startTransition(() =>
+          setCurrentView({ view: "Firmware", selected: null })
+        )
+      }
+    >
+      {t("new_firmware", {
+        version: firmwareUpdateAvailable,
+      })}
+    </div>
+  )
+}
+
+const AppUpdateAvailable = () => {
+  const { t } = useTranslation("about")
+  const selfReleases = useAtomValue(
+    GithubReleasesSelectorFamily({
+      owner: "neil-morrison44",
+      repo: "pocket-sync",
+    })
+  )
+
+  const AppVersion = useAtomValue(AppVersionSelector)
+
+  const updateAvailable = useMemo(() => {
+    return semverCompare(selfReleases[0].tag_name, AppVersion)
+  }, [selfReleases, AppVersion])
+
+  if (!updateAvailable) return null
+
+  return (
+    <Link href={selfReleases[0].html_url} className="about__update-link">
+      {t("update_available", { version: selfReleases[0].tag_name })}
+    </Link>
+  )
+}
+
 const SponsorLink = () => {
-  const sponsorCount =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(sponsorCountAtom)
+  const sponsorCount = useAtomValue(sponsorCountAtom)
   const { t } = useTranslation("about")
 
   return (

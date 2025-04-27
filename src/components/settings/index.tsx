@@ -1,9 +1,5 @@
 import { useCallback, useState } from "react"
 import {
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
-import {
   PocketSyncConfigSelector,
   skipAlternateAssetsSelector,
 } from "../../recoil/config/selectors"
@@ -28,28 +24,25 @@ import { patreonKeyListSelector } from "../../recoil/settings/selectors"
 import { HiddenCores } from "./items/hiddenCores"
 import { GithubToken } from "./items/githubToken"
 import { GBPalettesConversion } from "./items/gbPalettes"
+import { useSmoothedAtom, useSmoothedAtomValue } from "../../utils/jotai"
 
 export const Settings = () => {
-  const config = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PocketSyncConfigSelector
-  )
+  const config = useSmoothedAtomValue(PocketSyncConfigSelector)
   const [archiveUrlInput, setArchiveUrl] = useState(config.archive_url || "")
 
   const [patreonEmailInput, setPatreonEmail] = useState(
     config.patreon_email || ""
   )
   const [alwaysUseEnglish, setAlwaysUseEnglish] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(alwaysUseEnglishAtom)
-
+    useSmoothedAtom(alwaysUseEnglishAtom)
   const [turboDownloads, setTurboDownloads] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(turboDownloadsAtom)
+    useSmoothedAtom(turboDownloadsAtom)
   const [keepPlatformData, setKeepPlatformData] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(keepPlatformDataAtom)
-  const skipAlternateAssets = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    skipAlternateAssetsSelector
+    useSmoothedAtom(keepPlatformDataAtom)
+  const skipAlternateAssets = useSmoothedAtomValue(skipAlternateAssetsSelector)
+  const [reconnectWhenOpened, setReconnectWhenOpened] = useSmoothedAtom(
+    reconnectWhenOpenedAtom
   )
-  const [reconnectWhenOpened, setReconnectWhenOpened] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(reconnectWhenOpenedAtom)
   const updateConfig = useUpdateConfig()
   const { t } = useTranslation("settings")
   const onDisconnect = useCallback(
@@ -57,9 +50,7 @@ export const Settings = () => {
     []
   )
 
-  const patreonUrls = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    patreonKeyListSelector
-  )
+  const patreonUrls = useSmoothedAtomValue(patreonKeyListSelector)
 
   return (
     <div className="settings">
@@ -159,7 +150,10 @@ export const Settings = () => {
               type="checkbox"
               checked={turboDownloads.enabled}
               onChange={({ target }) =>
-                setTurboDownloads((t) => ({ ...t, enabled: target.checked }))
+                setTurboDownloads({
+                  ...turboDownloads,
+                  enabled: target.checked,
+                })
               }
             />
           </label>
@@ -178,7 +172,10 @@ export const Settings = () => {
               type="checkbox"
               checked={keepPlatformData.enabled}
               onChange={({ target }) =>
-                setKeepPlatformData((t) => ({ ...t, enabled: target.checked }))
+                setKeepPlatformData({
+                  ...keepPlatformData,
+                  enabled: target.checked,
+                })
               }
             />
           </label>
@@ -239,10 +236,10 @@ export const Settings = () => {
               type="checkbox"
               checked={reconnectWhenOpened.enable}
               onChange={({ target }) => {
-                setReconnectWhenOpened((r) => ({
-                  ...r,
+                setReconnectWhenOpened({
+                  ...reconnectWhenOpened,
                   enable: target.checked,
-                }))
+                })
               }}
             />
           </label>

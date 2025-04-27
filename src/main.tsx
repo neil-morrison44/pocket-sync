@@ -5,11 +5,11 @@ import { App } from "./app"
 import "./style.css"
 import { installPolyfills } from "./polyfills"
 import { I18nProvider } from "./i18n"
-import { RecoilRoot } from "recoil"
 import { Disconnections } from "./components/disconnections"
 
 import { error } from "@tauri-apps/plugin-log"
 import { AutoUpdate } from "./components/autoUpdate"
+import { createStore, Provider } from "jotai"
 
 installPolyfills()
 
@@ -19,14 +19,16 @@ window.addEventListener("error", (event) => {
   error(`${event.message}`)
 })
 
+const jotaiStore = createStore()
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <RecoilRoot>
-      <I18nProvider>
+    <I18nProvider>
+      <Provider store={jotaiStore}>
         <App />
         <Disconnections />
         <AutoUpdate />
-      </I18nProvider>
-    </RecoilRoot>
+      </Provider>
+    </I18nProvider>
   </React.StrictMode>
 )

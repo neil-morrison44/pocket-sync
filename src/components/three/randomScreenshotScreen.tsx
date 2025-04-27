@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import {
   screenshotsListSelector,
   SingleScreenshotImageSelectorFamily,
 } from "../../recoil/screenshots/selectors"
 import { MeshPhysicalMaterial, SRGBColorSpace, Texture } from "three"
 import { StaticScreen } from "./staticScreen"
+import { useAtomValue } from "jotai"
 
 type RandomScreenshotScreenProps = {
   interval?: number
@@ -14,9 +15,7 @@ type RandomScreenshotScreenProps = {
 export const RandomScreenshotScreen = ({
   interval = 3000,
 }: RandomScreenshotScreenProps) => {
-  const screenshotList = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    screenshotsListSelector
-  )
+  const screenshotList = useAtomValue(screenshotsListSelector)
   const [screenshotIndex, setScreenshotIndex] = useState(0)
 
   const screenshotName = useMemo(
@@ -41,9 +40,7 @@ export const RandomScreenshotScreen = ({
 
 const ScreenshotScreen = ({ name }: { name: string }) => {
   const materialRef = useRef<MeshPhysicalMaterial | null>(null)
-  const image = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    SingleScreenshotImageSelectorFamily(name)
-  )
+  const image = useAtomValue(SingleScreenshotImageSelectorFamily(name))
 
   useEffect(() => {
     if (!image || !materialRef.current) return

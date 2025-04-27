@@ -1,8 +1,3 @@
-import {
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-  useResetRecoilState,
-} from "recoil"
 import { Modal } from "../../modal"
 import { PhotoExportImageSelectorFamily } from "../../../recoil/saveStates/selectors"
 import { Suspense, useState } from "react"
@@ -11,6 +6,8 @@ import "./index.css"
 import { ColourMap, PhotoColourMapAtom } from "../../../recoil/saveStates/atoms"
 import { useExportPhotos } from "./hooks/exportPhotos"
 import { useTranslation } from "react-i18next"
+import { useAtom, useAtomValue, useSetAtom } from "jotai"
+import { useResetAtom } from "jotai/utils"
 
 export const PhotoExportModal = ({
   path,
@@ -56,9 +53,8 @@ export const PhotoExportModal = ({
 }
 
 const ColourMapPicker = () => {
-  const reset = useResetRecoilState(PhotoColourMapAtom)
-  const [colourMap, setColourMap] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(PhotoColourMapAtom)
+  const reset = useResetAtom(PhotoColourMapAtom)
+  const [colourMap, setColourMap] = useAtom(PhotoColourMapAtom)
   const { t } = useTranslation("save_states")
 
   return (
@@ -125,9 +121,7 @@ const LargePhotoView = ({
   path: string
   onClick?: () => void
 }) => {
-  const imageSrc = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PhotoExportImageSelectorFamily({ path, index })
-  )
+  const imageSrc = useAtomValue(PhotoExportImageSelectorFamily({ path, index }))
   return (
     <img
       width="128"

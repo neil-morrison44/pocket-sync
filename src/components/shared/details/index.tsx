@@ -1,4 +1,4 @@
-import { ReactNode, Suspense, useState } from "react"
+import { ReactNode, startTransition, Suspense, useState } from "react"
 import "./index.css"
 
 type DetailsProps = {
@@ -22,7 +22,7 @@ export const Details = ({
     <div className="details">
       <div
         className={`details__title ${sticky ? "details__title--sticky" : ""}`}
-        onClick={() => setIsOpen((c) => !c)}
+        onClick={() => startTransition(() => setIsOpen((c) => !c))}
       >
         {renderIcon && renderIcon()}
         {title}

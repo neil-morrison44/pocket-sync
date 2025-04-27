@@ -1,25 +1,23 @@
-import { useCallback } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
-import { useInvalidateConfig } from "../../../hooks/invalidation"
+import { startTransition, useCallback } from "react"
+
 import { pocketPathAtom } from "../../../recoil/atoms"
 import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
 import { PocketSyncConfig } from "../../../types"
 import { invokeSaveFile } from "../../../utils/invokes"
+import { Getter, Setter } from "jotai"
+import { useAtomCallback } from "jotai/utils"
 
-export const useUpdateConfig = () => {
-  const currentConfig = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PocketSyncConfigSelector
-  )
-  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
-  const invalidateConfigSelector = useInvalidateConfig()
+type updateConfigFn = <T extends keyof PocketSyncConfig>(
+  key: T,
+  value:
+    | PocketSyncConfig[T]
+    | ((current: PocketSyncConfig[T]) => PocketSyncConfig[T])
+) => void
 
-  return useCallback(
-    async <T extends keyof PocketSyncConfig>(
-      key: T,
-      value:
-        | PocketSyncConfig[T]
-        | ((current: PocketSyncConfig[T]) => PocketSyncConfig[T])
-    ) => {
+export const useUpdateConfig = (): updateConfigFn => {
+  return useAtomCallback(
+    useCallback(async (get, set, key, value) => {
+      const currentConfig = await get(PocketSyncConfigSelector)
       const newValue =
         typeof value == "function" ? value(currentConfig[key]) : value
       const newConfig = {
@@ -27,18 +25,7 @@ export const useUpdateConfig = () => {
         [key]: newValue,
       } as PocketSyncConfig
 
-      if (newValue === undefined) {
-        delete newConfig[key]
-      }
-
-      const encoder = new TextEncoder()
-      await invokeSaveFile(
-        `${pocketPath}/pocket-sync.json`,
-        encoder.encode(JSON.stringify(newConfig, null, 2))
-      )
-
-      setTimeout(() => invalidateConfigSelector(), 500)
-    },
-    [currentConfig, invalidateConfigSelector, pocketPath]
+      startTransition(() => set(PocketSyncConfigSelector, newConfig))
+    }, [])
   )
 }

@@ -9,8 +9,9 @@ import {
 import { filterKnownBadFiles } from "../../utils/filterFiles"
 import { FileTreeNode, InstallZipEventPayload } from "./types"
 import { message } from "@tauri-apps/plugin-dialog"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { keepPlatformDataAtom } from "../../recoil/settings/atoms"
+import { useAtomValue } from "jotai"
 
 export const useListenForZipInstall = () => {
   const [installState, setInstallState] =
@@ -19,7 +20,7 @@ export const useListenForZipInstall = () => {
   useEffect(() => {
     const unlisten = listen<InstallZipEventPayload>(
       "install-zip-event",
-      ({ payload }) => setInstallState(payload)
+      ({ payload }) => startTransition(() => setInstallState(payload))
     )
     return () => {
       unlisten.then((l) => l())
@@ -32,8 +33,7 @@ export const useListenForZipInstall = () => {
       ({ payload }) => {
         if (payload.error)
           message(payload.error, { title: "Error", kind: "error" })
-
-        setInstallState(null)
+        startTransition(() => setInstallState(null))
       }
     )
     return () => {
@@ -92,9 +92,7 @@ export const useAllowedFiles = (
   tree: FileTreeNode[] | null
 ) => {
   const [allowedFiles, setAllowedFiles] = useState<string[] | null>(null)
-  const keepPlatformData =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(keepPlatformDataAtom)
-
+  const keepPlatformData = useAtomValue(keepPlatformDataAtom)
   const flattenedTree = useFlattenedTree(tree)
 
   useEffect(() => {
@@ -117,7 +115,6 @@ export const useAllowedFiles = (
   }, [files, keepPlatformData.enabled])
 
   const removeEmptyDirs = (allowed: string[]): string[] => {
-    console.log({ flattenedTree })
     return allowed
       .map((path) => flattenedTree.find(({ full }) => path == full))
       .filter((n): n is FileTreeNode => n !== undefined)
@@ -131,7 +128,6 @@ export const useAllowedFiles = (
     node: FileTreeNode,
     allowed: string[]
   ): boolean => {
-    console.log(node, allowed)
     return (
       allowedFiles?.includes(node.full) ||
       node.children.some((c) => hasAnyActiveChildren(c, allowed))
@@ -164,11 +160,6 @@ export const useAllowedFiles = (
 
           if (allAllowed) {
             // remove them all
-
-            console.log(
-              f.filter((p) => !paths.includes(p)),
-              removeEmptyDirs(f.filter((p) => !paths.includes(p)))
-            )
             return removeEmptyDirs(f.filter((p) => !paths.includes(p)))
           } else {
             // Add them all

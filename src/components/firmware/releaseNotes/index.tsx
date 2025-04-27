@@ -1,17 +1,17 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { FirmwareDetailsSelectorFamily } from "../../../recoil/firmware/selectors"
 import { useTranslation } from "react-i18next"
 import parse, { Element, domToReact } from "html-react-parser"
 
 import "./index.css"
 import { Link } from "../../link"
+import { useAtomValue } from "jotai"
 
 type FirmwareReleaseNotesProp = {
   version: string
 }
 
 export const FirmwareReleaseNotes = ({ version }: FirmwareReleaseNotesProp) => {
-  const firmwareDetails = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const firmwareDetails = useAtomValue(
     FirmwareDetailsSelectorFamily({ version })
   )
   const { t } = useTranslation("firmware")

@@ -1,19 +1,17 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { CoreInfoSelectorFamily } from "../../../recoil/selectors"
 
 import "./index.css"
 import { useUpdateAvailable } from "../../../hooks/useUpdateAvailable"
 import { useTranslation } from "react-i18next"
 import { useReplacementAvailable } from "../../../hooks/useReplacementAvailable"
+import { useAtomValue } from "jotai"
 
 type VersionProps = {
   coreName: string
 }
 
 export const Version = ({ coreName }: VersionProps) => {
-  const coreInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    CoreInfoSelectorFamily(coreName)
-  )
+  const coreInfo = useAtomValue(CoreInfoSelectorFamily(coreName))
   const updateAvailable = useUpdateAvailable(coreName)
   const replaceAvailable = useReplacementAvailable(coreName)
   const { t } = useTranslation("version")

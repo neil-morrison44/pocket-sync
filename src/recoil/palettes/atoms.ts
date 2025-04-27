@@ -1,6 +1,3 @@
-import { atom } from "recoil"
+import { atom } from "jotai"
 
-export const paletteRepoAtom = atom<string>({
-  key: "paletteRepoAtom",
-  default: "davewongillies/openfpga-palettes",
-})
+export const paletteRepoAtom = atom<string>("davewongillies/openfpga-palettes")

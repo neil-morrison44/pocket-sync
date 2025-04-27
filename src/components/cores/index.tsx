@@ -1,8 +1,10 @@
-import { Suspense, useCallback, useMemo, useState } from "react"
 import {
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
+  startTransition,
+  Suspense,
+  useCallback,
+  useMemo,
+  useState,
+} from "react"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import { coreInventoryAtom } from "../../recoil/inventory/atoms"
 import { cateogryListselector } from "../../recoil/inventory/selectors"
@@ -27,20 +29,18 @@ import {
   categoryFilterOptionAtom,
   sortingOptionAtom,
 } from "../../recoil/cores/atoms"
+import { useAtom, useAtomValue } from "jotai"
+import { useSmoothedAtomValue } from "../../utils/jotai"
 
 export const Cores = () => {
-  const [selectedCore, setSelectedCore] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(selectedSubviewSelector)
+  const [selectedCore, setSelectedCore] = useAtom(selectedSubviewSelector)
   const { pushScroll, popScroll } = useSaveScroll()
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [onlyUpdates, setOnlyUpdates] = useState(false)
-  const [filterCategory, setFilterCategory] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(categoryFilterOptionAtom)
+  const [filterCategory, setFilterCategory] = useAtom(categoryFilterOptionAtom)
   const { t } = useTranslation("cores")
   const [updateAllOpen, setUpdateAllOpen] = useState(false)
-
-  const [sortMode, setSortMode] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(sortingOptionAtom)
+  const [sortMode, setSortMode] = useAtom(sortingOptionAtom)
 
   const closeUpdateAllCallback = useCallback(
     () => setUpdateAllOpen(false),
@@ -94,7 +94,9 @@ export const Cores = () => {
       </Controls>
 
       {updateAllOpen ? (
-        <UpdateAll onClose={closeUpdateAllCallback} />
+        <Suspense>
+          <UpdateAll onClose={closeUpdateAllCallback} />
+        </Suspense>
       ) : (
         <SearchContextProvider
           query={searchQuery}
@@ -105,7 +107,7 @@ export const Cores = () => {
               sortMode={sortMode}
               onSelect={(core) => {
                 pushScroll()
-                setSelectedCore(core)
+                startTransition(() => setSelectedCore(core))
               }}
             />
           </Suspense>
@@ -125,10 +127,8 @@ const CoreList = ({
   onSelect: (coreid: string) => void
 }) => {
   const { t } = useTranslation("cores")
-  const coresList =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(coresListSelector)
-  const coreInventory =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(coreInventoryAtom)
+  const coresList = useAtomValue(coresListSelector)
+  const coreInventory = useSmoothedAtomValue(coreInventoryAtom)
 
   const notInstalledCores = useMemo(
     () =>
@@ -226,8 +226,7 @@ const CategoryFilter = ({
   filterCategory: string
   setFilterCategory: (fc: string) => void
 }) => {
-  const categoryList =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(cateogryListselector)
+  const categoryList = useAtomValue(cateogryListselector)
 
   const { t } = useTranslation("cores")
   return (

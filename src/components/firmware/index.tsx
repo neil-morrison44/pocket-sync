@@ -1,4 +1,3 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   FirmwareDetailsSelectorFamily,
   currentFirmwareVersionSelector,
@@ -14,20 +13,13 @@ import { invokeDeleteFiles, invokeDownloadFirmware } from "../../utils/invokes"
 import { useTranslation } from "react-i18next"
 import { ProgressLoader } from "../loader/progress"
 import { message } from "@tauri-apps/plugin-dialog"
+import { useAtomValue } from "jotai"
 
 export const Firmware = () => {
-  const currentFirmware = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    currentFirmwareVersionSelector
-  )
-  const latestFirmware = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    latestFirmwareSelector
-  )
-  const firmwares = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    previousFirmwareListSelector
-  )
-  const downloadedFirmware = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    downloadedFirmwareSelector
-  )
+  const currentFirmware = useAtomValue(currentFirmwareVersionSelector)
+  const latestFirmware = useAtomValue(latestFirmwareSelector)
+  const firmwares = useAtomValue(previousFirmwareListSelector)
+  const downloadedFirmware = useAtomValue(downloadedFirmwareSelector)
   const [selectedFirmware, setSelectedFirmware] = useState(
     latestFirmware.version
   )
@@ -107,7 +99,7 @@ const DownloadButton = ({
 }: DownloadButtonProps) => {
   const { t } = useTranslation("firmware")
 
-  const firmwareDetails = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const firmwareDetails = useAtomValue(
     FirmwareDetailsSelectorFamily({ version })
   )
 
@@ -149,9 +141,7 @@ type FirmwareDownloadedProps = {
 }
 
 const FirmwareDownloaded = ({ downloading }: FirmwareDownloadedProps) => {
-  const downloadedFirmware = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    downloadedFirmwareSelector
-  )
+  const downloadedFirmware = useAtomValue(downloadedFirmwareSelector)
   const { t } = useTranslation("firmware")
 
   const onRemove = useCallback(async () => {

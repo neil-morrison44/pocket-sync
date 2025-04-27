@@ -1,18 +1,14 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   CoreInfoSelectorFamily,
   CoreAuthorImageSelectorFamily,
 } from "../../../recoil/selectors"
 
 import "./index.css"
+import { useAtomValue } from "jotai"
 
 export const AuthorTag = ({ coreName }: { coreName: string }) => {
-  const coreInfo = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    CoreInfoSelectorFamily(coreName)
-  )
-  const authorImageSrc = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    CoreAuthorImageSelectorFamily(coreName)
-  )
+  const coreInfo = useAtomValue(CoreInfoSelectorFamily(coreName))
+  const authorImageSrc = useAtomValue(CoreAuthorImageSelectorFamily(coreName))
 
   return (
     <div className="author-tag">

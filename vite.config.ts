@@ -3,9 +3,15 @@ import react from "@vitejs/plugin-react"
 import postcssNesting from "postcss-nesting"
 import i18nextLoader from "vite-plugin-i18next-loader"
 
+import jotaiDebugLabel from "jotai/babel/plugin-debug-label"
+import jotaiReactRefresh from "jotai/babel/plugin-react-refresh"
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), i18nextLoader({ paths: ["./src/i18n/locales"] })],
+  plugins: [
+    react({ babel: { plugins: [jotaiDebugLabel, jotaiReactRefresh] } }),
+    i18nextLoader({ paths: ["./src/i18n/locales"] }),
+  ],
   css: {
     postcss: {
       plugins: [postcssNesting],

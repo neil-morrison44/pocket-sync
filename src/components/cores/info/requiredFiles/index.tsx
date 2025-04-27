@@ -1,9 +1,10 @@
 import { useMemo } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { useTranslation } from "react-i18next"
 import "./index.css"
 import { WarningIcon } from "./warningIcon"
 import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles/selectors"
+import { useAtomValue } from "jotai"
 
 type RequiredFilesProps = {
   coreName: string
@@ -12,9 +13,7 @@ type RequiredFilesProps = {
 }
 
 export const RequiredFiles = ({ coreName, onClick }: RequiredFilesProps) => {
-  const requiredFiles = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    RequiredFileInfoSelectorFamily(coreName)
-  )
+  const requiredFiles = useAtomValue(RequiredFileInfoSelectorFamily(coreName))
   const { t } = useTranslation("core_info")
 
   const foundFiles = useMemo(

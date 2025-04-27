@@ -1,4 +1,3 @@
-import { DefaultValue, selector, selectorFamily } from "recoil"
 import { CoreInfoSelectorFamily, coresListSelector } from "../selectors"
 import { coreInventoryAtom } from "../inventory/atoms"
 import { FileWatchAtomFamily } from "../fileSystem/atoms"
@@ -10,6 +9,8 @@ import {
 } from "../../utils/invokes"
 import { JTCrtConfig } from "../../types"
 import { pocketPathAtom } from "../atoms"
+import { Atom, atom } from "jotai"
+import { atomFamily } from "jotai/utils"
 
 type UpdateInfo = {
   coreName: string
@@ -17,49 +18,47 @@ type UpdateInfo = {
   latestVersion: string
 }
 
-export const installedCoresWithUpdatesSelector = selector<UpdateInfo[]>({
-  key: "installedCoresWithUpdatesSelector",
-  get: ({ get }) => {
-    const installedCores = get(coresListSelector)
-    const coreInventory = get(coreInventoryAtom)
+export const installedCoresWithUpdatesSelector = atom<Promise<UpdateInfo[]>>(
+  async (get) => {
+    const [installedCores, coreInventory] = await Promise.all([
+      get(coresListSelector),
+      get(coreInventoryAtom),
+    ])
 
-    return installedCores
-      .map((coreName) => {
-        const coreInfo = get(CoreInfoSelectorFamily(coreName))
-        const inventoryItem = coreInventory.cores.data.find(
-          ({ id }) => coreName === id
-        )
-        return {
-          coreName,
-          installedVersion: coreInfo.core.metadata.version,
-          latestVersion: inventoryItem?.releases[0].core.metadata.version,
-        }
-      })
-      .filter(
-        ({ installedVersion, latestVersion }) =>
-          latestVersion && installedVersion !== latestVersion
-      ) as UpdateInfo[]
-  },
-})
+    return (
+      await Promise.all(
+        installedCores.map(async (coreName) => {
+          const coreInfo = await get(CoreInfoSelectorFamily(coreName))
+          const inventoryItem = coreInventory.cores.data.find(
+            ({ id }) => coreName === id
+          )
+          return {
+            coreName,
+            installedVersion: coreInfo.core.metadata.version,
+            latestVersion: inventoryItem?.releases[0].core.metadata.version,
+          }
+        })
+      )
+    ).filter(
+      ({ installedVersion, latestVersion }) =>
+        latestVersion && installedVersion !== latestVersion
+    ) as UpdateInfo[]
+  }
+)
 
-export const CoreInfoTxtSelectorFamily = selectorFamily<string, string>({
-  key: "CoreInfoTxtSelectorFamily",
-  get:
-    (coreName) =>
-    async ({ get }) => {
-      const path = `Cores/${coreName}/info.txt`
-
-      get(FileWatchAtomFamily(path))
-
-      const exists = await invokeFileExists(path)
-
-      if (!exists) return ""
-
-      const text = await invokeReadTextFile(path)
-
-      return text
-    },
-})
+export const CoreInfoTxtSelectorFamily = atomFamily<
+  string,
+  Atom<Promise<string>>
+>((coreName) =>
+  atom(async (get) => {
+    const path = `Cores/${coreName}/info.txt`
+    get(FileWatchAtomFamily(path))
+    const exists = await invokeFileExists(path)
+    if (!exists) return ""
+    const text = await invokeReadTextFile(path)
+    return text
+  })
+)
 
 export const JT_ANALOGIZER_VIDEO_OPTIONS: [number, JTCrtConfig["video"]][] = [
   [0x820, "RBGS (SCART)"],
@@ -86,11 +85,10 @@ export const JT_ANALOGIZER_SNAC_OPTIONS: [number, JTCrtConfig["snac"]][] = [
 const DEFAULT_CRT_CONFIG = {
   video: "Disable Analog Video",
   snac: "None",
-} as const
+} as JTCrtConfig
 
-export const JTCRTConfigSelector = selector<JTCrtConfig>({
-  key: "JTCRTConfigSelector",
-  get: async ({ get }) => {
+export const JTCRTConfigSelector = atom(
+  async (get) => {
     const path = "Assets/jtpatreon/common/crtcfg.bin"
     get(FileWatchAtomFamily(path))
     const exists = await invokeFileExists(path)
@@ -111,29 +109,23 @@ export const JTCRTConfigSelector = selector<JTCrtConfig>({
 
     return { video: video[1], snac: snac[1] }
   },
-  set: ({ get }, newValue) => {
+  async (get, _set, newValue: JTCrtConfig | null) => {
     const pocketPath = get(pocketPathAtom)
     const path = `${pocketPath}/Assets/jtpatreon/common/crtcfg.bin`
-
-    if (newValue instanceof DefaultValue) {
+    if (!newValue) {
       newValue = DEFAULT_CRT_CONFIG
     }
-
     const videoValue = JT_ANALOGIZER_VIDEO_OPTIONS.find(
       ([_, value]) => newValue.video === value
     )
     const snacValue = JT_ANALOGIZER_SNAC_OPTIONS.find(
       ([_, value]) => newValue.snac === value
     )
-
     if (!videoValue) throw new Error(`Non-video value ${newValue.video}`)
     if (!snacValue) throw new Error(`Non-snac value ${newValue.snac}`)
-
     const configValue = (videoValue[0] << 20) | (snacValue[0] << 12)
-
     const binary = new Uint8Array(4)
     new DataView(binary.buffer).setUint32(0, configValue, false)
-
     invokeSaveFile(path, binary)
-  },
-})
+  }
+)

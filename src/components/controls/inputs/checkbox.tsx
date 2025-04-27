@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import { ReactNode, startTransition } from "react"
 
 type ControlsCheckboxProps = {
   children: ReactNode
@@ -20,7 +20,7 @@ export const ControlsCheckbox = ({
     <input
       type="checkbox"
       checked={checked}
-      onChange={({ target }) => onChange(target.checked)}
+      onChange={({ target }) => startTransition(() => onChange(target.checked))}
     />
     {checked ? <CheckCircleIcon /> : <EmptyCircleIcon />}
   </label>

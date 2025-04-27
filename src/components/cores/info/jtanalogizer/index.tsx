@@ -1,7 +1,3 @@
-import {
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
 import { DataJSONSelectorFamily } from "../../../../recoil/selectors"
 import { Suspense, useMemo } from "react"
 import {
@@ -15,6 +11,7 @@ import { AnalogizerIcon } from "../../icons/AnalogizerIcon"
 import { SupportsBubble } from "../supportsBubble"
 
 import "./index.css"
+import { useAtom, useAtomValue } from "jotai"
 
 type JTAnalogizerSettingsProps = {
   coreName: string
@@ -23,9 +20,7 @@ type JTAnalogizerSettingsProps = {
 export const JTAnalogizerSettings = ({
   coreName,
 }: JTAnalogizerSettingsProps) => {
-  const coreData = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    DataJSONSelectorFamily(coreName)
-  )
+  const coreData = useAtomValue(DataJSONSelectorFamily(coreName))
   const hasCRTConfig = useMemo(
     () =>
       coreData.data.data_slots.find(
@@ -45,8 +40,7 @@ export const JTAnalogizerSettings = ({
 
 const JTAnalogizerSettingsInner = () => {
   const { t } = useTranslation("core_info")
-  const [crtConfig, setCrtConfig] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(JTCRTConfigSelector)
+  const [crtConfig, setCrtConfig] = useAtom(JTCRTConfigSelector)
 
   return (
     <Details

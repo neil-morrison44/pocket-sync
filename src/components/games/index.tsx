@@ -1,5 +1,5 @@
 import { Suspense, useMemo, useState } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { cateogryListselector } from "../../recoil/inventory/selectors"
 import { coresListSelector } from "../../recoil/selectors"
 import { Controls } from "../controls"
@@ -15,10 +15,10 @@ import { ControlsButton } from "../controls/inputs/button"
 import { ControlsSelect } from "../controls/inputs/select"
 
 import "../cores/index.css"
+import { useAtomValue } from "jotai"
 
 export const Games = () => {
-  const coresList =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(coresListSelector)
+  const coresList = useAtomValue(coresListSelector)
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [filterCategory, setFilterCategory] = useState<string>("All")
   const [cleanFilesOpen, setCleanFilesOpen] = useState(false)
@@ -39,8 +39,7 @@ export const Games = () => {
     [coresList]
   )
 
-  const categoryList =
-    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(cateogryListselector)
+  const categoryList = useAtomValue(cateogryListselector)
 
   return (
     <div>

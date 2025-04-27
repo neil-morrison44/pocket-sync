@@ -1,18 +1,15 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
 import { useUpdateConfig } from "../hooks/useUpdateConfig"
 import { useTranslation } from "react-i18next"
 import { invokeConvertAllPalFiles } from "../../../utils/invokes"
 import { useProgress } from "../../../hooks/useProgress"
 import { ProgressLoader } from "../../loader/progress"
+import { useAtomValue } from "jotai"
 
 export const GBPalettesConversion = () => {
   const updateConfig = useUpdateConfig()
   const { t } = useTranslation("settings")
-  const config = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PocketSyncConfigSelector
-  )
-
+  const config = useAtomValue(PocketSyncConfigSelector)
   const { inProgress, percent } = useProgress("downconvert_all_pal_files")
 
   return (

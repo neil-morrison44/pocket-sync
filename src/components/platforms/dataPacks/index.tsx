@@ -1,8 +1,5 @@
-import { useMemo, useState } from "react"
-import {
-  useRecoilCallback,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil"
+import { useCallback, useMemo, useState } from "react"
+
 import {
   DataPackJsonSelectorFamily,
   PlatformInfoSelectorFamily,
@@ -15,6 +12,8 @@ import { Modal } from "../../modal"
 import "./index.css"
 import { useTranslation } from "react-i18next"
 import { invokeSaveMultipleFiles } from "../../../utils/invokes"
+import { useAtomValue } from "jotai"
+import { useAtomCallback } from "jotai/utils"
 
 type DataPacksProps = {
   platformId?: PlatformId
@@ -22,12 +21,8 @@ type DataPacksProps = {
 }
 
 export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
-  const imagePacks = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    imagePackListSelector
-  )
-  const platformIds = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    platformsListSelector
-  )
+  const imagePacks = useAtomValue(imagePackListSelector)
+  const platformIds = useAtomValue(platformsListSelector)
   const { t } = useTranslation("platforms")
 
   const sortedPlatformIds = useMemo(() => {
@@ -46,9 +41,9 @@ export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
     ).length
   }, [selections])
 
-  const apply = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
+  const apply = useAtomCallback(
+    useCallback(
+      async (get, set) => {
         const selectionEntries = Object.entries(selections)
         const encoder = new TextEncoder()
 
@@ -58,7 +53,7 @@ export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
         for (let index = 0; index < selectionEntries.length; index++) {
           const [platformId, pack] = selectionEntries[index]
           if (!pack) continue
-          const packJson = await snapshot.getPromise(
+          const packJson = await get(
             DataPackJsonSelectorFamily({ ...pack, platformId })
           )
           paths.push(`Platforms/${platformId}.json`)
@@ -68,7 +63,8 @@ export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
         await invokeSaveMultipleFiles(paths, jsons)
         onClose()
       },
-    [selections]
+      [selections]
+    )
   )
 
   return (
@@ -118,9 +114,7 @@ const CurrentJSON = ({
   onClick: () => void
 }) => {
   const { t } = useTranslation("platforms")
-  const currentJson = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PlatformInfoSelectorFamily(platformId)
-  )
+  const currentJson = useAtomValue(PlatformInfoSelectorFamily(platformId))
   const { platform } = currentJson
 
   return (
@@ -152,13 +146,10 @@ const JsonInPack = ({
   selected: boolean
   onClick: () => void
 }) => {
-  const packJson = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const packJson = useAtomValue(
     DataPackJsonSelectorFamily({ ...pack, platformId })
   )
-  // console.log({ packJson })
-  const currentJson = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PlatformInfoSelectorFamily(platformId)
-  )
+  const currentJson = useAtomValue(PlatformInfoSelectorFamily(platformId))
 
   if (!packJson) return null
   if (comparePlatforms(packJson, currentJson)) return null

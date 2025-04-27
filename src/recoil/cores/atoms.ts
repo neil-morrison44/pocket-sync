@@ -1,12 +1,6 @@
-import { atom } from "recoil"
+import { atom } from "jotai"
 import { SortMode } from "../../types"
 
-export const sortingOptionAtom = atom<SortMode>({
-  key: "sortingOptionAtom",
-  default: "name",
-})
+export const sortingOptionAtom = atom<SortMode>("name")
 
-export const categoryFilterOptionAtom = atom<string>({
-  key: "categoryFilterOptionAtom",
-  default: "All",
-})
+export const categoryFilterOptionAtom = atom<string>("All")

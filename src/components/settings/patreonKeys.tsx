@@ -2,14 +2,12 @@ import { listen } from "@tauri-apps/api/event"
 import { useBEM } from "../../hooks/useBEM"
 import { Link } from "../link"
 import { ReactElement, useEffect, useState } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { patreonKeyListSelector } from "../../recoil/settings/selectors"
 import { PatreonKeyInfo } from "../../types"
+import { useAtomValue } from "jotai"
 
 export const PatreonKeys = () => {
-  const patreonUrls = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    patreonKeyListSelector
-  )
+  const patreonUrls = useAtomValue(patreonKeyListSelector)
 
   return (
     <div className="settings__patreon-keys-list">

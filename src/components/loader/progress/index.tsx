@@ -3,9 +3,10 @@ import { useEffect, useState } from "react"
 
 import "./index.css"
 import { ProgressEvent } from "../../../types"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { pocketPathAtom } from "../../../recoil/atoms"
 import { useProgress } from "../../../hooks/useProgress"
+import { useAtomValue } from "jotai"
 
 declare module "react" {
   interface CSSProperties {
@@ -49,7 +50,7 @@ export const ProgressLoaderInner = ({
   }
   showToken: boolean
 }) => {
-  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
+  const pocketPath = useAtomValue(pocketPathAtom)
   return (
     <div className="progress-loader">
       <div

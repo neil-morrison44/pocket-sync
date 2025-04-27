@@ -1,4 +1,3 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import {
   GameBoyGameSelectorFamily,
   PaletteColoursSelectorFamily,
@@ -21,6 +20,7 @@ import { useSavePalette } from "./hooks/useSavePalette"
 import { Link } from "../link"
 import { PaletteName } from "./name"
 import { Trans, useTranslation } from "react-i18next"
+import { useAtomValue } from "jotai"
 
 type PaletteFullProps = {
   name: string
@@ -28,16 +28,14 @@ type PaletteFullProps = {
 }
 
 export const PaletteFull = ({ name }: PaletteFullProps) => {
-  const paletteColours = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PaletteColoursSelectorFamily(name)
-  )
+  const paletteColours = useAtomValue(PaletteColoursSelectorFamily(name))
   const { t } = useTranslation("palettes")
   const [tempPalette, setTempPalette] = useState(() => paletteColours)
   const hasBeenChanged = useMemo(
     () => !comparePalettes(tempPalette, paletteColours),
     [tempPalette, paletteColours]
   )
-  const games = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const games = useAtomValue(
     WalkDirSelectorFamily({ path: `Assets/gb`, extensions: ["gb"] })
   )
   const savePalette = useSavePalette()
@@ -171,9 +169,7 @@ type GameboyEmuProps = {
 const GameboyEmu = ({ game, palette }: GameboyEmuProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const gameboyRef = useRef<Gameboy | null>(null)
-  const gameData = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    GameBoyGameSelectorFamily(game)
-  )
+  const gameData = useAtomValue(GameBoyGameSelectorFamily(game))
 
   const applyPalette = useCallback((palette: Palette) => {
     if (!gameboyRef.current) return

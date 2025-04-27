@@ -1,4 +1,3 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { useInventoryItem } from "../../../../hooks/useInventoryItem"
 import { GithubReleasesSelectorFamily } from "../../../../recoil/github/selectors"
 import { GithubRelease, InventoryItem } from "../../../../types"
@@ -7,6 +6,7 @@ import { useTranslation } from "react-i18next"
 
 import { parseISO, differenceInMilliseconds } from "date-fns"
 import { scaleLinear, scalePow } from "d3-scale"
+import { useAtomValue } from "jotai"
 
 type DownloadCountProps = {
   coreName: string
@@ -29,11 +29,10 @@ const DownloadCountInner = ({
   const { owner, name: repo } = inventoryItem.repository
   const latestTag = inventoryItem.releases[0].core.metadata.version
 
-  const githubReleases = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const githubReleases = useAtomValue(
     GithubReleasesSelectorFamily({
       owner,
       repo,
-      latest: latestTag,
     })
   )
 

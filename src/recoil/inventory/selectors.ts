@@ -1,60 +1,55 @@
-import { selector, selectorFamily } from "recoil"
 import { Category, PlatformId, PlatformInfoJSON } from "../../types"
 import { allCategoriesSelector } from "../platforms/selectors"
 import { coreInventoryAtom } from "./atoms"
+import { atomFamily } from "jotai/utils"
+import { atom, Atom } from "jotai"
 
-export const CorePlatformSelectorFamily = selectorFamily<
-  PlatformInfoJSON["platform"] | null,
-  PlatformId
->({
-  key: "CorePlatformSelectorFamily",
-  get:
-    (platformId: PlatformId) =>
-    ({ get }) => {
-      const inventory = get(coreInventoryAtom)
-      const platform = inventory.platforms.data.find(
-        ({ id }) => id === platformId
-      )
-      return platform ?? null
-    },
+export const CorePlatformSelectorFamily = atomFamily<
+  PlatformId,
+  Atom<Promise<PlatformInfoJSON["platform"] | null>>
+>((platformId: PlatformId) =>
+  atom(async (get) => {
+    const inventory = await get(coreInventoryAtom)
+    const platform = inventory.platforms.data.find(
+      ({ id }) => id === platformId
+    )
+    return platform ?? null
+  })
+)
+
+export const DownloadURLSelectorFamily = atomFamily<
+  string,
+  Atom<Promise<string | null>>
+>((coreName: string) =>
+  atom(async (get) => {
+    const inventory = await get(coreInventoryAtom)
+    const inventoryItem = inventory.cores.data.find(
+      ({ id: identifier }) => coreName === identifier
+    )
+    if (!inventoryItem) return null
+    return inventoryItem.releases[0].download_url
+  })
+)
+
+export const cateogryListselector = atom<Promise<Category[]>>(async (get) => {
+  const inventory = await get(coreInventoryAtom)
+  const deviceCategories = await get(allCategoriesSelector)
+
+  const cateogrySet = new Set([
+    ...inventory.platforms.data.map(({ category }) => category),
+    ...deviceCategories,
+  ])
+
+  return ["All", ...Array.from(cateogrySet)]
 })
 
-export const DownloadURLSelectorFamily = selectorFamily<string | null, string>({
-  key: "DownloadURLSelectorFamily",
-  get:
-    (coreName: string) =>
-    async ({ get }) => {
-      const inventory = get(coreInventoryAtom)
-      const inventoryItem = inventory.cores.data.find(
-        ({ id: identifier }) => coreName === identifier
-      )
-      if (!inventoryItem) return null
-      return inventoryItem.releases[0].download_url
-    },
-})
-
-export const cateogryListselector = selector<Category[]>({
-  key: "CateogryListselector",
-  get: ({ get }) => {
-    const inventory = get(coreInventoryAtom)
-    const deviceCategories = get(allCategoriesSelector)
-
-    const cateogrySet = new Set([
-      ...inventory.platforms.data.map(({ category }) => category),
-      ...deviceCategories,
-    ])
-
-    return ["All", ...Array.from(cateogrySet)]
-  },
-})
-
-export const PlatformInventoryImageSelectorFamily = selectorFamily<
-  string | undefined,
-  PlatformId | undefined
->({
-  key: "PlatformInventoryImageSelectorFamily",
-  get: (platformId) => () =>
+export const PlatformInventoryImageSelectorFamily = atomFamily<
+  PlatformId | undefined,
+  Atom<string | undefined>
+>((platformId) =>
+  atom(() =>
     platformId
       ? `https://openfpga-cores-inventory.github.io/analogue-pocket/assets/images/platforms/${platformId}.png`
-      : undefined,
-})
+      : undefined
+  )
+)

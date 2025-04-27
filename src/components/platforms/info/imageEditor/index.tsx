@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
+
 import { ImageBinSrcSelectorFamily } from "../../../../recoil/selectors"
 import { Modal } from "../../../modal"
 import { invokeSaveFile } from "../../../../utils/invokes"
@@ -16,6 +16,7 @@ import {
 
 import "./index.css"
 import { useTranslation } from "react-i18next"
+import { useAtomValue } from "jotai"
 
 type ImageEditorProps = {
   onClose: () => void
@@ -30,10 +31,10 @@ export const ImageEditor = ({
   width,
   height,
 }: ImageEditorProps) => {
-  const currentImageSrc = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+  const currentImageSrc = useAtomValue(
     ImageBinSrcSelectorFamily({ path, width, height })
   )
-  const pocketPath = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(pocketPathAtom)
+  const pocketPath = useAtomValue(pocketPathAtom)
   const [selectedStampIndex, setSelectedStampIndex] = useState(0)
   const [imageStamps, setImageStamps] = useState<ImageInfo[]>([])
   const canvasRef = useRef<HTMLCanvasElement>(null)

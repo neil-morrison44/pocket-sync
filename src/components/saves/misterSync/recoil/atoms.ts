@@ -1,34 +1,25 @@
 import { listen } from "@tauri-apps/api/event"
-import { atom } from "recoil"
-import {
-  syncToAppLocalDataEffect,
-  syncToAppLocalDataEffectDefault,
-} from "../../../../recoil/effects"
+import { atom } from "jotai"
+import { withAtomEffect } from "jotai-effect"
+import { atomWithAppLocalStorage } from "../../../../utils/jotai"
 
-export const SavesInvalidationAtom = atom<number>({
-  key: "SavesInvalidationAtom",
-  default: 0,
-  effects: [
-    ({ setSelf }) => {
-      listen("mister-save-sync-moved-save", () => {
-        setSelf(Date.now())
-      })
-    },
-  ],
-})
+const BaseSavesInvalidationAtom = atom<number>(0)
 
-export const MiSTerCredsAtom = atom<{
-  host: string
-  user: string
-  password: string
-}>({
-  key: "MiSTerCredsAtom",
-  default: {
-    host: "",
-    user: "root",
-    password: "1",
-  },
-  effects: [syncToAppLocalDataEffect("mister_creds")],
+export const SavesInvalidationAtom = withAtomEffect(
+  BaseSavesInvalidationAtom,
+  (get, set) => {
+    const unlisten = listen("mister-save-sync-moved-save", () => {
+      set(BaseSavesInvalidationAtom, Date.now())
+    })
+
+    return () => unlisten.then((l) => l())
+  }
+)
+
+export const MiSTerCredsAtom = atomWithAppLocalStorage("mister_creds", {
+  host: "",
+  user: "root",
+  password: "1",
 })
 
 export type MiSTerSaveJoin = { pocket: string; mister: string }
@@ -82,11 +73,7 @@ export const DEFAULT_MISTER_SAVE_MAPPING = [
   { pocket: "gamete", mister: "Gamate" },
 ] satisfies MiSTerSaveJoin[]
 
-export const saveMappingAtom = atom<MiSTerSaveJoin[]>({
-  key: "saveMappingAtom",
-  default: syncToAppLocalDataEffectDefault(
-    "mister_save_mapping",
-    DEFAULT_MISTER_SAVE_MAPPING
-  ),
-  effects: [syncToAppLocalDataEffect("mister_save_mapping")],
-})
+export const saveMappingAtom = atomWithAppLocalStorage<MiSTerSaveJoin[]>(
+  "mister_save_mapping",
+  DEFAULT_MISTER_SAVE_MAPPING
+)

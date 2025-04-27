@@ -1,8 +1,8 @@
 import * as THREE from "three"
 import { ReactNode, useLayoutEffect, useMemo, useRef } from "react"
 import { Html } from "@react-three/drei"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil"
 import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
+import { useAtomValue } from "jotai"
 
 type LabeledLineProps = {
   start: THREE.Vector3Tuple
@@ -12,9 +12,7 @@ type LabeledLineProps = {
 
 export const LabeledLine = ({ start, end, children }: LabeledLineProps) => {
   const ref = useRef<THREE.Line | null>(null)
-  const { colour } = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    PocketSyncConfigSelector
-  )
+  const { colour } = useAtomValue(PocketSyncConfigSelector)
   const inversePocketColour = useMemo(() => {
     if (colour === "white") return "black"
     return "white"
