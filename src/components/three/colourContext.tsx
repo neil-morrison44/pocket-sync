@@ -1,4 +1,10 @@
-import { ReactNode, createContext, useEffect, useState } from "react"
+import {
+  ReactNode,
+  createContext,
+  startTransition,
+  useLayoutEffect,
+  useState,
+} from "react"
 import { PocketColour } from "../../types"
 
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
@@ -68,12 +74,16 @@ export const ColourContextProviderRandomised = ({
   const [bodyColour, setBodyColour] = useState<PocketColour>("black")
   const [buttonsColour, setButtonsColour] = useState<PocketColour>("black")
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const interval = setInterval(() => {
-      setBodyColour(ALL_COLOURS[Math.floor(ALL_COLOURS.length * Math.random())])
-      setButtonsColour(
-        ALL_COLOURS[Math.floor(ALL_COLOURS.length * Math.random())]
-      )
+      startTransition(() => {
+        setBodyColour(
+          ALL_COLOURS[Math.floor(ALL_COLOURS.length * Math.random())]
+        )
+        setButtonsColour(
+          ALL_COLOURS[Math.floor(ALL_COLOURS.length * Math.random())]
+        )
+      })
     }, changeInterval)
 
     return () => clearInterval(interval)

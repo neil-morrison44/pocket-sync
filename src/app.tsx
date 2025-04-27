@@ -6,7 +6,6 @@ import React, {
   Suspense,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react"
@@ -16,7 +15,7 @@ import { NewsFeed } from "./components/newsFeed"
 import { currentViewAtom } from "./recoil/view/atoms"
 import { useTranslation } from "react-i18next"
 import { ColourContextProviderRandomised } from "./components/three/colourContext"
-import { createStore, Provider, useAtom, useSetAtom } from "jotai"
+import { useAtom, useSetAtom } from "jotai"
 import { useAtomFnSet } from "./utils/jotai"
 import { ErrorBoundary } from "./components/errorBoundary"
 
@@ -74,13 +73,13 @@ export const App = () => {
     <div className="container">
       <h1>{t("app_name")}</h1>
 
-      <Suspense fallback={<div style={{ flexGrow: 1 }}></div>}>
-        <ErrorBoundary>
+      <ErrorBoundary>
+        <Suspense fallback={<div style={{ flexGrow: 1 }}></div>}>
           <ColourContextProviderRandomised changeInterval={15000}>
             <Pocket move="spin" />
           </ColourContextProviderRandomised>
-        </ErrorBoundary>
-      </Suspense>
+        </Suspense>
+      </ErrorBoundary>
 
       {attempts > 0 && <Tip>{t("not_pocket_tip")}</Tip>}
 

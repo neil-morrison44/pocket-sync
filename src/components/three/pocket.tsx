@@ -1,6 +1,13 @@
 import { Canvas, useFrame, useLoader } from "@react-three/fiber"
 import { Environment, PerformanceMonitor, RoundedBox } from "@react-three/drei"
-import { ReactNode, useCallback, useContext, useMemo, useRef } from "react"
+import {
+  ReactNode,
+  Suspense,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+} from "react"
 import "./index.css"
 import {
   DoubleSide,
@@ -37,7 +44,7 @@ import { useButtonsMaterial } from "./hooks/useButtonsMaterial"
 import { PerfLevelContext } from "./context/perfLevel"
 
 import { performanceLevelAtom } from "../../recoil/atoms"
-import { useAtom, useSetAtom } from "jotai"
+import { useSetAtom } from "jotai"
 import { useSmoothedAtomValue } from "../../utils/jotai"
 
 type PocketProps = {
@@ -99,9 +106,13 @@ export const Pocket = ({
       />
       <PerfLevelContext.Provider value={perfLevel}>
         {/* <Perf deepAnalyze matrixUpdate /> */}
-        <Environment files={envMap} />
+        <Suspense>
+          <Environment files={envMap} />
+        </Suspense>
         <Lights />
-        <Body move={move} screenMaterial={screenMaterial} />
+        <Suspense>
+          <Body move={move} screenMaterial={screenMaterial} />
+        </Suspense>
         {/* <OrbitControls enablePan={false} /> */}
         {/* <Stats showPanel={0} /> */}
         <PostEffects />

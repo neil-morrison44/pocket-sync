@@ -4,7 +4,7 @@ import {
   readTextFile,
   writeTextFile,
 } from "@tauri-apps/plugin-fs"
-import { atomFamily, loadable, unwrap, useAtomCallback } from "jotai/utils"
+import { atomFamily, useAtomCallback } from "jotai/utils"
 import deepEqual from "fast-deep-equal/es6"
 import {
   Atom,
@@ -15,7 +15,7 @@ import {
   useAtomValue,
 } from "jotai"
 import { startTransition, use, useCallback, useEffect, useState } from "react"
-import { withAtomEffect } from "jotai-effect"
+import { warn } from "@tauri-apps/plugin-log"
 
 export const atomFamilyDeepEqual: typeof atomFamily = (initAtom, areEqual) =>
   atomFamily(initAtom, areEqual ?? deepEqual)
@@ -40,10 +40,9 @@ export const atomWithAppLocalStorage = <T>(
       })
       let value = initialValue
       try {
-        console.log(text)
         value = JSON.parse(text) as T
       } catch (err) {
-        console.log(`Error Reading Config File ${fileName}, ${err} \n ${text}`)
+        warn(`Error Reading Config File ${fileName}, ${err} \n "${text}"`)
       }
       return value
     },
