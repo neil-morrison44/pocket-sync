@@ -14,6 +14,8 @@ export const AutoUpdate = () => {
       while (!abort.aborted) {
         info("Checking for update...")
         const update = await check()
+        // no idea why this happens
+        if (update?.version === "") break
 
         if (
           update?.available &&
