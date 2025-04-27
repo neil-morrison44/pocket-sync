@@ -48,9 +48,7 @@ export const Fetch = () => {
       const confirmed = await confirm(t("remove_confirm"), { kind: "warning" })
       if (!confirmed) return
       updateConfig("fetches", (fetches) => {
-        const clonedFetches = [
-          ...((fetches as PocketSyncConfig["fetches"]) ?? []),
-        ]
+        const clonedFetches = [...(fetches ?? [])]
         clonedFetches.splice(index, 1)
         return clonedFetches
       })
