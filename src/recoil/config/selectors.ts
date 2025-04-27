@@ -3,15 +3,18 @@ import { invokeFileExists, invokeSaveFile } from "../../utils/invokes"
 import { readJSONFile } from "../../utils/readJSONFile"
 import { pocketPathAtom } from "../atoms"
 import { AppVersionSelector } from "../selectors"
-import { FileWatchAtomFamily } from "../fileSystem/atoms"
 import { atom } from "jotai"
 
-export const PocketSyncConfigSelector = atom<Promise<PocketSyncConfig>>(
+export const configChangesAtom = atom<PocketSyncConfig | null>(null)
+
+export const PocketSyncConfigSelector = atom(
   async (get) => {
+    const configChanges = get(configChangesAtom)
+    if (configChanges !== null) return configChanges
+
     const pocketPath = get(pocketPathAtom)
     const file = "pocket-sync.json"
     const path = `${pocketPath}/${file}`
-    get(FileWatchAtomFamily(file))
 
     if (!pocketPath) {
       return {
@@ -41,8 +44,21 @@ export const PocketSyncConfigSelector = atom<Promise<PocketSyncConfig>>(
         encoder.encode(JSON.stringify(defaultConfig, null, 2))
       )
     }
-    console.log("Reading file, ", file)
+
     return readJSONFile<PocketSyncConfig>(file)
+  },
+  async (get, set, newConfig: PocketSyncConfig) => {
+    const pocketPath = get(pocketPathAtom)
+    const file = "pocket-sync.json"
+    const path = `${pocketPath}/${file}`
+    const encoder = new TextEncoder()
+
+    set(configChangesAtom, newConfig)
+
+    await invokeSaveFile(
+      path,
+      encoder.encode(JSON.stringify(newConfig, null, 2))
+    )
   }
 )
 

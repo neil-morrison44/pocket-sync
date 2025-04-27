@@ -6,6 +6,7 @@ import { useAtomValue } from "jotai"
 
 export const AutoBackup = () => {
   const hasBackedUpRef = useRef<boolean>(false)
+  console.log("AutoBackup")
   const allSaves = useAtomValue(AllSavesSelector)
   const { saves } = useAtomValue(PocketSyncConfigSelector)
 

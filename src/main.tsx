@@ -26,7 +26,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <I18nProvider>
       <Provider store={jotaiStore}>
         <App />
-        {/* <Disconnections /> */}
+        <Disconnections />
         <AutoUpdate />
       </Provider>
     </I18nProvider>

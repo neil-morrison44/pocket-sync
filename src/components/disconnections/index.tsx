@@ -22,6 +22,7 @@ export const Disconnections = () => {
     const unlisten = listen<{ connected: boolean }>(
       "pocket-connection",
       ({ payload }) => {
+        console.log("disconnected?")
         if (!payload.connected) {
           onDisconnect()
           clearAllSelectorCaches()
