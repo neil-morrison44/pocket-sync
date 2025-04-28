@@ -1,4 +1,16 @@
 # Changelog
+<a id="v5.7.1"></a>
+# [v5.7.1 - Fix Windows infinite loading bug](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.7.1) - 2025-04-28
+
+## What's Changed
+* Fixes issue where it loads forever in windows by [@neil-morrison44](https://github.com/neil-morrison44) in [#383](https://github.com/neil-morrison44/pocket-sync/pull/383)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.0...v5.7.1
+
+[Changes][v5.7.1]
+
+
 <a id="v5.7.0"></a>
 # [v5.7.0 - big internal data management stability changes & QOL improvements](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.7.0) - 2025-04-27
 
@@ -1667,6 +1679,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v5.7.1]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.0...v5.7.1
 [v5.7.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.6.2...v5.7.0
 [v5.6.2]: https://github.com/neil-morrison44/pocket-sync/compare/v5.6.1...v5.6.2
 [v5.6.1]: https://github.com/neil-morrison44/pocket-sync/compare/v5.6.0...v5.6.1
