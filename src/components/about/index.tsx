@@ -116,6 +116,8 @@ const FirmwareUpdateAvailable = () => {
   const firmwareUpdateAvailable = useAtomValue(updateAvailableSelector)
   const setCurrentView = useSetAtom(currentViewAtom)
 
+  if (!firmwareUpdateAvailable) return null
+
   return (
     <div
       className="about__update-link"
