@@ -16,7 +16,8 @@ pub async fn clear_file_caches(cache_dir: &PathBuf) -> io::Result<()> {
 
 pub async fn get_file_with_cache(path: &PathBuf, cache_dir: &PathBuf) -> io::Result<File> {
     let file = tokio::fs::File::open(&path).await?;
-    file.sync_all().await?;
+    // Causes a permission error in Windows for some reason
+    // file.sync_all().await?;
     let metadata = file.metadata().await?;
     let file_cache_dir = cache_dir.join(FILE_CACHE_FOLDER);
 
@@ -33,7 +34,7 @@ pub async fn get_file_with_cache(path: &PathBuf, cache_dir: &PathBuf) -> io::Res
 
             if let Some(cache_path) = cache_path {
                 let cached_file = tokio::fs::File::open(&cache_path).await?;
-                cached_file.sync_all().await?;
+                // cached_file.sync_all().await?;
                 trace!("Returning cached file {cache_path:?}");
                 return Ok(cached_file);
             }

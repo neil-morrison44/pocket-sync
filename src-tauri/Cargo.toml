@@ -1,6 +1,6 @@
 [package]
 name = "pocket-sync"
-version = "5.7.0"
+version = "5.7.1"
 description = "A GUI tool for doing stuff with the Analogue Pocket"
 authors = ["neil-morrison44"]
 license = "AGPL-3.0"
@@ -71,4 +71,4 @@ default = ["custom-protocol"]
 custom-protocol = ["tauri/custom-protocol"]
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
-tauri-plugin-updater = "2.0.2"
+tauri-plugin-updater = "2.7.1"

@@ -1,7 +1,7 @@
 {
   "name": "pocket-sync",
   "private": true,
-  "version": "5.7.0",
+  "version": "5.7.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -26,7 +26,7 @@
     "@tauri-apps/plugin-os": "^2.2.0",
     "@tauri-apps/plugin-process": "^2.2.0",
     "@tauri-apps/plugin-shell": "^2.2.0",
-    "@tauri-apps/plugin-updater": "^2.3.0",
+    "@tauri-apps/plugin-updater": "^2.7.1",
     "@types/three": "0.175.0",
     "@zip.js/zip.js": "^2.7.60",
     "d3-scale": "^4.0.2",
