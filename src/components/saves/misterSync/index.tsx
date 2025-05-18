@@ -1,8 +1,10 @@
 import { emit, listen } from "@tauri-apps/api/event"
 import {
   Fragment,
+  startTransition,
   Suspense,
   useCallback,
+  useDeferredValue,
   useEffect,
   useMemo,
   useState,
@@ -31,7 +33,12 @@ import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
 import { ControlsSearch } from "../../controls/inputs/search"
 import { useAtom, useAtomValue } from "jotai"
-import { useAtomFnSet } from "../../../utils/jotai"
+import {
+  useAtomFnSet,
+  useSetAtomFnSet,
+  useSmoothedAtom,
+  useSmoothedAtomValue,
+} from "../../../utils/jotai"
 
 type MisterSyncProps = {
   onClose: () => void
@@ -43,12 +50,12 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
   const [selectedSave, setSelectedSave] = useState<string | null>(null)
 
   const [query, setQuery] = useState("")
-  const [creds, setCreds] = useAtomFnSet(MiSTerCredsAtom)
+
+  const creds = useSmoothedAtomValue(MiSTerCredsAtom)
+  const setCreds = useSetAtomFnSet(MiSTerCredsAtom)
 
   const { t } = useTranslation("mister_sync")
-
   const [saveMappingOpen, setSaveMappingOpen] = useState(false)
-
   const connect = useCallback(async () => {
     setConnecting(true)
     const c = await invokeBeginMisterSaveSyncSession(
@@ -123,9 +130,10 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
                 <input
                   type="text"
                   value={creds.host}
-                  onChange={({ target }) =>
-                    setCreds((c) => ({ ...c, host: target.value }))
-                  }
+                  onChange={({ target }) => {
+                    const host = target.value
+                    setCreds((c) => ({ ...c, host }))
+                  }}
                 />
               </label>
               <label>
@@ -133,9 +141,10 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
                 <input
                   type="text"
                   value={creds.user}
-                  onChange={({ target }) =>
-                    setCreds((c) => ({ ...c, user: target.value }))
-                  }
+                  onChange={({ target }) => {
+                    const user = target.value
+                    setCreds((c) => ({ ...c, user }))
+                  }}
                 />
               </label>
               <label>
@@ -143,9 +152,10 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
                 <input
                   type="text"
                   value={creds.password}
-                  onChange={({ target }) =>
-                    setCreds((c) => ({ ...c, password: target.value }))
-                  }
+                  onChange={({ target }) => {
+                    const password = target.value
+                    setCreds((c) => ({ ...c, password }))
+                  }}
                 />
               </label>
               <button onClick={connect}>{t("login.connect")}</button>
