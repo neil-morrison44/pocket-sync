@@ -1,4 +1,16 @@
 # Changelog
+<a id="v5.7.3"></a>
+# [v5.7.3 - Fixes issue configuring MiSTer save sync](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.7.3) - 2025-05-18
+
+## What's Changed
+* Fixes issue entering text into MiSTer sync inputs by [@neil-morrison44](https://github.com/neil-morrison44) in [#386](https://github.com/neil-morrison44/pocket-sync/pull/386)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.2...v5.7.3
+
+[Changes][v5.7.3]
+
+
 <a id="v5.7.2"></a>
 # [v5.7.2 - Fixes firmware update message showing when there isn't one](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.7.2) - 2025-04-28
 
@@ -1687,6 +1699,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v5.7.3]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.2...v5.7.3
 [v5.7.2]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.1...v5.7.2
 [v5.7.1]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.0...v5.7.1
 [v5.7.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.6.2...v5.7.0
