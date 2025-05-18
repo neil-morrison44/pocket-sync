@@ -1,7 +1,7 @@
 {
   "name": "pocket-sync",
   "private": true,
-  "version": "5.7.2",
+  "version": "5.7.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,7 +14,7 @@
   "dependencies": {
     "@neil-morrison44/gameboy-emulator": "^1.3.0",
     "@prantlf/jsonlint": "11.7.0",
-    "@react-three/drei": "^10.0.7",
+    "@react-three/drei": "^10.0.8",
     "@react-three/fiber": "^9.1.2",
     "@react-three/postprocessing": "^3.0.4",
     "@tauri-apps/api": "^2.1.1",
@@ -69,7 +69,7 @@
     "stylelint": "^16.19.1",
     "stylelint-config-standard": "^38.0.0",
     "typescript": "^5.8.3",
-    "vite": "^6.3.3",
+    "vite": "^6.3.5",
     "vite-plugin-i18next-loader": "^3.1.2"
   },
   "prettier": {

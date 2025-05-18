@@ -99,6 +99,7 @@ export const useSetAtomFnSet = <T>(
             const currentValue = await get(atom)
             // @ts-expect-error have checked it's a function...
             const newValue = await updater(currentValue)
+            console.log({ updater, newValue }, await updater(currentValue))
             set(atom, newValue)
             break
           }
