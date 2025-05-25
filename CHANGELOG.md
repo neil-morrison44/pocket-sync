@@ -1,4 +1,16 @@
 # Changelog
+<a id="v5.7.4"></a>
+# [v5.7.4 - Fixes issue opening folders on Windows](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.7.4) - 2025-05-25
+
+## What's Changed
+* Fixes issue opening Games folders on Windows by [@neil-morrison44](https://github.com/neil-morrison44) in [#389](https://github.com/neil-morrison44/pocket-sync/pull/389)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.3...v5.7.4
+
+[Changes][v5.7.4]
+
+
 <a id="v5.7.3"></a>
 # [v5.7.3 - Fixes issue configuring MiSTer save sync](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.7.3) - 2025-05-18
 
@@ -1699,6 +1711,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v5.7.4]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.3...v5.7.4
 [v5.7.3]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.2...v5.7.3
 [v5.7.2]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.1...v5.7.2
 [v5.7.1]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.0...v5.7.1
