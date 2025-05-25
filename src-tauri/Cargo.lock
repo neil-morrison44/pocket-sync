@@ -4029,7 +4029,7 @@ dependencies = [
 
 [[package]]
 name = "pocket-sync"
-version = "5.7.3"
+version = "5.7.4"
 dependencies = [
  "anyhow",
  "async-walkdir",
