@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react"
-
 import { pocketPathAtom } from "../../recoil/atoms"
 import {
   CoreInfoSelectorFamily,
@@ -9,11 +8,11 @@ import { decodeDataParams } from "../../utils/decodeDataParams"
 import { invokeCreateFolderIfMissing } from "../../utils/invokes"
 import { PlatformImage } from "../cores/platformImage"
 import { GameCount } from "./gameCount"
-import { open } from "@tauri-apps/plugin-shell"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { PlatformInfoSelectorFamily } from "../../recoil/platforms/selectors"
 import { DataSlotJSON } from "../../types"
 import { useAtomValue } from "jotai"
+import { openFolder } from "../../utils/openFolder"
 
 const NOT_REQUIRED_BUT_MAYBE_GAME_NAMES = /(^slot)/i
 
@@ -49,7 +48,7 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
 
   const onOpenFolder = useCallback(async (path: string) => {
     await invokeCreateFolderIfMissing(path)
-    open(path)
+    openFolder(path)
   }, [])
 
   if (!romsSlot) return null
