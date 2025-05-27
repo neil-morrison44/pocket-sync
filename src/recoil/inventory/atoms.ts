@@ -3,6 +3,7 @@ import { InventoryJSON, InventoryPlatformsJSON } from "../../types"
 import { info } from "@tauri-apps/plugin-log"
 import { atomWithRefresh } from "jotai/utils"
 import { withAtomEffect } from "jotai-effect"
+import { startTransition } from "react"
 
 const INTERVAL_MINS = 2.5
 
@@ -33,10 +34,9 @@ const coreInventoryAtomBase = atomWithRefresh(
 export const coreInventoryAtom = withAtomEffect(
   coreInventoryAtomBase,
   (_get, set) => {
-    const interval = setInterval(
-      () => set(coreInventoryAtomBase),
-      INTERVAL_MINS * 60 * 1000
-    )
+    const interval = setInterval(() => {
+      startTransition(() => set(coreInventoryAtomBase))
+    }, INTERVAL_MINS * 60 * 1000)
     return () => clearInterval(interval)
   }
 )

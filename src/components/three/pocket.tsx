@@ -107,7 +107,11 @@ export const Pocket = ({
       <PerfLevelContext.Provider value={perfLevel}>
         {/* <Perf deepAnalyze matrixUpdate /> */}
         <Suspense>
-          <Environment files={envMap} />
+          <Environment
+            files={envMap}
+            environmentRotation={[0, Math.PI * 0.8, 0]}
+            blur={4}
+          />
         </Suspense>
         <Lights />
         <Suspense>
@@ -131,8 +135,8 @@ const PostEffects = () => {
     <EffectComposer>
       {colour == "glow" ? (
         <Bloom
-          intensity={0.05}
-          luminanceThreshold={0.8}
+          intensity={0.1}
+          luminanceThreshold={0}
           kernelSize={KernelSize.HUGE}
           luminanceSmoothing={0.025}
         />
@@ -157,16 +161,37 @@ const PostEffects = () => {
 
 const Lights = () => {
   const perfLevel = useContext(PerfLevelContext)
+  const colour = useContext(BodyColourContext)
+  const [intensityScale, fillColour, keyColour] = useMemo(() => {
+    switch (colour) {
+      case "white":
+        return [0.5, "lightyellow", "rgb(100,100,255)"]
+      default:
+        return [1, undefined, undefined]
+    }
+  }, [colour])
   return (
     <>
+      {/* Key Light - strong and directional */}
       <pointLight
-        position={[-5, 22, 10]}
-        intensity={1500}
+        position={[10, 10, 10]}
+        intensity={1000 * intensityScale}
         castShadow={perfLevel > 1}
+        color={keyColour}
       />
+
+      {/* Fill Light - softer and opposite to the key */}
       <pointLight
-        position={[0, -20, 10]}
-        intensity={250}
+        position={[-10, 5, 10]}
+        intensity={500 * intensityScale}
+        castShadow={perfLevel > 2}
+        color={fillColour}
+      />
+
+      {/* Back Light - creates rim lighting to separate from background */}
+      <pointLight
+        position={[0, 10, -10]}
+        intensity={750 * intensityScale}
         castShadow={perfLevel > 2}
       />
     </>
@@ -292,7 +317,7 @@ const Screen = ({ screenMaterial }: PocketProps) => {
           alphaMap={alphaMap}
           alphaTest={0.5}
           clearcoat={1}
-          clearcoatRoughness={0}
+          clearcoatRoughness={0.55}
           envMapIntensity={0.1}
         />
       </mesh>

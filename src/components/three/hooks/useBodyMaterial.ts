@@ -60,7 +60,7 @@ export const useBodyMaterial = (): MeshPhysicalMaterial => {
         }
         material.roughnessMap = roughnessMap
         if (perfLevel >= 2) {
-          material.clearcoat = 1
+          material.clearcoat = 0.25
           material.clearcoatMap = clearcoatMap
           material.clearcoatRoughness = 0.5
         }

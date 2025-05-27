@@ -2,6 +2,7 @@ import { atomWithRefresh } from "jotai/utils"
 import { FeedItem, RawFeedItem } from "../../types"
 import { invokeGetNewsFeed } from "../../utils/invokes"
 import { withAtomEffect } from "jotai-effect"
+import { startTransition } from "react"
 
 const INTERVAL_MINS = 5
 
@@ -27,7 +28,7 @@ const baseNewsFeedAtom = atomWithRefresh(async (_get) => ({
 
 export const newsFeedAtom = withAtomEffect(baseNewsFeedAtom, (_get, set) => {
   const interval = setInterval(
-    () => set(baseNewsFeedAtom),
+    () => startTransition(() => set(baseNewsFeedAtom)),
     INTERVAL_MINS * 60 * 1000
   )
   return () => clearInterval(interval)
