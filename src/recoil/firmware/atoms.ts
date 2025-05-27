@@ -1,6 +1,7 @@
 import { invokeGetFirmwareVersionsList } from "../../utils/invokes"
 import { atomWithRefresh } from "jotai/utils"
 import { withAtomEffect } from "jotai-effect"
+import { startTransition } from "react"
 
 const INTERVAL_MINS = 60
 
@@ -12,7 +13,7 @@ export const allFirmwaresAtom = withAtomEffect(
   baseAllFirmwaresAtom,
   (_get, set) => {
     const interval = setInterval(async () => {
-      set(allFirmwaresAtom)
+      startTransition(() => set(allFirmwaresAtom))
     }, INTERVAL_MINS * 60 * 1000)
 
     return () => clearInterval(interval)

@@ -1,5 +1,6 @@
 import { withAtomEffect } from "jotai-effect"
 import { atomWithRefresh } from "jotai/utils"
+import { startTransition } from "react"
 
 const INTERVAL_MINS = 15
 
@@ -23,7 +24,7 @@ export const sponsorCountAtom = withAtomEffect(
   baseSponsorCountAtom,
   (_get, set) => {
     const interval = setInterval(async () => {
-      set(baseSponsorCountAtom)
+      startTransition(() => set(baseSponsorCountAtom))
     }, INTERVAL_MINS * 60 * 1000)
 
     return () => clearInterval(interval)

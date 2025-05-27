@@ -61,8 +61,8 @@ const ScreenshotScreen = ({ name }: { name: string }) => {
     <meshPhysicalMaterial
       ref={materialRef}
       attach="material"
-      clearcoat={1}
-      clearcoatRoughness={0}
+      clearcoat={0.5}
+      clearcoatRoughness={0.55}
       envMapIntensity={0.01}
       reflectivity={0}
       emissive={"white"}
