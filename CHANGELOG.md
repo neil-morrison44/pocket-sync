@@ -1,4 +1,16 @@
 # Changelog
+<a id="v5.7.5"></a>
+# [v5.7.5 - Fixes UI glitching on background refresh & improves 3D Pocket lighting](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.7.5) - 2025-05-27
+
+## What's Changed
+* Lights the 3D Pocket using 3 Point lighting & fixes UI gltich on refresh by [@neil-morrison44](https://github.com/neil-morrison44) in [#390](https://github.com/neil-morrison44/pocket-sync/pull/390)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.4...v5.7.5
+
+[Changes][v5.7.5]
+
+
 <a id="v5.7.4"></a>
 # [v5.7.4 - Fixes issue opening folders on Windows](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.7.4) - 2025-05-25
 
@@ -1711,6 +1723,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v5.7.5]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.4...v5.7.5
 [v5.7.4]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.3...v5.7.4
 [v5.7.3]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.2...v5.7.3
 [v5.7.2]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.1...v5.7.2
