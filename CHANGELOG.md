@@ -1,4 +1,17 @@
 # Changelog
+<a id="v5.8.0"></a>
+# [v5.8.0 - OpenGPGA Library update, Gameboy Camera Gold support](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.8.0) - 2025-08-16
+
+## What's Changed
+* Adds gameboy camera gold by [@neil-morrison44](https://github.com/neil-morrison44) in [#401](https://github.com/neil-morrison44/pocket-sync/pull/401)
+* Switches everything to OpenFPGA Library instead of Core Inventory by [@neil-morrison44](https://github.com/neil-morrison44) in [#402](https://github.com/neil-morrison44/pocket-sync/pull/402)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.5...v5.8.0
+
+[Changes][v5.8.0]
+
+
 <a id="v5.7.5"></a>
 # [v5.7.5 - Fixes UI glitching on background refresh & improves 3D Pocket lighting](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.7.5) - 2025-05-27
 
@@ -1723,6 +1736,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v5.8.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.5...v5.8.0
 [v5.7.5]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.4...v5.7.5
 [v5.7.4]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.3...v5.7.4
 [v5.7.3]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.2...v5.7.3
