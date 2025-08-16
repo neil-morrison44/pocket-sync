@@ -11,8 +11,8 @@ export const Thanks = () => {
 
       <ul>
         <li>
-          <Link href={"https://github.com/openfpga-cores-inventory"}>
-            {"https://github.com/openfpga-cores-inventory"}
+          <Link href={"https://github.com/openfpga-library"}>
+            {"https://github.com/openfpga-library"}
           </Link>
         </li>
 

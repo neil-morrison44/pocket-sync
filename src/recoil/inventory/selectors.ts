@@ -49,7 +49,7 @@ export const PlatformInventoryImageSelectorFamily = atomFamily<
 >((platformId) =>
   atom(() =>
     platformId
-      ? `https://openfpga-cores-inventory.github.io/analogue-pocket/assets/images/platforms/${platformId}.png`
+      ? `https://openfpga-library.github.io/analogue-pocket/assets/images/platforms/${platformId}.png`
       : undefined
   )
 )

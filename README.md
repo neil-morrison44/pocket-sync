@@ -134,7 +134,7 @@ Can read more here https://github.com/tauri-apps/tauri/discussions/4426#discussi
 
 ### Why isn't _some core_ in the list?
 
-If it's new it could just be that it's not yet added to https://github.com/openfpga-cores-inventory/analogue-pocket. If it's been released outwith Github then support for whatever the format is will need to be added to the inventory.
+If it's new it could just be that it's not yet added to https://github.com/openfpga-library/analogue-pocket. If it's been released outwith Github then support for whatever the format is will need to be added to the inventory.
 
 You can install cores by dragging & dropping the .zip onto any running Pocket Sync window and it'll install as if you've downloaded it.
 
@@ -153,6 +153,6 @@ You should donate to the folks actually porting / building cores first tough, si
 
 ## Thanks to
 
-- [The OpenFPGA Cores Inventory supplies a bunch of the data used in the app](https://github.com/openfpga-cores-inventory)
+- [The OpenFPGA Library supplies a bunch of the data used in the app](https://github.com/openfpga-library)
 - [This recreation of the Analogue OS font](https://github.com/AbFarid/analogue-os-font)
 - [And this refinement of the recreation of the Analogue OS font](https://github.com/mumchristmas/GamePocket-font)

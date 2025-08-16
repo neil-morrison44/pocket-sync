@@ -24,7 +24,7 @@ export const NewsFeed = ({ deepLinks = false }: NewsFeedProps) => {
       <div className="news-feed__title">
         <Trans t={t} i18nKey={"updates_from"}>
           {"_"}
-          <Link href="https://openfpga-cores-inventory.github.io/analogue-pocket/">
+          <Link href="https://openfpga-library.github.io/analogue-pocket/">
             {"_"}
           </Link>
         </Trans>
