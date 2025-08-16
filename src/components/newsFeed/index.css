@@ -6,6 +6,7 @@
 .news-feed__title {
   text-align: left;
   padding: 10px;
+  overflow: hidden;
 }
 
 .news-feed__title-last-updated{

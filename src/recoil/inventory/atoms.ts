@@ -8,10 +8,10 @@ import { startTransition } from "react"
 const INTERVAL_MINS = 2.5
 
 const INVENTORY_API =
-  "https://openfpga-cores-inventory.github.io/analogue-pocket/api/v3/cores.json"
+  "https://openfpga-library.github.io/analogue-pocket/api/v3/cores.json"
 
 const INVENTORY_PLATFORMS_API =
-  "https://openfpga-cores-inventory.github.io/analogue-pocket/api/v3/platforms.json"
+  "https://openfpga-library.github.io/analogue-pocket/api/v3/platforms.json"
 
 const getInventoryInfo = async () => {
   const [coresResponse, platformsResponse] = await Promise.all([

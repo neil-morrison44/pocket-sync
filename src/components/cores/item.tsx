@@ -109,7 +109,7 @@ export const NotInstalledCoreItem = ({
   const platform = useAtomValue(CorePlatformSelectorFamily(platform_id))
 
   const config = useAtomValue(PocketSyncConfigSelector)
-  const authorImageUrl = `https://openfpga-cores-inventory.github.io/analogue-pocket/assets/images/authors/${identifier}.png`
+  const authorImageUrl = `https://openfpga-library.github.io/analogue-pocket/assets/images/authors/${identifier}.png`
   const [author] = identifier.split(".")
 
   if (config.hidden_cores && config.hidden_cores.includes(identifier))

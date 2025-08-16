@@ -286,7 +286,7 @@
   },
   "news_feed": {
     "last_updated": "最新アップデート",
-    "updates_from": "<1>OpenFPGA Cores Inventory</1> からの最新情報"
+    "updates_from": "<1>OpenFPGA Library</1> からの最新情報"
   },
   "platform_info": {
     "controls": {

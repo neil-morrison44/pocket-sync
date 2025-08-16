@@ -18,9 +18,8 @@ pub async fn get_feed_json() -> Vec<FeedItem> {
         .unwrap()
         .as_millis();
 
-    let feed_url = format!(
-        "https://openfpga-cores-inventory.github.io/analogue-pocket/feed.xml?cache_bust={now}"
-    );
+    let feed_url =
+        format!("https://openfpga-library.github.io/analogue-pocket/feed.xml?cache_bust={now}");
     let response = reqwest::get(&feed_url).await;
 
     match response {
