@@ -143,7 +143,7 @@ export const useAddNewImageCallback = (
     const imageData = await readFile(imagePath)
 
     const [name] = imagePath.split("/").reverse()
-    const file = new File([imageData], name)
+    const file = new File([imageData as any as BlobPart], name)
 
     const url = await URL.createObjectURL(file)
     const image = new Image()
