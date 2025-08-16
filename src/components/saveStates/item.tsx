@@ -16,7 +16,11 @@ type SaveStateItemProps = {
   onExportPhotos: () => void
 }
 
-const GB_CAMERA_NAMES = ["Game Boy Camera", "Pocket Camera"]
+const GB_CAMERA_NAMES = [
+  "Game Boy Camera",
+  "Pocket Camera",
+  "Game Boy Camera Gold",
+]
 
 export const SaveStateItem = ({
   path,
