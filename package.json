@@ -68,7 +68,7 @@
     "postcss-nesting": "^13.0.1",
     "stylelint": "^16.23.1",
     "stylelint-config-standard": "^39.0.0",
-    "typescript": "^5.9.2",
+    "typescript": "^5.9.0",
     "vite": "^6.3.5",
     "vite-plugin-i18next-loader": "^3.1.2"
   },
