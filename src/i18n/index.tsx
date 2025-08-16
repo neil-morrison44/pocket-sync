@@ -5,7 +5,7 @@ import resources from "virtual:i18next-loader"
 import { ReactNode, useMemo } from "react"
 import { I18nextProvider } from "react-i18next"
 import { alwaysUseEnglishAtom } from "../recoil/settings/atoms"
-import { locale } from "@tauri-apps/plugin-os"
+import { getLocale } from "tauri-plugin-locale-api"
 import { useAtomValue } from "jotai"
 
 let userLanguage: string | null = null
@@ -34,7 +34,7 @@ export const I18nProvider = ({
         detect: async () =>
           localeOverride ??
           (alwaysUseEnglish.value ? "en-US" : undefined) ??
-          (await locale()),
+          (await getLocale()),
         cacheUserLanguage: (lng: string) => {
           userLanguage = lng
         },
