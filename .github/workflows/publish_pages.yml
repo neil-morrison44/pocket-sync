@@ -18,7 +18,7 @@ jobs:
       - run: npm ci
       - run: npx tsc .github/workflows/scripts/build_platforms_zip.ts --target esnext --module commonjs
       - run: mv .github/workflows/scripts/build_platforms_zip.js .github/workflows/scripts/build_platforms_zip.cjs
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         with:
           script: |
             const { buildPlatformZip } = require(".github/workflows/scripts/build_platforms_zip.cjs")
