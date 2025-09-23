@@ -45,12 +45,12 @@
     "r3f-perf": "^7.2.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-i18next": "^15.6.1",
+    "react-i18next": "^15.7.3",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "simplex-noise": "^4.0.3",
     "tauri-plugin-locale-api": "^2.0.1",
-    "three": "0.179.1"
+    "three": "0.180.0"
   },
   "devDependencies": {
     "@octokit/rest": "^22.0.0",
