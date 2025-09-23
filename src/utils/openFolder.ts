@@ -1,8 +1,8 @@
 import { path } from "@tauri-apps/api"
-import { open } from "@tauri-apps/plugin-shell"
+import { openPath } from "@tauri-apps/plugin-opener"
 
 export const openFolder = async (folderPath: string) => {
   const sep = path.sep()
   const platformPath = folderPath.replaceAll("/", sep)
-  open(platformPath)
+  openPath(platformPath)
 }

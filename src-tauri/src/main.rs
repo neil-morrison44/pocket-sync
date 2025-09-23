@@ -952,6 +952,8 @@ async fn find_mtime_for_files(full_file_paths: Vec<PathBuf>) -> Result<Vec<Optio
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_locale::init())
+        .plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
@@ -962,6 +964,8 @@ fn main() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
+        .plugin(tauri_plugin_locale::init())
+        .plugin(tauri_plugin_opener::init())
         .plugin(
             tauri_plugin_log::Builder::default()
                 .targets([
@@ -1022,7 +1026,7 @@ fn main() {
         .expect("error while running tauri application");
 }
 
-fn start_tasks(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
+fn start_tasks(app: &App) -> Result<(), Box<dyn std::error::Error + 'static>> {
     let window = &app.get_webview_window("main").unwrap();
     {
         let window = window.clone();
@@ -1032,12 +1036,6 @@ fn start_tasks(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> 
     Ok(())
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct DownloadFile {
-    filename: String,
-    path: String,
-    mtime: Option<u64>,
-}
 #[derive(Serialize, Deserialize)]
 struct BackupSavesResponse {
     files: Vec<SaveZipFile>,
