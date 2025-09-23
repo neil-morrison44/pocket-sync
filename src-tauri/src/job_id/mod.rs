@@ -33,7 +33,7 @@ pub struct JobHandle<'a> {
 }
 
 impl JobState {
-    pub async fn start_job(&self, key: &str) -> Arc<JobHandle> {
+    pub async fn start_job(&self, key: &str) -> Arc<JobHandle<'_>> {
         let mut lock = self.inner.write().await;
         let id = String::from(key);
         let task = Job {

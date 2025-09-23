@@ -105,7 +105,7 @@ pub async fn check_data_file_status(
 
                 if let Some(archive_crc32) = &crc32
                     .as_ref()
-                    .and_then(|crc32| (u32::from_str_radix(&crc32, 16).ok()))
+                    .and_then(|crc32| u32::from_str_radix(&crc32, 16).ok())
                 {
                     if archive_crc32 == &file_crc32 {
                         DataSlotFileStatus::Exists

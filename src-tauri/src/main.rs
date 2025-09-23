@@ -1026,7 +1026,7 @@ fn main() {
         .expect("error while running tauri application");
 }
 
-fn start_tasks(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
+fn start_tasks(app: &App) -> Result<(), Box<dyn std::error::Error + 'static>> {
     let window = &app.get_webview_window("main").unwrap();
     {
         let window = window.clone();
@@ -1036,12 +1036,6 @@ fn start_tasks(app: &App) -> Result<(), Box<(dyn std::error::Error + 'static)>> 
     Ok(())
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct DownloadFile {
-    filename: String,
-    path: String,
-    mtime: Option<u64>,
-}
 #[derive(Serialize, Deserialize)]
 struct BackupSavesResponse {
     files: Vec<SaveZipFile>,
