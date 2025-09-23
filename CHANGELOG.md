@@ -1,4 +1,16 @@
 # Changelog
+<a id="v5.9.0"></a>
+# [v5.9.0 - Framework updates, restores some things like saving window state](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.9.0) - 2025-09-23
+
+## What's Changed
+* Updates all Tauri things by [@neil-morrison44](https://github.com/neil-morrison44) in [#403](https://github.com/neil-morrison44/pocket-sync/pull/403)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.8.0...v5.9.0
+
+[Changes][v5.9.0]
+
+
 <a id="v5.8.0"></a>
 # [v5.8.0 - OpenGPGA Library update, Gameboy Camera Gold support](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.8.0) - 2025-08-16
 
@@ -1736,6 +1748,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v5.9.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.8.0...v5.9.0
 [v5.8.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.5...v5.8.0
 [v5.7.5]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.4...v5.7.5
 [v5.7.4]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.3...v5.7.4
