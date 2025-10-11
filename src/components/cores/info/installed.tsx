@@ -313,7 +313,10 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
 
         {inventoryItem && (
           <div className="core-info__info-row">
-            <InstallOlderVersion inventoryItem={inventoryItem} />
+            <InstallOlderVersion
+              coreName={coreName}
+              inventoryItem={inventoryItem}
+            />
           </div>
         )}
 

@@ -170,7 +170,10 @@ export const NotInstalledCoreInfo = ({
             </div>
             {inventoryItem && (
               <div className="core-info__info-row">
-                <InstallOlderVersion inventoryItem={inventoryItem} />
+                <InstallOlderVersion
+                  coreName={coreName}
+                  inventoryItem={inventoryItem}
+                />
               </div>
             )}
             {inventoryItem.repository.platform === "github" && (

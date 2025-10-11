@@ -6,10 +6,12 @@ import { useInstallCore } from "../../../../hooks/useInstallCore"
 import { InventoryItem } from "../../../../types"
 
 type InstallOlderVersionProps = {
+  coreName: string
   inventoryItem: InventoryItem
 }
 
 export const InstallOlderVersion = ({
+  coreName,
   inventoryItem,
 }: InstallOlderVersionProps) => {
   const { t } = useTranslation("core_info")
