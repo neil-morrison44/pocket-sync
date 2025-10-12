@@ -3,14 +3,19 @@ import { Details } from "../../../shared/details"
 import { useInventoryItem } from "../../../../hooks/useInventoryItem"
 import { useMemo, useState } from "react"
 import { useInstallCore } from "../../../../hooks/useInstallCore"
+import { InventoryItem } from "../../../../types"
 
 type InstallOlderVersionProps = {
   coreName: string
+  inventoryItem: InventoryItem
 }
 
-export const InstallOlderVersion = ({ coreName }: InstallOlderVersionProps) => {
+export const InstallOlderVersion = ({
+  coreName,
+  inventoryItem,
+}: InstallOlderVersionProps) => {
   const { t } = useTranslation("core_info")
-  const inventoryItem = useInventoryItem(coreName)
+
   const priorVersions = useMemo(
     () =>
       inventoryItem?.releases.map(

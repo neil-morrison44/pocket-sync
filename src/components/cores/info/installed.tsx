@@ -311,9 +311,14 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
           </Details>
         </div>
 
-        <div className="core-info__info-row">
-          <InstallOlderVersion coreName={coreName} />
-        </div>
+        {inventoryItem && (
+          <div className="core-info__info-row">
+            <InstallOlderVersion
+              coreName={coreName}
+              inventoryItem={inventoryItem}
+            />
+          </div>
+        )}
 
         <div className="core-info__info-row">
           <Details title={t("display_modes_title")}>
