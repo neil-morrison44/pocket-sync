@@ -1,4 +1,22 @@
 # Changelog
+<a id="v5.9.1"></a>
+# [v5.9.1 - React compiler speedups & fix for non-inventory cores](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.9.1) - 2025-10-12
+
+## What's Changed
+* Only shows the option to install older versions on inventory cores by [@neil-morrison44](https://github.com/neil-morrison44) in [#413](https://github.com/neil-morrison44/pocket-sync/pull/413)
+* Uses React compiler & some other fixes by [@neil-morrison44](https://github.com/neil-morrison44) in [#414](https://github.com/neil-morrison44/pocket-sync/pull/414)
+* Bump actions/checkout from 4 to 5 by [@dependabot](https://github.com/dependabot)[bot] in [#399](https://github.com/neil-morrison44/pocket-sync/pull/399)
+* Bump actions/download-artifact from 4 to 5 by [@dependabot](https://github.com/dependabot)[bot] in [#400](https://github.com/neil-morrison44/pocket-sync/pull/400)
+* Bump tauri-apps/tauri-action from 0.5.20 to 0.5.23 by [@dependabot](https://github.com/dependabot)[bot] in [#404](https://github.com/neil-morrison44/pocket-sync/pull/404)
+* Bump actions/upload-pages-artifact from 3 to 4 by [@dependabot](https://github.com/dependabot)[bot] in [#405](https://github.com/neil-morrison44/pocket-sync/pull/405)
+* Bump actions/github-script from 7 to 8 by [@dependabot](https://github.com/dependabot)[bot] in [#408](https://github.com/neil-morrison44/pocket-sync/pull/408)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.0...v5.9.1
+
+[Changes][v5.9.1]
+
+
 <a id="v5.9.0"></a>
 # [v5.9.0 - Framework updates, restores some things like saving window state](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.9.0) - 2025-09-23
 
@@ -1748,6 +1766,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v5.9.1]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.0...v5.9.1
 [v5.9.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.8.0...v5.9.0
 [v5.8.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.5...v5.8.0
 [v5.7.5]: https://github.com/neil-morrison44/pocket-sync/compare/v5.7.4...v5.7.5
