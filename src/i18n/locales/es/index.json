@@ -178,7 +178,7 @@
     },
     "release_notes": {
       "from": "De ",
-      "title": "v{version} Notas de lanzamiento:"
+      "title": "v{version} - { published, date, short } Notas de lanzamiento:"
     },
     "remove_button": "Eliminar"
   },

@@ -203,7 +203,7 @@
     },
     "release_notes": {
       "from": "Von ",
-      "title": "v{version} Veröffentlichungshinweise:"
+      "title": "v{version} - { published, date, short } Veröffentlichungshinweise:"
     },
     "remove_button": "Entfernen"
   },

@@ -198,16 +198,22 @@ const CoreList = ({
       <h2>{t("installed", { count: sortedList.length })}</h2>
       <Grid placeholderItemHeight={160}>
         {sortedList.map((core) => (
-          <Suspense fallback={<Loader title={core} height={160} />} key={core}>
+          <Suspense
+            fallback={<Loader title={core} height={160} key={core} />}
+            key={core}
+          >
             <CoreItem coreName={core} onClick={() => onSelect(core)} />
           </Suspense>
         ))}
       </Grid>
 
       <h2>{t("not_installed", { count: notInstalledCores.length })}</h2>
-      <Grid>
+      <Grid placeholderItemHeight={160}>
         {notInstalledCores.map((item) => (
-          <Suspense fallback={<Loader />} key={item.id}>
+          <Suspense
+            fallback={<Loader title={item.id} height={160} key={item.id} />}
+            key={item.id}
+          >
             <NotInstalledCoreItem
               inventoryItem={item}
               onClick={() => onSelect(item.id)}

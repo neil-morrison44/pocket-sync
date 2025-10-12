@@ -351,12 +351,12 @@ const Buttons = ({ material }: { material: Material }) => {
     [BUTTON_GAP, 0, -BUTTON_GAP],
   ] as const
 
-  const refs = [
-    useRef<Mesh>(null),
-    useRef<Mesh>(null),
-    useRef<Mesh>(null),
-    useRef<Mesh>(null),
-  ]
+  const refA = useRef<Mesh>(null)
+  const refB = useRef<Mesh>(null)
+  const refC = useRef<Mesh>(null)
+  const refD = useRef<Mesh>(null)
+
+  const refs = [refA, refB, refC, refD]
   const hoverButtonRef = useRef<keyof typeof refs | null>(null)
 
   useFrame(() => {
@@ -413,7 +413,10 @@ const BottomButtons = ({ material }: { material: Material }) => {
     [-BUTTON_GAP, 0, -BUTTON_GAP],
   ] as const
 
-  const refs = [useRef<Mesh>(null), useRef<Mesh>(null), useRef<Mesh>(null)]
+  const refA = useRef<Mesh>(null)
+  const refB = useRef<Mesh>(null)
+  const refC = useRef<Mesh>(null)
+  const refs = [refA, refB, refC]
   const hoverButtonRef = useRef<keyof typeof refs | null>(null)
 
   useFrame(() => {

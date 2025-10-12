@@ -165,7 +165,7 @@
     },
     "release_notes": {
       "from": "De ",
-      "title": "v{version} Notes de version :"
+      "title": "v{version} - { published, date, short } Notes de version :"
     },
     "remove_button": "Supprimer"
   },

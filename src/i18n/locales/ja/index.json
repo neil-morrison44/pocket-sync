@@ -178,7 +178,7 @@
     },
     "release_notes": {
       "from": "提供元 ",
-      "title": "v{version} リリースノート:"
+      "title": "v{version} - { published, date, short } リリースノート:"
     },
     "remove_button": "削除"
   },

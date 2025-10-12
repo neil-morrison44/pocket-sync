@@ -208,7 +208,7 @@
     },
     "release_notes": {
       "from": "Từ",
-      "title": "v{version} Nội dung của bản phát hành:"
+      "title": "v{version} - { published, date, short } Nội dung của bản phát hành:"
     },
     "remove_button": "Xóa"
   },

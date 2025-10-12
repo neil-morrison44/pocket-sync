@@ -210,7 +210,7 @@
     },
     "release_notes": {
       "from": "From ",
-      "title": "v{version} Release Notes:"
+      "title": "v{version} - { published, date, short } Release Notes:"
     },
     "remove_button": "Remove"
   },

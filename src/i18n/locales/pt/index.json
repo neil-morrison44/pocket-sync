@@ -203,7 +203,7 @@
     },
     "release_notes": {
       "from": "De ",
-      "title": "Notas de Lançamento v{version}:"
+      "title": "Notas de Lançamento v{version} - {published, date, short}:"
     },
     "remove_button": "Remover"
   },

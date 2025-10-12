@@ -9,7 +9,15 @@ import jotaiReactRefresh from "jotai/babel/plugin-react-refresh"
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    react({ babel: { plugins: [jotaiDebugLabel, jotaiReactRefresh] } }),
+    react({
+      babel: {
+        plugins: [
+          jotaiDebugLabel,
+          jotaiReactRefresh,
+          "babel-plugin-react-compiler",
+        ],
+      },
+    }),
     i18nextLoader({ paths: ["./src/i18n/locales"] }),
   ],
   css: {

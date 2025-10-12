@@ -178,7 +178,7 @@
     },
     "release_notes": {
       "from": "来自 ",
-      "title": "v{version} 更新记录:"
+      "title": "v{version} - { published, date, short } 更新记录:"
     },
     "remove_button": "移除"
   },

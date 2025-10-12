@@ -19,7 +19,12 @@ export const FirmwareReleaseNotes = ({ version }: FirmwareReleaseNotesProp) => {
 
   return (
     <div className="firmware-release-notes">
-      <h1>{t("release_notes.title", { version })}</h1>
+      <h1>
+        {t("release_notes.title", {
+          version,
+          published: new Date(firmwareDetails.published_at),
+        })}
+      </h1>
       <div className="firmware-release-notes__link">
         {t("release_notes.from")}
         <Link href={url}>{url}</Link>

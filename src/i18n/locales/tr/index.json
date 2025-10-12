@@ -210,7 +210,7 @@
     },
     "release_notes": {
       "from": "Kaynak",
-      "title": "v{version} Sürüm Notları:"
+      "title": "v{version} - { published, date, short } Sürüm Notları:"
     },
     "remove_button": "Kaldır"
   },
