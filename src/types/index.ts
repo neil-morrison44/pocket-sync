@@ -314,7 +314,7 @@ export type FirmwareInfo = {
   file_name: string
   md5: string
   download_url?: string
-  publishedAt: Date
+  published_at: string
   release_notes_html: string
 }
 

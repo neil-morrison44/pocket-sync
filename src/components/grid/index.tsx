@@ -17,13 +17,14 @@ export const Grid = ({
 
   return (
     <div className={`grid ${className ?? ""}`}>
-      {Children.toArray(
-        items.map((i) => (
-          <OnlyLoadsWhenShown height={placeholderItemHeight}>
-            {i}
-          </OnlyLoadsWhenShown>
-        ))
-      )}
+      {items.map((i) => (
+        <OnlyLoadsWhenShown
+          height={placeholderItemHeight}
+          key={((i as any).key as string | undefined) || undefined}
+        >
+          {i}
+        </OnlyLoadsWhenShown>
+      ))}
     </div>
   )
 }

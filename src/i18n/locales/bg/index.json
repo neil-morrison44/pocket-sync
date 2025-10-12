@@ -210,7 +210,7 @@
     },
     "release_notes": {
       "from": "От ",
-      "title": "v{version} Релийз коментари:"
+      "title": "v{version} - { published, date, short } Релийз коментари:"
     },
     "remove_button": "Премахни"
   },
