@@ -77,6 +77,7 @@ pub struct DataSlot {
     name: String,
     #[serde(default)]
     id: IntOrHexString,
+    #[serde(default)]
     required: bool,
     #[serde(default)]
     parameters: SlotParameters,
@@ -115,6 +116,7 @@ pub enum DataSlotFileStatus {
 pub struct DataSlotFile {
     pub name: String,
     pub path: PathBuf,
+    #[serde(default)]
     required: bool,
     pub status: DataSlotFileStatus,
     md5: Option<String>,
