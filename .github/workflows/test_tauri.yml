@@ -60,7 +60,7 @@ jobs:
       - name: install app dependencies and build it
         run: npm ci && npm run build
 
-      - uses: tauri-apps/tauri-action@v0.5.23
+      - uses: tauri-apps/tauri-action@v0.6.0
         if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -74,7 +74,7 @@ jobs:
           releaseId: ${{ steps.get_release.outputs.id }}
           args: --target ${{ matrix.target }}
 
-      - uses: tauri-apps/tauri-action@v0.5.23
+      - uses: tauri-apps/tauri-action@v0.6.0
         if: matrix.platform != 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
