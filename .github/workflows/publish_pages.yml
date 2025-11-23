@@ -16,7 +16,7 @@ jobs:
           node-version: 22
       - run: npm uninstall tauri-plugin-log-api
       - run: npm ci
-      - run: npx tsc .github/workflows/scripts/build_platforms_zip.ts --target esnext --module commonjs
+      - run: npx tsc .github/workflows/scripts/build_platforms_zip.ts --target esnext --module commonjs --skipLibCheck
       - run: mv .github/workflows/scripts/build_platforms_zip.js .github/workflows/scripts/build_platforms_zip.cjs
       - uses: actions/github-script@v8
         with:
