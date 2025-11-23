@@ -1,4 +1,16 @@
 # Changelog
+<a id="v5.9.3"></a>
+# [v5.9.3 - Translation fix for when the language doesn't match the region](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.9.3) - 2025-11-23
+
+## What's Changed
+* Supports locales with region modifiers by [@neil-morrison44](https://github.com/neil-morrison44) in [#426](https://github.com/neil-morrison44/pocket-sync/pull/426)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.2...v5.9.3
+
+[Changes][v5.9.3]
+
+
 <a id="v5.9.2"></a>
 # [v5.9.2 - Little fix to cores which don't have a `required` param on their data slots](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.9.2) - 2025-10-26
 
@@ -1779,6 +1791,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v5.9.3]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.2...v5.9.3
 [v5.9.2]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.1...v5.9.2
 [v5.9.1]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.0...v5.9.1
 [v5.9.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.8.0...v5.9.0
