@@ -7,12 +7,24 @@ import { I18nextProvider } from "react-i18next"
 import { alwaysUseEnglishAtom } from "../recoil/settings/atoms"
 import { getLocale } from "tauri-plugin-locale-api"
 import { useAtomValue } from "jotai"
+import { info } from "@tauri-apps/plugin-log"
 
 let userLanguage: string | null = null
 
 type I18nProviderProps = {
   localeOverride?: string | null
   children: ReactNode
+}
+
+const getNiceLocale = async (): Promise<string> => {
+  const rawLocale = await getLocale()
+  info(`Locale is ${rawLocale}`)
+  if (rawLocale.includes("@")) {
+    const [locale, _otherBit] = rawLocale.split("@")
+    return locale
+  } else {
+    return rawLocale
+  }
 }
 
 export const I18nProvider = ({
@@ -34,7 +46,7 @@ export const I18nProvider = ({
         detect: async () =>
           localeOverride ??
           (alwaysUseEnglish.value ? "en-US" : undefined) ??
-          (await getLocale()),
+          (await getNiceLocale()),
         cacheUserLanguage: (lng: string) => {
           userLanguage = lng
         },
