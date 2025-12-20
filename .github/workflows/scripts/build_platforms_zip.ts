@@ -31,18 +31,20 @@ export const buildPlatformZip = async ({ github }: { github: Octokit }) => {
     const latestRelease = (await github.request(
       `https://api.github.com/repos/${pack.owner}/${pack.repository}/releases/latest`
     )) as {
-      assets?: {
-        name: string
-        browser_download_url: string
-      }[]
+      data: {
+        assets?: {
+          name: string
+          browser_download_url: string
+        }[]
+      }
     }
-    if (!latestRelease?.assets) {
+    if (!latestRelease?.data.assets) {
       console.info(`latestRelease fetch error`)
       console.error(latestRelease)
       continue
     }
 
-    const variants = latestRelease.assets.filter(({ name }) =>
+    const variants = latestRelease.data.assets.filter(({ name }) =>
       name.endsWith(".zip")
     )
 
