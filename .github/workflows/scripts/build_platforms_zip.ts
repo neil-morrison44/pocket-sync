@@ -23,18 +23,21 @@ export const buildPlatformZip = async ({ github }: { github: Octokit }) => {
     image_platforms: string[]
   }[] = []
 
+  console.log(`Found ${packs.length} packs`)
   for (const pack of packs) {
-    const latestRelease = (await (
-      await fetch(
-        `https://api.github.com/repos/${pack.owner}/${pack.repository}/releases/latest`
-      )
-    ).json()) as {
+    console.log(
+      `Pack ${packs.indexOf(pack)}: ${pack.owner} - ${pack.repository}`
+    )
+    const latestRelease = (await github.request(
+      `https://api.github.com/repos/${pack.owner}/${pack.repository}/releases/latest`
+    )) as {
       assets?: {
         name: string
         browser_download_url: string
       }[]
     }
     if (!latestRelease?.assets) {
+      console.info(`latestRelease fetch error`)
       console.error(latestRelease)
       continue
     }
