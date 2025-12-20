@@ -17,6 +17,7 @@ import { DataPacks } from "../dataPacks"
 import { useTranslation } from "react-i18next"
 import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
+import { ViewTransition } from "react"
 import { useAtomValue } from "jotai"
 
 type PlatformInfoProps = {
@@ -76,11 +77,13 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
 
       <div>
         <div className="platform__image-editable">
-          <img
-            className="platform-info__image"
-            onClick={() => setImageEditorOpen(true)}
-            src={platformImage}
-          />
+          <ViewTransition name={`platform-${id}`}>
+            <img
+              className="platform-info__image"
+              onClick={() => setImageEditorOpen(true)}
+              src={platformImage}
+            />
+          </ViewTransition>
           <div className="platform__image-edit">{t("edit")}</div>
         </div>
         <div className="platform__info-blurb">

@@ -5,6 +5,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  useTransition,
 } from "react"
 import { screenshotsListSelector } from "../../recoil/screenshots/selectors"
 import { Screenshot } from "./item"
@@ -82,13 +83,17 @@ export const Screenshots = () => {
           className="screenshots__button screenshots__button--next"
           onClick={() => changeSelectedImage(1)}
         ></div>
-        <ScreenshotInfo
-          fileName={selected}
-          onBack={() => {
-            setSelected(null)
-            popScroll()
-          }}
-        />
+        <Suspense>
+          <ScreenshotInfo
+            fileName={selected}
+            onBack={() => {
+              startTransition(() => {
+                setSelected(null)
+                popScroll()
+              })
+            }}
+          />
+        </Suspense>
       </>
     )
   }
@@ -156,8 +161,10 @@ export const Screenshots = () => {
                       }
                     })
                   } else {
-                    pushScroll()
-                    setSelected(fileName)
+                    startTransition(() => {
+                      pushScroll()
+                      setSelected(fileName)
+                    })
                   }
                 }}
               />

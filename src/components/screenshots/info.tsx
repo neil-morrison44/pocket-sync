@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useEffect, useState } from "react"
+import { Suspense, use, useCallback, useEffect, useMemo, useState } from "react"
 import {
   ImageDimensionsSelectorFamily,
   SingleScreenshotSelectorFamily,
@@ -17,6 +17,7 @@ import { ControlsButton } from "../controls/inputs/button"
 import { ControlsCheckbox } from "../controls/inputs/checkbox"
 import { imageModeAtom } from "../../recoil/screenshots/atom"
 import { useAtom, useAtomValue } from "jotai"
+import { ViewTransition } from "react"
 
 type ScreenshotInfoProps = {
   fileName: string
@@ -31,31 +32,18 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
     VideoJSONSelectorFamily(`${screenshot.author}.${screenshot.core}`)
   )
   const upscaler = useUpscaler()
-  const [imageSrc, setImageSrc] = useState<string | null>(null)
+  // const [imageSrc, setImageSrc] = useState<string | null>(null)
   const { t } = useTranslation("screenshot_info")
+  const image = use(imagePromiser(screenshot.file))
 
-  useEffect(() => {
-    let cancelled = false
+  const imageSrc = useMemo(() => {
     switch (imageMode) {
       case "raw":
-        setImageSrc(URL.createObjectURL(screenshot.file))
-        break
+        return image.src
       case "upscaled":
-        {
-          const image = new Image()
-          image.src = URL.createObjectURL(screenshot.file)
-          image.onload = () => {
-            if (cancelled) return
-            setImageSrc(upscaler(videoJson, image))
-          }
-        }
-        break
+        return upscaler(videoJson, image)
     }
-
-    return () => {
-      cancelled = true
-    }
-  }, [screenshot.file, imageMode, upscaler, videoJson])
+  }, [imageMode, screenshot])
 
   const saveFile = useSaveFile()
 
@@ -96,25 +84,23 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
           {t("controls.upscaled")}
         </ControlsCheckbox>
       </Controls>
-      <img
-        className="screenshot-info__raw-image"
-        src={imageSrc || undefined}
-      ></img>
+      <ViewTransition
+        name={"a" + fileName.replace(".png", "").replace("_", "")}
+      >
+        <img
+          className="screenshot-info__raw-image"
+          src={imageSrc || undefined}
+        ></img>
+      </ViewTransition>
 
       <div className="screenshot-info__info">
         <div className="screenshot-info__name">
           {screenshot.game}
-          {imageSrc && (
-            <Suspense>
-              <ImageDimensions imageSrc={imageSrc} />
-            </Suspense>
-          )}
+          {imageSrc && <ImageDimensions imageSrc={imageSrc} />}
         </div>
         {screenshot.platform && <div>{screenshot.platform}</div>}
         {screenshot.core && screenshot.author && (
-          <Suspense fallback={<Loader />}>
-            <CoreTag coreName={`${screenshot.author}.${screenshot.core}`} />
-          </Suspense>
+          <CoreTag coreName={`${screenshot.author}.${screenshot.core}`} />
         )}
         <div>{screenshot.file_name}</div>
       </div>
@@ -128,4 +114,19 @@ const ImageDimensions = ({ imageSrc }: { imageSrc: string }) => {
     // eslint-disable-next-line react/jsx-no-literals
     <span className="screenshot-info__dimensions">{`(${size.width}px x ${size.height}px)`}</span>
   )
+}
+
+const ImagePromiseWeakMap = new WeakMap<File, Promise<HTMLImageElement>>()
+const imagePromiser = (file: File) => {
+  const priorPromise = ImagePromiseWeakMap.get(file)
+  if (priorPromise) return priorPromise
+
+  const blobUrl = URL.createObjectURL(file)
+  const image = new Image()
+  const promise = new Promise<HTMLImageElement>((resolve, reject) => {
+    image.addEventListener("load", () => resolve(image))
+  })
+  image.src = blobUrl
+  ImagePromiseWeakMap.set(file, promise)
+  return promise
 }
