@@ -422,6 +422,8 @@ async fn start_zip_install_flow(
         tokio::fs::create_dir_all(destination.parent().unwrap()).await?;
         if !source.is_dir() {
             tokio::fs::copy(&source, &destination).await?;
+        } else {
+            tokio::fs::create_dir(&destination).await?;
         }
 
         FromRustPayload::InstallZipEvent {
