@@ -1,4 +1,17 @@
 # Changelog
+<a id="v5.10.0"></a>
+# [v5.10.0 - Fix MROM install & adds MROM UI](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.10.0) - 2025-12-29
+
+## What's Changed
+* Fixes empty folders being ignored during MROM install by [@neil-morrison44](https://github.com/neil-morrison44) in [#432](https://github.com/neil-morrison44/pocket-sync/pull/432)
+* Adds UI for MROM dumps by [@neil-morrison44](https://github.com/neil-morrison44) in [#433](https://github.com/neil-morrison44/pocket-sync/pull/433)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.3...v5.10.0
+
+[Changes][v5.10.0]
+
+
 <a id="v5.9.3"></a>
 # [v5.9.3 - Translation fix for when the language doesn't match the region](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.9.3) - 2025-11-23
 
@@ -1791,6 +1804,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v5.10.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.3...v5.10.0
 [v5.9.3]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.2...v5.9.3
 [v5.9.2]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.1...v5.9.2
 [v5.9.1]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.0...v5.9.1
