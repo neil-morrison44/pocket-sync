@@ -950,6 +950,70 @@ async fn find_mtime_for_files(full_file_paths: Vec<PathBuf>) -> Result<Vec<Optio
     Ok(results)
 }
 
+#[tauri::command(async)]
+async fn move_game(
+    source_path: PathBuf,
+    dest_path: PathBuf,
+    state: tauri::State<'_, PocketSyncState>,
+) -> Result<(), String> {
+    debug!(
+        "Command: move_game - {:?} to {:?}",
+        &source_path, &dest_path
+    );
+    let pocket_path = state.0.pocket_path.read().await;
+    trace!("read pocket path {:?}", &pocket_path);
+    let mut source_save_path =
+        PathBuf::from(source_path.to_string_lossy().replacen("Assets", "Saves", 1));
+
+    source_save_path.set_extension("sav");
+
+    let mut dest_save_path =
+        PathBuf::from(dest_path.to_string_lossy().replacen("Assets", "Saves", 1));
+    dest_save_path.set_extension("sav");
+
+    let full_source_path = pocket_path.join(source_path);
+    let full_source_save_path = pocket_path.join(source_save_path);
+    let full_dest_save_path = pocket_path.join(dest_save_path);
+    let full_dest_path = pocket_path.join(dest_path);
+
+    trace!("created paths");
+
+    let dest_path = &full_dest_path.parent().unwrap();
+
+    trace!("dest is {:?}", &dest_path);
+
+    tokio::fs::create_dir_all(&full_dest_path.parent().unwrap())
+        .await
+        .map_err(|err| err.to_string())?;
+    trace!("created dir all {:?}", &full_dest_path);
+
+    tokio::fs::create_dir_all(&full_dest_save_path.parent().unwrap())
+        .await
+        .map_err(|err| err.to_string())?;
+    trace!("created save dir all {:?}", &full_dest_save_path);
+
+    tokio::fs::copy(&full_source_path, &full_dest_path)
+        .await
+        .map_err(|err| err.to_string())?;
+    trace!("copied {:?} to {:?}", &full_source_path, &full_dest_path);
+
+    let _ = tokio::fs::copy(&full_source_save_path, &full_dest_save_path).await;
+
+    trace!(
+        "copied {:?} to {:?}",
+        &full_source_save_path,
+        &full_dest_save_path
+    );
+
+    tokio::fs::remove_file(&full_source_path)
+        .await
+        .map_err(|err| err.to_string())?;
+
+    let _ = tokio::fs::remove_file(&full_source_save_path).await;
+
+    Ok(())
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_locale::init())
@@ -1016,7 +1080,8 @@ fn main() {
             update_patreon_keys,
             downconvert_all_pal_files,
             downconvert_single_pal_file,
-            find_mtime_for_files
+            find_mtime_for_files,
+            move_game
         ])
         .setup(|app| {
             log_panics::init();

@@ -18,6 +18,19 @@
     "files_found": "{count, plural, =0 {No cleanable files} one {# cleanable file} other {# cleanable files} } found",
     "title": "Clean Files"
   },
+  "mrom": {
+    "close_button": "Close",
+    "move_dumps": "Move Dumps",
+    "title": "MROM",
+    "headers": {
+      "platform": "Platform",
+      "library_image": "Library Image",
+      "name": "Name",
+      "destination": "Destination",
+      "dumped_save": "Dumped Save",
+      "pocket_save": "Pocket Save"
+    }
+  },
   "update_all": {
     "title": "Update All",
     "heading": {
@@ -217,6 +230,7 @@
   "games": {
     "controls": {
       "category": "Category",
+      "mrom": "MROM",
       "clean_files": "Clean Files",
       "instance_json": "Instance JSON",
       "refresh": "Refresh",

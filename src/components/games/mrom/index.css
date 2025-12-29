@@ -1,0 +1,67 @@
+.mrom {
+  display: flex;
+  gap: 10px;
+}
+
+.mrom__items-list {
+  border-radius: 5px;
+  padding: 20px;
+  background-color: var(--info-colour);
+  flex-grow: 1;
+  overflow: auto;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: min-content min-content max-content 1fr min-content min-content;
+  grid-auto-rows: min-content;
+  list-style: none;
+  position: relative;
+  padding-top: 0;
+}
+
+.mrom__items-header{
+  grid-column: 1/-1;
+  grid-template-columns: subgrid;
+  display: grid;
+  text-align: center;
+  align-items: center;
+  padding-inline: 20px;
+  font-weight: bold;
+  position: sticky;
+  background-color: inherit;
+  top: 0;
+  z-index: 100;
+  padding-top: 10px;
+
+}
+
+.mrom__list-item {
+  border-radius: inherit;
+  grid-column: 1/-1;
+  grid-template-columns: subgrid;
+  display: grid;
+  align-items: center;
+  background-color: var(--background-colour);
+  padding: 10px;
+}
+
+.mrom__list-item-image {
+  image-rendering: pixelated;
+  transform: scale(1);
+}
+
+.mrom__list-item-platform{
+  font-family: GamePocket, sans-serif;
+  font-size: 2rem;
+  margin-inline: 10px;
+  transform: rotate(-45deg);
+}
+
+.mrom__list-item-dumped-save, .mrom__list-item-pocket-save {
+  transform: scale(2);
+  place-self: center;
+
+  &:disabled {
+    opacity: 0.1;
+    pointer-events: none;
+  }
+}

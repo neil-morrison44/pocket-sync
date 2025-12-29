@@ -9,6 +9,7 @@ import {
   Job,
 } from "../types"
 import { debug } from "@tauri-apps/plugin-log"
+import { path } from "@tauri-apps/api"
 
 export const invokeOpenPocket = async () => invoke<string | null>("open_pocket")
 
@@ -262,3 +263,10 @@ export const invokeConvertAllPalFiles = async () =>
 
 export const invokeConvertSinglePalFile = async (path: string) =>
   await invoke<void>("downconvert_single_pal_file", { palFilePath: path })
+
+export const invokeMoveGame = async (sourcePath: string, destPath: string) => {
+  if (sourcePath.startsWith(path.sep())) sourcePath = sourcePath.substring(1)
+  if (destPath.startsWith(path.sep())) destPath = destPath.substring(1)
+
+  await invoke<void>("move_game", { sourcePath, destPath })
+}
