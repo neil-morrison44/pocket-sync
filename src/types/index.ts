@@ -402,3 +402,12 @@ export type PatreonKeyInfo = {
   logo: string
   link: string
 }
+
+export type MROMInfo = {
+  path: string
+  platform: "DMG" | "CGB"
+  name: string
+  crc32: string
+  dumpedSave?: string
+  pocketSave?: string
+}

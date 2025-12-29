@@ -1,5 +1,4 @@
 import { Suspense, useMemo, useState } from "react"
-
 import { cateogryListselector } from "../../recoil/inventory/selectors"
 import { coresListSelector } from "../../recoil/selectors"
 import { Controls } from "../controls"
@@ -13,9 +12,10 @@ import { useTranslation } from "react-i18next"
 import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
 import { ControlsSelect } from "../controls/inputs/select"
-
 import "../cores/index.css"
 import { useAtomValue } from "jotai"
+import { CoreConditional } from "../shared/coreConditional"
+import { MROMModal } from "./mrom"
 
 export const Games = () => {
   const coresList = useAtomValue(coresListSelector)
@@ -23,6 +23,7 @@ export const Games = () => {
   const [filterCategory, setFilterCategory] = useState<string>("All")
   const [cleanFilesOpen, setCleanFilesOpen] = useState(false)
   const [instanceJsonOpen, setInstanceJsonOpen] = useState(false)
+  const [mromOpen, setMROMOpen] = useState(false)
   const { t } = useTranslation("games")
 
   const sortedList = useMemo(
@@ -49,12 +50,18 @@ export const Games = () => {
       {instanceJsonOpen && (
         <InstanceJson onClose={() => setInstanceJsonOpen(false)} />
       )}
+      {mromOpen && <MROMModal onClose={() => setMROMOpen(false)} />}
       <Controls>
         <ControlsSearch
           value={searchQuery}
           onChange={setSearchQuery}
           placeholder={t("controls.search")}
         />
+        <CoreConditional core="NRL.MROM">
+          <ControlsButton onClick={() => setMROMOpen(true)}>
+            {t("controls.mrom")}
+          </ControlsButton>
+        </CoreConditional>
         <ControlsButton onClick={() => setCleanFilesOpen(true)}>
           {t("controls.clean_files")}
         </ControlsButton>
