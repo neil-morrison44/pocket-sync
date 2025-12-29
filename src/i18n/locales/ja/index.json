@@ -18,6 +18,16 @@
     "files_found": "{count, plural, =0 {消去できるファイルはありません} one {# 個のファイルを消去できます} other {# 個のファイルを消去できます} }",
     "title": "クリーンアップ"
   },
+  "mrom": {
+    "close_button": "近い",
+    "move_dumps": "ROMを移動する",
+    "headers": {
+      "platform": "プラットフォーム",
+      "library_image": "ライブラリ画像",
+      "name": "名前",
+      "destination": "行き先"
+    }
+  },
   "update_all": {
     "title": "すべてをアップデート",
     "heading": {

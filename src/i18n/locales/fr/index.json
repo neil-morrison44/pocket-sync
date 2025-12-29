@@ -16,6 +16,16 @@
     "files_found": "{count, plural, =0 {Pas de fichier à nettoyer} one {# fichier à nettoyer} other {# fichiers à nettoyer} } found",
     "title": "Nettoyer les fichiers"
   },
+  "mrom": {
+    "close_button": "Fermer",
+    "move_dumps": "Déplacer les ROM",
+    "headers": {
+      "platform": "Plate-forme",
+      "library_image": "Image de bibliothèque",
+      "name": "Nom",
+      "destination": "Destination"
+    }
+  },
   "update_all": {
     "title": "Tout mettre à jour",
     "heading": {

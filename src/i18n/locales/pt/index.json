@@ -18,6 +18,16 @@
     "files_found": "{count, plural, =0 {Nenhum arquivo limpável} one {# arquivo limpável} other {# arquivos limpáveis}} encontrado",
     "title": "Limpar Arquivos"
   },
+  "mrom": {
+    "close_button": "Fechar",
+    "move_dumps": "Mover ROMs",
+    "headers": {
+      "platform": "Plataforma",
+      "library_image": "Imagem da biblioteca",
+      "name": "Nome",
+      "destination": "Destino"
+    }
+  },
   "update_all": {
     "title": "Atualizar Tudo",
     "heading": {

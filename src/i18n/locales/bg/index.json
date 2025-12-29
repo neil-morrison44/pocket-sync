@@ -18,6 +18,16 @@
     "files_found": "{count, plural, =0 {Няма файлове за почистване.} one {# файл за почистване.} other {# файлове за почистване.} }",
     "title": "Почистване на файлове"
   },
+  "mrom": {
+    "close_button": "Затвори",
+    "move_dumps": "Преместване на ROM-ове",
+    "headers": {
+      "platform": "Платформа",
+      "library_image": "Изображение от библиотеката",
+      "name": "Име",
+      "destination": "Дестинация"
+    }
+  },
   "update_all": {
     "title": "Обнови всички",
     "heading": {

@@ -20,7 +20,7 @@
   },
   "mrom": {
     "close_button": "Close",
-    "move_dumps": "Move Dumps",
+    "move_dumps": "Move ROMs",
     "title": "MROM",
     "headers": {
       "platform": "Platform",

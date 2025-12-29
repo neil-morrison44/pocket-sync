@@ -18,6 +18,16 @@
     "files_found": "共找到{count, plural, =0 {0个可清理文件} one {# 个可清理文件} other {# 个可清理文件} }",
     "title": "清理文件"
   },
+  "mrom": {
+    "close_button": "关闭",
+    "move_dumps": "移动ROM",
+    "headers": {
+      "platform": "平台",
+      "library_image": "图库图片",
+      "name": "姓名",
+      "destination": "目的地"
+    }
+  },
   "update_all": {
     "title": "全部更新",
     "heading": {

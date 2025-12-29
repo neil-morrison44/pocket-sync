@@ -18,6 +18,16 @@
     "files_found": "{count, plural, =0 {No hay archivos que se puedan limpiar} one {# archivo que se pueda limpiar} other {# archivos que se puedan limpiar} } encontrado",
     "title": "Archivos limpios"
   },
+  "mrom": {
+    "close_button": "Cerca",
+    "move_dumps": "Mover ROM",
+    "headers": {
+      "platform": "Plataforma",
+      "library_image": "Imagen de la biblioteca",
+      "name": "Nombre",
+      "destination": "Destino"
+    }
+  },
   "update_all": {
     "title": "Actualizar todo",
     "heading": {

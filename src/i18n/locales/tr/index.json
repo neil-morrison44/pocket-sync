@@ -18,6 +18,16 @@
     "files_found": "{count, plural, =0 {Silinebilir dosya yok} one {# silinebilr dosya} other {# silinebilir dosyalar} } found",
     "title": "Dsoyaları Temizle"
   },
+  "mrom": {
+    "close_button": "Kapalı",
+    "move_dumps": "ROM'ları taşı",
+    "headers": {
+      "platform": "Platform",
+      "library_image": "Kütüphane Resmi",
+      "name": "İsim",
+      "destination": "Varış noktası"
+    }
+  },
   "update_all": {
     "title": "Hepsini Güncelle",
     "heading": {

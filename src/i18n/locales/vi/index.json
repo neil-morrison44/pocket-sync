@@ -18,6 +18,16 @@
     "files_found": "{count, plural, =0 {Không có tệp nào có thể xóa} one {# tệp có thể xóa} other {# tệp có thể xóa} } được tìm thấy",
     "title": "Xóa tập tin"
   },
+  "mrom": {
+    "close_button": "Đóng",
+    "move_dumps": "Di chuyển ROM",
+    "headers": {
+      "platform": "Nền tảng",
+      "library_image": "Hình ảnh thư viện",
+      "name": "Tên",
+      "destination": "Điểm đến"
+    }
+  },
   "update_all": {
     "title": "Cập nhật tất cả",
     "heading": {

@@ -18,6 +18,16 @@
     "files_found": "{count, plural, =0 {Keine Dateien zur Bereinigung} one {# Datei zur Bereinigung} other {# Dateien zur Bereinigung} } gefunden",
     "title": "Dateien bereinigen"
   },
+  "mrom": {
+    "close_button": "Schließen",
+    "move_dumps": "ROMs verschieben",
+    "headers": {
+      "platform": "Plattform",
+      "library_image": "Bibliotheksbild",
+      "name": "Name",
+      "destination": "Ziel"
+    }
+  },
   "update_all": {
     "title": "Alle aktualisieren",
     "heading": {
