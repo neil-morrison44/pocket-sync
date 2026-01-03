@@ -1,4 +1,10 @@
-import { Suspense, useCallback, useMemo, useState } from "react"
+import {
+  startTransition,
+  Suspense,
+  useCallback,
+  useMemo,
+  useState,
+} from "react"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import {
   platformsListSelector,
@@ -10,7 +16,7 @@ import { Loader } from "../loader"
 import { SearchContextProvider } from "../search/context"
 import { PlatformInfo } from "./info"
 import { PlatformItem } from "./item"
-
+import { ViewTransition } from "react"
 import "./index.css"
 import "../cores/index.css"
 import { selectedSubviewSelector } from "../../recoil/view/selectors"
@@ -62,13 +68,17 @@ export const Platforms = () => {
 
   if (selectedPlatform)
     return (
-      <PlatformInfo
-        id={selectedPlatform}
-        onBack={() => {
-          setSelectedPlatform(null)
-          popScroll()
-        }}
-      />
+      <Suspense>
+        <PlatformInfo
+          id={selectedPlatform}
+          onBack={() => {
+            startTransition(() => {
+              setSelectedPlatform(null)
+              popScroll()
+            })
+          }}
+        />
+      </Suspense>
     )
 
   return (
@@ -102,8 +112,10 @@ export const Platforms = () => {
               <PlatformItem
                 id={id}
                 onClick={() => {
-                  setSelectedPlatform(id)
-                  pushScroll()
+                  startTransition(() => {
+                    setSelectedPlatform(id)
+                    pushScroll()
+                  })
                 }}
               />
             </Suspense>

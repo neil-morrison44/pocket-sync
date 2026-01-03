@@ -1,6 +1,7 @@
 import { PlatformImageSelectorFamily } from "../../recoil/platforms/selectors"
 import { PlatformId } from "../../types"
 import { useAtomValue } from "jotai"
+import { ViewTransition } from "react"
 
 type PlatformImageProps = {
   platformId: PlatformId
@@ -11,5 +12,10 @@ export const PlatformImage = ({
   className,
 }: PlatformImageProps) => {
   const imageSrc = useAtomValue(PlatformImageSelectorFamily(platformId))
-  return <img className={className} src={imageSrc} width="521" height="165" />
+
+  return (
+    <ViewTransition name={platformId}>
+      <img className={className} src={imageSrc} width="521" height="165" />
+    </ViewTransition>
+  )
 }

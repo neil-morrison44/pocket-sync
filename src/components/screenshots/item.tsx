@@ -1,8 +1,9 @@
-import { ReactElement, useMemo } from "react"
+import { ReactElement, use, useMemo } from "react"
 
 import { SingleScreenshotSelectorFamily } from "../../recoil/screenshots/selectors"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { useAtomValue } from "jotai"
+import { ViewTransition } from "react"
 
 type ScreenshotProps = {
   fileName: string
@@ -17,7 +18,6 @@ export const Screenshot = ({
 }: ScreenshotProps): ReactElement => {
   const screenshot = useAtomValue(SingleScreenshotSelectorFamily(fileName))
   if (screenshot === null) throw new Error(`Null file ${fileName}`)
-
   const blob = useMemo(() => URL.createObjectURL(screenshot.file), [screenshot])
 
   return (
@@ -31,7 +31,11 @@ export const Screenshot = ({
         role="button"
         onClick={onClick}
       >
-        <img className="screenshots__item-image" src={blob} />
+        <ViewTransition
+          name={"a" + fileName.replace(".png", "").replace("_", "")}
+        >
+          <img className="screenshots__item-image" src={blob} />
+        </ViewTransition>
 
         <div className="screenshots__item-info">
           <div className="screenshots__item-info-line">{screenshot.game}</div>

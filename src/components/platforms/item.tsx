@@ -7,6 +7,7 @@ import {
 import { PlatformId } from "../../types"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { useAtomValue } from "jotai"
+import { ViewTransition } from "react"
 
 type PlatformItemProps = {
   id: PlatformId
@@ -27,7 +28,9 @@ export const PlatformItem = ({ id, onClick }: PlatformItemProps) => {
       fields={[platform.name, category, platform.manufacturer]}
     >
       <div className="cores__item" role="button" onClick={onClick}>
-        <img src={platformImage} />
+        <ViewTransition name={`platform-${id}`}>
+          <img src={platformImage} />
+        </ViewTransition>
         <div className="cores__info-blurb">
           <strong>{platform.name}</strong>
           <div>{category}</div>

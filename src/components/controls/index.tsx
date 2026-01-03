@@ -1,4 +1,5 @@
 import { ReactNode } from "react"
+import { ViewTransition } from "react"
 import "./index.css"
 
 type ControlProps = {
@@ -6,5 +7,7 @@ type ControlProps = {
 }
 
 export const Controls = ({ children }: ControlProps) => (
-  <div className="controls">{children}</div>
+  <ViewTransition>
+    <div className="controls">{children}</div>
+  </ViewTransition>
 )
