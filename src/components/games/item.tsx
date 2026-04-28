@@ -1,8 +1,9 @@
-import { useCallback, useMemo } from "react"
+import { Suspense, useCallback, useMemo } from "react"
 import { pocketPathAtom } from "../../recoil/atoms"
 import {
   CoreInfoSelectorFamily,
   DataJSONSelectorFamily,
+  FolderSizeSelectorFamily,
 } from "../../recoil/selectors"
 import { decodeDataParams } from "../../utils/decodeDataParams"
 import { invokeCreateFolderIfMissing } from "../../utils/invokes"
@@ -73,15 +74,24 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
         />
         <div className="cores__info-blurb">
           <b>{coreName}</b>
-          <GameCount
-            platformId={platformId}
-            coreName={coreName}
-            extensions={romsSlot?.extensions || []}
-          />
-
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <GameCount
+              platformId={platformId}
+              coreName={coreName}
+              extensions={romsSlot?.extensions || []}
+            />
+            <Suspense>
+              <FolderSize path={path} />
+            </Suspense>
+          </div>
           {(romsSlot?.extensions || []).map((e) => `.${e}`).join(", ")}
         </div>
       </div>
     </SearchContextSelfHidingConsumer>
   )
+}
+
+const FolderSize = ({ path }: { path: string }) => {
+  const size = useAtomValue(FolderSizeSelectorFamily(path))
+  return <span>{size}</span>
 }

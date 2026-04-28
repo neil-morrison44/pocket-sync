@@ -7,7 +7,7 @@ use tokio::{fs::File, io};
 pub static FILE_CACHE_FOLDER: &str = "file_caches";
 
 pub async fn clear_file_caches(cache_dir: &PathBuf) -> io::Result<()> {
-    let file_cache_dir = cache_dir.join(FILE_CACHE_FOLDER);
+    let file_cache_dir = cache_dir;
     if file_cache_dir.exists() {
         tokio::fs::remove_dir_all(file_cache_dir).await?;
     }

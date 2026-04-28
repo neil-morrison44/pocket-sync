@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { Suspense, useCallback, useEffect, useState } from "react"
 import {
   PocketSyncConfigSelector,
   skipAlternateAssetsSelector,
@@ -25,6 +25,9 @@ import { HiddenCores } from "./items/hiddenCores"
 import { GithubToken } from "./items/githubToken"
 import { GBPalettesConversion } from "./items/gbPalettes"
 import { useSmoothedAtom, useSmoothedAtomValue } from "../../utils/jotai"
+import { useAtom, useAtomValue, useSetAtom } from "jotai"
+import { cacheDirSizeSelector } from "../../recoil/selectors"
+import prettyBytes from "pretty-bytes"
 
 export const Settings = () => {
   const config = useSmoothedAtomValue(PocketSyncConfigSelector)
@@ -43,6 +46,8 @@ export const Settings = () => {
   const [reconnectWhenOpened, setReconnectWhenOpened] = useSmoothedAtom(
     reconnectWhenOpenedAtom
   )
+  const refreshCacheSize = useSetAtom(cacheDirSizeSelector)
+
   const updateConfig = useUpdateConfig()
   const { t } = useTranslation("settings")
   const onDisconnect = useCallback(
@@ -51,6 +56,10 @@ export const Settings = () => {
   )
 
   const patreonUrls = useSmoothedAtomValue(patreonKeyListSelector)
+
+  useEffect(() => {
+    refreshCacheSize()
+  }, [])
 
   return (
     <div className="settings">
@@ -248,10 +257,19 @@ export const Settings = () => {
         <div className="settings__row">
           <h3 className="settings__row-title">{t("clear_file_cache.title")}</h3>
           <div className="settings__ramble">{t("clear_file_cache.ramble")}</div>
+
           <label className="settings__checkbox">
-            <button onClick={() => invokeClearFileCache()}>
+            <button
+              onClick={async () => {
+                await invokeClearFileCache()
+                refreshCacheSize()
+              }}
+            >
               {t("clear_file_cache.button")}
             </button>
+            <Suspense>
+              <CacheSize />
+            </Suspense>
           </label>
         </div>
 
@@ -359,4 +377,9 @@ const ColoursList = () => {
       </optgroup>
     </>
   )
+}
+
+export const CacheSize = () => {
+  const [cacheSize] = useAtom(cacheDirSizeSelector)
+  return <div>{cacheSize}</div>
 }

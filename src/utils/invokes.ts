@@ -270,3 +270,7 @@ export const invokeMoveGame = async (sourcePath: string, destPath: string) => {
 
   await invoke<void>("move_game", { sourcePath, destPath })
 }
+
+export const invokeFolderSize = async (folder: string): Promise<number> => {
+  return await invoke<number>("get_folder_size", { folder })
+}
