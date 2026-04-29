@@ -1,4 +1,16 @@
 # Changelog
+<a id="v5.11.0"></a>
+# [v5.11.0 - More caches cleared on clear cache & folder sizes shown in Games](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.11.0) - 2026-04-29
+
+## What's Changed
+* Shows the sizes of games folders & clears more cache items by [@neil-morrison44](https://github.com/neil-morrison44) in [#439](https://github.com/neil-morrison44/pocket-sync/pull/439)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.10.0...v5.11.0
+
+[Changes][v5.11.0]
+
+
 <a id="v5.10.0"></a>
 # [v5.10.0 - Fix MROM install & adds MROM UI](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.10.0) - 2025-12-29
 
@@ -1804,6 +1816,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v5.11.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.10.0...v5.11.0
 [v5.10.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.3...v5.10.0
 [v5.9.3]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.2...v5.9.3
 [v5.9.2]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.1...v5.9.2
