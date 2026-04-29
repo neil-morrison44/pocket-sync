@@ -951,6 +951,23 @@ async fn find_mtime_for_files(full_file_paths: Vec<PathBuf>) -> Result<Vec<Optio
 }
 
 #[tauri::command(async)]
+async fn get_folder_size(folder: PathBuf) -> Result<u128, String> {
+    debug!("Command: get_folder_size - {}", &folder.display());
+    let mut size = 0;
+    let mut walker = WalkDir::new(&folder);
+
+    while let Some(Ok(entry)) = walker.next().await {
+        if entry.path().is_file() {
+            if let Ok(meta) = entry.path().metadata() {
+                size += meta.len() as u128;
+            }
+        }
+    }
+
+    Ok(size)
+}
+
+#[tauri::command(async)]
 async fn move_game(
     source_path: PathBuf,
     dest_path: PathBuf,
@@ -1081,7 +1098,8 @@ fn main() {
             downconvert_all_pal_files,
             downconvert_single_pal_file,
             find_mtime_for_files,
-            move_game
+            move_game,
+            get_folder_size
         ])
         .setup(|app| {
             log_panics::init();

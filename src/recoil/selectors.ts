@@ -4,6 +4,7 @@ import { getVersion } from "@tauri-apps/api/app"
 import {
   invokeFileExists,
   invokeFindCleanableFiles,
+  invokeFolderSize,
   invokeListFolders,
   invokeReadBinaryFile,
   invokeWalkDirListFiles,
@@ -14,8 +15,11 @@ import { path } from "@tauri-apps/api"
 import { FileWatchAtomFamily, FolderWatchAtomFamily } from "./fileSystem/atoms"
 import { getCurrentWindow, Window } from "@tauri-apps/api/window"
 import { Atom, atom } from "jotai"
-import { atomFamily } from "jotai/utils"
+import { atomFamily, atomWithRefresh } from "jotai/utils"
 import { atomFamilyDeepEqual } from "../utils/jotai"
+import { appCacheDir } from "@tauri-apps/api/path"
+import prettyBytes from "pretty-bytes"
+import { pocketPathAtom } from "./atoms"
 
 export const DataJSONSelectorFamily = atomFamily<
   string,
@@ -168,4 +172,23 @@ export const homeDirSelector = atom<Promise<string>>(async () => path.homeDir())
 
 export const mainWindowSelector = atom<Promise<Window>>(
   async () => await getCurrentWindow()
+)
+
+export const cacheDirSizeSelector = atomWithRefresh<Promise<string>>(
+  async () => {
+    const folder = await appCacheDir()
+    const size = await invokeFolderSize(folder)
+    return prettyBytes(size)
+  }
+)
+
+export const FolderSizeSelectorFamily = atomFamily<
+  string,
+  Atom<Promise<string>>
+>((path) =>
+  atom(async (get) => {
+    get(FolderWatchAtomFamily(path))
+    const size = await invokeFolderSize(path)
+    return prettyBytes(size)
+  })
 )
