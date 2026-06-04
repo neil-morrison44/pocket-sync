@@ -11,6 +11,7 @@ export const VIEWS_LIST = [
   "Palettes",
   "Firmware",
   "Fetch",
+  "Plugins",
   "Settings",
 ] as const
 

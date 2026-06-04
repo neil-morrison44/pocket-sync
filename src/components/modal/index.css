@@ -24,6 +24,11 @@
   gap: 10px;
 }
 
+.modal--fit-content{
+  width: fit-content;
+  height: fit-content;
+}
+
 .modal h2 {
   margin-block-start: 8px;
 }

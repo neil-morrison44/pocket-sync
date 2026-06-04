@@ -24,6 +24,7 @@ export const PocketSyncConfigSelector = atom(
         saves: [],
         skipAlternateAssets: true,
         hidden_cores: [],
+        plugins: [],
       } satisfies PocketSyncConfig
     }
 
@@ -37,6 +38,7 @@ export const PocketSyncConfigSelector = atom(
         skipAlternateAssets: true,
         hidden_cores: [],
         gb_palette_convert: true,
+        plugins: [],
       } satisfies PocketSyncConfig
       const encoder = new TextEncoder()
       await invokeSaveFile(

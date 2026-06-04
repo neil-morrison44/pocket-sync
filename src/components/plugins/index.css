@@ -1,0 +1,145 @@
+.plugins{
+
+}
+
+.plugins__add-input{
+  font-size: 1.4em;
+  width: 60vw;
+  margin-bottom: 12px;
+}
+
+.plugins__list{
+  padding: 20px;
+  display: grid;
+  overflow: auto;
+  grid-template-columns: min-content auto 1fr 1fr;
+  grid-auto-flow: column;
+  gap: 32px;
+  row-gap: 24px;
+}
+
+.plugins__list:empty{
+  display: none;
+}
+
+.plugins__item{
+  grid-column: 1 / 5;
+  background-color: var(--info-colour);
+  display: grid;
+  padding: 20px;
+  border-radius: 12px;
+  grid-template-areas:
+  "i n p r"
+  "i v p r"
+  "i d p r"
+  "i l p r";
+  justify-content: start;
+  grid-template-columns: subgrid;
+}
+
+.plugins__item-logo{
+  width: 120px;
+  height: 120px;
+  border-radius: 4px;
+  grid-area: i;
+  background: linear-gradient(rgb(100 100 100), rgb(150 150 150));
+  object-fit: contain;
+}
+
+.plugins__item-name{
+  grid-area: n;
+}
+
+.plugins__item-play{
+  width: 80px;
+  grid-area: p;
+  background-color: var(--green-colour);
+  border-radius: 100px;
+  aspect-ratio: 1 / 1;
+  place-self: center center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+
+  &::after{
+    content: "";
+    width: 50%;
+    height: 50%;
+    display: block;
+    background-color: white;
+    clip-path: polygon(20% 0, 100% 50%, 20% 100%);
+  }
+
+  &:hover{
+    transform: scale(1.05);
+  }
+
+  &:active{
+    transform: scale(0.95);
+  }
+}
+
+.plugins__item-play--is-running {
+    cursor: default;
+    pointer-events: none;
+    filter: brightness(50%) saturate(80%);
+
+    &::after{
+      clip-path: circle(50%);
+      transition: clip-path 2s;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background-color: var(--green-colour);
+      z-index: -1;
+      animation: running-ripple 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+}
+
+@keyframes running-ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.plugins__item-version{
+  grid-area: v;
+}
+
+.plugins__item-description{
+  grid-area: d;
+  white-space: pre-wrap;
+}
+
+.plugins__item-link{
+  grid-area: l;
+}
+
+.plugins__item-remove{
+  grid-area: r;
+  place-self: center center;
+  background-color: var(--red-colour);
+}
+
+.plugins__info {
+  background-color: var(--info-colour);
+  width: calc(100% + 20px);
+  max-height: fit-content;
+  justify-self: flex-end;
+  text-align: left;
+  position: fixed;
+  bottom: 0;
+  padding: 12px;
+}
