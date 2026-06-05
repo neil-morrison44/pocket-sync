@@ -82,7 +82,7 @@ jobs:
           releaseId: ${{ steps.get_release.outputs.id }}
           args: --target ${{ matrix.target }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: bundle-${{ matrix.target }}
           path: src-tauri/target/${{ matrix.target }}/release/bundle/
