@@ -1,4 +1,25 @@
 # Changelog
+<a id="v6.0.0"></a>
+# [v6.0.0 - Adds support for plugins](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.0.0) - 2026-06-05
+
+## What's Changed
+* Remove outdated r3f-perf dependency by [@hadess](https://github.com/hadess) in [#440](https://github.com/neil-morrison44/pocket-sync/pull/440)
+* Adds plugin system by [@neil-morrison44](https://github.com/neil-morrison44) in [#442](https://github.com/neil-morrison44/pocket-sync/pull/442)
+* Bump actions/checkout from 5 to 6 by [@dependabot](https://github.com/dependabot)[bot] in [#427](https://github.com/neil-morrison44/pocket-sync/pull/427)
+* Bump apple-actions/import-codesign-certs from 5 to 6 by [@dependabot](https://github.com/dependabot)[bot] in [#428](https://github.com/neil-morrison44/pocket-sync/pull/428)
+* Bump tauri-apps/tauri-action from 0.5.23 to 0.6.0 by [@dependabot](https://github.com/dependabot)[bot] in [#424](https://github.com/neil-morrison44/pocket-sync/pull/424)
+* Bump actions/upload-artifact from 4 to 5 by [@dependabot](https://github.com/dependabot)[bot] in [#421](https://github.com/neil-morrison44/pocket-sync/pull/421)
+* Bump actions/download-artifact from 5 to 6 by [@dependabot](https://github.com/dependabot)[bot] in [#420](https://github.com/neil-morrison44/pocket-sync/pull/420)
+* Removes patreon key functionality by [@neil-morrison44](https://github.com/neil-morrison44) in [#443](https://github.com/neil-morrison44/pocket-sync/pull/443)
+
+## New Contributors
+* [@hadess](https://github.com/hadess) made their first contribution in [#440](https://github.com/neil-morrison44/pocket-sync/pull/440)
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.11.0...v6.0.0
+
+[Changes][v6.0.0]
+
+
 <a id="v5.11.0"></a>
 # [v5.11.0 - More caches cleared on clear cache & folder sizes shown in Games](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.11.0) - 2026-04-29
 
@@ -1816,6 +1837,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v6.0.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.11.0...v6.0.0
 [v5.11.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.10.0...v5.11.0
 [v5.10.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.3...v5.10.0
 [v5.9.3]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.2...v5.9.3
