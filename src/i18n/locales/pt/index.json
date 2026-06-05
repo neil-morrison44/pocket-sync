@@ -256,7 +256,24 @@
     "save_states": "Estados de Gravação",
     "saves": "Gravações",
     "screenshots": "Capturas de Tela",
+    "plugins": "Plugins",
     "settings": "Configurações"
+  },
+  "plugins": {
+    "buttons": {
+      "add": "Adicionar Plugin"
+    },
+    "remove": "Remover",
+    "confirm_remove": "Isso também removerá quaisquer dados locais que o plugin tenha armazenado neste computador. Tem certeza?",
+    "confirm_exit": "O plugin ainda está em execução. Tem certeza de que deseja fechar a janela?",
+    "safe_to_close": "O plugin terminou, esta janela pode ser fechada.",
+    "info": "A especificação do plugin, um plugin de exemplo e ferramentas para criar plugins podem ser encontrados em <1>github.com/{repo}</1>",
+    "add_modal": {
+      "title": "Adicionar plugin via URL",
+      "add": "Verifique e instale o plugin.",
+      "cancel": "Cancelar",
+      "invalid": "Nenhum plugin válido encontrado nesse URL."
+    }
   },
   "palettes": {
     "buttons": {

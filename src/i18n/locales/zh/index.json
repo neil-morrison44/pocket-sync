@@ -231,7 +231,24 @@
     "save_states": "即时存档",
     "saves": "存档",
     "screenshots": "截屏",
+    "plugins": "插件",
     "settings": "设置"
+  },
+  "plugins": {
+    "buttons": {
+      "add": "添加插件"
+    },
+    "remove": "消除",
+    "confirm_remove": "这将同时删除插件在此计算机上存储的所有本地数据，您确定吗？",
+    "confirm_exit": "插件仍在运行，您确定要关闭窗口吗？",
+    "safe_to_close": "插件已完成，此窗口可以关闭。",
+    "info": "插件规范、示例插件和插件构建工具可在 <1>github.com/{repo} 找到。</1>",
+    "add_modal": {
+      "title": "通过 URL 添加插件",
+      "add": "验证并安装插件",
+      "cancel": "取消",
+      "invalid": "该URL未找到有效的插件"
+    }
   },
   "palettes": {
     "buttons": {

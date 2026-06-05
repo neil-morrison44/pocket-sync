@@ -213,7 +213,24 @@
     "save_states": "États sauvegardés",
     "saves": "Sauvegardes",
     "screenshots": "Captures d'écran",
+    "plugins": "Plugins",
     "settings": "Paramètres"
+  },
+  "plugins": {
+    "buttons": {
+      "add": "Ajouter un plugin"
+    },
+    "remove": "Retirer",
+    "confirm_remove": "Cela supprimera également toutes les données locales que le plugin a stockées sur cet ordinateur. Êtes-vous sûr ?",
+    "confirm_exit": "Le plugin est toujours en cours d'exécution, êtes-vous sûr de vouloir fermer la fenêtre ?",
+    "safe_to_close": "L'installation du plugin est terminée, cette fenêtre peut être fermée.",
+    "info": "La spécification du plugin, un exemple de plugin et les outils pour créer des plugins sont disponibles sur <1>github.com/{repo}</1>",
+    "add_modal": {
+      "title": "Ajouter un plugin via une URL",
+      "add": "Vérifier et installer le plugin",
+      "cancel": "Annuler",
+      "invalid": "Aucun plugin valide n'a été trouvé à cette URL."
+    }
   },
   "palettes": {
     "buttons": {

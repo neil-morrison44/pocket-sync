@@ -231,7 +231,24 @@
     "save_states": "Save States",
     "saves": "Saves",
     "screenshots": "Screenshots",
+    "plugins": "プラグイン",
     "settings": "Settings"
+  },
+  "plugins": {
+    "buttons": {
+      "add": "プラグインを追加"
+    },
+    "remove": "取り除く",
+    "confirm_remove": "これにより、プラグインがこのコンピューターに保存しているローカルデータもすべて削除されますが、よろしいですか？",
+    "confirm_exit": "プラグインはまだ実行中です。ウィンドウを閉じてもよろしいですか？",
+    "safe_to_close": "プラグインの処理が完了しました。このウィンドウは閉じることができます。",
+    "info": "プラグイン仕様、プラグインの例、およびプラグイン構築ツールは、<1>github.com/{repo} にあります。</1>",
+    "add_modal": {
+      "title": "URL経由でプラグインを追加する",
+      "add": "プラグインの検証とインストール",
+      "cancel": "キャンセル",
+      "invalid": "そのURLには有効なプラグインが見つかりませんでした"
+    }
   },
   "palettes": {
     "buttons": {

@@ -244,5 +244,24 @@
     "rotate": "Döndür",
     "save": "Kaydet",
     "scale": "Ölçekle"
+  },
+  "layout": {
+    "plugins": "Eklentiler"
+  },
+  "plugins": {
+    "buttons": {
+      "add": "Eklenti Ekle"
+    },
+    "remove": "Kaldırmak",
+    "confirm_remove": "Bu işlem, eklentinin bu bilgisayarda depoladığı yerel verileri de silecektir, emin misiniz?",
+    "confirm_exit": "Eklenti hala çalışıyor, pencereyi kapatmak istediğinizden emin misiniz?",
+    "safe_to_close": "Eklenti işlemi tamamlandı, bu pencere kapatılabilir.",
+    "info": "Eklenti spesifikasyonu, örnek bir eklenti ve eklenti oluşturma araçları <1>github.com/{repo} adresinde bulunabilir.</1>",
+    "add_modal": {
+      "title": "URL üzerinden eklenti ekle",
+      "add": "Eklentiyi doğrulayın ve yükleyin.",
+      "cancel": "İptal etmek",
+      "invalid": "Bu URL'de geçerli bir eklenti bulunamadı."
+    }
   }
 }

@@ -231,7 +231,24 @@
     "save_states": "Guardar estados",
     "saves": "Guardados",
     "screenshots": "Capturas de pantalla",
+    "plugins": "Plugins",
     "settings": "Ajustes"
+  },
+  "plugins": {
+    "buttons": {
+      "add": "Agregar complemento"
+    },
+    "remove": "Eliminar",
+    "confirm_remove": "Esto también eliminará cualquier dato local que el complemento haya almacenado en este ordenador, ¿estás seguro?",
+    "confirm_exit": "El plugin sigue en ejecución, ¿estás seguro de que quieres cerrar la ventana?",
+    "safe_to_close": "El plugin ha finalizado, esta ventana se puede cerrar.",
+    "info": "La especificación del complemento, un ejemplo de complemento y las herramientas para crear complementos se pueden encontrar en <1>github.com/{repo}</1>",
+    "add_modal": {
+      "title": "Agregar complemento a través de la URL",
+      "add": "Verificar e instalar el complemento",
+      "cancel": "Cancelar",
+      "invalid": "No se encontró ningún complemento válido en esa URL."
+    }
   },
   "palettes": {
     "buttons": {

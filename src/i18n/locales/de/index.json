@@ -256,7 +256,24 @@
     "save_states": "Speicherstände",
     "saves": "Spielstände",
     "screenshots": "Bildschirmfotos",
+    "plugins": "Plugins",
     "settings": "Einstellungen"
+  },
+  "plugins": {
+    "buttons": {
+      "add": "Plugin hinzufügen"
+    },
+    "remove": "Entfernen",
+    "confirm_remove": "Dadurch werden auch alle lokalen Daten gelöscht, die das Plugin auf diesem Computer gespeichert hat. Sind Sie sicher?",
+    "confirm_exit": "Das Plugin läuft noch. Möchten Sie das Fenster wirklich schließen?",
+    "safe_to_close": "Das Plugin wurde beendet, dieses Fenster kann geschlossen werden.",
+    "info": "Die Plugin-Spezifikation, ein Beispiel-Plugin und Werkzeuge zum Erstellen von Plugins finden Sie unter <1>github.com/{repo}</1>",
+    "add_modal": {
+      "title": "Plugin per URL hinzufügen",
+      "add": "Plugin prüfen und installieren",
+      "cancel": "Stornieren",
+      "invalid": "Unter dieser URL wurde kein gültiges Plugin gefunden."
+    }
   },
   "palettes": {
     "buttons": {
