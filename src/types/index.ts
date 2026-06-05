@@ -246,7 +246,6 @@ export type PocketSyncConfig = {
   saves: SaveConfig[]
   skipAlternateAssets?: boolean
   fetches?: FetchType[]
-  patreon_email?: string
   hidden_cores?: string[]
   gb_palette_convert?: boolean
   plugins?: string[]
@@ -394,14 +393,6 @@ export type JTCrtConfig = {
     | "SNES"
     | "PCE 2BTN/6BTN"
     | "PCE Multitap"
-}
-
-export type PatreonKeyInfo = {
-  id: string
-  name: string
-  url: string
-  logo: string
-  link: string
 }
 
 export type MROMInfo = {

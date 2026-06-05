@@ -459,12 +459,6 @@
       "remove": "取り除く",
       "ramble": "GitHub のレート制限に問題がある場合は、以下に PAT トークンを追加してください。\nPAT トークンにはスコープが設定されておらず、Pocket の SD カードではなくコンピューターに保存されます。"
     },
-    "patreon_keys": {
-      "title": "Patreonキー",
-      "update": "キーを取得",
-      "ramble": "アクティブなPatreonメンバーシップを介してロック解除キーを必要とするコアの場合",
-      "placeholder": "Patreonのメール"
-    },
     "clear_file_cache": {
       "button": "キャッシュをクリア",
       "ramble": "USB & SD Card の転送品質も保つため、大きなファイルはPCのファイルシステムに一時的にコピー＆保存されます。\n問題が発生した場合はキャッシュをクリアしてみてください。",

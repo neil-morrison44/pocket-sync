@@ -407,12 +407,6 @@
       "remove": "Retirer",
       "ramble": "Si vous rencontrez des problèmes avec la limite de débit de GitHub, ajoutez un jeton PAT ci-dessous.\nLe jeton PAT ne doit avoir aucune portée définie et est stocké sur votre ordinateur plutôt que sur la carte SD du Pocket."
     },
-    "patreon_keys": {
-      "title": "Clés Patreon",
-      "update": "Obtenir les clés",
-      "ramble": "Pour les cœurs qui nécessitent une clé de déverrouillage via un abonnement Patreon actif",
-      "placeholder": "Courriel Patreon"
-    },
     "clear_file_cache": {
       "button": "Vider le cache des fichiers",
       "ramble": "Pour faciliter le transfert via USB et carte SD, les fichiers plus volumineux sont copiés et stockés sur le système de fichiers de votre ordinateur, ce qui ne devrait pas poser de problème, mais si vous rencontrez des problèmes, essayez de vider le cache des fichiers.",
