@@ -80,14 +80,14 @@ jobs:
           name: image-packs
           path: ./site
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: ./site
-
       - uses: actions/download-artifact@v6
         with:
           name: sponsors-data
+          path: ./site
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
           path: ./site
 
       - name: Deploy to GitHub Pages
