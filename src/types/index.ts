@@ -249,6 +249,7 @@ export type PocketSyncConfig = {
   patreon_email?: string
   hidden_cores?: string[]
   gb_palette_convert?: boolean
+  plugins?: string[]
 }
 
 export type SaveConfig = {
@@ -410,4 +411,13 @@ export type MROMInfo = {
   crc32: string
   dumpedSave?: string
   pocketSave?: string
+}
+
+export type PocketPluginInfo = {
+  id: string
+  version: string
+  name: string
+  github_url: string
+  logo_url?: string
+  description?: string
 }

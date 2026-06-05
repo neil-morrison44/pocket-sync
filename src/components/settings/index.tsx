@@ -25,9 +25,8 @@ import { HiddenCores } from "./items/hiddenCores"
 import { GithubToken } from "./items/githubToken"
 import { GBPalettesConversion } from "./items/gbPalettes"
 import { useSmoothedAtom, useSmoothedAtomValue } from "../../utils/jotai"
-import { useAtom, useAtomValue, useSetAtom } from "jotai"
+import { useAtom, useSetAtom } from "jotai"
 import { cacheDirSizeSelector } from "../../recoil/selectors"
-import prettyBytes from "pretty-bytes"
 
 export const Settings = () => {
   const config = useSmoothedAtomValue(PocketSyncConfigSelector)

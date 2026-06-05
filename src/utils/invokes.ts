@@ -7,6 +7,7 @@ import {
   RootFile,
   SaveZipFile,
   Job,
+  PocketPluginInfo,
 } from "../types"
 import { debug } from "@tauri-apps/plugin-log"
 import { path } from "@tauri-apps/api"
@@ -273,4 +274,34 @@ export const invokeMoveGame = async (sourcePath: string, destPath: string) => {
 
 export const invokeFolderSize = async (folder: string): Promise<number> => {
   return await invoke<number>("get_folder_size", { folder })
+}
+
+export const invokeListAndInstallPlugins = async (
+  pluginUrls: string[],
+  githubToken: string | null
+): Promise<PocketPluginInfo[]> => {
+  return await invoke<PocketPluginInfo[]>("list_and_install_plugins", {
+    pluginUrls,
+    githubToken,
+  })
+}
+
+export const invokeRunPlugin = async (pluginId: string): Promise<void> => {
+  return await invoke("run_plugin", {
+    pluginId,
+  })
+}
+
+export const invokeUninstallPlugin = async (
+  pluginId: string
+): Promise<void> => {
+  return await invoke("uninstall_plugin", {
+    pluginId,
+  })
+}
+
+export const invokeKillPlugin = async (pluginId: string): Promise<void> => {
+  return await invoke("kill_plugin", {
+    pluginId,
+  })
 }

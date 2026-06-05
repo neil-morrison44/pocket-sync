@@ -50,7 +50,8 @@
     "remark-gfm": "^4.0.1",
     "simplex-noise": "^4.0.3",
     "tauri-plugin-locale-api": "^2.0.1",
-    "three": "0.180.0"
+    "three": "0.180.0",
+    "wouter": "^3.10.0"
   },
   "devDependencies": {
     "@octokit/rest": "^22.0.0",

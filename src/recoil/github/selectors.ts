@@ -21,10 +21,18 @@ export const GithubReleasesSelectorFamily = atomFamilyDeepEqual<
 >(({ owner, repo }) =>
   atom(async (get, { signal }) => {
     const headers = await get(githubHeadersSelector)
-    const response = await fetch(
+    let response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/releases`,
       { headers, signal }
     )
+
+    if (response.status === 403) {
+      // try without headers, incase the org has disabled the type of auth
+      response = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/releases`,
+        { signal }
+      )
+    }
 
     const remainingRateLimit = parseInt(
       response.headers.get("x-ratelimit-remaining") || "60"

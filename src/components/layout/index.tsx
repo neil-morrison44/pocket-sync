@@ -49,6 +49,10 @@ const Firmware = React.lazy(() =>
   import("../firmware").then((i) => ({ default: i.Firmware }))
 )
 
+const Plugins = React.lazy(() =>
+  import("../plugins").then((i) => ({ default: i.Plugins }))
+)
+
 export const Layout = () => {
   const [viewAndSubview, setViewAndSubview] = useAtom(currentViewAtom)
   const enableGlobalZipInstall = useAtomValue(enableGlobalZipInstallAtom)
@@ -117,6 +121,7 @@ export const Layout = () => {
               {view === "Platforms" && <Platforms />}
               {view === "Palettes" && <Palettes />}
               {view === "Fetch" && <Fetch />}
+              {view === "Plugins" && <Plugins />}
             </div>
           </Suspense>
         </ErrorBoundary>

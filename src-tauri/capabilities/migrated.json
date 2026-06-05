@@ -2,9 +2,7 @@
   "identifier": "migrated",
   "description": "permissions that were migrated from v1",
   "local": true,
-  "windows": [
-    "main"
-  ],
+  "windows": ["main", "plugin-*"],
   "permissions": [
     "core:default",
     "fs:allow-read-file",
@@ -13,9 +11,7 @@
     "fs:allow-appcache-write",
     {
       "identifier": "fs:scope",
-      "allow": [
-        "$APPLOCALDATA/*"
-      ]
+      "allow": ["$APPLOCALDATA/*"]
     },
     "shell:allow-open",
     "dialog:allow-open",
