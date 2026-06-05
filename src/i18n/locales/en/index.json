@@ -517,12 +517,6 @@
       "remove": "Remove",
       "ramble": "If you're having issues with the GitHub rate limit, then add a PAT token below.\nThe PAT token shouldn't have any scopes set, and is stored on your computer rather than on the Pocket's SD card."
     },
-    "patreon_keys": {
-      "title": "Patreon Keys",
-      "update": "Get Keys",
-      "ramble": "For cores that require an unlock key via an active Patreon membership",
-      "placeholder": "Patreon email"
-    },
     "clear_file_cache": {
       "button": "Clear file cache",
       "ramble": "To help with USB & SD card transfer larger files are copied & stored on your computer's file system,\nwhich should be fine but if you're running into issues try clearing the file cache.",

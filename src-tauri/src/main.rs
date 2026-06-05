@@ -17,7 +17,6 @@ use install_zip::start_zip_task;
 use job_id::{Job, JobState};
 use log::{LevelFilter, debug, error, trace};
 use required_files::{DataSlotFile, required_files_for_core};
-use reqwest::header::CONTENT_DISPOSITION;
 use root_files::RootFile;
 use save_sync_session::start_mister_save_sync_session;
 use saves_zip::{
@@ -34,7 +33,6 @@ use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_log::{Target, TargetKind};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::sync::Mutex;
-use util::progress_download;
 
 use crate::app_error::AppError;
 use crate::install_files::install_file;
@@ -786,81 +784,6 @@ async fn stop_job(job_id: &str, state: tauri::State<'_, PocketSyncState>) -> Res
 }
 
 #[tauri::command(async)]
-async fn update_patreon_keys(
-    email: &str,
-    urls: Vec<(&str, &str)>,
-    state: tauri::State<'_, PocketSyncState>,
-    window: tauri::WebviewWindow,
-) -> Result<(), AppError> {
-    debug!("Command: update_patreon_keys");
-    let pocket_path = state.0.pocket_path.read().await;
-
-    for (url, id) in urls {
-        let event_key = format!("patreon_keys:{id}");
-
-        window
-            .emit(&event_key, PatreonKeyStatus::InProgress)
-            .unwrap();
-
-        let full_url = format!("{url}{email}");
-
-        let client = reqwest::Client::new();
-        let response = client
-            .get(full_url)
-            .header(reqwest::header::USER_AGENT, "PocketSync/1.0")
-            .send()
-            .await?;
-
-        match response.status().is_success() {
-            true => {
-                let filename = &response
-                    .headers()
-                    .get(CONTENT_DISPOSITION)
-                    .and_then(|header_value| {
-                        header_value.to_str().ok().and_then(|content_disposition| {
-                            content_disposition.split(';').find_map(|part| {
-                                let part = part.trim();
-                                if part.starts_with("filename=") {
-                                    Some(
-                                        part.trim_start_matches("filename=")
-                                            .trim_matches('"')
-                                            .to_string(),
-                                    )
-                                } else {
-                                    None
-                                }
-                            })
-                        })
-                    })
-                    .ok_or("no filename")
-                    .unwrap();
-
-                let file = progress_download(response, |total_size, downloaded| {
-                    let percent = total_size as f64 / downloaded as f64;
-
-                    window
-                        .emit(&event_key, PatreonKeyStatus::Downloading(percent))
-                        .unwrap();
-                })
-                .await?;
-
-                let path = pocket_path.join(filename);
-
-                tokio::fs::write(path, file).await?;
-
-                window.emit(&event_key, PatreonKeyStatus::Valid)?;
-            }
-            false => {
-                debug!("Failed to get keys for {id}");
-                window.emit(&event_key, PatreonKeyStatus::Invalid)?;
-            }
-        }
-    }
-
-    Ok(())
-}
-
-#[tauri::command(async)]
 async fn downconvert_all_pal_files(
     state: tauri::State<'_, PocketSyncState>,
     window: tauri::WebviewWindow,
@@ -1054,7 +977,6 @@ fn main() {
             save_multiple_files,
             get_active_jobs,
             stop_job,
-            update_patreon_keys,
             downconvert_all_pal_files,
             downconvert_single_pal_file,
             find_mtime_for_files,
@@ -1100,12 +1022,4 @@ struct InstancePackageEventPayload {
 struct FileMetadata {
     timestamp_secs: u64,
     crc32: u32,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub enum PatreonKeyStatus {
-    InProgress,
-    Downloading(f64),
-    Valid,
-    Invalid,
 }
