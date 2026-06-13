@@ -1,4 +1,14 @@
 # Changelog
+<a id="v6.0.1"></a>
+# [v6.0.1 - Improve openfpgaOS files download](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.0.1) - 2026-06-13
+
+- Fixes some issues downloading files needed for openfpgaOS cores (and maybe other cores too)
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.0.0...v6.0.1
+
+[Changes][v6.0.1]
+
+
 <a id="v6.0.0"></a>
 # [v6.0.0 - Adds support for plugins](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.0.0) - 2026-06-05
 
@@ -1837,6 +1847,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v6.0.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.0.0...v6.0.1
 [v6.0.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.11.0...v6.0.0
 [v5.11.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.10.0...v5.11.0
 [v5.10.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.3...v5.10.0
