@@ -9,14 +9,12 @@ use clean_fs::find_dotfiles;
 use extism::CancelHandle;
 use file_cache::{clear_file_caches, get_file_with_cache};
 use file_locks::FileLocks;
-use firmware::{FirmwareDetails, FirmwareListItem};
 use futures::stream::{self, StreamExt};
 use futures_locks::RwLock;
 use hashes::crc32_for_file;
 use install_zip::start_zip_task;
 use job_id::{Job, JobState};
 use log::{LevelFilter, debug, error, trace};
-use required_files::{DataSlotFile, required_files_for_core};
 use root_files::RootFile;
 use save_sync_session::start_mister_save_sync_session;
 use saves_zip::{
@@ -35,7 +33,6 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::sync::Mutex;
 
 use crate::app_error::AppError;
-use crate::install_files::install_file;
 use crate::util::{find_common_path, get_mtime_timestamp};
 
 mod checks;

@@ -8,10 +8,6 @@ use crate::{
 use anyhow::Result;
 use std::{collections::HashMap, path::PathBuf};
 
-fn normalize_path_str(path_str: &str) -> String {
-    path_str.replace('\\', "/")
-}
-
 pub async fn check_data_file_status(
     mut data_slot_files: Vec<DataSlotFile>,
     archive_metadata: Vec<RawMetadataItem>,
