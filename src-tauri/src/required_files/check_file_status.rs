@@ -1,4 +1,4 @@
-use super::{archive_metadata::RawMetadataItem, ArchiveInfo, DataSlotFile};
+use super::{ArchiveInfo, DataSlotFile, archive_metadata::RawMetadataItem};
 use crate::{
     hashes::{crc32_for_file, md5_for_file},
     progress::ProgressEmitter,
@@ -36,19 +36,43 @@ pub async fn check_data_file_status(
         progress_emit.set_message("data_slot", Some(&data_slot_file.name));
         let file_path = pocket_path.join(&data_slot_file.path);
         let exists = tokio::fs::try_exists(&file_path).await?;
-        let path = normalize_path_str(&data_slot_file.path.to_string_lossy());
+
+        let platform = data_slot_file
+            .path
+            .components()
+            .nth(1)
+            .and_then(|c| c.as_os_str().to_str())
+            .unwrap_or_default();
+
+        let full_path = &data_slot_file.name;
+
+        let asset_file = data_slot_file
+            .path
+            .file_name()
+            .and_then(|f| f.to_str())
+            .unwrap_or_default();
+
+        let keys_to_check = [
+            format!("{platform}/{full_path}"),
+            full_path.to_string(),
+            format!("{platform}/{asset_file}"),
+            asset_file.to_string(),
+        ];
+
+        let matched_key = keys_to_check
+            .into_iter()
+            .find(|key| archive_hash.contains_key(key.as_str()));
 
         data_slot_file.status = match (
-            archive_hash.get(&data_slot_file.name),
-            archive_hash.get(&path),
+            matched_key.and_then(|f| archive_hash.get(&f)),
             exists,
             root_file_hash.get(&data_slot_file.name),
         ) {
-            (_, _, false, Some(root_file)) => DataSlotFileStatus::FoundAtRoot {
+            (_, false, Some(root_file)) => DataSlotFileStatus::FoundAtRoot {
                 root: root_file.clone(),
             },
 
-            (_, _, true, Some(root_file)) => {
+            (_, true, Some(root_file)) => {
                 let placed_file_md5 = md5_for_file(&file_path).await?;
                 let root_file_md5 = String::from(match root_file {
                     RootFile::Zipped { md5, .. } => md5,
@@ -79,11 +103,9 @@ pub async fn check_data_file_status(
                 }
             }
 
-            (None, None, true, _) => DataSlotFileStatus::Exists,
-            (None, None, false, _) => DataSlotFileStatus::NotFound,
-            (None, Some(metadata_item), false, _)
-            | (Some(metadata_item), None, false, _)
-            | (Some(_), Some(metadata_item), false, _) => {
+            (None, true, _) => DataSlotFileStatus::Exists,
+            (None, false, _) => DataSlotFileStatus::NotFound,
+            (Some(metadata_item), false, _) => {
                 let RawMetadataItem {
                     name, crc32, mtime, ..
                 } = metadata_item;
@@ -95,9 +117,7 @@ pub async fn check_data_file_status(
                 })
             }
 
-            (None, Some(metadata_item), true, _)
-            | (Some(_), Some(metadata_item), true, _)
-            | (Some(metadata_item), None, true, _) => {
+            (Some(metadata_item), true, _) => {
                 let RawMetadataItem {
                     name, crc32, mtime, ..
                 } = metadata_item;
@@ -300,7 +320,9 @@ mod tests {
                     ),
                     required: true,
                     status: DataSlotFileStatus::MissingButOnArchive(ArchiveInfo {
-                        url: String::from("Assets/platform_one/tester.TestCore/common/file_on_archive_full_path.bin"),
+                        url: String::from(
+                            "Assets/platform_one/tester.TestCore/common/file_on_archive_full_path.bin"
+                        ),
                         crc32: String::from("1234"),
                         mtime: None
                     }),

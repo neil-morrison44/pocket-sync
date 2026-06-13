@@ -323,75 +323,6 @@ async fn walkdir_list_files(
 }
 
 #[tauri::command(async)]
-async fn uninstall_core(
-    core_name: &str,
-    state: tauri::State<'_, PocketSyncState>,
-) -> Result<bool, ()> {
-    debug!("Command: uninstall_core - {core_name}");
-    let pocket_path = state.0.pocket_path.read().await;
-
-    let paths = vec![
-        pocket_path.join("Cores").join(core_name),
-        pocket_path.join("Presets").join(core_name),
-        pocket_path.join("Settings").join(core_name),
-    ];
-
-    for path in paths {
-        if path.exists() && path.is_dir() {
-            tokio::fs::remove_dir_all(path).await.unwrap();
-        } else {
-            error!("Weird, it's gone already");
-        }
-    }
-
-    Ok(true)
-}
-
-#[tauri::command(async)]
-async fn install_archive_files(
-    files: Vec<DataSlotFile>,
-    archive_url: &str,
-    job_id: Option<&str>,
-    turbo: bool,
-    state: tauri::State<'_, PocketSyncState>,
-    window: Window,
-) -> Result<bool, String> {
-    debug!("Command: install_archive_files");
-
-    let pocket_path = state.0.pocket_path.read().await;
-    let job_id = job_id.unwrap_or("install_archive_files");
-    let job_handle = state.0.jobs.start_job(job_id).await;
-
-    let all_paths: Vec<PathBuf> = files.iter().map(|d| pocket_path.join(&d.path)).collect();
-    let common_dir = find_common_path(&all_paths).unwrap();
-
-    let arc_lock = state.0.file_locker.find_lock_for(&common_dir).await;
-    let _write_lock = arc_lock.write().await;
-
-    let mut progress = progress::ProgressEmitter::new(Box::new(|event| {
-        window
-            .emit(&format!("progress-event::{job_id}"), event)
-            .unwrap();
-    }));
-
-    progress.begin_work_units(files.len());
-    for file in files {
-        if !job_handle.is_alive().await {
-            break;
-        }
-        progress.set_message("downloading", Some(&file.name));
-        let file_name = file.name.clone();
-        if let Err(err) = install_file(file, archive_url, turbo, &pocket_path).await {
-            error!("Error: {} download file {}", err, &file_name);
-        };
-
-        progress.complete_work_units(1);
-    }
-
-    Ok(true)
-}
-
-#[tauri::command(async)]
 async fn backup_saves(
     save_paths: Vec<&str>,
     zip_path: &str,
@@ -548,51 +479,6 @@ async fn find_cleanable_files(
     Ok(files)
 }
 
-#[tauri::command]
-async fn list_instance_packageable_cores(
-    state: tauri::State<'_, PocketSyncState>,
-) -> Result<Vec<String>, ()> {
-    debug!("Command: list_instance_packageable_cores");
-    let pocket_path = state.0.pocket_path.read().await;
-    Ok(instance_packager::find_cores_with_package_json(&pocket_path).unwrap())
-}
-
-#[tauri::command]
-async fn run_packager_for_core(
-    state: tauri::State<'_, PocketSyncState>,
-    core_name: &str,
-    window: Window,
-) -> Result<(), ()> {
-    debug!("Command: run_packager_for_core");
-    let pocket_path = state.0.pocket_path.read().await;
-
-    let emit_event = |file_name, success, message| {
-        window
-            .emit(
-                "instance-packager-event-payload",
-                InstancePackageEventPayload {
-                    file_name: String::from(file_name),
-                    success: success,
-                    message: message,
-                },
-            )
-            .unwrap()
-    };
-
-    Ok(instance_packager::build_jsons_for_core(
-        &pocket_path,
-        core_name,
-        true,
-        |file_name| {
-            emit_event(String::from(file_name), true, None);
-        },
-        |file_name, message| {
-            emit_event(String::from(file_name), false, Some(String::from(message)));
-        },
-    )
-    .unwrap())
-}
-
 #[tauri::command(async)]
 async fn get_news_feed() -> Result<Vec<news_feed::FeedItem>, String> {
     debug!("Command: get_news_feed");
@@ -652,49 +538,6 @@ async fn get_file_metadata_mtime_only(
 }
 
 #[tauri::command(async)]
-async fn get_firmware_versions_list() -> Result<Vec<FirmwareListItem>, AppError> {
-    debug!("Command: get_firmware_versions_list");
-    Ok(firmware::get_firmware_json().await?)
-}
-
-#[tauri::command(async)]
-async fn get_firmware_release_notes(version: &str) -> Result<FirmwareDetails, AppError> {
-    debug!("Command: get_firmware_release_notes");
-    Ok(firmware::get_release_notes(version).await?)
-}
-
-#[tauri::command(async)]
-async fn download_firmware(
-    url: &str,
-    md5: &str,
-    file_name: &str,
-    state: tauri::State<'_, PocketSyncState>,
-    window: tauri::Window,
-) -> Result<bool, AppError> {
-    debug!("Command: download_firmware");
-    let pocket_path = state.0.pocket_path.read().await;
-    let file_path = pocket_path.join(file_name);
-
-    let arc_lock = state.0.file_locker.find_lock_for(&pocket_path).await;
-    let _write_lock = arc_lock.write().await;
-
-    firmware::download_firmware_file(url, &file_path, &window).await?;
-
-    debug!("firmware downloaded");
-
-    let verify = firmware::verify_firmware_file(&file_path, md5).await?;
-
-    if !verify {
-        debug!("firmware verification failed");
-        tokio::fs::remove_file(&file_path).await?;
-    }
-
-    debug!("firmware verified");
-
-    Ok(verify)
-}
-
-#[tauri::command(async)]
 async fn clear_file_cache(app_handle: tauri::AppHandle) -> Result<(), AppError> {
     debug!("Command: clear_file_cache");
     if let Ok(cache_dir) = app_handle.path().app_cache_dir() {
@@ -704,37 +547,6 @@ async fn clear_file_cache(app_handle: tauri::AppHandle) -> Result<(), AppError> 
 }
 
 mod files_from_zip;
-
-#[tauri::command(async)]
-async fn find_required_files(
-    state: tauri::State<'_, PocketSyncState>,
-    core_id: &str,
-    include_alts: bool,
-    archive_url: &str,
-    window: tauri::WebviewWindow,
-) -> Result<Vec<DataSlotFile>, AppError> {
-    debug!("Command: find_required_files");
-    let pocket_path = state.0.pocket_path.read().await;
-
-    let core_info: Vec<_> = core_id.split(".").collect();
-    let common_dir_path = pocket_path.join(format!("Assets/{}/common", &core_info.last().unwrap()));
-    let arc_lock = state.0.file_locker.find_lock_for(&common_dir_path).await;
-    let _read_lock = arc_lock.read().await;
-
-    let core_dir_path = pocket_path.join(format!(
-        "Assets/{}/{}",
-        &core_info.last().unwrap(),
-        &core_info.first().unwrap()
-    ));
-
-    let arc_lock = state.0.file_locker.find_lock_for(&common_dir_path).await;
-    let _read_lock = arc_lock.read().await;
-
-    let arc_lock = state.0.file_locker.find_lock_for(&core_dir_path).await;
-    let _read_lock = arc_lock.read().await;
-
-    Ok(required_files_for_core(core_id, &pocket_path, include_alts, archive_url, window).await?)
-}
 
 #[tauri::command(async)]
 async fn check_root_files(
@@ -950,8 +762,8 @@ fn main() {
             read_binary_file,
             read_text_file,
             save_file,
-            uninstall_core,
-            install_archive_files,
+            commands::cores::uninstall_core,
+            commands::archive::install_archive_files,
             file_exists,
             backup_saves,
             list_backup_saves,
@@ -962,18 +774,18 @@ fn main() {
             delete_files,
             copy_files,
             find_cleanable_files,
-            list_instance_packageable_cores,
-            run_packager_for_core,
+            commands::cores::list_instance_packageable_cores,
+            commands::cores::run_packager_for_core,
             get_news_feed,
             begin_mister_sync_session,
             get_file_metadata,
             get_file_metadata_mtime_only,
-            get_firmware_versions_list,
-            get_firmware_release_notes,
-            download_firmware,
+            commands::firmware::get_firmware_versions_list,
+            commands::firmware::get_firmware_release_notes,
+            commands::firmware::download_firmware,
             clear_file_cache,
             check_root_files,
-            find_required_files,
+            commands::archive::find_required_files,
             save_multiple_files,
             get_active_jobs,
             stop_job,
