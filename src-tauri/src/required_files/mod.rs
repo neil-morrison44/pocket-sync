@@ -185,7 +185,6 @@ pub async fn required_files_for_core(
 
     if !SKIP_INSTANCE_FILES_FOR.contains(&core_id) {
         for instance_file_path in instance_files {
-            dbg!(&instance_file_path);
             progress.set_message("instance_file", Some(&instance_file_path.to_string_lossy()));
             let instance_data_slots = process_instance_data(
                 core_id,
@@ -194,8 +193,6 @@ pub async fn required_files_for_core(
                 &core_data_slots,
             )
             .await?;
-
-            dbg!(&instance_data_slots);
 
             data_slot_files.extend(
                 instance_data_slots

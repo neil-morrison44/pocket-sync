@@ -22,8 +22,6 @@ export const RequiredFiles = ({ coreName, onClick }: RequiredFilesProps) => {
     [requiredFiles]
   )
 
-  console.log({ requiredFiles })
-
   const full = useMemo(
     () =>
       foundFiles.length === requiredFiles.length ||
