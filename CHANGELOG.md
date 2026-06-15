@@ -1,4 +1,16 @@
 # Changelog
+<a id="v6.1.1"></a>
+# [v6.1.1 - Fixes running plugins in the built & signed MacOS app](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.1.1) - 2026-06-15
+
+## What's Changed
+* Fixes running plugins in the built & signed MacOS app by [@neil-morrison44](https://github.com/neil-morrison44) in [#453](https://github.com/neil-morrison44/pocket-sync/pull/453)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.0.1...v6.1.1
+
+[Changes][v6.1.1]
+
+
 <a id="v6.0.1"></a>
 # [v6.0.1 - Improve openfpgaOS files download](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.0.1) - 2026-06-13
 
@@ -1847,6 +1859,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v6.1.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.0.1...v6.1.1
 [v6.0.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.0.0...v6.0.1
 [v6.0.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.11.0...v6.0.0
 [v5.11.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.10.0...v5.11.0
