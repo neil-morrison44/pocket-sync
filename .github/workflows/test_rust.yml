@@ -21,10 +21,12 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
-      - name: install Rust stable
-        uses: actions-rs/toolchain@v1
+          cache: "npm"
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
         with:
-          toolchain: stable
+          workspaces: "src-tauri -> target"
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
         run: |
