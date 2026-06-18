@@ -8,7 +8,6 @@ use std::{
     fs::{self, File},
     io::{Cursor, Read, Write},
     path::{Path, PathBuf},
-    sync::Arc,
     time::SystemTime,
 };
 use tempdir::TempDir;
