@@ -39,13 +39,18 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
   const platformId = core.metadata.platform_ids[decodedParams.platformIndex]
   const { platform } = useAtomValue(PlatformInfoSelectorFamily(platformId))
 
+  const platformPath = useMemo(() => {
+    if (!romsSlot) return ""
+    return `${pocketPath}/Assets/${platformId}`
+  }, [romsSlot, pocketPath, platformId])
+
   const path = useMemo(() => {
     if (!romsSlot) return ""
     const coreSpecific = decodedParams?.coreSpecific
     return `${pocketPath}/Assets/${platformId}/${
       coreSpecific ? coreName : "common"
     }`
-  }, [romsSlot, decodedParams?.coreSpecific, pocketPath, platformId, coreName])
+  }, [romsSlot, decodedParams?.coreSpecific, platformPath, coreName])
 
   const onOpenFolder = useCallback(async (path: string) => {
     await invokeCreateFolderIfMissing(path)
@@ -81,7 +86,7 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
               extensions={romsSlot?.extensions || []}
             />
             <Suspense>
-              <FolderSize path={path} />
+              <FolderSize path={platformPath} />
             </Suspense>
           </div>
           {(romsSlot?.extensions || []).map((e) => `.${e}`).join(", ")}

@@ -79,6 +79,6 @@ pub async fn download_firmware_file(
 }
 
 pub async fn verify_firmware_file(file_path: &PathBuf, md5: &str) -> Result<bool, anyhow::Error> {
-    let file_md5 = md5_for_file(file_path).await?;
+    let file_md5 = md5_for_file(file_path, None).await?;
     Ok(file_md5 == md5)
 }
