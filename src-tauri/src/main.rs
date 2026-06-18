@@ -821,8 +821,6 @@ fn main() {
                 HashCache::default()
             };
 
-            dbg!(&cache_data);
-
             app.manage(RwLock::new(cache_data));
 
             start_tasks(app)
