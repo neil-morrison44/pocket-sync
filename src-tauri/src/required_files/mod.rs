@@ -10,9 +10,11 @@ use log::error;
 use serde::{Deserialize, Serialize};
 use std::{cmp, path::PathBuf};
 use tauri::Emitter;
+use tokio::sync::RwLock;
 
 use crate::{
     core_json_files::{CoreDetails, core::CoreFile},
+    hashes::HashCache,
     progress,
     required_files::{
         archive_metadata::get_metadata_from_archive, core_data_slots::process_core_data,
@@ -148,6 +150,7 @@ pub async fn required_files_for_core(
     include_alts: bool,
     archive_url: &str,
     window: tauri::WebviewWindow,
+    hash_cache: &RwLock<HashCache>,
 ) -> Result<Vec<DataSlotFile>> {
     let core_details: CoreDetails =
         CoreFile::from_core_path(&pocket_path.join(format!("Cores/{}", core_id)))?.into();
@@ -166,7 +169,7 @@ pub async fn required_files_for_core(
     let (instance_files, archive_meta, files_at_root) = tokio::join!(
         find_instance_files(&assets_folder, include_alts),
         get_metadata_from_archive(archive_url),
-        check_root_files(&pocket_path, Some(vec!["rom", "bin", "key"]))
+        check_root_files(&pocket_path, Some(vec!["rom", "bin", "key"]), hash_cache)
     );
 
     progress.begin_work_units((instance_files.len() + 1) * 2);
@@ -225,6 +228,7 @@ pub async fn required_files_for_core(
                 archive_meta,
                 files_at_root,
                 pocket_path,
+                Some(hash_cache),
                 progress,
             )
             .await?;
@@ -237,6 +241,7 @@ pub async fn required_files_for_core(
                 archive_meta,
                 vec![],
                 pocket_path,
+                Some(hash_cache),
                 progress,
             )
             .await?;
@@ -249,6 +254,7 @@ pub async fn required_files_for_core(
                 vec![],
                 files_at_root,
                 pocket_path,
+                Some(hash_cache),
                 progress,
             )
             .await?;

@@ -1,18 +1,20 @@
 use super::{ArchiveInfo, DataSlotFile, archive_metadata::RawMetadataItem};
 use crate::{
-    hashes::{crc32_for_file, md5_for_file},
+    hashes::{HashCache, crc32_for_file, md5_for_file},
     progress::ProgressEmitter,
     required_files::DataSlotFileStatus,
     root_files::RootFile,
 };
 use anyhow::Result;
 use std::{collections::HashMap, path::PathBuf};
+use tokio::sync::RwLock;
 
 pub async fn check_data_file_status(
     mut data_slot_files: Vec<DataSlotFile>,
     archive_metadata: Vec<RawMetadataItem>,
     files_at_root: Vec<RootFile>,
     pocket_path: &PathBuf,
+    hash_cache: Option<&RwLock<HashCache>>,
     mut progress_emit: ProgressEmitter<'_>,
 ) -> Result<Vec<DataSlotFile>> {
     let archive_hash: HashMap<_, _> = archive_metadata
@@ -69,7 +71,7 @@ pub async fn check_data_file_status(
             },
 
             (_, true, Some(root_file)) => {
-                let placed_file_md5 = md5_for_file(&file_path).await?;
+                let placed_file_md5 = md5_for_file(&file_path, hash_cache).await?;
                 let root_file_md5 = String::from(match root_file {
                     RootFile::Zipped { md5, .. } => md5,
                     RootFile::UnZipped { md5, .. } => md5,
@@ -117,7 +119,8 @@ pub async fn check_data_file_status(
                 let RawMetadataItem {
                     name, crc32, mtime, ..
                 } = metadata_item;
-                let file_crc32 = crc32_for_file(&pocket_path.join(&data_slot_file.path)).await?;
+                let file_crc32 =
+                    crc32_for_file(&pocket_path.join(&data_slot_file.path), hash_cache).await?;
 
                 if let Some(archive_crc32) = &crc32
                     .as_ref()
@@ -279,6 +282,7 @@ mod tests {
             archive_metadata,
             vec![],
             &tmp_path,
+            None,
             ProgressEmitter::default(),
         )
         .await?;
@@ -413,6 +417,7 @@ mod tests {
             archive_metadata,
             root_files,
             &tmp_path,
+            None,
             ProgressEmitter::default(),
         )
         .await?;
@@ -498,6 +503,7 @@ mod tests {
             archive_metadata,
             root_files,
             &tmp_path,
+            None,
             ProgressEmitter::default(),
         )
         .await?;

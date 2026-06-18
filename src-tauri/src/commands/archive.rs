@@ -1,6 +1,7 @@
 use crate::{
     PocketSyncState,
     app_error::AppError,
+    hashes::HashCacheState,
     install_files::install_file,
     progress,
     required_files::{DataSlotFile, required_files_for_core},
@@ -13,6 +14,7 @@ use tauri::{Emitter, Window};
 #[tauri::command(async)]
 pub async fn find_required_files(
     state: tauri::State<'_, PocketSyncState>,
+    hash_cache: tauri::State<'_, HashCacheState>,
     core_id: &str,
     include_alts: bool,
     archive_url: &str,
@@ -38,7 +40,15 @@ pub async fn find_required_files(
     let arc_lock = state.0.file_locker.find_lock_for(&core_dir_path).await;
     let _read_lock = arc_lock.read().await;
 
-    Ok(required_files_for_core(core_id, &pocket_path, include_alts, archive_url, window).await?)
+    Ok(required_files_for_core(
+        core_id,
+        &pocket_path,
+        include_alts,
+        archive_url,
+        window,
+        hash_cache.inner(),
+    )
+    .await?)
 }
 
 #[tauri::command(async)]

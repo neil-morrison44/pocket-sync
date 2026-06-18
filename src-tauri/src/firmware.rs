@@ -4,7 +4,9 @@ use std::{path::PathBuf, time::Instant};
 use tauri::Emitter;
 use tokio::io::AsyncWriteExt;
 
-use crate::{hashes::md5_for_file, progress::ProgressEvent, util::progress_download};
+use crate::{
+    PocketSyncState, hashes::md5_for_file, progress::ProgressEvent, util::progress_download,
+};
 
 #[derive(Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -79,6 +81,6 @@ pub async fn download_firmware_file(
 }
 
 pub async fn verify_firmware_file(file_path: &PathBuf, md5: &str) -> Result<bool, anyhow::Error> {
-    let file_md5 = md5_for_file(file_path).await?;
+    let file_md5 = md5_for_file(file_path, None).await?;
     Ok(file_md5 == md5)
 }

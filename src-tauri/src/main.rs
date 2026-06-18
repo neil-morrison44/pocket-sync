@@ -10,7 +10,6 @@ use extism::CancelHandle;
 use file_cache::{clear_file_caches, get_file_with_cache};
 use file_locks::FileLocks;
 use futures::stream::{self, StreamExt};
-use futures_locks::RwLock;
 use hashes::crc32_for_file;
 use install_zip::start_zip_task;
 use job_id::{Job, JobState};
@@ -26,13 +25,14 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::time::SystemTime;
 use std::vec;
-use tauri::{App, Emitter, Manager, Window};
+use tauri::{App, Emitter, Manager, RunEvent, Window};
 use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_log::{Target, TargetKind};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::sync::Mutex;
+use tokio::sync::{Mutex, RwLock};
 
 use crate::app_error::AppError;
+use crate::hashes::{HashCache, HashCacheState};
 use crate::util::{find_common_path, get_mtime_timestamp};
 
 mod checks;
@@ -64,6 +64,7 @@ struct InnerState {
     file_locker: FileLocks,
     active_plugin_handles: Mutex<HashMap<String, CancelHandle>>,
     jobs: JobState,
+    hash_cache: RwLock<HashCache>,
 }
 
 struct PocketSyncState(InnerState);
@@ -325,10 +326,12 @@ async fn backup_saves(
     zip_path: &str,
     max_count: usize,
     state: tauri::State<'_, PocketSyncState>,
+    hash_cache: tauri::State<'_, HashCacheState>,
 ) -> Result<bool, ()> {
     debug!("Command: backup_saves");
     let pocket_path = state.0.pocket_path.read().await;
-    build_save_zip(&pocket_path, save_paths, zip_path, max_count)
+    let hash_cache = hash_cache.inner();
+    build_save_zip(&pocket_path, save_paths, zip_path, max_count, hash_cache)
         .await
         .unwrap();
 
@@ -336,7 +339,10 @@ async fn backup_saves(
 }
 
 #[tauri::command(async)]
-async fn list_backup_saves(backup_path: &str) -> Result<BackupSavesResponse, AppError> {
+async fn list_backup_saves(
+    backup_path: &str,
+    hash_cache: tauri::State<'_, HashCacheState>,
+) -> Result<BackupSavesResponse, AppError> {
     debug!("Command: list_backup_saves");
     let path = PathBuf::from(backup_path);
     if !path.exists() {
@@ -346,7 +352,8 @@ async fn list_backup_saves(backup_path: &str) -> Result<BackupSavesResponse, App
         });
     }
 
-    let files = read_save_zip_list(&path).await?;
+    let hash_cache = hash_cache.inner();
+    let files = read_save_zip_list(&path, hash_cache).await?;
 
     Ok(BackupSavesResponse {
         files,
@@ -368,11 +375,13 @@ async fn list_saves_in_zip(zip_path: &str) -> Result<Vec<SaveZipFile>, AppError>
 #[tauri::command(async)]
 async fn list_saves_on_pocket(
     state: tauri::State<'_, PocketSyncState>,
+    hash_cache: tauri::State<'_, HashCacheState>,
 ) -> Result<Vec<SaveZipFile>, AppError> {
     debug!("Command: list_saves_on_pocket");
     let pocket_path = state.0.pocket_path.read().await;
+    let hash_cache = hash_cache.inner();
     let saves_path = pocket_path.join("Saves");
-    Ok(read_saves_in_folder(&saves_path).await?)
+    Ok(read_saves_in_folder(&saves_path, Some(hash_cache)).await?)
 }
 
 #[tauri::command(async)]
@@ -500,13 +509,15 @@ async fn begin_mister_sync_session(
 #[tauri::command(async)]
 async fn get_file_metadata(
     state: tauri::State<'_, PocketSyncState>,
+    hash_cache: tauri::State<'_, HashCacheState>,
     file_path: &str,
 ) -> Result<FileMetadata, AppError> {
     trace!("Command: get_file_metadata");
     let pocket_path = state.0.pocket_path.read().await;
+    let hash_cache = hash_cache.inner();
     let full_path = pocket_path.join(file_path);
 
-    let crc32 = crc32_for_file(&full_path).await?;
+    let crc32 = crc32_for_file(&full_path, Some(hash_cache)).await?;
 
     let metadata = tokio::fs::metadata(full_path)
         .await
@@ -549,10 +560,12 @@ mod files_from_zip;
 async fn check_root_files(
     state: tauri::State<'_, PocketSyncState>,
     extensions: Option<Vec<&str>>,
+    hash_cache: tauri::State<'_, HashCacheState>,
 ) -> Result<Vec<RootFile>, AppError> {
     debug!("Command: check_root_files");
     let pocket_path = state.0.pocket_path.read().await;
-    Ok(root_files::check_root_files(&pocket_path, extensions).await?)
+    let hash_cache = hash_cache.inner();
+    Ok(root_files::check_root_files(&pocket_path, extensions, hash_cache).await?)
 }
 
 #[tauri::command(async)]
@@ -724,7 +737,7 @@ async fn move_game(
 }
 
 fn main() {
-    tauri::Builder::default()
+    let app = tauri::Builder::default()
         .plugin(tauri_plugin_locale::init())
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_log::Builder::new().build())
@@ -798,10 +811,37 @@ fn main() {
         ])
         .setup(|app| {
             log_panics::init();
+
+            let cache_dir = app.path().app_cache_dir().expect("No cache dir");
+            let cache_file = cache_dir.join("hash_cache.bin");
+
+            let cache_data = if let Ok(data) = std::fs::read(&cache_file) {
+                postcard::from_bytes(&data).unwrap_or_default()
+            } else {
+                HashCache::default()
+            };
+
+            dbg!(&cache_data);
+
+            app.manage(RwLock::new(cache_data));
+
             start_tasks(app)
         })
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application");
+
+    app.run(|app_handle, event| {
+        if let RunEvent::Exit = event {
+            let hash_cache = app_handle.state::<HashCacheState>();
+
+            let cache = hash_cache.blocking_read();
+            let cache_dir = app_handle.path().app_cache_dir().unwrap();
+            let _ = std::fs::create_dir_all(&cache_dir);
+            let cache_file = cache_dir.join("hash_cache.bin");
+            let data = postcard::to_allocvec(&*cache).unwrap();
+            let _ = std::fs::write(&cache_file, data);
+        }
+    })
 }
 
 fn start_tasks(app: &App) -> Result<(), Box<dyn std::error::Error + 'static>> {
