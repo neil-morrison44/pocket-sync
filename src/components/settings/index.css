@@ -19,12 +19,12 @@
 
   & input[type="text"],
   & select {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     width: 80%;
   }
 }
 
-.settings__row-title{
+.settings__row-title {
   border-bottom: solid grey 1px;
 }
 
@@ -46,7 +46,7 @@
   bottom: 0;
 }
 
-.settings__checkbox{
+.settings__checkbox {
   font-size: 1.25rem;
   display: flex;
   gap: 10px;
@@ -62,11 +62,11 @@
   }
 }
 
-.settings__checkbox:not(:last-child){
+.settings__checkbox:not(:last-child) {
   margin-block-end: 15px;
 }
 
-.settings__items-input-list{
+.settings__items-input-list {
   background-color: var(--light-colour);
   padding: 10px;
   border-radius: 5px;
@@ -77,18 +77,18 @@
   min-height: 20px;
 }
 
-.settings__items-input-item{
+.settings__items-input-item {
   background-color: var(--info-colour);
   padding: 5px 10px;
   border-radius: inherit;
   display: flex;
   cursor: pointer;
 
-  &:hover{
+  &:hover {
     transform: scale(1.05);
   }
 
-  &::after{
+  &::after {
     content: "x";
     font-family: monospace;
     font-size: 1.1rem;
@@ -96,6 +96,6 @@
   }
 }
 
-.settings__progress-bar{
+.settings__progress-bar {
   width: 80%;
 }

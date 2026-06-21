@@ -51,6 +51,7 @@
     "simplex-noise": "^4.0.3",
     "tauri-plugin-locale-api": "^2.0.1",
     "three": "0.180.0",
+    "three-stdlib": "^2.36.1",
     "wouter": "^3.10.0"
   },
   "devDependencies": {

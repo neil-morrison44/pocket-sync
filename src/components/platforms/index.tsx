@@ -23,6 +23,7 @@ import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
 import { useAtom, useAtomValue } from "jotai"
 import { useAtomCallback } from "jotai/utils"
+import { PlatformLoadout } from "./loadout"
 
 export const Platforms = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -41,6 +42,7 @@ export const Platforms = () => {
 
   const [imagePacksOpen, setImagePacksOpen] = useState(false)
   const [dataPacksOpen, setDataPacksOpen] = useState(false)
+  const [loadoutOpen, setLoadoutOpen] = useState(false)
 
   const removeCorelessPlatforms = useAtomCallback(
     useCallback(async (get, set) => {
@@ -82,6 +84,9 @@ export const Platforms = () => {
         <ControlsButton onClick={removeCorelessPlatforms}>
           {t("controls.remove_coreless")}
         </ControlsButton>
+        <ControlsButton onClick={() => setLoadoutOpen(true)}>
+          {t("controls.loadout")}
+        </ControlsButton>
         <ControlsButton onClick={() => setDataPacksOpen(true)}>
           {t("controls.data_packs")}
         </ControlsButton>
@@ -94,6 +99,7 @@ export const Platforms = () => {
         <ImagePacks onClose={() => setImagePacksOpen(false)} />
       )}
       {dataPacksOpen && <DataPacks onClose={() => setDataPacksOpen(false)} />}
+      {loadoutOpen && <PlatformLoadout onClose={() => setLoadoutOpen(false)} />}
 
       <SearchContextProvider query={searchQuery}>
         <Grid placeholderItemHeight={200}>

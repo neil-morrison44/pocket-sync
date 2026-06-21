@@ -1,5 +1,3 @@
-use std::{path::PathBuf, time::SystemTime};
-
 use crate::{
     FileMetadata, PocketSyncState,
     app_error::AppError,
@@ -13,6 +11,7 @@ use crate::{
 use async_walkdir::{DirEntry, WalkDir};
 use futures::{StreamExt, stream};
 use log::{debug, error, trace};
+use std::{path::PathBuf, time::SystemTime};
 use tauri::{Emitter, Manager, Window};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
