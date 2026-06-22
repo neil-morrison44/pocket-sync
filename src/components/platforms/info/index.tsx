@@ -48,7 +48,7 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
   const cats = useAtomValue(allCategoriesSelector)
   const [imagePacksOpen, setImagePacksOpen] = useState(false)
   const [dataPacksOpen, setDataPacksOpen] = useState(false)
-  const updateValue = useUpdatePlatformValue(id)
+  const updateValue = useUpdatePlatformValue(id, isArchived)
 
   const toggleArchiveStatus = useCallback(() => {
     startTransition(() =>

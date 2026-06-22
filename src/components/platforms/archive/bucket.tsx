@@ -20,19 +20,16 @@ import {
 } from "../../../recoil/platforms/atoms"
 import { useAtomCallback } from "jotai/utils"
 import { PlatformId } from "../../../types"
+import { useTranslation } from "react-i18next"
 
 export const PlatformsBucket = () => {
   const [platformModalBucketFilter, setPlatformModalBucketFilter] = useAtom(
     platformModalBucketFilterAtom
   )
   const [searchText, setSearchText] = useState<string>("")
+  const { t } = useTranslation("platforms")
 
-  const BUCKET_FILTERS = [
-    { id: "all", label: "All" },
-    { id: "category", label: "Category" },
-    { id: "manufacturer", label: "Manufacturer" },
-    { id: "year", label: "Year" },
-  ] as const
+  const BUCKET_FILTERS = ["all", "category", "manufacturer", "year"] as const
 
   const setPlatformPostions = useSetAtom(platformModalPositionAtom)
 
@@ -46,16 +43,16 @@ export const PlatformsBucket = () => {
           autoCorrect="off"
           autoCapitalize="off"
           autoComplete="off"
-          placeholder="Archived Platforms"
+          placeholder={t("archive.search_placeholder")}
         />
         <div
           className="platform-archive__archive-all-button"
           onClick={() => setPlatformPostions([])}
         >
-          {"Archive All"}
+          {t("archive.archive_all")}
         </div>
         <div className="platform-archive__platform-bucket-view-tabs">
-          {BUCKET_FILTERS.map(({ id, label }) => (
+          {BUCKET_FILTERS.map((id) => (
             <label key={id} className="platform-tab">
               <input
                 type="radio"
@@ -65,7 +62,9 @@ export const PlatformsBucket = () => {
                 onChange={() => setPlatformModalBucketFilter(id)}
                 className="platform-tab__input"
               />
-              <span className="platform-tab__label">{label}</span>
+              <span className="platform-tab__label">
+                {t(`archive.filters.${id}`)}
+              </span>
             </label>
           ))}
         </div>

@@ -115,10 +115,8 @@ export const PlatformArchive = ({ onClose }: PlatformArchiveProps) => {
       </div>
 
       <div className="platform-archive__buttons">
-        <button onClick={archivePlatforms}>
-          {t("image_packs.apply_changes", { count: 1 })}
-        </button>
-        <button onClick={onClose}>{t("image_packs.close")}</button>
+        <button onClick={archivePlatforms}>{t("archive.apply_changes")}</button>
+        <button onClick={onClose}>{t("archive.close")}</button>
       </div>
     </Modal>
   )

@@ -1,5 +1,8 @@
 import { ImagePack, PlatformId, PlatformInfoJSON } from "../../types"
-import { invokeAllPlatformData } from "../../utils/invokes"
+import {
+  invokeAllPlatformData,
+  invokeReadAllPlatformImages,
+} from "../../utils/invokes"
 import { PLATFORM_IMAGE } from "../../values"
 import {
   CoreInfoSelectorFamily,
@@ -119,19 +122,30 @@ export const PlatformIsArchivedSelectorFamily = atomFamily<
   })
 )
 
+export const AllPlatformImagesSelector = atom<
+  Promise<Record<PlatformId, Uint8Array>>
+>(async (get) => {
+  get(FolderWatchAtomFamily("Platforms/_images"))
+  return await invokeReadAllPlatformImages()
+})
+
 export const PlatformImageSelectorFamily = atomFamily<
   PlatformId,
   Atom<Promise<string>>
 >((platformId: PlatformId) =>
-  atom(async (get) =>
-    get(
-      ImageBinSrcSelectorFamily({
-        path: `Platforms/_images/${platformId}.bin`,
-        width: PLATFORM_IMAGE.WIDTH,
-        height: PLATFORM_IMAGE.HEIGHT,
-      })
+  atom(async (get) => {
+    const allPlatformImages = await get(AllPlatformImagesSelector)
+    const buffer =
+      allPlatformImages[platformId] ??
+      new Uint8Array(PLATFORM_IMAGE.WIDTH * PLATFORM_IMAGE.HEIGHT * 2)
+
+    return renderBinImage(
+      buffer,
+      PLATFORM_IMAGE.WIDTH,
+      PLATFORM_IMAGE.HEIGHT,
+      true
     )
-  )
+  })
 )
 
 export const allCategoriesSelector = atom<Promise<string[]>>(async (get) => {

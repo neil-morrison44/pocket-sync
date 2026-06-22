@@ -371,6 +371,18 @@
       "image_packs": "Image Packs",
       "search": "Search"
     },
+    "archive": {
+      "apply_changes": "Save Changes",
+      "close": "Close without saving",
+      "search_placeholder": "Archived Platforms",
+      "archive_all": "Archive All",
+      "filters": {
+        "all": "All",
+        "category": "Category",
+        "manufacturer": "Manufacturer",
+        "year": "Year"
+      }
+    },
     "data_packs": {
       "apply_changes": "Apply {count, plural, =0 {0 Changes} one {1 Change} other {# Changes}}",
       "close": "Close",

@@ -312,3 +312,14 @@ export const invokeArchiveUnarchivePlatforms = async (
 ): Promise<void> => {
   return await invoke("archive_unarchive_platforms", { archive, unarchive })
 }
+
+export const invokeReadAllPlatformImages = async (): Promise<
+  Record<PlatformId, Uint8Array>
+> => {
+  const result = await invoke<Record<PlatformId, number[]>>(
+    "all_platform_images"
+  )
+  return Object.fromEntries(
+    Object.entries(result).map(([id, data]) => [id, new Uint8Array(data)])
+  )
+}
