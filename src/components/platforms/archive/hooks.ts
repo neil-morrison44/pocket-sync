@@ -1,12 +1,15 @@
 import * as THREE from "three"
 import { useAtom, useAtomValue, useSetAtom, useStore } from "jotai"
 import {
+  allPlatformsDataSelector,
   PlatformImageSelectorFamily,
   platformsListSelector,
+  unpositionedPlatformsSelector,
 } from "../../../recoil/platforms/selectors"
 import { useCallback, useEffect, useState } from "react"
 import { platformModalPositionAtom } from "../../../recoil/platforms/atoms"
 import { useAtomCallback } from "jotai/utils"
+import { invokeArchiveUnarchivePlatforms } from "../../../utils/invokes"
 
 const COLUMN_COUNT = 16
 const ROW_COUNT = 15
@@ -88,11 +91,12 @@ export const useSetupPositions = () => {
   const setupCallback = useAtomCallback(
     useCallback(async (get, set) => {
       console.log("setting up positions")
-      const platformList = await get(platformsListSelector)
+      const allPlatformInfo = await get(allPlatformsDataSelector)
+      const activePlatformList = Object.keys(allPlatformInfo.active)
 
       set(
         platformModalPositionAtom,
-        platformList.map((platform, index) => {
+        activePlatformList.map((platform, index) => {
           const col = index % COLUMNS
           const row = Math.floor(index / COLUMNS)
 
@@ -105,4 +109,34 @@ export const useSetupPositions = () => {
   useEffect(() => {
     setupCallback()
   }, [setupCallback])
+}
+
+export const useArchivePlatforms = (onClose: () => void) => {
+  return useAtomCallback(
+    useCallback(
+      async (get, _set) => {
+        const currentPlatforms = await get(allPlatformsDataSelector)
+        let platformsToArchive = await get(unpositionedPlatformsSelector)
+        let platformsToUnarchive = get(platformModalPositionAtom).map(
+          ({ id }) => id
+        )
+
+        platformsToArchive = platformsToArchive.filter((p) =>
+          Object.keys(currentPlatforms.active).includes(p)
+        )
+        platformsToUnarchive = platformsToUnarchive.filter((p) =>
+          Object.keys(currentPlatforms.archived).includes(p)
+        )
+
+        if (platformsToArchive.length + platformsToUnarchive.length > 0) {
+          await invokeArchiveUnarchivePlatforms(
+            platformsToArchive,
+            platformsToUnarchive
+          )
+        }
+        onClose()
+      },
+      [onClose]
+    )
+  )
 }

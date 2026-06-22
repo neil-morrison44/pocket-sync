@@ -1,7 +1,7 @@
 use crate::{PocketSyncState, app_error::AppError};
 use log::{debug, error};
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, path::Path};
+use std::{collections::HashMap, io::ErrorKind, path::Path};
 use tokio::fs;
 
 #[derive(Serialize, Deserialize)]
@@ -81,4 +81,47 @@ async fn read_platforms_from_dir(
     }
 
     Ok(platforms)
+}
+
+#[tauri::command(async)]
+pub async fn archive_unarchive_platforms(
+    state: tauri::State<'_, PocketSyncState>,
+    archive: Vec<String>,
+    unarchive: Vec<String>,
+) -> Result<(), AppError> {
+    debug!("Command: archive_unarchive_platforms");
+
+    let (platforms_path, platforms_archive_path) = {
+        let pocket_path = state.0.pocket_path.read().await;
+        let platforms = pocket_path.join("Platforms");
+        let archive = platforms.join("_archive");
+        (platforms, archive)
+    };
+    fs::create_dir_all(&platforms_archive_path)
+        .await
+        .map_err(AppError::from)?;
+
+    for platform in archive {
+        let src = platforms_path.join(format!("{}.json", platform));
+        let dest = platforms_archive_path.join(format!("{}.json", platform));
+
+        match fs::rename(&src, &dest).await {
+            Ok(_) => debug!("Archived platform: {}", platform),
+            Err(e) if e.kind() == ErrorKind::NotFound => continue,
+            Err(e) => return Err(e.into()),
+        }
+    }
+
+    for platform in unarchive {
+        let src = platforms_archive_path.join(format!("{}.json", platform));
+        let dest = platforms_path.join(format!("{}.json", platform));
+
+        match fs::rename(&src, &dest).await {
+            Ok(_) => debug!("Unarchived platform: {}", platform),
+            Err(e) if e.kind() == ErrorKind::NotFound => continue,
+            Err(e) => return Err(e.into()),
+        }
+    }
+
+    Ok(())
 }

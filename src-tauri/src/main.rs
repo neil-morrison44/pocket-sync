@@ -321,7 +321,8 @@ fn main() {
             commands::plugins::list_and_install_plugins,
             commands::plugins::uninstall_plugin,
             commands::plugins::kill_plugin,
-            commands::platforms::all_platform_data
+            commands::platforms::all_platform_data,
+            commands::platforms::archive_unarchive_platforms
         ])
         .setup(|app| {
             log_panics::init();

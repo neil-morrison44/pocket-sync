@@ -9,6 +9,7 @@ import {
   Job,
   PocketPluginInfo,
   PlatformInfoJSON,
+  PlatformId,
 } from "../types"
 import { debug } from "@tauri-apps/plugin-log"
 import { path } from "@tauri-apps/api"
@@ -303,4 +304,11 @@ export const invokeAllPlatformData = async (): Promise<{
   archived: Record<string, PlatformInfoJSON["platform"]>
 }> => {
   return await invoke("all_platform_data")
+}
+
+export const invokeArchiveUnarchivePlatforms = async (
+  archive: PlatformId[],
+  unarchive: PlatformId[]
+): Promise<void> => {
+  return await invoke("archive_unarchive_platforms", { archive, unarchive })
 }

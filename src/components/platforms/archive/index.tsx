@@ -9,7 +9,6 @@ import {
   useMemo,
   useRef,
   useState,
-  useTransition,
 } from "react"
 import * as THREE from "three"
 import {
@@ -21,19 +20,17 @@ import { useTranslation } from "react-i18next"
 import { Size } from "@react-three/fiber"
 import "./index.css"
 import { useAtom, useAtomValue, useSetAtom } from "jotai"
-import { loadable, useAtomCallback } from "jotai/utils"
+import { useAtomCallback } from "jotai/utils"
 import { Canvas, ThreeEvent, useFrame, useThree } from "@react-three/fiber"
-import { NoToneMapping, Plane } from "three"
+import { NoToneMapping } from "three"
 import {
   Html,
   MeshPortalMaterial,
-  OrbitControls,
   useCursor,
   useTexture,
 } from "@react-three/drei"
 import { Body, Lights, PostEffects } from "../../three/pocket"
 import { PocketEnv } from "../../three/env"
-import { StaticScreen } from "../../three/staticScreen"
 import { Clipper } from "../../three/clipper"
 import { ColourContextProviderFromConfig } from "../../three/colourContext"
 
@@ -41,23 +38,27 @@ import velvet_diff_tex from "./velvet_texture/velour_velvet_diff_2k.jpg"
 import velvet_nor_tex from "./velvet_texture/velour_velvet_nor_gl_2k.jpg"
 import velvet_arm_tex from "./velvet_texture/velour_velvet_arm_2k.jpg"
 import velvet_spec_ior_tex from "./velvet_texture/velour_velvet_spec_ior_2k.jpg"
-import { usePlatformTextureAtlas, useSetupPositions } from "./hooks"
+import {
+  useArchivePlatforms,
+  usePlatformTextureAtlas,
+  useSetupPositions,
+} from "./hooks"
 import { GlassGrid, GridCell } from "./glassGrid"
 import { PlatformImage } from "../../cores/platformImage"
 import { PlatformsBucket } from "./bucket"
 import {
   addPlatformItemsAtom,
-  draggedPlatformIdAtom,
+  draggedPlatformsAtom,
   platformModalCursorPositonAtom,
   platformModalPositionAtom,
 } from "../../../recoil/platforms/atoms"
-import { PlatformLoadoutDragItemLayer } from "./dragItemLayer"
+import { PlatformArchiveDragItemLayer } from "./dragItemLayer"
 
-type PlatformLoadoutProps = {
+type PlatformArchiveProps = {
   onClose: () => void
 }
 
-export const PlatformLoadout = ({ onClose }: PlatformLoadoutProps) => {
+export const PlatformArchive = ({ onClose }: PlatformArchiveProps) => {
   const { t } = useTranslation("platforms")
   const [pocketIsOpen, setPocketIsOpen] = useState<boolean>(false)
 
@@ -69,17 +70,18 @@ export const PlatformLoadout = ({ onClose }: PlatformLoadoutProps) => {
   }, [])
 
   const setCursorPosition = useSetAtom(platformModalCursorPositonAtom)
-  const [draggingPlatformId, setDraggingPlatformId] = useAtom(
-    draggedPlatformIdAtom
-  )
+  const [draggingPlatformId, setDraggingPlatformId] =
+    useAtom(draggedPlatformsAtom)
   const contentContainerRef = useRef<HTMLDivElement>(null)
+
+  const archivePlatforms = useArchivePlatforms(onClose)
 
   useSetupPositions()
 
   return (
-    <Modal className="platform-loadout">
+    <Modal className="platform-archive">
       <div
-        className="platform-loadout__content"
+        className="platform-archive__content"
         ref={contentContainerRef}
         style={{ cursor: draggingPlatformId ? "grabbing" : "unset" }}
         onMouseUp={(_e) => setDraggingPlatformId(null)}
@@ -94,11 +96,11 @@ export const PlatformLoadout = ({ onClose }: PlatformLoadoutProps) => {
         }}
       >
         <Suspense>
-          <PlatformLoadoutDragItemLayer />
+          <PlatformArchiveDragItemLayer />
         </Suspense>
         <Canvas
           shadows
-          className="platform-loadout__3d-preview"
+          className="platform-archive__3d-preview"
           gl={{ localClippingEnabled: true }}
           camera={{ fov: 50, position: [0, 0, 42] }}
           onCreated={(state) => (state.gl.toneMapping = NoToneMapping)}
@@ -112,8 +114,8 @@ export const PlatformLoadout = ({ onClose }: PlatformLoadoutProps) => {
         </Suspense>
       </div>
 
-      <div className="platform-loadout__buttons">
-        <button onClick={() => {}}>
+      <div className="platform-archive__buttons">
+        <button onClick={archivePlatforms}>
           {t("image_packs.apply_changes", { count: 1 })}
         </button>
         <button onClick={onClose}>{t("image_packs.close")}</button>
@@ -233,17 +235,40 @@ const PocketSuitcase = ({ isOpen }: PocketSuitcaseProps) => {
 
   const handleDrop = useAtomCallback(
     useCallback((get, set, col: number, row: number) => {
-      const draggedPlatformId = get(draggedPlatformIdAtom)
-      if (draggedPlatformId) {
-        console.log({ draggedPlatformId, row, col })
+      const draggedItem = get(draggedPlatformsAtom)
+      if (draggedItem) {
+        console.log({ draggedItem, row, col })
 
-        startTransition(() => {
-          set(addPlatformItemsAtom, { id: draggedPlatformId, row, col })
-        })
-        // set(platformModalPositionAtom, (ps) => [
-        //   ...ps.filter(({ id }) => id !== draggedPlatformId),
-        //   { id: draggedPlatformId, row, col },
-        // ])
+        switch (draggedItem.type) {
+          case "platform": {
+            startTransition(() => {
+              set(addPlatformItemsAtom, { id: draggedItem.id, row, col })
+            })
+            break
+          }
+          case "group": {
+            const maxColumn = Math.max(
+              ...draggedItem.platforms.map(({ col }) => col)
+            )
+            const maxRow = Math.max(
+              ...draggedItem.platforms.map(({ row }) => row)
+            )
+
+            const midColumn = Math.round(maxColumn / 2)
+            const midRow = Math.round(maxRow / 2)
+
+            startTransition(() => {
+              set(
+                addPlatformItemsAtom,
+                draggedItem.platforms.map((p) => ({
+                  id: p.id,
+                  col: p.col + (col - midColumn),
+                  row: p.row + (row - midRow),
+                }))
+              )
+            })
+          }
+        }
       }
     }, [])
   )
@@ -382,13 +407,12 @@ export const InventoryCube = ({
   gridColumn,
   gridRow,
 }: InventoryCubeProps) => {
-  const [draggedPlatformId, setDraggedPlatformId] = useAtom(
-    draggedPlatformIdAtom
-  )
+  const [draggedItem, setDraggedItem] = useAtom(draggedPlatformsAtom)
   const [hovered, setHovered] = useState(false)
   useCursor(hovered, "grab", "auto")
 
-  const isBeingDragged = draggedPlatformId === platformId
+  const isBeingDragged =
+    draggedItem?.type === "platform" && draggedItem.id === platformId
 
   const portalParent = use(PortalParentContext)
   const vec = useMemo(() => new THREE.Vector3(), [])
@@ -447,11 +471,11 @@ export const InventoryCube = ({
           onPointerOver={handlePointerOver}
           onPointerOut={handlePointerOut}
           onPointerDown={(e) => {
-            setDraggedPlatformId(platformId)
+            setDraggedItem({ type: "platform", id: platformId })
             e.stopPropagation()
           }}
         ></mesh>
-        {hovered && (
+        {hovered && draggedItem === null && (
           <Html
             position={[0, 2, 0]}
             center
@@ -480,21 +504,21 @@ export const InventoryCube = ({
             }}
           >
             <div
-              className="platform-loadout__tooltip"
+              className="platform-archive__tooltip"
               style={{ pointerEvents: "none" }}
             >
               <PlatformName platformId={platformId} />
               <Suspense
                 fallback={
                   <div
-                    className="platform-loadout__tooltip-banner"
+                    className="platform-archive__tooltip-banner"
                     style={{ aspectRatio: "521 / 165", background: "#999" }}
                   />
                 }
               >
                 <PlatformImage
                   platformId={platformId}
-                  className="platform-loadout__tooltip-banner"
+                  className="platform-archive__tooltip-banner"
                 />
               </Suspense>
             </div>
@@ -508,7 +532,7 @@ export const InventoryCube = ({
 const PlatformName = ({ platformId }: { platformId: string }) => {
   const platformInfo = useAtomValue(PlatformInfoSelectorFamily(platformId))
   return (
-    <div className="platform-loadout__tooltip-name">
+    <div className="platform-archive__tooltip-name">
       {platformInfo.platform.name}
     </div>
   )

@@ -3,10 +3,18 @@ import { PlatformId } from "../../types"
 
 export const platformModalCursorPositonAtom = atom<[number, number]>([0, 0])
 
-export const draggedPlatformIdAtom = atom<PlatformId | null>(null)
+export const draggedPlatformsAtom = atom<
+  | null
+  | { type: "platform"; id: PlatformId }
+  | {
+      type: "group"
+      label: string
+      platforms: { id: PlatformId; col: number; row: number }[]
+    }
+>(null)
 
 export const platformModalBucketFilterAtom = atom<
-  "all" | "category" | "manufacturer" | "year" | "core-author"
+  "all" | "category" | "manufacturer" | "year"
 >("all")
 
 export type PlatformItem = {
@@ -75,8 +83,15 @@ export const addPlatformItemsAtom = atom(
     const getOccupiedSet = (items: PlatformItem[]) =>
       new Set(items.map((i) => `${i.col},${i.row}`))
 
-    for (const newItem of itemsToAdd) {
+    const clampCol = (col: number) => Math.max(0, Math.min(col, COLS - 1))
+    const clampRow = (row: number) => Math.max(0, Math.min(row, ROWS - 1))
+
+    for (const rawItem of itemsToAdd) {
+      const newItem = { ...rawItem }
       currentItems = currentItems.filter((i) => i.id !== newItem.id)
+
+      newItem.col = clampCol(newItem.col)
+      newItem.row = clampRow(newItem.row)
 
       const targetKey = `${newItem.col},${newItem.row}`
       const occupiedSet = getOccupiedSet(currentItems)

@@ -1,15 +1,15 @@
-.platform-loadout {
+.platform-archive {
   padding: 0;
 }
 
-.platform-loadout__content {
+.platform-archive__content {
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
 }
 
-.platform-loadout__drag-item-layer {
+.platform-archive__drag-item-layer {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -18,25 +18,25 @@
   perspective: 500;
 }
 
-.platform-loadout__count {
+.platform-archive__count {
   padding: 12px;
   /*font-family: GamePocket, sans-serif;*/
   font-size: 1.2em;
 }
 
-.platform-loadout__drag-image {
+.platform-archive__drag-image {
   width: 80px;
   height: auto;
   transform: translate(-50%, -50%);
 }
 
-.platform-loadout__3d-preview {
+.platform-archive__3d-preview {
   flex-basis: 66vh;
   overflow: hidden;
   flex-shrink: 0;
 }
 
-.platform-loadout__tooltip {
+.platform-archive__tooltip {
   background-color: rgba(20, 20, 20, 0.9);
   color: white;
   border-radius: 6px;
@@ -53,7 +53,7 @@
 }
 
 /* The Downward Arrow */
-.platform-loadout__tooltip::after {
+.platform-archive__tooltip::after {
   content: "";
   position: absolute;
   top: 100%; /* Pushes it to the very bottom of the tooltip */
@@ -66,25 +66,25 @@
   border-color: rgba(20, 20, 20, 0.9) transparent transparent transparent;
 }
 
-.platform-loadout__tooltip-name {
+.platform-archive__tooltip-name {
   padding-inline: 8px;
   font-weight: bold;
 }
 
-.platform-loadout__tooltip-banner {
+.platform-archive__tooltip-banner {
   width: 150px;
   height: auto;
   margin-bottom: 4px;
 }
 
-.platform-loadout__platform-bucket {
+.platform-archive__platform-bucket {
   flex-shrink: 1;
   display: flex;
   flex-direction: column;
   position: relative;
 }
 
-.platform-loadout__platform-bucket-nav {
+.platform-archive__platform-bucket-nav {
   display: flex;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   justify-content: space-between;
@@ -96,7 +96,33 @@
   width: 100%;
 }
 
-.platform-loadout__platform-bucket-view-tabs {
+.platform-archive__archive-all-button {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &::before,
+  &::after {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+
+    border-bottom: 6px double currentColor;
+    border-right: 6px double currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    opacity: 0.5;
+  }
+}
+
+.platform-archive__platform-bucket-view-tabs {
   display: flex;
   gap: 8px;
   justify-self: flex-end;
@@ -140,7 +166,7 @@
   }
 }
 
-.platform-loadout__platform-bucket-content {
+.platform-archive__platform-bucket-content {
   overflow: auto;
   display: flex;
   flex-wrap: wrap;
@@ -152,7 +178,7 @@
   box-sizing: border-box;
 }
 
-.platform-loadout__platform-item {
+.platform-archive__platform-item {
   background-color: var(--info-colour);
   display: flex;
   align-items: center;
@@ -169,12 +195,29 @@
   }
 }
 
-.platform-loadout__platform-item-image {
+.platform-archive__platform-item-image {
   width: 120px;
   height: auto;
 }
 
-.platform-loadout__buttons {
+.platform-archive__platform-group {
+  background-color: var(--info-colour);
+  text-align: center;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-radius: 4px;
+
+  cursor: grab;
+  border: 1px solid white;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.platform-archive__buttons {
   padding: 12px;
   display: flex;
   padding-block-start: 0;

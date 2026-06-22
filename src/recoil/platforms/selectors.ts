@@ -36,6 +36,13 @@ export const platformsListSelector = atom<Promise<PlatformId[]>>(
   }
 )
 
+export const activePlatformsCountSelector = atom<Promise<number>>(
+  async (get) => {
+    const allPlatforms = await get(allPlatformsDataSelector)
+    return Object.keys(allPlatforms.active).length
+  }
+)
+
 export const platformsWithoutCoresSelector = atom<Promise<PlatformId[]>>(
   async (get) => {
     const platforms = await get(platformsListSelector)
@@ -99,6 +106,16 @@ export const PlatformInfoSelectorFamily = atomFamily<
         },
       })
     return { platform }
+  })
+)
+
+export const PlatformIsArchivedSelectorFamily = atomFamily<
+  PlatformId,
+  Atom<Promise<boolean>>
+>((platformId: PlatformId) =>
+  atom(async (get) => {
+    const allPlatforms = await get(allPlatformsDataSelector)
+    return platformId in allPlatforms.archived
   })
 )
 
@@ -247,8 +264,9 @@ export const ImagePackImageSelectorFamily = atomFamilyDeepEqual<
 export const unpositionedPlatformsSelector = atom<Promise<PlatformId[]>>(
   async (get) => {
     const fullPlatformsList = await get(platformsListSelector)
-    const positionedPlatforms = get(platformModalPositionAtom)
 
+    const positionedPlatforms = get(platformModalPositionAtom)
+    console.log({ positionedPlatforms, fullPlatformsList })
     return Array.from(
       new Set(fullPlatformsList).difference(
         new Set(positionedPlatforms.map(({ id }) => id))

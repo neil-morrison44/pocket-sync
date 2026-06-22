@@ -355,6 +355,8 @@
     "controls": {
       "back": "Back to list",
       "data_packs": "Data Packs",
+      "archive": "Archive Platform",
+      "unarchive": "Unarchive Platform",
       "image_packs": "Image Packs"
     },
     "cores": "Cores",
@@ -365,6 +367,7 @@
     "controls": {
       "data_packs": "Data Packs",
       "remove_coreless": "Remove Coreless",
+      "archive": "Archive Platforms ({active, number, short}/{max, number, short})",
       "image_packs": "Image Packs",
       "search": "Search"
     },
