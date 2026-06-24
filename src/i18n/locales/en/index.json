@@ -278,6 +278,7 @@
     "confirm_remove": "This will also remove any local data the plugin has stored on this computer, are you sure?",
     "confirm_exit": "The plugin is still running, are you sure you want to close the window?",
     "safe_to_close": "Plugin has finished, this window can be closed",
+    "submit": "Submit",
     "info": "The plugin specification, an example plugin, and tools for building plugins can be found at <1>github.com/{repo}</1>",
     "add_modal": {
       "title": "Add plugin via URL",

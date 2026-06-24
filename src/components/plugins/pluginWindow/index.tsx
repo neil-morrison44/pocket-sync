@@ -212,7 +212,7 @@ const PluginMessageRenderer = ({
             if (key === "Enter") submitText()
           }}
         />
-        <button onClick={submitText}>{"Submit"}</button>
+        <button onClick={submitText}>{t("submit")}</button>
       </>
     )
   }
