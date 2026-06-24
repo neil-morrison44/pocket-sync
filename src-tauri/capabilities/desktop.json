@@ -9,6 +9,20 @@
     "locale:default",
     "updater:default",
     "opener:default",
+    "fs:allow-exists",
+    "fs:allow-read-text-file",
+    "fs:allow-write-text-file",
+    "fs:allow-mkdir",
+    "fs:allow-remove",
+    "fs:allow-read-dir",
+    {
+      "identifier": "fs:allow-exists",
+      "allow": ["**"]
+    },
+    {
+      "identifier": "fs:allow-read-text-file",
+      "allow": ["**"]
+    },
     {
       "identifier": "opener:allow-open-path",
       "allow": [

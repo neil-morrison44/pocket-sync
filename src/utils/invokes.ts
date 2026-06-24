@@ -13,6 +13,29 @@ import {
 } from "../types"
 import { debug } from "@tauri-apps/plugin-log"
 import { path } from "@tauri-apps/api"
+import {
+  copyFile,
+  exists,
+  mkdir,
+  readDir,
+  readFile,
+  readTextFile,
+  remove,
+  stat,
+  writeFile,
+} from "@tauri-apps/plugin-fs"
+import { getDefaultStore } from "jotai"
+import { pocketPathAtom } from "../recoil/atoms"
+import { join } from "@tauri-apps/api/path"
+
+const store = getDefaultStore()
+
+const toFullPath = async (pocketRelativePath: string) => {
+  const basePath = store.get(pocketPathAtom)
+  if (!basePath) throw new Error("Pocket folder path is not set.")
+
+  return await join(basePath, pocketRelativePath)
+}
 
 export const invokeOpenPocket = async () => invoke<string | null>("open_pocket")
 
@@ -21,26 +44,26 @@ export const invokeOpenPocketFolder = async (path: string) =>
     pocketPath: path,
   })
 
-export const invokeListFiles = async (path: string) =>
-  invoke<string[]>("list_files", {
-    path,
-  })
+export const invokeListFiles = async (relativePath: string) => {
+  const path = await toFullPath(relativePath)
+  const entries = await readDir(path)
+  return entries.filter((e) => e.isFile).map((e) => e.name)
+}
 
-export const invokeListFolders = async (path: string) =>
-  invoke<string[]>("list_folders", {
-    path,
-  })
+export const invokeListFolders = async (relativePath: string) => {
+  const path = await toFullPath(relativePath)
+  const entries = await readDir(path)
+  return entries.filter((e) => e.isDirectory).map((e) => e.name)
+}
 
-export const invokeReadTextFile = async (path: string) =>
-  invoke<string>("read_text_file", {
-    path,
-  })
+export const invokeReadTextFile = async (relativePath: string) => {
+  const path = await toFullPath(relativePath)
+  return readTextFile(path)
+}
 
-export const invokeReadBinaryFile = async (path: string) => {
-  const file = await invoke<number[]>("read_binary_file", {
-    path,
-  })
-  return new Uint8Array(file)
+export const invokeReadBinaryFile = async (relativePath: string) => {
+  const path = await toFullPath(relativePath)
+  return readFile(path)
 }
 
 export const invokeWalkDirListFiles = async (
@@ -57,16 +80,19 @@ export const invokeWalkDirListFiles = async (
   return files
 }
 
-export const invokeSaveFile = async (path: string, buffer: Uint8Array) =>
-  invoke<boolean>("save_file", {
-    path,
-    buffer: Array.prototype.slice.call(buffer),
-  })
+export const invokeSaveFile = async (path: string, buffer: Uint8Array) => {
+  try {
+    await writeFile(path, buffer)
+  } catch (err) {
+    return false
+  }
+  return true
+}
 
-export const invokeFileExists = async (path: string) =>
-  invoke<boolean>("file_exists", {
-    path,
-  })
+export const invokeFileExists = async (relativePath: string) => {
+  const path = await toFullPath(relativePath)
+  return exists(path)
+}
 
 export const invokeUninstallCore = async (coreName: string) =>
   invoke<boolean>("uninstall_core", {
@@ -105,17 +131,25 @@ export const invokeRestoreZip = async (zipPath: string, filePath: string) => {
 }
 
 export const invokeCreateFolderIfMissing = async (path: string) => {
-  return invoke<boolean>("create_folder_if_missing", { path })
+  if (!(await exists(path))) {
+    await mkdir(path, { recursive: true })
+  }
+  return true
 }
 
 export const invokeDeleteFiles = async (paths: string[]) => {
-  return invoke<boolean>("delete_files", { paths })
+  await Promise.all(
+    paths.map(async (p) => {
+      const path = await toFullPath(p)
+      return remove(path)
+    })
+  )
+  return true
 }
 
 export const invokeCopyFiles = async (copies: FileCopy[]) => {
-  return invoke<boolean>("copy_files", {
-    copies: copies.map(({ origin, destination }) => [origin, destination]),
-  })
+  await Promise.all(copies.map((c) => copyFile(c.origin, c.destination)))
+  return true
 }
 
 export const invokeFindCleanableFiles = async (path: string) => {
@@ -152,11 +186,11 @@ export const invokeFileMetadata = async (filePath: string) => {
   return { timestamp: metadata.timestamp_secs * 1000, crc32: metadata.crc32 }
 }
 
-export const invokeFileMTime = async (filePath: string) => {
-  const mtime = await invoke<number>("get_file_metadata_mtime_only", {
-    filePath,
-  })
-  return mtime * 1000
+export const invokeFileMTime = async (relativePath: string) => {
+  const path = await toFullPath(relativePath)
+
+  const fileInfo = await stat(path)
+  return fileInfo.mtime ? fileInfo.mtime.getTime() : 0
 }
 
 export const invokeFilesMTime = async (filePaths: string[]) => {

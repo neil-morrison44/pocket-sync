@@ -29,6 +29,7 @@ export const PocketSyncConfigSelector = atom(
     }
 
     const exists = await invokeFileExists(file)
+    console.log({ exists })
     if (!exists) {
       const defaultConfig = {
         version: await get(AppVersionSelector),

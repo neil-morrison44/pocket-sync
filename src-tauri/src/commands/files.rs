@@ -2,175 +2,14 @@ use crate::{
     FileMetadata, PocketSyncState,
     app_error::AppError,
     clean_fs::find_dotfiles,
-    file_cache::get_file_with_cache,
     hashes::{HashCacheState, crc32_for_file},
-    progress,
     saves_zip::remove_leading_slash,
     util::{find_common_path, get_mtime_timestamp},
 };
 use async_walkdir::{DirEntry, WalkDir};
 use futures::{StreamExt, stream};
-use log::{debug, error, trace};
+use log::{debug, trace};
 use std::{path::PathBuf, time::SystemTime};
-use tauri::{Emitter, Manager, Window};
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
-
-#[tauri::command(async)]
-pub async fn read_binary_file(
-    state: tauri::State<'_, PocketSyncState>,
-    path: &str,
-    app_handle: tauri::AppHandle,
-) -> Result<Vec<u8>, String> {
-    debug!("Command: read_binary_file - {path}");
-    let pocket_path = state.0.pocket_path.read().await;
-    let path = pocket_path.join(path);
-
-    let arc_lock = state.0.file_locker.find_lock_for(&path).await;
-    let _read_lock = arc_lock.read().await;
-
-    if let Ok(mut f) = if let Ok(cache_dir) = app_handle.path().app_cache_dir() {
-        get_file_with_cache(&path, &cache_dir).await
-    } else {
-        tokio::fs::File::open(&path).await
-    } {
-        let mut buffer = vec![];
-        f.read_to_end(&mut buffer)
-            .await
-            .expect(&format!("failed to read file: {:?}", path));
-
-        Ok(buffer)
-    } else {
-        Err(format!("No file found: {}", path.display()))
-    }
-}
-
-#[tauri::command(async)]
-pub async fn read_text_file(
-    state: tauri::State<'_, PocketSyncState>,
-    path: &str,
-    app_handle: tauri::AppHandle,
-) -> Result<String, ()> {
-    debug!("Command: read_text_file - {path}");
-    let pocket_path = state.0.pocket_path.read().await;
-    let path = pocket_path.join(path);
-
-    let arc_lock = state.0.file_locker.find_lock_for(&path).await;
-    let _read_lock = arc_lock.read().await;
-
-    let mut f = if let Ok(cache_dir) = app_handle.path().app_cache_dir() {
-        get_file_with_cache(&path, &cache_dir).await
-    } else {
-        tokio::fs::File::open(&path).await
-    }
-    .expect(&format!("no file found: {:?}", &path));
-
-    let mut file_contents = String::new();
-    f.read_to_string(&mut file_contents)
-        .await
-        .expect(&format!("failed to read file: {:?}", path));
-    Ok(file_contents)
-}
-
-#[tauri::command(async)]
-pub async fn file_exists(
-    state: tauri::State<'_, PocketSyncState>,
-    path: &str,
-) -> Result<bool, AppError> {
-    trace!("Command: file_exists - {path}");
-    let pocket_path = state.0.pocket_path.read().await;
-    let path = pocket_path.join(path);
-
-    let exists = tokio::fs::try_exists(&path).await?;
-    Ok(exists)
-}
-
-#[tauri::command(async)]
-pub async fn save_file(
-    path: &str,
-    buffer: Vec<u8>,
-    state: tauri::State<'_, PocketSyncState>,
-) -> Result<bool, ()> {
-    debug!("Command: save_file - {path}");
-    let file_path = PathBuf::from(path);
-    let folder_path = file_path.parent().unwrap();
-    let arc_lock = state.0.file_locker.find_lock_for(&file_path).await;
-    let _write_lock = arc_lock.write().await;
-    tokio::fs::create_dir_all(&folder_path).await.unwrap();
-    let mut file = tokio::fs::File::create(file_path).await.unwrap();
-    file.write_all(&buffer).await.unwrap();
-    file.flush().await.unwrap();
-    Ok(true)
-}
-
-#[tauri::command(async)]
-pub async fn list_files(
-    path: &str,
-    state: tauri::State<'_, PocketSyncState>,
-) -> Result<Vec<String>, ()> {
-    debug!("Command: list_files - {path}");
-    let pocket_path = state.0.pocket_path.read().await;
-    let dir_path = pocket_path.join(path);
-
-    let arc_lock = state.0.file_locker.find_lock_for(&dir_path).await;
-    trace!("list_files lock requested");
-    let _read_lock = arc_lock.read().await;
-    trace!("list_files lock granted");
-
-    if !tokio::fs::try_exists(&dir_path).await.unwrap() {
-        return Ok(vec![]);
-    }
-
-    let mut paths = tokio::fs::read_dir(dir_path).await.unwrap();
-    let mut results: Vec<_> = Vec::new();
-
-    while let Ok(Some(entry)) = paths.next_entry().await {
-        let file_type = entry.file_type().await.unwrap();
-        if file_type.is_file() {
-            let file_name = entry.file_name();
-            let file_name = file_name.to_str().unwrap();
-
-            if !file_name.starts_with(".") {
-                results.push(String::from(file_name))
-            }
-        }
-    }
-
-    Ok(results)
-}
-
-#[tauri::command(async)]
-pub async fn list_folders(
-    path: &str,
-    state: tauri::State<'_, PocketSyncState>,
-) -> Result<Vec<String>, ()> {
-    debug!("Command: list_folders - {path}");
-    let pocket_path = state.0.pocket_path.read().await;
-    let dir_path = pocket_path.join(path);
-
-    let arc_lock = state.0.file_locker.find_lock_for(&dir_path).await;
-    let _read_lock = arc_lock.read().await;
-
-    if !tokio::fs::try_exists(&dir_path).await.unwrap() {
-        return Ok(vec![]);
-    }
-
-    let mut paths = tokio::fs::read_dir(dir_path).await.unwrap();
-    let mut results: Vec<_> = Vec::new();
-
-    while let Ok(Some(entry)) = paths.next_entry().await {
-        let file_type = entry.file_type().await.unwrap();
-        if file_type.is_dir() {
-            let file_name = entry.file_name();
-            let file_name = file_name.to_str().unwrap();
-
-            if !file_name.starts_with(".") {
-                results.push(String::from(file_name))
-            }
-        }
-    }
-
-    Ok(results)
-}
 
 #[tauri::command(async)]
 pub async fn walkdir_list_files(
@@ -223,68 +62,6 @@ pub async fn walkdir_list_files(
     }
 
     Ok(file_paths)
-}
-
-#[tauri::command(async)]
-pub async fn delete_files(
-    paths: Vec<&str>,
-    state: tauri::State<'_, PocketSyncState>,
-) -> Result<bool, ()> {
-    debug!("Command: delete_files");
-    let pocket_path = state.0.pocket_path.read().await;
-
-    let tasks: Vec<_> = paths
-        .into_iter()
-        .filter_map(|path| {
-            let file_path = pocket_path.join(path);
-            file_path
-                .exists()
-                .then(|| tokio::fs::remove_file(file_path))
-        })
-        .collect();
-
-    futures::future::join_all(tasks).await;
-    Ok(true)
-}
-
-#[tauri::command(async)]
-pub async fn copy_files(
-    copies: Vec<(&str, &str)>,
-    window: Window,
-    state: tauri::State<'_, PocketSyncState>,
-) -> Result<bool, ()> {
-    debug!("Command: copy_files");
-
-    let mut progress = progress::ProgressEmitter::new(Box::new(|event| {
-        window.emit("progress-event::copy_files", event).unwrap();
-    }));
-
-    progress.begin_work_units(copies.len());
-
-    let all_dests: Vec<PathBuf> = copies
-        .iter()
-        .map(|(_source, dest)| PathBuf::from(dest))
-        .collect();
-    let common_dir = find_common_path(&all_dests).unwrap();
-    let arc_lock = state.0.file_locker.find_lock_for(&common_dir).await;
-    let _write_lock = arc_lock.write().await;
-
-    for (origin, destination) in copies {
-        let origin = PathBuf::from(origin);
-        let destination = PathBuf::from(&destination);
-
-        if let Err(err) = match tokio::fs::create_dir_all(destination.parent().unwrap()).await {
-            Ok(_) => tokio::fs::copy(&origin, &destination).await,
-            Err(e) => Err(e),
-        } {
-            error!("{}", err);
-        } else {
-            progress.complete_work_units(1);
-            progress.set_message("file", Some(&destination.to_string_lossy()));
-        }
-    }
-
-    Ok(true)
 }
 
 #[tauri::command(async)]
@@ -364,18 +141,6 @@ pub async fn save_multiple_files(
 }
 
 #[tauri::command(async)]
-pub async fn get_file_metadata_mtime_only(
-    state: tauri::State<'_, PocketSyncState>,
-    file_path: &str,
-) -> Result<u64, AppError> {
-    trace!("Command: get_file_metadata_mtime_only");
-    let pocket_path = state.0.pocket_path.read().await;
-    let full_path = pocket_path.join(file_path);
-
-    Ok(get_mtime_timestamp(&full_path).await?)
-}
-
-#[tauri::command(async)]
 pub async fn get_file_metadata(
     state: tauri::State<'_, PocketSyncState>,
     hash_cache: tauri::State<'_, HashCacheState>,
@@ -400,16 +165,4 @@ pub async fn get_file_metadata(
         timestamp_secs: timestamp,
         crc32,
     })
-}
-
-#[tauri::command(async)]
-pub async fn create_folder_if_missing(path: &str) -> Result<bool, ()> {
-    debug!("Command: create_folder_if_missing - {path}");
-    let folder_path = PathBuf::from(path);
-    if !folder_path.exists() {
-        tokio::fs::create_dir_all(path).await.unwrap();
-        return Ok(true);
-    }
-
-    Ok(false)
 }
