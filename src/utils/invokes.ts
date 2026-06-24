@@ -8,6 +8,8 @@ import {
   SaveZipFile,
   Job,
   PocketPluginInfo,
+  PlatformInfoJSON,
+  PlatformId,
 } from "../types"
 import { debug } from "@tauri-apps/plugin-log"
 import { path } from "@tauri-apps/api"
@@ -295,4 +297,29 @@ export const invokeKillPlugin = async (pluginId: string): Promise<void> => {
   return await invoke("kill_plugin", {
     pluginId,
   })
+}
+
+export const invokeAllPlatformData = async (): Promise<{
+  active: Record<string, PlatformInfoJSON["platform"]>
+  archived: Record<string, PlatformInfoJSON["platform"]>
+}> => {
+  return await invoke("all_platform_data")
+}
+
+export const invokeArchiveUnarchivePlatforms = async (
+  archive: PlatformId[],
+  unarchive: PlatformId[]
+): Promise<void> => {
+  return await invoke("archive_unarchive_platforms", { archive, unarchive })
+}
+
+export const invokeReadAllPlatformImages = async (): Promise<
+  Record<PlatformId, Uint8Array>
+> => {
+  const result = await invoke<Record<PlatformId, number[]>>(
+    "all_platform_images"
+  )
+  return Object.fromEntries(
+    Object.entries(result).map(([id, data]) => [id, new Uint8Array(data)])
+  )
 }

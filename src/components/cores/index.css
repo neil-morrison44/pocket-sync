@@ -29,14 +29,14 @@
   height: 24px;
 }
 
-.cores__item-analogizer{
+.cores__item-analogizer {
   position: absolute;
-  color: rgb(101,156,222);
+  color: rgb(101, 156, 222);
   right: 0;
-  top:0;
+  top: 0;
   margin: 2px;
   font-size: 1.2rem;
-  filter: drop-shadow(0 0 4px rgba(0,0,0,0.25));
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
 }
 
 .cores__item {
@@ -62,12 +62,30 @@
   cursor: pointer;
 }
 
+.cores__item-archive-icon {
+  color: var(--red-colour);
+  position: absolute;
+  right: 0;
+  height: 120px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: flex-end;
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+  background: linear-gradient(
+    4rad,
+    rgba(255, 245, 245, 0.9) 45%,
+    transparent 50%
+  );
+  backdrop-filter: blur(2px);
+}
+
 .cores__not-installed-item-id {
   font-weight: normal;
   font-size: 0.825rem;
 }
 
-.cores__item-sponsor-banner{
+.cores__item-sponsor-banner {
   position: absolute;
   top: 0;
   right: 0;

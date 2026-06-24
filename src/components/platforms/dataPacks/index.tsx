@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from "react"
 import {
   DataPackJsonSelectorFamily,
   PlatformInfoSelectorFamily,
+  PlatformIsArchivedSelectorFamily,
   imagePackListSelector,
   platformsListSelector,
 } from "../../../recoil/platforms/selectors"
@@ -43,7 +44,7 @@ export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
 
   const apply = useAtomCallback(
     useCallback(
-      async (get, set) => {
+      async (get, _set) => {
         const selectionEntries = Object.entries(selections)
         const encoder = new TextEncoder()
 
@@ -56,7 +57,12 @@ export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
           const packJson = await get(
             DataPackJsonSelectorFamily({ ...pack, platformId })
           )
-          paths.push(`Platforms/${platformId}.json`)
+          const isArchived = await get(
+            PlatformIsArchivedSelectorFamily(platformId)
+          )
+          paths.push(
+            `Platforms/${isArchived ? "_archive/" : ""}${platformId}.json`
+          )
           jsons.push(encoder.encode(JSON.stringify(packJson, null, 2)))
         }
 

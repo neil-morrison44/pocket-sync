@@ -1,0 +1,226 @@
+.platform-archive {
+  padding: 0;
+}
+
+.platform-archive__content {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.platform-archive__drag-item-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+  perspective: 500;
+}
+
+.platform-archive__count {
+  padding: 12px;
+  /*font-family: GamePocket, sans-serif;*/
+  font-size: 1.2em;
+}
+
+.platform-archive__drag-image {
+  width: 80px;
+  height: auto;
+  transform: translate(-50%, -50%);
+}
+
+.platform-archive__3d-preview {
+  flex-basis: 66vh;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.platform-archive__tooltip {
+  background-color: rgba(20, 20, 20, 0.9);
+  color: white;
+  border-radius: 6px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  font-size: 14px;
+  white-space: nowrap;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 1);
+  border-bottom: transparent;
+  pointer-events: none;
+}
+
+/* The Downward Arrow */
+.platform-archive__tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%; /* Pushes it to the very bottom of the tooltip */
+  left: 50%; /* Centers it horizontally */
+  transform: translateX(-50%); /* Fixes the exact center alignment */
+
+  /* The CSS Triangle Hack */
+  border-width: 8px;
+  border-style: solid;
+  border-color: rgba(20, 20, 20, 0.9) transparent transparent transparent;
+}
+
+.platform-archive__tooltip-name {
+  padding-inline: 8px;
+  font-weight: bold;
+}
+
+.platform-archive__tooltip-banner {
+  width: 150px;
+  height: auto;
+  margin-bottom: 4px;
+}
+
+.platform-archive__platform-bucket {
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.platform-archive__platform-bucket-nav {
+  display: flex;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  justify-content: space-between;
+  padding-inline: 12px;
+  padding-block-end: 4px;
+  position: absolute;
+  bottom: 100%;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.platform-archive__archive-all-button {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &::before,
+  &::after {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+
+    border-bottom: 6px double currentColor;
+    border-right: 6px double currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    opacity: 0.5;
+  }
+}
+
+.platform-archive__platform-bucket-view-tabs {
+  display: flex;
+  gap: 8px;
+  justify-self: flex-end;
+
+  .platform-tab__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .platform-tab {
+    cursor: pointer;
+  }
+
+  .platform-tab__label {
+    display: inline-block;
+    opacity: 0.4;
+    padding-inline: 4px;
+    border-bottom: 1px solid #666;
+    user-select: none;
+    -webkit-user-select: none;
+    transition:
+      opacity 0.2s ease,
+      border-color 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+      opacity: 0.8;
+    }
+  }
+
+  .platform-tab__input:checked + .platform-tab__label {
+    opacity: 1;
+    border-bottom: 1px solid var(--selection-colour);
+  }
+}
+
+.platform-archive__platform-bucket-content {
+  overflow: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: flex-start;
+  flex-basis: 200px;
+  padding: 12px;
+  background-color: rgba(255, 255, 2555, 0.5);
+  box-sizing: border-box;
+}
+
+.platform-archive__platform-item {
+  background-color: var(--info-colour);
+  display: flex;
+  align-items: center;
+  user-select: none;
+  -webkit-user-select: none;
+  gap: 6px;
+  padding-inline-start: 6px;
+  border-radius: 3px;
+  cursor: grab;
+  border: 1px solid white;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.platform-archive__platform-item-image {
+  width: 120px;
+  height: auto;
+}
+
+.platform-archive__platform-group {
+  background-color: var(--info-colour);
+  text-align: center;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-radius: 4px;
+
+  cursor: grab;
+  border: 1px solid white;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.platform-archive__buttons {
+  padding: 12px;
+  display: flex;
+  padding-block-start: 0;
+  justify-content: space-between;
+  gap: 12px;
+}

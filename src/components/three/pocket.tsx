@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useLoader } from "@react-three/fiber"
-import { Environment, PerformanceMonitor, RoundedBox } from "@react-three/drei"
+import { PerformanceMonitor, RoundedBox } from "@react-three/drei"
 import {
   ReactNode,
   Suspense,
@@ -24,7 +24,6 @@ import { KernelSize } from "postprocessing"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import * as THREE from "three"
 
-import envMap from "./small_empty_room_1_1k.hdr"
 import screenAlphaMap from "./screen_alpha.png"
 import boardGLB from "./board.glb"
 
@@ -46,6 +45,7 @@ import { PerfLevelContext } from "./context/perfLevel"
 import { performanceLevelAtom } from "../../recoil/atoms"
 import { useSetAtom } from "jotai"
 import { useSmoothedAtomValue } from "../../utils/jotai"
+import { PocketEnv } from "./env"
 
 type PocketProps = {
   move?: "none" | "spin" | "back-and-forth"
@@ -107,11 +107,7 @@ export const Pocket = ({
       <PerfLevelContext.Provider value={perfLevel}>
         {/* <Perf deepAnalyze matrixUpdate /> */}
         <Suspense>
-          <Environment
-            files={envMap}
-            environmentRotation={[0, Math.PI * 0.8, 0]}
-            blur={4}
-          />
+          <PocketEnv />
         </Suspense>
         <Lights />
         <Suspense>
@@ -126,7 +122,7 @@ export const Pocket = ({
   )
 }
 
-const PostEffects = () => {
+export const PostEffects = () => {
   const colour = useContext(BodyColourContext)
   const perfLevel = useContext(PerfLevelContext)
   if (perfLevel === 0 || (colour !== "glow" && perfLevel <= 2)) return null
@@ -159,7 +155,7 @@ const PostEffects = () => {
   )
 }
 
-const Lights = () => {
+export const Lights = () => {
   const perfLevel = useContext(PerfLevelContext)
   const colour = useContext(BodyColourContext)
   const [intensityScale, fillColour, keyColour] = useMemo(() => {
@@ -198,10 +194,17 @@ const Lights = () => {
   )
 }
 
-const Body = ({
+export const Body = ({
   move,
   screenMaterial,
-}: Pick<PocketProps, "move" | "screenMaterial">) => {
+  jauntyAngle = true,
+  showScreen = true,
+  showFaceButtons = true,
+}: Pick<PocketProps, "move" | "screenMaterial"> & {
+  jauntyAngle?: boolean
+  showScreen?: boolean
+  showFaceButtons?: boolean
+}) => {
   const bodyColour = useContext(BodyColourContext)
   const perfLevel = useContext(PerfLevelContext)
 
@@ -238,8 +241,12 @@ const Body = ({
     [bodyColour, buttonsMaterial]
   )
 
+  const initialRotation = useMemo(() => {
+    return [0, move === "spin" ? 1 : 0, jauntyAngle ? -0.2 : 0] as const
+  }, [move, jauntyAngle])
+
   return (
-    <group ref={groupRef} rotation={[0, move === "spin" ? 1 : 0, -0.2]}>
+    <group ref={groupRef} rotation={initialRotation}>
       <mesh
         scale={[0.2, 0.2, 0.2]}
         rotation={[0, Math.PI, 0]}
@@ -269,12 +276,16 @@ const Body = ({
         </>
       )}
 
-      <Buttons material={buttonsMaterial} />
-      <DPAD material={buttonsMaterial} />
-      <BottomButtons material={buttonsMaterial} />
+      {showFaceButtons && (
+        <>
+          <Buttons material={buttonsMaterial} />
+          <DPAD material={buttonsMaterial} />
+          <BottomButtons material={buttonsMaterial} />
+        </>
+      )}
       <ShoulderButtons material={buttonsMaterial} />
 
-      <Screen screenMaterial={screenMaterial} />
+      {showScreen && <Screen screenMaterial={screenMaterial} />}
 
       {/* Power Button */}
       <mesh

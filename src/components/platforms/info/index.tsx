@@ -1,8 +1,15 @@
-import { Suspense, useMemo, useState } from "react"
+import {
+  startTransition,
+  Suspense,
+  useCallback,
+  useMemo,
+  useState,
+} from "react"
 import {
   PlatformInfoSelectorFamily,
   PlatformImageSelectorFamily,
   allCategoriesSelector,
+  PlatformIsArchivedSelectorFamily,
 } from "../../../recoil/platforms/selectors"
 import { PlatformId } from "../../../types"
 import { PLATFORM_IMAGE } from "../../../values"
@@ -18,6 +25,7 @@ import { useTranslation } from "react-i18next"
 import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
 import { useAtomValue } from "jotai"
+import { invokeArchiveUnarchivePlatforms } from "../../../utils/invokes"
 
 type PlatformInfoProps = {
   id: PlatformId
@@ -27,6 +35,8 @@ type PlatformInfoProps = {
 export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
   const [imageEditorOpen, setImageEditorOpen] = useState(false)
   const { platform } = useAtomValue(PlatformInfoSelectorFamily(id))
+  const isArchived = useAtomValue(PlatformIsArchivedSelectorFamily(id))
+
   const platformImage = useAtomValue(PlatformImageSelectorFamily(id))
   const { t } = useTranslation("platform_info")
 
@@ -38,7 +48,16 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
   const cats = useAtomValue(allCategoriesSelector)
   const [imagePacksOpen, setImagePacksOpen] = useState(false)
   const [dataPacksOpen, setDataPacksOpen] = useState(false)
-  const updateValue = useUpdatePlatformValue(id)
+  const updateValue = useUpdatePlatformValue(id, isArchived)
+
+  const toggleArchiveStatus = useCallback(() => {
+    startTransition(() =>
+      invokeArchiveUnarchivePlatforms(
+        isArchived ? [] : [id],
+        isArchived ? [id] : []
+      )
+    )
+  }, [isArchived])
 
   return (
     <div>
@@ -46,6 +65,9 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
         <ControlsBackButton onClick={onBack}>
           {t("controls.back")}
         </ControlsBackButton>
+        <ControlsButton onClick={toggleArchiveStatus}>
+          {isArchived ? t("controls.unarchive") : t("controls.archive")}
+        </ControlsButton>
         <ControlsButton onClick={() => setDataPacksOpen(true)}>
           {t("controls.data_packs")}
         </ControlsButton>

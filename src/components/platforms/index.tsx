@@ -1,6 +1,8 @@
 import { Suspense, useCallback, useMemo, useState } from "react"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import {
+  activePlatformsCountSelector,
+  allPlatformsDataSelector,
   platformsListSelector,
   platformsWithoutCoresSelector,
 } from "../../recoil/platforms/selectors"
@@ -23,10 +25,14 @@ import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
 import { useAtom, useAtomValue } from "jotai"
 import { useAtomCallback } from "jotai/utils"
+import { PlatformArchive } from "./archive"
+
+const MAX_PLATFORMS = 239
 
 export const Platforms = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const platformIds = useAtomValue(platformsListSelector)
+  const activePlatformCount = useAtomValue(activePlatformsCountSelector)
   const { pushScroll, popScroll } = useSaveScroll()
   const { t } = useTranslation("platforms")
 
@@ -41,20 +47,26 @@ export const Platforms = () => {
 
   const [imagePacksOpen, setImagePacksOpen] = useState(false)
   const [dataPacksOpen, setDataPacksOpen] = useState(false)
+  const [archiveOpen, setArchiveOpen] = useState(false)
 
   const removeCorelessPlatforms = useAtomCallback(
-    useCallback(async (get, set) => {
+    useCallback(async (get, _set) => {
       const platformsWithoutCores = await get(platformsWithoutCoresSelector)
 
       const confirmation = await confirm(
         t("delete_unused", { count: platformsWithoutCores.length })
       )
+      const allPlatformsData = await get(allPlatformsDataSelector)
 
       if (confirmation && platformsWithoutCores.length > 0) {
         await invokeDeleteFiles(
-          platformsWithoutCores.map(
-            (platformId) => `Platforms/${platformId}.json`
-          )
+          platformsWithoutCores.map((platformId) => {
+            if (platformId in allPlatformsData.active) {
+              return `Platforms/${platformId}.json`
+            } else {
+              return `Platforms/_archive/${platformId}.json`
+            }
+          })
         )
       }
     }, [])
@@ -82,6 +94,21 @@ export const Platforms = () => {
         <ControlsButton onClick={removeCorelessPlatforms}>
           {t("controls.remove_coreless")}
         </ControlsButton>
+        <ControlsButton
+          onClick={() => setArchiveOpen(true)}
+          style={{
+            backgroundColor:
+              activePlatformCount > MAX_PLATFORMS
+                ? "var(--red-colour)"
+                : undefined,
+            color: activePlatformCount > MAX_PLATFORMS ? "white" : undefined,
+          }}
+        >
+          {t("controls.archive", {
+            active: activePlatformCount,
+            max: MAX_PLATFORMS,
+          })}
+        </ControlsButton>
         <ControlsButton onClick={() => setDataPacksOpen(true)}>
           {t("controls.data_packs")}
         </ControlsButton>
@@ -94,6 +121,7 @@ export const Platforms = () => {
         <ImagePacks onClose={() => setImagePacksOpen(false)} />
       )}
       {dataPacksOpen && <DataPacks onClose={() => setDataPacksOpen(false)} />}
+      {archiveOpen && <PlatformArchive onClose={() => setArchiveOpen(false)} />}
 
       <SearchContextProvider query={searchQuery}>
         <Grid placeholderItemHeight={200}>

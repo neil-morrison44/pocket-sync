@@ -17,12 +17,12 @@ use zip::ZipArchive;
 mod payloads;
 
 use crate::{
+    PocketSyncState,
     core_json_files::{
         core::CoreFile,
         updaters::{CoreUpdateDetails, UpdatersFile},
     },
     util::progress_download,
-    PocketSyncState,
 };
 struct Titles {
     title: String,
@@ -412,8 +412,22 @@ async fn start_zip_install_flow(
     }
 
     for (index, path) in paths.iter().enumerate() {
-        let destination = pocket_path.join(&path);
+        let mut destination = pocket_path.join(&path);
         let source = tmp_path.join(&path);
+
+        if let Ok(stripped) = path.strip_prefix("Platforms") {
+            if stripped.components().count() == 1
+                && path.extension().and_then(|e| e.to_str()) == Some("json")
+            {
+                let archive_dest = pocket_path
+                    .join("Platforms")
+                    .join("_archive")
+                    .join(stripped);
+                if archive_dest.exists() {
+                    destination = archive_dest;
+                }
+            }
+        }
 
         if destination.is_dir() && destination.exists() {
             continue;
@@ -438,7 +452,6 @@ async fn start_zip_install_flow(
     }
 
     // check if there's an updaters.json file in the installed cores
-
     let cores: Vec<_> = paths
         .iter()
         .filter(|path| path.ends_with("core.json"))
@@ -468,7 +481,21 @@ fn get_file_names(
     files
         .into_iter()
         .map(|f| {
-            let path = pocket_path.join(f);
+            let mut path = pocket_path.join(f);
+
+            if f.starts_with("Platforms/") && f.ends_with(".json") {
+                let file_name = &f["Platforms/".len()..];
+                if !file_name.contains('/') {
+                    let archive_path = pocket_path
+                        .join("Platforms")
+                        .join("_archive")
+                        .join(file_name);
+                    if archive_path.exists() {
+                        path = archive_path;
+                    }
+                }
+            }
+
             PathStatus {
                 exists: path.exists(),
                 path: String::from(f),

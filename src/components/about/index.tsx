@@ -23,6 +23,7 @@ import { ColourContextProviderFromConfig } from "../three/colourContext"
 import { Changelog } from "./changelog"
 import { useAtomValue, useSetAtom } from "jotai"
 import { sponsorCountAtom } from "../../recoil/github/atoms"
+import { AllPlatformImagesSelector } from "../../recoil/platforms/selectors"
 
 const Pocket = React.lazy(() =>
   import("../three/pocket").then((m) => ({ default: m.Pocket }))
@@ -51,6 +52,9 @@ export const About = () => {
           onClose={() => startTransition(() => setChangelogOpen(false))}
         />
       )}
+      <Suspense>
+        <PlatformImagePreload />
+      </Suspense>
       <div className="about__sponsor">
         <Suspense>
           <div
@@ -203,4 +207,9 @@ const SillyTitleEffect = ({ children }: { children: ReactNode }) => {
     return () => titleElement.removeEventListener("mousemove", onMouseMove)
   }, [])
   return <h1 ref={titleRef}>{children}</h1>
+}
+
+const PlatformImagePreload = () => {
+  const _imageData = useAtomValue(AllPlatformImagesSelector)
+  return null
 }
