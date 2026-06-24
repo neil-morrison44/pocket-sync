@@ -1,4 +1,17 @@
 # Changelog
+<a id="v6.2.0"></a>
+# [v6.2.0 - Platform archival UI & required files check speedup](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.2.0) - 2026-06-24
+
+## What's Changed
+* Makes the hash cache (crc32 & md5) persistent across launches by [@neil-morrison44](https://github.com/neil-morrison44) in [#454](https://github.com/neil-morrison44/pocket-sync/pull/454)
+* Resident Evil style platform archive management by [@neil-morrison44](https://github.com/neil-morrison44) in [#455](https://github.com/neil-morrison44/pocket-sync/pull/455)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.1.1...v6.2.0
+
+[Changes][v6.2.0]
+
+
 <a id="v6.1.1"></a>
 # [v6.1.1 - Fixes running plugins in the built & signed MacOS app](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.1.1) - 2026-06-15
 
@@ -1859,6 +1872,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v6.2.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.1.1...v6.2.0
 [v6.1.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.0.1...v6.1.1
 [v6.0.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.0.0...v6.0.1
 [v6.0.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.11.0...v6.0.0
