@@ -9,7 +9,7 @@ use file_cache::clear_file_caches;
 use file_locks::FileLocks;
 use install_zip::start_zip_task;
 use job_id::{Job, JobState};
-use log::{LevelFilter, debug, trace};
+use log::{LevelFilter, debug, info, trace};
 use root_files::RootFile;
 use save_sync_session::start_mister_save_sync_session;
 use saves_zip::SaveZipFile;
@@ -19,6 +19,7 @@ use std::path::PathBuf;
 use std::vec;
 use tauri::{App, Emitter, Manager, RunEvent};
 use tauri_plugin_dialog::DialogExt;
+use tauri_plugin_fs::FsExt;
 use tauri_plugin_log::{Target, TargetKind};
 use tokio::sync::{Mutex, RwLock};
 
@@ -62,7 +63,7 @@ struct PocketSyncState(InnerState);
 async fn open_pocket(
     state: tauri::State<'_, PocketSyncState>,
     app_handle: tauri::AppHandle,
-) -> Result<Option<String>, ()> {
+) -> Result<Option<String>, AppError> {
     debug!("Command: open_pocket");
 
     if let Some(tauri_plugin_dialog::FilePath::Path(pocket_path)) =
@@ -79,10 +80,14 @@ async fn open_pocket_folder(
     state: tauri::State<'_, PocketSyncState>,
     pocket_path: &str,
     app_handle: tauri::AppHandle,
-) -> Result<Option<String>, ()> {
+) -> Result<Option<String>, AppError> {
     debug!("Command: open_pocket_folder {pocket_path}");
     let window = app_handle.get_webview_window("main").unwrap();
     let pocket_path = PathBuf::from(pocket_path);
+
+    info!("Adding {:?} to fs_scope", &pocket_path);
+    app_handle.fs_scope().allow_directory(&pocket_path, true)?;
+
     if !check_if_folder_looks_like_pocket(&pocket_path) {
         return Ok(None);
     }
@@ -279,30 +284,20 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             open_pocket,
             open_pocket_folder,
-            commands::files::list_files,
-            commands::files::list_folders,
             commands::files::walkdir_list_files,
-            commands::files::read_binary_file,
-            commands::files::read_text_file,
-            commands::files::save_file,
             commands::cores::uninstall_core,
             commands::archive::install_archive_files,
-            commands::files::file_exists,
             commands::saves::backup_saves,
             commands::saves::list_backup_saves,
             commands::saves::list_saves_in_zip,
             commands::saves::list_saves_on_pocket,
             commands::saves::restore_save,
-            commands::files::create_folder_if_missing,
-            commands::files::delete_files,
-            commands::files::copy_files,
             commands::files::find_cleanable_files,
             commands::cores::list_instance_packageable_cores,
             commands::cores::run_packager_for_core,
             get_news_feed,
             begin_mister_sync_session,
             commands::files::get_file_metadata,
-            commands::files::get_file_metadata_mtime_only,
             commands::firmware::get_firmware_versions_list,
             commands::firmware::get_firmware_release_notes,
             commands::firmware::download_firmware,
