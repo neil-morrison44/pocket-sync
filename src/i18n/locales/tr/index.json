@@ -256,12 +256,27 @@
     "confirm_remove": "Bu işlem, eklentinin bu bilgisayarda depoladığı yerel verileri de silecektir, emin misiniz?",
     "confirm_exit": "Eklenti hala çalışıyor, pencereyi kapatmak istediğinizden emin misiniz?",
     "safe_to_close": "Eklenti işlemi tamamlandı, bu pencere kapatılabilir.",
+    "submit": "Göndermek",
     "info": "Eklenti spesifikasyonu, örnek bir eklenti ve eklenti oluşturma araçları <1>github.com/{repo} adresinde bulunabilir.</1>",
     "add_modal": {
       "title": "URL üzerinden eklenti ekle",
       "add": "Eklentiyi doğrulayın ve yükleyin.",
       "cancel": "İptal etmek",
       "invalid": "Bu URL'de geçerli bir eklenti bulunamadı."
+    }
+  },
+  "platforms": {
+    "archive": {
+      "apply_changes": "Değişiklikleri Kaydet",
+      "close": "Kaydetmeden kapat",
+      "search_placeholder": "Arşivlenmiş Platformlar",
+      "archive_all": "Tümünü Arşivle",
+      "filters": {
+        "all": "Tüm",
+        "category": "Kategori",
+        "manufacturer": "Üretici",
+        "year": "Yıl"
+      }
     }
   }
 }

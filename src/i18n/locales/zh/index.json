@@ -242,6 +242,7 @@
     "confirm_remove": "这将同时删除插件在此计算机上存储的所有本地数据，您确定吗？",
     "confirm_exit": "插件仍在运行，您确定要关闭窗口吗？",
     "safe_to_close": "插件已完成，此窗口可以关闭。",
+    "submit": "提交",
     "info": "插件规范、示例插件和插件构建工具可在 <1>github.com/{repo} 找到。</1>",
     "add_modal": {
       "title": "通过 URL 添加插件",
@@ -331,6 +332,18 @@
       "remove_coreless": "删除无核",
       "image_packs": "图像包",
       "search": "搜索"
+    },
+    "archive": {
+      "apply_changes": "保存更改",
+      "close": "关闭而不保存",
+      "search_placeholder": "已存档平台",
+      "archive_all": "全部存档",
+      "filters": {
+        "all": "全部",
+        "category": "类别",
+        "manufacturer": "制造商",
+        "year": "年"
+      }
     },
     "data_packs": {
       "apply_changes": "共执行了 {count, plural, =0 {0项修改} one {1项修改} other {# 项修改}}",

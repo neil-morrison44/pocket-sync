@@ -242,6 +242,7 @@
     "confirm_remove": "これにより、プラグインがこのコンピューターに保存しているローカルデータもすべて削除されますが、よろしいですか？",
     "confirm_exit": "プラグインはまだ実行中です。ウィンドウを閉じてもよろしいですか？",
     "safe_to_close": "プラグインの処理が完了しました。このウィンドウは閉じることができます。",
+    "submit": "提出する",
     "info": "プラグイン仕様、プラグインの例、およびプラグイン構築ツールは、<1>github.com/{repo} にあります。</1>",
     "add_modal": {
       "title": "URL経由でプラグインを追加する",
@@ -331,6 +332,18 @@
       "remove_coreless": "コアがない項目を削除",
       "image_packs": "イメージパック",
       "search": "検索"
+    },
+    "archive": {
+      "apply_changes": "変更を保存",
+      "close": "保存せずに閉じる",
+      "search_placeholder": "アーカイブされたプラットフォーム",
+      "archive_all": "すべてアーカイブ",
+      "filters": {
+        "all": "全て",
+        "category": "カテゴリ",
+        "manufacturer": "メーカー",
+        "year": "年"
+      }
     },
     "data_packs": {
       "apply_changes": "{count, plural, =0 {変更なし} one {1 件の変更を適用} other {# 件の変更を適用}}",

@@ -224,6 +224,7 @@
     "confirm_remove": "Cela supprimera également toutes les données locales que le plugin a stockées sur cet ordinateur. Êtes-vous sûr ?",
     "confirm_exit": "Le plugin est toujours en cours d'exécution, êtes-vous sûr de vouloir fermer la fenêtre ?",
     "safe_to_close": "L'installation du plugin est terminée, cette fenêtre peut être fermée.",
+    "submit": "Soumettre",
     "info": "La spécification du plugin, un exemple de plugin et les outils pour créer des plugins sont disponibles sur <1>github.com/{repo}</1>",
     "add_modal": {
       "title": "Ajouter un plugin via une URL",
@@ -301,6 +302,18 @@
     "cancel": "Annuler",
     "controls": {
       "search": "Rechercher"
+    },
+    "archive": {
+      "apply_changes": "Enregistrer les modifications",
+      "close": "Fermer sans enregistrer",
+      "search_placeholder": "Plateformes archivées",
+      "archive_all": "Archive Tout",
+      "filters": {
+        "all": "Tous",
+        "category": "Catégorie",
+        "manufacturer": "Fabricant",
+        "year": "Année"
+      }
     },
     "data_packs": {
       "apply_changes": "Appliquer {count, plural, =0 {0 modification} one {1 modification} other {# modifications}}",

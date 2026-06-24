@@ -267,6 +267,7 @@
     "confirm_remove": "Isso também removerá quaisquer dados locais que o plugin tenha armazenado neste computador. Tem certeza?",
     "confirm_exit": "O plugin ainda está em execução. Tem certeza de que deseja fechar a janela?",
     "safe_to_close": "O plugin terminou, esta janela pode ser fechada.",
+    "submit": "Enviar",
     "info": "A especificação do plugin, um plugin de exemplo e ferramentas para criar plugins podem ser encontrados em <1>github.com/{repo}</1>",
     "add_modal": {
       "title": "Adicionar plugin via URL",
@@ -356,6 +357,18 @@
       "remove_coreless": "Remover Sem Núcleo",
       "image_packs": "Pacotes de Imagens",
       "search": "Pesquisar"
+    },
+    "archive": {
+      "apply_changes": "Salvar alterações",
+      "close": "Fechar sem salvar",
+      "search_placeholder": "Plataformas arquivadas",
+      "archive_all": "Arquivar tudo",
+      "filters": {
+        "all": "Todos",
+        "category": "Categoria",
+        "manufacturer": "Fabricante",
+        "year": "Ano"
+      }
     },
     "data_packs": {
       "apply_changes": "Aplicar {count, plural, =0 {0 Alterações} one {1 Alteração} other {# Alterações}}",

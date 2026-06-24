@@ -267,6 +267,7 @@
     "confirm_remove": "Dadurch werden auch alle lokalen Daten gelöscht, die das Plugin auf diesem Computer gespeichert hat. Sind Sie sicher?",
     "confirm_exit": "Das Plugin läuft noch. Möchten Sie das Fenster wirklich schließen?",
     "safe_to_close": "Das Plugin wurde beendet, dieses Fenster kann geschlossen werden.",
+    "submit": "Einreichen",
     "info": "Die Plugin-Spezifikation, ein Beispiel-Plugin und Werkzeuge zum Erstellen von Plugins finden Sie unter <1>github.com/{repo}</1>",
     "add_modal": {
       "title": "Plugin per URL hinzufügen",
@@ -356,6 +357,18 @@
       "remove_coreless": "Coreless entfernen",
       "image_packs": "Bildpakete",
       "search": "Suchen"
+    },
+    "archive": {
+      "apply_changes": "Änderungen speichern",
+      "close": "Schließen, ohne zu speichern",
+      "search_placeholder": "Archivierte Plattformen",
+      "archive_all": "Alle archivieren",
+      "filters": {
+        "all": "Alle",
+        "category": "Kategorie",
+        "manufacturer": "Hersteller",
+        "year": "Jahr"
+      }
     },
     "data_packs": {
       "apply_changes": "{count, plural, =0 {0 Änderungen} one {1 Änderungen} other {# Änderungen}} anwenden",

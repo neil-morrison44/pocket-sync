@@ -272,6 +272,7 @@
     "confirm_remove": "Thao tác này cũng sẽ xóa mọi dữ liệu cục bộ mà plugin đã lưu trữ trên máy tính này, bạn có chắc không?",
     "confirm_exit": "Plugin vẫn đang chạy, bạn có chắc chắn muốn đóng cửa sổ này không?",
     "safe_to_close": "Plugin đã hoàn tất, cửa sổ này có thể đóng lại.",
+    "submit": "Nộp",
     "info": "Bạn có thể tìm thấy thông số kỹ thuật của plugin, một ví dụ về plugin và các công cụ để xây dựng plugin tại <1>github.com/{repo}</1>",
     "add_modal": {
       "title": "Thêm plugin thông qua URL",
@@ -360,6 +361,18 @@
       "remove_coreless": "Xóa bỏ Coreless",
       "image_packs": "Gói hình ảnh",
       "search": "Tìm kiếm"
+    },
+    "archive": {
+      "apply_changes": "Lưu thay đổi",
+      "close": "Đóng mà không lưu.",
+      "search_placeholder": "Các nền tảng đã được lưu trữ",
+      "archive_all": "Lưu trữ tất cả",
+      "filters": {
+        "all": "Tất cả",
+        "category": "Loại",
+        "manufacturer": "Nhà sản xuất",
+        "year": "Năm"
+      }
     },
     "data_packs": {
       "apply_changes": "Áp dụng {count, plural, =0 {0 thay đổi} one {1 thay đổi} other {# thay đổi}}",
