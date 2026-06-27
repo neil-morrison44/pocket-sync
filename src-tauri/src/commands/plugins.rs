@@ -158,6 +158,7 @@ pub async fn run_plugin(
                 window_clone.emit("plugin-plugin-message", res)?;
             }
             PluginMessage::Exit => {
+                window_clone.emit("plugin-plugin-message", res)?;
                 return Ok(());
             }
         }

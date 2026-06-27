@@ -15,8 +15,9 @@ import {
 } from "@tauri-apps/plugin-window-state"
 import { listen } from "@tauri-apps/api/event"
 import { AutoUpdate } from "./components/autoUpdate"
-import { createStore, Provider } from "jotai"
+import { createStore, getDefaultStore, Provider } from "jotai"
 import { PluginWindow } from "./components/plugins/pluginWindow"
+import { initGlobalFSEvents } from "./recoil/fileSystem/atoms"
 
 installPolyfills()
 
@@ -32,7 +33,9 @@ listen<string>("resize", (event) => {
   saveWindowState(StateFlags.ALL)
 })
 
-const jotaiStore = createStore()
+const jotaiStore = getDefaultStore()
+
+initGlobalFSEvents()
 
 const MainWindow = () => {
   return (

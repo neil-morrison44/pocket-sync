@@ -4,15 +4,11 @@ import {
   invokeReadAllPlatformImages,
 } from "../../utils/invokes"
 import { PLATFORM_IMAGE } from "../../values"
-import {
-  CoreInfoSelectorFamily,
-  coresListSelector,
-  ImageBinSrcSelectorFamily,
-} from "../selectors"
+import { CoreInfoSelectorFamily, coresListSelector } from "../selectors"
 import * as zip from "@zip.js/zip.js"
 import { renderBinImage } from "../../utils/renderBinImage"
 import { fetch as tauriFecth } from "@tauri-apps/plugin-http"
-import { FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { Atom, atom } from "jotai"
 import { atomFamily } from "jotai/utils"
 import { atomFamilyDeepEqual } from "../../utils/jotai"
@@ -24,7 +20,7 @@ export const allPlatformsDataSelector = atom<
     archived: Record<string, PlatformInfoJSON["platform"]>
   }>
 >(async (get) => {
-  get(FolderWatchAtomFamily("Platforms"))
+  get(fsWatchAtomFamily("Platforms"))
   const allPlatforms = await invokeAllPlatformData()
   return allPlatforms
 })
@@ -125,7 +121,7 @@ export const PlatformIsArchivedSelectorFamily = atomFamily<
 export const AllPlatformImagesSelector = atom<
   Promise<Record<PlatformId, Uint8Array>>
 >(async (get) => {
-  get(FolderWatchAtomFamily("Platforms/_images"))
+  get(fsWatchAtomFamily("Platforms/_images"))
   return await invokeReadAllPlatformImages()
 })
 
@@ -280,7 +276,6 @@ export const unpositionedPlatformsSelector = atom<Promise<PlatformId[]>>(
     const fullPlatformsList = await get(platformsListSelector)
 
     const positionedPlatforms = get(platformModalPositionAtom)
-    console.log({ positionedPlatforms, fullPlatformsList })
     return Array.from(
       new Set(fullPlatformsList).difference(
         new Set(positionedPlatforms.map(({ id }) => id))

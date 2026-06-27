@@ -1,6 +1,6 @@
 import { CoreInfoSelectorFamily, coresListSelector } from "../selectors"
 import { coreInventoryAtom } from "../inventory/atoms"
-import { FileWatchAtomFamily } from "../fileSystem/atoms"
+import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import {
   invokeFileExists,
   invokeReadBinaryFile,
@@ -52,7 +52,7 @@ export const CoreInfoTxtSelectorFamily = atomFamily<
 >((coreName) =>
   atom(async (get) => {
     const path = `Cores/${coreName}/info.txt`
-    get(FileWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     const exists = await invokeFileExists(path)
     if (!exists) return ""
     const text = await invokeReadTextFile(path)
@@ -90,7 +90,7 @@ const DEFAULT_CRT_CONFIG = {
 export const JTCRTConfigSelector = atom(
   async (get) => {
     const path = "Assets/jtpatreon/common/crtcfg.bin"
-    get(FileWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     const exists = await invokeFileExists(path)
     if (!exists) return DEFAULT_CRT_CONFIG
 

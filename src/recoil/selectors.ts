@@ -12,7 +12,7 @@ import {
 import { AUTHOUR_IMAGE } from "../values"
 import { readJSONFile } from "../utils/readJSONFile"
 import { path } from "@tauri-apps/api"
-import { FileWatchAtomFamily, FolderWatchAtomFamily } from "./fileSystem/atoms"
+import { fsWatchAtomFamily } from "./fileSystem/atoms"
 import { getCurrentWindow, Window } from "@tauri-apps/api/window"
 import { Atom, atom } from "jotai"
 import { atomFamily, atomWithRefresh } from "jotai/utils"
@@ -27,13 +27,13 @@ export const DataJSONSelectorFamily = atomFamily<
 >((coreName) =>
   atom(async (get) => {
     const path = `Cores/${coreName}/data.json`
-    get(FileWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     return readJSONFile<DataJSON>(path)
   })
 )
 
 export const coresListSelector = atom<Promise<string[]>>(async (get) => {
-  get(FolderWatchAtomFamily("Cores"))
+  get(fsWatchAtomFamily("Cores"))
   return await invokeListFolders("Cores")
 })
 
@@ -43,7 +43,7 @@ export const CoreInfoSelectorFamily = atomFamily<
 >((coreName: string) =>
   atom(async (get) => {
     const path = `Cores/${coreName}/core.json`
-    get(FileWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     return readJSONFile<CoreInfoJSON>(path)
   })
 )
@@ -75,7 +75,7 @@ export const CoreAuthorImageSelectorFamily = atomFamily<
 >((coreName: string) =>
   atom(async (get) => {
     const path = `Cores/${coreName}/icon.bin`
-    get(FileWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     const width = AUTHOUR_IMAGE.WIDTH
     const height = AUTHOUR_IMAGE.HEIGHT
 
@@ -115,7 +115,7 @@ export const WalkDirSelectorFamily = atomFamilyDeepEqual<
   Atom<Promise<string[]>>
 >(({ path, extensions = [], offPocket = false }) =>
   atom(async (get) => {
-    get(FolderWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     const files = await invokeWalkDirListFiles(path, extensions, offPocket)
     return files
   })
@@ -126,7 +126,7 @@ export const ImageBinSrcSelectorFamily = atomFamilyDeepEqual<
   Atom<Promise<string>>
 >(({ path, width, height }) =>
   atom(async (get, { signal }) => {
-    get(FileWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     const exists = await invokeFileExists(path)
     signal.throwIfAborted()
 
@@ -163,7 +163,7 @@ export const CleanableFilesSelectorFamily = atomFamily<
   Atom<Promise<string[]>>
 >((path) =>
   atom(async (get) => {
-    get(FolderWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     return await invokeFindCleanableFiles(path)
   })
 )
@@ -187,7 +187,7 @@ export const FolderSizeSelectorFamily = atomFamily<
   Atom<Promise<string>>
 >((path) =>
   atom(async (get) => {
-    get(FolderWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     const size = await invokeFolderSize(path)
     return prettyBytes(size)
   })

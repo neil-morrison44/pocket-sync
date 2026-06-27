@@ -9,7 +9,7 @@ import { invokeFilesMTime, invokeListRootFiles } from "../../utils/invokes"
 import { fetch as tauriFecth } from "@tauri-apps/plugin-http"
 
 import { pocketPathAtom } from "../atoms"
-import { FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { WalkDirSelectorFamily } from "../selectors"
 import { atomFamilyDeepEqual } from "../../utils/jotai"
 import { Atom, atom } from "jotai"
@@ -42,7 +42,7 @@ export const PathFileInfoSelectorFamily = atomFamilyDeepEqual<
   Atom<Promise<FetchFileMetadataWithStatus[]>>
 >(({ path, offPocket }) =>
   atom(async (get) => {
-    get(FolderWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     const pocketPath = get(pocketPathAtom)
     const fileList = await get(
       WalkDirSelectorFamily({ path, extensions: [], offPocket })
@@ -83,7 +83,7 @@ export const ListSomeRootFilesSelectorFamily = atomFamilyDeepEqual<
   Atom<Promise<RootFile[]>>
 >((extensions) =>
   atom(async (get) => {
-    get(FolderWatchAtomFamily("/"))
+    get(fsWatchAtomFamily("/"))
     const rootFileInfo = await invokeListRootFiles(extensions)
     return rootFileInfo
   })

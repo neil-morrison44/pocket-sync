@@ -6,7 +6,7 @@ import {
   invokeReadBinaryFile,
   invokeWalkDirListFiles,
 } from "../../utils/invokes"
-import { FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { Atom, atom } from "jotai"
 import { atomFamilyDeepEqual } from "../../utils/jotai"
 import { path } from "@tauri-apps/api"
@@ -14,7 +14,7 @@ import { MROMInfo } from "../../types"
 
 export const instancePackagerCoresListSelector = atom<Promise<string[]>>(
   async (get) => {
-    get(FolderWatchAtomFamily("Cores"))
+    get(fsWatchAtomFamily("Cores"))
     return await invokeListInstancePackageableCores()
   }
 )
@@ -22,7 +22,7 @@ export const instancePackagerCoresListSelector = atom<Promise<string[]>>(
 export const mromDumpedROMSListSelector = atom<Promise<MROMInfo[]>>(
   async (get) => {
     const MROM_ROOT = "Assets/mrom/common"
-    get(FolderWatchAtomFamily(MROM_ROOT))
+    get(fsWatchAtomFamily(MROM_ROOT))
     const dumps = await invokeWalkDirListFiles(MROM_ROOT, ["GB", "GBC"])
     const results: MROMInfo[] = []
 

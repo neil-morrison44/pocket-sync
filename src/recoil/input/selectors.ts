@@ -1,7 +1,7 @@
 import { atomFamily } from "jotai/utils"
 import { InputJSON } from "../../types"
 import { readJSONFile } from "../../utils/readJSONFile"
-import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { WalkDirSelectorFamily } from "../selectors"
 import { atom, Atom } from "jotai"
 import { atomFamilyDeepEqual } from "../../utils/jotai"
@@ -10,7 +10,7 @@ const CoreInputSelectorFamily = atomFamily<string, Atom<Promise<InputJSON>>>(
   (coreName: string) =>
     atom(async (get) => {
       const path = `Cores/${coreName}/input.json`
-      get(FolderWatchAtomFamily(path))
+      get(fsWatchAtomFamily(path))
       return readJSONFile<InputJSON>(path)
     })
 )
@@ -32,7 +32,7 @@ export const PresetInputSelectorFamily = atomFamilyDeepEqual<
   atom(async (get) => {
     if (filePath === "core") return get(CoreInputSelectorFamily(coreName))
     const path = `Presets/${coreName}/Input${filePath}`
-    get(FileWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     return readJSONFile<InputJSON>(path)
   })
 )
