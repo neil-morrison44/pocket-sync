@@ -1,4 +1,16 @@
 # Changelog
+<a id="v6.2.1"></a>
+# [v6.2.1 - Plugin & File System bug fixes](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.2.1) - 2026-06-27
+
+## What's Changed
+* Some bug fixes by [@neil-morrison44](https://github.com/neil-morrison44) in [#458](https://github.com/neil-morrison44/pocket-sync/pull/458)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.0...v6.2.1
+
+[Changes][v6.2.1]
+
+
 <a id="v6.2.0"></a>
 # [v6.2.0 - Platform archival UI & required files check speedup](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.2.0) - 2026-06-24
 
@@ -1872,6 +1884,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v6.2.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.0...v6.2.1
 [v6.2.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.1.1...v6.2.0
 [v6.1.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.0.1...v6.1.1
 [v6.0.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.0.0...v6.0.1
