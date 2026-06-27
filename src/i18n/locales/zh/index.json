@@ -236,7 +236,8 @@
   },
   "plugins": {
     "buttons": {
-      "add": "添加插件"
+      "add": "添加插件",
+      "refresh": "刷新"
     },
     "remove": "消除",
     "confirm_remove": "这将同时删除插件在此计算机上存储的所有本地数据，您确定吗？",

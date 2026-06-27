@@ -250,7 +250,8 @@
   },
   "plugins": {
     "buttons": {
-      "add": "Eklenti Ekle"
+      "add": "Eklenti Ekle",
+      "refresh": "Yenile"
     },
     "remove": "Kaldırmak",
     "confirm_remove": "Bu işlem, eklentinin bu bilgisayarda depoladığı yerel verileri de silecektir, emin misiniz?",

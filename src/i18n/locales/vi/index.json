@@ -266,7 +266,8 @@
   },
   "plugins": {
     "buttons": {
-      "add": "Thêm Plugin"
+      "add": "Thêm Plugin",
+      "refresh": "Làm mới"
     },
     "remove": "Di dời",
     "confirm_remove": "Thao tác này cũng sẽ xóa mọi dữ liệu cục bộ mà plugin đã lưu trữ trên máy tính này, bạn có chắc không?",

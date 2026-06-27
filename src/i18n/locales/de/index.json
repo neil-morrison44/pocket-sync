@@ -261,7 +261,8 @@
   },
   "plugins": {
     "buttons": {
-      "add": "Plugin hinzufügen"
+      "add": "Plugin hinzufügen",
+      "refresh": "Aktualisieren"
     },
     "remove": "Entfernen",
     "confirm_remove": "Dadurch werden auch alle lokalen Daten gelöscht, die das Plugin auf diesem Computer gespeichert hat. Sind Sie sicher?",

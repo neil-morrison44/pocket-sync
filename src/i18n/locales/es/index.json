@@ -236,7 +236,8 @@
   },
   "plugins": {
     "buttons": {
-      "add": "Agregar complemento"
+      "add": "Agregar complemento",
+      "refresh": "Refrescar"
     },
     "remove": "Eliminar",
     "confirm_remove": "Esto también eliminará cualquier dato local que el complemento haya almacenado en este ordenador, ¿estás seguro?",

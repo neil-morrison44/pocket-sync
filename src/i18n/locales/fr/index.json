@@ -218,7 +218,8 @@
   },
   "plugins": {
     "buttons": {
-      "add": "Ajouter un plugin"
+      "add": "Ajouter un plugin",
+      "refresh": "Rafraîchir"
     },
     "remove": "Retirer",
     "confirm_remove": "Cela supprimera également toutes les données locales que le plugin a stockées sur cet ordinateur. Êtes-vous sûr ?",
