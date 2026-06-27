@@ -130,14 +130,11 @@ const CoreList = ({
   const coresList = useAtomValue(coresListSelector)
   const coreInventory = useSmoothedAtomValue(coreInventoryAtom)
 
-  console.log({ coresList, coreInventory })
-
   const notInstalledCores = useMemo(
     () =>
       coreInventory.cores.data
         .filter(({ id }) => !coresList.includes(id))
         .sort((a, b) => {
-          console.log(a)
           const dateA = new Date(a.releases[0].core.metadata.date_release)
           const dateB = new Date(b.releases[0].core.metadata.date_release)
           switch (sortMode) {

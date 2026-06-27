@@ -1,4 +1,4 @@
-import { useAtomValue } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
 import { Controls } from "../controls"
 import { ControlsButton } from "../controls/inputs/button"
 import { pluginListSelector } from "../../recoil/plugins/selectors"
@@ -19,7 +19,7 @@ import { ask } from "@tauri-apps/plugin-dialog"
 export const Plugins = () => {
   const [addPluginModalOpen, setAddPluginModalOpen] = useState<boolean>(false)
   const { t } = useTranslation("plugins")
-  const plugins = useAtomValue(pluginListSelector)
+  const [plugins, refreshPlugins] = useAtom(pluginListSelector)
 
   return (
     <div className="plugins">
@@ -29,6 +29,9 @@ export const Plugins = () => {
       <Controls>
         <ControlsButton onClick={() => setAddPluginModalOpen(true)}>
           {t("buttons.add")}
+        </ControlsButton>
+        <ControlsButton onClick={() => refreshPlugins()}>
+          {t("buttons.refresh")}
         </ControlsButton>
       </Controls>
 

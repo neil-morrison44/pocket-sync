@@ -60,6 +60,9 @@ async fn read_platforms_from_dir(
         let path = entry.path();
         if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("json") {
             if let Some(file_stem) = path.file_stem().and_then(|s| s.to_str()) {
+                if file_stem.starts_with(".") {
+                    continue;
+                }
                 match fs::read_to_string(&path).await {
                     Ok(content) => match serde_json::from_str::<PlatformFile>(&content) {
                         Ok(file_data) => {

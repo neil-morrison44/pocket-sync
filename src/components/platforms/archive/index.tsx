@@ -235,8 +235,6 @@ const PocketSuitcase = ({ isOpen }: PocketSuitcaseProps) => {
     useCallback((get, set, col: number, row: number) => {
       const draggedItem = get(draggedPlatformsAtom)
       if (draggedItem) {
-        console.log({ draggedItem, row, col })
-
         switch (draggedItem.type) {
           case "platform": {
             startTransition(() => {

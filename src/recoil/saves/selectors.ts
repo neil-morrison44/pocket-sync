@@ -5,7 +5,7 @@ import {
   invokeListSavesInZip,
   invokeListSavesOnPocket,
 } from "../../utils/invokes"
-import { FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { WalkDirSelectorFamily } from "../selectors"
 import { Atom, atom } from "jotai"
 
@@ -38,7 +38,7 @@ const SaveZipFilesListSelectorFamily = atomFamily<
 
 export const pocketSavesFilesListSelector = atom<Promise<SaveZipFile[]>>(
   async (get) => {
-    get(FolderWatchAtomFamily("Saves"))
+    get(fsWatchAtomFamily("Saves"))
     const savesList = await invokeListSavesOnPocket()
     return savesList
   }

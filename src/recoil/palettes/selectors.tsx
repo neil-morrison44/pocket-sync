@@ -1,4 +1,4 @@
-import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { invokeReadBinaryFile } from "../../utils/invokes"
 import { GithubRelease, Palette, rgb } from "../../types"
 import { fetch as TauriFetch } from "@tauri-apps/plugin-http"
@@ -11,7 +11,8 @@ import { Atom, atom } from "jotai"
 import { atomFamily } from "jotai/utils"
 
 export const palettesListSelector = atom<Promise<string[]>>(async (get) => {
-  const path = "Assets/gb/common/palettes"
+  const path = "Assets/gb/common/Palettes"
+  get(fsWatchAtomFamily(path))
   return get(WalkDirSelectorFamily({ path, extensions: ["pal"] }))
 })
 
@@ -21,7 +22,7 @@ export const PaletteColoursSelectorFamily = atomFamily<
 >((name: string) =>
   atom(async (get) => {
     const path = `Assets/gb/common/palettes${name}`
-    get(FileWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     const data = await invokeReadBinaryFile(path)
 
     return {
@@ -53,7 +54,7 @@ export const GameBoyGameSelectorFamily = atomFamily<
 >((game: string) =>
   atom(async (get) => {
     const path = `Assets/gb/${game}`
-    get(FileWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     const data = await invokeReadBinaryFile(path)
     return data
   })
@@ -65,7 +66,7 @@ export const PaletteCodeSelectorFamily = atomFamily<
 >((name: string) =>
   atom(async (get) => {
     const path = `Assets/gb/common/palettes${name}`
-    get(FileWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     const data = await invokeReadBinaryFile(path)
     let encodedName = "Imported Palette"
 

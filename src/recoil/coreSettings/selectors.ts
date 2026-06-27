@@ -1,6 +1,6 @@
 import { InteractJSON, InteractPersistJSON } from "../../types/interact"
 import { readJSONFile } from "../../utils/readJSONFile"
-import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { WalkDirSelectorFamily } from "../selectors"
 import { atomFamily } from "jotai/utils"
 import { atom, Atom } from "jotai"
@@ -12,7 +12,7 @@ const CoreInteractFileSelectorFamily = atomFamily<
 >((coreName) =>
   atom(async (get) => {
     const path = `Cores/${coreName}/interact.json`
-    get(FileWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     return readJSONFile<InteractJSON>(path)
   })
 )
@@ -30,7 +30,7 @@ export const ListPresetInteractSelectorFamily = atomFamily<
 >((coreName: string) =>
   atom(async (get) => {
     const path = `Presets/${coreName}/Interact`
-    get(FolderWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     const inputFiles = get(
       WalkDirSelectorFamily({ path, extensions: ["json"] })
     )
@@ -47,7 +47,7 @@ export const PresetInteractFileSelectorFamily = atomFamilyDeepEqual<
       return get(CoreInteractFileSelectorFamily(coreName))
 
     const path = `Presets/${coreName}/Interact/${filePath}`
-    get(FileWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     return readJSONFile<InteractJSON>(path)
   })
 )

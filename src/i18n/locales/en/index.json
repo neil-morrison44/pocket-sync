@@ -272,7 +272,8 @@
   },
   "plugins": {
     "buttons": {
-      "add": "Add Plugin"
+      "add": "Add Plugin",
+      "refresh": "Refresh"
     },
     "remove": "Remove",
     "confirm_remove": "This will also remove any local data the plugin has stored on this computer, are you sure?",

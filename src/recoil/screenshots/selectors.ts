@@ -6,7 +6,7 @@ import {
 } from "../../utils/invokes"
 import { getBinaryMetadata } from "../../utils/getBinaryMetadata"
 import { readJSONFile } from "../../utils/readJSONFile"
-import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { atom, Atom } from "jotai"
 import { atomFamily } from "jotai/utils"
 
@@ -16,7 +16,7 @@ export const VideoJSONSelectorFamily = atomFamily<
 >((coreName) =>
   atom(async (get) => {
     const path = `Cores/${coreName}/video.json`
-    get(FileWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
     const exists = await invokeFileExists(path)
     if (!exists)
       return {
@@ -31,7 +31,7 @@ export const VideoJSONSelectorFamily = atomFamily<
 )
 
 export const screenshotsListSelector = atom<Promise<string[]>>(async (get) => {
-  get(FolderWatchAtomFamily("Memories/Screenshots"))
+  get(fsWatchAtomFamily("Memories/Screenshots"))
   return await invokeListFiles("Memories/Screenshots")
 })
 
@@ -41,7 +41,7 @@ export const SingleScreenshotSelectorFamily = atomFamily<
 >((fileName) =>
   atom(async (get) => {
     const path = `Memories/Screenshots/${fileName}`
-    get(FileWatchAtomFamily(path))
+    get(fsWatchAtomFamily(path))
 
     const data = await invokeReadBinaryFile(path)
     const buf = new Uint8Array(data)

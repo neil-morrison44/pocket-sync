@@ -5,7 +5,7 @@ import {
 } from "../../utils/getBinaryMetadata"
 import { invokeReadBinaryFile } from "../../utils/invokes"
 import { PhotoColourMapAtom } from "./atoms"
-import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { WalkDirSelectorFamily } from "../selectors"
 import { Atom, atom } from "jotai"
 import { atomFamily } from "jotai/utils"
@@ -64,7 +64,7 @@ export const ReadSavForStaSelectorFamily = atomFamily<
   atom(async (get) => {
     const savPath = path.replace(".sta", ".sav")
     const fullpath = `Memories/Save States/${savPath}`
-    get(FileWatchAtomFamily(fullpath))
+    get(fsWatchAtomFamily(fullpath))
     return await invokeReadBinaryFile(fullpath)
   })
 )

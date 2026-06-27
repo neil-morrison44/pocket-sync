@@ -5,7 +5,7 @@ import {
 } from "../../utils/invokes"
 import { FirmwareInfo, FirmwareListItem } from "../../types"
 import { allFirmwaresAtom } from "./atoms"
-import { FileWatchAtomFamily, FolderWatchAtomFamily } from "../fileSystem/atoms"
+import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { Atom, atom } from "jotai"
 import { atomFamilyDeepEqual } from "../../utils/jotai"
 
@@ -31,7 +31,7 @@ export const currentFirmwareVersionSelector = atom<
     build_date: string
   }>
 >(async (get) => {
-  get(FileWatchAtomFamily("Analogue_Pocket.json"))
+  get(fsWatchAtomFamily("Analogue_Pocket.json"))
   const analoguePocketJson = await invokeReadTextFile("Analogue_Pocket.json")
   const parsedJSON = JSON.parse(analoguePocketJson) as {
     product: "Analogue Pocket"
@@ -67,7 +67,7 @@ export const FirmwareDetailsSelectorFamily = atomFamilyDeepEqual<
 
 export const downloadedFirmwareSelector = atom<Promise<string | null>>(
   async (get) => {
-    get(FolderWatchAtomFamily("/"))
+    get(fsWatchAtomFamily("/"))
     const filesAtRoot = await invokeListFiles("")
     const firmwareFile = filesAtRoot.find((f) => f.endsWith(".bin"))
     return firmwareFile || null
