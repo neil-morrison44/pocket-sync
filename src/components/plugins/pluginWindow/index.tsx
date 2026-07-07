@@ -46,7 +46,7 @@ export const PluginWindow = ({ pluginId }: PluginWindowProps) => {
         if (parts.length > 1) {
           currentLogs.push(...parts.slice(1))
         }
-        return currentLogs.slice(-20)
+        return currentLogs
       })
     })
 

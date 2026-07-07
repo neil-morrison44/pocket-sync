@@ -45,13 +45,13 @@ export const activePlatformsCountSelector = atom<Promise<number>>(
 export const platformsWithoutCoresSelector = atom<Promise<PlatformId[]>>(
   async (get) => {
     const platforms = await get(platformsListSelector)
-    return (
-      await Promise.all(
-        platforms.map(async (pId) => get(CoresForPlatformSelectorFamily(pId)))
-      )
+    const platformWithCores = await Promise.all(
+      platforms.map(async (pId) => get(CoresForPlatformSelectorFamily(pId)))
     )
-      .filter((cores) => cores.length === 0)
-      .flat()
+    return platformWithCores
+      .map((cores, index) => ({ cores, id: platforms[index] }))
+      .filter(({ cores }) => cores.length === 0)
+      .map(({ id }) => id)
   }
 )
 

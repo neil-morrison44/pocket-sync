@@ -26,7 +26,7 @@ export const PlatformItem = ({ id, onClick }: PlatformItemProps) => {
 
   return (
     <SearchContextSelfHidingConsumer
-      fields={[platform.name, category, platform.manufacturer]}
+      fields={[platform.name, id, category, platform.manufacturer]}
     >
       <div className="cores__item" role="button" onClick={onClick}>
         {isArchived && <ArchiveIcon />}
