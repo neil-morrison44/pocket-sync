@@ -27,16 +27,36 @@ export const installPolyfills = () => {
   }
 
   // Not sure why but this causes a crash on load on Linux
-  if (!screen.orientation){
-
-    Object.defineProperty(screen, "orientation", {value: {
-  addEventListener: () => {},
-  removeEventListener: () => {}
-
-      },      configurable: true,
+  if (!screen.orientation) {
+    Object.defineProperty(screen, "orientation", {
+      value: {
+        addEventListener: () => {},
+        removeEventListener: () => {},
+      },
+      configurable: true,
       enumerable: false,
       writable: true,
-    })}
+    })
+  }
 
-  
+  if (
+    typeof AbortSignal !== "undefined" &&
+    !AbortSignal.prototype.throwIfAborted
+  ) {
+    AbortSignal.prototype.throwIfAborted = function () {
+      if (this.aborted) {
+        const error =
+          this.reason ||
+          new DOMException("The operation was aborted.", "AbortError")
+        throw error
+      }
+    }
+  }
+
+  if (typeof Set !== "undefined" && !Set.prototype.difference) {
+    Set.prototype.difference = function (otherSet: Set<any>) {
+      const thisAsArray = Array.from(this)
+      return new Set(thisAsArray.filter((item) => !otherSet.has(item)))
+    }
+  }
 }
