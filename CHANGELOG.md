@@ -1,4 +1,16 @@
 # Changelog
+<a id="v6.2.3"></a>
+# [v6.2.3 - Hopefully fixes issue loading platform images](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.2.3) - 2026-07-08
+
+## What's Changed
+* Fixes issue where the OS is (probably) running out of file handles by [@neil-morrison44](https://github.com/neil-morrison44) in [#462](https://github.com/neil-morrison44/pocket-sync/pull/462)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.2...v6.2.3
+
+[Changes][v6.2.3]
+
+
 <a id="v6.2.2"></a>
 # [v6.2.2 - Fixes issue removing coreless platforms & issue preventing plugin logs from scrolling](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.2.2) - 2026-07-07
 
@@ -1896,6 +1908,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v6.2.3]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.2...v6.2.3
 [v6.2.2]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.1...v6.2.2
 [v6.2.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.0...v6.2.1
 [v6.2.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.1.1...v6.2.0
