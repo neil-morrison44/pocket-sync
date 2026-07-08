@@ -54,29 +54,63 @@ async fn read_platforms_from_dir(
         return Ok(platforms);
     }
 
-    let mut entries = fs::read_dir(dir).await?;
+    let mut entries = tokio::fs::read_dir(dir).await?;
+    let mut tasks = Vec::new();
 
     while let Ok(Some(entry)) = entries.next_entry().await {
         let path = entry.path();
+
         if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("json") {
             if let Some(file_stem) = path.file_stem().and_then(|s| s.to_str()) {
-                if file_stem.starts_with(".") {
+                if file_stem.starts_with('.') {
                     continue;
                 }
-                match fs::read_to_string(&path).await {
-                    Ok(content) => match serde_json::from_str::<PlatformFile>(&content) {
-                        Ok(file_data) => {
-                            platforms.insert(file_stem.to_string(), file_data.platform);
+
+                let path_clone = path.clone();
+                let stem_string = file_stem.to_string();
+
+                tasks.push(tokio::spawn(async move {
+                    let mut attempts = 0;
+                    let max_attempts = 5;
+
+                    let content = loop {
+                        attempts += 1;
+                        match tokio::fs::read_to_string(&path_clone).await {
+                            Ok(c) => break Some(c),
+                            Err(e) => {
+                                if attempts >= max_attempts {
+                                    debug!(
+                                        "Failed to read {:?} after {} attempts: {}",
+                                        path_clone, max_attempts, e
+                                    );
+                                    break None;
+                                }
+                                let backoff_ms = 5 * attempts as u64;
+                                tokio::time::sleep(std::time::Duration::from_millis(backoff_ms))
+                                    .await;
+                            }
                         }
-                        Err(e) => {
-                            error!("Failed to parse platform JSON {:?}: {}", path, e);
+                    };
+
+                    if let Some(json_str) = content {
+                        match serde_json::from_str::<PlatformFile>(&json_str) {
+                            Ok(file_data) => Some((stem_string, file_data.platform)),
+                            Err(e) => {
+                                println!("Failed to parse JSON {:?}: {}", path_clone, e);
+                                None
+                            }
                         }
-                    },
-                    Err(e) => {
-                        error!("Failed to read file {:?}: {}", path, e);
+                    } else {
+                        None
                     }
-                }
+                }));
             }
+        }
+    }
+
+    for task in tasks {
+        if let Ok(Some((short_name, platform_data))) = task.await {
+            platforms.insert(short_name, platform_data);
         }
     }
 
@@ -125,22 +159,40 @@ pub async fn all_platform_images(
                 let cache_dir_clone = cache_dir.clone();
 
                 tasks.push(tokio::spawn(async move {
-                    let result = if let Some(cache) = cache_dir_clone {
-                        get_file_with_cache(&path_clone, &cache).await
-                    } else {
-                        tokio::fs::File::open(&path_clone).await
-                    };
+                    let mut attempts = 0;
+                    let max_attempts = 5;
+                    loop {
+                        attempts += 1;
 
-                    match result {
-                        Ok(mut f) => {
-                            let mut buffer = Vec::new();
-                            if f.read_to_end(&mut buffer).await.is_ok() {
-                                Some((short_name, buffer))
-                            } else {
-                                None
+                        let result = if let Some(cache) = cache_dir_clone.as_ref() {
+                            get_file_with_cache(&path_clone, &cache).await
+                        } else {
+                            tokio::fs::File::open(&path_clone).await
+                        };
+
+                        match result {
+                            Ok(mut f) => {
+                                let mut buffer = Vec::new();
+                                if f.read_to_end(&mut buffer).await.is_ok() {
+                                    return Some((short_name, buffer));
+                                } else {
+                                    return None;
+                                }
+                            }
+                            Err(e) => {
+                                if attempts >= max_attempts {
+                                    debug!(
+                                        "Failed to open {} after {} attempts: {}",
+                                        short_name, max_attempts, e
+                                    );
+                                    return None;
+                                }
+
+                                let backoff_ms = 5 * attempts as u64;
+                                tokio::time::sleep(std::time::Duration::from_millis(backoff_ms))
+                                    .await;
                             }
                         }
-                        Err(_) => None,
                     }
                 }));
             }
