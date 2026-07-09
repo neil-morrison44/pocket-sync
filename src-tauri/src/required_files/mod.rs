@@ -88,18 +88,12 @@ pub struct DataSlot {
     md5: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct InstanceDataSlot {
-    #[serde(default)]
-    id: IntOrHexString,
-    filename: String,
-}
-
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct ArchiveInfo {
     pub url: String,
     crc32: String,
     pub mtime: Option<String>,
+    pub size: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]

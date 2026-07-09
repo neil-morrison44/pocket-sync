@@ -144,7 +144,20 @@ const RequiredFilesList = ({ coreName }: RequiredFilesListProps) => {
   const requiredFiles = useAtomValue(RequiredFileInfoSelectorFamily(coreName))
   const sortedRequiredFiles = useMemo(() => {
     return [...requiredFiles].sort((a, b) => {
-      if (a.status === b.status) return a.name.localeCompare(b.name)
+      if (a.status.type === b.status.type) {
+        if (
+          (a.status.type === "MissingButOnArchive" ||
+            a.status.type === "NeedsUpdateFromArchive") &&
+          a.status.size &&
+          // @ts-expect-error already know the statuses are the sam
+          b.status.size
+        ) {
+          // @ts-expect-error already know the statuses are the same
+          return parseInt(b.status.size) - parseInt(a.status.size)
+        }
+
+        return a.name.localeCompare(b.name)
+      }
 
       return (
         STATUS_SORT_ORDER.indexOf(a.status.type) -

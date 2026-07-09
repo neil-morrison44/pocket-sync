@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next"
 import { DataSlotFile } from "../../../../types"
+import prettyBytes from "pretty-bytes"
 
 type RequiredFileRowProps = {
   info: DataSlotFile
@@ -16,6 +17,12 @@ export const RequiredFileRow = ({ info }: RequiredFileRowProps) => {
       }`}
     >
       <div className="load-required-files__row_name">{info.name}</div>
+      <div>
+        {(info.status.type === "MissingButOnArchive" ||
+          info.status.type === "NeedsUpdateFromArchive") &&
+          info.status.size &&
+          prettyBytes(parseInt(info.status.size))}
+      </div>
       <div>{info.path}</div>
       <div>{t(`file_status.${camelToSnakeCase(info.status.type)}`)}</div>
     </div>

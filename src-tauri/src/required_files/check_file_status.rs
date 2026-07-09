@@ -105,19 +105,28 @@ pub async fn check_data_file_status(
             (None, false, _) => DataSlotFileStatus::NotFound,
             (Some(metadata_item), false, _) => {
                 let RawMetadataItem {
-                    name, crc32, mtime, ..
+                    name,
+                    crc32,
+                    mtime,
+                    size,
+                    ..
                 } = metadata_item;
 
                 DataSlotFileStatus::MissingButOnArchive(ArchiveInfo {
                     url: name.clone(),
                     crc32: crc32.clone().unwrap_or_default(),
                     mtime: mtime.clone(),
+                    size: size.clone(),
                 })
             }
 
             (Some(metadata_item), true, _) => {
                 let RawMetadataItem {
-                    name, crc32, mtime, ..
+                    name,
+                    crc32,
+                    mtime,
+                    size,
+                    ..
                 } = metadata_item;
                 let file_crc32 =
                     crc32_for_file(&pocket_path.join(&data_slot_file.path), hash_cache).await?;
@@ -133,6 +142,7 @@ pub async fn check_data_file_status(
                             url: name.clone(),
                             crc32: crc32.clone().unwrap_or_default(),
                             mtime: mtime.clone(),
+                            size: size.clone(),
                         })
                     }
                 } else {
@@ -140,6 +150,7 @@ pub async fn check_data_file_status(
                         url: name.clone(),
                         crc32: crc32.clone().unwrap_or_default(),
                         mtime: mtime.clone(),
+                        size: size.clone(),
                     })
                 }
             }
