@@ -119,15 +119,6 @@ async fn begin_mister_sync_session(
     }
 }
 
-#[tauri::command(async)]
-async fn clear_file_cache(app_handle: tauri::AppHandle) -> Result<(), AppError> {
-    debug!("Command: clear_file_cache");
-    if let Ok(cache_dir) = app_handle.path().app_cache_dir() {
-        clear_file_caches(&cache_dir).await?
-    }
-    Ok(())
-}
-
 mod files_from_zip;
 
 #[tauri::command(async)]
@@ -306,7 +297,7 @@ fn main() {
             commands::firmware::get_firmware_versions_list,
             commands::firmware::get_firmware_release_notes,
             commands::firmware::download_firmware,
-            clear_file_cache,
+            commands::cache::clear_file_cache,
             check_root_files,
             commands::archive::find_required_files,
             commands::files::save_multiple_files,
@@ -365,6 +356,7 @@ fn start_tasks(app: &App) -> Result<(), Box<dyn std::error::Error + 'static>> {
         tauri::async_runtime::spawn(async move { start_zip_task(window).await });
     }
 
+    let _ = window.clear_all_browsing_data();
     Ok(())
 }
 
