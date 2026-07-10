@@ -1,4 +1,17 @@
 # Changelog
+<a id="v6.2.4"></a>
+# [v6.2.4 - Shows file sizes for downloadable assets & clears the, potentially massive, browser cache on startup](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.2.4) - 2026-07-10
+
+## What's Changed
+* Shows file size for downloadable required files by [@neil-morrison44](https://github.com/neil-morrison44) in [#463](https://github.com/neil-morrison44/pocket-sync/pull/463)
+* Flushes the browser cache on startup by [@neil-morrison44](https://github.com/neil-morrison44) in [#464](https://github.com/neil-morrison44/pocket-sync/pull/464)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.3...v6.2.4
+
+[Changes][v6.2.4]
+
+
 <a id="v6.2.3"></a>
 # [v6.2.3 - Hopefully fixes issue loading platform images](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.2.3) - 2026-07-08
 
@@ -1908,6 +1921,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v6.2.4]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.3...v6.2.4
 [v6.2.3]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.2...v6.2.3
 [v6.2.2]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.1...v6.2.2
 [v6.2.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.0...v6.2.1
