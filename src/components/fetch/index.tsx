@@ -7,16 +7,11 @@ import {
   PathFileInfoSelectorFamily,
 } from "../../recoil/archive/selectors"
 import { useInstallRequiredFiles } from "../../hooks/useInstallRequiredFiles"
-import {
-  FetchFileMetadataWithStatus,
-  FileCopy,
-  PocketSyncConfig,
-} from "../../types"
+import { FetchFileMetadataWithStatus, FileCopy } from "../../types"
 import { Controls } from "../controls"
 import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
 import { NewFetch } from "./new"
 import { invokeCopyFiles } from "../../utils/invokes"
-import { pocketPathAtom } from "../../recoil/atoms"
 import { comparePaths } from "../../utils/comparePaths"
 import { splitAsPath } from "../../utils/splitAsPath"
 import { archiveBumpAtom } from "../../recoil/archive/atoms"
@@ -27,8 +22,7 @@ import { ControlsButton } from "../controls/inputs/button"
 import { ProgressLoader, ProgressLoaderInner } from "../loader/progress"
 import { usePreventGlobalZipInstallModal } from "../../hooks/usePreventGlobalZipInstall"
 import { FetchInfoSelectorFamily } from "../../recoil/fetch/selectors"
-import { debug } from "@tauri-apps/plugin-log"
-import { useAtom, useAtomValue, useSetAtom } from "jotai"
+import { useAtomValue, useSetAtom } from "jotai"
 
 type FileStatus = "complete" | "partial" | "none" | "waiting"
 
@@ -258,6 +252,8 @@ const ArchiveOrgItem = ({
                               type: "MissingButOnArchive",
                               url: f.name,
                               crc32: "",
+                              name: f.name,
+                              mtime: "0",
                             },
                           })),
                         `https://archive.org/download/${name}`

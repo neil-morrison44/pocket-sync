@@ -58,8 +58,8 @@ export type DataSlotFile = {
     | { type: "NotChecked" }
     | { type: "FoundAtRoot"; root: RootFileZipped | RootFileUnZipped }
     | { type: "RootNeedsUpdate"; root: RootFileZipped | RootFileUnZipped }
-    | { type: "MissingButOnArchive"; url: string; crc32: string }
-    | { type: "NeedsUpdateFromArchive"; url: string; crc32: string }
+    | ({ type: "MissingButOnArchive" } & ArchiveFileMetadata)
+    | ({ type: "NeedsUpdateFromArchive" } & ArchiveFileMetadata)
 }
 
 export type PlatformId = string
@@ -267,6 +267,7 @@ export type ArchiveFileMetadata = {
   name: string
   crc32: string
   mtime: string
+  size?: string
 }
 
 export type FetchFileMetadataWithStatus = {
@@ -387,12 +388,7 @@ export type JTCrtConfig = {
     | "Scandoubler RGBHV (SCANLINES 75%)"
     | "Disable Analog Video"
   snac:
-    | "None"
-    | "DB15 Normal"
-    | "NES"
-    | "SNES"
-    | "PCE 2BTN/6BTN"
-    | "PCE Multitap"
+    "None" | "DB15 Normal" | "NES" | "SNES" | "PCE 2BTN/6BTN" | "PCE Multitap"
 }
 
 export type MROMInfo = {

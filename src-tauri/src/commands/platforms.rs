@@ -1,5 +1,5 @@
 use crate::{PocketSyncState, app_error::AppError, file_cache::get_file_with_cache};
-use log::{debug, error};
+use log::debug;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, io::ErrorKind, path::Path};
 use tauri::Manager;
