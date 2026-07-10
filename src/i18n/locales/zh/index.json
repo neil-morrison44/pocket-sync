@@ -361,7 +361,8 @@
     "save": "保存"
   },
   "progress": {
-    "remaining_time": "剩余时间 (预计): {remainingTime}"
+    "remaining_time": "剩余时间 (预计): {remainingTime}",
+    "speed": "{speed}/秒"
   },
   "save_info": {
     "confirm_restore": "确认使用备份恢复?",

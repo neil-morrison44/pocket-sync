@@ -90,7 +90,6 @@ export const useSetupPositions = () => {
 
   const setupCallback = useAtomCallback(
     useCallback(async (get, set) => {
-      console.log("setting up positions")
       const allPlatformInfo = await get(allPlatformsDataSelector)
       const activePlatformList = Object.keys(allPlatformInfo.active)
 

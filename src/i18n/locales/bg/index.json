@@ -393,7 +393,8 @@
     "save": "Съхрани"
   },
   "progress": {
-    "remaining_time": "Оставащо време (прибл.): {remainingTime}"
+    "remaining_time": "Оставащо време (прибл.): {remainingTime}",
+    "speed": "{speed}/секунда"
   },
   "save_info": {
     "confirm_restore": "Възстанови от бекъп?",

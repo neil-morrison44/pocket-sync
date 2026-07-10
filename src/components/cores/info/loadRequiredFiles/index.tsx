@@ -37,8 +37,14 @@ export const LoadRequiredFiles = ({
   onClose,
 }: LoadRequiredFilesProps) => {
   const { t } = useTranslation("core_info_required_files")
-  const { installRequiredFiles, percent, inProgress, message, remainingTime } =
-    useInstallRequiredFiles()
+  const {
+    installRequiredFiles,
+    percent,
+    inProgress,
+    message,
+    remainingTime,
+    speed,
+  } = useInstallRequiredFiles()
 
   const skipAlternateAssets = useAtomValue(skipAlternateAssetsSelector)
   const updateConfig = useUpdateConfig()
@@ -54,6 +60,7 @@ export const LoadRequiredFiles = ({
             percent={percent}
             message={message?.param}
             remainingTime={remainingTime}
+            speed={speed}
           />
           <JobsStopButton jobId="install_archive_files" />
         </>

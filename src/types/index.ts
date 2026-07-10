@@ -369,6 +369,8 @@ export type ProgressEvent = {
     token: string
     param?: string
   }
+  complete_units: number
+  total_units: number
 }
 
 export type SortMode = "name" | "last_update"

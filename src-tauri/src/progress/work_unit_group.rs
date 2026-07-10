@@ -12,6 +12,10 @@ impl WorkUnitGroupStatus {
         }
     }
 
+    pub fn get_completed_and_total(self: &Self) -> (usize, usize) {
+        return (self.completed, self.count);
+    }
+
     pub fn fraction(self: &Self) -> f32 {
         let count = self.count as f32;
         let completed = self.completed as f32;
