@@ -4,6 +4,9 @@ import { ProgressEvent } from "../types"
 
 export const useProgress = (name: string, onEnd?: () => void) => {
   const [percent, setPercent] = useState(0)
+  const [completed, setCompleted] = useState(0)
+  const [total, setTotal] = useState(0)
+
   const [message, setMessage] = useState<null | {
     token: string
     param?: string
@@ -40,6 +43,9 @@ export const useProgress = (name: string, onEnd?: () => void) => {
       ({ payload }) => {
         startTransition(() => {
           setPercent(payload.progress * 100)
+          setCompleted(payload.complete_units)
+          setTotal(payload.total_units)
+
           if (payload.message) setMessage(payload.message)
 
           if (!hasStartedRef.current) {
@@ -62,5 +68,5 @@ export const useProgress = (name: string, onEnd?: () => void) => {
     }
   }, [setPercent, onEnd, name])
 
-  return { message, inProgress, percent, remainingTime }
+  return { message, inProgress, percent, remainingTime, completed, total }
 }

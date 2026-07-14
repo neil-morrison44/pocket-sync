@@ -331,7 +331,8 @@
     "save": "Sauvegarder"
   },
   "progress": {
-    "remaining_time": "Temps restant (environ) : {remainingTime}"
+    "remaining_time": "Temps restant (environ) : {remainingTime}",
+    "speed": "{speed}/seconde"
   },
   "save_info": {
     "confirm_restore": "Restorer depuis une sauvegarde ?",

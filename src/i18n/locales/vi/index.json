@@ -390,7 +390,8 @@
     "save": "Lưu"
   },
   "progress": {
-    "remaining_time": "Thời gian còn lại (khoảng): {remainingTime}"
+    "remaining_time": "Thời gian còn lại (khoảng): {remainingTime}",
+    "speed": "{speed}/giây"
   },
   "save_info": {
     "confirm_restore": "Khôi phục từ bản sao lưu?",

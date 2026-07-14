@@ -3,8 +3,14 @@ use bytes::Bytes;
 use rayon::prelude::*;
 use reqwest::Url;
 use std::cmp::{max, min};
+use tokio::sync::mpsc;
 
-pub async fn turbo_download_file(url: &str) -> Result<Bytes> {
+use crate::commands::archive::ProgressUpdate;
+
+pub async fn turbo_download_file(
+    url: &str,
+    progress_tx: mpsc::UnboundedSender<ProgressUpdate>,
+) -> Result<Bytes> {
     let url = Url::parse(url)?;
     let client = reqwest::Client::new();
     let request = client.head(url.clone()).build()?;
@@ -41,7 +47,11 @@ pub async fn turbo_download_file(url: &str) -> Result<Bytes> {
     let file_bytes = tokio::task::spawn_blocking(move || {
         let file_bytes: Vec<_> = ranges
             .par_iter()
-            .map(|(start, end)| download_retry_on_timeout(url.clone(), *start, *end).unwrap())
+            .map(|(start, end)| {
+                let bytes = download_retry_on_timeout(url.clone(), *start, *end).unwrap();
+                let _ = progress_tx.send(ProgressUpdate::AddBytes(bytes.len()));
+                bytes
+            })
             .collect();
 
         file_bytes.concat()

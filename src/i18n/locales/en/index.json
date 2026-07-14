@@ -400,7 +400,8 @@
     "save": "Save"
   },
   "progress": {
-    "remaining_time": "Remaining Time (approx): {remainingTime}"
+    "remaining_time": "Remaining Time (approx): {remainingTime}",
+    "speed": "{speed} / second"
   },
   "save_info": {
     "confirm_restore": "Restore from backup?",

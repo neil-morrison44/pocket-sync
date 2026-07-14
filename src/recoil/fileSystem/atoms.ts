@@ -18,8 +18,6 @@ export const initGlobalFSEvents = async () => {
 
       const changedPaths = events.flatMap((e) => e.paths)
 
-      console.log(changedPaths)
-
       changedPaths.forEach((fullPath) => {
         const relativePath = fullPath
           .replace(`${pocket_path}${sep()}`, "")

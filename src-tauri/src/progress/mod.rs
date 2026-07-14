@@ -18,6 +18,17 @@ impl<'a> ProgressEmitter<'a> {
         }
     }
 
+    pub fn get_completed_and_total(self: &Self) -> (usize, usize) {
+        let mut completed: usize = 0;
+        let mut total: usize = 0;
+        for work_unit in &self.work_unit_stack {
+            let (wg_completed, wg_total) = work_unit.get_completed_and_total();
+            completed += wg_completed;
+            total += wg_total;
+        }
+        return (completed, total);
+    }
+
     pub fn begin_work_units(self: &mut Self, count: usize) -> () {
         self.work_unit_stack.push(WorkUnitGroupStatus::new(count));
     }
@@ -47,10 +58,13 @@ impl<'a> ProgressEmitter<'a> {
     }
 
     fn emit_progress(self: &mut Self) -> () {
+        let (completed, total) = self.get_completed_and_total();
         let event = ProgressEvent {
             finished: false,
             progress: self.overall_percentage(),
             message: self.message.clone(),
+            complete_units: completed,
+            total_units: total,
         };
 
         (self.emit_callback)(event);
@@ -68,10 +82,13 @@ impl<'a> ProgressEmitter<'a> {
 
 impl Drop for ProgressEmitter<'_> {
     fn drop(&mut self) {
+        let (completed, total) = self.get_completed_and_total();
         let event = ProgressEvent {
             finished: true,
             progress: self.overall_percentage(),
             message: self.message.clone(),
+            complete_units: completed,
+            total_units: total,
         };
         (self.emit_callback)(event);
     }
@@ -98,6 +115,8 @@ pub struct ProgressEvent {
     pub finished: bool,
     pub progress: f32,
     pub message: Option<ProgressMessage>,
+    pub complete_units: usize,
+    pub total_units: usize,
 }
 
 #[cfg(test)]

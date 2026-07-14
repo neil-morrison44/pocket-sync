@@ -4,12 +4,13 @@ use crate::{
     hashes::HashCacheState,
     install_files::install_file,
     progress,
-    required_files::{DataSlotFile, required_files_for_core},
+    required_files::{DataSlotFile, DataSlotFileStatus, required_files_for_core},
     util::find_common_path,
 };
 use log::{debug, error};
 use std::path::PathBuf;
 use tauri::{Emitter, Window};
+use tokio::sync::mpsc;
 
 #[tauri::command(async)]
 pub async fn find_required_files(
@@ -51,6 +52,11 @@ pub async fn find_required_files(
     .await?)
 }
 
+pub enum ProgressUpdate {
+    AddBytes(usize),
+    SetMessage(String, String),
+}
+
 #[tauri::command(async)]
 pub async fn install_archive_files(
     files: Vec<DataSlotFile>,
@@ -72,24 +78,55 @@ pub async fn install_archive_files(
     let arc_lock = state.0.file_locker.find_lock_for(&common_dir).await;
     let _write_lock = arc_lock.write().await;
 
-    let mut progress = progress::ProgressEmitter::new(Box::new(|event| {
-        window
-            .emit(&format!("progress-event::{job_id}"), event)
-            .unwrap();
-    }));
+    let mut total_bytes: usize = 0;
+    for file in &files {
+        match &file.status {
+            DataSlotFileStatus::NeedsUpdateFromArchive(info)
+            | DataSlotFileStatus::MissingButOnArchive(info) => {
+                if let Some(size_str) = &info.size {
+                    total_bytes += size_str.parse::<usize>().unwrap_or(0);
+                }
+            }
+            _ => {}
+        }
+    }
 
-    progress.begin_work_units(files.len());
+    let (progress_tx, mut progress_rx) = mpsc::unbounded_channel::<ProgressUpdate>();
+    let window_clone = window.clone();
+    let job_id_clone = job_id.to_string();
+
+    tokio::spawn(async move {
+        let mut progress = progress::ProgressEmitter::new(Box::new(move |event| {
+            let _ = window_clone.emit(&format!("progress-event::{job_id_clone}"), event);
+        }));
+
+        progress.begin_work_units(total_bytes.max(1)); // Avoid 0-byte division
+
+        while let Some(msg) = progress_rx.recv().await {
+            match msg {
+                ProgressUpdate::AddBytes(bytes) => progress.complete_work_units(bytes),
+                ProgressUpdate::SetMessage(action, file) => {
+                    progress.set_message(&action, Some(&file))
+                }
+            }
+        }
+    });
+
     for file in files {
         if !job_handle.is_alive().await {
             break;
         }
-        progress.set_message("downloading", Some(&file.name));
+        let _ = progress_tx.send(ProgressUpdate::SetMessage(
+            "downloading".into(),
+            file.name.clone(),
+        ));
+
         let file_name = file.name.clone();
-        if let Err(err) = install_file(file, archive_url, turbo, &pocket_path).await {
+        if let Err(err) =
+            install_file(file, archive_url, turbo, &pocket_path, progress_tx.clone()).await
+        {
             error!("Error: {} download file {}", err, &file_name);
         };
-
-        progress.complete_work_units(1);
     }
 
     Ok(true)
