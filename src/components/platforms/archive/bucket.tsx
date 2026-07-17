@@ -1,9 +1,8 @@
 import { useAtom, useAtomValue, useSetAtom } from "jotai"
 import {
   allPlatformsDataSelector,
-  PlatformInfoSelectorFamily,
   unpositionedPlatformsSelector,
-} from "../../../recoil/platforms/selectors"
+} from "../../../jotai/platforms/selectors"
 import {
   MouseEvent,
   Suspense,
@@ -17,7 +16,7 @@ import {
   draggedPlatformsAtom,
   platformModalBucketFilterAtom,
   platformModalPositionAtom,
-} from "../../../recoil/platforms/atoms"
+} from "../../../jotai/platforms/atoms"
 import { useAtomCallback } from "jotai/utils"
 import { PlatformId } from "../../../types"
 import { useTranslation } from "react-i18next"

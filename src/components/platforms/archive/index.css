@@ -224,3 +224,32 @@
   justify-content: space-between;
   gap: 12px;
 }
+
+.platform-archive__limit-status {
+  margin-left: 5px;
+  margin-top: 5px;
+
+  padding: 5px;
+  background-color: var(--green-colour);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min-content;
+  height: auto;
+  box-sizing: border-box;
+  border-radius: 4px;
+  gap: 4px;
+  text-wrap: nowrap;
+
+  transition: opacity 1s;
+  transition-delay: 2s;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.platform-archive__limit-status--warning {
+  background-color: var(--red-colour);
+  transition-delay: 0;
+  transition-duration: 0.2s;
+  opacity: 1;
+}

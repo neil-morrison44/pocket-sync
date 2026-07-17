@@ -5,9 +5,9 @@ import {
   PlatformImageSelectorFamily,
   platformsListSelector,
   unpositionedPlatformsSelector,
-} from "../../../recoil/platforms/selectors"
+} from "../../../jotai/platforms/selectors"
 import { useCallback, useEffect, useState } from "react"
-import { platformModalPositionAtom } from "../../../recoil/platforms/atoms"
+import { platformModalPositionAtom } from "../../../jotai/platforms/atoms"
 import { useAtomCallback } from "jotai/utils"
 import { invokeArchiveUnarchivePlatforms } from "../../../utils/invokes"
 

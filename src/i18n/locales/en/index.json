@@ -366,10 +366,11 @@
   },
   "platforms": {
     "cancel": "Cancel",
+    "count": "{count} Platforms",
     "controls": {
       "data_packs": "Data Packs",
       "remove_coreless": "Remove Coreless",
-      "archive": "Archive Platforms ({active, number, short}/{max, number, short})",
+      "archive": "Archive Platforms",
       "image_packs": "Image Packs",
       "search": "Search"
     },
@@ -391,6 +392,7 @@
       "current": "Current"
     },
     "delete_unused": "Delete {count, plural, one {# unused Platform} other {# unused Platforms}}?",
+    "limit_reached_warning": "WARNING: the Pocket's limit on platforms has been reached, archive some or OpenFPGA will not function correctly",
     "edit": "Edit",
     "image_packs": {
       "apply_changes": "Apply {count, plural, =0 {0 Changes} one {1 Change} other {# Changes}}",

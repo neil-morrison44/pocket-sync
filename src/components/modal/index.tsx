@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useState } from "react"
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow"
 import "./index.css"
 
-import { mainWindowSelector } from "../../recoil/selectors"
+import { mainWindowSelector } from "../../jotai/selectors"
 import { useAtomValue } from "jotai"
 
 type ModalProps = {

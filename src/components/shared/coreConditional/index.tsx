@@ -1,6 +1,6 @@
 import { useAtomValue } from "jotai"
 import { ReactNode, useMemo } from "react"
-import { coresListSelector } from "../../../recoil/selectors"
+import { coresListSelector } from "../../../jotai/selectors"
 
 type CoreConditionalProps = {
   children: ReactNode

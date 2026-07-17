@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
-import { AllSavesSelector } from "../../recoil/saves/selectors"
-import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
+import { AllSavesSelector } from "../../jotai/saves/selectors"
+import { PocketSyncConfigSelector } from "../../jotai/config/selectors"
 import { invokeBackupSaves, invokeFileExists } from "../../utils/invokes"
 import { useAtomValue } from "jotai"
 

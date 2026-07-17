@@ -1,10 +1,10 @@
-import { DataJSONSelectorFamily } from "../../../../recoil/selectors"
+import { DataJSONSelectorFamily } from "../../../../jotai/selectors"
 import { Suspense, useMemo } from "react"
 import {
   JT_ANALOGIZER_SNAC_OPTIONS,
   JT_ANALOGIZER_VIDEO_OPTIONS,
   JTCRTConfigSelector,
-} from "../../../../recoil/cores/selectors"
+} from "../../../../jotai/cores/selectors"
 import { useTranslation } from "react-i18next"
 import { Details } from "../../../shared/details"
 import { AnalogizerIcon } from "../../icons/AnalogizerIcon"

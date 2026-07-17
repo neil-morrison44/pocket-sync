@@ -1,16 +1,16 @@
 import { Suspense, useCallback, useMemo } from "react"
-import { pocketPathAtom } from "../../recoil/atoms"
+import { pocketPathAtom } from "../../jotai/atoms"
 import {
   CoreInfoSelectorFamily,
   DataJSONSelectorFamily,
   FolderSizeSelectorFamily,
-} from "../../recoil/selectors"
+} from "../../jotai/selectors"
 import { decodeDataParams } from "../../utils/decodeDataParams"
 import { invokeCreateFolderIfMissing } from "../../utils/invokes"
 import { PlatformImage } from "../cores/platformImage"
 import { GameCount } from "./gameCount"
 import { SearchContextSelfHidingConsumer } from "../search/context"
-import { PlatformInfoSelectorFamily } from "../../recoil/platforms/selectors"
+import { PlatformInfoSelectorFamily } from "../../jotai/platforms/selectors"
 import { DataSlotJSON } from "../../types"
 import { useAtomValue } from "jotai"
 import { openFolder } from "../../utils/openFolder"

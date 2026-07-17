@@ -3,7 +3,7 @@ import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import "./index.css"
 import { WarningIcon } from "./warningIcon"
-import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles/selectors"
+import { RequiredFileInfoSelectorFamily } from "../../../../jotai/requiredFiles/selectors"
 import { useAtomValue } from "jotai"
 import { useBEM } from "../../../../hooks/useBEM"
 

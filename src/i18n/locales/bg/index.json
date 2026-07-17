@@ -363,6 +363,7 @@
     "controls": {
       "data_packs": "Колекция данни",
       "remove_coreless": "Премахни без ядра",
+      "archive": "Архивни платформи",
       "image_packs": "Колекция изображения",
       "search": "Търси"
     },

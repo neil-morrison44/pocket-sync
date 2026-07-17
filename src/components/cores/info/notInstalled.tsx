@@ -5,7 +5,7 @@ import { useInventoryItem } from "../../../hooks/useInventoryItem"
 import {
   DownloadURLSelectorFamily,
   PlatformInventoryImageSelectorFamily,
-} from "../../../recoil/inventory/selectors"
+} from "../../../jotai/inventory/selectors"
 import { Controls } from "../../controls"
 import { ErrorBoundary } from "../../errorBoundary"
 import { Link } from "../../link"
@@ -17,7 +17,7 @@ import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
 import { AnalogizerIcon } from "../icons/AnalogizerIcon"
 import { DownloadCount } from "./downloadCounts"
-import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
+import { PocketSyncConfigSelector } from "../../../jotai/config/selectors"
 import { useUpdateConfig } from "../../settings/hooks/useUpdateConfig"
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { InstallOlderVersion } from "./installOlderVersion"

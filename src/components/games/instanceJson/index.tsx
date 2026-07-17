@@ -1,7 +1,7 @@
 import { listen } from "@tauri-apps/api/event"
 import { useEffect, useState } from "react"
 
-import { instancePackagerCoresListSelector } from "../../../recoil/games/selectors"
+import { instancePackagerCoresListSelector } from "../../../jotai/games/selectors"
 import { invokeRunPackagerForCore } from "../../../utils/invokes"
 import { Modal } from "../../modal"
 import { CoreTag } from "../../shared/coreTag"

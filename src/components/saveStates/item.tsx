@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import {
   SaveStateImageSelectorFamily,
   SaveStateMetadataSelectorFamily,
-} from "../../recoil/saveStates/selectors"
+} from "../../jotai/saveStates/selectors"
 
 import { parse } from "date-fns"
 import { SearchContextSelfHidingConsumer } from "../search/context"

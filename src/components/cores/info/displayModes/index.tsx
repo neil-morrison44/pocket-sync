@@ -1,10 +1,10 @@
-import { VideoJSONSelectorFamily } from "../../../../recoil/screenshots/selectors"
+import { VideoJSONSelectorFamily } from "../../../../jotai/screenshots/selectors"
 import { useCallback, useMemo } from "react"
 import { SupportsBubble } from "../supportsBubble"
 
 import "./index.css"
 import { useTranslation } from "react-i18next"
-import { pocketPathAtom } from "../../../../recoil/atoms"
+import { pocketPathAtom } from "../../../../jotai/atoms"
 import { VideoJSON } from "../../../../types"
 import { invokeSaveFile } from "../../../../utils/invokes"
 import { confirm } from "@tauri-apps/plugin-dialog"

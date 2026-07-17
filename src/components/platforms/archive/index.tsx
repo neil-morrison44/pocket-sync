@@ -14,7 +14,7 @@ import * as THREE from "three"
 import {
   PlatformInfoSelectorFamily,
   platformsListSelector,
-} from "../../../recoil/platforms/selectors"
+} from "../../../jotai/platforms/selectors"
 import { Modal } from "../../modal"
 import { useTranslation } from "react-i18next"
 import { Size } from "@react-three/fiber"
@@ -51,7 +51,7 @@ import {
   draggedPlatformsAtom,
   platformModalCursorPositonAtom,
   platformModalPositionAtom,
-} from "../../../recoil/platforms/atoms"
+} from "../../../jotai/platforms/atoms"
 import { PlatformArchiveDragItemLayer } from "./dragItemLayer"
 
 type PlatformArchiveProps = {

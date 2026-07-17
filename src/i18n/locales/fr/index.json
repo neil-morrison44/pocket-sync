@@ -302,6 +302,7 @@
   "platforms": {
     "cancel": "Annuler",
     "controls": {
+      "archive": "Plateformes d'archivage",
       "search": "Rechercher"
     },
     "archive": {

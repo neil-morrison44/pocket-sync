@@ -1,5 +1,5 @@
 import { CSSProperties } from "react"
-import { PlatformImageSelectorFamily } from "../../recoil/platforms/selectors"
+import { PlatformImageSelectorFamily } from "../../jotai/platforms/selectors"
 import { PlatformId } from "../../types"
 import { useAtomValue } from "jotai"
 

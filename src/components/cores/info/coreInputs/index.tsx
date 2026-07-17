@@ -10,8 +10,8 @@ import { Texture } from "three"
 import {
   ListPresetInputsSelectorFamily,
   PresetInputSelectorFamily,
-} from "../../../../recoil/input/selectors"
-import { PlatformImageSelectorFamily } from "../../../../recoil/platforms/selectors"
+} from "../../../../jotai/input/selectors"
+import { PlatformImageSelectorFamily } from "../../../../jotai/platforms/selectors"
 import { InputKey } from "../../../../types"
 import { Modal } from "../../../modal"
 import { LabeledLine } from "../../../three/labeledLine"

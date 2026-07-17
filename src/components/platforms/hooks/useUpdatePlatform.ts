@@ -1,6 +1,6 @@
 import { useCallback } from "react"
-import { pocketPathAtom } from "../../../recoil/atoms"
-import { PlatformInfoSelectorFamily } from "../../../recoil/platforms/selectors"
+import { pocketPathAtom } from "../../../jotai/atoms"
+import { PlatformInfoSelectorFamily } from "../../../jotai/platforms/selectors"
 import { PlatformId, PlatformInfoJSON } from "../../../types"
 import { invokeSaveFile } from "../../../utils/invokes"
 import { useAtomValue } from "jotai"

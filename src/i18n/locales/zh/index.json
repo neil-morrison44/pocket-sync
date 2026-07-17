@@ -331,6 +331,7 @@
     "controls": {
       "data_packs": "数据包",
       "remove_coreless": "删除无核",
+      "archive": "归档平台",
       "image_packs": "图像包",
       "search": "搜索"
     },

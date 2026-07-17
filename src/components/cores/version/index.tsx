@@ -1,4 +1,4 @@
-import { CoreInfoSelectorFamily } from "../../../recoil/selectors"
+import { CoreInfoSelectorFamily } from "../../../jotai/selectors"
 
 import "./index.css"
 import { useUpdateAvailable } from "../../../hooks/useUpdateAvailable"

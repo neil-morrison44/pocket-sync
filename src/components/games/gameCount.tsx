@@ -3,7 +3,7 @@ import { useMemo } from "react"
 import {
   DataJSONSelectorFamily,
   WalkDirSelectorFamily,
-} from "../../recoil/selectors"
+} from "../../jotai/selectors"
 import { useTranslation } from "react-i18next"
 import { useAtomValue } from "jotai"
 

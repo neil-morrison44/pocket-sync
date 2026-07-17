@@ -1,9 +1,9 @@
 import { useCallback, useRef, useState } from "react"
 
-import { ImageBinSrcSelectorFamily } from "../../../../recoil/selectors"
+import { ImageBinSrcSelectorFamily } from "../../../../jotai/selectors"
 import { Modal } from "../../../modal"
 import { invokeSaveFile } from "../../../../utils/invokes"
-import { pocketPathAtom } from "../../../../recoil/atoms"
+import { pocketPathAtom } from "../../../../jotai/atoms"
 import { ImageInfo } from "./types"
 import {
   useRenderStamps,

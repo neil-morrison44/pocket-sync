@@ -1,6 +1,6 @@
 import "./font.css"
 import "./app.css"
-import { pocketPathAtom, reconnectWhenOpenedAtom } from "./recoil/atoms"
+import { pocketPathAtom, reconnectWhenOpenedAtom } from "./jotai/atoms"
 import { Layout } from "./components/layout"
 import React, {
   Suspense,
@@ -12,7 +12,7 @@ import React, {
 import { invokeOpenPocket, invokeOpenPocketFolder } from "./utils/invokes"
 import { Tip } from "./components/tip"
 import { NewsFeed } from "./components/newsFeed"
-import { currentViewAtom } from "./recoil/view/atoms"
+import { currentViewAtom } from "./jotai/view/atoms"
 import { useTranslation } from "react-i18next"
 import { ColourContextProviderRandomised } from "./components/three/colourContext"
 import { useAtom, useSetAtom } from "jotai"

@@ -1,11 +1,11 @@
 import { Loader } from "@react-three/drei"
 import { Suspense, useCallback, useState } from "react"
-import { PersistInteractFileAtomFamily } from "../../../../recoil/coreSettings/atoms"
+import { PersistInteractFileAtomFamily } from "../../../../jotai/coreSettings/atoms"
 import {
   EMPTY_PERSIST,
   ListPresetInteractSelectorFamily,
   PresetInteractFileSelectorFamily,
-} from "../../../../recoil/coreSettings/selectors"
+} from "../../../../jotai/coreSettings/selectors"
 import { InteractPersistJSON } from "../../../../types/interact"
 import {
   hex16bitSignedToNumber,

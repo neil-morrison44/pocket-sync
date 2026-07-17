@@ -3,11 +3,11 @@ import { open } from "@tauri-apps/plugin-dialog"
 import {
   SingleScreenshotSelectorFamily,
   VideoJSONSelectorFamily,
-} from "../../../recoil/screenshots/selectors"
+} from "../../../jotai/screenshots/selectors"
 import { Screenshot } from "../../../types"
 import { invokeSaveFile } from "../../../utils/invokes"
 import { useUpscaler } from "./useUpscaler"
-import { imageModeAtom } from "../../../recoil/screenshots/atom"
+import { imageModeAtom } from "../../../jotai/screenshots/atom"
 import { useAtomCallback } from "jotai/utils"
 import { useCallback } from "react"
 

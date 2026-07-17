@@ -1,6 +1,6 @@
 import { ReactElement, useMemo } from "react"
 
-import { SingleScreenshotSelectorFamily } from "../../recoil/screenshots/selectors"
+import { SingleScreenshotSelectorFamily } from "../../jotai/screenshots/selectors"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { useAtomValue } from "jotai"
 
