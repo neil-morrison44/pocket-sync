@@ -10,7 +10,7 @@ import {
   PlatformImageSelectorFamily,
   allCategoriesSelector,
   PlatformIsArchivedSelectorFamily,
-} from "../../../recoil/platforms/selectors"
+} from "../../../jotai/platforms/selectors"
 import { PlatformId } from "../../../types"
 import { PLATFORM_IMAGE } from "../../../values"
 import { Controls } from "../../controls"

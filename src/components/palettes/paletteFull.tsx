@@ -1,7 +1,7 @@
 import {
   GameBoyGameSelectorFamily,
   PaletteColoursSelectorFamily,
-} from "../../recoil/palettes/selectors"
+} from "../../jotai/palettes/selectors"
 import { Palette, rgb } from "../../types"
 
 import { Gameboy } from "@neil-morrison44/gameboy-emulator"
@@ -14,7 +14,7 @@ import {
   useRef,
   useState,
 } from "react"
-import { WalkDirSelectorFamily } from "../../recoil/selectors"
+import { WalkDirSelectorFamily } from "../../jotai/selectors"
 import { Loader } from "../loader"
 import { useSavePalette } from "./hooks/useSavePalette"
 import { Link } from "../link"

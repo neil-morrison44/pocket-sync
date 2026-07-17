@@ -2,11 +2,11 @@ import { Suspense, useCallback, useEffect, useState } from "react"
 import {
   PocketSyncConfigSelector,
   skipAlternateAssetsSelector,
-} from "../../recoil/config/selectors"
+} from "../../jotai/config/selectors"
 import { useUpdateConfig } from "./hooks/useUpdateConfig"
 
 import "./index.css"
-import { reconnectWhenOpenedAtom } from "../../recoil/atoms"
+import { reconnectWhenOpenedAtom } from "../../jotai/atoms"
 import { invokeClearFileCache } from "../../utils/invokes"
 import { useTranslation, Trans } from "react-i18next"
 import { Thanks } from "./thanks"
@@ -15,7 +15,7 @@ import {
   alwaysUseEnglishAtom,
   keepPlatformDataAtom,
   turboDownloadsAtom,
-} from "../../recoil/settings/atoms"
+} from "../../jotai/settings/atoms"
 import { Link } from "../link"
 import { emit } from "@tauri-apps/api/event"
 import { openLogDir } from "../../utils/openLogDir"
@@ -24,7 +24,7 @@ import { GithubToken } from "./items/githubToken"
 import { GBPalettesConversion } from "./items/gbPalettes"
 import { useSmoothedAtom, useSmoothedAtomValue } from "../../utils/jotai"
 import { useAtom, useSetAtom } from "jotai"
-import { cacheDirSizeSelector } from "../../recoil/selectors"
+import { cacheDirSizeSelector } from "../../jotai/selectors"
 
 export const Settings = () => {
   const config = useSmoothedAtomValue(PocketSyncConfigSelector)

@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 
-import { coreInventoryAtom } from "../recoil/inventory/atoms"
-import { CoreInfoSelectorFamily } from "../recoil/selectors"
+import { coreInventoryAtom } from "../jotai/inventory/atoms"
+import { CoreInfoSelectorFamily } from "../jotai/selectors"
 import { useAtomValue } from "jotai"
 
 export const useUpdateAvailable = (coreName: string) => {

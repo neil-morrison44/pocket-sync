@@ -6,7 +6,7 @@ import {
   PlatformIsArchivedSelectorFamily,
   imagePackListSelector,
   platformsListSelector,
-} from "../../../recoil/platforms/selectors"
+} from "../../../jotai/platforms/selectors"
 import { PlatformId, ImagePack, PlatformInfoJSON } from "../../../types"
 import { Modal } from "../../modal"
 

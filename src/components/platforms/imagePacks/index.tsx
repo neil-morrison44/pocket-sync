@@ -3,7 +3,7 @@ import {
   ImagePackImageSelectorFamily,
   imagePackListSelector,
   platformsListSelector,
-} from "../../../recoil/platforms/selectors"
+} from "../../../jotai/platforms/selectors"
 import { ImagePack, PlatformId } from "../../../types"
 import { PlatformImage } from "../../cores/platformImage"
 import { Link } from "../../link"

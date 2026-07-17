@@ -1,4 +1,4 @@
-import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
+import { PocketSyncConfigSelector } from "../../../jotai/config/selectors"
 import { useUpdateConfig } from "../hooks/useUpdateConfig"
 import { useTranslation } from "react-i18next"
 import { invokeConvertAllPalFiles } from "../../../utils/invokes"

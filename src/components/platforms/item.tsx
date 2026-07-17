@@ -4,7 +4,7 @@ import {
   PlatformImageSelectorFamily,
   PlatformInfoSelectorFamily,
   PlatformIsArchivedSelectorFamily,
-} from "../../recoil/platforms/selectors"
+} from "../../jotai/platforms/selectors"
 import { PlatformId } from "../../types"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { useAtomValue } from "jotai"

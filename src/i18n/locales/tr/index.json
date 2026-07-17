@@ -267,6 +267,9 @@
     }
   },
   "platforms": {
+    "controls": {
+      "archive": "Arşiv Platformları"
+    },
     "archive": {
       "apply_changes": "Değişiklikleri Kaydet",
       "close": "Kaydetmeden kapat",

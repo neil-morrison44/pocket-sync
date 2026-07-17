@@ -62,12 +62,12 @@
   padding: 0 20px;
 }
 
-.platform-info__image{
+.platform-info__image {
   width: 100%;
   image-rendering: pixelated;
 }
 
-.platform__info-blurb{
+.platform__info-blurb {
   background-color: var(--info-colour);
   padding: 10px;
   display: flex;
@@ -75,4 +75,18 @@
   flex-direction: column;
   justify-content: flex-start;
   flex-grow: 1;
+}
+
+.platforms__limit-warning {
+  background-color: var(--red-colour);
+  margin: 10px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  cursor: pointer;
+  &:active {
+    transform: scale(0.99);
+  }
 }

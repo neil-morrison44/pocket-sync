@@ -356,6 +356,7 @@
     "controls": {
       "data_packs": "Pacotes de Dados",
       "remove_coreless": "Remover Sem Núcleo",
+      "archive": "Plataformas de Arquivamento",
       "image_packs": "Pacotes de Imagens",
       "search": "Pesquisar"
     },

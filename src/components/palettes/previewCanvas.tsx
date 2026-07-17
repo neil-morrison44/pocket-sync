@@ -1,4 +1,4 @@
-import { PaletteColoursSelectorFamily } from "../../recoil/palettes/selectors"
+import { PaletteColoursSelectorFamily } from "../../jotai/palettes/selectors"
 import { useEffect, useRef } from "react"
 import { Palette } from "../../types"
 import { useAtomValue } from "jotai"

@@ -6,10 +6,10 @@ import {
   useState,
 } from "react"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
-import { coreInventoryAtom } from "../../recoil/inventory/atoms"
-import { cateogryListselector } from "../../recoil/inventory/selectors"
-import { coresListSelector } from "../../recoil/selectors"
-import { selectedSubviewSelector } from "../../recoil/view/selectors"
+import { coreInventoryAtom } from "../../jotai/inventory/atoms"
+import { cateogryListselector } from "../../jotai/inventory/selectors"
+import { coresListSelector } from "../../jotai/selectors"
+import { selectedSubviewSelector } from "../../jotai/view/selectors"
 import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
@@ -28,7 +28,7 @@ import { InventoryItem, SortMode } from "../../types"
 import {
   categoryFilterOptionAtom,
   sortingOptionAtom,
-} from "../../recoil/cores/atoms"
+} from "../../jotai/cores/atoms"
 import { useAtom, useAtomValue } from "jotai"
 import { useSmoothedAtomValue } from "../../utils/jotai"
 

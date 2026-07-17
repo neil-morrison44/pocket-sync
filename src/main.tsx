@@ -17,7 +17,7 @@ import { listen } from "@tauri-apps/api/event"
 import { AutoUpdate } from "./components/autoUpdate"
 import { createStore, getDefaultStore, Provider } from "jotai"
 import { PluginWindow } from "./components/plugins/pluginWindow"
-import { initGlobalFSEvents } from "./recoil/fileSystem/atoms"
+import { initGlobalFSEvents } from "./jotai/fileSystem/atoms"
 
 installPolyfills()
 

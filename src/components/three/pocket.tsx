@@ -42,7 +42,7 @@ import { useBodyMaterial } from "./hooks/useBodyMaterial"
 import { useButtonsMaterial } from "./hooks/useButtonsMaterial"
 import { PerfLevelContext } from "./context/perfLevel"
 
-import { performanceLevelAtom } from "../../recoil/atoms"
+import { performanceLevelAtom } from "../../jotai/atoms"
 import { useSetAtom } from "jotai"
 import { useSmoothedAtomValue } from "../../utils/jotai"
 import { PocketEnv } from "./env"

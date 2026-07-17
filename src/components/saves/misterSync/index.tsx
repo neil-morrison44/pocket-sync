@@ -10,7 +10,7 @@ import {
   useState,
 } from "react"
 import { useBEM } from "../../../hooks/useBEM"
-import { AllSavesSelector } from "../../../recoil/saves/selectors"
+import { AllSavesSelector } from "../../../jotai/saves/selectors"
 import { invokeBeginMisterSaveSyncSession } from "../../../utils/invokes"
 import { splitAsPath } from "../../../utils/splitAsPath"
 import { Controls } from "../../controls"
@@ -25,7 +25,7 @@ import {
   MiSTerSaveInfoSelectorFamily,
 } from "./recoil/selectors"
 import { Tip } from "../../tip"
-import { pocketPathAtom } from "../../../recoil/atoms"
+import { pocketPathAtom } from "../../../jotai/atoms"
 import { MiSTerCredsAtom } from "./recoil/atoms"
 import { useTranslation } from "react-i18next"
 import { SaveMapping } from "./mapping"

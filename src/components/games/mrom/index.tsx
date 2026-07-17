@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { pocketPathAtom } from "../../../recoil/atoms"
+import { pocketPathAtom } from "../../../jotai/atoms"
 import { Modal } from "../../modal"
 
 import "./index.css"
@@ -8,7 +8,7 @@ import { useAtomValue } from "jotai"
 import {
   libraryImageSelector,
   mromDumpedROMSListSelector,
-} from "../../../recoil/games/selectors"
+} from "../../../jotai/games/selectors"
 import { FileCopy, MROMInfo } from "../../../types"
 import { invokeCopyFiles, invokeMoveGame } from "../../../utils/invokes"
 

@@ -1,6 +1,6 @@
 import { useCallback } from "react"
 import { emit } from "@tauri-apps/api/event"
-import { githubTokenAtom } from "../recoil/settings/atoms"
+import { githubTokenAtom } from "../jotai/settings/atoms"
 import { useAtomValue } from "jotai"
 
 export const useInstallCore = () => {

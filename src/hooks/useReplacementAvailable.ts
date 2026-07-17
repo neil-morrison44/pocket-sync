@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { coreInventoryAtom } from "../recoil/inventory/atoms"
+import { coreInventoryAtom } from "../jotai/inventory/atoms"
 import { useAtomValue } from "jotai"
 import { useSmoothedAtomValue } from "../utils/jotai"
 

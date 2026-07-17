@@ -331,6 +331,7 @@
     "controls": {
       "data_packs": "Paquetes de datos",
       "remove_coreless": "Eliminar Coreless",
+      "archive": "Plataformas de archivo",
       "image_packs": "Paquetes de imágenes",
       "search": "Buscar"
     },

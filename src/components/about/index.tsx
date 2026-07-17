@@ -7,23 +7,23 @@ import React, {
   useRef,
   useState,
 } from "react"
-import { GithubReleasesSelectorFamily } from "../../recoil/github/selectors"
-import { AppVersionSelector } from "../../recoil/selectors"
+import { GithubReleasesSelectorFamily } from "../../jotai/github/selectors"
+import { AppVersionSelector } from "../../jotai/selectors"
 import { ErrorBoundary } from "../errorBoundary"
 import { Link } from "../link"
 import { NewsFeed } from "../newsFeed"
 
 import "./index.css"
-import { updateAvailableSelector } from "../../recoil/firmware/selectors"
-import { currentViewAtom } from "../../recoil/view/atoms"
+import { updateAvailableSelector } from "../../jotai/firmware/selectors"
+import { currentViewAtom } from "../../jotai/view/atoms"
 
 import { useTranslation } from "react-i18next"
 import { semverCompare } from "../../utils/semverCompare"
 import { ColourContextProviderFromConfig } from "../three/colourContext"
 import { Changelog } from "./changelog"
 import { useAtomValue, useSetAtom } from "jotai"
-import { sponsorCountAtom } from "../../recoil/github/atoms"
-import { AllPlatformImagesSelector } from "../../recoil/platforms/selectors"
+import { sponsorCountAtom } from "../../jotai/github/atoms"
+import { AllPlatformImagesSelector } from "../../jotai/platforms/selectors"
 
 const Pocket = React.lazy(() =>
   import("../three/pocket").then((m) => ({ default: m.Pocket }))

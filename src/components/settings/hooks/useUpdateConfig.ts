@@ -1,7 +1,7 @@
 import { startTransition, useCallback } from "react"
 
-import { pocketPathAtom } from "../../../recoil/atoms"
-import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
+import { pocketPathAtom } from "../../../jotai/atoms"
+import { PocketSyncConfigSelector } from "../../../jotai/config/selectors"
 import { PocketSyncConfig } from "../../../types"
 import { invokeSaveFile } from "../../../utils/invokes"
 import { Getter, Setter } from "jotai"

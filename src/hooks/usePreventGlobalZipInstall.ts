@@ -1,4 +1,4 @@
-import { enableGlobalZipInstallAtom } from "../recoil/atoms"
+import { enableGlobalZipInstallAtom } from "../jotai/atoms"
 import { useEffect } from "react"
 import { useSetAtom } from "jotai"
 
