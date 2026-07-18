@@ -1,4 +1,12 @@
 # Changelog
+<a id="v6.3.1"></a>
+# [v6.3.1 - Fix platform limit calculation (too low)](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.3.1) - 2026-07-18
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.0...v6.3.1
+
+[Changes][v6.3.1]
+
+
 <a id="v6.3.0"></a>
 # [v6.3.0 - Really calculates platform limit, better file download estimation, fixes log folder button, fast download cancel](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.3.0) - 2026-07-18
 
@@ -1938,6 +1946,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v6.3.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.0...v6.3.1
 [v6.3.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.4...v6.3.0
 [v6.2.4]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.3...v6.2.4
 [v6.2.3]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.2...v6.2.3
