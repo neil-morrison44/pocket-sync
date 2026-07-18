@@ -122,8 +122,16 @@ pub async fn install_archive_files(
         ));
 
         let file_name = file.name.clone();
-        if let Err(err) =
-            install_file(file, archive_url, turbo, &pocket_path, progress_tx.clone()).await
+
+        if let Err(err) = install_file(
+            file,
+            archive_url,
+            turbo,
+            &pocket_path,
+            progress_tx.clone(),
+            job_handle.cancel_token(),
+        )
+        .await
         {
             error!("Error: {} download file {}", err, &file_name);
         };
