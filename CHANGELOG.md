@@ -1,4 +1,21 @@
 # Changelog
+<a id="v6.3.0"></a>
+# [v6.3.0 - Really calculates platform limit, better file download estimation, fixes log folder button, fast download cancel](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.3.0) - 2026-07-18
+
+## What's Changed
+* Shows more updates in the UI while downloads are happening by [@neil-morrison44](https://github.com/neil-morrison44) in [#465](https://github.com/neil-morrison44/pocket-sync/pull/465)
+* Updates platform limit calculation by [@neil-morrison44](https://github.com/neil-morrison44) in [#467](https://github.com/neil-morrison44/pocket-sync/pull/467)
+* Bump actions/download-artifact from 6 to 8 by [@dependabot](https://github.com/dependabot)[bot] in [#449](https://github.com/neil-morrison44/pocket-sync/pull/449)
+* Bump actions/configure-pages from 5 to 6 by [@dependabot](https://github.com/dependabot)[bot] in [#448](https://github.com/neil-morrison44/pocket-sync/pull/448)
+* Bump actions/upload-pages-artifact from 4 to 5 by [@dependabot](https://github.com/dependabot)[bot] in [#446](https://github.com/neil-morrison44/pocket-sync/pull/446)
+* Allows for cancelling a download without waiting for a whole file to download by [@neil-morrison44](https://github.com/neil-morrison44) in [#468](https://github.com/neil-morrison44/pocket-sync/pull/468)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.4...v6.3.0
+
+[Changes][v6.3.0]
+
+
 <a id="v6.2.4"></a>
 # [v6.2.4 - Shows file sizes for downloadable assets & clears the, potentially massive, browser cache on startup](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.2.4) - 2026-07-10
 
@@ -1921,6 +1938,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v6.3.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.4...v6.3.0
 [v6.2.4]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.3...v6.2.4
 [v6.2.3]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.2...v6.2.3
 [v6.2.2]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.1...v6.2.2
