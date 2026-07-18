@@ -5,7 +5,6 @@
 
 use checks::{check_if_folder_looks_like_pocket, connection_task};
 use extism::CancelHandle;
-use file_cache::clear_file_caches;
 use file_locks::FileLocks;
 use install_zip::start_zip_task;
 use job_id::{Job, JobState};
