@@ -1,4 +1,146 @@
 # Changelog
+<a id="v6.3.1"></a>
+# [v6.3.1 - Fix platform limit calculation (too low)](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.3.1) - 2026-07-18
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.0...v6.3.1
+
+[Changes][v6.3.1]
+
+
+<a id="v6.3.0"></a>
+# [v6.3.0 - Really calculates platform limit, better file download estimation, fixes log folder button, fast download cancel](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.3.0) - 2026-07-18
+
+## What's Changed
+* Shows more updates in the UI while downloads are happening by [@neil-morrison44](https://github.com/neil-morrison44) in [#465](https://github.com/neil-morrison44/pocket-sync/pull/465)
+* Updates platform limit calculation by [@neil-morrison44](https://github.com/neil-morrison44) in [#467](https://github.com/neil-morrison44/pocket-sync/pull/467)
+* Bump actions/download-artifact from 6 to 8 by [@dependabot](https://github.com/dependabot)[bot] in [#449](https://github.com/neil-morrison44/pocket-sync/pull/449)
+* Bump actions/configure-pages from 5 to 6 by [@dependabot](https://github.com/dependabot)[bot] in [#448](https://github.com/neil-morrison44/pocket-sync/pull/448)
+* Bump actions/upload-pages-artifact from 4 to 5 by [@dependabot](https://github.com/dependabot)[bot] in [#446](https://github.com/neil-morrison44/pocket-sync/pull/446)
+* Allows for cancelling a download without waiting for a whole file to download by [@neil-morrison44](https://github.com/neil-morrison44) in [#468](https://github.com/neil-morrison44/pocket-sync/pull/468)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.4...v6.3.0
+
+[Changes][v6.3.0]
+
+
+<a id="v6.2.4"></a>
+# [v6.2.4 - Shows file sizes for downloadable assets & clears the, potentially massive, browser cache on startup](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.2.4) - 2026-07-10
+
+## What's Changed
+* Shows file size for downloadable required files by [@neil-morrison44](https://github.com/neil-morrison44) in [#463](https://github.com/neil-morrison44/pocket-sync/pull/463)
+* Flushes the browser cache on startup by [@neil-morrison44](https://github.com/neil-morrison44) in [#464](https://github.com/neil-morrison44/pocket-sync/pull/464)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.3...v6.2.4
+
+[Changes][v6.2.4]
+
+
+<a id="v6.2.3"></a>
+# [v6.2.3 - Hopefully fixes issue loading platform images](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.2.3) - 2026-07-08
+
+## What's Changed
+* Fixes issue where the OS is (probably) running out of file handles by [@neil-morrison44](https://github.com/neil-morrison44) in [#462](https://github.com/neil-morrison44/pocket-sync/pull/462)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.2...v6.2.3
+
+[Changes][v6.2.3]
+
+
+<a id="v6.2.2"></a>
+# [v6.2.2 - Fixes issue removing coreless platforms & issue preventing plugin logs from scrolling](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.2.2) - 2026-07-07
+
+## What's Changed
+* Fixes issue removing coreless platforms & issue preventing plugins from scrolling by [@neil-morrison44](https://github.com/neil-morrison44) in [#461](https://github.com/neil-morrison44/pocket-sync/pull/461)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.1...v6.2.2
+
+[Changes][v6.2.2]
+
+
+<a id="v6.2.1"></a>
+# [v6.2.1 - Plugin & File System bug fixes](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.2.1) - 2026-06-27
+
+## What's Changed
+* Some bug fixes by [@neil-morrison44](https://github.com/neil-morrison44) in [#458](https://github.com/neil-morrison44/pocket-sync/pull/458)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.0...v6.2.1
+
+[Changes][v6.2.1]
+
+
+<a id="v6.2.0"></a>
+# [v6.2.0 - Platform archival UI & required files check speedup](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.2.0) - 2026-06-24
+
+## What's Changed
+* Makes the hash cache (crc32 & md5) persistent across launches by [@neil-morrison44](https://github.com/neil-morrison44) in [#454](https://github.com/neil-morrison44/pocket-sync/pull/454)
+* Resident Evil style platform archive management by [@neil-morrison44](https://github.com/neil-morrison44) in [#455](https://github.com/neil-morrison44/pocket-sync/pull/455)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.1.1...v6.2.0
+
+[Changes][v6.2.0]
+
+
+<a id="v6.1.1"></a>
+# [v6.1.1 - Fixes running plugins in the built & signed MacOS app](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.1.1) - 2026-06-15
+
+## What's Changed
+* Fixes running plugins in the built & signed MacOS app by [@neil-morrison44](https://github.com/neil-morrison44) in [#453](https://github.com/neil-morrison44/pocket-sync/pull/453)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.0.1...v6.1.1
+
+[Changes][v6.1.1]
+
+
+<a id="v6.0.1"></a>
+# [v6.0.1 - Improve openfpgaOS files download](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.0.1) - 2026-06-13
+
+- Fixes some issues downloading files needed for openfpgaOS cores (and maybe other cores too)
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.0.0...v6.0.1
+
+[Changes][v6.0.1]
+
+
+<a id="v6.0.0"></a>
+# [v6.0.0 - Adds support for plugins](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.0.0) - 2026-06-05
+
+## What's Changed
+* Remove outdated r3f-perf dependency by [@hadess](https://github.com/hadess) in [#440](https://github.com/neil-morrison44/pocket-sync/pull/440)
+* Adds plugin system by [@neil-morrison44](https://github.com/neil-morrison44) in [#442](https://github.com/neil-morrison44/pocket-sync/pull/442)
+* Bump actions/checkout from 5 to 6 by [@dependabot](https://github.com/dependabot)[bot] in [#427](https://github.com/neil-morrison44/pocket-sync/pull/427)
+* Bump apple-actions/import-codesign-certs from 5 to 6 by [@dependabot](https://github.com/dependabot)[bot] in [#428](https://github.com/neil-morrison44/pocket-sync/pull/428)
+* Bump tauri-apps/tauri-action from 0.5.23 to 0.6.0 by [@dependabot](https://github.com/dependabot)[bot] in [#424](https://github.com/neil-morrison44/pocket-sync/pull/424)
+* Bump actions/upload-artifact from 4 to 5 by [@dependabot](https://github.com/dependabot)[bot] in [#421](https://github.com/neil-morrison44/pocket-sync/pull/421)
+* Bump actions/download-artifact from 5 to 6 by [@dependabot](https://github.com/dependabot)[bot] in [#420](https://github.com/neil-morrison44/pocket-sync/pull/420)
+* Removes patreon key functionality by [@neil-morrison44](https://github.com/neil-morrison44) in [#443](https://github.com/neil-morrison44/pocket-sync/pull/443)
+
+## New Contributors
+* [@hadess](https://github.com/hadess) made their first contribution in [#440](https://github.com/neil-morrison44/pocket-sync/pull/440)
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.11.0...v6.0.0
+
+[Changes][v6.0.0]
+
+
+<a id="v5.11.0"></a>
+# [v5.11.0 - More caches cleared on clear cache & folder sizes shown in Games](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.11.0) - 2026-04-29
+
+## What's Changed
+* Shows the sizes of games folders & clears more cache items by [@neil-morrison44](https://github.com/neil-morrison44) in [#439](https://github.com/neil-morrison44/pocket-sync/pull/439)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v5.10.0...v5.11.0
+
+[Changes][v5.11.0]
+
+
 <a id="v5.10.0"></a>
 # [v5.10.0 - Fix MROM install & adds MROM UI](https://github.com/neil-morrison44/pocket-sync/releases/tag/v5.10.0) - 2025-12-29
 
@@ -1804,6 +1946,17 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v6.3.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.0...v6.3.1
+[v6.3.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.4...v6.3.0
+[v6.2.4]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.3...v6.2.4
+[v6.2.3]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.2...v6.2.3
+[v6.2.2]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.1...v6.2.2
+[v6.2.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.0...v6.2.1
+[v6.2.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.1.1...v6.2.0
+[v6.1.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.0.1...v6.1.1
+[v6.0.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.0.0...v6.0.1
+[v6.0.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.11.0...v6.0.0
+[v5.11.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.10.0...v5.11.0
 [v5.10.0]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.3...v5.10.0
 [v5.9.3]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.2...v5.9.3
 [v5.9.2]: https://github.com/neil-morrison44/pocket-sync/compare/v5.9.1...v5.9.2

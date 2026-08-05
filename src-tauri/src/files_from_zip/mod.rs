@@ -73,5 +73,5 @@ pub async fn md5_file_in_zip(zip_path: &PathBuf, file_name: &str) -> Result<Stri
 
     let tmp_file_path = tmp_path_clone.join(file_name);
 
-    md5_for_file(&tmp_file_path).await
+    md5_for_file(&tmp_file_path, None).await
 }

@@ -231,7 +231,26 @@
     "save_states": "Guardar estados",
     "saves": "Guardados",
     "screenshots": "Capturas de pantalla",
+    "plugins": "Plugins",
     "settings": "Ajustes"
+  },
+  "plugins": {
+    "buttons": {
+      "add": "Agregar complemento",
+      "refresh": "Refrescar"
+    },
+    "remove": "Eliminar",
+    "confirm_remove": "Esto también eliminará cualquier dato local que el complemento haya almacenado en este ordenador, ¿estás seguro?",
+    "confirm_exit": "El plugin sigue en ejecución, ¿estás seguro de que quieres cerrar la ventana?",
+    "safe_to_close": "El plugin ha finalizado, esta ventana se puede cerrar.",
+    "submit": "Entregar",
+    "info": "La especificación del complemento, un ejemplo de complemento y las herramientas para crear complementos se pueden encontrar en <1>github.com/{repo}</1>",
+    "add_modal": {
+      "title": "Agregar complemento a través de la URL",
+      "add": "Verificar e instalar el complemento",
+      "cancel": "Cancelar",
+      "invalid": "No se encontró ningún complemento válido en esa URL."
+    }
   },
   "palettes": {
     "buttons": {
@@ -312,8 +331,21 @@
     "controls": {
       "data_packs": "Paquetes de datos",
       "remove_coreless": "Eliminar Coreless",
+      "archive": "Plataformas de archivo",
       "image_packs": "Paquetes de imágenes",
       "search": "Buscar"
+    },
+    "archive": {
+      "apply_changes": "Guardar cambios",
+      "close": "Cerrar sin guardar",
+      "search_placeholder": "Plataformas archivadas",
+      "archive_all": "Archivar todo",
+      "filters": {
+        "all": "Todo",
+        "category": "Categoría",
+        "manufacturer": "Fabricante",
+        "year": "Año"
+      }
     },
     "data_packs": {
       "apply_changes": "Aplicar {count, plural, =0 {0 Cambios} one {1 Cambio} other {# Cambios}}",
@@ -330,7 +362,8 @@
     "save": "Guardar"
   },
   "progress": {
-    "remaining_time": "Tiempo restante (aprox.): {remainingTime}"
+    "remaining_time": "Tiempo restante (aprox.): {remainingTime}",
+    "speed": "{speed}/segundo"
   },
   "save_info": {
     "confirm_restore": "¿Restaurar desde el respaldo?",
@@ -455,12 +488,6 @@
       "title": "Token de Github",
       "remove": "Eliminar",
       "ramble": "Si tienes problemas con el límite de velocidad de GitHub, agrega un token PAT a continuación.\nEl token PAT no debe tener ningún alcance establecido y se almacena en su computadora en lugar de en la tarjeta SD de Pocket."
-    },
-    "patreon_keys": {
-      "title": "Claves de Patreon",
-      "update": "Obtener claves",
-      "ramble": "Para núcleos que requieren una clave de desbloqueo a través de una membresía activa de Patreon",
-      "placeholder": "Correo electrónico de Patreon"
     },
     "clear_file_cache": {
       "button": "Borrar caché de archivos",

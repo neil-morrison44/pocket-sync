@@ -4,7 +4,7 @@ import {
   downloadedFirmwareSelector,
   latestFirmwareSelector,
   previousFirmwareListSelector,
-} from "../../recoil/firmware/selectors"
+} from "../../jotai/firmware/selectors"
 import "./index.css"
 import { FirmwareReleaseNotes } from "./releaseNotes"
 import { Suspense, useCallback, useState, useTransition } from "react"

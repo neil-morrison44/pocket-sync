@@ -1,4 +1,4 @@
-import { PlatformInfoSelectorFamily } from "../../../recoil/platforms/selectors"
+import { PlatformInfoSelectorFamily } from "../../../jotai/platforms/selectors"
 import { PlatformId } from "../../../types"
 import { useAtomValue } from "jotai"
 

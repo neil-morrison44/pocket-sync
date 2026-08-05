@@ -7,6 +7,9 @@ import {
   RootFile,
   SaveZipFile,
   Job,
+  PocketPluginInfo,
+  PlatformInfoJSON,
+  PlatformId,
 } from "../types"
 import { debug } from "@tauri-apps/plugin-log"
 import { path } from "@tauri-apps/api"
@@ -249,15 +252,6 @@ export const invokeGetActiveJobs = async () =>
 export const invokeStopJob = async (jobId: string) =>
   await invoke<Job[]>("stop_job", { jobId })
 
-export const invokePatreonKeys = async (
-  email: string,
-  urls: { url: string; id: string }[]
-) =>
-  await invoke<void>("update_patreon_keys", {
-    email,
-    urls: urls.map(({ url, id }) => [url, id]),
-  })
-
 export const invokeConvertAllPalFiles = async () =>
   await invoke<void>("downconvert_all_pal_files")
 
@@ -269,4 +263,63 @@ export const invokeMoveGame = async (sourcePath: string, destPath: string) => {
   if (destPath.startsWith(path.sep())) destPath = destPath.substring(1)
 
   await invoke<void>("move_game", { sourcePath, destPath })
+}
+
+export const invokeFolderSize = async (folder: string): Promise<number> => {
+  return await invoke<number>("get_folder_size", { folder })
+}
+
+export const invokeListAndInstallPlugins = async (
+  pluginUrls: string[],
+  githubToken: string | null
+): Promise<PocketPluginInfo[]> => {
+  return await invoke<PocketPluginInfo[]>("list_and_install_plugins", {
+    pluginUrls,
+    githubToken,
+  })
+}
+
+export const invokeRunPlugin = async (pluginId: string): Promise<void> => {
+  return await invoke("run_plugin", {
+    pluginId,
+  })
+}
+
+export const invokeUninstallPlugin = async (
+  pluginId: string
+): Promise<void> => {
+  return await invoke("uninstall_plugin", {
+    pluginId,
+  })
+}
+
+export const invokeKillPlugin = async (pluginId: string): Promise<void> => {
+  return await invoke("kill_plugin", {
+    pluginId,
+  })
+}
+
+export const invokeAllPlatformData = async (): Promise<{
+  active: Record<string, PlatformInfoJSON["platform"]>
+  archived: Record<string, PlatformInfoJSON["platform"]>
+}> => {
+  return await invoke("all_platform_data")
+}
+
+export const invokeArchiveUnarchivePlatforms = async (
+  archive: PlatformId[],
+  unarchive: PlatformId[]
+): Promise<void> => {
+  return await invoke("archive_unarchive_platforms", { archive, unarchive })
+}
+
+export const invokeReadAllPlatformImages = async (): Promise<
+  Record<PlatformId, Uint8Array>
+> => {
+  const result = await invoke<Record<PlatformId, number[]>>(
+    "all_platform_images"
+  )
+  return Object.fromEntries(
+    Object.entries(result).map(([id, data]) => [id, new Uint8Array(data)])
+  )
 }

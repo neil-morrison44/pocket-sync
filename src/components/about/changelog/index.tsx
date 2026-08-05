@@ -1,6 +1,6 @@
 import { Suspense, useMemo } from "react"
 import { Modal } from "../../modal"
-import { pocketSyncChangelogSelector } from "../../../recoil/github/selectors"
+import { pocketSyncChangelogSelector } from "../../../jotai/github/selectors"
 
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"

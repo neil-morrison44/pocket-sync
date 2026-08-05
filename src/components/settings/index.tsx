@@ -1,13 +1,13 @@
-import { useCallback, useState } from "react"
+import { Suspense, useCallback, useEffect, useState } from "react"
 import {
   PocketSyncConfigSelector,
   skipAlternateAssetsSelector,
-} from "../../recoil/config/selectors"
+} from "../../jotai/config/selectors"
 import { useUpdateConfig } from "./hooks/useUpdateConfig"
 
 import "./index.css"
-import { reconnectWhenOpenedAtom } from "../../recoil/atoms"
-import { invokeClearFileCache, invokePatreonKeys } from "../../utils/invokes"
+import { reconnectWhenOpenedAtom } from "../../jotai/atoms"
+import { invokeClearFileCache } from "../../utils/invokes"
 import { useTranslation, Trans } from "react-i18next"
 import { Thanks } from "./thanks"
 import { PocketColour } from "../../types"
@@ -15,24 +15,20 @@ import {
   alwaysUseEnglishAtom,
   keepPlatformDataAtom,
   turboDownloadsAtom,
-} from "../../recoil/settings/atoms"
+} from "../../jotai/settings/atoms"
 import { Link } from "../link"
 import { emit } from "@tauri-apps/api/event"
 import { openLogDir } from "../../utils/openLogDir"
-import { PatreonKeys } from "./patreonKeys"
-import { patreonKeyListSelector } from "../../recoil/settings/selectors"
 import { HiddenCores } from "./items/hiddenCores"
 import { GithubToken } from "./items/githubToken"
 import { GBPalettesConversion } from "./items/gbPalettes"
 import { useSmoothedAtom, useSmoothedAtomValue } from "../../utils/jotai"
+import { useAtom, useSetAtom } from "jotai"
+import { cacheDirSizeSelector } from "../../jotai/selectors"
 
 export const Settings = () => {
   const config = useSmoothedAtomValue(PocketSyncConfigSelector)
   const [archiveUrlInput, setArchiveUrl] = useState(config.archive_url || "")
-
-  const [patreonEmailInput, setPatreonEmail] = useState(
-    config.patreon_email || ""
-  )
   const [alwaysUseEnglish, setAlwaysUseEnglish] =
     useSmoothedAtom(alwaysUseEnglishAtom)
   const [turboDownloads, setTurboDownloads] =
@@ -43,6 +39,8 @@ export const Settings = () => {
   const [reconnectWhenOpened, setReconnectWhenOpened] = useSmoothedAtom(
     reconnectWhenOpenedAtom
   )
+  const refreshCacheSize = useSetAtom(cacheDirSizeSelector)
+
   const updateConfig = useUpdateConfig()
   const { t } = useTranslation("settings")
   const onDisconnect = useCallback(
@@ -50,7 +48,9 @@ export const Settings = () => {
     []
   )
 
-  const patreonUrls = useSmoothedAtomValue(patreonKeyListSelector)
+  useEffect(() => {
+    refreshCacheSize()
+  }, [])
 
   return (
     <div className="settings">
@@ -106,35 +106,6 @@ export const Settings = () => {
               {t("archive.save")}
             </button>
           </div>
-        </div>
-        <div className="settings__row">
-          <h3 className="settings__row-title">{t("patreon_keys.title")}</h3>
-          <div className="settings__ramble">{t("patreon_keys.ramble")}</div>
-          <div className="settings__text-input-and-save">
-            <input
-              type="text"
-              className="settings__text-input"
-              placeholder={t("patreon_keys.placeholder")}
-              value={patreonEmailInput}
-              onChange={({ target }) => setPatreonEmail(target.value)}
-              spellCheck={false}
-              autoCapitalize="off"
-              autoCorrect="off"
-            />
-            <button
-              onClick={() => {
-                updateConfig("patreon_email", patreonEmailInput)
-
-                invokePatreonKeys(
-                  patreonEmailInput,
-                  patreonUrls.map(({ url, id }) => ({ url, id }))
-                )
-              }}
-            >
-              {t("patreon_keys.update")}
-            </button>
-          </div>
-          <PatreonKeys />
         </div>
         <div className="settings__row">
           <h3 className="settings__row-title">{t("turbo_downloads.title")}</h3>
@@ -248,10 +219,19 @@ export const Settings = () => {
         <div className="settings__row">
           <h3 className="settings__row-title">{t("clear_file_cache.title")}</h3>
           <div className="settings__ramble">{t("clear_file_cache.ramble")}</div>
+
           <label className="settings__checkbox">
-            <button onClick={() => invokeClearFileCache()}>
+            <button
+              onClick={async () => {
+                await invokeClearFileCache()
+                refreshCacheSize()
+              }}
+            >
               {t("clear_file_cache.button")}
             </button>
+            <Suspense>
+              <CacheSize />
+            </Suspense>
           </label>
         </div>
 
@@ -359,4 +339,9 @@ const ColoursList = () => {
       </optgroup>
     </>
   )
+}
+
+export const CacheSize = () => {
+  const [cacheSize] = useAtom(cacheDirSizeSelector)
+  return <div>{cacheSize}</div>
 }

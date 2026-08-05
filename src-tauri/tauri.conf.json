@@ -25,12 +25,12 @@
     },
     "longDescription": "",
     "macOS": {
-      "entitlements": null,
+      "entitlements": "./Entitlements.plist",
       "exceptionDomain": "",
       "frameworks": [],
       "providerShortName": null,
       "signingIdentity": null,
-      "minimumSystemVersion": "11"
+      "minimumSystemVersion": "12"
     },
     "resources": [],
     "shortDescription": "",

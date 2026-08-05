@@ -6,7 +6,7 @@ import React, {
   useTransition,
 } from "react"
 
-import { currentViewAtom, VIEWS_LIST } from "../../recoil/view/atoms"
+import { currentViewAtom, VIEWS_LIST } from "../../jotai/view/atoms"
 import { About } from "../about"
 import { ErrorBoundary } from "../errorBoundary"
 import { Loader } from "../loader"
@@ -14,7 +14,7 @@ import { AutoBackup } from "../saves/autobackup"
 import { ZipInstall } from "../zipInstall"
 import "./index.css"
 import { useTranslation } from "react-i18next"
-import { enableGlobalZipInstallAtom } from "../../recoil/atoms"
+import { enableGlobalZipInstallAtom } from "../../jotai/atoms"
 import { useAtom, useAtomValue } from "jotai"
 
 const Saves = React.lazy(() =>
@@ -47,6 +47,10 @@ const Platforms = React.lazy(() =>
 
 const Firmware = React.lazy(() =>
   import("../firmware").then((i) => ({ default: i.Firmware }))
+)
+
+const Plugins = React.lazy(() =>
+  import("../plugins").then((i) => ({ default: i.Plugins }))
 )
 
 export const Layout = () => {
@@ -117,6 +121,7 @@ export const Layout = () => {
               {view === "Platforms" && <Platforms />}
               {view === "Palettes" && <Palettes />}
               {view === "Fetch" && <Fetch />}
+              {view === "Plugins" && <Plugins />}
             </div>
           </Suspense>
         </ErrorBoundary>

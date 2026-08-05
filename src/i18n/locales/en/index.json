@@ -267,7 +267,26 @@
     "save_states": "Save States",
     "saves": "Saves",
     "screenshots": "Screenshots",
+    "plugins": "Plugins",
     "settings": "Settings"
+  },
+  "plugins": {
+    "buttons": {
+      "add": "Add Plugin",
+      "refresh": "Refresh"
+    },
+    "remove": "Remove",
+    "confirm_remove": "This will also remove any local data the plugin has stored on this computer, are you sure?",
+    "confirm_exit": "The plugin is still running, are you sure you want to close the window?",
+    "safe_to_close": "Plugin has finished, this window can be closed",
+    "submit": "Submit",
+    "info": "The plugin specification, an example plugin, and tools for building plugins can be found at <1>github.com/{repo}</1>",
+    "add_modal": {
+      "title": "Add plugin via URL",
+      "add": "Verify & install plugin",
+      "cancel": "Cancel",
+      "invalid": "No valid plugin found at that URL"
+    }
   },
   "palettes": {
     "buttons": {
@@ -338,6 +357,8 @@
     "controls": {
       "back": "Back to list",
       "data_packs": "Data Packs",
+      "archive": "Archive Platform",
+      "unarchive": "Unarchive Platform",
       "image_packs": "Image Packs"
     },
     "cores": "Cores",
@@ -345,11 +366,25 @@
   },
   "platforms": {
     "cancel": "Cancel",
+    "count": "{count} Platforms",
     "controls": {
       "data_packs": "Data Packs",
       "remove_coreless": "Remove Coreless",
+      "archive": "Archive Platforms",
       "image_packs": "Image Packs",
       "search": "Search"
+    },
+    "archive": {
+      "apply_changes": "Save Changes",
+      "close": "Close without saving",
+      "search_placeholder": "Archived Platforms",
+      "archive_all": "Archive All",
+      "filters": {
+        "all": "All",
+        "category": "Category",
+        "manufacturer": "Manufacturer",
+        "year": "Year"
+      }
     },
     "data_packs": {
       "apply_changes": "Apply {count, plural, =0 {0 Changes} one {1 Change} other {# Changes}}",
@@ -357,6 +392,7 @@
       "current": "Current"
     },
     "delete_unused": "Delete {count, plural, one {# unused Platform} other {# unused Platforms}}?",
+    "limit_reached_warning": "WARNING: the Pocket's limit on platforms has been reached, archive some or OpenFPGA will not function correctly",
     "edit": "Edit",
     "image_packs": {
       "apply_changes": "Apply {count, plural, =0 {0 Changes} one {1 Change} other {# Changes}}",
@@ -366,7 +402,8 @@
     "save": "Save"
   },
   "progress": {
-    "remaining_time": "Remaining Time (approx): {remainingTime}"
+    "remaining_time": "Remaining Time (approx): {remainingTime}",
+    "speed": "{speed} / second"
   },
   "save_info": {
     "confirm_restore": "Restore from backup?",
@@ -499,12 +536,6 @@
       "title": "Github Token",
       "remove": "Remove",
       "ramble": "If you're having issues with the GitHub rate limit, then add a PAT token below.\nThe PAT token shouldn't have any scopes set, and is stored on your computer rather than on the Pocket's SD card."
-    },
-    "patreon_keys": {
-      "title": "Patreon Keys",
-      "update": "Get Keys",
-      "ramble": "For cores that require an unlock key via an active Patreon membership",
-      "placeholder": "Patreon email"
     },
     "clear_file_cache": {
       "button": "Clear file cache",

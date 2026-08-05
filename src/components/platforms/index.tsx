@@ -1,9 +1,12 @@
 import { Suspense, useCallback, useMemo, useState } from "react"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import {
+  activePlatformsCountSelector,
+  allPlatformsDataSelector,
+  hasHitPlatformLimitSelector,
   platformsListSelector,
   platformsWithoutCoresSelector,
-} from "../../recoil/platforms/selectors"
+} from "../../jotai/platforms/selectors"
 import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
@@ -13,7 +16,7 @@ import { PlatformItem } from "./item"
 
 import "./index.css"
 import "../cores/index.css"
-import { selectedSubviewSelector } from "../../recoil/view/selectors"
+import { selectedSubviewSelector } from "../../jotai/view/selectors"
 import { ImagePacks } from "./imagePacks"
 import { useTranslation } from "react-i18next"
 import { confirm } from "@tauri-apps/plugin-dialog"
@@ -23,6 +26,8 @@ import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
 import { useAtom, useAtomValue } from "jotai"
 import { useAtomCallback } from "jotai/utils"
+import { PlatformArchive } from "./archive"
+import { WarningIcon } from "../cores/info/requiredFiles/warningIcon"
 
 export const Platforms = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -41,20 +46,26 @@ export const Platforms = () => {
 
   const [imagePacksOpen, setImagePacksOpen] = useState(false)
   const [dataPacksOpen, setDataPacksOpen] = useState(false)
+  const [archiveOpen, setArchiveOpen] = useState(false)
 
   const removeCorelessPlatforms = useAtomCallback(
-    useCallback(async (get, set) => {
+    useCallback(async (get, _set) => {
       const platformsWithoutCores = await get(platformsWithoutCoresSelector)
 
       const confirmation = await confirm(
         t("delete_unused", { count: platformsWithoutCores.length })
       )
+      const allPlatformsData = await get(allPlatformsDataSelector)
 
       if (confirmation && platformsWithoutCores.length > 0) {
         await invokeDeleteFiles(
-          platformsWithoutCores.map(
-            (platformId) => `Platforms/${platformId}.json`
-          )
+          platformsWithoutCores.map((platformId) => {
+            if (platformId in allPlatformsData.active) {
+              return `Platforms/${platformId}.json`
+            } else {
+              return `Platforms/_archive/${platformId}.json`
+            }
+          })
         )
       }
     }, [])
@@ -82,6 +93,9 @@ export const Platforms = () => {
         <ControlsButton onClick={removeCorelessPlatforms}>
           {t("controls.remove_coreless")}
         </ControlsButton>
+        <ControlsButton onClick={() => setArchiveOpen(true)}>
+          {t("controls.archive")}
+        </ControlsButton>
         <ControlsButton onClick={() => setDataPacksOpen(true)}>
           {t("controls.data_packs")}
         </ControlsButton>
@@ -94,6 +108,11 @@ export const Platforms = () => {
         <ImagePacks onClose={() => setImagePacksOpen(false)} />
       )}
       {dataPacksOpen && <DataPacks onClose={() => setDataPacksOpen(false)} />}
+      {archiveOpen && <PlatformArchive onClose={() => setArchiveOpen(false)} />}
+
+      <Suspense>
+        <PlatformLimitWarning onClick={() => setArchiveOpen(true)} />
+      </Suspense>
 
       <SearchContextProvider query={searchQuery}>
         <Grid placeholderItemHeight={200}>
@@ -110,6 +129,24 @@ export const Platforms = () => {
           ))}
         </Grid>
       </SearchContextProvider>
+    </div>
+  )
+}
+
+type PlatformLimitWarningProps = {
+  onClick?: () => void
+}
+
+const PlatformLimitWarning = ({ onClick }: PlatformLimitWarningProps) => {
+  const hasHitLimit = useAtomValue(hasHitPlatformLimitSelector)
+  const { t } = useTranslation("platforms")
+
+  if (!hasHitLimit) return null
+
+  return (
+    <div className="platforms__limit-warning" onClick={onClick}>
+      <WarningIcon />
+      {t("limit_reached_warning")}
     </div>
   )
 }

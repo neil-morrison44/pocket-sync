@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import {
   screenshotsListSelector,
   SingleScreenshotImageSelectorFamily,
-} from "../../recoil/screenshots/selectors"
+} from "../../jotai/screenshots/selectors"
 import { MeshPhysicalMaterial, SRGBColorSpace, Texture } from "three"
 import { StaticScreen } from "./staticScreen"
 import { useAtomValue } from "jotai"

@@ -3,8 +3,9 @@ import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import "./index.css"
 import { WarningIcon } from "./warningIcon"
-import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles/selectors"
+import { RequiredFileInfoSelectorFamily } from "../../../../jotai/requiredFiles/selectors"
 import { useAtomValue } from "jotai"
+import { useBEM } from "../../../../hooks/useBEM"
 
 type RequiredFilesProps = {
   coreName: string
@@ -22,7 +23,11 @@ export const RequiredFiles = ({ coreName, onClick }: RequiredFilesProps) => {
   )
 
   const full = useMemo(
-    () => foundFiles.length === requiredFiles.length,
+    () =>
+      foundFiles.length === requiredFiles.length ||
+      requiredFiles.every(
+        (f) => f.status.type === "NotFound" || f.status.type === "Exists"
+      ),
     [foundFiles.length, requiredFiles.length]
   )
 
@@ -30,18 +35,22 @@ export const RequiredFiles = ({ coreName, onClick }: RequiredFilesProps) => {
 
   const noFiles = foundFiles.length === 0
 
+  const className = useBEM({
+    block: "required-files",
+    modifiers: {
+      full: full,
+      missing: !full,
+      none: noFiles,
+    },
+  })
+
   return (
     <div className="core-info__info-row">
       <strong>
         {t("required_files")}
         {":"}
       </strong>
-      <div
-        className={`required-files required-files--${
-          full ? "full" : "missing"
-        } ${noFiles ? "required-files--none" : ""}`}
-        onClick={onClick}
-      >
+      <div className={className} onClick={onClick}>
         {noFiles && <WarningIcon />}
 
         {t("required_files_count", {

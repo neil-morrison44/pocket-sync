@@ -231,7 +231,26 @@
     "save_states": "即时存档",
     "saves": "存档",
     "screenshots": "截屏",
+    "plugins": "插件",
     "settings": "设置"
+  },
+  "plugins": {
+    "buttons": {
+      "add": "添加插件",
+      "refresh": "刷新"
+    },
+    "remove": "消除",
+    "confirm_remove": "这将同时删除插件在此计算机上存储的所有本地数据，您确定吗？",
+    "confirm_exit": "插件仍在运行，您确定要关闭窗口吗？",
+    "safe_to_close": "插件已完成，此窗口可以关闭。",
+    "submit": "提交",
+    "info": "插件规范、示例插件和插件构建工具可在 <1>github.com/{repo} 找到。</1>",
+    "add_modal": {
+      "title": "通过 URL 添加插件",
+      "add": "验证并安装插件",
+      "cancel": "取消",
+      "invalid": "该URL未找到有效的插件"
+    }
   },
   "palettes": {
     "buttons": {
@@ -312,8 +331,21 @@
     "controls": {
       "data_packs": "数据包",
       "remove_coreless": "删除无核",
+      "archive": "归档平台",
       "image_packs": "图像包",
       "search": "搜索"
+    },
+    "archive": {
+      "apply_changes": "保存更改",
+      "close": "关闭而不保存",
+      "search_placeholder": "已存档平台",
+      "archive_all": "全部存档",
+      "filters": {
+        "all": "全部",
+        "category": "类别",
+        "manufacturer": "制造商",
+        "year": "年"
+      }
     },
     "data_packs": {
       "apply_changes": "共执行了 {count, plural, =0 {0项修改} one {1项修改} other {# 项修改}}",
@@ -330,7 +362,8 @@
     "save": "保存"
   },
   "progress": {
-    "remaining_time": "剩余时间 (预计): {remainingTime}"
+    "remaining_time": "剩余时间 (预计): {remainingTime}",
+    "speed": "{speed}/秒"
   },
   "save_info": {
     "confirm_restore": "确认使用备份恢复?",
@@ -458,12 +491,6 @@
       "title": "Github 代币",
       "remove": "消除",
       "ramble": "如果您遇到 GitHub 速率限制问题，请在下面添加 PAT 令牌。\nPAT 令牌不应设置任何范围，并且存储在您的计算机上而不是 Pocket 的 SD 卡上。"
-    },
-    "patreon_keys": {
-      "title": "Patreon 钥匙",
-      "update": "获取密钥",
-      "ramble": "对于需要通过有效的 Patreon 会员资格解锁密钥的核心",
-      "placeholder": "Patreon 电子邮件"
     },
     "clear_file_cache": {
       "button": "清除文件缓存",

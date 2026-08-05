@@ -10,15 +10,17 @@ use log::error;
 use serde::{Deserialize, Serialize};
 use std::{cmp, path::PathBuf};
 use tauri::Emitter;
+use tokio::sync::RwLock;
 
 use crate::{
-    core_json_files::{core::CoreFile, CoreDetails},
+    core_json_files::{CoreDetails, core::CoreFile},
+    hashes::HashCache,
     progress,
     required_files::{
         archive_metadata::get_metadata_from_archive, core_data_slots::process_core_data,
         instance_data_slots::process_instance_data,
     },
-    root_files::{check_root_files, RootFile},
+    root_files::{RootFile, check_root_files},
 };
 
 use self::{
@@ -86,18 +88,12 @@ pub struct DataSlot {
     md5: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct InstanceDataSlot {
-    #[serde(default)]
-    id: IntOrHexString,
-    filename: String,
-}
-
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct ArchiveInfo {
     pub url: String,
     crc32: String,
     pub mtime: Option<String>,
+    pub size: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -130,15 +126,7 @@ impl PartialEq for DataSlotFile {
 
 impl DataSlotFile {
     pub fn should_be_downloaded(self: &Self) -> bool {
-        !self.name.ends_with(".sav")
-            && (self.name.contains("bios")
-                || self.name.contains("beta.bin")
-                || self.name.contains("coinop.key")
-                || self.required
-                // Setting this to `true` has it try to download all files
-                // even if they're not marked as required
-                // can't find why that made sense
-                || false)
+        !self.name.ends_with(".sav") && !self.name.ends_with(".cfg")
     }
 }
 
@@ -156,6 +144,7 @@ pub async fn required_files_for_core(
     include_alts: bool,
     archive_url: &str,
     window: tauri::WebviewWindow,
+    hash_cache: &RwLock<HashCache>,
 ) -> Result<Vec<DataSlotFile>> {
     let core_details: CoreDetails =
         CoreFile::from_core_path(&pocket_path.join(format!("Cores/{}", core_id)))?.into();
@@ -174,7 +163,7 @@ pub async fn required_files_for_core(
     let (instance_files, archive_meta, files_at_root) = tokio::join!(
         find_instance_files(&assets_folder, include_alts),
         get_metadata_from_archive(archive_url),
-        check_root_files(&pocket_path, Some(vec!["rom", "bin", "key"]))
+        check_root_files(&pocket_path, Some(vec!["rom", "bin", "key"]), hash_cache)
     );
 
     progress.begin_work_units((instance_files.len() + 1) * 2);
@@ -233,6 +222,7 @@ pub async fn required_files_for_core(
                 archive_meta,
                 files_at_root,
                 pocket_path,
+                Some(hash_cache),
                 progress,
             )
             .await?;
@@ -245,6 +235,7 @@ pub async fn required_files_for_core(
                 archive_meta,
                 vec![],
                 pocket_path,
+                Some(hash_cache),
                 progress,
             )
             .await?;
@@ -257,6 +248,7 @@ pub async fn required_files_for_core(
                 vec![],
                 files_at_root,
                 pocket_path,
+                Some(hash_cache),
                 progress,
             )
             .await?;

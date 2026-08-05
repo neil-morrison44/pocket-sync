@@ -1,4 +1,4 @@
-import { PocketSyncConfigSelector } from "../recoil/config/selectors"
+import { PocketSyncConfigSelector } from "../jotai/config/selectors"
 import { useMemo } from "react"
 import { useAtomValue } from "jotai"
 

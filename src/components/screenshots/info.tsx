@@ -2,8 +2,8 @@ import { Suspense, useCallback, useEffect, useState } from "react"
 import {
   ImageDimensionsSelectorFamily,
   SingleScreenshotSelectorFamily,
-} from "../../recoil/screenshots/selectors"
-import { VideoJSONSelectorFamily } from "../../recoil/screenshots/selectors"
+} from "../../jotai/screenshots/selectors"
+import { VideoJSONSelectorFamily } from "../../jotai/screenshots/selectors"
 import "./info.css"
 
 import { useSaveFile } from "../../hooks/saveFile"
@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next"
 import { ControlsBackButton } from "../controls/inputs/backButton"
 import { ControlsButton } from "../controls/inputs/button"
 import { ControlsCheckbox } from "../controls/inputs/checkbox"
-import { imageModeAtom } from "../../recoil/screenshots/atom"
+import { imageModeAtom } from "../../jotai/screenshots/atom"
 import { useAtom, useAtomValue } from "jotai"
 
 type ScreenshotInfoProps = {

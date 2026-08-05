@@ -1,22 +1,32 @@
 use std::{
     path::PathBuf,
+    sync::{
+        Arc,
+        atomic::{AtomicBool, Ordering},
+    },
     time::{Duration, SystemTime},
 };
 
 use crate::{
+    commands::archive::ProgressUpdate,
     files_from_zip::copy_file_from_zip,
     required_files::{DataSlotFile, DataSlotFileStatus},
     root_files::RootFile,
     turbo_downloads::turbo_download_file,
 };
 use anyhow::Result;
-use fs_set_times::{set_mtime, SystemTimeSpec};
+use bytes::Bytes;
+use fs_set_times::{SystemTimeSpec, set_mtime};
+use futures::StreamExt;
+use tokio::sync::mpsc;
 
 pub async fn install_file(
     file: DataSlotFile,
     archive_url: &str,
     turbo: bool,
     pocket_path: &PathBuf,
+    progress_tx: mpsc::UnboundedSender<ProgressUpdate>,
+    has_been_cancelled: Arc<AtomicBool>,
 ) -> Result<()> {
     match file.status {
         DataSlotFileStatus::MissingButOnArchive(archive_info)
@@ -24,12 +34,31 @@ pub async fn install_file(
             let full_url = format!("{}/{}", archive_url, archive_info.url);
             let content = {
                 if turbo {
-                    turbo_download_file(&full_url).await?
+                    let has_been_cancelled_clone = has_been_cancelled.clone();
+                    turbo_download_file(&full_url, progress_tx.clone(), has_been_cancelled_clone)
+                        .await?
                 } else {
                     let response = reqwest::get(&full_url).await?;
-                    response.bytes().await?
+                    let mut stream = response.bytes_stream();
+                    let mut content_buffer = Vec::new();
+
+                    while let Some(chunk) = stream.next().await {
+                        if has_been_cancelled.load(std::sync::atomic::Ordering::Relaxed) {
+                            return Ok(());
+                        }
+
+                        let chunk = chunk?;
+                        let _ = progress_tx.send(ProgressUpdate::AddBytes(chunk.len()));
+                        content_buffer.extend_from_slice(&chunk);
+                    }
+                    Bytes::from(content_buffer)
                 }
             };
+
+            if has_been_cancelled.load(Ordering::Relaxed) {
+                return Ok(());
+            }
+
             let new_file_path = pocket_path.join(&file.path);
             create_parent_folders(&new_file_path).await?;
 

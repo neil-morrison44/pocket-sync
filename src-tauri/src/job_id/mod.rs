@@ -2,6 +2,7 @@ use anyhow::{Context, Result};
 use serde::Serialize;
 use std::collections::HashMap;
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use tokio::sync::RwLock;
 
 #[derive(Clone, Default, Debug)]
@@ -18,6 +19,8 @@ struct InnerJobState {
 pub struct Job {
     pub id: String,
     pub status: JobStatus,
+    #[serde(skip)]
+    pub cancel_flag: Arc<AtomicBool>,
 }
 
 #[derive(Default, Debug, Clone, Serialize)]
@@ -30,21 +33,27 @@ pub enum JobStatus {
 pub struct JobHandle<'a> {
     job_id: String,
     state: &'a JobState,
+    cancel_flag: Arc<AtomicBool>,
 }
 
 impl JobState {
     pub async fn start_job(&self, key: &str) -> Arc<JobHandle<'_>> {
         let mut lock = self.inner.write().await;
         let id = String::from(key);
+
+        let cancel_flag = Arc::new(AtomicBool::new(false));
+
         let task = Job {
             id: id.clone(),
             status: JobStatus::Running,
+            cancel_flag: cancel_flag.clone(),
         };
         lock.tasks.insert(id.clone(), task);
 
         Arc::new(JobHandle {
             job_id: id.clone(),
-            state: &self,
+            state: self,
+            cancel_flag,
         })
     }
 
@@ -65,7 +74,7 @@ impl JobState {
         let mut lock = self.inner.write().await;
         let task = lock.tasks.get_mut(key).context("Stopping missing task")?;
         task.status = JobStatus::Stopping;
-
+        task.cancel_flag.store(true, Ordering::Relaxed);
         Ok(())
     }
 
@@ -87,5 +96,9 @@ impl JobHandle<'_> {
             Some(JobStatus::Running) => true,
             _ => false,
         }
+    }
+
+    pub fn cancel_token(&self) -> Arc<AtomicBool> {
+        self.cancel_flag.clone()
     }
 }

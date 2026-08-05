@@ -1,7 +1,7 @@
 {
   "name": "pocket-sync",
   "private": true,
-  "version": "5.10.0",
+  "version": "6.3.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -42,7 +42,7 @@
     "jotai-effect": "^2.1.3",
     "mdast-util-gfm-autolink-literal": "2.0.0",
     "postprocessing": "^6.37.8",
-    "r3f-perf": "^7.2.3",
+    "pretty-bytes": "^7.1.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-i18next": "^16.2.0",
@@ -50,7 +50,9 @@
     "remark-gfm": "^4.0.1",
     "simplex-noise": "^4.0.3",
     "tauri-plugin-locale-api": "^2.0.1",
-    "three": "0.180.0"
+    "three": "0.180.0",
+    "three-stdlib": "^2.36.1",
+    "wouter": "^3.10.0"
   },
   "devDependencies": {
     "@octokit/rest": "^22.0.0",

@@ -11,12 +11,14 @@ type ProgressProps = {
   percent: number
   message?: string | null
   remainingTime?: string
+  speed?: string
 }
 
 export const Progress = ({
   percent,
   message,
   remainingTime,
+  speed,
 }: ProgressProps) => {
   const { t } = useTranslation("progress")
 
@@ -30,7 +32,18 @@ export const Progress = ({
           }
         />
       </Suspense>
-      {remainingTime && <div>{t("remaining_time", { remainingTime })}</div>}
+      {remainingTime && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <div>{t("remaining_time", { remainingTime })}</div>
+          {speed && <div>{t("speed", { speed })}</div>}
+        </div>
+      )}
     </ColourContextProviderFromConfig>
   )
 }

@@ -1,13 +1,13 @@
 import { useCallback } from "react"
-import { pocketPathAtom } from "../../../recoil/atoms"
-import { PlatformInfoSelectorFamily } from "../../../recoil/platforms/selectors"
+import { pocketPathAtom } from "../../../jotai/atoms"
+import { PlatformInfoSelectorFamily } from "../../../jotai/platforms/selectors"
 import { PlatformId, PlatformInfoJSON } from "../../../types"
 import { invokeSaveFile } from "../../../utils/invokes"
 import { useAtomValue } from "jotai"
 
 type InnerPlatform = PlatformInfoJSON["platform"]
 
-export const useUpdatePlatformValue = (id: PlatformId) => {
+export const useUpdatePlatformValue = (id: PlatformId, isArchived: boolean) => {
   const platformInfo = useAtomValue(PlatformInfoSelectorFamily(id))
   const pocketPath = useAtomValue(pocketPathAtom)
 
@@ -22,10 +22,10 @@ export const useUpdatePlatformValue = (id: PlatformId) => {
       }
       const encoder = new TextEncoder()
       await invokeSaveFile(
-        `${pocketPath}/Platforms/${id}.json`,
+        `${pocketPath}/Platforms/${isArchived ? "_archive/" : ""}${id}.json`,
         encoder.encode(JSON.stringify(newPlatform, null, 2))
       )
     },
-    [id, platformInfo, pocketPath]
+    [id, platformInfo, isArchived, pocketPath]
   )
 }

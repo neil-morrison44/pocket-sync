@@ -65,6 +65,8 @@ pub async fn download_firmware_file(
                     finished: downloaded == total_size,
                     progress: percentage,
                     message: None,
+                    complete_units: downloaded as usize,
+                    total_units: total_size as usize,
                 },
             )
             .unwrap();
@@ -78,10 +80,7 @@ pub async fn download_firmware_file(
     Ok(())
 }
 
-pub async fn verify_firmware_file(
-    file_path: &PathBuf,
-    md5: &str,
-) -> Result<bool, Box<dyn std::error::Error>> {
-    let file_md5 = md5_for_file(file_path).await?;
+pub async fn verify_firmware_file(file_path: &PathBuf, md5: &str) -> Result<bool, anyhow::Error> {
+    let file_md5 = md5_for_file(file_path, None).await?;
     Ok(file_md5 == md5)
 }

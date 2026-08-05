@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react"
 
-import { pocketPathAtom } from "../../../recoil/atoms"
-import { CleanableFilesSelectorFamily } from "../../../recoil/selectors"
+import { pocketPathAtom } from "../../../jotai/atoms"
+import { CleanableFilesSelectorFamily } from "../../../jotai/selectors"
 import { invokeDeleteFiles } from "../../../utils/invokes"
 import { Loader } from "../../loader"
 import { Modal } from "../../modal"

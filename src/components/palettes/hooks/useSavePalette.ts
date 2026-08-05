@@ -1,11 +1,11 @@
 import { Palette } from "../../../types"
 
-import { pocketPathAtom } from "../../../recoil/atoms"
+import { pocketPathAtom } from "../../../jotai/atoms"
 import {
   invokeConvertSinglePalFile,
   invokeSaveFile,
 } from "../../../utils/invokes"
-import { PocketSyncConfigSelector } from "../../../recoil/config/selectors"
+import { PocketSyncConfigSelector } from "../../../jotai/config/selectors"
 import { useAtomValue } from "jotai"
 
 export const useSavePalette = () => {

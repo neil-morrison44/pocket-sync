@@ -2,9 +2,9 @@ import {
   CoreAuthorImageSelectorFamily,
   CoreInfoSelectorFamily,
   CoreMainPlatformIdSelectorFamily,
-} from "../../recoil/selectors"
+} from "../../jotai/selectors"
 
-import { PlatformInfoSelectorFamily } from "../../recoil/platforms/selectors"
+import { PlatformInfoSelectorFamily } from "../../jotai/platforms/selectors"
 
 import "./index.css"
 import { Version } from "./version"
@@ -17,10 +17,10 @@ import { useInventoryItem } from "../../hooks/useInventoryItem"
 import {
   CorePlatformSelectorFamily,
   PlatformInventoryImageSelectorFamily,
-} from "../../recoil/inventory/selectors"
+} from "../../jotai/inventory/selectors"
 import { PlatformImage } from "./platformImage"
 import { AnalogizerIcon } from "./icons/AnalogizerIcon"
-import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
+import { PocketSyncConfigSelector } from "../../jotai/config/selectors"
 import { useAtomValue } from "jotai"
 
 type CoreItemProps = {

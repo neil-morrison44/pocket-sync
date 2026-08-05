@@ -1,9 +1,9 @@
 import { Modal } from "../../modal"
-import { PhotoExportImageSelectorFamily } from "../../../recoil/saveStates/selectors"
+import { PhotoExportImageSelectorFamily } from "../../../jotai/saveStates/selectors"
 import { Suspense, useState } from "react"
 
 import "./index.css"
-import { ColourMap, PhotoColourMapAtom } from "../../../recoil/saveStates/atoms"
+import { ColourMap, PhotoColourMapAtom } from "../../../jotai/saveStates/atoms"
 import { useExportPhotos } from "./hooks/exportPhotos"
 import { useTranslation } from "react-i18next"
 import { useAtom, useAtomValue, useSetAtom } from "jotai"

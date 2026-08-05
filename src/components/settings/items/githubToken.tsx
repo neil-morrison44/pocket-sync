@@ -1,4 +1,4 @@
-import { githubTokenAtom } from "../../../recoil/settings/atoms"
+import { githubTokenAtom } from "../../../jotai/settings/atoms"
 import { useTranslation } from "react-i18next"
 import { useAtom } from "jotai"
 

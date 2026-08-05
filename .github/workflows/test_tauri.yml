@@ -18,15 +18,17 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: setup node
         uses: actions/setup-node@v6
         with:
           node-version: 22
-      - name: install Rust stable
-        uses: actions-rs/toolchain@v1
+          cache: "npm"
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
         with:
-          toolchain: stable
+          workspaces: "src-tauri -> target"
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
         run: |
@@ -38,7 +40,7 @@ jobs:
           rustup target add aarch64-apple-darwin
           rustup target add x86_64-apple-darwin
 
-      - uses: apple-actions/import-codesign-certs@v5
+      - uses: apple-actions/import-codesign-certs@v6
         if: matrix.platform == 'macos-latest'
         with:
           p12-file-base64: ${{ secrets.APPLE_CERTIFICATE }}
@@ -60,7 +62,7 @@ jobs:
       - name: install app dependencies and build it
         run: npm ci && npm run build
 
-      - uses: tauri-apps/tauri-action@v0.5.23
+      - uses: tauri-apps/tauri-action@v0.6.0
         if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -74,7 +76,7 @@ jobs:
           releaseId: ${{ steps.get_release.outputs.id }}
           args: --target ${{ matrix.target }}
 
-      - uses: tauri-apps/tauri-action@v0.5.23
+      - uses: tauri-apps/tauri-action@v0.6.0
         if: matrix.platform != 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -82,7 +84,7 @@ jobs:
           releaseId: ${{ steps.get_release.outputs.id }}
           args: --target ${{ matrix.target }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: bundle-${{ matrix.target }}
           path: src-tauri/target/${{ matrix.target }}/release/bundle/

@@ -7,7 +7,7 @@ import {
 } from "react"
 import { PocketColour } from "../../types"
 
-import { PocketSyncConfigSelector } from "../../recoil/config/selectors"
+import { PocketSyncConfigSelector } from "../../jotai/config/selectors"
 import { useAtomValue } from "jotai"
 
 export const BodyColourContext = createContext<PocketColour>("black")

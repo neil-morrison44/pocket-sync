@@ -1,0 +1,319 @@
+import { ImagePack, PlatformId, PlatformInfoJSON } from "../../types"
+import {
+  invokeAllPlatformData,
+  invokeReadAllPlatformImages,
+} from "../../utils/invokes"
+import { PLATFORM_IMAGE } from "../../values"
+import { CoreInfoSelectorFamily, coresListSelector } from "../selectors"
+import * as zip from "@zip.js/zip.js"
+import { renderBinImage } from "../../utils/renderBinImage"
+import { fetch as tauriFecth } from "@tauri-apps/plugin-http"
+import { fsWatchAtomFamily } from "../fileSystem/atoms"
+import { Atom, atom } from "jotai"
+import { atomFamily } from "jotai/utils"
+import { atomFamilyDeepEqual } from "../../utils/jotai"
+import { platformModalPositionAtom } from "./atoms"
+import { calculatePlatformsLimit } from "../../utils/platformsLimit"
+
+export const allPlatformsDataSelector = atom<
+  Promise<{
+    active: Record<string, PlatformInfoJSON["platform"]>
+    archived: Record<string, PlatformInfoJSON["platform"]>
+  }>
+>(async (get) => {
+  get(fsWatchAtomFamily("Platforms"))
+  const allPlatforms = await invokeAllPlatformData()
+  return allPlatforms
+})
+
+export const platformsListSelector = atom<Promise<PlatformId[]>>(
+  async (get) => {
+    const allPlatforms = await get(allPlatformsDataSelector)
+    return [
+      ...Object.keys(allPlatforms.active),
+      ...Object.keys(allPlatforms.archived),
+    ]
+  }
+)
+
+export const activePlatformsCountSelector = atom<Promise<number>>(
+  async (get) => {
+    const allPlatforms = await get(allPlatformsDataSelector)
+    return Object.keys(allPlatforms.active).length
+  }
+)
+
+export const platformsWithoutCoresSelector = atom<Promise<PlatformId[]>>(
+  async (get) => {
+    const platforms = await get(platformsListSelector)
+    const platformWithCores = await Promise.all(
+      platforms.map(async (pId) => get(CoresForPlatformSelectorFamily(pId)))
+    )
+    return platformWithCores
+      .map((cores, index) => ({ cores, id: platforms[index] }))
+      .filter(({ cores }) => cores.length === 0)
+      .map(({ id }) => id)
+  }
+)
+
+export const CoresForPlatformSelectorFamily = atomFamily<
+  PlatformId,
+  Atom<Promise<string[]>>
+>((platformId: PlatformId) =>
+  atom(async (get) => {
+    const coresList = await get(coresListSelector)
+    const results: string[] = []
+    for (const coreId of coresList) {
+      const coreData = await get(CoreInfoSelectorFamily(coreId))
+
+      if (coreData.core.metadata.platform_ids.includes(platformId)) {
+        results.push(coreId)
+      }
+    }
+
+    return results
+  })
+)
+
+export const PlatformExistsSelectorFamily = atomFamily<
+  PlatformId,
+  Atom<Promise<boolean>>
+>((platformId: PlatformId) =>
+  atom(async (get) => {
+    const allPlatforms = await get(allPlatformsDataSelector)
+    return (
+      Object.keys(allPlatforms.active).includes(platformId) ||
+      Object.keys(allPlatforms.archived).includes(platformId)
+    )
+  })
+)
+
+export const PlatformInfoSelectorFamily = atomFamily<
+  PlatformId,
+  Atom<Promise<PlatformInfoJSON>>
+>((platformId: PlatformId) =>
+  atom(async (get) => {
+    const allPlatforms = await get(allPlatformsDataSelector)
+    const platform =
+      allPlatforms.active[platformId] ?? allPlatforms.archived[platformId]
+
+    if (!platform)
+      throw new Error(`Missing platform file for: ${platformId}`, {
+        cause: {
+          type: "missing_platform",
+          platform_id: platformId,
+          repairable: true,
+        },
+      })
+    return { platform }
+  })
+)
+
+export const PlatformIsArchivedSelectorFamily = atomFamily<
+  PlatformId,
+  Atom<Promise<boolean>>
+>((platformId: PlatformId) =>
+  atom(async (get) => {
+    const allPlatforms = await get(allPlatformsDataSelector)
+    return platformId in allPlatforms.archived
+  })
+)
+
+export const AllPlatformImagesSelector = atom<
+  Promise<Record<PlatformId, Uint8Array>>
+>(async (get) => {
+  get(fsWatchAtomFamily("Platforms/_images"))
+  return await invokeReadAllPlatformImages()
+})
+
+export const PlatformImageSelectorFamily = atomFamily<
+  PlatformId,
+  Atom<Promise<string>>
+>((platformId: PlatformId) =>
+  atom(async (get) => {
+    const allPlatformImages = await get(AllPlatformImagesSelector)
+    const buffer =
+      allPlatformImages[platformId] ??
+      new Uint8Array(PLATFORM_IMAGE.WIDTH * PLATFORM_IMAGE.HEIGHT * 2)
+
+    return renderBinImage(
+      buffer,
+      PLATFORM_IMAGE.WIDTH,
+      PLATFORM_IMAGE.HEIGHT,
+      true
+    )
+  })
+)
+
+export const allCategoriesSelector = atom<Promise<string[]>>(async (get) => {
+  const allPlatforms = await get(allPlatformsDataSelector)
+
+  return Array.from(
+    new Set(
+      [
+        ...Object.values(allPlatforms.active),
+        ...Object.values(allPlatforms.archived),
+      ].flatMap(({ category }) => {
+        return category ? [category] : []
+      })
+    )
+  ) as string[]
+})
+
+export const imagePackListSelector = atom<Promise<ImagePack[]>>(
+  async (_get, { signal }) => {
+    try {
+      const response = await tauriFecth(
+        "https://neil-morrison44.github.io/pocket-sync/image_packs.json",
+        {
+          method: "GET",
+          connectTimeout: 30e3,
+          signal,
+        }
+      )
+
+      const packs = (await response.json()) as ImagePack[]
+      return packs
+    } catch (err) {
+      console.error(err)
+      return []
+    }
+  }
+)
+
+const mergedPlatformFileBlobsSelector = atom<
+  Promise<Record<string, Blob | undefined> | null>
+>(async (_get, { signal }) => {
+  const platformsZip = await (
+    await fetch(`https://neil-morrison44.github.io/pocket-sync/platforms.zip`, {
+      signal,
+    })
+  ).blob()
+  const entries = await new zip.ZipReader(new zip.BlobReader(platformsZip), {
+    signal,
+  }).getEntries({})
+
+  // Give the UI a chance before we start chugging through all the entries
+  await new Promise<void>((resolve) => setTimeout(resolve, 10))
+
+  return Object.fromEntries(
+    await Promise.all(
+      entries
+        .filter((e) => e && e.getData)
+        .map((entry) =>
+          // @ts-ignore already filtering out the non-entry ones
+          entry
+            .getData(new zip.BlobWriter(), {})
+            .then((blob) => [entry.filename, blob])
+        )
+    )
+  )
+
+  // return entries
+})
+
+export const DataPackJsonSelectorFamily = atomFamilyDeepEqual<
+  ImagePack & {
+    platformId: PlatformId
+  },
+  Atom<Promise<PlatformInfoJSON | null>>
+>(({ owner, repository, variant, platformId }) =>
+  atom(async (get) => {
+    const fileBlobs = await get(mergedPlatformFileBlobsSelector)
+    if (!fileBlobs) return null
+
+    const packPath = `${owner}__${repository}__${variant || "default"}`
+    const data = fileBlobs[`${packPath}/Platforms/${platformId}.json`]
+    if (!data) return null
+    const text = await data.text()
+    let parsed: PlatformInfoJSON | null = null
+
+    try {
+      parsed = JSON.parse(text)
+    } catch (err) {
+      console.warn(
+        `Data Pack Error: ${JSON.stringify({
+          owner,
+          repository,
+          variant,
+          platformId,
+        })}`,
+        err
+      )
+    }
+
+    return parsed
+  })
+)
+
+export const ImagePackImageSelectorFamily = atomFamilyDeepEqual<
+  Omit<ImagePack, "image_platforms" | "data_platforms"> & {
+    platformId: PlatformId
+  },
+  Atom<Promise<{ imageSrc: string; file: Blob } | null>>
+>(({ owner, repository, variant, platformId }) =>
+  atom(async (get) => {
+    const fileBlobs = await get(mergedPlatformFileBlobsSelector)
+    if (!fileBlobs) return null
+
+    const packPath = `${owner}__${repository}__${variant || "default"}`
+    const data = fileBlobs[`${packPath}/Platforms/_images/${platformId}.bin`]
+    if (!data) return null
+
+    return {
+      imageSrc: renderBinImage(
+        new Uint8Array(await data.arrayBuffer()),
+        PLATFORM_IMAGE.WIDTH,
+        PLATFORM_IMAGE.HEIGHT,
+        true
+      ),
+      file: data,
+    }
+  })
+)
+
+export const unpositionedPlatformsSelector = atom<Promise<PlatformId[]>>(
+  async (get) => {
+    const fullPlatformsList = await get(platformsListSelector)
+
+    const positionedPlatforms = get(platformModalPositionAtom)
+    return Array.from(
+      new Set(fullPlatformsList).difference(
+        new Set(positionedPlatforms.map(({ id }) => id))
+      )
+    )
+  }
+)
+
+export const hasHitPlatformLimitSelector = atom<Promise<boolean>>(
+  async (get) => {
+    const allPlatforms = await get(allPlatformsDataSelector)
+    const activePlatforms = Object.keys(allPlatforms.active)
+
+    const platformsToCores = await Promise.all(activePlatforms.map(async (platformId) => {
+      return {id: platformId, cores: await get(CoresForPlatformSelectorFamily(platformId))}
+    }))
+
+    const platformsWithCores = platformsToCores.filter(({ cores }) => cores.length > 0).map(({ id }) => id)
+    const coresWithActivePlatforms = Array.from(new Set(platformsToCores.map(({cores}) => cores).flat()))
+
+
+    return calculatePlatformsLimit(platformsWithCores, coresWithActivePlatforms)
+  }
+)
+
+export const wouldHitPlatformLimitSelector = atom<Promise<boolean>>(
+  async (get) => {
+    const potentialPlatformIds = get(platformModalPositionAtom).map(({id}) => id)
+
+    const platformsToCores = await Promise.all(potentialPlatformIds.map(async (platformId) => {
+      return {id: platformId, cores: await get(CoresForPlatformSelectorFamily(platformId))}
+    }))
+
+    const platformsWithCores = platformsToCores.filter(({ cores }) => cores.length > 0).map(({ id }) => id)
+    const coresWithActivePlatforms = Array.from(new Set(platformsToCores.map(({cores}) => cores).flat()))
+
+
+    return calculatePlatformsLimit(platformsWithCores, coresWithActivePlatforms)
+  }
+)

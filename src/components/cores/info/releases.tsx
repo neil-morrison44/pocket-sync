@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { Suspense, useMemo, useState } from "react"
 import { Link } from "../../link"
-import { GithubReleasesSelectorFamily } from "../../../recoil/github/selectors"
+import { GithubReleasesSelectorFamily } from "../../../jotai/github/selectors"
 import { useTranslation } from "react-i18next"
 
 import "./releases.css"

@@ -1,6 +1,6 @@
 import { Suspense, useMemo, useState } from "react"
-import { cateogryListselector } from "../../recoil/inventory/selectors"
-import { coresListSelector } from "../../recoil/selectors"
+import { cateogryListselector } from "../../jotai/inventory/selectors"
+import { coresListSelector } from "../../jotai/selectors"
 import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"

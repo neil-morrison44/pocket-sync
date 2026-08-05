@@ -1,4 +1,4 @@
-import { coresListSelector } from "../../../recoil/selectors"
+import { coresListSelector } from "../../../jotai/selectors"
 import { useSmoothedAtomValue } from "../../../utils/jotai"
 import { InstalledCoreInfo } from "./installed"
 import { NotInstalledCoreInfo } from "./notInstalled"

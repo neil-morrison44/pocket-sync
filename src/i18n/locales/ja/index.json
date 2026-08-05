@@ -231,7 +231,26 @@
     "save_states": "Save States",
     "saves": "Saves",
     "screenshots": "Screenshots",
+    "plugins": "プラグイン",
     "settings": "Settings"
+  },
+  "plugins": {
+    "buttons": {
+      "add": "プラグインを追加",
+      "refresh": "更新"
+    },
+    "remove": "取り除く",
+    "confirm_remove": "これにより、プラグインがこのコンピューターに保存しているローカルデータもすべて削除されますが、よろしいですか？",
+    "confirm_exit": "プラグインはまだ実行中です。ウィンドウを閉じてもよろしいですか？",
+    "safe_to_close": "プラグインの処理が完了しました。このウィンドウは閉じることができます。",
+    "submit": "提出する",
+    "info": "プラグイン仕様、プラグインの例、およびプラグイン構築ツールは、<1>github.com/{repo} にあります。</1>",
+    "add_modal": {
+      "title": "URL経由でプラグインを追加する",
+      "add": "プラグインの検証とインストール",
+      "cancel": "キャンセル",
+      "invalid": "そのURLには有効なプラグインが見つかりませんでした"
+    }
   },
   "palettes": {
     "buttons": {
@@ -312,8 +331,21 @@
     "controls": {
       "data_packs": "データパック",
       "remove_coreless": "コアがない項目を削除",
+      "archive": "アーカイブ・プラットフォーム",
       "image_packs": "イメージパック",
       "search": "検索"
+    },
+    "archive": {
+      "apply_changes": "変更を保存",
+      "close": "保存せずに閉じる",
+      "search_placeholder": "アーカイブされたプラットフォーム",
+      "archive_all": "すべてアーカイブ",
+      "filters": {
+        "all": "全て",
+        "category": "カテゴリ",
+        "manufacturer": "メーカー",
+        "year": "年"
+      }
     },
     "data_packs": {
       "apply_changes": "{count, plural, =0 {変更なし} one {1 件の変更を適用} other {# 件の変更を適用}}",
@@ -330,7 +362,8 @@
     "save": "保存"
   },
   "progress": {
-    "remaining_time": "残り時間: 約 {remainingTime}"
+    "remaining_time": "残り時間: 約 {remainingTime}",
+    "speed": "{speed}/秒"
   },
   "save_info": {
     "confirm_restore": "バックアップから復元しますか？",
@@ -458,12 +491,6 @@
       "title": "Githubトークン",
       "remove": "取り除く",
       "ramble": "GitHub のレート制限に問題がある場合は、以下に PAT トークンを追加してください。\nPAT トークンにはスコープが設定されておらず、Pocket の SD カードではなくコンピューターに保存されます。"
-    },
-    "patreon_keys": {
-      "title": "Patreonキー",
-      "update": "キーを取得",
-      "ramble": "アクティブなPatreonメンバーシップを介してロック解除キーを必要とするコアの場合",
-      "placeholder": "Patreonのメール"
     },
     "clear_file_cache": {
       "button": "キャッシュをクリア",

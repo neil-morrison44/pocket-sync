@@ -1,13 +1,13 @@
 import React, { ReactElement, useCallback, useMemo, useState } from "react"
 import { PlatformId } from "../../types"
 import { useInstallCore } from "../../hooks/useInstallCore"
-import { CoresForPlatformSelectorFamily } from "../../recoil/platforms/selectors"
-import { DownloadURLSelectorFamily } from "../../recoil/inventory/selectors"
+import { CoresForPlatformSelectorFamily } from "../../jotai/platforms/selectors"
+import { DownloadURLSelectorFamily } from "../../jotai/inventory/selectors"
 import { usePreventGlobalZipInstallModal } from "../../hooks/usePreventGlobalZipInstall"
 import { emit, once } from "@tauri-apps/api/event"
 import { RepairIcon } from "./repairIcon"
 import { Trans } from "react-i18next"
-import { githubTokenAtom } from "../../recoil/settings/atoms"
+import { githubTokenAtom } from "../../jotai/settings/atoms"
 import { useAtomValue } from "jotai"
 
 const CORE_FILE_REGEX = /Cores[\/\\]([^\/\\]+)[\/\\]/

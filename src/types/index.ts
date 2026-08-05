@@ -58,8 +58,8 @@ export type DataSlotFile = {
     | { type: "NotChecked" }
     | { type: "FoundAtRoot"; root: RootFileZipped | RootFileUnZipped }
     | { type: "RootNeedsUpdate"; root: RootFileZipped | RootFileUnZipped }
-    | { type: "MissingButOnArchive"; url: string; crc32: string }
-    | { type: "NeedsUpdateFromArchive"; url: string; crc32: string }
+    | ({ type: "MissingButOnArchive" } & ArchiveFileMetadata)
+    | ({ type: "NeedsUpdateFromArchive" } & ArchiveFileMetadata)
 }
 
 export type PlatformId = string
@@ -246,9 +246,9 @@ export type PocketSyncConfig = {
   saves: SaveConfig[]
   skipAlternateAssets?: boolean
   fetches?: FetchType[]
-  patreon_email?: string
   hidden_cores?: string[]
   gb_palette_convert?: boolean
+  plugins?: string[]
 }
 
 export type SaveConfig = {
@@ -267,6 +267,7 @@ export type ArchiveFileMetadata = {
   name: string
   crc32: string
   mtime: string
+  size?: string
 }
 
 export type FetchFileMetadataWithStatus = {
@@ -368,6 +369,8 @@ export type ProgressEvent = {
     token: string
     param?: string
   }
+  complete_units: number
+  total_units: number
 }
 
 export type SortMode = "name" | "last_update"
@@ -387,20 +390,7 @@ export type JTCrtConfig = {
     | "Scandoubler RGBHV (SCANLINES 75%)"
     | "Disable Analog Video"
   snac:
-    | "None"
-    | "DB15 Normal"
-    | "NES"
-    | "SNES"
-    | "PCE 2BTN/6BTN"
-    | "PCE Multitap"
-}
-
-export type PatreonKeyInfo = {
-  id: string
-  name: string
-  url: string
-  logo: string
-  link: string
+    "None" | "DB15 Normal" | "NES" | "SNES" | "PCE 2BTN/6BTN" | "PCE Multitap"
 }
 
 export type MROMInfo = {
@@ -410,4 +400,13 @@ export type MROMInfo = {
   crc32: string
   dumpedSave?: string
   pocketSave?: string
+}
+
+export type PocketPluginInfo = {
+  id: string
+  version: string
+  name: string
+  github_url: string
+  logo_url?: string
+  description?: string
 }

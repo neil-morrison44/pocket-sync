@@ -1,0 +1,194 @@
+import { CoreInfoJSON, DataJSON } from "../types"
+import { renderBinImage } from "../utils/renderBinImage"
+import { getVersion } from "@tauri-apps/api/app"
+import {
+  invokeFileExists,
+  invokeFindCleanableFiles,
+  invokeFolderSize,
+  invokeListFolders,
+  invokeReadBinaryFile,
+  invokeWalkDirListFiles,
+} from "../utils/invokes"
+import { AUTHOUR_IMAGE } from "../values"
+import { readJSONFile } from "../utils/readJSONFile"
+import { path } from "@tauri-apps/api"
+import { fsWatchAtomFamily } from "./fileSystem/atoms"
+import { getCurrentWindow, Window } from "@tauri-apps/api/window"
+import { Atom, atom } from "jotai"
+import { atomFamily, atomWithRefresh } from "jotai/utils"
+import { atomFamilyDeepEqual } from "../utils/jotai"
+import { appCacheDir } from "@tauri-apps/api/path"
+import prettyBytes from "pretty-bytes"
+import { pocketPathAtom } from "./atoms"
+
+export const DataJSONSelectorFamily = atomFamily<
+  string,
+  Atom<Promise<DataJSON>>
+>((coreName) =>
+  atom(async (get) => {
+    const path = `Cores/${coreName}/data.json`
+    get(fsWatchAtomFamily(path))
+    return readJSONFile<DataJSON>(path)
+  })
+)
+
+export const coresListSelector = atom<Promise<string[]>>(async (get) => {
+  get(fsWatchAtomFamily("Cores"))
+  return await invokeListFolders("Cores")
+})
+
+export const CoreInfoSelectorFamily = atomFamily<
+  string,
+  Atom<Promise<CoreInfoJSON>>
+>((coreName: string) =>
+  atom(async (get) => {
+    const path = `Cores/${coreName}/core.json`
+    get(fsWatchAtomFamily(path))
+    return readJSONFile<CoreInfoJSON>(path)
+  })
+)
+
+export const CoreMainPlatformIdSelectorFamily = atomFamily<
+  string,
+  Atom<Promise<string>>
+>((coreName: string) =>
+  atom(async (get) => {
+    const { core } = await get(CoreInfoSelectorFamily(coreName))
+    // Hopefully 0 is the one that exists
+    return core.metadata.platform_ids[0]
+  })
+)
+
+export const CoreAllPlatformIdsSelectorFamily = atomFamily<
+  string,
+  Atom<Promise<string[]>>
+>((coreName: string) =>
+  atom(async (get) => {
+    const { core } = await get(CoreInfoSelectorFamily(coreName))
+    return core.metadata.platform_ids
+  })
+)
+
+export const CoreAuthorImageSelectorFamily = atomFamily<
+  string,
+  Atom<Promise<string>>
+>((coreName: string) =>
+  atom(async (get) => {
+    const path = `Cores/${coreName}/icon.bin`
+    get(fsWatchAtomFamily(path))
+    const width = AUTHOUR_IMAGE.WIDTH
+    const height = AUTHOUR_IMAGE.HEIGHT
+
+    const exists = await invokeFileExists(path)
+
+    if (!exists) {
+      // https://www.analogue.co/developer/docs/platform-metadata#platform-image
+      // A platform _may_ have a graphic associated with it.
+
+      const emptyBuffer = new Uint8Array(width * height * 2)
+      return renderBinImage(emptyBuffer, width, height, true)
+    }
+
+    const response = await invokeReadBinaryFile(path)
+    return await new Promise<string>((resolve) => {
+      // @ts-ignore not supported in safari
+      if (window.requestIdleCallback) {
+        requestIdleCallback(
+          () => {
+            resolve(renderBinImage(response, 36, 36, true))
+          },
+          { timeout: 1000 }
+        )
+      } else {
+        resolve(renderBinImage(response, 36, 36, true))
+      }
+    })
+  })
+)
+
+export const AppVersionSelector = atom<Promise<string>>(
+  async () => await getVersion()
+)
+
+export const WalkDirSelectorFamily = atomFamilyDeepEqual<
+  { path: string; extensions?: string[]; offPocket?: boolean },
+  Atom<Promise<string[]>>
+>(({ path, extensions = [], offPocket = false }) =>
+  atom(async (get) => {
+    get(fsWatchAtomFamily(path))
+    const files = await invokeWalkDirListFiles(path, extensions, offPocket)
+    return files
+  })
+)
+
+export const ImageBinSrcSelectorFamily = atomFamilyDeepEqual<
+  { path: string; width: number; height: number },
+  Atom<Promise<string>>
+>(({ path, width, height }) =>
+  atom(async (get, { signal }) => {
+    get(fsWatchAtomFamily(path))
+    const exists = await invokeFileExists(path)
+    signal.throwIfAborted()
+
+    if (!exists) {
+      // https://www.analogue.co/developer/docs/platform-metadata#platform-image
+      // A platform _may_ have a graphic associated with it.
+
+      const emptyBuffer = new Uint8Array(width * height * 2)
+      return renderBinImage(emptyBuffer, width, height, true)
+    }
+
+    const response = await invokeReadBinaryFile(path)
+    signal.throwIfAborted()
+
+    return await new Promise<string>((resolve) => {
+      // @ts-ignore not supported in safari
+      if (window.requestIdleCallback) {
+        requestIdleCallback(
+          () => {
+            signal.throwIfAborted()
+            resolve(renderBinImage(response, width, height, true))
+          },
+          { timeout: 1000 }
+        )
+      } else {
+        resolve(renderBinImage(response, width, height, true))
+      }
+    })
+  })
+)
+
+export const CleanableFilesSelectorFamily = atomFamily<
+  string,
+  Atom<Promise<string[]>>
+>((path) =>
+  atom(async (get) => {
+    get(fsWatchAtomFamily(path))
+    return await invokeFindCleanableFiles(path)
+  })
+)
+
+export const homeDirSelector = atom<Promise<string>>(async () => path.homeDir())
+
+export const mainWindowSelector = atom<Promise<Window>>(
+  async () => await getCurrentWindow()
+)
+
+export const cacheDirSizeSelector = atomWithRefresh<Promise<string>>(
+  async () => {
+    const folder = await appCacheDir()
+    const size = await invokeFolderSize(folder)
+    return prettyBytes(size)
+  }
+)
+
+export const FolderSizeSelectorFamily = atomFamily<
+  string,
+  Atom<Promise<string>>
+>((path) =>
+  atom(async (get) => {
+    get(fsWatchAtomFamily(path))
+    const size = await invokeFolderSize(path)
+    return prettyBytes(size)
+  })
+)

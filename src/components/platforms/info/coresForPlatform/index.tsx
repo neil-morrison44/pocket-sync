@@ -1,4 +1,4 @@
-import { CoresForPlatformSelectorFamily } from "../../../../recoil/platforms/selectors"
+import { CoresForPlatformSelectorFamily } from "../../../../jotai/platforms/selectors"
 import { PlatformId } from "../../../../types"
 import { CoreTag } from "../../../shared/coreTag"
 import { useAtomValue } from "jotai"

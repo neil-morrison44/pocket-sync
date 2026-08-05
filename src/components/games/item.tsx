@@ -1,15 +1,16 @@
-import { useCallback, useMemo } from "react"
-import { pocketPathAtom } from "../../recoil/atoms"
+import { Suspense, useCallback, useMemo } from "react"
+import { pocketPathAtom } from "../../jotai/atoms"
 import {
   CoreInfoSelectorFamily,
   DataJSONSelectorFamily,
-} from "../../recoil/selectors"
+  FolderSizeSelectorFamily,
+} from "../../jotai/selectors"
 import { decodeDataParams } from "../../utils/decodeDataParams"
 import { invokeCreateFolderIfMissing } from "../../utils/invokes"
 import { PlatformImage } from "../cores/platformImage"
 import { GameCount } from "./gameCount"
 import { SearchContextSelfHidingConsumer } from "../search/context"
-import { PlatformInfoSelectorFamily } from "../../recoil/platforms/selectors"
+import { PlatformInfoSelectorFamily } from "../../jotai/platforms/selectors"
 import { DataSlotJSON } from "../../types"
 import { useAtomValue } from "jotai"
 import { openFolder } from "../../utils/openFolder"
@@ -38,13 +39,18 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
   const platformId = core.metadata.platform_ids[decodedParams.platformIndex]
   const { platform } = useAtomValue(PlatformInfoSelectorFamily(platformId))
 
+  const platformPath = useMemo(() => {
+    if (!romsSlot) return ""
+    return `${pocketPath}/Assets/${platformId}`
+  }, [romsSlot, pocketPath, platformId])
+
   const path = useMemo(() => {
     if (!romsSlot) return ""
     const coreSpecific = decodedParams?.coreSpecific
     return `${pocketPath}/Assets/${platformId}/${
       coreSpecific ? coreName : "common"
     }`
-  }, [romsSlot, decodedParams?.coreSpecific, pocketPath, platformId, coreName])
+  }, [romsSlot, decodedParams?.coreSpecific, platformPath, coreName])
 
   const onOpenFolder = useCallback(async (path: string) => {
     await invokeCreateFolderIfMissing(path)
@@ -73,15 +79,24 @@ export const CoreFolderItem = ({ coreName }: { coreName: string }) => {
         />
         <div className="cores__info-blurb">
           <b>{coreName}</b>
-          <GameCount
-            platformId={platformId}
-            coreName={coreName}
-            extensions={romsSlot?.extensions || []}
-          />
-
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <GameCount
+              platformId={platformId}
+              coreName={coreName}
+              extensions={romsSlot?.extensions || []}
+            />
+            <Suspense>
+              <FolderSize path={platformPath} />
+            </Suspense>
+          </div>
           {(romsSlot?.extensions || []).map((e) => `.${e}`).join(", ")}
         </div>
       </div>
     </SearchContextSelfHidingConsumer>
   )
+}
+
+const FolderSize = ({ path }: { path: string }) => {
+  const size = useAtomValue(FolderSizeSelectorFamily(path))
+  return <span>{size}</span>
 }

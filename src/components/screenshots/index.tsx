@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from "react"
-import { screenshotsListSelector } from "../../recoil/screenshots/selectors"
+import { screenshotsListSelector } from "../../jotai/screenshots/selectors"
 import { Screenshot } from "./item"
 
 import "./index.css"
@@ -16,7 +16,7 @@ import { Grid } from "../grid"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
 import { Controls } from "../controls"
 import { SearchContextProvider } from "../search/context"
-import { selectedSubviewSelector } from "../../recoil/view/selectors"
+import { selectedSubviewSelector } from "../../jotai/view/selectors"
 import { useMultiExport } from "./hooks/useMultiExport"
 import { invokeDeleteFiles } from "../../utils/invokes"
 import { useTranslation } from "react-i18next"

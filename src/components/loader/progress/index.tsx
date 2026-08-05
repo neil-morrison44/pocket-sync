@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import "./index.css"
 import { ProgressEvent } from "../../../types"
 
-import { pocketPathAtom } from "../../../recoil/atoms"
+import { pocketPathAtom } from "../../../jotai/atoms"
 import { useProgress } from "../../../hooks/useProgress"
 import { useAtomValue } from "jotai"
 

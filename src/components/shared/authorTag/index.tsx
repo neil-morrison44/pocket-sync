@@ -1,7 +1,7 @@
 import {
   CoreInfoSelectorFamily,
   CoreAuthorImageSelectorFamily,
-} from "../../../recoil/selectors"
+} from "../../../jotai/selectors"
 
 import "./index.css"
 import { useAtomValue } from "jotai"

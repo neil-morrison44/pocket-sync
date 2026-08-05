@@ -3,7 +3,7 @@ import { useMemo } from "react"
 import {
   DataJSONSelectorFamily,
   WalkDirSelectorFamily,
-} from "../../recoil/selectors"
+} from "../../jotai/selectors"
 import { useTranslation } from "react-i18next"
 import { useAtomValue } from "jotai"
 
@@ -35,5 +35,5 @@ export const GameCount = ({
     return nonNamedFiles.length
   }, [files, data])
 
-  return <div>{t("item.game_count", { count })}</div>
+  return <span>{t("item.game_count", { count })}</span>
 }

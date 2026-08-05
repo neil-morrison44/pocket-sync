@@ -1,5 +1,5 @@
-import { CoreInfoSelectorFamily } from "../../../recoil/selectors"
-import { currentViewAtom } from "../../../recoil/view/atoms"
+import { CoreInfoSelectorFamily } from "../../../jotai/selectors"
+import { currentViewAtom } from "../../../jotai/view/atoms"
 import { AuthorTag } from "../authorTag"
 
 import "./index.css"

@@ -1,4 +1,4 @@
-import { currentViewAtom } from "../../recoil/view/atoms"
+import { currentViewAtom } from "../../jotai/view/atoms"
 import { useAtomValue } from "jotai"
 
 export const ViewDebug = () => {

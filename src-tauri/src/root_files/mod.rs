@@ -3,10 +3,11 @@ use std::path::PathBuf;
 use anyhow::Result;
 use log::error;
 use serde::{Deserialize, Serialize};
+use tokio::sync::RwLock;
 
 use crate::{
     files_from_zip::{self, crc32_file_in_zip, md5_file_in_zip},
-    hashes::{crc32_for_file, md5_for_file},
+    hashes::{HashCache, crc32_for_file, md5_for_file},
 };
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -28,6 +29,7 @@ pub enum RootFile {
 pub async fn check_root_files(
     pocket_path: &PathBuf,
     extensions: Option<Vec<&str>>,
+    hash_cache: &RwLock<HashCache>,
 ) -> Result<Vec<RootFile>> {
     let mut entries = tokio::fs::read_dir(&pocket_path.as_path()).await?;
     let mut results: Vec<RootFile> = Vec::new();
@@ -84,10 +86,10 @@ pub async fn check_root_files(
 
                         let file_name = String::from(file_name);
                         let file_path = &pocket_path.join(&file_name);
-                        let md5 = md5_for_file(&file_path).await?;
+                        let md5 = md5_for_file(&file_path, Some(hash_cache)).await?;
 
                         results.push(RootFile::UnZipped {
-                            crc32: crc32_for_file(&file_path).await?,
+                            crc32: crc32_for_file(&file_path, Some(hash_cache)).await?,
                             file_name,
                             md5,
                         });

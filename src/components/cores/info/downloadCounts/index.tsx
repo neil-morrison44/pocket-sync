@@ -1,5 +1,5 @@
 import { useInventoryItem } from "../../../../hooks/useInventoryItem"
-import { GithubReleasesSelectorFamily } from "../../../../recoil/github/selectors"
+import { GithubReleasesSelectorFamily } from "../../../../jotai/github/selectors"
 import { GithubRelease, InventoryItem } from "../../../../types"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"

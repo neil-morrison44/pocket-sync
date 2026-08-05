@@ -3,14 +3,14 @@ import {
   DownloadablePaletteColoursSelectorFamily,
   downloadablePalettesSelector,
   palettesListSelector,
-} from "../../../recoil/palettes/selectors"
+} from "../../../jotai/palettes/selectors"
 import { PreviewCanvasInner } from "../previewCanvas"
 import { Grid } from "../../grid"
 
 import "./index.css"
 import { Suspense, useMemo } from "react"
 import { Details } from "../../shared/details"
-import { paletteRepoAtom } from "../../../recoil/palettes/atoms"
+import { paletteRepoAtom } from "../../../jotai/palettes/atoms"
 import { useSavePalette } from "../hooks/useSavePalette"
 import { Loader } from "../../loader"
 import { Link } from "../../link"

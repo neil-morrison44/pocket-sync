@@ -1,7 +1,7 @@
 import { Suspense, useMemo } from "react"
 
 import { useInstallRequiredFiles } from "../../../../hooks/useInstallRequiredFiles"
-import { skipAlternateAssetsSelector } from "../../../../recoil/config/selectors"
+import { skipAlternateAssetsSelector } from "../../../../jotai/config/selectors"
 import { Modal } from "../../../modal"
 import { Progress } from "../../../progress"
 import { Tip } from "../../../tip"
@@ -11,7 +11,7 @@ import "./index.css"
 import { RequiredFileRow } from "./row"
 import { useUpdateConfig } from "../../../settings/hooks/useUpdateConfig"
 import { useHasArchiveLink } from "../../../../hooks/useHasArchiveLink"
-import { RequiredFileInfoSelectorFamily } from "../../../../recoil/requiredFiles/selectors"
+import { RequiredFileInfoSelectorFamily } from "../../../../jotai/requiredFiles/selectors"
 import { DataSlotFile } from "../../../../types"
 import { Loader } from "../../../loader"
 import { JobsStopButton } from "../../../jobs/stop"
@@ -37,8 +37,14 @@ export const LoadRequiredFiles = ({
   onClose,
 }: LoadRequiredFilesProps) => {
   const { t } = useTranslation("core_info_required_files")
-  const { installRequiredFiles, percent, inProgress, message, remainingTime } =
-    useInstallRequiredFiles()
+  const {
+    installRequiredFiles,
+    percent,
+    inProgress,
+    message,
+    remainingTime,
+    speed,
+  } = useInstallRequiredFiles()
 
   const skipAlternateAssets = useAtomValue(skipAlternateAssetsSelector)
   const updateConfig = useUpdateConfig()
@@ -54,6 +60,7 @@ export const LoadRequiredFiles = ({
             percent={percent}
             message={message?.param}
             remainingTime={remainingTime}
+            speed={speed}
           />
           <JobsStopButton jobId="install_archive_files" />
         </>
@@ -144,7 +151,20 @@ const RequiredFilesList = ({ coreName }: RequiredFilesListProps) => {
   const requiredFiles = useAtomValue(RequiredFileInfoSelectorFamily(coreName))
   const sortedRequiredFiles = useMemo(() => {
     return [...requiredFiles].sort((a, b) => {
-      if (a.status === b.status) return a.name.localeCompare(b.name)
+      if (a.status.type === b.status.type) {
+        if (
+          (a.status.type === "MissingButOnArchive" ||
+            a.status.type === "NeedsUpdateFromArchive") &&
+          a.status.size &&
+          // @ts-expect-error already know the statuses are the sam
+          b.status.size
+        ) {
+          // @ts-expect-error already know the statuses are the same
+          return parseInt(b.status.size) - parseInt(a.status.size)
+        }
+
+        return a.name.localeCompare(b.name)
+      }
 
       return (
         STATUS_SORT_ORDER.indexOf(a.status.type) -

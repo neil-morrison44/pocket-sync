@@ -1,4 +1,4 @@
-import { FirmwareDetailsSelectorFamily } from "../../../recoil/firmware/selectors"
+import { FirmwareDetailsSelectorFamily } from "../../../jotai/firmware/selectors"
 import { useTranslation } from "react-i18next"
 import parse, { Element, domToReact } from "html-react-parser"
 

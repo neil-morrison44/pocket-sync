@@ -1,6 +1,6 @@
 import { useYScrollAsXScroll } from "../../hooks/useYScrollAsXScroll"
-import { newsFeedAtom } from "../../recoil/newsFeed/atoms"
-import { currentViewAtom } from "../../recoil/view/atoms"
+import { newsFeedAtom } from "../../jotai/newsFeed/atoms"
+import { currentViewAtom } from "../../jotai/view/atoms"
 import { Link } from "../link"
 import { useTranslation, Trans } from "react-i18next"
 

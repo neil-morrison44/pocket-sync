@@ -10,7 +10,7 @@ import {
 import {
   AllBackupZipsFilesSelectorFamily,
   pocketSavesFilesListSelector,
-} from "../../../recoil/saves/selectors"
+} from "../../../jotai/saves/selectors"
 import { PlatformId, SaveZipFile } from "../../../types"
 import { invokeRestoreZip } from "../../../utils/invokes"
 import { Controls } from "../../controls"

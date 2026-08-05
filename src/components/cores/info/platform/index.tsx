@@ -2,8 +2,8 @@ import { useMemo } from "react"
 import {
   PlatformExistsSelectorFamily,
   PlatformInfoSelectorFamily,
-} from "../../../../recoil/platforms/selectors"
-import { currentViewAtom } from "../../../../recoil/view/atoms"
+} from "../../../../jotai/platforms/selectors"
+import { currentViewAtom } from "../../../../jotai/view/atoms"
 import { PlatformId } from "../../../../types"
 import { Link } from "../../../link"
 import { useTranslation } from "react-i18next"

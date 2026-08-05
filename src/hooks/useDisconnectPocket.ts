@@ -1,7 +1,7 @@
 import { useCallback } from "react"
-import { pocketPathAtom } from "../recoil/atoms"
+import { pocketPathAtom } from "../jotai/atoms"
 import { useSetAtom } from "jotai"
-import { configChangesAtom } from "../recoil/config/selectors"
+import { configChangesAtom } from "../jotai/config/selectors"
 
 export const useDisconnectPocket = () => {
   const setPocketPath = useSetAtom(pocketPathAtom)

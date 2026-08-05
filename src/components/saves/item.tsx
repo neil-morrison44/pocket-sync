@@ -1,7 +1,7 @@
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { useCallback } from "react"
 
-import { BackupZipsSelectorFamily } from "../../recoil/saves/selectors"
+import { BackupZipsSelectorFamily } from "../../jotai/saves/selectors"
 import { SaveConfig } from "../../types"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { useTranslation } from "react-i18next"

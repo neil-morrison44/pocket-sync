@@ -1,6 +1,6 @@
 import { open } from "@tauri-apps/plugin-dialog"
 
-import { PhotoExportImageSelectorFamily } from "../../../../recoil/saveStates/selectors"
+import { PhotoExportImageSelectorFamily } from "../../../../jotai/saveStates/selectors"
 import { invokeSaveFile } from "../../../../utils/invokes"
 import { open as openFolder } from "@tauri-apps/plugin-shell"
 import { useAtomCallback } from "jotai/utils"

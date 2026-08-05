@@ -10,7 +10,7 @@ import { filterKnownBadFiles } from "../../utils/filterFiles"
 import { FileTreeNode, InstallZipEventPayload } from "./types"
 import { message } from "@tauri-apps/plugin-dialog"
 
-import { keepPlatformDataAtom } from "../../recoil/settings/atoms"
+import { keepPlatformDataAtom } from "../../jotai/settings/atoms"
 import { useAtomValue } from "jotai"
 
 export const useListenForZipInstall = () => {

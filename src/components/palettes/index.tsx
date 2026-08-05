@@ -1,7 +1,7 @@
 import {
   PaletteCodeSelectorFamily,
   palettesListSelector,
-} from "../../recoil/palettes/selectors"
+} from "../../jotai/palettes/selectors"
 import { Suspense, useCallback, useMemo, useState } from "react"
 
 import "./index.css"
@@ -16,7 +16,7 @@ import {
   invokeDeleteFiles,
   invokeSaveFile,
 } from "../../utils/invokes"
-import { pocketPathAtom } from "../../recoil/atoms"
+import { pocketPathAtom } from "../../jotai/atoms"
 import { PaletteName } from "./name"
 import { useSavePalette } from "./hooks/useSavePalette"
 import { Palette, rgb } from "../../types"

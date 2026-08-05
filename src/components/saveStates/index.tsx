@@ -1,6 +1,6 @@
 import { Fragment, Suspense, useCallback, useMemo, useState } from "react"
 
-import { AllSaveStatesSelector } from "../../recoil/saveStates/selectors"
+import { AllSaveStatesSelector } from "../../jotai/saveStates/selectors"
 import { SaveStateItem } from "./item"
 import { Loader } from "../loader"
 

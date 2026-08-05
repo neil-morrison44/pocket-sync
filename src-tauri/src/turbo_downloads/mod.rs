@@ -2,9 +2,22 @@ use anyhow::{Error, Result};
 use bytes::Bytes;
 use rayon::prelude::*;
 use reqwest::Url;
-use std::cmp::{max, min};
+use std::{
+    cmp::{max, min},
+    sync::{
+        Arc,
+        atomic::{AtomicBool, Ordering},
+    },
+};
+use tokio::sync::mpsc;
 
-pub async fn turbo_download_file(url: &str) -> Result<Bytes> {
+use crate::commands::archive::ProgressUpdate;
+
+pub async fn turbo_download_file(
+    url: &str,
+    progress_tx: mpsc::UnboundedSender<ProgressUpdate>,
+    has_been_cancelled: Arc<AtomicBool>,
+) -> Result<Bytes> {
     let url = Url::parse(url)?;
     let client = reqwest::Client::new();
     let request = client.head(url.clone()).build()?;
@@ -38,15 +51,31 @@ pub async fn turbo_download_file(url: &str) -> Result<Bytes> {
         let end = min(i + chunk_size, content_length) - 1;
         ranges.push((start, end));
     }
-    let file_bytes = tokio::task::spawn_blocking(move || {
-        let file_bytes: Vec<_> = ranges
-            .par_iter()
-            .map(|(start, end)| download_retry_on_timeout(url.clone(), *start, *end).unwrap())
-            .collect();
 
-        file_bytes.concat()
+    let file_bytes = tokio::task::spawn_blocking(move || {
+        // 2. Map over the iter returning a Result, which allows Rayon to short-circuit
+        let results: Result<Vec<_>, _> = ranges
+            .par_iter()
+            .map(|(start, end)| {
+                if has_been_cancelled.load(Ordering::Relaxed) {
+                    return Err(Error::msg("Download cancelled"));
+                }
+
+                let bytes = download_retry_on_timeout(url.clone(), *start, *end)
+                    .map_err(|_| Error::msg("Chunk download failed"))?;
+
+                if has_been_cancelled.load(Ordering::Relaxed) {
+                    return Err(Error::msg("Download cancelled"));
+                }
+
+                let _ = progress_tx.send(ProgressUpdate::AddBytes(bytes.len()));
+                Ok(bytes)
+            })
+            .collect();
+        results.map(|chunks| chunks.concat())
     })
-    .await?;
+    .await??;
+
     Ok(file_bytes.into())
 }
 
