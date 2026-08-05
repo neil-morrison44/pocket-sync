@@ -21,11 +21,14 @@
   "mrom": {
     "close_button": "Đóng",
     "move_dumps": "Di chuyển ROM",
+    "title": "MROM",
     "headers": {
       "platform": "Nền tảng",
       "library_image": "Hình ảnh thư viện",
       "name": "Tên",
-      "destination": "Điểm đến"
+      "destination": "Điểm đến",
+      "dumped_save": "Save đã lưu",
+      "pocket_save": "Pocket Save"
     }
   },
   "update_all": {
@@ -51,7 +54,8 @@
       "install": "Cài đặt",
       "required_files": "Tập tin được yêu cầu",
       "uninstall": "Gỡ cài đặt",
-      "update": "Cập nhật"
+      "update": "Cập nhật",
+      "hide_core": "Hide Core"
     },
     "inputs": "Nhập đầu vào",
     "modal": {
@@ -80,6 +84,7 @@
     },
     "required_files": "Tập tin được yêu cầu",
     "required_files_count": "{count} / {total} tập tin",
+    "hide_core_confirm": "Thao tác này sẽ ẩn lõi xử lý khỏi danh sách; bạn có thể quản lý các lõi xử lý bị ẩn trong phần Cài đặt.",
     "settings": "Cài đặt",
     "sponsor": "Tài trợ",
     "download_count": "Tải xuống",
@@ -225,6 +230,7 @@
   "games": {
     "controls": {
       "category": "Phân loại",
+      "mrom": "MROM",
       "clean_files": "Xóa tập tin",
       "instance_json": "Instance JSON",
       "refresh": "Làm mới",
@@ -334,7 +340,8 @@
       "data_packs": "Gói dữ liệu",
       "image_packs": "Gói hình ảnh"
     },
-    "cores": "Cores"
+    "cores": "Cores",
+    "edit": "Chỉnh sửa"
   },
   "platforms": {
     "cancel": "Hủy bỏ",
@@ -434,6 +441,7 @@
   },
   "settings": {
     "3d_pocket": {
+      "title": "Màu Pocket:",
       "colours": {
         "black": "Đen",
         "white": "Trắng",
@@ -466,6 +474,7 @@
       },
       "classic_label": "Classic",
       "transparent_label": "Trong suốt",
+      "aluminium_label": "Nhôm",
       "body_label": "Body",
       "buttons_label": "Nút bấm",
       "match_body": "Khớp với Body",
