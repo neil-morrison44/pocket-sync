@@ -41,7 +41,6 @@
   text-align: left;
   padding: 0 20px;
   box-sizing: border-box;
-  margin-left: -10px;
   position: fixed;
   bottom: 0;
   left: var(--sidebar-width);
