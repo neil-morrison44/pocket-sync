@@ -142,4 +142,5 @@
   position: fixed;
   bottom: 0;
   padding: 12px;
+  left: var(--sidebar-width);
 }
