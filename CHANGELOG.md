@@ -1,4 +1,18 @@
 # Changelog
+<a id="v6.3.2"></a>
+# [v6.3.2 - ignores OpenFPGA library cores without releases & fixes opening game folders on Windows](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.3.2) - 2026-08-13
+
+## What's Changed
+* Update Vietnamese translation by [@anh-tuan](https://github.com/anh-tuan) in [#473](https://github.com/neil-morrison44/pocket-sync/pull/473)
+* Fixes a couple of issues with windows by [@neil-morrison44](https://github.com/neil-morrison44) in [#476](https://github.com/neil-morrison44/pocket-sync/pull/476)
+* Ignores OpenFPGA library cores without attached releases by [@neil-morrison44](https://github.com/neil-morrison44) in [#477](https://github.com/neil-morrison44/pocket-sync/pull/477)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.1...v6.3.2
+
+[Changes][v6.3.2]
+
+
 <a id="v6.3.1"></a>
 # [v6.3.1 - Fix platform limit calculation (too low)](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.3.1) - 2026-07-18
 
@@ -1946,6 +1960,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v6.3.2]: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.1...v6.3.2
 [v6.3.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.0...v6.3.1
 [v6.3.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.4...v6.3.0
 [v6.2.4]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.3...v6.2.4
