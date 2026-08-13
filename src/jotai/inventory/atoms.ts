@@ -19,10 +19,14 @@ const getInventoryInfo = async () => {
     fetch(INVENTORY_PLATFORMS_API + `?cache_bust=${Date.now()}`),
   ])
 
-  const [cores, platforms] = (await Promise.all([
+  let [cores, platforms] = (await Promise.all([
     coresResponse.json(),
     platformsResponse.json(),
   ])) as [InventoryJSON, InventoryPlatformsJSON]
+
+  // the Library will, occasionally, return a core with 0 releases,
+  // since nothing can be done with these just ignore them completely
+  cores.data = cores.data.filter((core) => core.releases.length > 0)
 
   return { cores, platforms }
 }
@@ -34,9 +38,12 @@ const coreInventoryAtomBase = atomWithRefresh(
 export const coreInventoryAtom = withAtomEffect(
   coreInventoryAtomBase,
   (_get, set) => {
-    const interval = setInterval(() => {
-      startTransition(() => set(coreInventoryAtomBase))
-    }, INTERVAL_MINS * 60 * 1000)
+    const interval = setInterval(
+      () => {
+        startTransition(() => set(coreInventoryAtomBase))
+      },
+      INTERVAL_MINS * 60 * 1000
+    )
     return () => clearInterval(interval)
   }
 )
