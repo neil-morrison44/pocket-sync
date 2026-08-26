@@ -23,11 +23,11 @@ jobs:
           script: |
             const { buildPlatformZip } = require(".github/workflows/scripts/build_platforms_zip.cjs")
             await buildPlatformZip({ github })
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: platform-zip
           path: ./platforms.zip
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: image-packs
           path: ./image_packs.json
@@ -52,7 +52,7 @@ jobs:
             fs.writeFileSync('sponsors.json', JSON.stringify({ count }));
             console.log(`Saved sponsor count: ${count}`);
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: sponsors-data
           path: ./sponsors.json
