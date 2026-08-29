@@ -249,6 +249,7 @@ export type PocketSyncConfig = {
   hidden_cores?: string[]
   gb_palette_convert?: boolean
   plugins?: string[]
+  hide_ai_score?: boolean
 }
 
 export type SaveConfig = {
@@ -410,3 +411,21 @@ export type PocketPluginInfo = {
   logo_url?: string
   description?: string
 }
+
+export type AICheckJSON = Partial<
+  Record<
+    string,
+    {
+      overall_score: number
+      last_run: number
+      results: Record<
+        string,
+        {
+          name: string
+          score: "GuaranteeHuman" | { SuspectedAi: number }
+          output: string[]
+        }[]
+      >
+    }
+  >
+>

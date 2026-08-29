@@ -49,6 +49,9 @@ import { JTAnalogizerSettings } from "./jtanalogizer"
 import { InstallOlderVersion } from "./installOlderVersion"
 import { useAtomValue, useSetAtom } from "jotai"
 import { useSmoothedAtomValue } from "../../../utils/jotai"
+import { aiCheckAtom } from "../../../jotai/cores/atoms"
+import { AIReport } from "./aiReport"
+import { PocketSyncConfigSelector } from "../../../jotai/config/selectors"
 
 type CoreInfoProps = {
   coreName: string
@@ -59,6 +62,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   const coreInfo = useSmoothedAtomValue(CoreInfoSelectorFamily(coreName))
   const uninstall = useUninstallCore()
   const inventoryItem = useInventoryItem(coreName)
+  const config = useAtomValue(PocketSyncConfigSelector)
 
   const [requiredFilesOpen, setRequiredFilesOpen] = useState(false)
   const [inputsOpen, setInputsOpen] = useState(false)
@@ -76,6 +80,14 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   )
 
   const funding = inventoryItem?.repository.funding
+
+  const aiCheck = useAtomValue(aiCheckAtom)
+  const coreAIScore = useMemo(
+    () => aiCheck[coreName]?.overall_score ?? 0,
+    [coreName, aiCheck]
+  )
+
+  const showAIReport = config.hide_ai_score !== true && coreAIScore > 0
 
   return (
     <div className="core-info">
@@ -303,6 +315,18 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
 
         {coreInfo.core.metadata.platform_ids.includes("jtpatreon") && (
           <JTAnalogizerSettings coreName={coreName} />
+        )}
+
+        {showAIReport && (
+          <div className="core-info__info-row">
+            <Details
+              title={t("ai_ness_score", {
+                score: coreAIScore,
+              })}
+            >
+              <AIReport coreName={coreName} />
+            </Details>
+          </div>
         )}
 
         <div className="core-info__info-row">

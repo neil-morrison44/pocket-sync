@@ -23,6 +23,9 @@ import { confirm } from "@tauri-apps/plugin-dialog"
 import { InstallOlderVersion } from "./installOlderVersion"
 import { useAtomValue } from "jotai"
 import { useAtomCallback } from "jotai/utils"
+import { aiCheckAtom } from "../../../jotai/cores/atoms"
+import { Details } from "../../shared/details"
+import { AIReport } from "./aiReport"
 
 type NotInstalledCoreInfoProps = {
   onBack: () => void
@@ -38,6 +41,7 @@ export const NotInstalledCoreInfo = ({
   withoutTitle = false,
 }: NotInstalledCoreInfoProps) => {
   const inventoryItem = useInventoryItem(coreName)
+  const config = useAtomValue(PocketSyncConfigSelector)
   const { t } = useTranslation("core_info")
 
   const url = useMemo(() => {
@@ -59,6 +63,14 @@ export const NotInstalledCoreInfo = ({
     PlatformInventoryImageSelectorFamily(platform_id)
   )
   const { installCore } = useInstallCore()
+
+  const aiCheck = useAtomValue(aiCheckAtom)
+  const coreAIScore = useMemo(
+    () => aiCheck[coreName]?.overall_score ?? 0,
+    [coreName, aiCheck]
+  )
+
+  const showAIReport = config.hide_ai_score !== true && coreAIScore > 0
 
   return (
     <div className="core-info">
@@ -168,6 +180,17 @@ export const NotInstalledCoreInfo = ({
                 {date_release}
               </div>
             </div>
+            {showAIReport && (
+              <div className="core-info__info-row">
+                <Details
+                  title={t("ai_ness_score", {
+                    score: coreAIScore,
+                  })}
+                >
+                  <AIReport coreName={coreName} />
+                </Details>
+              </div>
+            )}
             {inventoryItem && (
               <div className="core-info__info-row">
                 <InstallOlderVersion
