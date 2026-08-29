@@ -22,6 +22,8 @@ import { PlatformImage } from "./platformImage"
 import { AnalogizerIcon } from "./icons/AnalogizerIcon"
 import { PocketSyncConfigSelector } from "../../jotai/config/selectors"
 import { useAtomValue } from "jotai"
+import { aiCheckAtom } from "../../jotai/cores/atoms"
+import { useMemo } from "react"
 
 type CoreItemProps = {
   coreName: string
@@ -37,6 +39,15 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
   const { platform } = useAtomValue(PlatformInfoSelectorFamily(mainPlatformId))
   const canUpdate = useUpdateAvailable(coreName)
   const inventoryItem = useInventoryItem(coreName)
+  const config = useAtomValue(PocketSyncConfigSelector)
+
+  const aiCheck = useAtomValue(aiCheckAtom)
+  const coreAIScore = useMemo(
+    () => aiCheck[coreName]?.overall_score ?? 0,
+    [coreName, aiCheck]
+  )
+
+  const showAIScore = config.hide_ai_score !== true
 
   return (
     <SearchContextSelfHidingConsumer
@@ -83,6 +94,14 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
             <AnalogizerIcon />
           </div>
         )}
+        {showAIScore && coreAIScore > 0 && (
+          <div
+            className="cores__item-ai-score"
+            style={{ opacity: coreAIScore }}
+          >
+            {"AI"}
+          </div>
+        )}
       </div>
     </SearchContextSelfHidingConsumer>
   )
@@ -112,6 +131,14 @@ export const NotInstalledCoreItem = ({
   const authorImageUrl = `https://openfpga-library.github.io/analogue-pocket/assets/images/authors/${identifier}.png`
   const [author] = identifier.split(".")
 
+  const aiCheck = useAtomValue(aiCheckAtom)
+  const coreAIScore = useMemo(
+    () => aiCheck[identifier]?.overall_score ?? 0,
+    [identifier, aiCheck]
+  )
+
+  const showAIScore = config.hide_ai_score !== true
+
   if (config.hidden_cores && config.hidden_cores.includes(identifier))
     return null
 
@@ -133,6 +160,14 @@ export const NotInstalledCoreItem = ({
         {identifier.endsWith("_Analogizer") && (
           <div className="cores__item-analogizer">
             <AnalogizerIcon />
+          </div>
+        )}
+        {showAIScore && coreAIScore > 0 && (
+          <div
+            className="cores__item-ai-score"
+            style={{ opacity: coreAIScore }}
+          >
+            {"AI"}
           </div>
         )}
         <div className="cores__info-blurb">

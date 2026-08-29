@@ -101,6 +101,10 @@
     "url": "URL",
     "version": "Version",
     "display_modes_title": "Display Modes",
+    "ai_ness_score": "AI-ness score {score, number, percent}",
+    "ai_report": {
+      "info": "AI score is a rough guide only, any issues please raise an issue on <1>the AI report repo</1>"
+    },
     "display_mode_warning": "This display mode requires the core to be updated, are you sure you want to turn it on?",
     "info_txt_title": "Info.txt",
     "previous_version": "Previous versions",
@@ -522,6 +526,11 @@
       "ramble_1": "This setting will skip processing json files under the `_alternatives` folder,\nmeaning you'll just get the \"main\" titles for the cores which sort their JSON files this way.",
       "ramble_2": "<b>Warning:</b> turning this off will mean that installing Required Files takes <b>much</b> longer.",
       "title": "Skip Alternate Assets"
+    },
+    "hide_ai_score": {
+      "title": "Hide AI Score",
+      "ramble": "This will hide any parts of the UI which try to judge & present the amount of AI which has been used in developing a core.",
+      "checkbox": "Hidden"
     },
     "language": {
       "title": "Language",

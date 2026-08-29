@@ -186,6 +186,21 @@ export const Settings = () => {
           </label>
         </div>
 
+        <div className="settings__row">
+          <h3 className="settings__row-title">{t("hide_ai_score.title")}</h3>
+          <div className="settings__ramble">{t("hide_ai_score.ramble")}</div>
+          <label className="settings__checkbox">
+            {t("hide_ai_score.checkbox")}
+            <input
+              type="checkbox"
+              checked={config.hide_ai_score ?? false}
+              onChange={({ target }) =>
+                updateConfig("hide_ai_score", target.checked)
+              }
+            />
+          </label>
+        </div>
+
         <GBPalettesConversion />
 
         <div className="settings__row">
