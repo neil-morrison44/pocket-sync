@@ -29,4 +29,6 @@ export const COLOUR = {
   gbc_grape: "#47327B",
   gbc_berry: "#7F1F39",
   gbc_gold: "#A4A383",
+  supreme_red: "rgb(255, 40, 40)",
+  supreme_gold: "rgb(211, 175, 55)",
 } as Record<PocketColour, string>

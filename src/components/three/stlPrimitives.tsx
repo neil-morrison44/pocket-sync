@@ -19,11 +19,36 @@ import {
   Vector2,
   Vector3,
 } from "three"
+import { Geometry, Base, Subtraction } from "@react-three/csg"
+import { RoundedBoxGeometry } from "@react-three/drei"
 
-export const FrontMeshPrimitive = () => {
+type FrontMeshPrimitiveProps = {
+  hasLogo?: boolean
+}
+
+export const FrontMeshPrimitive = ({
+  hasLogo = false,
+}: FrontMeshPrimitiveProps) => {
   const geom = useLoader(STLLoader, frontSTL)
   assignUVs(geom)
-  return <primitive object={geom} attach="geometry" />
+
+  return (
+    <Geometry computeVertexNormals>
+      <Base geometry={geom} />
+      {hasLogo && (
+        <Subtraction position={[0, -48, 0]} rotation={[0, 0, 0]}>
+          <RoundedBoxGeometry
+            args={[22, 9, 0.5]}
+            radius={1}
+            steps={10}
+            smoothness={4}
+            bevelSegments={4}
+            creaseAngle={0.4}
+          />
+        </Subtraction>
+      )}
+    </Geometry>
+  )
 }
 
 export const BackMeshPrimitive = () => {

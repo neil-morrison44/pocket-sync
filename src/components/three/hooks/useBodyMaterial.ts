@@ -45,6 +45,18 @@ export const useBodyMaterial = (): MeshPhysicalMaterial => {
         material.bumpMap = roughnessMap
         material.bumpScale = 1
       }
+    } else if (bodyColour.startsWith("supreme_")) {
+      material.envMapIntensity = 1
+      material.color = new Color(COLOUR[bodyColour] || "red")
+      material.ior = 1.36
+
+      material.clearcoat = 0.1
+      material.metalness = 1
+      material.roughness = 0.1
+
+      if (perfLevel >= 1) {
+        material.roughnessMap = roughnessMap
+      }
     } else {
       material.envMapIntensity = 0.5
       material.color = new Color(COLOUR[bodyColour] || "red")
