@@ -1,4 +1,17 @@
 # Changelog
+<a id="v6.4.0"></a>
+# [v6.4.0 - AI-ness scores for cores & Supreme colours](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.4.0) - 2026-08-30
+
+## What's Changed
+* Adds display of AI score for each core by [@neil-morrison44](https://github.com/neil-morrison44) in [#479](https://github.com/neil-morrison44/pocket-sync/pull/479)
+* Adds Supreme style colours, with an deboss too by [@neil-morrison44](https://github.com/neil-morrison44) in [#480](https://github.com/neil-morrison44/pocket-sync/pull/480)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.2...v6.4.0
+
+[Changes][v6.4.0]
+
+
 <a id="v6.3.2"></a>
 # [v6.3.2 - ignores OpenFPGA library cores without releases & fixes opening game folders on Windows](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.3.2) - 2026-08-13
 
@@ -1960,6 +1973,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v6.4.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.2...v6.4.0
 [v6.3.2]: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.1...v6.3.2
 [v6.3.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.0...v6.3.1
 [v6.3.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.2.4...v6.3.0
