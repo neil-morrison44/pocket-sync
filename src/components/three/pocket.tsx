@@ -255,7 +255,7 @@ export const Body = ({
         receiveShadow={perfLevel > 0}
         castShadow={perfLevel > 1}
       >
-        <FrontMeshPrimitive />
+        <FrontMeshPrimitive hasLogo={bodyColour.startsWith("supreme_")} />
       </mesh>
       <mesh
         scale={[0.2, 0.2, 0.2]}

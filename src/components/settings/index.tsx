@@ -352,6 +352,12 @@ const ColoursList = () => {
           i18nPrefix="3d_pocket.colours"
         />
       </optgroup>
+      <optgroup label={t("3d_pocket.supreme_label")}>
+        <OptionsList
+          values={["supreme_red", "supreme_gold"]}
+          i18nPrefix="3d_pocket.colours"
+        />
+      </optgroup>
     </>
   )
 }

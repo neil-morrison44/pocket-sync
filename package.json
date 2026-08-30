@@ -1,7 +1,7 @@
 {
   "name": "pocket-sync",
   "private": true,
-  "version": "6.3.2",
+  "version": "6.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,6 +14,7 @@
   "dependencies": {
     "@neil-morrison44/gameboy-emulator": "^1.3.0",
     "@prantlf/jsonlint": "11.7.0",
+    "@react-three/csg": "^4.0.0",
     "@react-three/drei": "^10.7.6",
     "@react-three/fiber": "^9.4.0",
     "@react-three/postprocessing": "^3.0.4",

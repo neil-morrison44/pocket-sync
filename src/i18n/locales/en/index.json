@@ -511,11 +511,14 @@
         "gbc_gold": "Gold",
         "aluminium_noir": "Noir",
         "aluminium_black": "Black",
-        "gbc_kiwi": "Kiwi"
+        "gbc_kiwi": "Kiwi",
+        "supreme_red": "Red",
+        "supreme_gold": "Gold"
       },
       "classic_label": "Classic",
       "transparent_label": "Transparent",
       "aluminium_label": "Aluminium",
+      "supreme_label": "Supreme",
       "body_label": "Body",
       "buttons_label": "Buttons",
       "match_body": "Match Body",
