@@ -21,7 +21,7 @@ pub async fn backup_saves(
 ) -> Result<bool, ()> {
     debug!("Command: backup_saves");
     let pocket_path = state.0.pocket_path.read().await;
-    let hash_cache = hash_cache.inner();
+    let hash_cache = hash_cache.inner().clone();
     build_save_zip(&pocket_path, save_paths, zip_path, max_count, hash_cache)
         .await
         .unwrap();
@@ -43,7 +43,7 @@ pub async fn list_backup_saves(
         });
     }
 
-    let hash_cache = hash_cache.inner();
+    let hash_cache = hash_cache.inner().clone();
     let files = read_save_zip_list(&path, hash_cache).await?;
 
     Ok(BackupSavesResponse {
@@ -70,7 +70,7 @@ pub async fn list_saves_on_pocket(
 ) -> Result<Vec<SaveZipFile>, AppError> {
     debug!("Command: list_saves_on_pocket");
     let pocket_path = state.0.pocket_path.read().await;
-    let hash_cache = hash_cache.inner();
+    let hash_cache = hash_cache.inner().clone();
     let saves_path = pocket_path.join("Saves");
     Ok(read_saves_in_folder(&saves_path, Some(hash_cache)).await?)
 }

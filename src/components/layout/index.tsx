@@ -23,6 +23,10 @@ const Saves = React.lazy(() =>
 const Cores = React.lazy(() =>
   import("../cores").then((i) => ({ default: i.Cores }))
 )
+
+const Update = React.lazy(() =>
+  import("../update").then((i) => ({ default: i.Update }))
+)
 const Palettes = React.lazy(() =>
   import("../palettes").then((i) => ({ default: i.Palettes }))
 )
@@ -115,6 +119,7 @@ export const Layout = () => {
               {view === "Pocket Sync" && <About />}
               {view === "Settings" && <Settings />}
               {view === "Games" && <Games />}
+              {view === "Update" && <Update />}
               {view === "Saves" && <Saves />}
               {view === "Save States" && <SaveStates />}
               {view === "Firmware" && <Firmware />}

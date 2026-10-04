@@ -1,7 +1,16 @@
 use anyhow::Result;
+use log::{debug, log};
+use moka::future::Cache;
 use serde::{Deserialize, Serialize};
+use std::{
+    sync::{Arc, LazyLock},
+    time::Duration,
+};
+use tokio::sync::RwLock;
 
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
+use crate::app_error::AppError;
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct RawMetadataItem {
     pub name: String,
     pub crc32: Option<String>,
@@ -10,19 +19,37 @@ pub struct RawMetadataItem {
     pub size: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 struct MetadataResponse {
     pub files: Vec<RawMetadataItem>,
 }
 
-pub async fn get_metadata_from_archive(url: &str) -> Result<Vec<RawMetadataItem>> {
+static METADATA_CACHE: LazyLock<Cache<String, Vec<RawMetadataItem>>> = LazyLock::new(|| {
+    Cache::builder()
+        .time_to_live(Duration::from_secs(10 * 60))
+        .max_capacity(1_000)
+        .build()
+});
+
+pub async fn get_metadata_from_archive(url: &str) -> Result<Vec<RawMetadataItem>, AppError> {
     if url.len() == 0 {
         return Ok(vec![]);
     }
-    let response = reqwest::get(url).await?.text().await?;
-    let metadata: MetadataResponse = serde_json::from_str(&response)?;
 
-    Ok(metadata.files)
+    let result = METADATA_CACHE
+        .try_get_with(url.to_string(), async {
+            debug!("Cache miss - Fetching from network: {}", url);
+
+            let response = reqwest::get(url).await?.text().await?;
+            let metadata: MetadataResponse = serde_json::from_str(&response)?;
+            Ok::<Vec<RawMetadataItem>, AppError>(metadata.files)
+        })
+        .await;
+
+    match result {
+        Ok(files) => Ok(files),
+        Err(arc_err) => Err(AppError::Other(arc_err.to_string())),
+    }
 }
 
 #[cfg(test)]

@@ -8,7 +8,7 @@ mod parameters_bitmap;
 use anyhow::Result;
 use log::error;
 use serde::{Deserialize, Serialize};
-use std::{cmp, path::PathBuf};
+use std::{cmp, path::PathBuf, sync::Arc};
 use tauri::Emitter;
 use tokio::sync::RwLock;
 
@@ -143,8 +143,8 @@ pub async fn required_files_for_core(
     pocket_path: &PathBuf,
     include_alts: bool,
     archive_url: &str,
-    window: tauri::WebviewWindow,
-    hash_cache: &RwLock<HashCache>,
+    window: tauri::Window,
+    hash_cache: Arc<RwLock<HashCache>>,
 ) -> Result<Vec<DataSlotFile>> {
     let core_details: CoreDetails =
         CoreFile::from_core_path(&pocket_path.join(format!("Cores/{}", core_id)))?.into();
@@ -160,10 +160,16 @@ pub async fn required_files_for_core(
             .unwrap();
     }));
 
+    progress.set_context(&core_id);
+
     let (instance_files, archive_meta, files_at_root) = tokio::join!(
         find_instance_files(&assets_folder, include_alts),
         get_metadata_from_archive(archive_url),
-        check_root_files(&pocket_path, Some(vec!["rom", "bin", "key"]), hash_cache)
+        check_root_files(
+            &pocket_path,
+            Some(vec!["rom", "bin", "key"]),
+            hash_cache.clone()
+        )
     );
 
     progress.begin_work_units((instance_files.len() + 1) * 2);
@@ -222,33 +228,33 @@ pub async fn required_files_for_core(
                 archive_meta,
                 files_at_root,
                 pocket_path,
-                Some(hash_cache),
+                Some(hash_cache.clone()),
                 progress,
             )
             .await?;
         }
         (Ok(archive_meta), Err(err)) => {
-            error!("root file error {}", err.to_string());
+            error!("root file error {}", err);
 
             data_slot_files = check_data_file_status(
                 data_slot_files,
                 archive_meta,
                 vec![],
                 pocket_path,
-                Some(hash_cache),
+                Some(hash_cache.clone()),
                 progress,
             )
             .await?;
         }
         (Err(err), Ok(files_at_root)) => {
-            error!("archive metadata error {}", err.to_string());
+            error!("archive metadata error {}", err);
 
             data_slot_files = check_data_file_status(
                 data_slot_files,
                 vec![],
                 files_at_root,
                 pocket_path,
-                Some(hash_cache),
+                Some(hash_cache.clone()),
                 progress,
             )
             .await?;

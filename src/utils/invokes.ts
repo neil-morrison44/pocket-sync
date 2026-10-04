@@ -323,3 +323,18 @@ export const invokeReadAllPlatformImages = async (): Promise<
     Object.entries(result).map(([id, data]) => [id, new Uint8Array(data)])
   )
 }
+
+export const invokeInstallAndUpdateCores = async (args: {
+  updateList: string[]
+  installList: string[]
+  options: {
+    retain_platform_files: boolean
+    archive_url?: string
+    include_alternate_files: boolean
+    fast_downloads: boolean
+  }
+}): Promise<void> => {
+  console.log("call install_and_update_cores")
+  const result = await invoke<void>("install_and_update_cores", args)
+  console.log(result)
+}

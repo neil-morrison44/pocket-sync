@@ -8,6 +8,7 @@ use std::{
     fs::{self, File},
     io::{Cursor, Read, Write},
     path::{Path, PathBuf},
+    sync::Arc,
     time::SystemTime,
 };
 use tempdir::TempDir;
@@ -94,7 +95,7 @@ pub async fn read_saves_in_zip(zip_path: &PathBuf) -> Result<Vec<SaveZipFile>> {
 
 pub async fn read_saves_in_folder(
     folder_path: &PathBuf,
-    hash_cache: Option<&RwLock<HashCache>>,
+    hash_cache: Option<Arc<RwLock<HashCache>>>,
 ) -> Result<Vec<SaveZipFile>> {
     let mut walker = WalkDir::new(&folder_path);
     let mut tasks: Vec<_> = Vec::new();
@@ -105,12 +106,13 @@ pub async fn read_saves_in_folder(
                 if f.is_file() {
                     let file_path = entry.path().to_owned();
                     let folder_path_clone = folder_path.clone();
+                    let hash_cache_clone = hash_cache.clone();
 
                     let task = async move {
                         let metadata = tokio::fs::metadata(&file_path).await.unwrap();
                         let last_modified = time::OffsetDateTime::from(metadata.created().unwrap());
 
-                        let crc32 = crc32_for_file(&file_path, hash_cache).await.unwrap();
+                        let crc32 = crc32_for_file(&file_path, hash_cache_clone).await.unwrap();
                         let folder_path_str = folder_path_clone.to_str().unwrap();
 
                         SaveZipFile {
@@ -135,7 +137,7 @@ pub async fn read_saves_in_folder(
 
 pub async fn read_save_zip_list(
     dir_path: &PathBuf,
-    hash_cache: &RwLock<HashCache>,
+    hash_cache: Arc<RwLock<HashCache>>,
 ) -> Result<Vec<SaveZipFile>> {
     if !dir_path.exists() {
         return Ok(vec![]);
@@ -153,7 +155,7 @@ pub async fn read_save_zip_list(
         let metadata = file_path.metadata().unwrap();
         let last_modified = time::OffsetDateTime::from(metadata.modified().unwrap());
 
-        let crc32 = crc32_for_file(&file_path.into(), Some(hash_cache))
+        let crc32 = crc32_for_file(&file_path.into(), Some(hash_cache.clone()))
             .await
             .unwrap();
 
@@ -172,7 +174,7 @@ pub async fn build_save_zip(
     save_paths: Vec<&str>,
     dir_path: &str,
     max_count: usize,
-    hash_cache: &RwLock<HashCache>,
+    hash_cache: Arc<RwLock<HashCache>>,
 ) -> Result<()> {
     let zip_path = Path::new(dir_path);
     let timestamp = SystemTime::now()
@@ -224,16 +226,18 @@ pub async fn build_save_zip(
     }
     zip.finish().unwrap();
 
-    prune_zips(&zip_path, max_count, hash_cache).await.unwrap();
+    prune_zips(&zip_path, max_count, hash_cache.clone())
+        .await
+        .unwrap();
     Ok(())
 }
 
 async fn prune_zips(
     zip_path: &Path,
     max_count: usize,
-    hash_cache: &RwLock<HashCache>,
+    hash_cache: Arc<RwLock<HashCache>>,
 ) -> Result<()> {
-    let mut files = read_save_zip_list(&PathBuf::from(zip_path), hash_cache)
+    let mut files = read_save_zip_list(&PathBuf::from(zip_path), hash_cache.clone())
         .await
         .unwrap();
     files.sort();
@@ -245,7 +249,7 @@ async fn prune_zips(
         }
     }
 
-    let files = read_save_zip_list(&PathBuf::from(zip_path), hash_cache)
+    let files = read_save_zip_list(&PathBuf::from(zip_path), hash_cache.clone())
         .await
         .unwrap();
     if files.len() > max_count {

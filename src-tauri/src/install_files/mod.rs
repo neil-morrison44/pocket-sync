@@ -21,14 +21,14 @@ use futures::StreamExt;
 use tokio::sync::mpsc;
 
 pub async fn install_file(
-    file: DataSlotFile,
+    file: &DataSlotFile,
     archive_url: &str,
     turbo: bool,
     pocket_path: &PathBuf,
     progress_tx: mpsc::UnboundedSender<ProgressUpdate>,
     has_been_cancelled: Arc<AtomicBool>,
 ) -> Result<()> {
-    match file.status {
+    match &file.status {
         DataSlotFileStatus::MissingButOnArchive(archive_info)
         | DataSlotFileStatus::NeedsUpdateFromArchive(archive_info) => {
             let full_url = format!("{}/{}", archive_url, archive_info.url);
@@ -66,8 +66,12 @@ pub async fn install_file(
             let mut content_cusror = std::io::Cursor::new(content);
             tokio::io::copy(&mut content_cusror, &mut dest).await?;
 
-            if let Some(mtime) = archive_info.mtime.and_then(|s| s.parse().ok()) {
-                let time = SystemTime::UNIX_EPOCH + Duration::from_millis(mtime);
+            if let Some(mtime) = &archive_info
+                .mtime
+                .clone()
+                .and_then(|s| s.parse::<u64>().ok())
+            {
+                let time = SystemTime::UNIX_EPOCH + Duration::from_millis(*mtime);
                 set_mtime(&new_file_path, SystemTimeSpec::Absolute(time))?;
             };
 

@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, sync::Arc};
 
 use anyhow::Result;
 use log::error;
@@ -29,7 +29,7 @@ pub enum RootFile {
 pub async fn check_root_files(
     pocket_path: &PathBuf,
     extensions: Option<Vec<&str>>,
-    hash_cache: &RwLock<HashCache>,
+    hash_cache: Arc<RwLock<HashCache>>,
 ) -> Result<Vec<RootFile>> {
     let mut entries = tokio::fs::read_dir(&pocket_path.as_path()).await?;
     let mut results: Vec<RootFile> = Vec::new();
@@ -86,10 +86,10 @@ pub async fn check_root_files(
 
                         let file_name = String::from(file_name);
                         let file_path = &pocket_path.join(&file_name);
-                        let md5 = md5_for_file(&file_path, Some(hash_cache)).await?;
+                        let md5 = md5_for_file(&file_path, Some(hash_cache.clone())).await?;
 
                         results.push(RootFile::UnZipped {
-                            crc32: crc32_for_file(&file_path, Some(hash_cache)).await?,
+                            crc32: crc32_for_file(&file_path, Some(hash_cache.clone())).await?,
                             file_name,
                             md5,
                         });

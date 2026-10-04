@@ -12,7 +12,7 @@ import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { Atom, atom } from "jotai"
 import { atomFamily } from "jotai/utils"
 import { atomFamilyDeepEqual } from "../../utils/jotai"
-import { platformModalPositionAtom } from "./atoms"
+import { PlatformItem, platformModalPositionAtom } from "./atoms"
 import { calculatePlatformsLimit } from "../../utils/platformsLimit"
 
 export const allPlatformsDataSelector = atom<
@@ -72,6 +72,17 @@ export const CoresForPlatformSelectorFamily = atomFamily<
     }
 
     return results
+  })
+)
+
+export const MainPlatformForCoreSelectorFamily = atomFamily<
+  string,
+  Atom<Promise<PlatformInfoJSON>>
+>((coreName: string) =>
+  atom(async (get) => {
+    const coreInfo = await get(CoreInfoSelectorFamily(coreName))
+    const mainPlatformId = coreInfo.core.metadata.platform_ids[0]
+    return get(PlatformInfoSelectorFamily(mainPlatformId))
   })
 )
 
@@ -290,13 +301,21 @@ export const hasHitPlatformLimitSelector = atom<Promise<boolean>>(
     const allPlatforms = await get(allPlatformsDataSelector)
     const activePlatforms = Object.keys(allPlatforms.active)
 
-    const platformsToCores = await Promise.all(activePlatforms.map(async (platformId) => {
-      return {id: platformId, cores: await get(CoresForPlatformSelectorFamily(platformId))}
-    }))
+    const platformsToCores = await Promise.all(
+      activePlatforms.map(async (platformId) => {
+        return {
+          id: platformId,
+          cores: await get(CoresForPlatformSelectorFamily(platformId)),
+        }
+      })
+    )
 
-    const platformsWithCores = platformsToCores.filter(({ cores }) => cores.length > 0).map(({ id }) => id)
-    const coresWithActivePlatforms = Array.from(new Set(platformsToCores.map(({cores}) => cores).flat()))
-
+    const platformsWithCores = platformsToCores
+      .filter(({ cores }) => cores.length > 0)
+      .map(({ id }) => id)
+    const coresWithActivePlatforms = Array.from(
+      new Set(platformsToCores.map(({ cores }) => cores).flat())
+    )
 
     return calculatePlatformsLimit(platformsWithCores, coresWithActivePlatforms)
   }
@@ -304,15 +323,25 @@ export const hasHitPlatformLimitSelector = atom<Promise<boolean>>(
 
 export const wouldHitPlatformLimitSelector = atom<Promise<boolean>>(
   async (get) => {
-    const potentialPlatformIds = get(platformModalPositionAtom).map(({id}) => id)
+    const potentialPlatformIds = get(platformModalPositionAtom).map(
+      ({ id }) => id
+    )
 
-    const platformsToCores = await Promise.all(potentialPlatformIds.map(async (platformId) => {
-      return {id: platformId, cores: await get(CoresForPlatformSelectorFamily(platformId))}
-    }))
+    const platformsToCores = await Promise.all(
+      potentialPlatformIds.map(async (platformId) => {
+        return {
+          id: platformId,
+          cores: await get(CoresForPlatformSelectorFamily(platformId)),
+        }
+      })
+    )
 
-    const platformsWithCores = platformsToCores.filter(({ cores }) => cores.length > 0).map(({ id }) => id)
-    const coresWithActivePlatforms = Array.from(new Set(platformsToCores.map(({cores}) => cores).flat()))
-
+    const platformsWithCores = platformsToCores
+      .filter(({ cores }) => cores.length > 0)
+      .map(({ id }) => id)
+    const coresWithActivePlatforms = Array.from(
+      new Set(platformsToCores.map(({ cores }) => cores).flat())
+    )
 
     return calculatePlatformsLimit(platformsWithCores, coresWithActivePlatforms)
   }

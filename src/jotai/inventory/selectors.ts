@@ -4,6 +4,36 @@ import { coreInventoryAtom } from "./atoms"
 import { atomFamily } from "jotai/utils"
 import { atom, Atom } from "jotai"
 
+export const inventoryCoreListAtom = atom<Promise<string[]>>(async (get) => {
+  const inventory = await get(coreInventoryAtom)
+  return inventory.cores.data.map(({ id }) => id)
+})
+
+export const inventoryAuthorListAtom = atom<Promise<string[]>>(async (get) => {
+  const coreList = await get(inventoryCoreListAtom)
+  const authorSet = new Set(
+    coreList
+      .map((coreName) => {
+        const [author, _] = coreName.split(".")
+        return author
+      })
+      .sort((a, b) => a.localeCompare(b))
+  )
+  return Array.from(authorSet)
+})
+
+export const inventoryCategoryListAtom = atom<Promise<string[]>>(
+  async (get) => {
+    const inventory = await get(coreInventoryAtom)
+    const categorySet = new Set(
+      inventory.platforms.data
+        .map(({ category }) => category)
+        .sort((a, b) => a.localeCompare(b))
+    )
+    return Array.from(categorySet)
+  }
+)
+
 export const CorePlatformSelectorFamily = atomFamily<
   PlatformId,
   Atom<Promise<PlatformInfoJSON["platform"] | null>>

@@ -3,14 +3,22 @@ import { MutableRefObject, ReactNode, useEffect, useRef, useState } from "react"
 export const OnlyLoadsWhenShown = ({
   height,
   children,
+  className,
 }: {
   height: number
   children: ReactNode
+  className: string
 }) => {
   const placeHolderDivRef = useRef<HTMLDivElement>(null)
   const hasBeenShown = useHasBeenShown(placeHolderDivRef)
   if (!hasBeenShown)
-    return <div ref={placeHolderDivRef} style={{ height: `${height}px` }}></div>
+    return (
+      <div
+        ref={placeHolderDivRef}
+        className={className}
+        style={{ height: `${height}px` }}
+      ></div>
+    )
   return <>{children}</>
 }
 
