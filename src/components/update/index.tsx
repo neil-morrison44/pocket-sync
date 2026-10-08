@@ -182,6 +182,7 @@ export const Update = () => {
           </UpdateFilterContext>
         </Suspense>
       )}
+
       {showingModal && <UpdateModal onClose={() => setShowingModal(false)} />}
       <UpdateOptions
         listElement={listRef}

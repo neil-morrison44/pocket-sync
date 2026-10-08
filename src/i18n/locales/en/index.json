@@ -315,7 +315,7 @@
       },
       "three": {
         "unstarted": "Download required files",
-        "in_progress": "Downloading file {file_name} for {core_name},\n{bytes} ({index}/{total})",
+        "in_progress": "Downloading file {file_name} ({file_bytes}) for {core_name} ({index}/{total})\n{remaining_bytes} remaining",
         "finished": "Downloaded required files ({index}/{total})"
       }
     }

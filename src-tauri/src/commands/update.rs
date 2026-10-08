@@ -2,6 +2,7 @@ use crate::PocketSyncState;
 use crate::app_error::AppError;
 use crate::commands::archive::ProgressUpdate;
 use crate::hashes::HashCacheState;
+use crate::install_files::InstallOutcome;
 use crate::install_files::install_file;
 use crate::required_files::ArchiveInfo;
 use crate::required_files::DataSlotFile;
@@ -22,7 +23,7 @@ use tauri::Listener;
 use tauri::Window;
 use tokio::sync::Semaphore;
 use tokio::sync::mpsc;
-use tokio::time::Instant;
+use tokio::time::{Duration, sleep};
 
 #[derive(Deserialize, Debug)]
 struct InventoryJSON {
@@ -56,19 +57,6 @@ pub enum CoreDownloadType {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-pub enum PhaseOneErrorType {
-    GithubRateLimit,
-    Other,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub enum PhaseThreeErrorType {
-    Network,
-    FileSystem,
-    Other,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(tag = "type")]
 pub enum UpdateEvent {
     PhaseZeroStartedEvent,
@@ -81,7 +69,7 @@ pub enum UpdateEvent {
         download_type: CoreDownloadType,
     },
     PhaseOneErrorEvent {
-        error: PhaseOneErrorType,
+        error: String,
     },
     PhaseTwoStartedEvent,
     PhaseTwoProgressEvent {
@@ -92,29 +80,31 @@ pub enum UpdateEvent {
     PhaseThreeDownloadProgressEvent {
         core_name: String,
         file_name: String,
+        file_bytes: u64,
         download_progress: f32,
         file_index: u32,
         file_index_for_core: u32,
-        total_core_count: u32,
-        total_core_count_for_core: u32,
-        elapsed_time: u64,
-        elapsed_bytes: u64,
+        total_file_count: u32,
+        total_file_count_for_core: u32,
+        elapsed_time: u128,
+        downloaded_bytes: u64,
+        remaining_bytes: u64,
     },
     PhaseThreeErrorEvent {
-        error: PhaseThreeErrorType,
+        error: String,
     },
     Finish {
         updated_cores: Vec<String>,
         installed_cores: Vec<String>,
-        installed_files_per_core: HashMap<String, Vec<String>>,
-        total_time: u64,
+        downloaded_files_per_core: HashMap<String, Vec<String>>,
+        total_time: u128,
     },
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(tag = "type")]
 enum SkipEventPayload {
-    Core(String),
+    Core { core_name: String },
     File,
 }
 
@@ -122,6 +112,33 @@ enum SkipEventPayload {
 struct FileDownloadTicket {
     core_name: String,
     file_status: DataSlotFile,
+}
+
+pub trait DownloadTicketsExt {
+    fn core_start_index(&self, core_name: &str) -> usize;
+    fn bytes_remaining_after(&self, file_index: &usize) -> u64;
+    fn core_file_count(&self, core_name: &str) -> usize;
+}
+
+impl DownloadTicketsExt for Vec<FileDownloadTicket> {
+    fn core_start_index(&self, core_name: &str) -> usize {
+        self.iter()
+            .position(|ticket| ticket.core_name == core_name)
+            .unwrap_or(self.len())
+    }
+    fn core_file_count(&self, core_name: &str) -> usize {
+        self.iter().filter(|f| f.core_name == core_name).count()
+    }
+    fn bytes_remaining_after(&self, file_index: &usize) -> u64 {
+        self.iter()
+            .skip(file_index + 1)
+            .filter_map(|ticket| match &ticket.file_status.status {
+                DataSlotFileStatus::NeedsUpdateFromArchive(archive_info)
+                | DataSlotFileStatus::MissingButOnArchive(archive_info) => archive_info.size,
+                _ => None,
+            })
+            .sum()
+    }
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -223,14 +240,12 @@ pub async fn install_and_update_cores(
                     "Phase 1 Error for {}: {:?}",
                     core_download_ticket.core_name, e
                 );
-                let err_type = if e.to_string().contains("rate limit") {
-                    PhaseOneErrorType::GithubRateLimit
-                } else {
-                    PhaseOneErrorType::Other
-                };
+
                 window.emit(
                     "install_and_update_cores::update_event",
-                    UpdateEvent::PhaseOneErrorEvent { error: err_type },
+                    UpdateEvent::PhaseOneErrorEvent {
+                        error: e.to_string(),
+                    },
                 )?;
             }
         }
@@ -326,38 +341,35 @@ pub async fn install_and_update_cores(
         UpdateEvent::PhaseThreeStartedEvent,
     )?;
 
+    let download_start_time = std::time::Instant::now();
+    let mut download_total_bytes: u64 = 0;
     let mut skipped_cores: Vec<String> = vec![];
     let cancel_current_download = Arc::new(AtomicBool::new(false));
-
-    // setup listener on "install_and_update_cores::skip_event"
-    // which can either skip the current core or the current file
-    //
-    // also setup progress_tx which emits `PhaseThreeDownloadProgressEvent` to the window
-    //
-    //
 
     let (skip_tx, mut skip_rx) = mpsc::unbounded_channel::<SkipEventPayload>();
     let cancel_for_listener = cancel_current_download.clone();
 
     window.listen("install_and_update_cores::skip_event", move |event| {
         if let Ok(payload) = serde_json::from_str::<SkipEventPayload>(&event.payload()) {
+            debug!("Cancelling download");
             cancel_for_listener.store(true, Ordering::Relaxed);
             let _ = skip_tx.send(payload);
         }
     });
 
-    if let Some(archive_url) = &options.archive_url {
-        let cancel_for_loop = cancel_current_download.clone();
+    let mut downloaded_files_per_core: HashMap<String, Vec<String>> = HashMap::new();
 
+    if let Some(archive_url) = &options.archive_url {
         for (file_index, file_download_ticket) in file_download_tickets.iter().enumerate() {
             while let Ok(skip_payload) = skip_rx.try_recv() {
+                debug!("Skipping core");
                 match skip_payload {
-                    SkipEventPayload::Core(core_name) => skipped_cores.push(core_name),
+                    SkipEventPayload::Core { core_name } => skipped_cores.push(core_name),
                     _ => {}
                 }
             }
 
-            cancel_for_loop.store(false, Ordering::Relaxed);
+            cancel_current_download.store(false, Ordering::Relaxed);
             if skipped_cores.contains(&file_download_ticket.core_name) {
                 continue;
             }
@@ -374,47 +386,80 @@ pub async fn install_and_update_cores(
                 | DataSlotFileStatus::NeedsUpdateFromArchive(ArchiveInfo {
                     size: Some(bytes),
                     ..
-                }) => bytes.parse::<u64>().unwrap_or(0),
+                }) => *bytes,
                 _ => 0,
             };
+            let core_start_index = file_download_tickets.core_start_index(&core_name);
+            let core_total_count = file_download_tickets.core_file_count(&core_name);
+            let remaining_bytes = file_download_tickets.bytes_remaining_after(&file_index);
+            let total_file_count = file_download_tickets.len();
 
             tokio::spawn(async move {
-                let start_time = Instant::now();
                 let mut elapsed_bytes = 0;
-
-                // This while loop naturally exits when `install_file` finishes and drops `progress_tx`
                 while let Some(ProgressUpdate::AddBytes(bytes)) = progress_rx.recv().await {
                     elapsed_bytes += bytes as u64;
 
                     let event = UpdateEvent::PhaseThreeDownloadProgressEvent {
                         core_name: core_name.clone(),
                         file_name: file_name.clone(),
+                        file_bytes,
                         download_progress: (elapsed_bytes as f64 / file_bytes as f64) as f32,
                         file_index: file_index as u32,
-                        file_index_for_core: 0,       // Retrieve from ticket
-                        total_core_count: 0,          // Retrieve from ticket
-                        total_core_count_for_core: 0, // Retrieve from ticket
-                        elapsed_time: start_time.elapsed().as_secs(),
-                        elapsed_bytes,
+                        file_index_for_core: (file_index - core_start_index) as u32,
+                        total_file_count: total_file_count as u32,
+                        total_file_count_for_core: core_total_count as u32,
+                        elapsed_time: download_start_time.elapsed().as_millis(),
+                        remaining_bytes,
+                        downloaded_bytes: download_total_bytes + elapsed_bytes,
                     };
 
-                    let _ = window_clone.emit("phase_three_download_progress", event);
+                    let _ = window_clone.emit("install_and_update_cores::update_event", event);
                 }
             });
 
-            install_file(
+            match install_file(
                 &file_download_ticket.file_status,
                 &archive_url,
                 options.fast_downloads,
                 &pocket_path,
                 progress_tx,
-                cancel_current_download,
+                cancel_current_download.clone(),
             )
-            .await;
+            .await
+            {
+                Ok(InstallOutcome::Completed { bytes_downloaded }) => {
+                    downloaded_files_per_core
+                        .entry(file_download_ticket.core_name.clone())
+                        .or_default()
+                        .push(file_download_ticket.file_status.name.clone());
+                    download_total_bytes += bytes_downloaded as u64;
+                }
+                Ok(InstallOutcome::Cancelled { bytes_downloaded }) => {
+                    download_total_bytes += bytes_downloaded as u64;
+                }
+                Err(e) => {
+                    window.emit(
+                        "install_and_update_cores::update_event",
+                        UpdateEvent::PhaseThreeErrorEvent {
+                            error: e.to_string(),
+                        },
+                    )?;
+                    error!("{}", e);
+                }
+            }
         }
     }
 
     // Finish: emit a Finish event with the stats
+
+    let event = UpdateEvent::Finish {
+        updated_cores: successfully_updated,
+        installed_cores: successfully_installed,
+        downloaded_files_per_core,
+        total_time: start_time.elapsed().as_millis(),
+    };
+
+    let _ = window.emit("install_and_update_cores::update_event", event);
 
     window.emit("pocket-fs-pause", false)?;
 
@@ -433,15 +478,6 @@ async fn download_and_extract_core(
     let core_name = ticket.core_name.clone();
     let download_type = ticket.download_type;
 
-    let mut res = client
-        .get(&ticket.download_url)
-        .send()
-        .await?
-        .error_for_status()?;
-    let total_size = res.content_length().unwrap_or(0) as f32;
-    let mut downloaded: f32 = 0.0;
-    let mut zip_bytes = Vec::with_capacity(total_size as usize);
-
     window.emit(
         "install_and_update_cores::update_event",
         UpdateEvent::PhaseOneCoreDownloadProgressEvent {
@@ -453,7 +489,17 @@ async fn download_and_extract_core(
         },
     )?;
 
+    let mut res = client
+        .get(&ticket.download_url)
+        .send()
+        .await?
+        .error_for_status()?;
+    let total_size = res.content_length().unwrap_or(0) as f32;
+    let mut downloaded: f32 = 0.0;
+    let mut zip_bytes = Vec::with_capacity(total_size as usize);
+
     while let Some(chunk) = res.chunk().await? {
+        // sleep(Duration::from_millis(100)).await;
         zip_bytes.extend_from_slice(&chunk);
         downloaded += chunk.len() as f32;
 

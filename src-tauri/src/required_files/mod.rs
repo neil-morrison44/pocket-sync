@@ -8,6 +8,7 @@ mod parameters_bitmap;
 use anyhow::Result;
 use log::error;
 use serde::{Deserialize, Serialize};
+use serde_with::{DisplayFromStr, serde_as};
 use std::{cmp, path::PathBuf, sync::Arc};
 use tauri::Emitter;
 use tokio::sync::RwLock;
@@ -88,12 +89,14 @@ pub struct DataSlot {
     md5: Option<String>,
 }
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct ArchiveInfo {
     pub url: String,
     crc32: String,
     pub mtime: Option<String>,
-    pub size: Option<String>,
+    #[serde_as(as = "Option<DisplayFromStr>")]
+    pub size: Option<u64>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]

@@ -15,9 +15,10 @@ import { NewsFeed } from "./components/newsFeed"
 import { currentViewAtom } from "./jotai/view/atoms"
 import { useTranslation } from "react-i18next"
 import { ColourContextProviderRandomised } from "./components/three/colourContext"
-import { useAtom, useSetAtom } from "jotai"
+import { useAtom, useAtomValue, useSetAtom } from "jotai"
 import { useAtomFnSet } from "./utils/jotai"
 import { ErrorBoundary } from "./components/errorBoundary"
+import { archiveFileExtensionsSelector } from "./jotai/archive/selectors"
 
 const Pocket = React.lazy(() =>
   import("./components/three/pocket").then((m) => ({ default: m.Pocket }))

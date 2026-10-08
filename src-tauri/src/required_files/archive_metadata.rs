@@ -1,22 +1,21 @@
 use anyhow::Result;
-use log::{debug, log};
+use log::debug;
 use moka::future::Cache;
 use serde::{Deserialize, Serialize};
-use std::{
-    sync::{Arc, LazyLock},
-    time::Duration,
-};
-use tokio::sync::RwLock;
+use serde_with::{DisplayFromStr, serde_as};
+use std::{sync::LazyLock, time::Duration};
 
 use crate::app_error::AppError;
 
+#[serde_as]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct RawMetadataItem {
     pub name: String,
     pub crc32: Option<String>,
     pub md5: Option<String>,
     pub mtime: Option<String>,
-    pub size: Option<String>,
+    #[serde_as(as = "Option<DisplayFromStr>")]
+    pub size: Option<u64>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

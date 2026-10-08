@@ -2,7 +2,7 @@ use super::{ArchiveInfo, DataSlotFile, archive_metadata::RawMetadataItem};
 use crate::{
     hashes::{HashCache, crc32_for_file, md5_for_file},
     progress::ProgressEmitter,
-    required_files::{DataSlotFile, DataSlotFileStatus},
+    required_files::DataSlotFileStatus,
     root_files::RootFile,
 };
 use anyhow::Result;
@@ -143,7 +143,7 @@ pub async fn check_data_file_status(
                             url: name.clone(),
                             crc32: crc32.clone().unwrap_or_default(),
                             mtime: mtime.clone(),
-                            size: size.clone(),
+                            size: *size,
                         })
                     }
                 } else {
@@ -151,7 +151,7 @@ pub async fn check_data_file_status(
                         url: name.clone(),
                         crc32: crc32.clone().unwrap_or_default(),
                         mtime: mtime.clone(),
-                        size: size.clone(),
+                        size: *size,
                     })
                 }
             }

@@ -190,6 +190,15 @@
   transition-duration: 0;
 }
 
+.update__core-3d-scene {
+  grid-area: b;
+  position: relative;
+  container-type: size;
+  overflow: hidden;
+  perspective: 50px;
+  transform-style: preserve-3d;
+}
+
 .update__core-flythrough {
   grid-area: b;
   position: relative;
@@ -202,8 +211,10 @@
 .update__core-flythrough-item {
   width: auto;
   height: 40px;
-  will-change: transform;
-  transition: transform 2s linear;
+  will-change: transform, opacity;
+  transition:
+    transform 0.2s linear,
+    opacity 0.2s ease-out;
   position: absolute;
   top: 0;
   left: 0;
@@ -212,4 +223,10 @@
   background-color: white;
   padding: 4px;
   overflow: hidden;
+}
+
+.update__controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }
