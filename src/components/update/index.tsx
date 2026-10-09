@@ -43,7 +43,7 @@ import {
   updateFilterDefaultsAtom,
   UpdateFilterOptions,
 } from "../../jotai/update/atom"
-import { UpdateControls } from "./controls"
+import { OtherFilterType, UpdateControls } from "./controls"
 import { turboDownloadsAtom } from "../../jotai/settings/atoms"
 
 export const Update = () => {
@@ -59,9 +59,9 @@ export const Update = () => {
     updateFilterDefaultsOptions.categoryFilters
   )
   const [aiNess, setAiNess] = useState(updateFilterDefaultsOptions.aiNessFilter)
-  const [otherFilters, setOtherFilters] = useState<
-    ("analogizer" | "requires_jotego_license" | "requires_coc_license")[]
-  >(updateFilterDefaultsOptions.otherFilters)
+  const [otherFilters, setOtherFilters] = useState<OtherFilterType[]>(
+    updateFilterDefaultsOptions.otherFilters
+  )
 
   const [showingModal, setShowingModal] = useState(false)
 
@@ -303,7 +303,8 @@ const InstalledCoreItem = ({
 
   if (
     filterContext.authorFilters.includes(authorName) ||
-    filterContext.categoryFilters.includes(category)
+    filterContext.categoryFilters.includes(category) ||
+    filterContext.otherFilters.includes("update")
   ) {
     return null
   }
@@ -389,6 +390,7 @@ const NotInstalledCoreItem = ({ coreName }: { coreName: string }) => {
     (filterContext.otherFilters.includes("analogizer") &&
       coreName.endsWith("_Analogizer")) ||
     coreAIScore > filterContext.aiNessFilter ||
+    filterContext.otherFilters.includes("install") ||
     config.hidden_cores?.includes(coreName)
   ) {
     return null

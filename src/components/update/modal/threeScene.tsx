@@ -102,7 +102,7 @@ export const UpdateThreeScene = ({
                   <group scale={5} rotation={[0, -0.5, 0]}>
                     <Float
                       speed={0.5}
-                      rotationIntensity={1}
+                      rotationIntensity={1.5}
                       floatIntensity={0.75}
                       floatingRange={[-0.2, 0.2]}
                     >

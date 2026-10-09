@@ -1,12 +1,11 @@
+import { OtherFilterType } from "../../components/update/controls"
 import { atomWithAppLocalStorage } from "../../utils/jotai"
 
 export type UpdateFilterOptions = {
   authorFilters: string[]
   aiNessFilter: number
   categoryFilters: string[]
-  otherFilters: (
-    "analogizer" | "requires_coc_license" | "requires_jotego_license"
-  )[]
+  otherFilters: OtherFilterType[]
 }
 
 export const updateFilterDefaultsAtom =

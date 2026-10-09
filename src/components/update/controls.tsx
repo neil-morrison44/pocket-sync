@@ -158,13 +158,19 @@ const CategoryFilterControl = ({
   )
 }
 
-type OtherFilterType =
-  "analogizer" | "requires_jotego_license" | "requires_coc_license"
+export type OtherFilterType =
+  | "analogizer"
+  | "requires_jotego_license"
+  | "requires_coc_license"
+  | "update"
+  | "install"
 
 const OTHER_FILTER_OPTIONS: readonly OtherFilterType[] = [
   "analogizer",
   "requires_jotego_license",
   "requires_coc_license",
+  "update",
+  "install",
 ]
 
 type OtherFiltersControlProps = {

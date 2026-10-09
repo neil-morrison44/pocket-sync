@@ -319,7 +319,9 @@
         "title": "Other Filters {count, plural, =0 {} other {(#)}}",
         "analogizer": "Analogizer",
         "requires_jotego_license": "JOTEGO\nPatreon key",
-        "requires_coc_license": "Coin Op Collection\nKey"
+        "requires_coc_license": "Coin Op Collection\nKey",
+        "update": "Updatable Cores",
+        "install": "Installable Cores"
       },
       "ai_ness": {
         "title": "Acceptable AI-ness level",

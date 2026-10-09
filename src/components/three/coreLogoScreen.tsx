@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
-import { CanvasTexture, SRGBColorSpace } from "three"
+import { useEffect, useRef, useState } from "react"
+import { CanvasTexture, Material, SRGBColorSpace } from "three"
 import { useAtomValue } from "jotai"
 import { PlatformImageSelectorFamily } from "../../jotai/platforms/selectors"
 import { CoreMainPlatformIdSelectorFamily } from "../../jotai/selectors"
@@ -8,7 +8,7 @@ export const CoreLogoScreen = ({ coreName }: { coreName: string }) => {
   const platformId = useAtomValue(CoreMainPlatformIdSelectorFamily(coreName))
   const platformImage = useAtomValue(PlatformImageSelectorFamily(platformId))
   const [screenTexture, setScreenTexture] = useState<CanvasTexture | null>(null)
-
+  const materialRef = useRef<Material>(null)
   console.log({ coreName })
 
   useEffect(() => {
@@ -16,6 +16,8 @@ export const CoreLogoScreen = ({ coreName }: { coreName: string }) => {
 
     let isCancelled = false
     const image = new Image()
+
+    let newTexture: CanvasTexture | null = null
 
     image.onload = () => {
       if (isCancelled) return
@@ -48,7 +50,7 @@ export const CoreLogoScreen = ({ coreName }: { coreName: string }) => {
 
       context.fillText(coreName, canvas.width / 2, canvas.height - 16 * scale)
 
-      const newTexture = new CanvasTexture(canvas)
+      newTexture = new CanvasTexture(canvas)
       newTexture.anisotropy = 16
       newTexture.colorSpace = SRGBColorSpace
 
@@ -61,17 +63,17 @@ export const CoreLogoScreen = ({ coreName }: { coreName: string }) => {
     image.src = platformImage
     return () => {
       isCancelled = true
+      if (newTexture) newTexture.dispose()
     }
   }, [coreName, platformImage])
 
   useEffect(() => {
-    return () => {
-      if (screenTexture) screenTexture.dispose()
-    }
+    if (materialRef.current) materialRef.current.needsUpdate = true
   }, [screenTexture])
 
   return (
     <meshPhysicalMaterial
+      ref={materialRef}
       attach="material"
       map={screenTexture || undefined}
       emissive={"white"}
