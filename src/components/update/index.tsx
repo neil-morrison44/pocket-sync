@@ -44,6 +44,7 @@ import {
   UpdateFilterOptions,
 } from "../../jotai/update/atom"
 import { UpdateControls } from "./controls"
+import { turboDownloadsAtom } from "../../jotai/settings/atoms"
 
 export const Update = () => {
   const [updateFilterDefaultsOptions, setUpdateFilterDefaultsOptions] = useAtom(
@@ -128,27 +129,30 @@ const UpdateOptions = ({ onStart, listElement }: UpdateOptionsProps) => {
   }>({ install: [], update: [] })
 
   const config = useAtomValue(PocketSyncConfigSelector)
+  const turboDownloads = useAtomValue(turboDownloadsAtom)
 
   const startCallback = useCallback(async () => {
     if (config.archive_url === "" || config.archive_url === null) {
-      const confirmNoArchiveUrl = await confirm(t("no_archive_url_warning"), {
-        title: "Missing Archive URL",
-        kind: "warning",
-      })
+      const confirmNoArchiveUrl = await confirm(
+        t("no_archive_url_warning.text"),
+        {
+          title: t("no_archive_url_warning.title"),
+          kind: "warning",
+        }
+      )
       if (!confirmNoArchiveUrl) return
     }
 
-    console.log("Start!", { ...selectedCores, archive_url: config.archive_url })
     onStart()
 
     await invokeInstallAndUpdateCores({
       installList: selectedCores.install,
       updateList: selectedCores.update,
       options: {
-        include_alternate_files: false,
+        include_alternate_files: !config.skipAlternateAssets,
         retain_platform_files: true,
         archive_url: config.archive_url ?? undefined,
-        fast_downloads: true,
+        fast_downloads: turboDownloads.enabled,
       },
     })
 

@@ -2,9 +2,10 @@ import { useTranslation } from "react-i18next"
 import { formatDownloadTime, InstalledCoreImage } from "../shared"
 import { Suspense } from "react"
 import { AuthorTag } from "../../shared/authorTag"
-import { useAtomValue } from "jotai"
+import { useAtomValue, useSetAtom } from "jotai"
 import { CoreInfoSelectorFamily } from "../../../jotai/selectors"
 import { OnlyLoadsWhenShown } from "../../../utils/onlyLoadsWhenShown"
+import { currentViewAtom } from "../../../jotai/view/atoms"
 
 export const UpdateFinishedReport = ({
   updated_cores,
@@ -81,10 +82,14 @@ export const UpdateFinishedReport = ({
 
 const InstalledCoreItem = ({ coreName }: { coreName: string }) => {
   const coreInfo = useAtomValue(CoreInfoSelectorFamily(coreName))
+  const setViewAndSubview = useSetAtom(currentViewAtom)
   const [_, core] = coreName.split(".")
 
   return (
-    <div className="update__core-finish-report-core">
+    <div
+      className="update__core-finish-report-core"
+      onClick={() => setViewAndSubview({ view: "Cores", selected: coreName })}
+    >
       <InstalledCoreImage coreName={coreName} />
       <div>
         <div>{`${core} ${coreInfo.core.metadata.version}`}</div>

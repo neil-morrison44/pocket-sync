@@ -281,7 +281,10 @@
     "requires_license": "Requires license file",
     "ai_score": "AI-ness: {score, number, percent}",
     "start_button": "Update {update_count, plural, one {# core} other {# cores}} & install {install_count, plural, one {# core} other {# cores}}",
-    "no_archive_url_warning": "An archive URL hasn't been set up in the Settings tab, cores will be installed without required files. Continue?",
+    "no_archive_url_warning": {
+      "title": "no_archive_url_warning",
+      "text": "An archive URL hasn't been set up in the Settings tab, cores will be installed without required files. Continue?"
+    },
     "progress": {
       "one": "Downloading & installing {core_name} - {progress, number, percent}",
       "three": {

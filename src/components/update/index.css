@@ -81,6 +81,24 @@
   column-gap: 24px;
   row-gap: 6px;
   grid-auto-flow: row;
+
+  &:empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    &::before {
+      content: "";
+      display: block;
+      width: 50vh;
+      height: 50vh;
+      background-image: url("./emptyCheck.svg");
+      background-repeat: no-repeat;
+      background-size: cover;
+      margin-block: auto;
+    }
+  }
 }
 
 .update__list-item {
@@ -211,9 +229,10 @@
 .update__modal-errors {
   color: var(--red-colour);
   display: flex;
-  align-items: center;
   gap: 12px;
   font-size: 0.75em;
+  max-height: 100px;
+  overflow: auto;
 }
 
 .update__modal-errors-count {
@@ -230,6 +249,7 @@
   flex-shrink: 0;
   padding: 12px;
   padding-bottom: 0;
+  align-self: flex-start;
 }
 
 .update__core-3d-scene {
@@ -288,7 +308,7 @@
 }
 
 .update__core-finish-report-cores {
-  overflow: auto;
+  overflow-y: auto;
   max-height: 100%;
   display: flex;
   gap: 6px;
@@ -304,6 +324,11 @@
   color: white;
   padding: 6px 12px;
   gap: 12px;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.95);
+  }
 
   .author-tag img {
     width: 18px;

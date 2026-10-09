@@ -51,3 +51,50 @@ export const InstalledCoreImage = ({ coreName }: { coreName: string }) => {
     />
   )
 }
+
+export type CoreDownloadType = "Update" | "Install"
+
+export type PhaseThreeArgs = {
+  core_name: string
+  file_name: string
+  file_bytes: number
+  download_progress: number
+  file_index: number
+  file_index_for_core: number
+  total_file_count: number
+  total_file_count_for_core: number
+  elapsed_time: number
+  downloaded_bytes: number
+  remaining_bytes: number
+}
+
+export type UpdateEvent =
+  | { type: "PhaseZeroStartedEvent" }
+  | { type: "PhaseOneStartedEvent" }
+  | {
+      type: "PhaseOneCoreDownloadProgressEvent"
+      core_name: string
+      download_progress: number
+      core_index: number
+      total_core_count: number
+      download_type: CoreDownloadType
+    }
+  | { type: "PhaseOneErrorEvent"; error: string }
+  | { type: "PhaseTwoStartedEvent" }
+  | {
+      type: "PhaseTwoProgressEvent"
+      processed_cores: number
+      total_cores: number
+    }
+  | { type: "PhaseThreeStartedEvent" }
+  | ({
+      type: "PhaseThreeDownloadProgressEvent"
+    } & PhaseThreeArgs)
+  | { type: "PhaseThreeErrorEvent"; error: string }
+  | {
+      type: "Finish"
+      updated_cores: string[]
+      installed_cores: string[]
+      downloaded_files_per_core: Record<string, string[]>
+      total_time: number
+    }

@@ -1,25 +1,32 @@
-import { ReactElement, useEffect, useMemo, useRef, useState } from "react"
-import { MeshPhysicalMaterial, Texture } from "three"
+import { useEffect, useState } from "react"
+import { CanvasTexture, SRGBColorSpace } from "three"
 import { useAtomValue } from "jotai"
 import { PlatformImageSelectorFamily } from "../../jotai/platforms/selectors"
 import { CoreMainPlatformIdSelectorFamily } from "../../jotai/selectors"
 
 export const CoreLogoScreen = ({ coreName }: { coreName: string }) => {
-  const materialRef = useRef<MeshPhysicalMaterial | null>(null)
   const platformId = useAtomValue(CoreMainPlatformIdSelectorFamily(coreName))
   const platformImage = useAtomValue(PlatformImageSelectorFamily(platformId))
-  const [screenTexture, setScreenTexture] = useState<Texture | undefined>()
+  const [screenTexture, setScreenTexture] = useState<CanvasTexture | null>(null)
+
+  console.log({ coreName })
 
   useEffect(() => {
+    if (!platformImage) return
+
+    let isCancelled = false
     const image = new Image()
-    image.src = platformImage
+
     image.onload = () => {
+      if (isCancelled) return
+
       const canvas = document.createElement("canvas")
       const scale = 5
       canvas.width = 160 * scale
       canvas.height = 144 * scale
       const context = canvas.getContext("2d")
       if (!context) return
+
       context.fillStyle = "#222"
       context.fillRect(0, 0, canvas.width, canvas.height)
       const imageScale = canvas.width / image.width
@@ -41,21 +48,30 @@ export const CoreLogoScreen = ({ coreName }: { coreName: string }) => {
 
       context.fillText(coreName, canvas.width / 2, canvas.height - 16 * scale)
 
-      const newTexture = new Texture(canvas)
-      newTexture.needsUpdate = true
+      const newTexture = new CanvasTexture(canvas)
       newTexture.anisotropy = 16
-      setScreenTexture(newTexture)
+      newTexture.colorSpace = SRGBColorSpace
 
-      if (!materialRef.current) return
-      materialRef.current.map?.dispose()
-      materialRef.current.map = newTexture
-      materialRef.current.needsUpdate = true
+      setScreenTexture((prevTexture) => {
+        if (prevTexture) prevTexture.dispose()
+        return newTexture
+      })
+    }
+
+    image.src = platformImage
+    return () => {
+      isCancelled = true
     }
   }, [coreName, platformImage])
 
+  useEffect(() => {
+    return () => {
+      if (screenTexture) screenTexture.dispose()
+    }
+  }, [screenTexture])
+
   return (
     <meshPhysicalMaterial
-      ref={materialRef}
       attach="material"
       map={screenTexture || undefined}
       emissive={"white"}

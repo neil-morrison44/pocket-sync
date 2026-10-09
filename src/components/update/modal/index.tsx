@@ -6,12 +6,14 @@ import {
   formatDownloadTime,
   InstalledCoreImage,
   NotInstalledCoreImage,
+  PhaseThreeArgs,
 } from "../shared"
 import prettyBytes from "pretty-bytes"
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { Canvas } from "@react-three/fiber"
 import { UpdateThreeScene } from "./threeScene"
 import { UpdateFinishedReport } from "./finishedReport"
+import { useUpdateEventManager } from "./hooks"
 
 type UpdateModalProps = {
   onClose: () => void
@@ -19,184 +21,50 @@ type UpdateModalProps = {
 
 export const UpdateModal = ({ onClose }: UpdateModalProps) => {
   const { t } = useTranslation("update")
-  const [phaseOneErrors, setPhaseOneErrors] = useState<string[]>([])
-  const [phaseThreeErrors, setPhaseThreeErrors] = useState<string[]>([])
-
-  const [phaseStatuses, setPhaseStatuses] = useState<
-    Record<
-      "zero" | "one" | "two" | "three",
-      "unstarted" | "in_progress" | "finished"
-    >
-  >({
-    zero: "unstarted",
-    one: "unstarted",
-    two: "unstarted",
-    three: "unstarted",
-  })
-
-  const [phaseStatusArgs, setPhaseStatusArgs] = useState<{
-    one: {
-      core_name: null | string
-      index: number
-      total: number
-    }
-    three: {
-      file_name: string
-      core_name: string
-      file_bytes: string
-      remaining_bytes: string
-      index: number
-      total: number
-    }
-  }>({
-    one: { core_name: null, index: 0, total: 0 },
-    three: {
-      file_name: "",
-      core_name: "",
-      file_bytes: "0B",
-      remaining_bytes: "0B",
-      index: 0,
-      total: 0,
-    },
-  })
-  const [currentEvent, setCurrentEvent] = useState<UpdateEvent | null>(null)
-  const [phaseThreeCurrentEvent, setPhaseThreeCurrentEvent] =
-    useState<PhaseThreeArgs | null>(null)
-
-  const [installedCores, setInstalledCores] = useState<
-    Record<string, { progress: number; height: number; zOffset: number }>
-  >({})
-
-  useEffect(() => {
-    const unlisten = listen<UpdateEvent>(
-      "install_and_update_cores::update_event",
-      ({ payload }) => {
-        switch (payload.type) {
-          case "PhaseZeroStartedEvent": {
-            setPhaseStatuses((p) => ({ ...p, zero: "in_progress" }))
-            break
-          }
-          case "PhaseOneStartedEvent": {
-            setPhaseStatuses((p) => ({ ...p, zero: "finished" }))
-            break
-          }
-          case "PhaseOneCoreDownloadProgressEvent": {
-            setPhaseStatuses((p) => ({ ...p, one: "in_progress" }))
-            setPhaseStatusArgs((p) => ({
-              ...p,
-              one: {
-                core_name: payload.core_name,
-                index: payload.core_index + 1,
-                total: payload.total_core_count,
-              },
-            }))
-            setInstalledCores((p) => {
-              return {
-                ...p,
-                [payload.core_name]: {
-                  ...(p[payload.core_name] ?? {
-                    height: Math.random() * 90,
-                    zOffset: Math.random(),
-                  }),
-                  progress: payload.download_progress,
-                },
-              }
-            })
-            break
-          }
-          case "PhaseOneErrorEvent": {
-            setPhaseOneErrors((errs) => [...errs, payload.error])
-            break
-          }
-          case "PhaseTwoStartedEvent": {
-            setPhaseStatuses((p) => ({
-              ...p,
-              one: "finished",
-              two: "in_progress",
-            }))
-            break
-          }
-          case "PhaseThreeStartedEvent": {
-            setPhaseStatuses((p) => ({ ...p, two: "finished" }))
-            break
-          }
-          case "PhaseThreeDownloadProgressEvent": {
-            setPhaseStatuses((p) => ({ ...p, three: "in_progress" }))
-
-            setPhaseStatusArgs((p) => ({
-              ...p,
-              three: {
-                file_name: payload.file_name,
-                core_name: payload.core_name,
-                file_bytes: prettyBytes(payload.file_bytes),
-                index: payload.file_index + 1,
-                total: payload.total_file_count,
-                remaining_bytes: prettyBytes(payload.remaining_bytes),
-              },
-            }))
-
-            setPhaseThreeCurrentEvent(payload)
-            break
-          }
-          case "PhaseThreeErrorEvent": {
-            setPhaseThreeErrors((errs) => [...errs, payload.error])
-            break
-          }
-          case "Finish": {
-            setPhaseStatuses((p) => ({
-              zero: "finished",
-              one: "finished",
-              two: "finished",
-              three: "finished",
-            }))
-          }
-        }
-
-        setCurrentEvent(payload)
-      }
-    )
-
-    return () => {
-      unlisten.then((l) => l())
-    }
-  }, [])
+  const updateState = useUpdateEventManager()
 
   return (
     <Modal>
       <div className="update__modal">
         <div className="update__modal-status">
           <ol>
-            {Object.entries(phaseStatuses).map(([phaseName, phaseStatus]) => {
-              return (
-                <li
-                  key={phaseName}
-                  className={`update__modal-status-line update__modal-status-line--${phaseStatus}`}
-                >
-                  {t(
-                    `phase_status.${phaseName}.${phaseStatus}`,
-                    // @ts-expect-error I know this works
-                    phaseStatusArgs[phaseName]
-                  )}
-                  {phaseName === "one" && phaseOneErrors.length > 0 && (
-                    <Errors errors={phaseOneErrors} />
-                  )}
-                  {phaseName === "three" && phaseThreeErrors.length > 0 && (
-                    <Errors errors={phaseThreeErrors} />
-                  )}
-                </li>
-              )
-            })}
+            {Object.entries(updateState.phases).map(
+              ([phaseName, phaseStatus]) => {
+                return (
+                  <li
+                    key={phaseName}
+                    className={`update__modal-status-line update__modal-status-line--${phaseStatus}`}
+                  >
+                    {t(
+                      `phase_status.${phaseName}.${phaseStatus}`,
+                      updateState.phaseArgs[phaseName as "one" | "three"]
+                    )}
+                    {phaseName === "one" &&
+                      updateState.errors.one.length > 0 && (
+                        <Errors errors={updateState.errors.one} />
+                      )}
+                    {phaseName === "three" &&
+                      updateState.errors.three.length > 0 && (
+                        <Errors errors={updateState.errors.three} />
+                      )}
+                  </li>
+                )
+              }
+            )}
           </ol>
-          {phaseStatuses.three === "in_progress" && phaseThreeCurrentEvent && (
-            <PhaseThreeControls coreName={phaseThreeCurrentEvent.core_name} />
-          )}
-          {phaseStatuses.three === "finished" && (
+          {updateState.phases.three === "in_progress" &&
+            updateState.phaseThreeCurrentEvent && (
+              <PhaseThreeControls
+                coreName={updateState.phaseThreeCurrentEvent.core_name}
+              />
+            )}
+          {updateState.phases.three === "finished" && (
             <button onClick={onClose}>{t("buttons.close")}</button>
           )}
         </div>
 
         <Activity
-          mode={phaseStatuses.two === "in_progress" ? "visible" : "hidden"}
+          mode={updateState.phases.two === "in_progress" ? "visible" : "hidden"}
         >
           <div className="update__core-item-grid">
             <PhaseTwoLoading />
@@ -204,10 +72,10 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
         </Activity>
 
         <Activity
-          mode={phaseStatuses.one === "in_progress" ? "visible" : "hidden"}
+          mode={updateState.phases.one === "in_progress" ? "visible" : "hidden"}
         >
           <div className="update__core-flythrough">
-            {Object.entries(installedCores).map(
+            {Object.entries(updateState.installedCores).map(
               ([coreName, { progress, height, zOffset }]) => (
                 <div
                   key={coreName}
@@ -223,17 +91,21 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
             )}
           </div>
         </Activity>
-        <Activity mode={currentEvent?.type === "Finish" ? "visible" : "hidden"}>
+        <Activity
+          mode={
+            updateState.currentEvent?.type === "Finish" ? "visible" : "hidden"
+          }
+        >
           <div className="update__core-finish-report">
-            {currentEvent?.type === "Finish" && (
-              <UpdateFinishedReport {...currentEvent} />
+            {updateState.currentEvent?.type === "Finish" && (
+              <UpdateFinishedReport {...updateState.currentEvent} />
             )}
           </div>
         </Activity>
         <Activity
           mode={
-            phaseStatuses.one === "in_progress" ||
-            phaseStatuses.three === "in_progress"
+            updateState.phases.one === "in_progress" ||
+            updateState.phases.three === "in_progress"
               ? "visible"
               : "hidden"
           }
@@ -244,24 +116,30 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
           >
             <UpdateThreeScene
               progress={
-                phaseStatuses.three === "in_progress" && phaseThreeCurrentEvent
-                  ? phaseThreeCurrentEvent.download_progress
+                updateState.phases.three === "in_progress" &&
+                updateState.currentEvent?.type ===
+                  "PhaseThreeDownloadProgressEvent"
+                  ? updateState.currentEvent.download_progress
                   : undefined
               }
               coreName={
-                phaseStatuses.three === "in_progress" && phaseThreeCurrentEvent
-                  ? phaseThreeCurrentEvent.core_name
+                updateState.phases.three === "in_progress" &&
+                updateState.currentEvent?.type ===
+                  "PhaseThreeDownloadProgressEvent"
+                  ? updateState.currentEvent.core_name
                   : undefined
               }
               loadingModel={
-                phaseStatuses.three === "in_progress" && phaseThreeCurrentEvent
-                  ? (phaseThreeCurrentEvent.file_name.endsWith(".rom") &&
+                updateState.phases.three === "in_progress" &&
+                updateState.currentEvent?.type ===
+                  "PhaseThreeDownloadProgressEvent"
+                  ? (updateState.currentEvent.file_name.endsWith(".rom") &&
                       "Arcade") ||
-                    ((phaseThreeCurrentEvent.file_name.endsWith(".iso") ||
-                      phaseThreeCurrentEvent.file_name
+                    ((updateState.currentEvent.file_name.endsWith(".iso") ||
+                      updateState.currentEvent.file_name
                         .toLowerCase()
                         .endsWith(".pak") ||
-                      phaseThreeCurrentEvent.file_name
+                      updateState.currentEvent.file_name
                         .toLowerCase()
                         .endsWith(".wad")) &&
                       "Disk") ||
@@ -273,19 +151,22 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
         </Activity>
       </div>
       <div className="update__modal-progress">
-        {phaseStatuses.one === "in_progress" && (
+        {updateState.phases.one === "in_progress" && (
           <PhaseOneLoading
-            coreName={Object.entries(installedCores ?? {}).at(-1)?.[0]}
+            coreName={
+              Object.entries(updateState.installedCores ?? {}).at(-1)?.[0]
+            }
             progress={
-              Object.entries(installedCores ?? {}).at(-1)?.[1].progress ?? 0
+              Object.entries(updateState.installedCores ?? {}).at(-1)?.[1]
+                .progress ?? 0
             }
           />
         )}
-        {phaseStatuses.three === "in_progress" && phaseThreeCurrentEvent && (
-          <PhaseThreeLoading {...phaseThreeCurrentEvent} />
+        {updateState.currentEvent?.type ===
+          "PhaseThreeDownloadProgressEvent" && (
+          <PhaseThreeLoading {...updateState.currentEvent} />
         )}
       </div>
-      {/*<pre>{JSON.stringify(currentEvent, null, 2)}</pre>*/}
     </Modal>
   )
 }
@@ -294,14 +175,13 @@ const PhaseTwoLoading = () => {
   const [coreStats, setCoreStats] = useState<
     Record<string, { x: number; y: number; progress: number }>
   >({})
-  const [lastEvent, setLastEvent] = useState<any | null>(null)
+
   useEffect(() => {
     const unlisten = listen<{
       context: string
       progress: number
       finished: number
     }>("progress-event::required_files_for_core", ({ payload }) => {
-      setLastEvent(payload)
       setCoreStats((cs) => ({
         ...cs,
         [payload.context]: {
@@ -458,7 +338,7 @@ const PhaseThreeLoading = ({ ...props }: PhaseThreeLoadingProps) => {
       </div>
 
       <div>
-        <div>{speedBps > 0 ? `${prettyBytes(speedBps)}/s` : "Starting..."}</div>
+        <div>{speedBps > 0 ? `${prettyBytes(speedBps)}/s` : "0B/s"}</div>
         {prettyBytes(downloaded_bytes)} / {prettyBytes(totalBytes)}
       </div>
     </>
@@ -467,59 +347,10 @@ const PhaseThreeLoading = ({ ...props }: PhaseThreeLoadingProps) => {
 
 const Errors = ({ errors }: { errors: string[] }) => {
   const allErrorsText = Array.from(new Set(errors)).join(", ")
-
   return (
     <div className="update__modal-errors">
       <div className="update__modal-errors-count">{errors.length}</div>
-
       {allErrorsText}
     </div>
   )
 }
-
-export type CoreDownloadType = "Update" | "Install"
-
-type PhaseThreeArgs = {
-  core_name: string
-  file_name: string
-  file_bytes: number
-  download_progress: number
-  file_index: number
-  file_index_for_core: number
-  total_file_count: number
-  total_file_count_for_core: number
-  elapsed_time: number
-  downloaded_bytes: number
-  remaining_bytes: number
-}
-
-type UpdateEvent =
-  | { type: "PhaseZeroStartedEvent" }
-  | { type: "PhaseOneStartedEvent" }
-  | {
-      type: "PhaseOneCoreDownloadProgressEvent"
-      core_name: string
-      download_progress: number
-      core_index: number
-      total_core_count: number
-      download_type: CoreDownloadType
-    }
-  | { type: "PhaseOneErrorEvent"; error: string }
-  | { type: "PhaseTwoStartedEvent" }
-  | {
-      type: "PhaseTwoProgressEvent"
-      processed_cores: number
-      total_cores: number
-    }
-  | { type: "PhaseThreeStartedEvent" }
-  | ({
-      type: "PhaseThreeDownloadProgressEvent"
-    } & PhaseThreeArgs)
-  | { type: "PhaseThreeErrorEvent"; error: string }
-  | {
-      type: "Finish"
-      updated_cores: string[]
-      installed_cores: string[]
-      downloaded_files_per_core: Record<string, string[]>
-      total_time: number
-    }
