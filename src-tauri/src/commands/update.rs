@@ -499,7 +499,6 @@ async fn download_and_extract_core(
     let mut zip_bytes = Vec::with_capacity(total_size as usize);
 
     while let Some(chunk) = res.chunk().await? {
-        // sleep(Duration::from_millis(100)).await;
         zip_bytes.extend_from_slice(&chunk);
         downloaded += chunk.len() as f32;
 
@@ -525,37 +524,67 @@ async fn download_and_extract_core(
         let cursor = std::io::Cursor::new(zip_bytes);
         let mut archive = zip::ZipArchive::new(cursor)?;
 
+        let temp_dir = tempfile::tempdir_in(&pocket_path_clone)?;
+        let temp_path = temp_dir.path();
+
         for i in 0..archive.len() {
             let mut file = archive.by_index(i)?;
-            let outpath = pocket_path_clone.join(file.mangled_name());
+            let relative_path = file.mangled_name();
+            let temp_outpath = temp_path.join(&relative_path);
+            let final_outpath = pocket_path_clone.join(&relative_path);
 
-            if skip_file(&outpath, &pocket_path_clone) {
+            if skip_file(&final_outpath, &pocket_path_clone) {
                 continue;
             }
 
             if file.name().ends_with('/') {
-                std::fs::create_dir_all(&outpath)?;
+                std::fs::create_dir_all(&temp_outpath)?;
             } else {
-                if let Some(p) = outpath.parent() {
+                if let Some(p) = temp_outpath.parent() {
                     if !p.exists() {
                         std::fs::create_dir_all(p)?;
                     }
                 }
 
                 if is_update && retain_platform_files {
-                    if file.name().starts_with("Platforms/") && outpath.exists() {
+                    if file.name().starts_with("Platforms/") && final_outpath.exists() {
                         continue;
                     }
                 }
 
-                let mut outfile = std::fs::File::create(&outpath)?;
+                let mut outfile = std::fs::File::create(&temp_outpath)?;
                 std::io::copy(&mut file, &mut outfile)?;
             }
         }
+
+        move_dir_contents(temp_path, &pocket_path_clone)?;
         Ok(())
     })
     .await??;
 
+    Ok(())
+}
+
+fn move_dir_contents(src: &Path, dst: &Path) -> std::io::Result<()> {
+    if !dst.exists() {
+        std::fs::create_dir_all(dst)?;
+    }
+
+    for entry in std::fs::read_dir(src)? {
+        let entry = entry?;
+        let src_path = entry.path();
+        let dst_path = dst.join(entry.file_name());
+
+        if src_path.is_dir() {
+            move_dir_contents(&src_path, &dst_path)?;
+        } else {
+            if let Some(parent) = dst_path.parent() {
+                std::fs::create_dir_all(parent)?;
+            }
+
+            std::fs::rename(&src_path, &dst_path)?;
+        }
+    }
     Ok(())
 }
 

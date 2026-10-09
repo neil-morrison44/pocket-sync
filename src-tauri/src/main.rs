@@ -264,6 +264,9 @@ fn main() {
                     Target::new(TargetKind::Webview),
                 ])
                 .level(LevelFilter::Debug)
+                .level_for("hyper_util", LevelFilter::Info)
+                .level_for("hyper", LevelFilter::Info)
+                .level_for("reqwest", LevelFilter::Info)
                 .build(),
         )
         .manage(PocketSyncState(Default::default()))

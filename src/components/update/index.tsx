@@ -1,4 +1,4 @@
-import { useAtomValue } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
 import { useTranslation } from "react-i18next"
 import {
   CoreInfoSelectorFamily,
@@ -22,6 +22,7 @@ import {
   useRef,
   useState,
   RefObject,
+  useEffectEvent,
 } from "react"
 import { installedCoresWithUpdatesSelector } from "../../jotai/cores/selectors"
 import { PlatformImage } from "../cores/platformImage"
@@ -37,18 +38,29 @@ import { confirm } from "@tauri-apps/plugin-dialog"
 import { invokeInstallAndUpdateCores } from "../../utils/invokes"
 import { OnlyLoadsWhenShown } from "../../utils/onlyLoadsWhenShown"
 import { UpdateModal } from "./modal"
-import { NotInstalledCoreImage } from "./shared"
+import { InstalledCoreImage, NotInstalledCoreImage } from "./shared"
+import {
+  updateFilterDefaultsAtom,
+  UpdateFilterOptions,
+} from "../../jotai/update/atom"
+import { UpdateControls } from "./controls"
 
 export const Update = () => {
-  const { t } = useTranslation("update")
+  const [updateFilterDefaultsOptions, setUpdateFilterDefaultsOptions] = useAtom(
+    updateFilterDefaultsAtom
+  )
   const authorList = useAtomValue(inventoryAuthorListAtom)
-  const [hiddenAuthorList, setHiddenAuthorList] = useState<string[]>([])
+  const [hiddenAuthorList, setHiddenAuthorList] = useState<string[]>(
+    updateFilterDefaultsOptions.authorFilters
+  )
   const categoryList = useAtomValue(inventoryCategoryListAtom)
-  const [hiddenCategoryList, setHiddenCategoryList] = useState<string[]>([])
-  const [aiNess, setAiNess] = useState(1)
+  const [hiddenCategoryList, setHiddenCategoryList] = useState<string[]>(
+    updateFilterDefaultsOptions.categoryFilters
+  )
+  const [aiNess, setAiNess] = useState(updateFilterDefaultsOptions.aiNessFilter)
   const [otherFilters, setOtherFilters] = useState<
     ("analogizer" | "requires_jotego_license" | "requires_coc_license")[]
-  >([])
+  >(updateFilterDefaultsOptions.otherFilters)
 
   const [showingModal, setShowingModal] = useState(false)
 
@@ -62,118 +74,29 @@ export const Update = () => {
     [hiddenAuthorList, hiddenCategoryList, aiNess, otherFilters]
   )
 
-  const deferedContextValue = useDeferredValue(contextValue)
+  const updateDefaultFilters = useEffectEvent(() => {
+    setUpdateFilterDefaultsOptions(contextValue)
+  })
 
+  useEffect(() => () => updateDefaultFilters(), [])
+
+  const deferedContextValue = useDeferredValue(contextValue)
   const [listRef, setListRef] = useState<HTMLDivElement | null>(null)
 
   return (
     <div className="update">
-      <Controls>
-        <ControlsPopoverButton
-          renderPopoverContent={() => (
-            <div className="update__filter-list">
-              {authorList.map((a) => (
-                <label className="update__filter-item">
-                  {a}
-                  <input
-                    type="checkbox"
-                    checked={!hiddenAuthorList.includes(a)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setHiddenAuthorList(
-                          hiddenAuthorList.filter((b) => b !== a)
-                        )
-                      } else {
-                        setHiddenAuthorList([...hiddenAuthorList, a])
-                      }
-                    }}
-                  />
-                </label>
-              ))}
-            </div>
-          )}
-        >
-          {t("controls.filter_by_author")}
-        </ControlsPopoverButton>
-        <ControlsPopoverButton
-          renderPopoverContent={() => (
-            <div className="update__filter-slider">
-              <div>{t("controls.ai_ness.title")}</div>
-              <div className="update__filter-slider-input">
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={aiNess * 100}
-                  onChange={({ target }) => {
-                    const value = parseInt(target.value)
-                    setAiNess(value / 100)
-                  }}
-                />
-                <div>{t("controls.ai_ness.value", { score: aiNess })}</div>
-              </div>
-            </div>
-          )}
-        >
-          {t("controls.filter_by_ai_ness")}
-        </ControlsPopoverButton>
-        <ControlsPopoverButton
-          renderPopoverContent={() => (
-            <div className="update__filter-list">
-              {categoryList.map((a) => (
-                <label className="update__filter-item">
-                  {a}
-                  <input
-                    type="checkbox"
-                    checked={!hiddenCategoryList.includes(a)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setHiddenCategoryList(
-                          hiddenCategoryList.filter((b) => b !== a)
-                        )
-                      } else {
-                        setHiddenCategoryList([...hiddenCategoryList, a])
-                      }
-                    }}
-                  />
-                </label>
-              ))}
-            </div>
-          )}
-        >
-          {t("controls.filter_by_category")}
-        </ControlsPopoverButton>
-        <ControlsPopoverButton
-          renderPopoverContent={() => (
-            <div className="update__filter-list">
-              {(
-                [
-                  "analogizer",
-                  "requires_jotego_license",
-                  "requires_coc_license",
-                ] as const
-              ).map((a) => (
-                <label className="update__filter-item">
-                  {t(`controls.other_filters.${a}`)}
-                  <input
-                    type="checkbox"
-                    checked={!otherFilters.includes(a)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setOtherFilters(otherFilters.filter((b) => b !== a))
-                      } else {
-                        setOtherFilters([...otherFilters, a])
-                      }
-                    }}
-                  />
-                </label>
-              ))}
-            </div>
-          )}
-        >
-          {t("controls.other_filters.title")}
-        </ControlsPopoverButton>
-      </Controls>
+      <UpdateControls
+        authorList={authorList}
+        hiddenAuthorList={hiddenAuthorList}
+        setHiddenAuthorList={setHiddenAuthorList}
+        categoryList={categoryList}
+        hiddenCategoryList={hiddenCategoryList}
+        setHiddenCategoryList={setHiddenCategoryList}
+        aiNess={aiNess}
+        setAiNess={setAiNess}
+        otherFilters={otherFilters}
+        setOtherFilters={setOtherFilters}
+      />
       {!showingModal && (
         <Suspense>
           <UpdateFilterContext value={deferedContextValue}>
@@ -273,14 +196,7 @@ const UpdateOptions = ({ onStart, listElement }: UpdateOptionsProps) => {
   )
 }
 
-const UpdateFilterContext = createContext<{
-  authorFilters: string[]
-  aiNessFilter: number
-  categoryFilters: string[]
-  otherFilters: (
-    "analogizer" | "requires_coc_license" | "requires_jotego_license"
-  )[]
-}>({
+const UpdateFilterContext = createContext<UpdateFilterOptions>({
   authorFilters: [],
   aiNessFilter: 1,
   categoryFilters: [],
@@ -294,12 +210,15 @@ const Overview = () => {
   const installedCoresWithUpdates = useAtomValue(
     installedCoresWithUpdatesSelector
   )
+  const config = useAtomValue(PocketSyncConfigSelector)
 
   const notInstalledList = useMemo(() => {
-    const installed = new Set(coresList)
+    const hiddenItems = config.hidden_cores ?? []
+    const installedAndHidden = new Set([...coresList, ...hiddenItems])
     const inventory = new Set(inventoryCoreList)
-    return Array.from(inventory.difference(installed))
-  }, [coresList, inventoryCoreList])
+
+    return Array.from(inventory.difference(installedAndHidden))
+  }, [coresList, inventoryCoreList, config])
 
   return (
     <div className="update__overview">
@@ -342,19 +261,6 @@ const CoreList = ({ ref }: { ref: Ref<HTMLDivElement> }) => {
         </Suspense>
       ))}
     </div>
-  )
-}
-
-const InstalledCoreImage = ({ coreName }: { coreName: string }) => {
-  const mainPlatformId = useAtomValue(
-    CoreMainPlatformIdSelectorFamily(coreName)
-  )
-
-  return (
-    <PlatformImage
-      className="update__list-item-image"
-      platformId={mainPlatformId}
-    />
   )
 }
 

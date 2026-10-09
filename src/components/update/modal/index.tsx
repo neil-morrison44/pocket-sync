@@ -1,12 +1,17 @@
 import { emit, listen } from "@tauri-apps/api/event"
-import { Activity, useCallback, useEffect, useState } from "react"
+import { Activity, Suspense, useCallback, useEffect, useState } from "react"
 import { Modal } from "../../modal"
 import { useTranslation } from "react-i18next"
-import { NotInstalledCoreImage } from "../shared"
+import {
+  formatDownloadTime,
+  InstalledCoreImage,
+  NotInstalledCoreImage,
+} from "../shared"
 import prettyBytes from "pretty-bytes"
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { Canvas } from "@react-three/fiber"
 import { UpdateThreeScene } from "./threeScene"
+import { UpdateFinishedReport } from "./finishedReport"
 
 type UpdateModalProps = {
   onClose: () => void
@@ -14,6 +19,9 @@ type UpdateModalProps = {
 
 export const UpdateModal = ({ onClose }: UpdateModalProps) => {
   const { t } = useTranslation("update")
+  const [phaseOneErrors, setPhaseOneErrors] = useState<string[]>([])
+  const [phaseThreeErrors, setPhaseThreeErrors] = useState<string[]>([])
+
   const [phaseStatuses, setPhaseStatuses] = useState<
     Record<
       "zero" | "one" | "two" | "three",
@@ -25,7 +33,7 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
     two: "unstarted",
     three: "unstarted",
   })
-  const [isFinished, setIsFinished] = useState(false)
+
   const [phaseStatusArgs, setPhaseStatusArgs] = useState<{
     one: {
       core_name: null | string
@@ -96,6 +104,10 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
             })
             break
           }
+          case "PhaseOneErrorEvent": {
+            setPhaseOneErrors((errs) => [...errs, payload.error])
+            break
+          }
           case "PhaseTwoStartedEvent": {
             setPhaseStatuses((p) => ({
               ...p,
@@ -126,8 +138,11 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
             setPhaseThreeCurrentEvent(payload)
             break
           }
+          case "PhaseThreeErrorEvent": {
+            setPhaseThreeErrors((errs) => [...errs, payload.error])
+            break
+          }
           case "Finish": {
-            setIsFinished(true)
             setPhaseStatuses((p) => ({
               zero: "finished",
               one: "finished",
@@ -159,30 +174,41 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
                 >
                   {t(
                     `phase_status.${phaseName}.${phaseStatus}`,
+                    // @ts-expect-error I know this works
                     phaseStatusArgs[phaseName]
+                  )}
+                  {phaseName === "one" && phaseOneErrors.length > 0 && (
+                    <Errors errors={phaseOneErrors} />
+                  )}
+                  {phaseName === "three" && phaseThreeErrors.length > 0 && (
+                    <Errors errors={phaseThreeErrors} />
                   )}
                 </li>
               )
             })}
           </ol>
           {phaseStatuses.three === "in_progress" && phaseThreeCurrentEvent && (
-            <PhaseThreeControls
-              coreName={phaseThreeCurrentEvent.core_name}
-              fileName={phaseThreeCurrentEvent.file_name}
-            />
+            <PhaseThreeControls coreName={phaseThreeCurrentEvent.core_name} />
           )}
           {phaseStatuses.three === "finished" && (
-            <button onClick={onClose}>{"close"}</button>
+            <button onClick={onClose}>{t("buttons.close")}</button>
           )}
         </div>
 
-        <div className="update__core-flythrough">
-          <Activity
-            mode={phaseStatuses.one === "in_progress" ? "visible" : "hidden"}
-          >
-            {Object.entries(installedCores)
-              // .filter(([_, c]) => c.progress < 1)
-              .map(([coreName, { progress, height, zOffset }]) => (
+        <Activity
+          mode={phaseStatuses.two === "in_progress" ? "visible" : "hidden"}
+        >
+          <div className="update__core-item-grid">
+            <PhaseTwoLoading />
+          </div>
+        </Activity>
+
+        <Activity
+          mode={phaseStatuses.one === "in_progress" ? "visible" : "hidden"}
+        >
+          <div className="update__core-flythrough">
+            {Object.entries(installedCores).map(
+              ([coreName, { progress, height, zOffset }]) => (
                 <div
                   key={coreName}
                   className="update__core-flythrough-item"
@@ -193,96 +219,71 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
                 >
                   <NotInstalledCoreImage coreName={coreName} />
                 </div>
-              ))}
-          </Activity>
-
-          <Activity
-            mode={phaseStatuses.two === "in_progress" ? "visible" : "hidden"}
-          >
-            <PhaseTwoLoading />
-          </Activity>
-          {phaseStatuses.three === "in_progress" && phaseThreeCurrentEvent && (
-            <PhaseThreeLoading {...phaseThreeCurrentEvent} />
-          )}
-
-          {currentEvent?.type === "Finish" && (
-            <div style={{ overflow: "auto", height: "100%" }}>
-              <div>{`Finished in ${formatTime(currentEvent.total_time / 1000 || 0)}`}</div>
-
-              <div style={{ display: "flex", gap: "12px" }}>
-                <details style={{ maxHeight: "100px", overflow: "hidden" }}>
-                  <summary>{`Updated Cores ${currentEvent.updated_cores.length}`}</summary>
-                  <ul style={{ overflow: "auto", maxHeight: "200px" }}>
-                    {currentEvent.updated_cores.map((c) => (
-                      <li key={c}>{c}</li>
-                    ))}
-                  </ul>
-                </details>
-                <details style={{ maxHeight: "100px", overflow: "hidden" }}>
-                  <summary>{`Installed Cores ${currentEvent.installed_cores.length}`}</summary>
-                  <ul style={{ overflow: "auto", maxHeight: "200px" }}>
-                    {currentEvent.installed_cores.map((c) => (
-                      <li key={c}>{c}</li>
-                    ))}
-                  </ul>
-                </details>
-
-                <details style={{ maxHeight: "100px", overflow: "hidden" }}>
-                  <summary>{`Downloaded Files`}</summary>
-                  <ul style={{ overflow: "auto", maxHeight: "200px" }}>
-                    {Object.entries(currentEvent.installed_files_per_core).map(
-                      ([coreName, files]) => (
-                        <details
-                          style={{ maxHeight: "100px", overflow: "hidden" }}
-                        >
-                          <summary>{`${coreName} (${files.length})`}</summary>
-                          <ul style={{ overflow: "auto", maxHeight: "200px" }}>
-                            {files.map((f) => (
-                              <li key={c}>{c}</li>
-                            ))}
-                          </ul>
-                        </details>
-                      )
-                    )}
-                  </ul>
-                </details>
-              </div>
-              <pre>{JSON.stringify(currentEvent, null, 2)}</pre>
-            </div>
-          )}
-        </div>
-        <Canvas
-          className="update__core-3d-scene"
-          camera={{ fov: 10, position: [0, 0, 50] }}
+              )
+            )}
+          </div>
+        </Activity>
+        <Activity mode={currentEvent?.type === "Finish" ? "visible" : "hidden"}>
+          <div className="update__core-finish-report">
+            {currentEvent?.type === "Finish" && (
+              <UpdateFinishedReport {...currentEvent} />
+            )}
+          </div>
+        </Activity>
+        <Activity
+          mode={
+            phaseStatuses.one === "in_progress" ||
+            phaseStatuses.three === "in_progress"
+              ? "visible"
+              : "hidden"
+          }
         >
-          <UpdateThreeScene
+          <Canvas
+            className="update__core-3d-scene"
+            camera={{ fov: 10, position: [0, 0, 50] }}
+          >
+            <UpdateThreeScene
+              progress={
+                phaseStatuses.three === "in_progress" && phaseThreeCurrentEvent
+                  ? phaseThreeCurrentEvent.download_progress
+                  : undefined
+              }
+              coreName={
+                phaseStatuses.three === "in_progress" && phaseThreeCurrentEvent
+                  ? phaseThreeCurrentEvent.core_name
+                  : undefined
+              }
+              loadingModel={
+                phaseStatuses.three === "in_progress" && phaseThreeCurrentEvent
+                  ? (phaseThreeCurrentEvent.file_name.endsWith(".rom") &&
+                      "Arcade") ||
+                    ((phaseThreeCurrentEvent.file_name.endsWith(".iso") ||
+                      phaseThreeCurrentEvent.file_name
+                        .toLowerCase()
+                        .endsWith(".pak") ||
+                      phaseThreeCurrentEvent.file_name
+                        .toLowerCase()
+                        .endsWith(".wad")) &&
+                      "Disk") ||
+                    "Chip"
+                  : undefined
+              }
+            />
+          </Canvas>
+        </Activity>
+      </div>
+      <div className="update__modal-progress">
+        {phaseStatuses.one === "in_progress" && (
+          <PhaseOneLoading
+            coreName={Object.entries(installedCores ?? {}).at(-1)?.[0]}
             progress={
-              phaseStatuses.three === "in_progress" && phaseThreeCurrentEvent
-                ? phaseThreeCurrentEvent.download_progress
-                : undefined
-            }
-            coreName={
-              phaseStatuses.three === "in_progress" && phaseThreeCurrentEvent
-                ? phaseThreeCurrentEvent.core_name
-                : undefined
-            }
-            loadingModel={
-              phaseStatuses.three === "in_progress" && phaseThreeCurrentEvent
-                ? (phaseThreeCurrentEvent.file_name.endsWith(".rom") &&
-                    "Arcade") ||
-                  ((phaseThreeCurrentEvent.file_name.endsWith(".iso") ||
-                    phaseThreeCurrentEvent.file_name
-                      .toLowerCase()
-                      .endsWith(".pak") ||
-                    phaseThreeCurrentEvent.file_name
-                      .toLowerCase()
-                      .endsWith(".wad")) &&
-                    "Disk") ||
-                  "Chip"
-                : undefined
+              Object.entries(installedCores ?? {}).at(-1)?.[1].progress ?? 0
             }
           />
-        </Canvas>
+        )}
+        {phaseStatuses.three === "in_progress" && phaseThreeCurrentEvent && (
+          <PhaseThreeLoading {...phaseThreeCurrentEvent} />
+        )}
       </div>
       {/*<pre>{JSON.stringify(currentEvent, null, 2)}</pre>*/}
     </Modal>
@@ -321,36 +322,29 @@ const PhaseTwoLoading = () => {
       {Object.entries(coreStats).map(([coreName, { x, y, progress }]) => (
         <div
           key={coreName}
-          className="update__core-flythrough-item"
+          className="update__core-item-grid-item"
           style={{
-            transform: `translateX(${5 + x / 1.25}cqw) translateY(${5 + y / 1.25}cqh) translateZ(-${(1 - progress) * 1000}px)`,
+            opacity: progress,
           }}
         >
-          <NotInstalledCoreImage coreName={coreName} />
+          <Suspense fallback={<NotInstalledCoreImage coreName={coreName} />}>
+            <InstalledCoreImage coreName={coreName} />
+          </Suspense>
         </div>
       ))}
-      <pre>{JSON.stringify(lastEvent, null, 2)}</pre>
     </>
   )
 }
 
-const PhaseThreeControls = ({
-  coreName,
-  fileName,
-}: {
-  coreName: String
-  fileName: String
-}) => {
+const PhaseThreeControls = ({ coreName }: { coreName: String }) => {
+  const { t } = useTranslation("update")
   const [hasConfirmedSkip, setHasConfirmedSkip] = useState(false)
   const skipAllForCore = useCallback(async () => {
     if (!hasConfirmedSkip) {
-      const allow = confirm(
-        "This will skip all required files for this core, files can be installed later via the Cores tab",
-        {
-          title: "Skip files for Core",
-          kind: "warning",
-        }
-      )
+      const allow = confirm(t("buttons.skip_core_warning.text"), {
+        title: t("buttons.skip_core_warning.title"),
+        kind: "warning",
+      })
       if (!allow) return
     }
     setHasConfirmedSkip(true)
@@ -362,13 +356,10 @@ const PhaseThreeControls = ({
 
   const skipFile = useCallback(async () => {
     if (!hasConfirmedSkip) {
-      const allow = confirm(
-        "This will cancel downloading this file, files can be installed later via the Cores tab",
-        {
-          title: "Skip file",
-          kind: "warning",
-        }
-      )
+      const allow = confirm(t("buttons.skip_file_warning.text"), {
+        title: t("buttons.skip_file_warning.title"),
+        kind: "warning",
+      })
       if (!allow) return
     }
     setHasConfirmedSkip(true)
@@ -379,31 +370,46 @@ const PhaseThreeControls = ({
 
   return (
     <div className="update__controls">
-      <button onClick={skipFile}>{"Skip File"}</button>
-      <button onClick={skipAllForCore}>{"Skip Core"}</button>
+      <button onClick={skipFile}>{t("buttons.skip_file")}</button>
+      <button onClick={skipAllForCore}>{t("buttons.skip_core")}</button>
     </div>
+  )
+}
+
+type PhaseOneLoadingProps = {
+  coreName?: string
+  progress: number
+}
+
+const PhaseOneLoading = ({ coreName, progress }: PhaseOneLoadingProps) => {
+  const { t } = useTranslation("update")
+
+  return (
+    <>
+      <div></div>
+      <div>
+        <label>
+          {t("progress.one", {
+            progress,
+            core_name: coreName,
+          })}
+          <progress
+            className="update__modal-progress-bar"
+            value={progress * 100}
+            max="100"
+          />
+        </label>
+      </div>
+      <div></div>
+    </>
   )
 }
 
 type PhaseThreeLoadingProps = {} & PhaseThreeArgs
 
-const formatTime = (seconds: number) => {
-  if (seconds === 0 || !isFinite(seconds)) return "Calculating..."
-  const h = Math.floor(seconds / 3600)
-  const m = Math.floor((seconds % 3600) / 60)
-  const s = Math.floor(seconds % 60)
-
-  if (h > 0) return `${h}h ${m}m ${s}s`
-  if (m > 0) return `${m}m ${s}s`
-  return `${s}s`
-}
-
 const PhaseThreeLoading = ({ ...props }: PhaseThreeLoadingProps) => {
   const {
-    core_name,
     file_name,
-    file_index,
-    total_file_count,
     elapsed_time,
     downloaded_bytes,
     remaining_bytes,
@@ -411,6 +417,7 @@ const PhaseThreeLoading = ({ ...props }: PhaseThreeLoadingProps) => {
     file_bytes,
   } = props
 
+  const { t } = useTranslation("update")
   const totalBytes =
     downloaded_bytes -
     file_bytes * download_progress +
@@ -419,29 +426,53 @@ const PhaseThreeLoading = ({ ...props }: PhaseThreeLoadingProps) => {
 
   const speedBps =
     elapsed_time / 1000 > 0 ? downloaded_bytes / (elapsed_time / 1000) : 0
-
   const etaSeconds = speedBps > 0 ? remaining_bytes / speedBps : 0
-
   const totalProgress = downloaded_bytes / totalBytes
 
   return (
-    <div>
-      {/* Header Info */}
+    <>
+      <div></div>
       <div>
-        <div>
-          <span>{core_name}</span>
-          Downloading: {file_name}
-          <div>ETA: {formatTime(etaSeconds)}</div>
-          <progress value={download_progress * 100} max="100" />
-          <p>{(download_progress * 100).toFixed(0)}%</p>
-          <progress value={totalProgress * 100} max="100" />
-        </div>
-        <div>{speedBps > 0 ? `${prettyBytes(speedBps)}/s` : "Starting..."}</div>
-        <div>
-          {prettyBytes(downloaded_bytes)} / {prettyBytes(totalBytes)}
-        </div>
-        <div>ETA: {formatTime(etaSeconds)}</div>
+        <label>
+          {t("progress.three.file", {
+            progress: download_progress,
+            file_name,
+          })}
+          <progress
+            className="update__modal-progress-bar"
+            value={download_progress * 100}
+            max="100"
+          />
+        </label>
+        <label>
+          {t("progress.three.total", {
+            progress: totalProgress,
+            eta: formatDownloadTime(etaSeconds),
+          })}
+          <progress
+            className="update__modal-progress-bar"
+            value={totalProgress * 100}
+            max="100"
+          />
+        </label>
       </div>
+
+      <div>
+        <div>{speedBps > 0 ? `${prettyBytes(speedBps)}/s` : "Starting..."}</div>
+        {prettyBytes(downloaded_bytes)} / {prettyBytes(totalBytes)}
+      </div>
+    </>
+  )
+}
+
+const Errors = ({ errors }: { errors: string[] }) => {
+  const allErrorsText = Array.from(new Set(errors)).join(", ")
+
+  return (
+    <div className="update__modal-errors">
+      <div className="update__modal-errors-count">{errors.length}</div>
+
+      {allErrorsText}
     </div>
   )
 }
@@ -489,6 +520,6 @@ type UpdateEvent =
       type: "Finish"
       updated_cores: string[]
       installed_cores: string[]
-      installed_files_per_core: Record<string, string[]>
+      downloaded_files_per_core: Record<string, string[]>
       total_time: number
     }

@@ -282,12 +282,38 @@
     "ai_score": "AI-ness: {score, number, percent}",
     "start_button": "Update {update_count, plural, one {# core} other {# cores}} & install {install_count, plural, one {# core} other {# cores}}",
     "no_archive_url_warning": "An archive URL hasn't been set up in the Settings tab, cores will be installed without required files. Continue?",
+    "progress": {
+      "one": "Downloading & installing {core_name} - {progress, number, percent}",
+      "three": {
+        "file": "Downloading {file_name} - {progress, number, percent}",
+        "total": "All files {progress, number, percent}, complete in roughly {eta}"
+      }
+    },
+    "finish_report": {
+      "title": "Finished in {time}",
+      "updated": "Updated Cores {count}",
+      "installed": "Installed Cores {count}",
+      "downloaded_files": "Downloaded Files {count}"
+    },
+    "buttons": {
+      "close": "Close",
+      "skip_file": "Skip file",
+      "skip_file_warning": {
+        "title": "Skip file",
+        "text": "This will cancel downloading this file, files can be installed later via the Cores tab"
+      },
+      "skip_core": "Skip core",
+      "skip_core_warning": {
+        "title": "Skip files for Core",
+        "text": "This will skip all required files for this core, files can be installed later via the Cores tab"
+      }
+    },
     "controls": {
-      "filter_by_author": "Filter by Author",
-      "filter_by_category": "Filter by Category",
-      "filter_by_ai_ness": "Filter by AI-ness",
+      "filter_by_author": "Filter by Author {count, plural, =0 {} other {(#)}}",
+      "filter_by_category": "Filter by Category {count, plural, =0 {} other {(#)}}",
+      "filter_by_ai_ness": "Filter by AI-ness {value, plural, =1 {} other {({value, number, percent})}} ",
       "other_filters": {
-        "title": "Other Filters",
+        "title": "Other Filters {count, plural, =0 {} other {(#)}}",
         "analogizer": "Analogizer",
         "requires_jotego_license": "JOTEGO\nPatreon key",
         "requires_coc_license": "Coin Op Collection\nKey"
