@@ -18,7 +18,6 @@ import { ColourContextProviderRandomised } from "./components/three/colourContex
 import { useAtom, useAtomValue, useSetAtom } from "jotai"
 import { useAtomFnSet } from "./utils/jotai"
 import { ErrorBoundary } from "./components/errorBoundary"
-import { archiveFileExtensionsSelector } from "./jotai/archive/selectors"
 
 const Pocket = React.lazy(() =>
   import("./components/three/pocket").then((m) => ({ default: m.Pocket }))
