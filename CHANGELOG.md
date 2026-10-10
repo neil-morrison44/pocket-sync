@@ -1,4 +1,19 @@
 # Changelog
+<a id="v7.0.0"></a>
+# [v7.0.0 - Adds Update tab, which can install lots of things very fast](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.0.0) - 2026-10-10
+
+## What's Changed
+* Adds "Update" tab which updates & installs all cores (with filters) by [@neil-morrison44](https://github.com/neil-morrison44) in [#483](https://github.com/neil-morrison44/pocket-sync/pull/483)
+* Removes the now not needed archive Cores UI & fixes data pack loading when there's loads of platforms by [@neil-morrison44](https://github.com/neil-morrison44) in [#484](https://github.com/neil-morrison44/pocket-sync/pull/484)
+* Fixes an inconsistency in palette folder naming by [@neil-morrison44](https://github.com/neil-morrison44) in [#485](https://github.com/neil-morrison44/pocket-sync/pull/485)
+* Makes the items in the update list click through to the core info pages by [@neil-morrison44](https://github.com/neil-morrison44) in [#486](https://github.com/neil-morrison44/pocket-sync/pull/486)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v6.4.0...v7.0.0
+
+[Changes][v7.0.0]
+
+
 <a id="v6.4.0"></a>
 # [v6.4.0 - AI-ness scores for cores & Supreme colours](https://github.com/neil-morrison44/pocket-sync/releases/tag/v6.4.0) - 2026-08-30
 
@@ -1973,6 +1988,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v7.0.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.4.0...v7.0.0
 [v6.4.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.2...v6.4.0
 [v6.3.2]: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.1...v6.3.2
 [v6.3.1]: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.0...v6.3.1
