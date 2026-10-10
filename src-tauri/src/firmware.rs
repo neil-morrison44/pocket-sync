@@ -67,6 +67,7 @@ pub async fn download_firmware_file(
                     message: None,
                     complete_units: downloaded as usize,
                     total_units: total_size as usize,
+                    context: None,
                 },
             )
             .unwrap();

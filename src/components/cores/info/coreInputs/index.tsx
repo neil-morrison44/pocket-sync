@@ -19,6 +19,8 @@ import { useTranslation } from "react-i18next"
 import { ColourContextProviderFromConfig } from "../../../three/colourContext"
 import * as THREE from "three"
 import { useAtomValue } from "jotai"
+import { CoreLogoScreen } from "../../../three/coreLogoScreen"
+import { StaticScreen } from "../../../three/staticScreen"
 
 const Pocket = React.lazy(() =>
   import("../../../three/pocket").then((m) => ({ default: m.Pocket }))
@@ -46,50 +48,9 @@ export const CoreInputs = ({
   onClose: () => void
   platformId: string
 }) => {
-  const platformImage = useAtomValue(PlatformImageSelectorFamily(platformId))
   const { t } = useTranslation("core_info")
   const presetInputList = useAtomValue(ListPresetInputsSelectorFamily(coreName))
-
   const [chosenInput, setChosenInput] = useState("core")
-  const [screenTexture, setScreenTexture] = useState<Texture | undefined>()
-
-  useEffect(() => {
-    const image = new Image()
-    image.src = platformImage
-    image.onload = () => {
-      const canvas = document.createElement("canvas")
-      const scale = 5
-      canvas.width = 160 * scale
-      canvas.height = 144 * scale
-      const context = canvas.getContext("2d")
-      if (!context) return
-      context.fillStyle = "#222"
-      context.fillRect(0, 0, canvas.width, canvas.height)
-      const imageScale = canvas.width / image.width
-      context.drawImage(
-        image,
-        0,
-        canvas.height / 2 - (image.height * imageScale) / 2,
-        image.width * imageScale,
-        image.height * imageScale
-      )
-
-      context.fillStyle = "white"
-      context.textAlign = "center"
-      let fontSize = 32
-      do {
-        fontSize -= 1
-        context.font = `${fontSize * scale}px GamePocket`
-      } while (context.measureText(coreName).width > canvas.width * 0.9)
-
-      context.fillText(coreName, canvas.width / 2, canvas.height - 16 * scale)
-
-      const newTexture = new Texture(canvas)
-      newTexture.needsUpdate = true
-      newTexture.anisotropy = 16
-      setScreenTexture(newTexture)
-    }
-  }, [coreName, platformImage])
 
   return (
     <Modal>
@@ -111,14 +72,9 @@ export const CoreInputs = ({
         <Suspense fallback={<div>{"Suspending?"}</div>}>
           <Pocket
             screenMaterial={
-              <meshPhysicalMaterial
-                attach="material"
-                map={screenTexture || undefined}
-                emissive={"white"}
-                emissiveMap={screenTexture || undefined}
-                clearcoat={1}
-                envMapIntensity={0.01}
-              />
+              <Suspense fallback={<StaticScreen />}>
+                <CoreLogoScreen coreName={coreName} />
+              </Suspense>
             }
           >
             <OrbitControls

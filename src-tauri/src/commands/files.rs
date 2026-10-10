@@ -383,7 +383,7 @@ pub async fn get_file_metadata(
 ) -> Result<FileMetadata, AppError> {
     trace!("Command: get_file_metadata");
     let pocket_path = state.0.pocket_path.read().await;
-    let hash_cache = hash_cache.inner();
+    let hash_cache = hash_cache.inner().clone();
     let full_path = pocket_path.join(file_path);
 
     let crc32 = crc32_for_file(&full_path, Some(hash_cache)).await?;

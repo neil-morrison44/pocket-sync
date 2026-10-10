@@ -1,7 +1,7 @@
 use anyhow::Result;
 use md5::{Digest, Md5};
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, io::Read, path::PathBuf};
+use std::{collections::HashMap, io::Read, path::PathBuf, sync::Arc};
 use tokio::sync::RwLock;
 
 use crate::util::get_mtime_timestamp;
@@ -12,16 +12,16 @@ pub struct HashCache {
     pub md5: HashMap<(PathBuf, u64), String>,
 }
 
-pub type HashCacheState = RwLock<HashCache>;
+pub type HashCacheState = Arc<RwLock<HashCache>>;
 
 pub async fn md5_for_file(
     file_path: &PathBuf,
-    hash_cache: Option<&RwLock<HashCache>>,
+    hash_cache: Option<Arc<RwLock<HashCache>>>,
 ) -> Result<String> {
     let full_path = file_path.clone();
     let timestamp = get_mtime_timestamp(&full_path).await?;
 
-    if let Some(hash_cache) = hash_cache {
+    if let Some(hash_cache) = hash_cache.clone() {
         let cache_guard = hash_cache.read().await;
         if let Some(hash) = cache_guard.md5.get(&(PathBuf::from(&full_path), timestamp)) {
             return Ok(String::from(hash));
@@ -58,7 +58,7 @@ pub async fn md5_for_file(
     let hash = handle.await?;
     let hexed_hash = hex::encode(hash);
 
-    if let Some(hash_cache) = hash_cache {
+    if let Some(hash_cache) = hash_cache.clone() {
         let mut cache_guard = hash_cache.write().await;
         cache_guard
             .md5
@@ -70,11 +70,11 @@ pub async fn md5_for_file(
 
 pub async fn crc32_for_file(
     file_path: &PathBuf,
-    hash_cache: Option<&RwLock<HashCache>>,
+    hash_cache: Option<Arc<RwLock<HashCache>>>,
 ) -> Result<u32> {
     let timestamp = get_mtime_timestamp(&file_path).await?;
 
-    if let Some(hash_cache) = hash_cache {
+    if let Some(hash_cache) = hash_cache.clone() {
         let cache_guard = hash_cache.read().await;
         if let Some(hash) = cache_guard
             .crc32
@@ -114,7 +114,7 @@ pub async fn crc32_for_file(
 
     let crc32 = handle.await?;
 
-    if let Some(hash_cache) = hash_cache {
+    if let Some(hash_cache) = hash_cache.clone() {
         let mut cache_guard = hash_cache.write().await;
         cache_guard
             .crc32

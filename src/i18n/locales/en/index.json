@@ -263,6 +263,7 @@
   "layout": {
     "cores": "Cores",
     "fetch": "Fetch",
+    "update": "Update",
     "firmware": "Firmware",
     "palettes": "Palettes",
     "games": "Games",
@@ -273,6 +274,84 @@
     "screenshots": "Screenshots",
     "plugins": "Plugins",
     "settings": "Settings"
+  },
+  "update": {
+    "overview": "{install_count, plural, =0 {No installed cores} one {# installed core} other {# installed cores}}, {update_count, plural, =0 {no updatable cores} one {# updatable core} other {# updatable cores}}, and {not_installed_count, plural, =0 {no installable cores} one {# installable core} other {# installable cores}}",
+    "last_update_date": "Last Update: {date, date, long}",
+    "requires_license": "Requires license file",
+    "ai_score": "AI-ness: {score, number, percent}",
+    "start_button": "Update {update_count, plural, one {# core} other {# cores}} & install {install_count, plural, one {# core} other {# cores}}",
+    "no_archive_url_warning": {
+      "title": "no_archive_url_warning",
+      "text": "An archive URL hasn't been set up in the Settings tab, cores will be installed without required files. Continue?"
+    },
+    "progress": {
+      "one": "Downloading & installing {core_name} - {progress, number, percent}",
+      "three": {
+        "file": "Downloading {file_name} - {progress, number, percent}",
+        "total": "All files {progress, number, percent}, complete in roughly {eta}"
+      }
+    },
+    "finish_report": {
+      "title": "Finished in {time}",
+      "updated": "Updated Cores {count}",
+      "installed": "Installed Cores {count}",
+      "downloaded_files": "Downloaded Files {count}"
+    },
+    "buttons": {
+      "close": "Close",
+      "skip_file": "Skip file",
+      "skip_file_warning": {
+        "title": "Skip file",
+        "text": "This will cancel downloading this file, files can be installed later via the Cores tab"
+      },
+      "skip_core": "Skip core",
+      "skip_core_warning": {
+        "title": "Skip files for Core",
+        "text": "This will skip all required files for this core, files can be installed later via the Cores tab"
+      }
+    },
+
+    "donate_archive_org": "Some of these files are massive so please donate to the internet archive",
+    "controls": {
+      "filter_by_author": "Filter by Author {count, plural, =0 {} other {(#)}}",
+      "filter_by_category": "Filter by Category {count, plural, =0 {} other {(#)}}",
+      "filter_by_ai_ness": "Filter by AI-ness {value, plural, =1 {} other {({value, number, percent})}} ",
+      "other_filters": {
+        "title": "Other Filters {count, plural, =0 {} other {(#)}}",
+        "analogizer": "Analogizer",
+        "requires_jotego_license": "JOTEGO\nPatreon key",
+        "requires_coc_license": "Coin Op Collection\nKey",
+        "update": "Updatable Cores",
+        "install": "Installable Cores"
+      },
+      "ai_ness": {
+        "title": "Acceptable AI-ness level",
+        "value": "{score, number, percent}"
+      }
+    },
+    "phase_status": {
+      "zero": {
+        "unstarted": "Find cores in OpenFPGA library",
+        "in_progress": "Finding cores in OpenFPGA library...",
+        "finished": "Found cores in OpenFPGA library"
+      },
+      "one": {
+        "unstarted": "Download & install cores",
+        "in_progress": "Downloading & installing core {index} of {total}:\n{core_name}",
+        "finished": "Downloaded & installed cores ({index}/{total})"
+      },
+      "two": {
+        "unstarted": "Find required files & check what's downloaded already",
+        "in_progress": "Finding required files & checking what's downloaded already...",
+        "finished": "Found required files"
+      },
+      "three": {
+        "unstarted": "Download required files",
+        "in_progress": "Downloading file {file_name} ({file_bytes}) for {core_name} ({index}/{total})\n{remaining_bytes} remaining",
+        "finished": "Downloaded required files ({index}/{total})"
+      }
+    }
   },
   "plugins": {
     "buttons": {

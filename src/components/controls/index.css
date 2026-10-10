@@ -13,13 +13,15 @@
   gap: 20px;
 }
 
-.controls__item, .controls__button {
+.controls__item,
+.controls__button,
+.controls__popover-button {
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   accent-color: black;
-  padding-inline:10px;
+  padding-inline: 10px;
   text-align: center;
   /* stylelint-disable-next-line property-no-vendor-prefix */
   -webkit-user-select: none;
@@ -42,11 +44,13 @@
   min-height: 35px;
 }
 
-.controls__button {
+.controls__button,
+.controls__popover-button {
+  border-radius: 0;
   padding-block: 5px;
   padding-inline: 15px;
   background-color: #eee;
-  color:black;
+  color: black;
   font-weight: 500;
   clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
 
@@ -54,27 +58,55 @@
     filter: brightness(80%);
   }
 
-  &:active{
-    filter: invert();
+  &:active {
+    transform: scale(0.9);
   }
 }
 
-.controls__button--back{
+.controls__popover-content {
+  background-color: white;
+  margin: 0;
+  position-area: bottom;
+  min-width: 120px;
+  background-color: var(--light-colour);
+  border: none;
+  position: relative;
+  color: white;
+  padding-top: 12px;
+  clip-path: polygon(
+    0 12px,
+    calc(50% - 12px) 12px,
+    50% 0,
+    calc(50% + 12px) 12px,
+    100% 12px,
+    100% 100%,
+    0 100%
+  );
+  overflow: visible;
+  box-shadow: 1px 1px 0 white;
+  filter: drop-shadow(1px 1px 0 white);
+
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0.33);
+  }
+}
+
+.controls__button--back {
   padding-inline-start: 0;
 }
 
-.controls__checkbox{
+.controls__checkbox {
   clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
   align-self: stretch;
   padding-inline: 10px;
   padding-block: 5px;
   background-color: #eee;
-  color:black;
+  color: black;
   font-weight: 500;
   display: flex;
   align-items: flex-end;
 
-  input{
+  input {
     display: none;
   }
 
@@ -82,26 +114,24 @@
     filter: brightness(80%);
   }
 
-  &:active{
+  &:active {
     filter: invert();
   }
-
-
 }
 
-.controls__checkbox--checked{
+.controls__checkbox--checked {
   background-color: var(--selection-colour);
   color: white;
 
-  &:active{
+  &:active {
     background-color: #eee;
-    color:black;
+    color: black;
   }
 }
 
-.controls__select{
+.controls__select {
   display: flex;
-  padding-inline:10px;
+  padding-inline: 10px;
   clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
   gap: 5px;
   align-items: center;
@@ -114,9 +144,9 @@
   }
 
   align-self: stretch;
-  padding-block:2px;
+  padding-block: 2px;
   background-color: #eee;
-  color:black;
+  color: black;
   font-weight: 400;
 
   &:hover {
@@ -130,8 +160,7 @@
   border-radius: 10px;
 }
 
-
-.controls__group{
+.controls__group {
   font-size: 1rem;
   gap: 5px;
   display: flex;
@@ -140,32 +169,32 @@
   padding-inline: 10px;
   position: relative;
 
-
-  &::before, &::after{
-    content:"";
+  &::before,
+  &::after {
+    content: "";
     height: 100%;
-    width:2px;
+    width: 2px;
     background-color: white;
     opacity: 0.6;
     position: absolute;
-    left:0;
-    top:0;
+    left: 0;
+    top: 0;
     transform: rotate(8deg);
   }
 
-  &::after{
+  &::after {
     left: unset;
     right: 0;
   }
 }
 
-.controls__group-title{
+.controls__group-title {
   font-size: 1rem;
   width: 100%;
   line-height: 1em;
 }
 
-.controls__group-items{
+.controls__group-items {
   display: flex;
   gap: 10px;
   padding-inline: 5px;

@@ -6,3 +6,4 @@ pub mod firmware;
 pub mod platforms;
 pub mod plugins;
 pub mod saves;
+pub mod update;

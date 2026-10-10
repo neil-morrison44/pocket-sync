@@ -13,6 +13,7 @@
   --red-colour: rgb(200 80 88);
   --purple-colour: #885090;
   --selection-colour: #396cd8;
+  --orange-colour: #c69327;
 
   background-color: var(--background-colour);
   font-synthesis: none;
@@ -105,14 +106,15 @@ button {
   background-color: #0f0f0f98;
   transition: border-color 0.25s;
   box-shadow: 0 2px 2px rgb(0 0 0 / 20%);
-}
-
-button {
   cursor: pointer;
-}
 
-button:hover {
-  border-color: var(--selection-colour);
+  &:hover {
+    border-color: var(--selection-colour);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 input,

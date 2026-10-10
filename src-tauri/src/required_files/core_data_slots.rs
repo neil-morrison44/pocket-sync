@@ -1,6 +1,6 @@
-use crate::required_files::parameters_bitmap::ParsedParams;
+use crate::required_files::{DataSlotFileStatus, parameters_bitmap::ParsedParams};
 
-use super::{DataSlot, DataSlotFile, DataSlotFileStatus};
+use super::{DataSlot, DataSlotFile};
 use anyhow::Result;
 use nestify::nest;
 use serde::{Deserialize, Serialize};
@@ -75,8 +75,8 @@ pub async fn process_core_data(
 
 #[cfg(test)]
 mod tests {
-    use crate::required_files::parameters_bitmap::SlotParameters;
     use crate::required_files::IntOrHexString::*;
+    use crate::required_files::parameters_bitmap::SlotParameters;
 
     use super::*;
     use anyhow::Result;

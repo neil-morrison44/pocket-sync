@@ -7,6 +7,7 @@ pub struct ProgressEmitter<'a> {
     work_unit_stack: Vec<WorkUnitGroupStatus>,
     message: Option<ProgressMessage>,
     emit_callback: EmitCallback<'a>,
+    context: Option<String>,
 }
 
 impl<'a> ProgressEmitter<'a> {
@@ -15,6 +16,7 @@ impl<'a> ProgressEmitter<'a> {
             work_unit_stack: vec![WorkUnitGroupStatus::new(10)],
             message: None,
             emit_callback: callback,
+            context: None,
         }
     }
 
@@ -57,6 +59,10 @@ impl<'a> ProgressEmitter<'a> {
         self.emit_progress();
     }
 
+    pub fn set_context(self: &mut Self, context: &str) -> () {
+        self.context = Some(context.to_string());
+    }
+
     fn emit_progress(self: &mut Self) -> () {
         let (completed, total) = self.get_completed_and_total();
         let event = ProgressEvent {
@@ -65,6 +71,7 @@ impl<'a> ProgressEmitter<'a> {
             message: self.message.clone(),
             complete_units: completed,
             total_units: total,
+            context: self.context.clone(),
         };
 
         (self.emit_callback)(event);
@@ -89,6 +96,7 @@ impl Drop for ProgressEmitter<'_> {
             message: self.message.clone(),
             complete_units: completed,
             total_units: total,
+            context: self.context.clone(),
         };
         (self.emit_callback)(event);
     }
@@ -100,6 +108,7 @@ impl Default for ProgressEmitter<'_> {
             work_unit_stack: Default::default(),
             message: Default::default(),
             emit_callback: Box::new(|_e| {}),
+            context: None,
         }
     }
 }
@@ -117,6 +126,7 @@ pub struct ProgressEvent {
     pub message: Option<ProgressMessage>,
     pub complete_units: usize,
     pub total_units: usize,
+    pub context: Option<String>,
 }
 
 #[cfg(test)]

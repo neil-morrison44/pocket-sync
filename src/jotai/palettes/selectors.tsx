@@ -145,6 +145,7 @@ export const downloadablePalettesSelector = atom<
         return (
           filename.endsWith(".pal") &&
           !filename.startsWith(".") &&
+          //@ts-expect-error getData does exist
           entry.getData
         )
       })

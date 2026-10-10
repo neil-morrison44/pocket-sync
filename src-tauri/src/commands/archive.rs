@@ -19,7 +19,7 @@ pub async fn find_required_files(
     core_id: &str,
     include_alts: bool,
     archive_url: &str,
-    window: tauri::WebviewWindow,
+    window: tauri::Window,
 ) -> Result<Vec<DataSlotFile>, AppError> {
     debug!("Command: find_required_files");
     let pocket_path = state.0.pocket_path.read().await;
@@ -47,7 +47,7 @@ pub async fn find_required_files(
         include_alts,
         archive_url,
         window,
-        hash_cache.inner(),
+        hash_cache.inner().clone(),
     )
     .await?)
 }
@@ -78,13 +78,13 @@ pub async fn install_archive_files(
     let arc_lock = state.0.file_locker.find_lock_for(&common_dir).await;
     let _write_lock = arc_lock.write().await;
 
-    let mut total_bytes: usize = 0;
+    let mut total_bytes: u64 = 0;
     for file in &files {
         match &file.status {
             DataSlotFileStatus::NeedsUpdateFromArchive(info)
             | DataSlotFileStatus::MissingButOnArchive(info) => {
-                if let Some(size_str) = &info.size {
-                    total_bytes += size_str.parse::<usize>().unwrap_or(0);
+                if let Some(size) = &info.size {
+                    total_bytes += size;
                 }
             }
             _ => {}
@@ -100,7 +100,7 @@ pub async fn install_archive_files(
             let _ = window_clone.emit(&format!("progress-event::{job_id_clone}"), event);
         }));
 
-        progress.begin_work_units(total_bytes.max(1)); // Avoid 0-byte division
+        progress.begin_work_units(total_bytes.max(1) as usize); // Avoid 0-byte division
 
         while let Some(msg) = progress_rx.recv().await {
             match msg {
@@ -124,7 +124,7 @@ pub async fn install_archive_files(
         let file_name = file.name.clone();
 
         if let Err(err) = install_file(
-            file,
+            &file,
             archive_url,
             turbo,
             &pocket_path,

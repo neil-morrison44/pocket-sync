@@ -4,6 +4,7 @@ use rayon::prelude::*;
 use reqwest::Url;
 use std::{
     cmp::{max, min},
+    io::Read,
     sync::{
         Arc,
         atomic::{AtomicBool, Ordering},
@@ -52,41 +53,66 @@ pub async fn turbo_download_file(
         ranges.push((start, end));
     }
 
-    let file_bytes = tokio::task::spawn_blocking(move || {
-        // 2. Map over the iter returning a Result, which allows Rayon to short-circuit
+    let has_been_cancelled_clone = has_been_cancelled.clone();
+    let file_bytes_result = tokio::task::spawn_blocking(move || {
         let results: Result<Vec<_>, _> = ranges
             .par_iter()
             .map(|(start, end)| {
-                if has_been_cancelled.load(Ordering::Relaxed) {
-                    return Err(Error::msg("Download cancelled"));
-                }
-
-                let bytes = download_retry_on_timeout(url.clone(), *start, *end)
-                    .map_err(|_| Error::msg("Chunk download failed"))?;
-
-                if has_been_cancelled.load(Ordering::Relaxed) {
-                    return Err(Error::msg("Download cancelled"));
-                }
-
-                let _ = progress_tx.send(ProgressUpdate::AddBytes(bytes.len()));
-                Ok(bytes)
+                download_retry_on_timeout(
+                    url.clone(),
+                    *start,
+                    *end,
+                    &progress_tx,
+                    &has_been_cancelled_clone,
+                )
             })
             .collect();
-        results.map(|chunks| chunks.concat())
+        results
     })
-    .await??;
+    .await?;
 
-    Ok(file_bytes.into())
+    match file_bytes_result {
+        Ok(chunks) => Ok(chunks.concat().into()),
+        Err(e) => {
+            if has_been_cancelled.load(Ordering::Relaxed) {
+                Ok(Bytes::new())
+            } else {
+                Err(e)
+            }
+        }
+    }
 }
 
-fn download_retry_on_timeout(url: Url, start: u64, end: u64) -> Result<Bytes> {
+fn download_retry_on_timeout(
+    url: Url,
+    start: u64,
+    end: u64,
+    progress_tx: &mpsc::UnboundedSender<ProgressUpdate>,
+    has_been_cancelled: &Arc<AtomicBool>,
+) -> Result<Bytes> {
     let client = reqwest::blocking::Client::new();
     let mut retry_count = 0;
+
+    let mut current_start = start;
+    let mut chunk_data = Vec::with_capacity((end - start + 1) as usize);
+    let mut buffer = [0; 65536];
+
     loop {
-        let mut request = client.get(url.clone());
-        request = request.header("Range", format!("bytes={}-{}", start, end));
-        match request.send().and_then(|r| r.bytes()) {
-            Ok(b) => return Ok(b),
+        if has_been_cancelled.load(Ordering::Relaxed) {
+            return Err(Error::msg("Download cancelled"));
+        }
+
+        let request = client
+            .get(url.clone())
+            .header("Range", format!("bytes={}-{}", current_start, end));
+
+        let mut response = match request.send() {
+            Ok(r) => {
+                if !r.status().is_success() {
+                    return Err(Error::msg(format!("HTTP error: {}", r.status())));
+                }
+                r
+            }
             Err(err) if err.is_timeout() || err.is_decode() => {
                 if retry_count < 10 {
                     retry_count += 1;
@@ -101,5 +127,47 @@ fn download_retry_on_timeout(url: Url, start: u64, end: u64) -> Result<Bytes> {
                 return Err(e.into());
             }
         };
+
+        let mut read_error = false;
+        loop {
+            if has_been_cancelled.load(Ordering::Relaxed) {
+                return Err(Error::msg("Download cancelled"));
+            }
+
+            match response.read(&mut buffer) {
+                Ok(0) => break, // EOF
+                Ok(n) => {
+                    chunk_data.extend_from_slice(&buffer[..n]);
+                    current_start += n as u64;
+                    let _ = progress_tx.send(ProgressUpdate::AddBytes(n));
+                }
+                Err(e) => {
+                    println!("Read error midway through chunk: {}, retrying", e);
+                    read_error = true;
+                    break;
+                }
+            }
+        }
+
+        if read_error {
+            if retry_count < 10 {
+                retry_count += 1;
+                continue;
+            } else {
+                return Err(Error::msg("Max retries exceeded reading chunk body"));
+            }
+        }
+
+        if current_start > end {
+            return Ok(Bytes::from(chunk_data));
+        } else {
+            if retry_count < 10 {
+                retry_count += 1;
+                println!("Premature EOF, resuming remaining bytes");
+                continue;
+            } else {
+                return Err(Error::msg("Premature EOF and max retries exceeded"));
+            }
+        }
     }
 }

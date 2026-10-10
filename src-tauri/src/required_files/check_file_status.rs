@@ -6,7 +6,7 @@ use crate::{
     root_files::RootFile,
 };
 use anyhow::Result;
-use std::{collections::HashMap, path::PathBuf};
+use std::{collections::HashMap, path::PathBuf, sync::Arc};
 use tokio::sync::RwLock;
 
 pub async fn check_data_file_status(
@@ -14,7 +14,7 @@ pub async fn check_data_file_status(
     archive_metadata: Vec<RawMetadataItem>,
     files_at_root: Vec<RootFile>,
     pocket_path: &PathBuf,
-    hash_cache: Option<&RwLock<HashCache>>,
+    hash_cache: Option<Arc<RwLock<HashCache>>>,
     mut progress_emit: ProgressEmitter<'_>,
 ) -> Result<Vec<DataSlotFile>> {
     let archive_hash: HashMap<_, _> = archive_metadata
@@ -71,7 +71,7 @@ pub async fn check_data_file_status(
             },
 
             (_, true, Some(root_file)) => {
-                let placed_file_md5 = md5_for_file(&file_path, hash_cache).await?;
+                let placed_file_md5 = md5_for_file(&file_path, hash_cache.clone()).await?;
                 let root_file_md5 = String::from(match root_file {
                     RootFile::Zipped { md5, .. } => md5,
                     RootFile::UnZipped { md5, .. } => md5,
@@ -129,7 +129,8 @@ pub async fn check_data_file_status(
                     ..
                 } = metadata_item;
                 let file_crc32 =
-                    crc32_for_file(&pocket_path.join(&data_slot_file.path), hash_cache).await?;
+                    crc32_for_file(&pocket_path.join(&data_slot_file.path), hash_cache.clone())
+                        .await?;
 
                 if let Some(archive_crc32) = &crc32
                     .as_ref()
@@ -142,7 +143,7 @@ pub async fn check_data_file_status(
                             url: name.clone(),
                             crc32: crc32.clone().unwrap_or_default(),
                             mtime: mtime.clone(),
-                            size: size.clone(),
+                            size: *size,
                         })
                     }
                 } else {
@@ -150,7 +151,7 @@ pub async fn check_data_file_status(
                         url: name.clone(),
                         crc32: crc32.clone().unwrap_or_default(),
                         mtime: mtime.clone(),
-                        size: size.clone(),
+                        size: *size,
                     })
                 }
             }

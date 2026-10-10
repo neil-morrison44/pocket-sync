@@ -1,6 +1,5 @@
-use std::time::SystemTimeError;
-
 use serde::Serialize;
+use std::time::SystemTimeError;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -13,6 +12,9 @@ pub enum AppError {
 
     #[error(transparent)]
     Io(#[from] std::io::Error),
+
+    #[error(transparent)]
+    AcquireError(#[from] tokio::sync::AcquireError),
 
     #[error(transparent)]
     Reqwest(#[from] reqwest::Error),

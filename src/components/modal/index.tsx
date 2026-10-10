@@ -1,9 +1,9 @@
-import { ReactNode, useEffect, useState } from "react"
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow"
+import { ReactNode, Suspense, useEffect, useRef, useState } from "react"
 import "./index.css"
 
 import { mainWindowSelector } from "../../jotai/selectors"
 import { useAtomValue } from "jotai"
+import { Loader } from "../loader"
 
 type ModalProps = {
   children: ReactNode
@@ -11,27 +11,19 @@ type ModalProps = {
 }
 
 export const Modal = ({ children, className }: ModalProps) => {
-  const [wrapperHeight, setWrapperHeight] = useState(0)
-  const mainViewWindow = useAtomValue(mainWindowSelector)
+  const dialogRef = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
-    if (!mainViewWindow) return
-
-    mainViewWindow.innerSize().then(({ height }) => {
-      setWrapperHeight(height / window.devicePixelRatio)
-    })
-
-    const unlisten = mainViewWindow.onResized(({ payload }) => {
-      setWrapperHeight(payload.height / window.devicePixelRatio)
-    })
-    return () => {
-      unlisten.then((l) => l())
-    }
+    dialogRef.current?.showModal()
   }, [])
 
   return (
-    <div className="modal__wrapper" style={{ height: `${wrapperHeight}px` }}>
-      <div className={`modal ${className || ""}`}>{children}</div>
-    </div>
+    <dialog
+      className={`modal ${className || ""}`}
+      ref={dialogRef}
+      closedby="none"
+    >
+      <Suspense fallback={<Loader />}>{children}</Suspense>
+    </dialog>
   )
 }

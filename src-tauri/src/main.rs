@@ -15,6 +15,7 @@ use saves_zip::SaveZipFile;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::PathBuf;
+use std::sync::Arc;
 use std::vec;
 use tauri::{App, Emitter, Manager, RunEvent};
 use tauri_plugin_dialog::DialogExt;
@@ -128,7 +129,7 @@ async fn check_root_files(
 ) -> Result<Vec<RootFile>, AppError> {
     debug!("Command: check_root_files");
     let pocket_path = state.0.pocket_path.read().await;
-    let hash_cache = hash_cache.inner();
+    let hash_cache = hash_cache.inner().clone();
     Ok(root_files::check_root_files(&pocket_path, extensions, hash_cache).await?)
 }
 
@@ -263,6 +264,9 @@ fn main() {
                     Target::new(TargetKind::Webview),
                 ])
                 .level(LevelFilter::Debug)
+                .level_for("hyper_util", LevelFilter::Info)
+                .level_for("hyper", LevelFilter::Info)
+                .level_for("reqwest", LevelFilter::Info)
                 .build(),
         )
         .manage(PocketSyncState(Default::default()))
@@ -313,7 +317,8 @@ fn main() {
             commands::plugins::kill_plugin,
             commands::platforms::all_platform_data,
             commands::platforms::archive_unarchive_platforms,
-            commands::platforms::all_platform_images
+            commands::platforms::all_platform_images,
+            commands::update::install_and_update_cores
         ])
         .setup(|app| {
             log_panics::init();
@@ -327,7 +332,7 @@ fn main() {
                 HashCache::default()
             };
 
-            app.manage(RwLock::new(cache_data));
+            app.manage(Arc::new(RwLock::new(cache_data)));
 
             start_tasks(app)
         })
