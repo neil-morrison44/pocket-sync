@@ -55,12 +55,10 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
               }
             )}
           </ol>
-          {updateState.phases.three === "in_progress" &&
-            updateState.phaseThreeCurrentEvent && (
-              <PhaseThreeControls
-                coreName={updateState.phaseThreeCurrentEvent.core_name}
-              />
-            )}
+          {updateState.currentEvent?.type ==
+            "PhaseThreeDownloadProgressEvent" && (
+            <PhaseThreeControls coreName={updateState.currentEvent.core_name} />
+          )}
           {updateState.phases.three === "finished" && (
             <button onClick={onClose}>{t("buttons.close")}</button>
           )}
