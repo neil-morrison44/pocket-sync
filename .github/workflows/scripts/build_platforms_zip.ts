@@ -70,10 +70,12 @@ export const buildPlatformZip = async ({ github }: { github: Octokit }) => {
       for (const entry of entries.filter((entry) =>
         entry.filename.endsWith(".json")
       )) {
+        // @ts-expect-error getData does exist
         if (!entry.getData) return
         const [file, ..._] = entry.filename.split("/").reverse()
         const filename = `${packPath}/Platforms/${file}`
         dataPacks.push(file.replace(".json", ""))
+        // @ts-expect-error getData does exist
         const dataBlob = await entry.getData(new zip.BlobWriter(), {})
         try {
           await multiZip.add(filename, new zip.BlobReader(dataBlob))
@@ -86,10 +88,12 @@ export const buildPlatformZip = async ({ github }: { github: Octokit }) => {
       for (const entry of entries.filter((entry) =>
         entry.filename.endsWith(".bin")
       )) {
+        // @ts-expect-error getData does exist
         if (!entry.getData) return
         const [file, ..._] = entry.filename.split("/").reverse()
         const filename = `${packPath}/Platforms/_images/${file}`
         imagePacks.push(file.replace(".bin", ""))
+        // @ts-expect-error getData does exist
         const dataBlob = await entry.getData(new zip.BlobWriter(), {})
         try {
           await multiZip.add(filename, new zip.BlobReader(dataBlob))
