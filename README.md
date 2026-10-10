@@ -43,12 +43,6 @@ So long as the Github sponsors stay above the cost of an Apple Dev Membership I'
 
 If there are issues though see [this guide](/docs/mac_gatekeeper.md).
 
-## Philosophy
-
-- What this purposely _isn't_ is a way to install 100 Cores in 20 seconds without really knowing what any of them are (however you can "Update All")
-- I'll not be adding any sort of "Install All" button to the UI, instead it's a slower process of choosing what cores you're interested in & seeing them, including links to support whoever put the time into getting the core onto the Pocket, in more detail. Also, with the number of cores coming from github now you'll run into rate limiting if you try and pull them all down at once. _(If you really want to just download every core at once I'd recommend the [mattpannella](https://github.com/mattpannella/pocket-updater-utility) / [RetroDriven](https://github.com/RetroDriven/Pocket_Updater) updaters for this over this one)_
-- I'll not be supporting customising the `video.json` files (e.g. to add "Full Screen" modes), since I think this should be up to the core authors / users advanced enough to edit their own JSON (and deal with it if they break things). The app'll always allow you to opt out of any incoming `video.json` file though & if Analogue introduces a way to customise the video out without conflicting with the core author's files then I'll support it.
-
 ## Roadmap
 
 ### Translations
