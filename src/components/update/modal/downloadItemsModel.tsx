@@ -7,7 +7,7 @@ import React, { useRef } from "react"
 import { useGLTF } from "@react-three/drei"
 import { GLTF } from "three-stdlib"
 
-import downloadItemsModel from "./DownloadItems.glb"
+import downloadItemsModel from "./downloadItems.glb"
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -247,4 +247,4 @@ export const DownloadItemsModel = ({
   )
 }
 
-useGLTF.preload("/DownloadItems.glb")
+useGLTF.preload("/downloadItems.glb")
