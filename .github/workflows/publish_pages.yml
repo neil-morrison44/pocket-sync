@@ -18,7 +18,7 @@ jobs:
       - run: npm ci
       - run: npx tsc .github/workflows/scripts/build_platforms_zip.ts --target esnext --module commonjs --skipLibCheck
       - run: mv .github/workflows/scripts/build_platforms_zip.js .github/workflows/scripts/build_platforms_zip.cjs
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@v9
         with:
           script: |
             const { buildPlatformZip } = require(".github/workflows/scripts/build_platforms_zip.cjs")
@@ -33,7 +33,7 @@ jobs:
           path: ./image_packs.json
 
       - name: Fetch Sponsor Count
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const query = `
