@@ -23,7 +23,6 @@ use tauri::Listener;
 use tauri::Window;
 use tokio::sync::Semaphore;
 use tokio::sync::mpsc;
-use tokio::time::{Duration, sleep};
 
 #[derive(Deserialize, Debug)]
 struct InventoryJSON {

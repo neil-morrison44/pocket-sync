@@ -1,6 +1,5 @@
-use std::{sync::Arc, time::SystemTimeError};
-
 use serde::Serialize;
+use std::time::SystemTimeError;
 use thiserror::Error;
 
 #[derive(Debug, Error)]

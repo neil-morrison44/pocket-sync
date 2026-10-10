@@ -118,7 +118,7 @@ mod tests {
                 crc32: Some(String::from("8049042f")),
                 md5: Some(String::from("f46af2ef83e0d4359e13290208828664")),
                 mtime: Some(String::from("1695137679")),
-                size: Some(String::from("3473472"))
+                size: Some(3473472)
             }]
         );
         Ok(())
