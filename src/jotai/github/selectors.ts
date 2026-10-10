@@ -2,7 +2,7 @@ import { GithubRelease } from "../../types"
 import { coreInventoryAtom } from "../inventory/atoms"
 import { githubHeadersSelector } from "../settings/selectors"
 import { Atom, atom } from "jotai"
-import { atomFamily } from "jotai/utils"
+import { atomFamily } from "jotai-family"
 import { atomFamilyDeepEqual } from "../../utils/jotai"
 
 export const pocketSyncChangelogSelector = atom<Promise<string>>(

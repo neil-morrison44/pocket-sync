@@ -4,7 +4,7 @@ import {
   invokeListFolders,
 } from "../../../../utils/invokes"
 import { SavesInvalidationAtom, saveMappingAtom } from "./atoms"
-import { atomFamily } from "jotai/utils"
+import { atomFamily } from "jotai-family"
 import { atom, Atom } from "jotai"
 import { atomFamilyDeepEqual } from "../../../../utils/jotai"
 

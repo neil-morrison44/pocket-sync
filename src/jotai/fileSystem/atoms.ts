@@ -1,5 +1,5 @@
 import { atom } from "jotai"
-import { atomFamily } from "jotai/utils"
+import { atomFamily } from "jotai-family"
 import { listen } from "@tauri-apps/api/event"
 import { getDefaultStore } from "jotai"
 import { splitAsPath } from "../../utils/splitAsPath"
