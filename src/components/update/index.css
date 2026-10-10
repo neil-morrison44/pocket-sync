@@ -113,6 +113,16 @@
     "i n v l"
     "i a d s";
   grid-template-columns: subgrid;
+  cursor: pointer;
+  &:hover {
+    background-color: color-mix(
+      var(--info-colour),
+      var(--selection-colour) 25%
+    );
+  }
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 .update__list-item-image {
