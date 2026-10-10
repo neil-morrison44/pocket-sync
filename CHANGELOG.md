@@ -1,6 +1,23 @@
 # Changelog
+<a id="v7.0.1"></a>
+# [v7.0.1 - Fix Image Packs](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.0.1) - 2026-10-10
+
+## What's Changed
+* Bump actions/checkout from 6 to 7 by [@dependabot](https://github.com/dependabot)[bot] in [#471](https://github.com/neil-morrison44/pocket-sync/pull/471)
+* Bump actions/deploy-pages from 4 to 5 by [@dependabot](https://github.com/dependabot)[bot] in [#470](https://github.com/neil-morrison44/pocket-sync/pull/470)
+* Bump tauri-apps/tauri-action from 0.6.0 to 1.0.0 by [@dependabot](https://github.com/dependabot)[bot] in [#472](https://github.com/neil-morrison44/pocket-sync/pull/472)
+* Bump actions/upload-artifact from 5 to 7 by [@dependabot](https://github.com/dependabot)[bot] in [#447](https://github.com/neil-morrison44/pocket-sync/pull/447)
+* Bump actions/github-script from 8 to 9 by [@dependabot](https://github.com/dependabot)[bot] in [#445](https://github.com/neil-morrison44/pocket-sync/pull/445)
+* Fix image packs by [@neil-morrison44](https://github.com/neil-morrison44) in [#487](https://github.com/neil-morrison44/pocket-sync/pull/487)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.0...v7.0.1
+
+[Changes][v7.0.1]
+
+
 <a id="v7.0.0"></a>
-# [v7.0.0 - Adds Update tab, which can install lots of things very fast](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.0.0) - 2026-10-10
+# [v7.0.0 - Adds Update tab, which can update & install lots of things very fast](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.0.0) - 2026-10-10
 
 ## What's Changed
 * Adds "Update" tab which updates & installs all cores (with filters) by [@neil-morrison44](https://github.com/neil-morrison44) in [#483](https://github.com/neil-morrison44/pocket-sync/pull/483)
@@ -1988,6 +2005,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v7.0.1]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.0...v7.0.1
 [v7.0.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.4.0...v7.0.0
 [v6.4.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.2...v6.4.0
 [v6.3.2]: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.1...v6.3.2
