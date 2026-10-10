@@ -14,6 +14,9 @@ import { Canvas } from "@react-three/fiber"
 import { UpdateThreeScene } from "./threeScene"
 import { UpdateFinishedReport } from "./finishedReport"
 import { useUpdateEventManager } from "./hooks"
+import { useAtomValue } from "jotai"
+import { PocketSyncConfigSelector } from "../../../jotai/config/selectors"
+import { Link } from "../../link"
 
 type UpdateModalProps = {
   onClose: () => void
@@ -288,6 +291,7 @@ const PhaseOneLoading = ({ coreName, progress }: PhaseOneLoadingProps) => {
 type PhaseThreeLoadingProps = {} & PhaseThreeArgs
 
 const PhaseThreeLoading = ({ ...props }: PhaseThreeLoadingProps) => {
+  const config = useAtomValue(PocketSyncConfigSelector)
   const {
     file_name,
     elapsed_time,
@@ -311,7 +315,13 @@ const PhaseThreeLoading = ({ ...props }: PhaseThreeLoadingProps) => {
 
   return (
     <>
-      <div></div>
+      <div>
+        {config.archive_url?.includes("archive.org") && (
+          <Link href="https://archive.org/donate/">
+            {t("donate_archive_org")}
+          </Link>
+        )}
+      </div>
       <div>
         <label>
           {t("progress.three.file", {

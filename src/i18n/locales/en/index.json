@@ -311,6 +311,8 @@
         "text": "This will skip all required files for this core, files can be installed later via the Cores tab"
       }
     },
+
+    "donate_archive_org": "Some of these files are massive so please donate to the internet archive",
     "controls": {
       "filter_by_author": "Filter by Author {count, plural, =0 {} other {(#)}}",
       "filter_by_category": "Filter by Category {count, plural, =0 {} other {(#)}}",
