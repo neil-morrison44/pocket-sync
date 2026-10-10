@@ -4,7 +4,8 @@ import {
   readTextFile,
   writeTextFile,
 } from "@tauri-apps/plugin-fs"
-import { atomFamily, useAtomCallback } from "jotai/utils"
+import { unwrap, useAtomCallback } from "jotai/utils"
+import { atomFamily } from "jotai-family"
 import deepEqual from "fast-deep-equal/es6"
 import {
   Atom,
@@ -119,4 +120,28 @@ export const useAtomFnSet = <T>(
   const value = useAtomValue(atom)
   const setAtom = useSetAtomFnSet(atom)
   return [value, setAtom] as const
+}
+
+export type Loadable<Value> =
+  | { state: "loading" }
+  | { state: "hasData"; data: Value }
+  | { state: "hasError"; error: unknown }
+
+export const loadable = <Value>(
+  anAtom: Atom<Value>
+): Atom<Loadable<Awaited<Value>>> => {
+  const LOADING = { state: "loading" } as const
+  const unwrappedAtom = unwrap(anAtom, () => LOADING)
+
+  return atom((get) => {
+    try {
+      const data = get(unwrappedAtom)
+      if (data === LOADING) {
+        return LOADING
+      }
+      return { state: "hasData", data: data as Awaited<Value> }
+    } catch (error) {
+      return { state: "hasError", error }
+    }
+  })
 }

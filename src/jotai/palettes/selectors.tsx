@@ -13,6 +13,8 @@ import { atomFamily } from "jotai-family"
 export const palettesListSelector = atom<Promise<string[]>>(async (get) => {
   const path = "Assets/gb/common/Palettes"
   get(fsWatchAtomFamily(path))
+  const r = await get(WalkDirSelectorFamily({ path, extensions: ["pal"] }))
+  console.log("palettes?", r)
   return get(WalkDirSelectorFamily({ path, extensions: ["pal"] }))
 })
 
@@ -21,7 +23,7 @@ export const PaletteColoursSelectorFamily = atomFamily<
   Atom<Promise<Palette>>
 >((name: string) =>
   atom(async (get) => {
-    const path = `Assets/gb/common/palettes${name}`
+    const path = `Assets/gb/common/Palettes${name}`
     get(fsWatchAtomFamily(path))
     const data = await invokeReadBinaryFile(path)
 
@@ -65,7 +67,7 @@ export const PaletteCodeSelectorFamily = atomFamily<
   Atom<Promise<string>>
 >((name: string) =>
   atom(async (get) => {
-    const path = `Assets/gb/common/palettes${name}`
+    const path = `Assets/gb/common/Palettes${name}`
     get(fsWatchAtomFamily(path))
     const data = await invokeReadBinaryFile(path)
     let encodedName = "Imported Palette"

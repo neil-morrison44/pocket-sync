@@ -243,8 +243,7 @@ async fn move_game(
 fn main() {
     let app = tauri::Builder::default()
         .plugin(tauri_plugin_locale::init())
-        .plugin(tauri_plugin_window_state::Builder::new().build())
-        .plugin(tauri_plugin_log::Builder::new().build())
+        .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_clipboard_manager::init())
@@ -253,8 +252,6 @@ fn main() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
-        .plugin(tauri_plugin_window_state::Builder::default().build())
-        .plugin(tauri_plugin_locale::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(
             tauri_plugin_log::Builder::default()

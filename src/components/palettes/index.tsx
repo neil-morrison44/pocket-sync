@@ -2,7 +2,14 @@ import {
   PaletteCodeSelectorFamily,
   palettesListSelector,
 } from "../../jotai/palettes/selectors"
-import { Suspense, useCallback, useMemo, useState } from "react"
+import {
+  Dispatch,
+  SetStateAction,
+  Suspense,
+  useCallback,
+  useMemo,
+  useState,
+} from "react"
 
 import "./index.css"
 import { Controls } from "../controls"
@@ -26,20 +33,14 @@ import { PreviewCanvas } from "./previewCanvas"
 import { PaletteTown } from "./town"
 import { useAtomValue } from "jotai"
 
+type PaletteUIModes =
+  { name: "list" } | { name: "new" } | { name: "selected"; palette: string }
+
 export const Palettes = () => {
-  const palettesList = useAtomValue(palettesListSelector)
   const { t } = useTranslation("palettes")
-  const [mode, setMode] = useState<
-    { name: "list" } | { name: "new" } | { name: "selected"; palette: string }
-  >({ name: "list" })
+  const [mode, setMode] = useState<PaletteUIModes>({ name: "list" })
   const [codeModalOpen, setCodeModalOpen] = useState(false)
   const [townOpen, setTownOpen] = useState(false)
-
-  const sortedPalettesList = useMemo(
-    () => [...palettesList].sort((a, b) => a.localeCompare(b)),
-    [palettesList]
-  )
-
   const savePalette = useSavePalette()
 
   const createNewPalette = useCallback(async () => {
@@ -88,35 +89,52 @@ export const Palettes = () => {
         )}
       </Controls>
 
-      {townOpen && (
-        <Suspense>
-          <PaletteTown onClose={() => setTownOpen(false)} />
-        </Suspense>
-      )}
+      {townOpen && <PaletteTown onClose={() => setTownOpen(false)} />}
 
       {codeModalOpen && (
         <AddViaCodeModal onClose={() => setCodeModalOpen(false)} />
       )}
 
       {mode.name === "selected" && (
-        <PaletteFull
-          key={mode.palette}
-          name={mode.palette}
-          onClose={() => setMode({ name: "list" })}
-        />
+        <Suspense>
+          <PaletteFull
+            key={mode.palette}
+            name={mode.palette}
+            onClose={() => setMode({ name: "list" })}
+          />
+        </Suspense>
       )}
       {mode.name === "list" && (
-        <ul className="palettes__list">
-          {sortedPalettesList.map((palette) => (
-            <PaletteListItem
-              key={palette}
-              name={palette}
-              onClick={() => setMode({ name: "selected", palette })}
-            />
-          ))}
-        </ul>
+        <Suspense>
+          <PaletteList setMode={setMode} />
+        </Suspense>
       )}
     </div>
+  )
+}
+
+type PaletteListProps = {
+  setMode: Dispatch<SetStateAction<PaletteUIModes>>
+}
+
+const PaletteList = ({ setMode }: PaletteListProps) => {
+  const palettesList = useAtomValue(palettesListSelector)
+
+  const sortedPalettesList = useMemo(
+    () => [...palettesList].sort((a, b) => a.localeCompare(b)),
+    [palettesList]
+  )
+
+  return (
+    <ul className="palettes__list">
+      {sortedPalettesList.map((palette) => (
+        <PaletteListItem
+          key={palette}
+          name={palette}
+          onClick={() => setMode({ name: "selected", palette })}
+        />
+      ))}
+    </ul>
   )
 }
 
@@ -134,14 +152,14 @@ export const PaletteListItem = ({
   const [renameMode, setRenameMode] = useState(false)
 
   const deletePalette = useCallback(async () => {
-    await invokeDeleteFiles([`Assets/gb/common/palettes${name}`])
+    await invokeDeleteFiles([`Assets/gb/common/Palettes${name}`])
   }, [name])
 
   const duplicatePalette = useCallback(async () => {
     await invokeCopyFiles([
       {
-        origin: `${pocketPath}/Assets/gb/common/palettes${name}`,
-        destination: `${pocketPath}/Assets/gb/common/palettes${name.replace(
+        origin: `${pocketPath}/Assets/gb/common/Palettes${name}`,
+        destination: `${pocketPath}/Assets/gb/common/Palettes${name.replace(
           ".pal",
           "_copy.pal"
         )}`,
@@ -152,8 +170,8 @@ export const PaletteListItem = ({
 
   const renamePalette = useCallback(async () => {
     setRenameMode(false)
-    const origin = `${pocketPath}/Assets/gb/common/palettes/${name}`
-    const destination = `${pocketPath}/Assets/gb/common/palettes/${interimName}.pal`
+    const origin = `${pocketPath}/Assets/gb/common/Palettes/${name}`
+    const destination = `${pocketPath}/Assets/gb/common/Palettes/${interimName}.pal`
     if (splitAsPath(origin).join("/") === splitAsPath(destination).join("/"))
       return
 
@@ -164,7 +182,7 @@ export const PaletteListItem = ({
         exists: true,
       },
     ])
-    await invokeDeleteFiles([`Assets/gb/common/palettes/${name}`])
+    await invokeDeleteFiles([`Assets/gb/common/Palettes/${name}`])
   }, [interimName, name, pocketPath])
 
   return (
@@ -256,7 +274,7 @@ const AddViaCodeModal = ({ onClose }: { onClose: () => void }) => {
   const onAdd = useCallback(async () => {
     if (!parsedPalette) return
     await invokeSaveFile(
-      `${pocketPath}/Assets/gb/common/palettes/${parsedPalette.name}`,
+      `${pocketPath}/Assets/gb/common/Palettes/${parsedPalette.name}`,
       parsedPalette.data
     )
     onClose()

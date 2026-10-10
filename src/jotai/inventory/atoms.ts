@@ -1,6 +1,5 @@
 import { atom } from "jotai"
 import { InventoryJSON, InventoryPlatformsJSON } from "../../types"
-import { info } from "@tauri-apps/plugin-log"
 import { atomWithRefresh } from "jotai/utils"
 import { withAtomEffect } from "jotai-effect"
 import { startTransition } from "react"

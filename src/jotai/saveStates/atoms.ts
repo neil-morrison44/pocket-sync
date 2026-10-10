@@ -1,4 +1,3 @@
-import { atom } from "jotai"
 import { atomWithReset } from "jotai/utils"
 
 export type RGB = [number, number, number]
