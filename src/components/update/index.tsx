@@ -1,4 +1,4 @@
-import { useAtom, useAtomValue } from "jotai"
+import { useAtom, useAtomValue, useSetAtom } from "jotai"
 import { useTranslation } from "react-i18next"
 import {
   CoreInfoSelectorFamily,
@@ -45,6 +45,7 @@ import {
 } from "../../jotai/update/atom"
 import { OtherFilterType, UpdateControls } from "./controls"
 import { turboDownloadsAtom } from "../../jotai/settings/atoms"
+import { currentViewAtom } from "../../jotai/view/atoms"
 
 export const Update = () => {
   const [updateFilterDefaultsOptions, setUpdateFilterDefaultsOptions] = useAtom(
@@ -282,6 +283,7 @@ const InstalledCoreItem = ({
   const coreInfo = useAtomValue(CoreInfoSelectorFamily(coreName))
   const platformInfo = useAtomValue(MainPlatformForCoreSelectorFamily(coreName))
   const filterContext = use(UpdateFilterContext)
+  const setViewAndSubview = useSetAtom(currentViewAtom)
 
   const { name, authorName, authorImageUrl, lastUpdatedDate, category } =
     useMemo(() => {
@@ -314,6 +316,7 @@ const InstalledCoreItem = ({
       className="update__list-item"
       data-corename={coreName}
       data-installtype="update"
+      onClick={() => setViewAndSubview({ view: "Cores", selected: coreName })}
     >
       <Suspense>
         <OnlyLoadsWhenShown height={40} className="update__list-item-name">
@@ -344,6 +347,7 @@ const NotInstalledCoreItem = ({ coreName }: { coreName: string }) => {
   const coreInventory = useAtomValue(coreInventoryAtom)
   const filterContext = use(UpdateFilterContext)
   const config = useAtomValue(PocketSyncConfigSelector)
+  const setViewAndSubview = useSetAtom(currentViewAtom)
 
   const {
     name,
@@ -401,6 +405,7 @@ const NotInstalledCoreItem = ({ coreName }: { coreName: string }) => {
       className="update__list-item"
       data-corename={coreName}
       data-installtype="install"
+      onClick={() => setViewAndSubview({ view: "Cores", selected: coreName })}
     >
       <Suspense>
         <NotInstalledCoreImage coreName={coreName} />

@@ -18,12 +18,10 @@ import { Tip } from "../tip"
 import { CoreInfo } from "./info"
 import { CoreItem, NotInstalledCoreItem } from "./item"
 import { useTranslation } from "react-i18next"
-import { ControlsButton } from "../controls/inputs/button"
 import { ControlsCheckbox } from "../controls/inputs/checkbox"
 import { ControlsGroup } from "../controls/inputs/group"
 import { ControlsSelect } from "../controls/inputs/select"
 import { ControlsSearch } from "../controls/inputs/search"
-import { UpdateAll } from "./updateAll"
 import { InventoryItem, SortMode } from "../../types"
 import {
   categoryFilterOptionAtom,
@@ -67,9 +65,6 @@ export const Cores = () => {
           onChange={setSearchQuery}
           placeholder={t("controls.search")}
         />
-        <ControlsButton onClick={() => setUpdateAllOpen(true)}>
-          {t("controls.update_all")}
-        </ControlsButton>
 
         <SortModeOption sortMode={sortMode} setSortMode={setSortMode} />
 
@@ -93,26 +88,20 @@ export const Cores = () => {
         </ControlsGroup>
       </Controls>
 
-      {updateAllOpen ? (
-        <Suspense>
-          <UpdateAll onClose={closeUpdateAllCallback} />
+      <SearchContextProvider
+        query={searchQuery}
+        other={{ onlyUpdates, category: filterCategory }}
+      >
+        <Suspense fallback={<Loader />}>
+          <CoreList
+            sortMode={sortMode}
+            onSelect={(core) => {
+              pushScroll()
+              startTransition(() => setSelectedCore(core))
+            }}
+          />
         </Suspense>
-      ) : (
-        <SearchContextProvider
-          query={searchQuery}
-          other={{ onlyUpdates, category: filterCategory }}
-        >
-          <Suspense fallback={<Loader />}>
-            <CoreList
-              sortMode={sortMode}
-              onSelect={(core) => {
-                pushScroll()
-                startTransition(() => setSelectedCore(core))
-              }}
-            />
-          </Suspense>
-        </SearchContextProvider>
-      )}
+      </SearchContextProvider>
 
       <Tip>{t("install_tip")}</Tip>
     </div>
