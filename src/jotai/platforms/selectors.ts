@@ -10,10 +10,8 @@ import { renderBinImage } from "../../utils/renderBinImage"
 import { fetch as tauriFecth } from "@tauri-apps/plugin-http"
 import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { Atom, atom } from "jotai"
-import { atomFamily } from "jotai/utils"
+import { atomFamily } from "jotai-family"
 import { atomFamilyDeepEqual } from "../../utils/jotai"
-import { PlatformItem, platformModalPositionAtom } from "./atoms"
-import { calculatePlatformsLimit } from "../../utils/platformsLimit"
 
 export const allPlatformsDataSelector = atom<
   Promise<{
@@ -284,68 +282,4 @@ export const ImagePackImageSelectorFamily = atomFamilyDeepEqual<
       file: data,
     }
   })
-)
-
-export const unpositionedPlatformsSelector = atom<Promise<PlatformId[]>>(
-  async (get) => {
-    const fullPlatformsList = await get(platformsListSelector)
-
-    const positionedPlatforms = get(platformModalPositionAtom)
-    return Array.from(
-      new Set(fullPlatformsList).difference(
-        new Set(positionedPlatforms.map(({ id }) => id))
-      )
-    )
-  }
-)
-
-export const hasHitPlatformLimitSelector = atom<Promise<boolean>>(
-  async (get) => {
-    const allPlatforms = await get(allPlatformsDataSelector)
-    const activePlatforms = Object.keys(allPlatforms.active)
-
-    const platformsToCores = await Promise.all(
-      activePlatforms.map(async (platformId) => {
-        return {
-          id: platformId,
-          cores: await get(CoresForPlatformSelectorFamily(platformId)),
-        }
-      })
-    )
-
-    const platformsWithCores = platformsToCores
-      .filter(({ cores }) => cores.length > 0)
-      .map(({ id }) => id)
-    const coresWithActivePlatforms = Array.from(
-      new Set(platformsToCores.map(({ cores }) => cores).flat())
-    )
-
-    return calculatePlatformsLimit(platformsWithCores, coresWithActivePlatforms)
-  }
-)
-
-export const wouldHitPlatformLimitSelector = atom<Promise<boolean>>(
-  async (get) => {
-    const potentialPlatformIds = get(platformModalPositionAtom).map(
-      ({ id }) => id
-    )
-
-    const platformsToCores = await Promise.all(
-      potentialPlatformIds.map(async (platformId) => {
-        return {
-          id: platformId,
-          cores: await get(CoresForPlatformSelectorFamily(platformId)),
-        }
-      })
-    )
-
-    const platformsWithCores = platformsToCores
-      .filter(({ cores }) => cores.length > 0)
-      .map(({ id }) => id)
-    const coresWithActivePlatforms = Array.from(
-      new Set(platformsToCores.map(({ cores }) => cores).flat())
-    )
-
-    return calculatePlatformsLimit(platformsWithCores, coresWithActivePlatforms)
-  }
 )

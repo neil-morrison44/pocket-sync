@@ -5,7 +5,7 @@ import { archiveMetadataUrlSelector } from "../archive/selectors"
 import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { CoreAllPlatformIdsSelectorFamily } from "../selectors"
 import { atom, Atom } from "jotai"
-import { atomFamily } from "jotai/utils"
+import { atomFamily } from "jotai-family"
 
 export const RequiredFileInfoSelectorFamily = atomFamily<
   string,

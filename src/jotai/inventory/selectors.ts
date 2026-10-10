@@ -1,7 +1,7 @@
 import { Category, PlatformId, PlatformInfoJSON } from "../../types"
 import { allCategoriesSelector } from "../platforms/selectors"
 import { coreInventoryAtom } from "./atoms"
-import { atomFamily } from "jotai/utils"
+import { atomFamily } from "jotai-family"
 import { atom, Atom } from "jotai"
 
 export const inventoryCoreListAtom = atom<Promise<string[]>>(async (get) => {

@@ -8,7 +8,7 @@ import { PhotoColourMapAtom } from "./atoms"
 import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { WalkDirSelectorFamily } from "../selectors"
 import { Atom, atom } from "jotai"
-import { atomFamily } from "jotai/utils"
+import { atomFamily } from "jotai-family"
 import { atomFamilyDeepEqual } from "../../utils/jotai"
 
 export const AllSaveStatesSelector = atom<Promise<string[]>>(async (get) => {

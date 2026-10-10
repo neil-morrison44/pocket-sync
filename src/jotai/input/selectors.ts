@@ -1,4 +1,4 @@
-import { atomFamily } from "jotai/utils"
+import { atomFamily } from "jotai-family"
 import { InputJSON } from "../../types"
 import { readJSONFile } from "../../utils/readJSONFile"
 import { fsWatchAtomFamily } from "../fileSystem/atoms"

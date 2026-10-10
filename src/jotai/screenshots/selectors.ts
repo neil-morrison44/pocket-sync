@@ -8,7 +8,7 @@ import { getBinaryMetadata } from "../../utils/getBinaryMetadata"
 import { readJSONFile } from "../../utils/readJSONFile"
 import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { atom, Atom } from "jotai"
-import { atomFamily } from "jotai/utils"
+import { atomFamily } from "jotai-family"
 
 export const VideoJSONSelectorFamily = atomFamily<
   string,

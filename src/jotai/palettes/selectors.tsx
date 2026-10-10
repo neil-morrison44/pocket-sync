@@ -8,7 +8,7 @@ import { error } from "@tauri-apps/plugin-log"
 import { githubHeadersSelector } from "../settings/selectors"
 import { WalkDirSelectorFamily } from "../selectors"
 import { Atom, atom } from "jotai"
-import { atomFamily } from "jotai/utils"
+import { atomFamily } from "jotai-family"
 
 export const palettesListSelector = atom<Promise<string[]>>(async (get) => {
   const path = "Assets/gb/common/Palettes"

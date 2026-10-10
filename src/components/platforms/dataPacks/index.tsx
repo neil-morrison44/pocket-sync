@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react"
+import { Suspense, useCallback, useMemo, useState } from "react"
 
 import {
   DataPackJsonSelectorFamily,
@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next"
 import { invokeSaveMultipleFiles } from "../../../utils/invokes"
 import { useAtomValue } from "jotai"
 import { useAtomCallback } from "jotai/utils"
+import { OnlyLoadsWhenShown } from "../../../utils/onlyLoadsWhenShown"
 
 type DataPacksProps = {
   platformId?: PlatformId
@@ -77,27 +78,31 @@ export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
     <Modal className="data-packs">
       <div className="data-packs__content">
         {sortedPlatformIds.map((platformId) => (
-          <div key={platformId} className="data-packs__lane">
-            <CurrentJSON
-              key={platformId}
-              platformId={platformId}
-              selected={selections[platformId] === undefined}
-              onClick={() =>
-                setSelections((s) => ({ ...s, [platformId]: undefined }))
-              }
-            />
-            {imagePacks.map((pack) => (
-              <JsonInPack
-                key={pack.repository + pack.variant}
-                pack={pack}
-                platformId={platformId}
-                onClick={() =>
-                  setSelections((s) => ({ ...s, [platformId]: pack }))
-                }
-                selected={selections[platformId] === pack}
-              />
-            ))}
-          </div>
+          <OnlyLoadsWhenShown height={166}>
+            <Suspense key={platformId}>
+              <div className="data-packs__lane">
+                <CurrentJSON
+                  key={platformId}
+                  platformId={platformId}
+                  selected={selections[platformId] === undefined}
+                  onClick={() =>
+                    setSelections((s) => ({ ...s, [platformId]: undefined }))
+                  }
+                />
+                {imagePacks.map((pack) => (
+                  <JsonInPack
+                    key={pack.repository + pack.variant + pack.owner}
+                    pack={pack}
+                    platformId={platformId}
+                    onClick={() =>
+                      setSelections((s) => ({ ...s, [platformId]: pack }))
+                    }
+                    selected={selections[platformId] === pack}
+                  />
+                ))}
+              </div>
+            </Suspense>
+          </OnlyLoadsWhenShown>
         ))}
       </div>
       <div className="data-packs__buttons">

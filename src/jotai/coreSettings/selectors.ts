@@ -2,7 +2,7 @@ import { InteractJSON, InteractPersistJSON } from "../../types/interact"
 import { readJSONFile } from "../../utils/readJSONFile"
 import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { WalkDirSelectorFamily } from "../selectors"
-import { atomFamily } from "jotai/utils"
+import { atomFamily } from "jotai-family"
 import { atom, Atom } from "jotai"
 import { atomFamilyDeepEqual } from "../../utils/jotai"
 
