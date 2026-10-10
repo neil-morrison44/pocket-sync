@@ -7,7 +7,7 @@ export const OnlyLoadsWhenShown = ({
 }: {
   height: number
   children: ReactNode
-  className: string
+  className?: string
 }) => {
   const placeHolderDivRef = useRef<HTMLDivElement>(null)
   const hasBeenShown = useHasBeenShown(placeHolderDivRef)
