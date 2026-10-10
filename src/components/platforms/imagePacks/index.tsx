@@ -17,7 +17,6 @@ import { OnlyLoadsWhenShown } from "../../../utils/onlyLoadsWhenShown"
 import { invokeSaveMultipleFiles } from "../../../utils/invokes"
 import { useAtomValue } from "jotai"
 import { useAtomCallback } from "jotai/utils"
-import { loadable } from "../../../utils/jotai"
 
 type ImagePacksProps = {
   onClose: () => void
@@ -31,22 +30,20 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
     return allPlatformIds
   }, [allPlatformIds, singlePlatformId])
 
-  const imagePacksLoadable = useAtomValue(loadable(imagePackListSelector))
+  const imagePacks = useAtomValue(imagePackListSelector)
 
-  const imagePacks = useMemo(() => {
-    if (imagePacksLoadable.state !== "hasData") return []
-
+  const imagePackSorted = useMemo(() => {
     if (singlePlatformId) {
-      return imagePacksLoadable.data.filter(({ image_platforms }) =>
+      return imagePacks.filter(({ image_platforms }) =>
         image_platforms.includes(singlePlatformId)
       )
     }
 
-    const sorted = [...imagePacksLoadable.data]
+    const sorted = [...imagePacks]
     return sorted.sort(
       (a, b) => b.image_platforms.length - a.image_platforms.length
     )
-  }, [imagePacksLoadable])
+  }, [imagePacks])
 
   const [selections, setSelections] = useState<
     Record<PlatformId, ImagePack | undefined>
@@ -112,7 +109,7 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
           ))}
         </div>
 
-        {imagePacks.map((pack) => (
+        {imagePackSorted.map((pack) => (
           <Suspense key={`${pack.owner}-${pack.repository}-${pack.variant}`}>
             <div className="image-packs__column">
               <div className="image-packs__column-name">
