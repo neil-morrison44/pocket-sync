@@ -16,7 +16,8 @@ import { PlatformName } from "./platformName"
 import { OnlyLoadsWhenShown } from "../../../utils/onlyLoadsWhenShown"
 import { invokeSaveMultipleFiles } from "../../../utils/invokes"
 import { useAtomValue } from "jotai"
-import { loadable, useAtomCallback } from "jotai/utils"
+import { useAtomCallback } from "jotai/utils"
+import { loadable } from "../../../utils/jotai"
 
 type ImagePacksProps = {
   onClose: () => void

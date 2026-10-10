@@ -2,7 +2,7 @@ import { InteractPersistJSON } from "../../types/interact"
 import { invokeFileExists, invokeSaveFile } from "../../utils/invokes"
 import { readJSONFile } from "../../utils/readJSONFile"
 import { pocketPathAtom } from "../atoms"
-import { Atom, atom } from "jotai"
+import { atom } from "jotai"
 import { atomWithRefresh } from "jotai/utils"
 import { atomFamilyDeepEqual } from "../../utils/jotai"
 

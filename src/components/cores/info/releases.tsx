@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next"
 
 import "./releases.css"
 import { useAtomValue } from "jotai"
-import { loadable } from "jotai/utils"
 
 type ReleasesProps = {
   inventoryItem: InventoryItem

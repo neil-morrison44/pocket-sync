@@ -49,7 +49,7 @@ export const useSavePalette = () => {
     data[54] = 0x47
     data[55] = 0x42
 
-    const path = `${pocketPath}/Assets/gb/common/palettes${name}`
+    const path = `${pocketPath}/Assets/gb/common/Palettes${name}`
     await invokeSaveFile(path, data)
     if (config.gb_palette_convert) await invokeConvertSinglePalFile(path)
   }
