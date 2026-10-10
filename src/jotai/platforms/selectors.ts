@@ -210,11 +210,14 @@ const mergedPlatformFileBlobsSelector = atom<
   return Object.fromEntries(
     await Promise.all(
       entries
+        // @ts-expect-error getData does exist
         .filter((e) => e && e.getData)
         .map((entry) =>
           // @ts-ignore already filtering out the non-entry ones
           entry
+            // @ts-expect-error getData does exist
             .getData(new zip.BlobWriter(), {})
+            // @ts-expect-error and then it doesn't know what blob is
             .then((blob) => [entry.filename, blob])
         )
     )

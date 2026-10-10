@@ -30,7 +30,6 @@ type UpdateState = {
     { progress: number; height: number; zOffset: number }
   >
   currentEvent: UpdateEvent | null
-  phaseThreeCurrentEvent: PhaseThreeArgs | null
 }
 
 const initialState: UpdateState = {

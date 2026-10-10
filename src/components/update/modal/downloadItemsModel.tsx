@@ -47,7 +47,7 @@ type DownloadItemsModelProps = {
 export const DownloadItemsModel = ({
   model = "Chip",
 }: DownloadItemsModelProps) => {
-  const { nodes, materials } = useGLTF(downloadItemsModel) as GLTFResult
+  const { nodes, materials } = useGLTF(downloadItemsModel) as any as GLTFResult
   return (
     <group dispose={null}>
       <group>
