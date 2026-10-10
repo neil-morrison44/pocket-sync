@@ -356,7 +356,7 @@ const PhaseThreeLoading = ({ ...props }: PhaseThreeLoadingProps) => {
 }
 
 const Errors = ({ errors }: { errors: string[] }) => {
-  const allErrorsText = Array.from(new Set(errors)).join(", ")
+  const allErrorsText = Array.from(new Set(errors)).join(",\n")
   return (
     <div className="update__modal-errors">
       <div className="update__modal-errors-count">{errors.length}</div>
