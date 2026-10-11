@@ -1,4 +1,18 @@
 # Changelog
+<a id="v7.0.2"></a>
+# [v7.0.2 - Fix MacOS exFat error](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.0.2) - 2026-10-11
+
+## What's Changed
+* Fix "os error 2" when installing cores from the Update tab on macOS by [@kaylasara](https://github.com/kaylasara) in [#488](https://github.com/neil-morrison44/pocket-sync/pull/488)
+
+## New Contributors
+* [@kaylasara](https://github.com/kaylasara) made their first contribution in [#488](https://github.com/neil-morrison44/pocket-sync/pull/488)
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.1...v7.0.2
+
+[Changes][v7.0.2]
+
+
 <a id="v7.0.1"></a>
 # [v7.0.1 - Fix Image Packs](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.0.1) - 2026-10-10
 
@@ -2005,6 +2019,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v7.0.2]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.1...v7.0.2
 [v7.0.1]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.0...v7.0.1
 [v7.0.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.4.0...v7.0.0
 [v6.4.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.3.2...v6.4.0
