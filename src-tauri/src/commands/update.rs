@@ -8,6 +8,7 @@ use crate::required_files::ArchiveInfo;
 use crate::required_files::DataSlotFile;
 use crate::required_files::DataSlotFileStatus;
 use crate::required_files::required_files_for_core;
+use anyhow::Context;
 use futures::future::join_all;
 use log::{debug, error};
 use reqwest::Client;
@@ -243,7 +244,7 @@ pub async fn install_and_update_cores(
                 window.emit(
                     "install_and_update_cores::update_event",
                     UpdateEvent::PhaseOneErrorEvent {
-                        error: e.to_string(),
+                        error: format!("{e:#}"),
                     },
                 )?;
             }
@@ -440,10 +441,10 @@ pub async fn install_and_update_cores(
                     window.emit(
                         "install_and_update_cores::update_event",
                         UpdateEvent::PhaseThreeErrorEvent {
-                            error: e.to_string(),
+                            error: format!("{e:#}"),
                         },
                     )?;
-                    error!("{}", e);
+                    error!("{:#}", e);
                 }
             }
         }
@@ -523,8 +524,16 @@ async fn download_and_extract_core(
         let cursor = std::io::Cursor::new(zip_bytes);
         let mut archive = zip::ZipArchive::new(cursor)?;
 
-        let temp_dir = tempfile::tempdir_in(&pocket_path_clone)?;
+        let temp_dir = tempfile::tempdir_in(&pocket_path_clone).with_context(|| {
+            format!("Failed to create temp dir in {}", pocket_path_clone.display())
+        })?;
         let temp_path = temp_dir.path();
+
+        // Track exactly what was extracted rather than walking the temp dir afterwards,
+        // macOS can add `._` AppleDouble files on FAT / exFAT cards which move along with
+        // their partner file on rename & would then fail with "os error 2"
+        let mut dirs_to_create = Vec::new();
+        let mut files_to_move = Vec::new();
 
         for i in 0..archive.len() {
             let mut file = archive.by_index(i)?;
@@ -536,54 +545,48 @@ async fn download_and_extract_core(
                 continue;
             }
 
-            if file.name().ends_with('/') {
-                std::fs::create_dir_all(&temp_outpath)?;
+            if file.is_dir() {
+                dirs_to_create.push(final_outpath);
             } else {
-                if let Some(p) = temp_outpath.parent() {
-                    if !p.exists() {
-                        std::fs::create_dir_all(p)?;
-                    }
-                }
-
                 if is_update && retain_platform_files {
                     if file.name().starts_with("Platforms/") && final_outpath.exists() {
                         continue;
                     }
                 }
 
-                let mut outfile = std::fs::File::create(&temp_outpath)?;
-                std::io::copy(&mut file, &mut outfile)?;
+                if let Some(p) = temp_outpath.parent() {
+                    std::fs::create_dir_all(p)
+                        .with_context(|| format!("Failed to create {}", p.display()))?;
+                }
+
+                let mut outfile = std::fs::File::create(&temp_outpath)
+                    .with_context(|| format!("Failed to create {}", temp_outpath.display()))?;
+                std::io::copy(&mut file, &mut outfile)
+                    .with_context(|| format!("Failed to write {}", temp_outpath.display()))?;
+
+                files_to_move.push((temp_outpath, final_outpath));
             }
         }
 
-        move_dir_contents(temp_path, &pocket_path_clone)?;
+        for dir in dirs_to_create {
+            std::fs::create_dir_all(&dir)
+                .with_context(|| format!("Failed to create {}", dir.display()))?;
+        }
+
+        for (from, to) in files_to_move {
+            if let Some(p) = to.parent() {
+                std::fs::create_dir_all(p)
+                    .with_context(|| format!("Failed to create {}", p.display()))?;
+            }
+            std::fs::rename(&from, &to).with_context(|| {
+                format!("Failed to move {} to {}", from.display(), to.display())
+            })?;
+        }
+
         Ok(())
     })
     .await??;
 
-    Ok(())
-}
-
-fn move_dir_contents(src: &Path, dst: &Path) -> std::io::Result<()> {
-    if !dst.exists() {
-        std::fs::create_dir_all(dst)?;
-    }
-
-    for entry in std::fs::read_dir(src)? {
-        let entry = entry?;
-        let src_path = entry.path();
-        let dst_path = dst.join(entry.file_name());
-
-        if src_path.is_dir() {
-            move_dir_contents(&src_path, &dst_path)?;
-        } else {
-            if let Some(parent) = dst_path.parent() {
-                std::fs::create_dir_all(parent)?;
-            }
-
-            std::fs::rename(&src_path, &dst_path)?;
-        }
-    }
     Ok(())
 }
 
