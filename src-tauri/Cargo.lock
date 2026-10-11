@@ -4839,7 +4839,7 @@ dependencies = [
 
 [[package]]
 name = "pocket-sync"
-version = "7.0.1"
+version = "7.0.2"
 dependencies = [
  "anyhow",
  "async-walkdir",
