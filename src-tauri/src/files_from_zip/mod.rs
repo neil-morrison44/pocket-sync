@@ -1,5 +1,5 @@
 use crate::hashes::md5_for_file;
-use anyhow::Result;
+use anyhow::{Context, Result};
 use std::{fs, io::Cursor, path::PathBuf};
 use tempdir::TempDir;
 
@@ -24,18 +24,26 @@ pub async fn copy_file_from_zip(zip_path: &PathBuf, file_name: &str, to: &PathBu
     let tmp_dir = TempDir::new("zip_tmp")?;
     let tmp_path = tmp_dir.into_path();
     let tmp_path_clone = tmp_path.clone();
-    let _result: Result<(), anyhow::Error> = tauri::async_runtime::spawn_blocking(move || {
+    tauri::async_runtime::spawn_blocking(move || -> Result<()> {
         let zip_file = fs::read(&zip_path)?;
         let cursor = Cursor::new(zip_file);
         let mut archive = zip::ZipArchive::new(cursor)?;
 
-        archive.extract(&tmp_path)?;
+        archive
+            .extract(&tmp_path)
+            .with_context(|| format!("Failed to extract {}", zip_path.display()))?;
         Ok(())
     })
-    .await?;
+    .await??;
 
     let tmp_file_path = tmp_path_clone.join(file_name);
-    tokio::fs::copy(tmp_file_path, to).await?;
+    tokio::fs::copy(&tmp_file_path, to).await.with_context(|| {
+        format!(
+            "Failed to copy {} from zip to {}",
+            file_name,
+            to.display()
+        )
+    })?;
     Ok(())
 }
 
@@ -61,17 +69,21 @@ pub async fn md5_file_in_zip(zip_path: &PathBuf, file_name: &str) -> Result<Stri
     let tmp_dir = TempDir::new("zip_tmp")?;
     let tmp_path = tmp_dir.into_path();
     let tmp_path_clone = tmp_path.clone();
-    let _result: Result<(), anyhow::Error> = tauri::async_runtime::spawn_blocking(move || {
+    tauri::async_runtime::spawn_blocking(move || -> Result<()> {
         let zip_file = fs::read(&zip_path)?;
         let cursor = Cursor::new(zip_file);
         let mut archive = zip::ZipArchive::new(cursor)?;
 
-        archive.extract(&tmp_path)?;
+        archive
+            .extract(&tmp_path)
+            .with_context(|| format!("Failed to extract {}", zip_path.display()))?;
         Ok(())
     })
-    .await?;
+    .await??;
 
-    let tmp_file_path = tmp_path_clone.join(file_name);
+    let tmp_file_path = tmp_path_clone.join(&file_name);
 
-    md5_for_file(&tmp_file_path, None).await
+    md5_for_file(&tmp_file_path, None)
+        .await
+        .with_context(|| format!("Failed to hash {} from zip", file_name))
 }
