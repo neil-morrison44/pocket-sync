@@ -5,7 +5,21 @@
     "update_available": "アップデートが利用可能です! {version}",
     "sponsor_link": "GitHubで {count, number} 人と一緒にスポンサーになろう",
     "whats_new": "新着情報？",
-    "close_changelog": "近い"
+    "close_changelog": "近い",
+    "library_updates": "ライブラリの更新",
+    "side_panel": "アップデート情報",
+    "eject": "SD Card を取り出す",
+    "show_updates": "アップデート情報を表示",
+    "hide_updates": "アップデート情報を隠す",
+    "pocket_colours": "Pocket のカラー",
+    "colours": "カラー",
+    "body_colour": "本体",
+    "button_colour": "ボタン",
+    "stats": {
+      "firmware": "ファームウェア",
+      "cores": "コア",
+      "games": "ゲーム"
+    }
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -47,18 +61,18 @@
   "core_info": {
     "author": "作者",
     "controls": {
-      "back": "リストに戻る",
-      "install": "インストール",
-      "required_files": "必要なファイル",
-      "uninstall": "アンインストール",
-      "update": "アップデート"
+      "back": "コア一覧に戻る",
+      "install": "コアをインストール",
+      "required_files": "必要なファイルを読み込む",
+      "uninstall": "コアをアンインストール",
+      "update": "コアをアップデート"
     },
     "inputs": "Inputs",
     "modal": {
       "close": "閉じる",
       "input_core": "コア",
       "no_settings_found": "設定ファイルが見つかりません!",
-      "reset_all": "すべてをリセット"
+      "reset_all": "すべての設定をリセット"
     },
     "analogizer": "このコアは <1>Analogizer-FPGA</1> をサポートしています",
     "requires_license": {
@@ -149,13 +163,13 @@
   "fetch": {
     "controls": {
       "add_fetch_item": "同期項目を追加",
-      "refresh": "更新"
+      "refresh": "状態を更新"
     },
-    "fetch_button": "同期",
+    "fetch_button": "ファイルを同期",
     "file_count": "{count} / {total, plural, one {# ファイル} other {# ファイル}}",
     "loading": "読み込み中...",
     "new": {
-      "add_extension": "追加",
+      "add_extension": "拡張子を追加",
       "add_fetch": "同期項目を追加",
       "archive_name": "ソース: <i>https://archive.org/details/[this bit here]</i>",
       "archive_tip": "この設定はファイルがzip形式のアーカイブでは機能しません。メタデータファイルのダウンロードを避けるため、拡張子を確認してください。",
@@ -167,7 +181,7 @@
       "validating_archive_name": "archive {name} を確認中...",
       "invalid_archive_name": "https://archive.org/details/{name} に archive を見つかりませんでした"
     },
-    "remove_button": "削除",
+    "remove_button": "同期項目を削除",
     "remove_confirm": "この操作は同期設定を削除しますが、ファイルは削除されません。実行しますか？",
     "types": {
       "archive_org": "archive.org ファイル",
@@ -177,7 +191,7 @@
   "firmware": {
     "current": "使用中のファームウェア: v{version}",
     "downloading_firmware": "ファームウェアをダウンロード中...",
-    "load_firmware": "SD Card に書き込む",
+    "load_firmware": "ファームウェアを SD Card に書き込む",
     "loaded_firmware": "ファームウェア {version} が SD Card に配置されています",
     "loaded_firmware_info": "Pocket に挿入し、電源を入れるとインストールされます",
     "no_firmware_loaded": "SD Card にインストール待ちのファームウェアファイルがありません",
@@ -190,19 +204,28 @@
       "from": "提供元 ",
       "title": "v{version} - { published, date, short } リリースノート:"
     },
-    "remove_button": "削除"
+    "remove_button": "ファームウェアを削除",
+    "current_label": "インストール済みのファームウェア",
+    "versions_title": "ファームウェアのバージョン",
+    "jump_to": "ジャンプ",
+    "badge_latest": "最新",
+    "badge_installed": "インストール済み",
+    "published": "{date, date, medium}"
   },
   "games": {
     "controls": {
       "category": "カテゴリ",
-      "clean_files": "クリーンアップ",
-      "instance_json": "Instance JSON",
+      "clean_files": "ファイルをクリーンアップ",
+      "instance_json": "Instance JSON を作成",
       "refresh": "更新",
-      "search": "検索"
+      "search": "検索",
+      "mrom": "MROM ダンプを移動"
     },
     "item": {
       "game_count": "{count, plural, =0 {ゲームなし} one {# 個のゲーム} other {# 個のゲーム}}"
-    }
+    },
+    "open_folder": "フォルダを開く",
+    "none": "ゲームが見つかりません。コアをインストールしてから、SD Card のコアのフォルダにゲームを追加してください。"
   },
   "image_editor": {
     "cancel": "キャンセル",
@@ -210,7 +233,7 @@
     "remove": "削除",
     "reset": "リセット",
     "rotate": "回転",
-    "save": "保存",
+    "save": "画像を保存",
     "scale": "スケール"
   },
   "instance_json": {
@@ -229,17 +252,20 @@
     "platforms": "Platforms",
     "pocket_sync": "Pocket Sync",
     "save_states": "Save States",
-    "saves": "Saves",
+    "saves": "Backups",
     "screenshots": "Screenshots",
     "plugins": "プラグイン",
-    "settings": "Settings"
+    "settings": "Settings",
+    "collapse_sidebar": "サイドバーを折りたたむ",
+    "expand_sidebar": "サイドバーを展開",
+    "views": "ビュー"
   },
   "plugins": {
     "buttons": {
       "add": "プラグインを追加",
-      "refresh": "更新"
+      "refresh": "プラグインを更新"
     },
-    "remove": "取り除く",
+    "remove": "プラグインを削除",
     "confirm_remove": "これにより、プラグインがこのコンピューターに保存しているローカルデータもすべて削除されますが、よろしいですか？",
     "confirm_exit": "プラグインはまだ実行中です。ウィンドウを閉じてもよろしいですか？",
     "safe_to_close": "プラグインの処理が完了しました。このウィンドウは閉じることができます。",
@@ -254,10 +280,10 @@
   },
   "palettes": {
     "buttons": {
-      "add_via_code": "コードで追加",
-      "new": "新規パレット",
-      "back": "リストに戻る",
-      "palette_town": "パレットギャラリー"
+      "add_via_code": "コードでパレットを追加",
+      "new": "パレットを作成",
+      "back": "パレット一覧に戻る",
+      "palette_town": "パレットギャラリーを見る"
     },
     "town": {
       "title": "パレットギャラリー",
@@ -265,15 +291,15 @@
       "close": "閉じる"
     },
     "item": {
-      "duplicate": "複製",
-      "rename": "名称変更",
+      "duplicate": "パレットを複製",
+      "rename": "パレット名を変更",
       "copy_code": "共有コードをコピー",
-      "delete": "削除"
+      "delete": "パレットを削除"
     },
     "add_via_code": {
       "title": "共有コードで追加",
       "cancel": "キャンセル",
-      "add": "追加"
+      "add": "パレットを追加"
     },
     "full": {
       "inputs": {
@@ -283,19 +309,19 @@
         "window": "window",
         "off": "LCD オフ"
       },
-      "save": "保存",
-      "reset": "リセット",
+      "save": "パレットを保存",
+      "reset": "色をリセット",
       "emu_credit": "GB エミュレータは <1>roblouie/gameboy-emulator</1> をもとに作成されています"
     }
   },
   "mister_sync": {
     "controls": {
-      "back": "終了",
+      "back": "MiSTer Sync を終了",
       "search": "セーブを検索",
       "save_mapping": "マッピングを保存"
     },
     "login": {
-      "connect": "接続",
+      "connect": "MiSTer に接続",
       "host": "Host / IP Address:",
       "password": "Password:",
       "username": "Username:"
@@ -309,7 +335,7 @@
     "unsupported": "{platform} がサポートされていません",
     "mapping": {
       "close": "閉じる",
-      "clear": "クリア",
+      "clear": "マッピングをクリア",
       "reset": "初期値にリセット"
     }
   },
@@ -319,9 +345,9 @@
   },
   "platform_info": {
     "controls": {
-      "back": "リストに戻る",
-      "data_packs": "データパック",
-      "image_packs": "イメージパック"
+      "back": "プラットフォーム一覧に戻る",
+      "data_packs": "データパックを管理",
+      "image_packs": "イメージパックを管理"
     },
     "cores": "コア",
     "edit": "編集"
@@ -329,10 +355,10 @@
   "platforms": {
     "cancel": "キャンセル",
     "controls": {
-      "data_packs": "データパック",
-      "remove_coreless": "コアがない項目を削除",
+      "data_packs": "データパックを管理",
+      "remove_coreless": "コアがないプラットフォームを削除",
       "archive": "アーカイブ・プラットフォーム",
-      "image_packs": "イメージパック",
+      "image_packs": "イメージパックを管理",
       "search": "検索"
     },
     "archive": {
@@ -359,7 +385,7 @@
       "close": "閉じる",
       "current": "既存"
     },
-    "save": "保存"
+    "save": "変更を保存"
   },
   "progress": {
     "remaining_time": "残り時間: 約 {remainingTime}",
@@ -368,7 +394,7 @@
   "save_info": {
     "confirm_restore": "バックアップから復元しますか？",
     "controls": {
-      "back": "リストに戻る",
+      "back": "バックアップ一覧に戻る",
       "hide_unchanged": "変更なしの項目を非表示",
       "search": "検索"
     },
@@ -410,20 +436,28 @@
     "confirm_delete": "このバックアップ保存先を削除してもよろしいですか？",
     "controls": {
       "add_backup_location": "バックアップの保存先を追加",
-      "mister_sync": "MiSTer Sync"
+      "mister_sync": "MiSTer Sync を開く"
     },
     "latest_backup": "最新バックアップ: {date, date, long}, {date, time, short}",
     "none": "上のバックアップ保存先を追加",
     "not_found": "見つかりませんでした",
     "oldest_backup": "最古のバックアップ: {date, date, long}, {date, time, short}",
     "remove": "保存先を削除",
-    "view_saves": "セーブを表示"
+    "view_saves": "セーブを表示",
+    "copy_path": "パスをコピー",
+    "open_folder": "フォルダを開く",
+    "copied": "コピーしました",
+    "location_title": "保存先 {number}",
+    "back_up_now": "今すぐバックアップ",
+    "backing_up": "バックアップ中…",
+    "last_backup_label": "最終バックアップ",
+    "never": "バックアップはまだありません"
   },
   "screenshot_info": {
     "controls": {
-      "back": "リストに戻る",
-      "save": "保存",
-      "share": "共有",
+      "back": "スクリーンショット一覧に戻る",
+      "save": "スクリーンショットを保存",
+      "share": "スクリーンショットを共有",
       "upscaled": "超解像"
     }
   },
@@ -483,13 +517,15 @@
       "title": "言語"
     },
     "archive": {
-      "save": "保存",
+      "save": "URL を保存",
       "title": "ROM & BIOS アーカイブ (必要なファイル)",
-      "warning": "著作権で保護されている可能性のある（アーケード）ROM & BIOSファイルのダウンロードについて、お住いの地域の法律を確認してください。\nこれに同意する場合のみ、以下のURLを入力欄にコピーして「保存」をクリックしてください。"
+      "warning": "著作権で保護されている可能性のある（アーケード）ROM & BIOSファイルのダウンロードについて、お住いの地域の法律を確認してください。\nこれに同意する場合のみ、以下のURLを入力欄にコピーして「保存」をクリックしてください。",
+      "copy_url": "URL をコピー",
+      "copied": "コピーしました"
     },
     "github_token": {
       "title": "Githubトークン",
-      "remove": "取り除く",
+      "remove": "トークンを削除",
       "ramble": "GitHub のレート制限に問題がある場合は、以下に PAT トークンを追加してください。\nPAT トークンにはスコープが設定されておらず、Pocket の SD カードではなくコンピューターに保存されます。"
     },
     "clear_file_cache": {
@@ -498,7 +534,7 @@
       "title": "キャッシュをクリア"
     },
     "disconnect": {
-      "button": "切断",
+      "button": "Pocket を切断",
       "ramble": "「Pocketに接続」画面に戻ります (これにより SD Card / USB ドライブがファイルシステムより取り出されることはありません)",
       "title": "切断"
     },
@@ -531,7 +567,24 @@
       "ramble": ".pal ファイルを .gbp ファイルに複製します。背景に使用されている 4 色を新しい .gbp ファイルにコピーします。\n切り替えると、/Assets/gb/common/palettes 内の各 .pal ファイルに対して .gbp ファイルが作成されます。",
       "checkbox": "自動 .gbp ファイルを有効にする"
     },
-    "thanks": "Thanks to:"
+    "thanks": "Thanks to:",
+    "sections": "設定のセクション",
+    "section_titles": {
+      "display": "表示",
+      "downloads": "ダウンロード",
+      "files": "ファイル",
+      "connection": "接続"
+    },
+    "theme": {
+      "title": "テーマ",
+      "label": "外観",
+      "system": "システム",
+      "dark": "ダーク",
+      "light": "ライト",
+      "style_label": "スタイル",
+      "style_slanted": "斜め",
+      "style_modern": "モダン"
+    }
   },
   "time_ago": {
     "less_than_1_min_ago": "1 分以内"
@@ -548,7 +601,7 @@
       "other": "他の"
     },
     "cancel_button": "キャンセル",
-    "confirm_button": "確認",
+    "confirm_button": "ファイルをインストール",
     "remove_duplicate": "重複するファイルを削除",
     "scanning": "ファイルをスキャン中...",
     "moved_files_info": "ファイルが移動された場合（例：JSON ファイルが「_alternatives」に移動）の処理を行う",

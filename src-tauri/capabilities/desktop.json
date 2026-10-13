@@ -5,6 +5,7 @@
   "permissions": [
     "window-state:default",
     "core:window:allow-destroy",
+    "core:window:allow-start-dragging",
     "core:webview:allow-create-webview-window",
     "locale:default",
     "updater:default",

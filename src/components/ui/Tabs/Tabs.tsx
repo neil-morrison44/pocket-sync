@@ -53,6 +53,7 @@ const Tabs = ({ tabs, defaultValue, label, className }: TabsProps) => {
             value={value}
             className="tabs__content"
             forceMount
+            tabIndex={-1}
           >
             {content}
           </RadixTabs.Content>

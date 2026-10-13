@@ -5,7 +5,21 @@
     "update_available": "软件有更新! {version}",
     "sponsor_link": "通过 GitHub 与 {count, number} 人一起赞助",
     "whats_new": "什么是新的？",
-    "close_changelog": "关闭"
+    "close_changelog": "关闭",
+    "library_updates": "资料库更新",
+    "side_panel": "更新",
+    "eject": "弹出SD卡",
+    "show_updates": "显示更新",
+    "hide_updates": "隐藏更新",
+    "pocket_colours": "Pocket 颜色",
+    "colours": "颜色",
+    "body_colour": "机身",
+    "button_colour": "按键",
+    "stats": {
+      "firmware": "固件",
+      "cores": "核心",
+      "games": "游戏"
+    }
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -47,11 +61,11 @@
   "core_info": {
     "author": "作者",
     "controls": {
-      "back": "返回列表",
-      "install": "安装",
-      "required_files": "必要文件",
-      "uninstall": "卸载",
-      "update": "更新"
+      "back": "返回核心列表",
+      "install": "安装核心",
+      "required_files": "加载必要文件",
+      "uninstall": "卸载核心",
+      "update": "更新核心"
     },
     "inputs": "按键提示",
     "modal": {
@@ -148,15 +162,15 @@
   },
   "fetch": {
     "controls": {
-      "add_fetch_item": "添加新的同步",
-      "refresh": "刷新"
+      "add_fetch_item": "添加同步源",
+      "refresh": "刷新状态"
     },
-    "fetch_button": "同步",
+    "fetch_button": "同步文件",
     "file_count": "{count} / {total, plural, one {# 文件} other {# 文件}}",
     "loading": "载入中……",
     "new": {
-      "add_extension": "添加",
-      "add_fetch": "添加同步",
+      "add_extension": "添加扩展名",
+      "add_fetch": "添加同步源",
       "archive_name": "来源名称: <i>https://archive.org/details/[详细地址]</i>",
       "archive_tip": "这一功能并不会对ZIP打包文件生效，并且您应该设置目标文件扩展名类型以避免下载元数据文件",
       "close": "关闭",
@@ -167,7 +181,7 @@
       "validating_archive_name": "正在检查存档“{name}”...",
       "invalid_archive_name": "在 https://archive.org/details/{name} 上找不到存档"
     },
-    "remove_button": "移除",
+    "remove_button": "移除同步源",
     "remove_confirm": "这一操作将移除选定的同步设置但是并不会删除已经存在的文件，您确定吗?",
     "types": {
       "archive_org": "archive.org网站在线文件",
@@ -177,7 +191,7 @@
   "firmware": {
     "current": "现有固件版本: v{version}",
     "downloading_firmware": "下载固件中...",
-    "load_firmware": "上传至SD卡",
+    "load_firmware": "将固件上传至SD卡",
     "loaded_firmware": "固件 {version} 已经上传至SD卡",
     "loaded_firmware_info": "插入SD卡并启动Pocket完成新固件安装",
     "no_firmware_loaded": "未发现SD卡上有待安装的固件",
@@ -190,19 +204,28 @@
       "from": "来自 ",
       "title": "v{version} - { published, date, short } 更新记录:"
     },
-    "remove_button": "移除"
+    "remove_button": "移除固件",
+    "current_label": "已安装固件",
+    "versions_title": "固件版本",
+    "jump_to": "跳转到",
+    "badge_latest": "最新",
+    "badge_installed": "已安装",
+    "published": "{date, date, medium}"
   },
   "games": {
     "controls": {
       "category": "类型",
       "clean_files": "清理文件",
-      "instance_json": "实例配置JSON",
+      "instance_json": "生成实例配置JSON",
       "refresh": "刷新",
-      "search": "搜索"
+      "search": "搜索",
+      "mrom": "移动 MROM 转储"
     },
     "item": {
       "game_count": "共找到{count, plural, =0 {0个游戏} one {# 个游戏} other {# 个游戏}}"
-    }
+    },
+    "open_folder": "打开文件夹",
+    "none": "未找到游戏。请先安装核心，然后将游戏添加到SD卡上该核心的文件夹中。"
   },
   "image_editor": {
     "cancel": "取消",
@@ -210,7 +233,7 @@
     "remove": "移除",
     "reset": "重置",
     "rotate": "旋转",
-    "save": "保存",
+    "save": "保存图像",
     "scale": "缩放"
   },
   "instance_json": {
@@ -229,17 +252,20 @@
     "platforms": "平台",
     "pocket_sync": "Pocket Sync",
     "save_states": "即时存档",
-    "saves": "存档",
+    "saves": "备份",
     "screenshots": "截屏",
     "plugins": "插件",
-    "settings": "设置"
+    "settings": "设置",
+    "collapse_sidebar": "收起侧边栏",
+    "expand_sidebar": "展开侧边栏",
+    "views": "视图"
   },
   "plugins": {
     "buttons": {
       "add": "添加插件",
-      "refresh": "刷新"
+      "refresh": "刷新插件"
     },
-    "remove": "消除",
+    "remove": "移除插件",
     "confirm_remove": "这将同时删除插件在此计算机上存储的所有本地数据，您确定吗？",
     "confirm_exit": "插件仍在运行，您确定要关闭窗口吗？",
     "safe_to_close": "插件已完成，此窗口可以关闭。",
@@ -254,10 +280,10 @@
   },
   "palettes": {
     "buttons": {
-      "add_via_code": "通过代码添加",
+      "add_via_code": "通过代码添加调色板",
       "new": "新建调色板",
-      "back": "返回列表",
-      "palette_town": "调色板浏览器"
+      "back": "返回调色板列表",
+      "palette_town": "打开调色板浏览器"
     },
     "town": {
       "title": "调色板浏览器",
@@ -265,15 +291,15 @@
       "close": "关闭"
     },
     "item": {
-      "duplicate": "复制",
-      "rename": "重命名",
+      "duplicate": "复制调色板",
+      "rename": "重命名调色板",
       "copy_code": "复制共享代码",
-      "delete": "删除"
+      "delete": "删除调色板"
     },
     "add_via_code": {
       "title": "通过共享代码添加",
       "cancel": "取消",
-      "add": "添加"
+      "add": "添加调色板"
     },
     "full": {
       "inputs": {
@@ -283,19 +309,19 @@
         "window": "窗户",
         "off": "LCD 关闭"
       },
-      "save": "保存",
-      "reset": "重置",
+      "save": "保存调色板",
+      "reset": "重置颜色",
       "emu_credit": "GB模拟器改编自<1>roblouie/gameboy-emulator</1>"
     }
   },
   "mister_sync": {
     "controls": {
-      "back": "退出",
+      "back": "退出 MiSTer Sync",
       "search": "搜索存档",
       "save_mapping": "保存映射"
     },
     "login": {
-      "connect": "连接",
+      "connect": "连接到 MiSTer",
       "host": "主机名/IP地址:",
       "password": "密码:",
       "username": "用户名:"
@@ -309,7 +335,7 @@
     "unsupported": "尚未支持{platform}平台",
     "mapping": {
       "close": "关闭",
-      "clear": "清除",
+      "clear": "清除映射",
       "reset": "重置为默认值"
     }
   },
@@ -319,9 +345,9 @@
   },
   "platform_info": {
     "controls": {
-      "back": "返回列表",
-      "data_packs": "数据包",
-      "image_packs": "图像包"
+      "back": "返回平台列表",
+      "data_packs": "管理数据包",
+      "image_packs": "管理图像包"
     },
     "cores": "核心",
     "edit": "编辑"
@@ -329,10 +355,10 @@
   "platforms": {
     "cancel": "取消",
     "controls": {
-      "data_packs": "数据包",
-      "remove_coreless": "删除无核",
+      "data_packs": "管理数据包",
+      "remove_coreless": "删除无核心的平台",
       "archive": "归档平台",
-      "image_packs": "图像包",
+      "image_packs": "管理图像包",
       "search": "搜索"
     },
     "archive": {
@@ -359,7 +385,7 @@
       "close": "关闭",
       "current": "现有"
     },
-    "save": "保存"
+    "save": "保存更改"
   },
   "progress": {
     "remaining_time": "剩余时间 (预计): {remainingTime}",
@@ -368,7 +394,7 @@
   "save_info": {
     "confirm_restore": "确认使用备份恢复?",
     "controls": {
-      "back": "返回列表",
+      "back": "返回备份列表",
       "hide_unchanged": "隐藏未变更项目",
       "search": "搜索"
     },
@@ -410,20 +436,28 @@
     "confirm_delete": "您确认需要移除这个备份目录?",
     "controls": {
       "add_backup_location": "添加备份目录",
-      "mister_sync": "MiSTer Sync"
+      "mister_sync": "打开 MiSTer Sync"
     },
     "latest_backup": "最后的备份: {date, date, long}, {date, time, short}",
     "none": "添加以上备份目录",
     "not_found": "未找到",
     "oldest_backup": "最早的备份: {date, date, long}, {date, time, short}",
     "remove": "移除目录",
-    "view_saves": "浏览存档"
+    "view_saves": "浏览存档",
+    "copy_path": "复制路径",
+    "open_folder": "打开文件夹",
+    "copied": "已复制",
+    "location_title": "位置 {number}",
+    "back_up_now": "立即备份",
+    "backing_up": "正在备份…",
+    "last_backup_label": "上次备份",
+    "never": "尚无备份"
   },
   "screenshot_info": {
     "controls": {
-      "back": "返回列表",
-      "save": "保存",
-      "share": "分享",
+      "back": "返回截屏列表",
+      "save": "保存截屏",
+      "share": "分享截屏",
       "upscaled": "画质提升"
     }
   },
@@ -483,13 +517,15 @@
       "title": "语言"
     },
     "archive": {
-      "save": "保存",
+      "save": "保存 URL",
       "title": "游戏ROM & BIOS 资料库 (必要文件)",
-      "warning": "请您自行评估所处地区针对数字版权保护的法律法规风险。\n若您确认使用资料库，请复制下面的链接到文本框并点击 \"保存\"。"
+      "warning": "请您自行评估所处地区针对数字版权保护的法律法规风险。\n若您确认使用资料库，请复制下面的链接到文本框并点击 \"保存\"。",
+      "copy_url": "复制 URL",
+      "copied": "已复制"
     },
     "github_token": {
       "title": "Github 代币",
-      "remove": "消除",
+      "remove": "移除令牌",
       "ramble": "如果您遇到 GitHub 速率限制问题，请在下面添加 PAT 令牌。\nPAT 令牌不应设置任何范围，并且存储在您的计算机上而不是 Pocket 的 SD 卡上。"
     },
     "clear_file_cache": {
@@ -498,7 +534,7 @@
       "title": "清除文件缓存"
     },
     "disconnect": {
-      "button": "断开连接",
+      "button": "断开 Pocket 连接",
       "ramble": "返回\"连接到Pocket\" 初始页面 (这一操作并不会卸载弹出系统中的SD卡或USB磁盘)",
       "title": "断开连接"
     },
@@ -531,7 +567,24 @@
       "ramble": "将 .pal 文件复制到 .gbp 文件中。将背景使用的 4 种颜色复制到新的 .gbp 文件中。\n切换将为 /Assets/gb/common/palettes 中的每个 .pal 文件创建一个 .gbp 文件",
       "checkbox": "启用自动 .gbp 文件"
     },
-    "thanks": "鸣谢:"
+    "thanks": "鸣谢:",
+    "sections": "设置分区",
+    "section_titles": {
+      "display": "显示",
+      "downloads": "下载",
+      "files": "文件",
+      "connection": "连接"
+    },
+    "theme": {
+      "title": "主题",
+      "label": "外观",
+      "system": "跟随系统",
+      "dark": "深色",
+      "light": "浅色",
+      "style_label": "风格",
+      "style_slanted": "斜角",
+      "style_modern": "现代"
+    }
   },
   "time_ago": {
     "less_than_1_min_ago": "少于一分钟前"
@@ -548,7 +601,7 @@
       "other": "其他"
     },
     "cancel_button": "取消",
-    "confirm_button": "确认",
+    "confirm_button": "安装文件",
     "remove_duplicate": "移除已存在的重复文件",
     "scanning": "扫描文件中...",
     "moved_files_info": "处理特定情况下文件已经被移动到其他目录的情况，例如JSON文件在_alternatives目录中",

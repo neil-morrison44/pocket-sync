@@ -14,13 +14,15 @@
   box-sizing: border-box;
   width: var(--sidebar-width);
   height: 100vh;
-  padding: 12px 8px;
+  padding: calc(12px + var(--titlebar-inset)) 8px 12px;
   flex-shrink: 0;
   z-index: 1000;
   overflow: hidden auto;
   background-color: var(--sidebar-background);
   border-right: 1px solid var(--sidebar-border);
-  transition: width 150ms ease;
+  transition:
+    width 150ms ease,
+    padding 150ms ease;
 
   /* stylelint-disable-next-line property-no-vendor-prefix */
   -webkit-user-select: none;
@@ -148,7 +150,11 @@
 }
 
 /* Icons keep their position; labels fade while the width animates */
+/* Centres the 40px items (icon plus item padding) in the collapsed width;
+   8px, as when expanded, unless the width grows for the traffic lights */
 .sidebar--collapsed {
+  padding-inline: calc((var(--sidebar-collapsed-width) - 1px - 40px) / 2);
+
   & .sidebar__label {
     opacity: 0;
   }
@@ -158,4 +164,11 @@
   width: 36px;
   height: 36px;
   align-self: center;
+}
+
+/* Window drag area above the items (holds the macOS traffic lights) */
+.sidebar__drag-region {
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(var(--titlebar-inset) + 8px);
 }

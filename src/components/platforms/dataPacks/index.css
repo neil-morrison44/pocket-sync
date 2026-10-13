@@ -8,7 +8,7 @@
   display: flex;
   gap: 10px;
   align-items: flex-end;
-  border-bottom: 1px solid rgb(255 255 255 / 50%);
+  border-bottom: 1px solid var(--theme-separator);
   margin-block-end: 10px;
   padding-block-end: 10px;
 }

@@ -1,7 +1,7 @@
 .loader {
   height: 100%;
   width: 100%;
-  background-color: #333;
+  background-color: var(--theme-surface-raised);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,7 +22,7 @@
 .loader::before {
   content: "";
   display: block;
-  border: 2px solid white;
+  border: 2px solid var(--theme-text-headline);
   border-radius: 50%;
   border-top-color: transparent;
   width: 25%;

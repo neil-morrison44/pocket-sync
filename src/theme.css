@@ -4,6 +4,7 @@
  * 1. Themes: each theme sets the semantic `--theme-*` tokens. To add a theme,
  *    copy the dark block, change the values, and set `data-theme="<name>"`
  *    on <html>.
+ *    Styles (`data-style`: slanted or modern) layer on top of either theme: shapes and contrast.
  * 2. Aliases: legacy variable names used across the components point at the
  *    theme tokens, so they follow the active theme automatically.
  *
@@ -46,13 +47,15 @@
   --theme-danger: rgb(200 80 88);
   --theme-warning: #c69327;
   --theme-highlight: #885090;
-  --theme-selection: #396cd8;
+  --theme-selection: var(--theme-accent); /* selected items */
+  --theme-selection-text: var(--theme-accent-text);
   --theme-focus: var(--theme-accent); /* keyboard focus rings */
 
   /* Controls */
   --theme-control-background: #eee;
   --theme-control-text: #000;
   --theme-input-background: #fff;
+  --theme-input-text: #000;
   --theme-input-placeholder: #757575;
 
   /* Media */
@@ -64,11 +67,113 @@
   --theme-sidebar-item-active: #333;
 }
 
+/* Light: the white Analogue Pocket. Black controls like the Analogue site,
+   and a darker green, because #63DB84 on white is too low in contrast for
+   text and icons. */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* Surfaces */
+  --theme-background: #f4f4f1;
+  --theme-surface: #c9c9c4;
+  --theme-surface-hover: #e6e6e2;
+  --theme-surface-sunken: #e9e9e5;
+  --theme-surface-raised: #deded9;
+  --theme-border: #d4d4cf;
+  --theme-separator: rgb(0 0 0 / 12%);
+  --theme-overlay: rgb(0 0 0 / 5%);
+
+  /* Text */
+  --theme-text: #1a1a1a;
+  --theme-text-headline: var(--theme-text);
+  --theme-text-body: rgb(26 26 26 / 84%);
+  --theme-text-soft: rgb(26 26 26 / 55%);
+
+  /* Inverse */
+  --theme-inverse-background: #1a1a1a;
+  --theme-inverse-text: #f4f4f1;
+
+  /* Accents */
+  --theme-accent: #1e8e4e;
+  --theme-accent-text: #fff;
+  --theme-danger: #c03a44;
+  --theme-warning: #a8710f;
+  --theme-highlight: #885090;
+  --theme-selection: var(--theme-accent);
+  --theme-selection-text: var(--theme-accent-text);
+  --theme-focus: var(--theme-accent);
+
+  /* Controls */
+  --theme-control-background: #222;
+  --theme-control-text: #f6f6f6;
+  --theme-input-background: #fff;
+  --theme-input-text: #000;
+  --theme-input-placeholder: #757575;
+
+  /* Media */
+  --theme-media-background: #fff;
+
+  /* Sidebar */
+  --theme-sidebar-background: #e9e9e5;
+  --theme-sidebar-item-hover: #dfdfdb;
+  --theme-sidebar-item-active: #d4d4cf;
+}
+
+/* ---------- Styles ---------- */
+
+/* Modern: straight edges and more contrast, closer to the Analogue site.
+   Works with both themes; the fonts stay the same. */
+:root[data-style="modern"] {
+  --slant: 0px;
+}
+
+:root[data-style="modern"]:not([data-theme="light"]) {
+  --theme-background: #0b0b0b;
+  --theme-surface: #3a3a3a;
+  --theme-surface-hover: #161616;
+  --theme-surface-sunken: #000;
+  --theme-surface-raised: #1a1a1a;
+  --theme-border: #262626;
+  --theme-separator: rgb(255 255 255 / 20%);
+  --theme-overlay: rgb(255 255 255 / 6%);
+  --theme-text: #fff;
+  --theme-text-body: rgb(255 255 255 / 90%);
+  --theme-text-soft: rgb(255 255 255 / 62%);
+  --theme-control-background: #fff;
+  --theme-control-text: #000;
+  --theme-sidebar-background: #000;
+  --theme-sidebar-item-hover: #161616;
+  --theme-sidebar-item-active: #262626;
+}
+
+:root[data-style="modern"][data-theme="light"] {
+  --theme-background: #fff;
+  --theme-surface: #d6d6d6;
+  --theme-surface-hover: #f0f0f0;
+  --theme-surface-sunken: #f2f2f2;
+  --theme-surface-raised: #ebebeb;
+  --theme-border: #e0e0e0;
+  --theme-separator: rgb(0 0 0 / 16%);
+  --theme-overlay: rgb(0 0 0 / 4%);
+  --theme-text: #000;
+  --theme-text-body: rgb(0 0 0 / 88%);
+  --theme-text-soft: rgb(0 0 0 / 60%);
+  --theme-control-background: #000;
+  --theme-control-text: #fff;
+  --theme-sidebar-background: #fff;
+  --theme-sidebar-item-hover: #f0f0f0;
+  --theme-sidebar-item-active: #e6e6e6;
+}
+
 /* ---------- Theme-independent tokens & aliases ---------- */
 
 :root {
   /* Layout & typography */
   --content-max-width: 720px; /* text-heavy content; tiled grids may be wider */
+  --titlebar-inset: 0px; /* room for the macOS traffic lights */
+  /* 8px sidebar padding + 12px item padding on each side of a 16px icon,
+     plus the 1px border */
+  --sidebar-collapsed-width: 57px;
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 10px;

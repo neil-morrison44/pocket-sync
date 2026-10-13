@@ -47,6 +47,7 @@ import { turboDownloadsAtom } from "../../jotai/settings/atoms"
 import { currentViewAtom } from "../../jotai/view/atoms"
 import Icon from "../ui/Icon"
 import Button from "../ui/Button"
+import Stats from "../ui/Stats"
 
 export const Update = () => {
   const [updateFilterDefaultsOptions, setUpdateFilterDefaultsOptions] = useAtom(
@@ -238,15 +239,14 @@ const Overview = () => {
     return Array.from(inventory.difference(installedAndHidden))
   }, [coresList, inventoryCoreList, config])
 
-  return (
-    <div className="update__overview">
-      {t("overview", {
-        install_count: coresList.length,
-        update_count: installedCoresWithUpdates.length,
-        not_installed_count: notInstalledList.length,
-      })}
-    </div>
-  )
+  const stats = [
+    { value: coresList.length, label: t("stats.installed") },
+    { value: installedCoresWithUpdates.length, label: t("stats.updatable") },
+    { value: notInstalledList.length, label: t("stats.installable") },
+  ]
+
+  // An info card, like the firmware status
+  return <Stats className="update__overview" items={stats} />
 }
 
 const CoreList = ({ ref }: { ref: Ref<HTMLDivElement> }) => {

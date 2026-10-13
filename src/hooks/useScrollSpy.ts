@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
+
+/** How long a jump may take before the spy takes over again (fallback). */
+const JUMP_TIMEOUT_MS = 1000
 
 /**
- * Returns the id of the first element (in `ids` order) that is in the upper
- * part of the window, for navs that highlight the section being read.
+ * Tracks which element (by id) is being read, for navs that highlight the
+ * current section. `jumpTo` scrolls to an element and highlights it right
+ * away, ignoring the elements passed on the way, so the nav doesn't flash.
  *
  * @param ids element ids, in page order
  * @param rootMargin which part of the viewport counts as "being read"
@@ -12,6 +16,7 @@ export const useScrollSpy = (
   rootMargin = "0px 0px -60% 0px"
 ) => {
   const [active, setActive] = useState<string | undefined>(ids[0])
+  const jumpingRef = useRef(false)
 
   useEffect(() => {
     const visible = new Set<string>()
@@ -21,6 +26,7 @@ export const useScrollSpy = (
           if (entry.isIntersecting) visible.add(entry.target.id)
           else visible.delete(entry.target.id)
         }
+        if (jumpingRef.current) return
         const first = ids.find((id) => visible.has(id))
         if (first) setActive(first)
       },
@@ -33,5 +39,25 @@ export const useScrollSpy = (
     return () => observer.disconnect()
   }, [ids, rootMargin])
 
-  return [active, setActive] as const
+  /**
+   * Scrolls to `targetId` (defaults to `activeId`) and marks `activeId` as
+   * active.
+   */
+  const jumpTo = useCallback((activeId: string, targetId = activeId) => {
+    setActive(activeId)
+    jumpingRef.current = true
+
+    const release = () => {
+      jumpingRef.current = false
+      window.removeEventListener("scrollend", release)
+    }
+    window.addEventListener("scrollend", release)
+    setTimeout(release, JUMP_TIMEOUT_MS)
+
+    document
+      .getElementById(targetId)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }, [])
+
+  return { active, jumpTo }
 }

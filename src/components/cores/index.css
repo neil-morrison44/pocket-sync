@@ -41,7 +41,7 @@
 
 .cores__item-ai-score {
   position: absolute;
-  color: orange;
+  color: var(--theme-warning);
   left: 0;
   top: 0;
   margin: 2px;

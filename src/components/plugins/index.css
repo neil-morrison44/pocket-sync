@@ -42,7 +42,7 @@
   height: 120px;
   border-radius: 4px;
   grid-area: i;
-  background: linear-gradient(rgb(100 100 100), rgb(150 150 150));
+  background: linear-gradient(var(--theme-surface), var(--theme-surface-raised));
   object-fit: contain;
 }
 
@@ -69,7 +69,7 @@
     width: 50%;
     height: 50%;
     display: block;
-    background-color: white;
+    background-color: var(--theme-text-headline);
     clip-path: polygon(20% 0, 100% 50%, 20% 100%);
   }
 

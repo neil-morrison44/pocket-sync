@@ -5,7 +5,21 @@
     "update_available": "Наличен е ъпдейт! {version}",
     "sponsor_link": "Включи се към {count, number} човека, спонсори чрез GitHub",
     "whats_new": "какво ново",
-    "close_changelog": "Затвори"
+    "close_changelog": "Затвори",
+    "library_updates": "Обновления в библиотеката",
+    "side_panel": "Обновления",
+    "eject": "Извади SD картата",
+    "show_updates": "Покажи обновленията",
+    "hide_updates": "Скрий обновленията",
+    "pocket_colours": "Цветове на Pocket",
+    "colours": "Цветове",
+    "body_colour": "Корпус",
+    "button_colour": "Бутони",
+    "stats": {
+      "firmware": "Фърмуер",
+      "cores": "Ядра",
+      "games": "Игри"
+    }
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -47,11 +61,11 @@
   "core_info": {
     "author": "Автор",
     "controls": {
-      "back": "Назад към списъка",
-      "install": "Инсталирай",
-      "required_files": "Нужни файлове",
-      "uninstall": "Деинсталирай",
-      "update": "Обнови",
+      "back": "Назад към ядрата",
+      "install": "Инсталирай ядро",
+      "required_files": "Зареди нужните файлове",
+      "uninstall": "Деинсталирай ядро",
+      "update": "Обнови ядро",
       "hide_core": "Скрий ядро"
     },
     "inputs": "Контроли",
@@ -59,7 +73,7 @@
       "close": "Затвори",
       "input_core": "Ядро",
       "no_settings_found": "Няма намерени настройки!",
-      "reset_all": "Инициализирай всичко"
+      "reset_all": "Нулирай всички настройки"
     },
     "analogizer": "Това ядро поддържа <1>Analogizer-FPGA</1>",
     "requires_license": {
@@ -180,14 +194,14 @@
   },
   "fetch": {
     "controls": {
-      "add_fetch_item": "Добави нов източник",
-      "refresh": "Обнови"
+      "add_fetch_item": "Добави източник",
+      "refresh": "Обнови статуса"
     },
-    "fetch_button": "Извлечи",
+    "fetch_button": "Извлечи файлове",
     "file_count": "{count} / {total, plural, one {# Файл} other {# Файлове}}",
     "loading": "зареждане...",
     "new": {
-      "add_extension": "Добави",
+      "add_extension": "Добави разширение",
       "add_fetch": "Добави източник",
       "archive_name": "Име на архив: <i>https://archive.org/details/[this bit here]</i>",
       "archive_tip": "Това няма да проработи за архиви, в които файловете са zip-нати, трябва да изберете кои разширения да бъдат избягвани при изтеглянето на файловете с метаданни.",
@@ -199,7 +213,7 @@
       "validating_archive_name": "Проверка на архив \"{name}\"...",
       "invalid_archive_name": "Не е намерен архив в https://archive.org/details/{name}"
     },
-    "remove_button": "Премахни",
+    "remove_button": "Премахни източник",
     "remove_confirm": "Това ще премахне конфигурацията на източника, но не и файловете. Сигурни ли сте?",
     "types": {
       "archive_org": "Интернет архив",
@@ -209,7 +223,7 @@
   "firmware": {
     "current": "Текущ фърмуер: v{version}",
     "downloading_firmware": "Изтегляне на фърмуер...",
-    "load_firmware": "Зареди на SD карта",
+    "load_firmware": "Зареди фърмуер на SD картата",
     "loaded_firmware": "Фърмуер {version} е на SD картата",
     "loaded_firmware_info": "поставете SD картата и включете Pocket за да инсталирате",
     "no_firmware_loaded": "Няма фърмуер файл на SD картата, който да бъде инсталиран",
@@ -222,19 +236,28 @@
       "from": "От ",
       "title": "v{version} - { published, date, short } Релийз коментари:"
     },
-    "remove_button": "Премахни"
+    "remove_button": "Премахни фърмуер",
+    "current_label": "Инсталиран фърмуер",
+    "versions_title": "Версии на фърмуера",
+    "jump_to": "Към",
+    "badge_latest": "Последна",
+    "badge_installed": "Инсталирана",
+    "published": "{date, date, medium}"
   },
   "games": {
     "controls": {
       "category": "Категория",
       "clean_files": "Изчисти файлове",
-      "instance_json": "JSON на тази инстанция",
+      "instance_json": "Създай JSON на инстанция",
       "refresh": "Обнови",
-      "search": "Търси"
+      "search": "Търси",
+      "mrom": "Премести MROM дъмпове"
     },
     "item": {
       "game_count": "{count, plural, =0 {Няма игри} one {# Игра} other {# Игри}}"
-    }
+    },
+    "open_folder": "Отвори папката",
+    "none": "Няма намерени игри. Инсталирайте ядро, след това добавете игри в неговата папка на SD картата."
   },
   "image_editor": {
     "cancel": "Откажи",
@@ -242,7 +265,7 @@
     "remove": "Премахни",
     "reset": "Инициализирай",
     "rotate": "Завърти",
-    "save": "Съхрани",
+    "save": "Съхрани изображение",
     "scale": "Скалирай"
   },
   "instance_json": {
@@ -261,17 +284,20 @@
     "platforms": "Платформи",
     "pocket_sync": "Pocket Sync",
     "save_states": "Съхранени състояния",
-    "saves": "Запазвания",
+    "saves": "Резервни копия",
     "screenshots": "Скрийншоти",
     "plugins": "Плъгини",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "collapse_sidebar": "Свий страничната лента",
+    "expand_sidebar": "Разгъни страничната лента",
+    "views": "Изгледи"
   },
   "plugins": {
     "buttons": {
       "add": "Добавяне на плъгин",
-      "refresh": "Опресняване"
+      "refresh": "Опресни плъгините"
     },
-    "remove": "Премахване",
+    "remove": "Премахни плъгин",
     "confirm_remove": "Това ще премахне и всички локални данни, които плъгинът е съхранил на този компютър. Сигурни ли сте?",
     "confirm_exit": "Плъгинът все още работи, сигурни ли сте, че искате да затворите прозореца?",
     "safe_to_close": "Плъгинът е завършен, този прозорец може да бъде затворен",
@@ -286,10 +312,10 @@
   },
   "palettes": {
     "buttons": {
-      "add_via_code": "Добави чрез код",
-      "new": "Нова палитра",
-      "back": "Назад към списъка",
-      "palette_town": "Град на палитри"
+      "add_via_code": "Добави палитра чрез код",
+      "new": "Създай палитра",
+      "back": "Назад към палитрите",
+      "palette_town": "Разгледай Града на палитри"
     },
     "town": {
       "title": "Град на палитри",
@@ -297,15 +323,15 @@
       "close": "Затвори"
     },
     "item": {
-      "duplicate": "Клонирай",
-      "rename": "Преименувай",
+      "duplicate": "Клонирай палитра",
+      "rename": "Преименувай палитра",
       "copy_code": "Копирай код за споделяне",
-      "delete": "Изтрий"
+      "delete": "Изтрий палитра"
     },
     "add_via_code": {
       "title": "Добави чрез код за споделяне",
       "cancel": "Откажи",
-      "add": "Добави"
+      "add": "Добави палитра"
     },
     "full": {
       "inputs": {
@@ -315,19 +341,19 @@
         "window": "прозорец",
         "off": "LCD изключен"
       },
-      "save": "Съхрани",
-      "reset": "Инициализирай",
+      "save": "Съхрани палитра",
+      "reset": "Нулирай цветовете",
       "emu_credit": "GB емулатор адаптиран от <1>roblouie/gameboy-emulator</1>"
     }
   },
   "mister_sync": {
     "controls": {
-      "back": "Изход",
+      "back": "Излез от MiSTer Sync",
       "search": "Търси запазвания",
       "save_mapping": "Мапинг на запазвания"
     },
     "login": {
-      "connect": "Свържи",
+      "connect": "Свържи се с MiSTer",
       "host": "Хост / IP Адрес:",
       "password": "Парола:",
       "username": "Потребител:"
@@ -341,7 +367,7 @@
     "unsupported": "{platform} не е мапната",
     "mapping": {
       "close": "Затвори",
-      "clear": "Изчисти",
+      "clear": "Изчисти съпоставянето",
       "reset": "Върни първоначалното състояние"
     }
   },
@@ -351,9 +377,9 @@
   },
   "platform_info": {
     "controls": {
-      "back": "Обратно в списъка",
-      "data_packs": "Колекция данни",
-      "image_packs": "Колекция изображения"
+      "back": "Назад към платформите",
+      "data_packs": "Управлявай колекции данни",
+      "image_packs": "Управлявай колекции изображения"
     },
     "cores": "Ядра",
     "edit": "Редактирай"
@@ -361,10 +387,10 @@
   "platforms": {
     "cancel": "Откажи",
     "controls": {
-      "data_packs": "Колекция данни",
-      "remove_coreless": "Премахни без ядра",
+      "data_packs": "Управлявай колекции данни",
+      "remove_coreless": "Премахни платформи без ядра",
       "archive": "Архивни платформи",
-      "image_packs": "Колекция изображения",
+      "image_packs": "Управлявай колекции изображения",
       "search": "Търси"
     },
     "archive": {
@@ -391,7 +417,7 @@
       "close": "Затвори",
       "current": "Текущи"
     },
-    "save": "Съхрани"
+    "save": "Съхрани промените"
   },
   "progress": {
     "remaining_time": "Оставащо време (прибл.): {remainingTime}",
@@ -400,7 +426,7 @@
   "save_info": {
     "confirm_restore": "Възстанови от бекъп?",
     "controls": {
-      "back": "Обратно в списъка",
+      "back": "Назад към резервните копия",
       "hide_unchanged": "Скрий непроменените",
       "search": "Търси"
     },
@@ -441,21 +467,29 @@
     "backups": "Бекъпи: {count}",
     "confirm_delete": "Сигурни ли сте, че искате да изтриете тази бекъп локация?",
     "controls": {
-      "add_backup_location": "Добави бекъп локация",
-      "mister_sync": "MiSTer Sync"
+      "add_backup_location": "Добави локация за резервни копия",
+      "mister_sync": "Отвори MiSTer Sync"
     },
     "latest_backup": "Последен бекъп: {date, date, long}, {date, time, short}",
     "none": "Добави бекъп локация отгоре",
     "not_found": "Не е намерена",
     "oldest_backup": "Най-стар бекъп: {date, date, long}, {date, time, short}",
     "remove": "Премахни локация",
-    "view_saves": "Виж съхранения"
+    "view_saves": "Виж съхранения",
+    "copy_path": "Копирай пътя",
+    "open_folder": "Отвори папката",
+    "copied": "Копирано",
+    "location_title": "Локация {number}",
+    "back_up_now": "Архивирай сега",
+    "backing_up": "Архивиране…",
+    "last_backup_label": "Последно копие",
+    "never": "Все още няма копия"
   },
   "screenshot_info": {
     "controls": {
-      "back": "Обратно в списъка",
-      "save": "Съхрани",
-      "share": "Сподели",
+      "back": "Назад към скрийншотите",
+      "save": "Съхрани скрийншот",
+      "share": "Сподели скрийншот",
       "upscaled": "Прескалирано"
     }
   },
@@ -520,13 +554,15 @@
       "checkbox": "Винаги използвай Английски (US)"
     },
     "archive": {
-      "save": "Съхрани",
+      "save": "Съхрани URL",
       "title": "ROM & BIOS архив (Нужни файлове)",
-      "warning": "Моля проверете местните закони свързани с изтеглянето на защитени ROM & BIOS файлове.\nАко сте ок с това, копирайте следния url в полето и натиснете \"Съхрани\"."
+      "warning": "Моля проверете местните закони свързани с изтеглянето на защитени ROM & BIOS файлове.\nАко сте ок с това, копирайте следния url в полето и натиснете \"Съхрани\".",
+      "copy_url": "Копирай URL",
+      "copied": "Копирано"
     },
     "github_token": {
       "title": "Github Token",
-      "remove": "Премахни",
+      "remove": "Премахни токена",
       "ramble": "Ако имате проблеми с GitHub rate limit, добавете PAT тоукън отдолу.\nPAT тоукъна няма настроени никакви скоупове, и се съхранява на вашият компютър вместо на SD картата на Pocket."
     },
     "clear_file_cache": {
@@ -535,7 +571,7 @@
       "title": "Изчисти файл кеша"
     },
     "disconnect": {
-      "button": "Прекъсване",
+      "button": "Изключи Pocket",
       "ramble": "Връщане на \"Свържи Pocket\" екрана (Това не изключва безопасно SD картата / USB флашката)",
       "title": "Прекъсване"
     },
@@ -568,7 +604,24 @@
       "ramble": "Клонирай .pal файловете в .gbp файлове. Копира 4-те цвята използвани за фон в новите .gbp файлове.\nВключването ще създаде .gbp файл за всеки .pal файл в /Assets/gb/common/palettes",
       "checkbox": "Включи автоматични .gbp файлове"
     },
-    "thanks": "Благодарности на:"
+    "thanks": "Благодарности на:",
+    "sections": "Раздели на настройките",
+    "section_titles": {
+      "display": "Изглед",
+      "downloads": "Изтегляния",
+      "files": "Файлове",
+      "connection": "Връзка"
+    },
+    "theme": {
+      "title": "Тема",
+      "label": "Външен вид",
+      "system": "Системна",
+      "dark": "Тъмна",
+      "light": "Светла",
+      "style_label": "Стил",
+      "style_slanted": "Скосен",
+      "style_modern": "Модерен"
+    }
   },
   "time_ago": {
     "less_than_1_min_ago": "преди по-малко от минута"
@@ -585,7 +638,7 @@
       "other": "други"
     },
     "cancel_button": "Откажи",
-    "confirm_button": "Потвърди",
+    "confirm_button": "Инсталирай файловете",
     "remove_duplicate": "Премахни дублирани съществуващи файлове",
     "scanning": "Сканиране на файлове...",
     "moved_files_info": "Обработва случаи на преместени файлове, напр. JSON файловете са вече в `_alternatives`",

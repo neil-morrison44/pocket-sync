@@ -33,6 +33,8 @@ The reasoning behind these choices, the character principles and the current sta
 
 **Adding a theme:** copy the dark block, rename the selector to `:root[data-theme="<name>"]`, change the values (and `color-scheme`), and switch to it with `document.documentElement.dataset.theme = "<name>"`. Set the attribute on `<html>`: the aliases are resolved there, so they don't follow a theme set on a nested element.
 
+**Styles:** `data-style` on `<html>` layers on top of the theme. `slanted` (default) keeps the slanted edges; `modern` sets `--slant: 0px` (straight edges) and overrides surface and text tokens for more contrast, per theme. Build shapes from `--shape-slant*` and colours from tokens, and both styles work without extra CSS.
+
 **Layout & typography** tokens (`--radius-*`, `--space-*`, `--font-body`, `--font-display`) live in the same file, outside the theme blocks, because they don't change per theme.
 
 **Figma:** each Figma variable stores its CSS variable as its web code syntax (e.g. `var(--theme-accent)`), so the mapping lives in Figma. When you add or rename a token, update the matching Figma variable by hand.
@@ -41,7 +43,7 @@ Some colours are still hard-coded outside the theme, e.g. link colours and the o
 
 ## Figma
 
-The design lives in a Figma file (ask the author for access).
+The design lives in a Figma file (ask @olivierbrcknr for access).
 
 - **Variables**
   - **Theme** (mode `Dark`) mirrors the `--theme-*` tokens. Every variable's web code syntax is its CSS variable.
@@ -75,7 +77,7 @@ To add a theme: add a mode to the Figma "Theme" collection and a matching `:root
 
 ## UI primitives
 
-`src/components/ui/<Name>/` holds the shared building blocks: `Icon`, `Button` (themes `primary`, `secondary`, `tertiary`, `destructive`), `IconButton`, `Toggle`, `Switch`, `Select` (with option groups), `TextInput`, `SearchInput`, `Tabs`, `Tooltip` and `Skeleton` / `CardSkeleton`. Document props with JSDoc comments. Each has `Name.tsx`, `Name.css` and `index.ts`, uses `clsx` with `--theme-*` / `--is-*` modifiers, and is built on a Radix primitive where one exists. Use these instead of raw `<button>`, `<select>` or `<input>` elements. The `Controls*` components in `src/components/controls` are thin wrappers around them for the top controls bar.
+`src/components/ui/<Name>/` holds the shared building blocks: `Icon`, `Button` (themes `primary`, `secondary`, `tertiary`, `destructive`), `IconButton`, `Toggle`, `Switch`, `Select` (option groups, `searchable` combobox mode), `MultiSelect` (checklist with search and Select All / Clear All), `TextInput` (`code` variant), `SearchInput`, `PathField`, `Tabs`, `Tooltip`, `Popover`, `Stats`, `StickySection` and `Skeleton` / `CardSkeleton`. Document props with JSDoc comments. Each has `Name.tsx`, `Name.css` and `index.ts`, uses `clsx` with `--theme-*` / `--is-*` modifiers, and is built on a Radix primitive where one exists. Use these instead of raw `<button>`, `<select>` or `<input>` elements. The `Controls*` components in `src/components/controls` are thin wrappers around them for the top controls bar.
 
 ## Conventions for new UI
 

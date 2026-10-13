@@ -2,6 +2,8 @@ import React, { ReactElement, ReactNode, useState } from "react"
 
 import * as RadixTooltip from "@radix-ui/react-tooltip"
 
+import { usePortalContainer } from "../portalContainer"
+
 import "./Tooltip.css"
 
 export interface TooltipProps {
@@ -25,13 +27,14 @@ const Tooltip = ({
   forceOpen = false,
 }: TooltipProps) => {
   const [open, setOpen] = useState(false)
+  const portalContainer = usePortalContainer()
 
   if (!enabled) return children
 
   return (
     <RadixTooltip.Root open={open || forceOpen} onOpenChange={setOpen}>
       <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
-      <RadixTooltip.Portal>
+      <RadixTooltip.Portal container={portalContainer}>
         <RadixTooltip.Content className="tooltip" side={side} sideOffset={8}>
           {label}
         </RadixTooltip.Content>

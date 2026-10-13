@@ -27,7 +27,7 @@
   font-size: 1.1rem;
   background-color: var(--green-colour);
   color: var(--theme-accent-text);
-  border: 2px solid white;
+  border: 2px solid var(--theme-text-headline);
   animation: border-pulse 2s linear infinite;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -40,7 +40,7 @@
 
 @keyframes border-pulse {
   0%, 100% {
-    border-color: white;
+    border-color: var(--theme-text-headline);
   }
 
   50% {

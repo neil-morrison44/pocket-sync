@@ -20,7 +20,7 @@
   align-items: center;
   justify-content: center;
   padding: 10px 20px;
-  accent-color: white;
+  accent-color: var(--theme-accent);
 
   &:hover{
     background-color: var(--hover-colour);
@@ -33,7 +33,7 @@
   width: 10px;
   height: 10px;
   aspect-ratio: 1 / 1;
-  border: 1px solid white;
+  border: 1px solid var(--theme-text-headline);
   border-right-color: transparent;
   border-bottom-color: transparent;
   transform: rotate(-45deg);

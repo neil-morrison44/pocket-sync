@@ -38,7 +38,7 @@
 
 .mister-sync__mapping-platform{
   cursor: grab;
-  border: 1px solid white;
+  border: 1px solid var(--theme-separator);
   border-radius: 5px;
   padding-inline: 12px;
   text-align: center;

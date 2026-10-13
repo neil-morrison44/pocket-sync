@@ -4,6 +4,7 @@ import "./index.css"
 import { mainWindowSelector } from "../../jotai/selectors"
 import { useAtomValue } from "jotai"
 import { Loader } from "../loader"
+import { PortalContainerContext } from "../ui/portalContainer"
 
 type ModalProps = {
   children: ReactNode
@@ -12,9 +13,11 @@ type ModalProps = {
 
 export const Modal = ({ children, className }: ModalProps) => {
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const [dialog, setDialog] = useState<HTMLDialogElement | null>(null)
 
   useEffect(() => {
     dialogRef.current?.showModal()
+    setDialog(dialogRef.current)
   }, [])
 
   return (
@@ -23,7 +26,9 @@ export const Modal = ({ children, className }: ModalProps) => {
       ref={dialogRef}
       closedby="none"
     >
-      <Suspense fallback={<Loader />}>{children}</Suspense>
+      <PortalContainerContext value={dialog}>
+        <Suspense fallback={<Loader />}>{children}</Suspense>
+      </PortalContainerContext>
     </dialog>
   )
 }

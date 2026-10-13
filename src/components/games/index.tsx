@@ -43,6 +43,7 @@ export const Games = () => {
         />
         <ControlsSelect
           options={categoryList}
+          searchPlaceholder={t("controls.search")}
           selected={filterCategory}
           onChange={setFilterCategory}
         >

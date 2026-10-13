@@ -1,5 +1,5 @@
 import * as RadixTabs from "@radix-ui/react-tabs"
-import { useAtom } from "jotai"
+import { useAtomValue } from "jotai"
 import { atomWithStorage } from "jotai/utils"
 import { useTranslation } from "react-i18next"
 import { VIEWS_LIST } from "../../jotai/view/atoms"
@@ -36,6 +36,9 @@ const NAV_GROUPS: View[][] = [
 
 const FOOTER_VIEWS: View[] = ["Settings"]
 
+/** Tab value of the collapse toggle; the layout handles it as a toggle. */
+export const SIDEBAR_TOGGLE_VALUE = "__toggle-sidebar"
+
 export const sidebarCollapsedAtom = atomWithStorage(
   "pocket-sync:sidebar-collapsed",
   false
@@ -53,7 +56,7 @@ type SidebarProps = {
 // through doesn't load every screen).
 export const Sidebar = ({ view, isPending, connected }: SidebarProps) => {
   const { t } = useTranslation("layout")
-  const [collapsed, setCollapsed] = useAtom(sidebarCollapsedAtom)
+  const collapsed = useAtomValue(sidebarCollapsedAtom)
   const className = useBEM({ block: "sidebar", modifiers: { collapsed } })
 
   const renderItem = (v: View) => {
@@ -80,6 +83,7 @@ export const Sidebar = ({ view, isPending, connected }: SidebarProps) => {
 
   return (
     <nav className={className}>
+      <div className="sidebar__drag-region" data-tauri-drag-region />
       <RadixTabs.List className="sidebar__list" aria-label={t("views")}>
         <div className="sidebar__nav">
           {NAV_GROUPS.map((group, index) => (
@@ -94,20 +98,23 @@ export const Sidebar = ({ view, isPending, connected }: SidebarProps) => {
           )}
         </div>
 
-        <div className="sidebar__footer">{FOOTER_VIEWS.map(renderItem)}</div>
+        <div className="sidebar__footer">
+          {FOOTER_VIEWS.map(renderItem)}
+          {/* A trigger, so arrow keys reach it with the views; the layout
+              toggles the sidebar instead of switching views for this value */}
+          <Tooltip label={toggleLabel} side="right" enabled={collapsed}>
+            <RadixTabs.Trigger
+              value={SIDEBAR_TOGGLE_VALUE}
+              className="sidebar__item sidebar__item--muted"
+              aria-label={toggleLabel}
+              aria-expanded={!collapsed}
+            >
+              <Icon className="sidebar__icon" icon="layout" />
+              <span className="sidebar__label">{toggleLabel}</span>
+            </RadixTabs.Trigger>
+          </Tooltip>
+        </div>
       </RadixTabs.List>
-
-      <Tooltip label={toggleLabel} side="right" enabled={collapsed}>
-        <button
-          className="sidebar__item sidebar__item--muted"
-          aria-label={toggleLabel}
-          aria-expanded={!collapsed}
-          onClick={() => setCollapsed((c) => !c)}
-        >
-          <Icon className="sidebar__icon" icon="layout" />
-          <span className="sidebar__label">{toggleLabel}</span>
-        </button>
-      </Tooltip>
     </nav>
   )
 }

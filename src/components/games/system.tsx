@@ -3,7 +3,7 @@ import { useAtomValue } from "jotai"
 import { useTranslation } from "react-i18next"
 import { fuzzy } from "fast-fuzzy"
 import { sep } from "@tauri-apps/api/path"
-import { GameSystem } from "../../jotai/games/selectors"
+import { GameSystem, filterGameFiles } from "../../jotai/games/selectors"
 import { PlatformInfoSelectorFamily } from "../../jotai/platforms/selectors"
 import { WalkDirSelectorFamily } from "../../jotai/selectors"
 import { pocketPathAtom } from "../../jotai/atoms"
@@ -32,10 +32,7 @@ export const GameSystemSection = ({ system }: { system: GameSystem }) => {
 
   const games = useMemo(() => {
     const separator = sep()
-    return files
-      .filter(
-        (file) => !system.namedFiles.some((named) => file.endsWith(named))
-      )
+    return filterGameFiles(files, system.namedFiles)
       .map((file) => {
         const parts = file.split(separator).filter(Boolean)
         return {

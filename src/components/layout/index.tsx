@@ -7,7 +7,7 @@ import { Loader } from "../loader"
 import { AutoBackup } from "../saves/autobackup"
 import { ZipInstall } from "../zipInstall"
 import * as RadixTabs from "@radix-ui/react-tabs"
-import { Sidebar, sidebarCollapsedAtom } from "./sidebar"
+import { SIDEBAR_TOGGLE_VALUE, Sidebar, sidebarCollapsedAtom } from "./sidebar"
 import "./index.css"
 import { enableGlobalZipInstallAtom } from "../../jotai/atoms"
 import { useAtom, useAtomValue } from "jotai"
@@ -68,7 +68,7 @@ export type Connection = {
 export const Layout = ({ connection }: { connection: Connection }) => {
   const [viewAndSubview, setViewAndSubview] = useAtom(currentViewAtom)
   const enableGlobalZipInstall = useAtomValue(enableGlobalZipInstallAtom)
-  const sidebarCollapsed = useAtomValue(sidebarCollapsedAtom)
+  const [sidebarCollapsed, setSidebarCollapsed] = useAtom(sidebarCollapsedAtom)
   const [isPending, startTransition] = useTransition()
 
   const changeView = useCallback(
@@ -87,9 +87,13 @@ export const Layout = ({ connection }: { connection: Connection }) => {
     <RadixTabs.Root
       className={`layout ${sidebarCollapsed ? "layout--sidebar-collapsed" : ""}`}
       value={view as string}
-      onValueChange={(value) =>
+      onValueChange={(value) => {
+        if (value === SIDEBAR_TOGGLE_VALUE) {
+          setSidebarCollapsed((collapsed) => !collapsed)
+          return
+        }
         changeView(value as (typeof VIEWS_LIST)[number])
-      }
+      }}
       orientation="vertical"
       activationMode="manual"
     >
@@ -106,7 +110,12 @@ export const Layout = ({ connection }: { connection: Connection }) => {
           connected={connection.connected}
         />
       )}
-      <RadixTabs.Content className="layout__content" value={view as string}>
+      {/* Not a tab stop itself; focus goes to the controls inside */}
+      <RadixTabs.Content
+        className="layout__content"
+        value={view as string}
+        tabIndex={-1}
+      >
         <ErrorBoundary>
           <Suspense fallback={<Loader fullHeight />}>
             <div>

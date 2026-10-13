@@ -1,7 +1,9 @@
 import {
   ReactNode,
+  Suspense,
   createContext,
   startTransition,
+  useEffect,
   useLayoutEffect,
   useState,
 } from "react"
@@ -107,4 +109,63 @@ export const ColourContextProviderFromConfig = ({
       {children}
     </ColourContextProvider>
   )
+}
+
+type Colours = { body: PocketColour; buttons: PocketColour }
+
+/**
+ * Colours from the config when `fromConfig` is set, random ones otherwise.
+ * It keeps the same tree either way, so the 3D Pocket isn't remounted (and
+ * reloaded) when an SD card is connected.
+ */
+export const ColourContextProviderAuto = ({
+  fromConfig,
+  changeInterval,
+  children,
+}: {
+  fromConfig: boolean
+  changeInterval: number
+  children: ReactNode
+}) => {
+  const [colours, setColours] = useState<Colours>({
+    body: "black",
+    buttons: "black",
+  })
+
+  useLayoutEffect(() => {
+    if (fromConfig) return
+    const interval = setInterval(() => {
+      startTransition(() =>
+        setColours({
+          body: ALL_COLOURS[Math.floor(ALL_COLOURS.length * Math.random())],
+          buttons: ALL_COLOURS[Math.floor(ALL_COLOURS.length * Math.random())],
+        })
+      )
+    }, changeInterval)
+    return () => clearInterval(interval)
+  }, [fromConfig, changeInterval])
+
+  return (
+    <ColourContextProvider body={colours.body} buttons={colours.buttons}>
+      {fromConfig && (
+        <Suspense fallback={null}>
+          <ConfigColoursSync onChange={setColours} />
+        </Suspense>
+      )}
+      {children}
+    </ColourContextProvider>
+  )
+}
+
+/** Copies the configured colours into the parent's state. */
+const ConfigColoursSync = ({
+  onChange,
+}: {
+  onChange: (colours: Colours) => void
+}) => {
+  const { colour, button_colour } = useAtomValue(PocketSyncConfigSelector)
+  useEffect(() => {
+    onChange({ body: colour, buttons: button_colour ?? colour })
+  }, [colour, button_colour, onChange])
+  return null
 }

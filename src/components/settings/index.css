@@ -12,7 +12,7 @@
 }
 
 .settings__items {
-  margin-bottom: 149px;
+  margin-bottom: var(--space-2xl);
 }
 
 /* Separated from the content by a light line */
@@ -117,13 +117,24 @@
   margin-bottom: 15px;
 }
 
+/* Collapses the double space left where a placeholder was dropped */
+.settings__ramble--collapse-spaces {
+  white-space: normal;
+}
+
 .settings__row {
   margin-bottom: 40px;
-  scroll-margin-top: var(--space-xl);
+
+  /* Clears the sticky section title when jumping to a setting */
+  scroll-margin-top: 4.5rem;
 }
 
 .settings__row-title {
-  border-bottom: solid grey 1px;
+  border-bottom: solid var(--theme-separator) 1px;
+}
+
+.settings__path {
+  margin-bottom: var(--space-md);
 }
 
 .settings__text-input-and-save {
@@ -141,18 +152,28 @@
   gap: var(--space-sm);
 }
 
-.settings__info {
-  background-color: var(--info-colour);
-  width: calc(100% + 20px);
-  max-height: fit-content;
-  justify-self: flex-end;
-  text-align: left;
-  padding: 0 20px;
-  box-sizing: border-box;
-  position: fixed;
-  bottom: 0;
-  left: var(--sidebar-width);
-  transition: left 150ms ease;
+/* Credits, prominent at the top */
+.settings__thanks {
+  padding: var(--space-lg) var(--space-xl);
+  background-color: var(--theme-overlay);
+  border: 1px solid var(--theme-separator);
+}
+
+h2.settings__thanks-title {
+  margin: 0 0 var(--space-sm);
+  padding: 0;
+  font-size: 1.125rem;
+  line-height: 1.3;
+  color: var(--theme-text-headline);
+}
+
+.settings__thanks-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin: 0;
+  padding-inline-start: var(--space-xl);
+  color: var(--theme-text-body);
 }
 
 /* A setting row: label on the left, its control (switch or select) right,

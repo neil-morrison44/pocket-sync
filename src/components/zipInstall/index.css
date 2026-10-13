@@ -52,7 +52,7 @@
   display: inline-block;
   width: 12px;
   height: 12px;
-  background-color: white;
+  background-color: var(--theme-text-headline);
   clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
 }
 
@@ -92,10 +92,10 @@
 }
 
 .zip-install__cores-label{
-  background-color: #0f0f0f98;
+  background-color: var(--theme-overlay);
   padding: 5px 10px;
   border-radius: 5px;
-  border: 1px solid #0f0f0f98;
+  border: 1px solid var(--theme-separator);
   cursor: pointer;
   opacity: 0.8;
 }

@@ -226,6 +226,7 @@ const CategoryFilter = ({
   return (
     <ControlsSelect
       options={categoryList}
+      searchPlaceholder={t("controls.search")}
       selected={filterCategory}
       onChange={setFilterCategory}
     >

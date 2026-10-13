@@ -8,7 +8,7 @@
   width: 100%;
   height: auto;
   image-rendering: pixelated;
-  background-color: white;
+  background-color: var(--theme-media-background);
 }
 
 .core-info__title {
@@ -32,8 +32,8 @@
     width: 1.5rem;
     height: 1.5rem;
     display: inline-block;
-    border-right: 5px solid white;
-    border-bottom: 5px solid white;
+    border-right: 5px solid var(--theme-text-headline);
+    border-bottom: 5px solid var(--theme-text-headline);
     transform: rotate(-45deg);
     opacity: 0.5;
   }
@@ -163,7 +163,7 @@
 .core-info__download-graph-bar{
   display: block;
   position: absolute;
-  background-color: white;
+  background-color: var(--theme-text-headline);
   opacity: 0.6;
   bottom: 0;
   cursor: pointer;
@@ -181,6 +181,7 @@
 
 .core-info__previous-install-button{
   background-color: var(--selection-colour);
+  color: var(--theme-selection-text);
   margin-left: 12px;
 
   &:active{

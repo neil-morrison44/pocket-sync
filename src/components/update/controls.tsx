@@ -1,43 +1,48 @@
-import React from "react"
+import React, { ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 import { ControlsPopoverButton } from "../controls/inputs/popoverButton"
 import { Controls } from "../controls"
+import MultiSelect from "../ui/MultiSelect"
 
-type CheckboxFilterListProps<T extends string> = {
+/** Long lists (authors, categories) get a search field. */
+const SEARCH_THRESHOLD = 8
+
+type HiddenFilterSelectProps<T extends string> = {
   items: readonly T[]
+  /** Unchecked items; the list filters them out. */
   hiddenItems: T[]
-  onToggle: (item: T, isChecked: boolean) => void
-  onToggleAll: (isChecked: boolean) => void
+  setHiddenItems: (hiddenItems: T[]) => void
   getItemLabel?: (item: T) => string
+  children: ReactNode
 }
 
-const CheckboxFilterList = <T extends string>({
+// The filters store what is hidden; the checklist shows what is shown
+const HiddenFilterSelect = <T extends string>({
   items,
   hiddenItems,
-  onToggle,
-  onToggleAll,
+  setHiddenItems,
   getItemLabel = (item) => item,
-}: CheckboxFilterListProps<T>) => {
+  children,
+}: HiddenFilterSelectProps<T>) => {
+  const { t } = useTranslation("update")
+
   return (
-    <div className="update__filter-list">
-      <label className="update__filter-item update__filter-item--all">
-        <input
-          type="checkbox"
-          checked={hiddenItems.length == 0}
-          onChange={(e) => onToggleAll(e.target.checked)}
-        />
-      </label>
-      {items.map((item) => (
-        <label key={item} className="update__filter-item">
-          {getItemLabel(item)}
-          <input
-            type="checkbox"
-            checked={!hiddenItems.includes(item)}
-            onChange={(e) => onToggle(item, e.target.checked)}
-          />
-        </label>
-      ))}
-    </div>
+    <MultiSelect
+      options={items.map((item) => ({
+        value: item,
+        label: getItemLabel(item),
+      }))}
+      value={items.filter((item) => !hiddenItems.includes(item))}
+      onChange={(shown) =>
+        setHiddenItems(items.filter((item) => !shown.includes(item)))
+      }
+      searchable={items.length > SEARCH_THRESHOLD}
+      searchPlaceholder={t("controls.search_filter")}
+      selectAllLabel={t("controls.select_all")}
+      clearAllLabel={t("controls.clear_all")}
+    >
+      {children}
+    </MultiSelect>
   )
 }
 
@@ -54,29 +59,14 @@ const AuthorFilterControl = ({
 }: AuthorFilterControlProps) => {
   const { t } = useTranslation("update")
 
-  const handleToggle = (author: string, isChecked: boolean) => {
-    setHiddenAuthorList((prev) =>
-      isChecked ? prev.filter((a) => a !== author) : [...prev, author]
-    )
-  }
-
-  const handleToggleAll = (isChecked: boolean) => {
-    setHiddenAuthorList(() => (isChecked ? [] : [...authorList]))
-  }
-
   return (
-    <ControlsPopoverButton
-      renderPopoverContent={() => (
-        <CheckboxFilterList
-          items={authorList}
-          hiddenItems={hiddenAuthorList}
-          onToggle={handleToggle}
-          onToggleAll={handleToggleAll}
-        />
-      )}
+    <HiddenFilterSelect
+      items={authorList}
+      hiddenItems={hiddenAuthorList}
+      setHiddenItems={setHiddenAuthorList}
     >
       {t("controls.filter_by_author", { count: hiddenAuthorList.length })}
-    </ControlsPopoverButton>
+    </HiddenFilterSelect>
   )
 }
 
@@ -130,31 +120,16 @@ const CategoryFilterControl = ({
 }: CategoryFilterControlProps) => {
   const { t } = useTranslation("update")
 
-  const handleToggle = (category: string, isChecked: boolean) => {
-    setHiddenCategoryList((prev) =>
-      isChecked ? prev.filter((c) => c !== category) : [...prev, category]
-    )
-  }
-
-  const handleToggleAll = (isChecked: boolean) => {
-    setHiddenCategoryList(() => (isChecked ? [] : [...categoryList]))
-  }
-
   return (
-    <ControlsPopoverButton
-      renderPopoverContent={() => (
-        <CheckboxFilterList
-          items={categoryList}
-          hiddenItems={hiddenCategoryList}
-          onToggle={handleToggle}
-          onToggleAll={handleToggleAll}
-        />
-      )}
+    <HiddenFilterSelect
+      items={categoryList}
+      hiddenItems={hiddenCategoryList}
+      setHiddenItems={setHiddenCategoryList}
     >
       {t("controls.filter_by_category", {
         count: hiddenCategoryList.length,
       })}
-    </ControlsPopoverButton>
+    </HiddenFilterSelect>
   )
 }
 
@@ -184,30 +159,15 @@ const OtherFiltersControl = ({
 }: OtherFiltersControlProps) => {
   const { t } = useTranslation("update")
 
-  const handleToggle = (item: OtherFilterType, isChecked: boolean) => {
-    setOtherFilters((prev) =>
-      isChecked ? prev.filter((f) => f !== item) : [...prev, item]
-    )
-  }
-
-  const handleToggleAll = (isChecked: boolean) => {
-    setOtherFilters(() => (isChecked ? [] : [...OTHER_FILTER_OPTIONS]))
-  }
-
   return (
-    <ControlsPopoverButton
-      renderPopoverContent={() => (
-        <CheckboxFilterList
-          items={OTHER_FILTER_OPTIONS}
-          hiddenItems={otherFilters}
-          onToggle={handleToggle}
-          onToggleAll={handleToggleAll}
-          getItemLabel={(item) => t(`controls.other_filters.${item}`)}
-        />
-      )}
+    <HiddenFilterSelect
+      items={OTHER_FILTER_OPTIONS}
+      hiddenItems={otherFilters}
+      setHiddenItems={setOtherFilters}
+      getItemLabel={(item) => t(`controls.other_filters.${item}`)}
     >
       {t("controls.other_filters.title", { count: otherFilters.length })}
-    </ControlsPopoverButton>
+    </HiddenFilterSelect>
   )
 }
 

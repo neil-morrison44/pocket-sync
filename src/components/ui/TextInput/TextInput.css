@@ -6,7 +6,7 @@
   height: var(--control-height, 28px);
   padding-inline: 12px;
   background-color: var(--theme-input-background);
-  color: var(--theme-control-text);
+  color: var(--theme-input-text);
   position: relative;
   clip-path: var(--shape-slant);
   cursor: text;

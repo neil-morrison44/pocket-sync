@@ -8,9 +8,7 @@
 }
 
 .layout--sidebar-collapsed {
-  /* 8px sidebar padding + 12px item padding on each side of a 16px icon,
-     plus the 1px border, so icons stay put when collapsing */
-  --sidebar-width: 57px;
+  --sidebar-width: var(--sidebar-collapsed-width);
 }
 
 .layout__content {
@@ -18,9 +16,7 @@
   min-width: 0;
   position: relative;
 
-  /* The content is the tab panel for the sidebar's view tabs */
-  :root.keyboard-focus &:focus {
-    outline: 2px solid var(--theme-focus);
-    outline-offset: -2px;
+  &:focus {
+    outline: none;
   }
 }

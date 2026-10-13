@@ -24,7 +24,7 @@
   display: grid;
   grid-column: 1 / 5;
   grid-template-columns: subgrid;
-  border-bottom: 1px solid rgb(255 255 255 / 25%);
+  border-bottom: 1px solid var(--theme-separator);
   padding-inline: 20px;
   padding-block-end: 5px;
 }

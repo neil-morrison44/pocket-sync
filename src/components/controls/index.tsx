@@ -8,7 +8,9 @@ type ControlProps = {
 // Header bar layout: back button, search and filters on the left; actions
 // (wrapped in ControlsActions) on the right.
 export const Controls = ({ children }: ControlProps) => (
-  <div className="controls">{children}</div>
+  <div className="controls" data-tauri-drag-region>
+    {children}
+  </div>
 )
 
 export const ControlsActions = ({ children }: ControlProps) => (

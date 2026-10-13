@@ -27,8 +27,16 @@ import { useAtom, useSetAtom } from "jotai"
 import { cacheDirSizeSelector } from "../../jotai/selectors"
 import Switch from "../ui/Switch"
 import { SettingsNav } from "./nav"
+import { useColourOptions } from "./colourOptions"
+import {
+  StylePreference,
+  stylePreferenceAtom,
+  ThemePreference,
+  themePreferenceAtom,
+} from "../../jotai/theme/atoms"
 import StickySection from "../ui/StickySection"
 import PathField from "../ui/PathField"
+import { openFolder } from "../../utils/openFolder"
 
 const DEFAULT_ARCHIVE_URL = "https://archive.org/download/openFPGA-Files"
 import Button from "../ui/Button"
@@ -52,7 +60,10 @@ export const Settings = () => {
 
   const updateConfig = useUpdateConfig()
   const { t } = useTranslation("settings")
+  const { t: tSaves } = useTranslation("saves")
   const colourOptions = useColourOptions()
+  const [themePreference, setThemePreference] = useAtom(themePreferenceAtom)
+  const [stylePreference, setStylePreference] = useAtom(stylePreferenceAtom)
   const onDisconnect = useCallback(
     () => emit("pocket-connection", { connetcted: false }),
     []
@@ -65,11 +76,49 @@ export const Settings = () => {
   return (
     <div className="settings">
       <SettingsNav />
+      <Thanks />
       <div className="settings__items">
         <StickySection
           id="settings-section-display"
           title={t("section_titles.display")}
         >
+          <div className="settings__row" id="settings-theme">
+            <h3 className="settings__row-title">{t("theme.title")}</h3>
+
+            <div className="settings__checkbox">
+              <label htmlFor="settings-theme-select">{t("theme.label")}</label>
+
+              <Select<ThemePreference>
+                id="settings-theme-select"
+                value={themePreference}
+                onChange={setThemePreference}
+                options={[
+                  { value: "system", label: t("theme.system") },
+
+                  { value: "dark", label: t("theme.dark") },
+
+                  { value: "light", label: t("theme.light") },
+                ]}
+              />
+            </div>
+
+            <div className="settings__checkbox">
+              <label htmlFor="settings-style-select">
+                {t("theme.style_label")}
+              </label>
+
+              <Select<StylePreference>
+                id="settings-style-select"
+                value={stylePreference}
+                onChange={setStylePreference}
+                options={[
+                  { value: "slanted", label: t("theme.style_slanted") },
+                  { value: "modern", label: t("theme.style_modern") },
+                ]}
+              />
+            </div>
+          </div>
+
           <div className="settings__row" id="settings-3d_pocket">
             <h3 className="settings__row-title">{t("3d_pocket.title")}</h3>
 
@@ -261,17 +310,25 @@ export const Settings = () => {
         >
           <div className="settings__row" id="settings-reconnect">
             <h3 className="settings__row-title">{t("reconnect.title")}</h3>
-            <div className="settings__ramble">
-              <Trans
-                t={t}
-                i18nKey="reconnect.ramble"
-                values={{ ppath: reconnectWhenOpened.path }}
-              >
+            <div className="settings__ramble settings__ramble--collapse-spaces">
+              {/* The translations embed the path; it's shown below in a
+                  PathField instead, so it can't overflow the column */}
+              <Trans t={t} i18nKey="reconnect.ramble" values={{ ppath: "" }}>
                 {"_"}
-                <pre>{"_"}</pre>
+                <Omit />
                 {"_"}
               </Trans>
             </div>
+            {reconnectWhenOpened.path && (
+              <PathField
+                className="settings__path"
+                value={reconnectWhenOpened.path}
+                copyLabel={tSaves("copy_path")}
+                copiedLabel={tSaves("copied")}
+                onOpen={() => openFolder(reconnectWhenOpened.path)}
+                openLabel={tSaves("open_folder")}
+              />
+            )}
             <Switch
               className="settings__checkbox"
               label={t("reconnect.checkbox")}
@@ -295,72 +352,12 @@ export const Settings = () => {
           </div>
         </StickySection>
       </div>
-
-      <Thanks />
     </div>
   )
 }
 
-const COLOUR_GROUPS: { label?: string; values: PocketColour[] }[] = [
-  { values: ["black", "white", "glow"] },
-  {
-    label: "3d_pocket.transparent_label",
-    values: [
-      "trans_clear",
-      "trans_smoke",
-      "trans_blue",
-      "trans_green",
-      "trans_orange",
-      "trans_purple",
-      "trans_red",
-    ],
-  },
-  {
-    label: "3d_pocket.classic_label",
-    values: [
-      "indigo",
-      "red",
-      "green",
-      "blue",
-      "yellow",
-      "pink",
-      "orange",
-      "silver",
-    ],
-  },
-  {
-    label: "3d_pocket.aluminium_label",
-    values: [
-      "aluminium_natural",
-      "aluminium_noir",
-      "aluminium_black",
-      "aluminium_indigo",
-    ],
-  },
-  {
-    label: "3d_pocket.gbc_label",
-    values: [
-      "gbc_kiwi",
-      "gbc_dandelion",
-      "gbc_teal",
-      "gbc_grape",
-      "gbc_berry",
-      "gbc_gold",
-    ],
-  },
-  { label: "3d_pocket.supreme_label", values: ["supreme_red", "supreme_gold"] },
-]
-
-const useColourOptions = (): SelectOption<PocketColour>[] => {
-  const { t } = useTranslation("settings")
-  return COLOUR_GROUPS.flatMap(({ label, values }) =>
-    values.map((value) => ({
-      value,
-      label: t(`3d_pocket.colours.${value}`),
-      group: label && t(label),
-    }))
-  )
-}
+/** Drops a `<Trans>` placeholder's content. */
+const Omit = () => null
 
 export const CacheSize = () => {
   const [cacheSize] = useAtom(cacheDirSizeSelector)

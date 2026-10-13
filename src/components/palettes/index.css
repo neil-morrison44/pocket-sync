@@ -116,14 +116,14 @@
 .palette__emu-canvas{
   image-rendering: pixelated;
   width: 50%;
-  border: 2px solid black;
+  border: 2px solid var(--theme-surface-sunken);
 }
 
 .palette__name {
   grid-area: n;
   font-size: 2.5rem;
   font-family: GamePocket, sans-serif;
-  border-bottom: 2px solid white;
+  border-bottom: 2px solid var(--theme-text-headline);
   padding: 25px;
   padding-block-end: 15px;
 }

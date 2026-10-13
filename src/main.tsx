@@ -8,6 +8,8 @@ import { installPolyfills } from "./polyfills"
 import { I18nProvider } from "./i18n"
 import { TooltipProvider } from "./components/ui/Tooltip"
 import { useKeyboardFocus } from "./hooks/useKeyboardFocus"
+import { useApplyTheme } from "./hooks/useApplyTheme"
+import { platform } from "@tauri-apps/plugin-os"
 import { Disconnections } from "./components/disconnections"
 import { Link, Route, Switch } from "wouter"
 import { error } from "@tauri-apps/plugin-log"
@@ -40,14 +42,28 @@ const jotaiStore = getDefaultStore()
 
 initGlobalFSEvents()
 
+// Applies the chosen theme; inside the Provider so it shares Settings' store
+const ApplyTheme = () => {
+  useApplyTheme()
+  return null
+}
+
 const MainWindow = () => {
   return (
     <Provider store={jotaiStore}>
+      <ApplyTheme />
       <App />
       <Disconnections />
       <AutoUpdate />
     </Provider>
   )
+}
+
+// Lets CSS adapt to the platform, e.g. the macOS overlay title bar
+try {
+  document.documentElement.classList.add(`platform-${platform()}`)
+} catch {
+  // not running in Tauri (e.g. a plain browser)
 }
 
 // Shows focus rings only while the keyboard is used

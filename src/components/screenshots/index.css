@@ -40,7 +40,7 @@
     width: 10px;
     height: 10px;
     aspect-ratio: 1 / 1;
-    border: 2px solid white;
+    border: 2px solid var(--theme-text-headline);
     border-right-color: transparent;
     border-bottom-color: transparent;
     transform: rotate(-45deg);
@@ -78,7 +78,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  background-color: #111;
+  background-color: var(--theme-surface-sunken);
   image-rendering: pixelated;
 }
 

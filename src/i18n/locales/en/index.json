@@ -10,7 +10,16 @@
     "side_panel": "Updates",
     "eject": "Eject SD Card",
     "show_updates": "Show Updates",
-    "hide_updates": "Hide Updates"
+    "hide_updates": "Hide Updates",
+    "pocket_colours": "Pocket Colours",
+    "colours": "Colours",
+    "body_colour": "Body",
+    "button_colour": "Buttons",
+    "stats": {
+      "firmware": "Firmware",
+      "cores": "Cores",
+      "games": "Games"
+    }
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -329,6 +338,9 @@
     },
     "donate_archive_org": "Some of these files are massive so please donate to the internet archive",
     "controls": {
+      "search_filter": "Search",
+      "select_all": "Select All",
+      "clear_all": "Clear All",
       "filter_by_author": "Filter by Author {count, plural, =0 {} other {(#)}}",
       "filter_by_category": "Filter by Category {count, plural, =0 {} other {(#)}}",
       "filter_by_ai_ness": "Filter by AI-ness {value, plural, =1 {} other {({value, number, percent})}} ",
@@ -368,7 +380,12 @@
       }
     },
     "update_button": "Update {count, plural, =0 {Installed Cores} one {# Installed Core} other {# Installed Cores}}",
-    "install_button": "Install {count, plural, =0 {New Cores} one {# New Core} other {# New Cores}}"
+    "install_button": "Install {count, plural, =0 {New Cores} one {# New Core} other {# New Cores}}",
+    "stats": {
+      "installed": "Installed cores",
+      "updatable": "Updates available",
+      "installable": "Available to install"
+    }
   },
   "plugins": {
     "buttons": {
@@ -701,6 +718,16 @@
       "downloads": "Downloads",
       "files": "Files",
       "connection": "Connection"
+    },
+    "theme": {
+      "title": "Theme",
+      "label": "Appearance",
+      "system": "System",
+      "dark": "Dark",
+      "light": "Light",
+      "style_label": "Style",
+      "style_slanted": "Slanted",
+      "style_modern": "Modern"
     }
   },
   "time_ago": {

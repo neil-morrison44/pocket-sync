@@ -9,7 +9,7 @@
 
 
 .releases__body{
-  border-left: 2px solid white;
+  border-left: 2px solid var(--theme-separator);
   padding-left: 10px;
   box-sizing: border-box;
   margin-left: 10px;

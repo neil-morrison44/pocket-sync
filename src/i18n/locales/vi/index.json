@@ -5,7 +5,21 @@
     "update_available": "Có bản cập nhật! {version}",
     "sponsor_link": "Tham gia cùng {count, number} người tài trợ thông qua GitHub",
     "whats_new": "Có gì mới?",
-    "close_changelog": "Đóng"
+    "close_changelog": "Đóng",
+    "library_updates": "Cập nhật thư viện",
+    "side_panel": "Cập nhật",
+    "eject": "Đẩy thẻ SD ra",
+    "show_updates": "Hiện cập nhật",
+    "hide_updates": "Ẩn cập nhật",
+    "pocket_colours": "Màu Pocket",
+    "colours": "Màu sắc",
+    "body_colour": "Thân máy",
+    "button_colour": "Nút bấm",
+    "stats": {
+      "firmware": "Phần mềm",
+      "cores": "Cores",
+      "games": "Trò chơi"
+    }
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -50,11 +64,11 @@
   "core_info": {
     "author": "Tác giả",
     "controls": {
-      "back": "Quay lại danh sách",
-      "install": "Cài đặt",
-      "required_files": "Tập tin được yêu cầu",
-      "uninstall": "Gỡ cài đặt",
-      "update": "Cập nhật",
+      "back": "Quay lại Cores",
+      "install": "Cài đặt core",
+      "required_files": "Tải các tập tin được yêu cầu",
+      "uninstall": "Gỡ cài đặt core",
+      "update": "Cập nhật core",
       "hide_core": "Hide Core"
     },
     "inputs": "Nhập đầu vào",
@@ -62,7 +76,7 @@
       "close": "Đóng",
       "input_core": "Core",
       "no_settings_found": "Không có cài đặt được tìm thấy",
-      "reset_all": "Xóa tất cả"
+      "reset_all": "Đặt lại tất cả cài đặt"
     },
     "analogizer": "Core này hỗ trợ <1>Analogizer-FPGA</1>",
     "requires_license": {
@@ -183,15 +197,15 @@
   },
   "fetch": {
     "controls": {
-      "add_fetch_item": "Tạo mới fetch",
-      "refresh": "Làm mới"
+      "add_fetch_item": "Thêm nguồn fetch",
+      "refresh": "Làm mới trạng thái"
     },
-    "fetch_button": "Fetch",
+    "fetch_button": "Fetch tập tin",
     "file_count": "{count} / {total, plural, one {# Tập tin} other {# Tập tin}}",
     "loading": "đang tải...",
     "new": {
-      "add_extension": "Thêm",
-      "add_fetch": "Thêm fetch",
+      "add_extension": "Thêm phần mở rộng",
+      "add_fetch": "Thêm nguồn fetch",
       "archive_name": "Tên lưu trữ <i>https://archive.org/details/[this bit here]</i>",
       "archive_tip": "Cách này không hiệu quả với những tệp được nén và bạn nên thiết lập phần mở rộng mà bạn muốn để tránh tải xuống các tệp metadata.",
       "close": "Đóng",
@@ -202,7 +216,7 @@
       "validating_archive_name": "Đang kiểm tra file lưu trữ \"{name}\"...",
       "invalid_archive_name": "Không có file lưu trữ nào ở https://archive.org/details/{name}"
     },
-    "remove_button": "Xóa",
+    "remove_button": "Xóa nguồn",
     "remove_confirm": "Thao tác này sẽ xóa cấu hình fetch nhưng không xóa các tệp. Bạn có chắc không?",
     "types": {
       "archive_org": "Lưu trữ trên Internet",
@@ -212,7 +226,7 @@
   "firmware": {
     "current": "Phiên bản phần mềm hiện tại: v{version}",
     "downloading_firmware": "Đang tải xuống phần mềm mới",
-    "load_firmware": "Tải vào thẻ SD",
+    "load_firmware": "Tải phần mềm vào thẻ SD",
     "loaded_firmware": "Phiên bản phần mềm {version} đang trên thẻ SD",
     "loaded_firmware_info": "cắm và bật Pocket lên để cài đặt",
     "no_firmware_loaded": "Không có tập tin phần mềm nào trên thẻ SD đang chờ được cài đặt",
@@ -225,20 +239,28 @@
       "from": "Từ",
       "title": "v{version} - { published, date, short } Nội dung của bản phát hành:"
     },
-    "remove_button": "Xóa"
+    "remove_button": "Xóa phần mềm",
+    "current_label": "Phần mềm đã cài",
+    "versions_title": "Các phiên bản phần mềm",
+    "jump_to": "Đi tới",
+    "badge_latest": "Mới nhất",
+    "badge_installed": "Đã cài",
+    "published": "{date, date, medium}"
   },
   "games": {
     "controls": {
       "category": "Phân loại",
-      "mrom": "MROM",
-      "clean_files": "Xóa tập tin",
-      "instance_json": "Instance JSON",
+      "mrom": "Di chuyển bản dump MROM",
+      "clean_files": "Dọn dẹp tập tin",
+      "instance_json": "Tạo Instance JSON",
       "refresh": "Làm mới",
       "search": "Tìm kiếm"
     },
     "item": {
       "game_count": "{count, plural, =0 {Không có trò chơi nào} one {# trò chơi} other {# trò chơi}}"
-    }
+    },
+    "open_folder": "Mở thư mục",
+    "none": "Không tìm thấy trò chơi. Hãy cài một core, sau đó thêm trò chơi vào thư mục của nó trên thẻ SD."
   },
   "image_editor": {
     "cancel": "Hủy bỏ",
@@ -246,7 +268,7 @@
     "remove": "Xóa",
     "reset": "Làm lại",
     "rotate": "Xoay",
-    "save": "Lưu",
+    "save": "Lưu hình ảnh",
     "scale": "Tỉ lệ"
   },
   "instance_json": {
@@ -265,17 +287,20 @@
     "platforms": "Platforms",
     "pocket_sync": "Pocket Sync",
     "save_states": "Lưu Trạng thái",
-    "saves": "Lưu",
+    "saves": "Sao lưu",
     "screenshots": "Chụp màn hình",
     "plugins": "Plugin",
-    "settings": "Cài đặt"
+    "settings": "Cài đặt",
+    "collapse_sidebar": "Thu gọn thanh bên",
+    "expand_sidebar": "Mở rộng thanh bên",
+    "views": "Chế độ xem"
   },
   "plugins": {
     "buttons": {
       "add": "Thêm Plugin",
-      "refresh": "Làm mới"
+      "refresh": "Làm mới plugin"
     },
-    "remove": "Di dời",
+    "remove": "Xóa plugin",
     "confirm_remove": "Thao tác này cũng sẽ xóa mọi dữ liệu cục bộ mà plugin đã lưu trữ trên máy tính này, bạn có chắc không?",
     "confirm_exit": "Plugin vẫn đang chạy, bạn có chắc chắn muốn đóng cửa sổ này không?",
     "safe_to_close": "Plugin đã hoàn tất, cửa sổ này có thể đóng lại.",
@@ -290,10 +315,10 @@
   },
   "palettes": {
     "buttons": {
-      "add_via_code": "Thêm bằng mã",
-      "new": "Palette mới",
-      "back": "Quay lại danh sách",
-      "palette_town": "Palette Town"
+      "add_via_code": "Thêm palette bằng mã",
+      "new": "Tạo palette",
+      "back": "Quay lại Palettes",
+      "palette_town": "Duyệt Palette Town"
     },
     "town": {
       "title": "Palette Town",
@@ -301,15 +326,15 @@
       "close": "Đóng"
     },
     "item": {
-      "duplicate": "Nhân bản",
-      "rename": "Đổi tên",
+      "duplicate": "Nhân bản palette",
+      "rename": "Đổi tên palette",
       "copy_code": "Sao chép mã chia sẻ",
-      "delete": "Xóa"
+      "delete": "Xóa palette"
     },
     "add_via_code": {
       "title": "Thêm bằng mã chia sẻ",
       "cancel": "Hủy bỏ",
-      "add": "Thêm"
+      "add": "Thêm palette"
     },
     "full": {
       "inputs": {
@@ -319,19 +344,19 @@
         "window": "cửa sổ",
         "off": "LCD tắt"
       },
-      "save": "Lưu",
-      "reset": "Làm lại",
+      "save": "Lưu palette",
+      "reset": "Đặt lại màu",
       "emu_credit": "Trình giả lập GB được chuyển thể từ <1>roblouie/gameboy-emulator</1>"
     }
   },
   "mister_sync": {
     "controls": {
-      "back": "Thoát",
+      "back": "Thoát MiSTer Sync",
       "search": "Tìm kiếm bản lưu",
       "save_mapping": "Lưu Mapping"
     },
     "login": {
-      "connect": "Kết nối",
+      "connect": "Kết nối với MiSTer",
       "host": "Máy chủ / Địa chỉ IP:",
       "password": "Mật khẩu:",
       "username": "Tên đăng nhập"
@@ -345,7 +370,7 @@
     "unsupported": "{platform} chưa tương thích",
     "mapping": {
       "close": "Đóng",
-      "clear": "Xóa",
+      "clear": "Xóa ánh xạ",
       "reset": "Trả về mặc định"
     }
   },
@@ -355,9 +380,9 @@
   },
   "platform_info": {
     "controls": {
-      "back": "Quay lại danh sách",
-      "data_packs": "Gói dữ liệu",
-      "image_packs": "Gói hình ảnh"
+      "back": "Quay lại Platforms",
+      "data_packs": "Quản lý gói dữ liệu",
+      "image_packs": "Quản lý gói hình ảnh"
     },
     "cores": "Cores",
     "edit": "Chỉnh sửa"
@@ -365,10 +390,10 @@
   "platforms": {
     "cancel": "Hủy bỏ",
     "controls": {
-      "data_packs": "Gói dữ liệu",
-      "remove_coreless": "Xóa bỏ Coreless",
+      "data_packs": "Quản lý gói dữ liệu",
+      "remove_coreless": "Xóa các platform không có core",
       "archive": "Các nền tảng lưu trữ",
-      "image_packs": "Gói hình ảnh",
+      "image_packs": "Quản lý gói hình ảnh",
       "search": "Tìm kiếm"
     },
     "archive": {
@@ -395,7 +420,7 @@
       "close": "Đóng",
       "current": "Hiện tại"
     },
-    "save": "Lưu"
+    "save": "Lưu thay đổi"
   },
   "progress": {
     "remaining_time": "Thời gian còn lại (khoảng): {remainingTime}",
@@ -404,7 +429,7 @@
   "save_info": {
     "confirm_restore": "Khôi phục từ bản sao lưu?",
     "controls": {
-      "back": "Quay lại danh sách",
+      "back": "Quay lại Sao lưu",
       "hide_unchanged": "Ẩn những cái không thay đổi",
       "search": "Tìm kiếm"
     },
@@ -446,20 +471,28 @@
     "confirm_delete": "Bạn có chắc chắn muốn xóa vị trí sao lưu này không?",
     "controls": {
       "add_backup_location": "Thêm vị trí sao lưu",
-      "mister_sync": "MiSTer Sync"
+      "mister_sync": "Mở MiSTer Sync"
     },
     "latest_backup": "Sao lưu lần cuối: {ngày, ngày, dài}, {ngày, giờ, ngắn}",
     "none": "Thêm vị trí sao lưu ở trên",
     "not_found": "Không tìm thấy",
     "oldest_backup": "Sao lưu cũ nhất: {date, date, long}, {date, time, short}",
     "remove": "Xóa bỏ vị trí",
-    "view_saves": "Xem Saves"
+    "view_saves": "Xem Saves",
+    "copy_path": "Sao chép đường dẫn",
+    "open_folder": "Mở thư mục",
+    "copied": "Đã sao chép",
+    "location_title": "Vị trí {number}",
+    "back_up_now": "Sao lưu ngay",
+    "backing_up": "Đang sao lưu…",
+    "last_backup_label": "Lần sao lưu cuối",
+    "never": "Chưa có bản sao lưu"
   },
   "screenshot_info": {
     "controls": {
-      "back": "Quay lại danh sách",
-      "save": "Lưu",
-      "share": "Chia sẻ",
+      "back": "Quay lại Chụp màn hình",
+      "save": "Lưu ảnh chụp màn hình",
+      "share": "Chia sẻ ảnh chụp màn hình",
       "upscaled": "Đã tăng kích cỡ"
     }
   },
@@ -524,13 +557,15 @@
       "checkbox": "Luôn sử dụng tiếng Anh (Mỹ)"
     },
     "archive": {
-      "save": "Lưu",
+      "save": "Lưu URL",
       "title": "Lưu trữ ROM & BIOS (Các tập tin bắt buộc)",
-      "warning": "Vui lòng kiểm tra luật pháp địa phương của bạn xung quanh việc tải xuống các tệp ROM & BIOS có thể cần bản quyền (arcade).\nNếu bạn thấy thoải mái với điều này, hãy sao chép url sau vào đầu vào và nhấn \"lưu\"."
+      "warning": "Vui lòng kiểm tra luật pháp địa phương của bạn xung quanh việc tải xuống các tệp ROM & BIOS có thể cần bản quyền (arcade).\nNếu bạn thấy thoải mái với điều này, hãy sao chép url sau vào đầu vào và nhấn \"lưu\".",
+      "copy_url": "Sao chép URL",
+      "copied": "Đã sao chép"
     },
     "github_token": {
       "title": "Mã thông báo Github",
-      "remove": "Di dời",
+      "remove": "Xóa token",
       "ramble": "Nếu bạn gặp sự cố với giới hạn tốc độ GitHub, hãy thêm mã thông báo PAT bên dưới.\nMã thông báo PAT không được thiết lập bất kỳ phạm vi nào và được lưu trữ trên máy tính của bạn thay vì trên thẻ SD của Pocket."
     },
     "clear_file_cache": {
@@ -539,7 +574,7 @@
       "title": "Xóa bộ nhớ đệm tập tin"
     },
     "disconnect": {
-      "button": "Ngắt kết nối",
+      "button": "Ngắt kết nối Pocket",
       "ramble": "Quay lại màn hình \"Kết nối với Pocket\" (Không tự động eject Thẻ SD / ổ USB)",
       "title": "Ngắt kết nối"
     },
@@ -572,7 +607,24 @@
       "ramble": "Sao chép các tệp .pal thành các tệp .gbp. Sao chép 4 màu được sử dụng cho nền vào các tệp .gbp mới.\nChuyển đổi sẽ tạo một tệp .gbp cho mỗi tệp .pal trong /Assets/gb/common/palettes",
       "checkbox": "Bật tệp .gbp tự động"
     },
-    "thanks": "Cảm ơn:"
+    "thanks": "Cảm ơn:",
+    "sections": "Các mục cài đặt",
+    "section_titles": {
+      "display": "Hiển thị",
+      "downloads": "Tải xuống",
+      "files": "Tập tin",
+      "connection": "Kết nối"
+    },
+    "theme": {
+      "title": "Chủ đề",
+      "label": "Giao diện",
+      "system": "Hệ thống",
+      "dark": "Tối",
+      "light": "Sáng",
+      "style_label": "Phong cách",
+      "style_slanted": "Vát chéo",
+      "style_modern": "Hiện đại"
+    }
   },
   "time_ago": {
     "less_than_1_min_ago": "ít hơn một phút trước"
@@ -589,7 +641,7 @@
       "other": "Khác"
     },
     "cancel_button": "Hủy bỏ",
-    "confirm_button": "Xác nhận",
+    "confirm_button": "Cài đặt tập tin",
     "remove_duplicate": "Xóa các tập tin trùng lặp hiện có",
     "scanning": "Quét tập tin...",
     "moved_files_info": "Xử lý các trường hợp tệp đã được di chuyển, ví dụ: tệp JSON hiện nằm trong `_alternatives`",

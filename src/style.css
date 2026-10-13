@@ -13,31 +13,41 @@
   accent-color: var(--theme-accent);
 }
 
+/* Text selection in the accent, not the system blue */
+::selection {
+  background-color: var(--theme-selection);
+  color: var(--theme-selection-text);
+}
+
+/* macOS: the title bar overlays the app; the traffic lights sit in the
+   sidebar */
+:root.platform-macos {
+  --titlebar-inset: 28px;
+
+  /* The collapsed sidebar stays as wide as the traffic lights */
+  --sidebar-collapsed-width: 78px;
+}
+
+/* No rubber-band overscroll on the app window */
+html,
+body {
+  overscroll-behavior: none;
+}
+
 body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--theme-accent);
   text-decoration: inherit;
 }
 
 a:hover {
-  color: #535bf2;
+  color: var(--theme-text-headline);
 }
 
 h1 {
@@ -68,26 +78,74 @@ h2 {
   /* line-height: 3.2rem; */
 }
 
-button {
+/* Legacy look for buttons with their own classes (being migrated to <Button>) */
+:where(button[class]) {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  color: #fff;
-  background-color: #0f0f0f98;
+  color: var(--theme-text-headline);
+  background-color: var(--theme-overlay);
   transition: border-color 0.25s;
   box-shadow: 0 2px 2px rgb(0 0 0 / 20%);
   cursor: pointer;
 
   &:hover {
-    border-color: var(--selection-colour);
+    border-color: var(--theme-separator);
   }
 
   &:active {
     transform: scale(0.97);
   }
+}
+
+/* Plain <button>s (mostly in modals) look like a secondary <Button> */
+:where(button:not([class])) {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-height: var(--control-height, 28px);
+  padding: 4px 12px;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: var(--theme-control-background);
+  color: var(--theme-control-text);
+  font: inherit;
+  font-weight: 500;
+  clip-path: var(--shape-slant);
+  cursor: pointer;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--theme-focus);
+    clip-path: var(--shape-slant-ring);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  &:hover:not(:disabled) {
+    filter: brightness(90%);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.4;
+  }
+}
+
+:root.keyboard-focus :where(button:not([class])):focus::after {
+  visibility: visible;
 }
 
 input,

@@ -5,7 +5,21 @@
     "update_available": "¡Actualización disponible! {version}",
     "sponsor_link": "Únase a {count, number} personas para patrocinar a través de GitHub",
     "whats_new": "¿Qué hay de nuevo?",
-    "close_changelog": "Cerrar"
+    "close_changelog": "Cerrar",
+    "library_updates": "Actualizaciones de la biblioteca",
+    "side_panel": "Novedades",
+    "eject": "Expulsar tarjeta SD",
+    "show_updates": "Mostrar novedades",
+    "hide_updates": "Ocultar novedades",
+    "pocket_colours": "Colores del Pocket",
+    "colours": "Colores",
+    "body_colour": "Carcasa",
+    "button_colour": "Botones",
+    "stats": {
+      "firmware": "Firmware",
+      "cores": "Núcleos",
+      "games": "Juegos"
+    }
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -47,18 +61,18 @@
   "core_info": {
     "author": "Autor",
     "controls": {
-      "back": "Volver a la lista",
-      "install": "Instalar",
-      "required_files": "Archivos requeridos",
-      "uninstall": "Desinstalar",
-      "update": "Actualizar"
+      "back": "Volver a núcleos",
+      "install": "Instalar núcleo",
+      "required_files": "Cargar archivos requeridos",
+      "uninstall": "Desinstalar núcleo",
+      "update": "Actualizar núcleo"
     },
     "inputs": "Entradas",
     "modal": {
       "close": "Cerrar",
       "input_core": "Núcleo",
       "no_settings_found": "¡No se encontraron configuraciones!",
-      "reset_all": "Resetear todo"
+      "reset_all": "Restablecer todos los ajustes"
     },
     "analogizer": "Este núcleo es compatible con el <1>Analogizer-FPGA</1>",
     "requires_license": {
@@ -148,15 +162,15 @@
   },
   "fetch": {
     "controls": {
-      "add_fetch_item": "Agregar nueva búsqueda",
-      "refresh": "Actualizar"
+      "add_fetch_item": "Agregar fuente de búsqueda",
+      "refresh": "Actualizar estado"
     },
-    "fetch_button": "Buscar",
+    "fetch_button": "Buscar archivos",
     "file_count": "{count} / {total, plural, one {# Archivo} other {# Archivos}}",
     "loading": "cargando...",
     "new": {
-      "add_extension": "Agregar",
-      "add_fetch": "Añadir búsqueda",
+      "add_extension": "Agregar extensión",
+      "add_fetch": "Agregar fuente de búsqueda",
       "archive_name": "Nombre del archivo: <i>https://archive.org/details/[this bit here]</i>",
       "archive_tip": "Esto no funcionará para librerias donde los archivos están comprimidos y debes configurar qué extensiones deseas evitar que descarguen los archivos de metadatos.",
       "close": "Cerrar",
@@ -167,7 +181,7 @@
       "validating_archive_name": "Comprobando el Librerias de Internet \"{name}\"...",
       "invalid_archive_name": "No se encontró ningún archivo en https://archive.org/details/{name}"
     },
-    "remove_button": "Eliminar",
+    "remove_button": "Eliminar fuente",
     "remove_confirm": "Esto eliminará la configuración de búsqueda, pero no los archivos. ¿Está seguro?",
     "types": {
       "archive_org": "Librerias de Internet",
@@ -177,7 +191,7 @@
   "firmware": {
     "current": "Firmware actual: v{version}",
     "downloading_firmware": "Descargando Firmware...",
-    "load_firmware": "Cargar en la tarjeta SD",
+    "load_firmware": "Cargar firmware en la tarjeta SD",
     "loaded_firmware": "La {version} del Firmware está en la tarjeta SD",
     "loaded_firmware_info": "Inserte y encienda el Pocket para instalarlo.",
     "no_firmware_loaded": "No hay ningún archivo de Firmware en la tarjeta SD esperando a ser instalado",
@@ -190,19 +204,28 @@
       "from": "De ",
       "title": "v{version} - { published, date, short } Notas de lanzamiento:"
     },
-    "remove_button": "Eliminar"
+    "remove_button": "Eliminar firmware",
+    "current_label": "Firmware instalado",
+    "versions_title": "Versiones de firmware",
+    "jump_to": "Ir a",
+    "badge_latest": "Más reciente",
+    "badge_installed": "Instalado",
+    "published": "{date, date, medium}"
   },
   "games": {
     "controls": {
       "category": "Categoría",
-      "clean_files": "Archivos limpios",
-      "instance_json": "Instancia JSON",
+      "clean_files": "Limpiar archivos",
+      "instance_json": "Crear JSON de instancia",
       "refresh": "Actualizar",
-      "search": "Buscar"
+      "search": "Buscar",
+      "mrom": "Mover volcados MROM"
     },
     "item": {
       "game_count": "{count, plural, =0 {No hay Juegos} one {# Juego} other {# Juegos}}"
-    }
+    },
+    "open_folder": "Abrir carpeta",
+    "none": "No se encontraron juegos. Instala un núcleo y luego agrega juegos a su carpeta en la tarjeta SD."
   },
   "image_editor": {
     "cancel": "Cancelar",
@@ -210,7 +233,7 @@
     "remove": "Eliminar",
     "reset": "Reiniciar",
     "rotate": "Rotar",
-    "save": "Guardar",
+    "save": "Guardar imagen",
     "scale": "Escala"
   },
   "instance_json": {
@@ -229,17 +252,20 @@
     "platforms": "Plataformas",
     "pocket_sync": "Pocket Sync",
     "save_states": "Guardar estados",
-    "saves": "Guardados",
+    "saves": "Copias de seguridad",
     "screenshots": "Capturas de pantalla",
     "plugins": "Plugins",
-    "settings": "Ajustes"
+    "settings": "Ajustes",
+    "collapse_sidebar": "Contraer barra lateral",
+    "expand_sidebar": "Expandir barra lateral",
+    "views": "Vistas"
   },
   "plugins": {
     "buttons": {
       "add": "Agregar complemento",
-      "refresh": "Refrescar"
+      "refresh": "Refrescar plugins"
     },
-    "remove": "Eliminar",
+    "remove": "Eliminar plugin",
     "confirm_remove": "Esto también eliminará cualquier dato local que el complemento haya almacenado en este ordenador, ¿estás seguro?",
     "confirm_exit": "El plugin sigue en ejecución, ¿estás seguro de que quieres cerrar la ventana?",
     "safe_to_close": "El plugin ha finalizado, esta ventana se puede cerrar.",
@@ -254,10 +280,10 @@
   },
   "palettes": {
     "buttons": {
-      "add_via_code": "Agregar mediante código",
-      "new": "Nueva paleta",
-      "back": "Volver a la lista",
-      "palette_town": "Explorador de paletas"
+      "add_via_code": "Agregar paleta mediante código",
+      "new": "Crear paleta",
+      "back": "Volver a paletas",
+      "palette_town": "Abrir explorador de paletas"
     },
     "town": {
       "title": "Explorador de paletas",
@@ -265,15 +291,15 @@
       "close": "Cerrar"
     },
     "item": {
-      "duplicate": "Duplicar",
-      "rename": "Cambiar nombre",
+      "duplicate": "Duplicar paleta",
+      "rename": "Cambiar nombre de paleta",
       "copy_code": "Copiar código compartido",
-      "delete": "Eliminar"
+      "delete": "Eliminar paleta"
     },
     "add_via_code": {
       "title": "Agregar mediante código compartido",
       "cancel": "Cancelar",
-      "add": "Agregar"
+      "add": "Agregar paleta"
     },
     "full": {
       "inputs": {
@@ -283,19 +309,19 @@
         "window": "Ventana",
         "off": "LCD apagado"
       },
-      "save": "Guardar",
-      "reset": "Restablecer",
+      "save": "Guardar paleta",
+      "reset": "Restablecer colores",
       "emu_credit": "Emulador GB adaptado de <1>roblouie/gameboy-emulator</1>"
     }
   },
   "mister_sync": {
     "controls": {
-      "back": "Salida",
+      "back": "Salir de sincronización MiSTer",
       "search": "Buscar guardados",
       "save_mapping": "Guardar mapeo"
     },
     "login": {
-      "connect": "Conectar",
+      "connect": "Conectar a MiSTer",
       "host": "Anfitrión / Dirección IP:",
       "password": "Contraseña:",
       "username": "Nombre de usuario:"
@@ -309,7 +335,7 @@
     "unsupported": "{platform} no es compatible",
     "mapping": {
       "close": "Cerrar",
-      "clear": "Borrar",
+      "clear": "Borrar asignación",
       "reset": "Restablecer valores predeterminados"
     }
   },
@@ -319,9 +345,9 @@
   },
   "platform_info": {
     "controls": {
-      "back": "Volver a la lista",
-      "data_packs": "Paquetes de datos",
-      "image_packs": "Paquetes de imágenes"
+      "back": "Volver a plataformas",
+      "data_packs": "Gestionar paquetes de datos",
+      "image_packs": "Gestionar paquetes de imágenes"
     },
     "cores": "Núcleos",
     "edit": "Editar"
@@ -329,10 +355,10 @@
   "platforms": {
     "cancel": "Cancelar",
     "controls": {
-      "data_packs": "Paquetes de datos",
-      "remove_coreless": "Eliminar Coreless",
+      "data_packs": "Gestionar paquetes de datos",
+      "remove_coreless": "Eliminar plataformas sin núcleo",
       "archive": "Plataformas de archivo",
-      "image_packs": "Paquetes de imágenes",
+      "image_packs": "Gestionar paquetes de imágenes",
       "search": "Buscar"
     },
     "archive": {
@@ -359,7 +385,7 @@
       "close": "Cerrar",
       "current": "Actual"
     },
-    "save": "Guardar"
+    "save": "Guardar cambios"
   },
   "progress": {
     "remaining_time": "Tiempo restante (aprox.): {remainingTime}",
@@ -368,7 +394,7 @@
   "save_info": {
     "confirm_restore": "¿Restaurar desde el respaldo?",
     "controls": {
-      "back": "Volver a la lista",
+      "back": "Volver a copias de seguridad",
       "hide_unchanged": "Ocultar sin cambios",
       "search": "Buscar"
     },
@@ -410,20 +436,28 @@
     "confirm_delete": "¿Está seguro de que desea eliminar esta ubicación de respaldo?",
     "controls": {
       "add_backup_location": "Agregar ubicación de respaldo",
-      "mister_sync": "Sincronización MiSTer"
+      "mister_sync": "Abrir sincronización MiSTer"
     },
     "latest_backup": "Último respaldo: {date, date, long}, {date, time, short}",
     "none": "Agregue una ubicación de respaldo arriba",
     "not_found": "No encontrado",
     "oldest_backup": "respaldo más antiguo: {date, date, long}, {date, time, short}",
     "remove": "Eliminar ubicación",
-    "view_saves": "Ver guardados"
+    "view_saves": "Ver guardados",
+    "copy_path": "Copiar ruta",
+    "open_folder": "Abrir carpeta",
+    "copied": "Copiado",
+    "location_title": "Ubicación {number}",
+    "back_up_now": "Respaldar ahora",
+    "backing_up": "Respaldando…",
+    "last_backup_label": "Último respaldo",
+    "never": "Aún no hay respaldos"
   },
   "screenshot_info": {
     "controls": {
-      "back": "Volver a la lista",
-      "save": "Guardar",
-      "share": "Compartir",
+      "back": "Volver a capturas de pantalla",
+      "save": "Guardar captura",
+      "share": "Compartir captura",
       "upscaled": "Mejorado"
     }
   },
@@ -480,13 +514,15 @@
       "title": "Saltar activos alternativos"
     },
     "archive": {
-      "save": "Guardar",
+      "save": "Guardar URL",
       "title": "Libreria ROM y BIOS (Archivos requeridos)",
-      "warning": "Por favor consulte las leyes locales sobre la descarga de archivos ROM y BIOS potencialmente protegidos por derechos de autor (arcade).\nSi se siente cómodo con esto, copie la siguiente URL en la entrada y presione 'guardar'."
+      "warning": "Por favor consulte las leyes locales sobre la descarga de archivos ROM y BIOS potencialmente protegidos por derechos de autor (arcade).\nSi se siente cómodo con esto, copie la siguiente URL en la entrada y presione 'guardar'.",
+      "copy_url": "Copiar URL",
+      "copied": "Copiado"
     },
     "github_token": {
       "title": "Token de Github",
-      "remove": "Eliminar",
+      "remove": "Eliminar token",
       "ramble": "Si tienes problemas con el límite de velocidad de GitHub, agrega un token PAT a continuación.\nEl token PAT no debe tener ningún alcance establecido y se almacena en su computadora en lugar de en la tarjeta SD de Pocket."
     },
     "clear_file_cache": {
@@ -495,7 +531,7 @@
       "title": "Borrar caché de archivos"
     },
     "disconnect": {
-      "button": "Desconectar",
+      "button": "Desconectar Pocket",
       "ramble": "Regrese a la pantalla \"Conectar con Pocket\" (Esto no expulsa la tarjeta SD/unidad USB)",
       "title": "Desconectar"
     },
@@ -528,7 +564,24 @@
       "ramble": "Duplica los archivos .pal en archivos .gbp. Copia los 4 colores utilizados para el fondo en los nuevos archivos .gbp.\nAl alternar se creará un archivo .gbp para cada archivo .pal en /Assets/gb/common/palettes",
       "checkbox": "Habilitar archivos .gbp automáticos"
     },
-    "thanks": "Gracias a:"
+    "thanks": "Gracias a:",
+    "sections": "Secciones de ajustes",
+    "section_titles": {
+      "display": "Pantalla",
+      "downloads": "Descargas",
+      "files": "Archivos",
+      "connection": "Conexión"
+    },
+    "theme": {
+      "title": "Tema",
+      "label": "Apariencia",
+      "system": "Sistema",
+      "dark": "Oscuro",
+      "light": "Claro",
+      "style_label": "Estilo",
+      "style_slanted": "Inclinado",
+      "style_modern": "Moderno"
+    }
   },
   "time_ago": {
     "less_than_1_min_ago": "hace menos de un minuto"
@@ -545,7 +598,7 @@
       "other": "Otro"
     },
     "cancel_button": "Cancelar",
-    "confirm_button": "Confirmar",
+    "confirm_button": "Instalar archivos",
     "remove_duplicate": "Eliminar archivos duplicados existentes",
     "scanning": "Escaneando archivos...",
     "moved_files_info": "Maneja casos en los que los archivos se han movido, p. Los archivos JSON ahora están en `_alternatives`",

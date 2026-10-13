@@ -7,7 +7,7 @@
 
 .details__title {
   font-size: 1.25rem;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid var(--theme-separator);
   padding: 10px;
   font-weight: bold;
   cursor: pointer;
@@ -19,7 +19,7 @@
   -webkit-user-select: none;
 
   &:hover{
-    background-color: rgb(255 255 255 / 10%);
+    background-color: var(--theme-overlay);
   }
 
 

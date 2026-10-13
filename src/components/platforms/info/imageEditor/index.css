@@ -118,7 +118,7 @@
     width: var(--size);
     height: var(--size);
     aspect-ratio: 1 / 1;
-    border: 2px solid white;
+    border: 2px solid var(--theme-text-headline);
     border-right-color: transparent;
     border-bottom-color: transparent;
     box-sizing: border-box;

@@ -14,7 +14,7 @@
     margin-right: 10px;
     border-radius: 50%;
     aspect-ratio: 1 / 1;
-    border: 1px solid white;
+    border: 1px solid var(--theme-text-soft);
     width: 1.1em;
     height: 1.1em;
   }

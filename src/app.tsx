@@ -1,5 +1,4 @@
 import "./font.css"
-import "./app.css"
 import { pocketPathAtom, reconnectWhenOpenedAtom } from "./jotai/atoms"
 import { Layout } from "./components/layout"
 import { Suspense, useCallback, useEffect, useRef, useState } from "react"

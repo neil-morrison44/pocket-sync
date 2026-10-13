@@ -1,4 +1,6 @@
 .link{
+  color: inherit;
+  font-weight: inherit;
   text-decoration: underline;
   cursor: pointer;
   display: inline-block;

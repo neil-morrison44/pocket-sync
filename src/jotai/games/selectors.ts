@@ -14,6 +14,7 @@ import { MROMInfo, PlatformId } from "../../types"
 import {
   CoreInfoSelectorFamily,
   DataJSONSelectorFamily,
+  WalkDirSelectorFamily,
   coresListSelector,
 } from "../selectors"
 import { decodeDataParams } from "../../utils/decodeDataParams"
@@ -203,3 +204,23 @@ export const gameSystemsSelector = atom<Promise<GameSystem[]>>(async (get) => {
     }))
     .sort((a, b) => a.platformId.localeCompare(b.platformId))
 })
+
+/** Game files in a system's folder: everything but its fixed (BIOS) files. */
+export const filterGameFiles = (files: string[], namedFiles: string[]) =>
+  files.filter((file) => !namedFiles.some((named) => file.endsWith(named)))
+
+/** Total number of games across all systems on the SD card. */
+export const installedGamesCountSelector = atom<Promise<number>>(
+  async (get) => {
+    const systems = await get(gameSystemsSelector)
+    const counts = await Promise.all(
+      systems.map(async ({ platformId, extensions, namedFiles }) => {
+        const files = await get(
+          WalkDirSelectorFamily({ path: `Assets/${platformId}`, extensions })
+        )
+        return filterGameFiles(files, namedFiles).length
+      })
+    )
+    return counts.reduce((total, count) => total + count, 0)
+  }
+)

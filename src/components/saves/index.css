@@ -19,7 +19,6 @@
 }
 
 .saves__list {
-  max-width: var(--content-max-width);
   padding: var(--padding);
   overflow: auto;
   display: flex;

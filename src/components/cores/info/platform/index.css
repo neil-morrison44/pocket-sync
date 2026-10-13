@@ -32,7 +32,7 @@
 }
 
 .cores__platform-info-cateogry {
-  border-right: 1px solid white;
+  border-right: 1px solid var(--theme-separator);
   padding-right: 15px;
   box-sizing: border-box;
   background-color: var(--light-colour);

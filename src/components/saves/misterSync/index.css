@@ -44,7 +44,7 @@
 
 .mister-sync__log{
   background-color: var(--info-colour);
-  color: white;
+  color: var(--theme-text-body);
   padding: 20px;
   overflow: auto;
   white-space: pre-wrap;
@@ -74,13 +74,13 @@
 
 .mister-sync__saves-list-item{
   cursor: pointer;
-  border-bottom: 1px solid rgb(255 255 255 / 20%);
+  border-bottom: 1px solid var(--theme-separator);
   margin-bottom: 5px;
   padding: 5px;
 
   &:hover{
-    background-color: rgb(255 255 255 / 10%);
-    border-bottom: 1px solid rgb(255 255 255 / 80%);
+    background-color: var(--theme-overlay);
+    border-bottom: 1px solid var(--theme-text-body);
   }
 }
 
@@ -113,7 +113,7 @@
 }
 
 .mister-sync__status-to-mister{
-  --colour: var(--selection-colour);
+  --colour: var(--theme-warning);
 
   animation-direction: forward;
   clip-path: polygon(0 0, 100% 0, 65% 100%, 65% 50%, 0 50%);

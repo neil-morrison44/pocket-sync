@@ -10,7 +10,7 @@ import { useScrollSpy } from "../../hooks/useScrollSpy"
 export const SETTINGS_SECTIONS = [
   {
     key: "display",
-    items: ["3d_pocket", "language", "hide_ai_score", "hidden_cores"],
+    items: ["theme", "3d_pocket", "language", "hide_ai_score", "hidden_cores"],
   },
   {
     key: "downloads",
@@ -33,18 +33,13 @@ const ITEM_IDS = SETTINGS_SECTIONS.flatMap(({ items }) =>
   items.map((item) => `settings-${item}`)
 )
 
-const scrollTo = (id: string) =>
-  document
-    .getElementById(id)
-    ?.scrollIntoView({ behavior: "smooth", block: "start" })
-
 /**
  * Section menu beside the settings (like VS Code's settings editor): jumps to
  * a section or item and highlights the one currently in view.
  */
 export const SettingsNav = () => {
   const { t } = useTranslation("settings")
-  const [activeId, setActiveId] = useScrollSpy(ITEM_IDS)
+  const { active: activeId, jumpTo } = useScrollSpy(ITEM_IDS)
   const listRef = useRef<HTMLUListElement>(null)
   const rovingFocus = useRovingFocus(listRef, "button")
 
@@ -64,10 +59,9 @@ export const SettingsNav = () => {
                   ? "settings__nav-section-title--active"
                   : ""
               }`}
-              onClick={() => {
-                setActiveId(`settings-${items[0]}`)
-                scrollTo(`settings-section-${key}`)
-              }}
+              onClick={() =>
+                jumpTo(`settings-${items[0]}`, `settings-section-${key}`)
+              }
             >
               {t(`section_titles.${key}`)}
             </button>
@@ -83,10 +77,7 @@ export const SettingsNav = () => {
                         isActive ? "settings__nav-item--active" : ""
                       }`}
                       aria-current={isActive ? "true" : undefined}
-                      onClick={() => {
-                        setActiveId(id)
-                        scrollTo(id)
-                      }}
+                      onClick={() => jumpTo(id)}
                     >
                       {t(`${item}.title`)}
                     </button>

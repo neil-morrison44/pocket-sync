@@ -18,10 +18,7 @@ import { currentViewAtom } from "../../jotai/view/atoms"
 
 import { useTranslation } from "react-i18next"
 import { semverCompare } from "../../utils/semverCompare"
-import {
-  ColourContextProviderFromConfig,
-  ColourContextProviderRandomised,
-} from "../three/colourContext"
+import { ColourContextProviderAuto } from "../three/colourContext"
 import { ChangelogPanel } from "./changelog"
 import Tabs from "../ui/Tabs"
 import { useAtom, useAtomValue, useSetAtom } from "jotai"
@@ -29,6 +26,17 @@ import { sponsorCountAtom } from "../../jotai/github/atoms"
 import { AllPlatformImagesSelector } from "../../jotai/platforms/selectors"
 import Icon from "../ui/Icon"
 import Button from "../ui/Button"
+import Popover from "../ui/Popover"
+import Select from "../ui/Select"
+import Skeleton from "../ui/Skeleton"
+import Stats from "../ui/Stats"
+import { PocketSyncConfigSelector } from "../../jotai/config/selectors"
+import { currentFirmwareVersionSelector } from "../../jotai/firmware/selectors"
+import { coresListSelector } from "../../jotai/selectors"
+import { installedGamesCountSelector } from "../../jotai/games/selectors"
+import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
+import { useColourOptions } from "../settings/colourOptions"
+import { PocketColour } from "../../types"
 import { Tip } from "../tip"
 import type { Connection } from "../layout"
 import IconButton from "../ui/IconButton"
@@ -74,7 +82,7 @@ export const About = ({ connection }: { connection: Connection }) => {
         </Suspense>
       )}
       <div className="about__main">
-        <div className="about__toolbar">
+        <div className="about__toolbar" data-tauri-drag-region>
           <IconButton
             theme="tertiary"
             icon="article"
@@ -91,7 +99,6 @@ export const About = ({ connection }: { connection: Connection }) => {
               </Suspense>
             </div>
             <SillyTitleEffect>{t("app_name")}</SillyTitleEffect>
-            {version}
           </div>
           {connected && (
             <Suspense>
@@ -108,31 +115,43 @@ export const About = ({ connection }: { connection: Connection }) => {
           <div className="about__pocket">
             <Suspense fallback={<div className="three-pocket"></div>}>
               <ErrorBoundary>
-                {connected ? (
-                  <ColourContextProviderFromConfig>
-                    <Pocket
-                      move="back-and-forth"
-                      screenMaterial={
+                <ColourContextProviderAuto
+                  fromConfig={connected}
+                  changeInterval={15000}
+                >
+                  <Pocket
+                    move={connected ? "back-and-forth" : "spin"}
+                    screenMaterial={
+                      connected ? (
                         <Suspense fallback={<StaticScreen />}>
                           <RandomScreenshotScreen />
                         </Suspense>
-                      }
-                    />
-                  </ColourContextProviderFromConfig>
-                ) : (
-                  <ColourContextProviderRandomised changeInterval={15000}>
-                    <Pocket move="spin" />
-                  </ColourContextProviderRandomised>
-                )}
+                      ) : undefined
+                    }
+                  />
+                </ColourContextProviderAuto>
               </ErrorBoundary>
             </Suspense>
           </div>
         </div>
+        {connected && (
+          <Suspense fallback={<PocketStatsSkeleton />}>
+            <PocketStats />
+          </Suspense>
+        )}
+        <span className="about__version">{version}</span>
         <div className="about__eject">
           {connected ? (
-            <Button theme="tertiary" icon="logout" onClick={onEject}>
-              {t("eject")}
-            </Button>
+            <>
+              {/* Beside Eject, so it reads as a setting of the Pocket, not
+                  of the app */}
+              <Suspense>
+                <PocketColoursPopover />
+              </Suspense>
+              <Button theme="tertiary" icon="logout" onClick={onEject}>
+                {t("eject")}
+              </Button>
+            </>
           ) : (
             <>
               {connection.attempts > 0 && <Tip>{tApp("not_pocket_tip")}</Tip>}
@@ -268,3 +287,74 @@ const PlatformImagePreload = () => {
   const _imageData = useAtomValue(AllPlatformImagesSelector)
   return null
 }
+
+/** Quick colour settings for the 3D Pocket, saved like the ones in Settings. */
+const PocketColoursPopover = () => {
+  const { t } = useTranslation("about")
+  const { t: tSettings } = useTranslation("settings")
+  const config = useAtomValue(PocketSyncConfigSelector)
+  const updateConfig = useUpdateConfig()
+  const colourOptions = useColourOptions()
+
+  return (
+    <Popover
+      title={t("pocket_colours")}
+      trigger={
+        <Button theme="tertiary" icon="colors-swatch">
+          {t("colours")}
+        </Button>
+      }
+    >
+      <div className="about__colour-field">
+        <label htmlFor="about-body-colour">{t("body_colour")}</label>
+        <Select
+          id="about-body-colour"
+          value={config.colour}
+          options={colourOptions}
+          onChange={(value) => updateConfig("colour", value)}
+        />
+      </div>
+      <div className="about__colour-field">
+        <label htmlFor="about-button-colour">{t("button_colour")}</label>
+        <Select<PocketColour | "match">
+          id="about-button-colour"
+          value={config.button_colour ?? "match"}
+          options={[
+            { value: "match", label: tSettings("3d_pocket.match_body") },
+            ...colourOptions,
+          ]}
+          onChange={(value) =>
+            updateConfig("button_colour", value === "match" ? undefined : value)
+          }
+        />
+      </div>
+    </Popover>
+  )
+}
+
+/** Installed firmware, cores and games on the connected Pocket. */
+const PocketStats = () => {
+  const { t } = useTranslation("about")
+  const firmware = useAtomValue(currentFirmwareVersionSelector)
+  const cores = useAtomValue(coresListSelector)
+  const games = useAtomValue(installedGamesCountSelector)
+
+  return (
+    <Stats
+      className="about__stats"
+      items={[
+        { label: t("stats.firmware"), value: `v${firmware.version}` },
+        { label: t("stats.cores"), value: cores.length },
+        { label: t("stats.games"), value: games },
+      ]}
+    />
+  )
+}
+
+const PocketStatsSkeleton = () => (
+  <div className="about__stats about__stats--loading" aria-hidden>
+    <Skeleton width="60px" height="2.4rem" />
+    <Skeleton width="60px" height="2.4rem" />
+    <Skeleton width="60px" height="2.4rem" />
+  </div>
+)

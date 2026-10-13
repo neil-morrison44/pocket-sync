@@ -43,11 +43,11 @@
 }
 
 .news-feed__item--new {
-  border-right: 2px solid var(--selection-colour);
+  border-right: 2px solid var(--theme-accent);
 }
 
 .news-feed__item--update {
-  border-right: 2px solid var(--green-colour);
+  border-right: 2px solid var(--theme-text-soft);
 }
 
 .news-feed__item--link {
@@ -103,22 +103,46 @@
     padding-inline: 10px;
   }
 
-  /* Rows on the pane's background, split by dividers */
+  /* Rows on the pane's background, split by dividers; same type as the
+     changelog entries next to it */
   .news-feed__item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
     width: auto;
     min-width: 0;
     flex-shrink: 0;
+    padding: var(--space-md) var(--space-lg);
     background-color: transparent;
-    border-bottom: 1px solid var(--theme-border);
+    border-bottom: 1px solid var(--theme-separator);
 
     &:first-child,
     &:last-child {
       margin-inline: 0;
     }
 
+    &.news-feed__item--link:hover {
+      background-color: var(--theme-surface-raised);
+    }
+
     :root.keyboard-focus &:focus {
       outline: 2px solid var(--theme-focus);
       outline-offset: -2px;
     }
+  }
+
+  .news-feed__item-title {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-break: auto;
+    color: var(--theme-text-headline);
+  }
+
+  .news-feed__item-published {
+    display: flex;
+    gap: var(--space-xs);
+    font-size: 0.8125rem;
+    text-align: left;
   }
 }

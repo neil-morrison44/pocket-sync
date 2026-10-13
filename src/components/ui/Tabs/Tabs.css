@@ -81,9 +81,8 @@
   min-height: 0;
   overflow: hidden auto;
 
-  :root.keyboard-focus &:focus {
-    outline: 2px solid var(--theme-focus);
-    outline-offset: -2px;
+  &:focus {
+    outline: none;
   }
 
   &[data-state="inactive"] {

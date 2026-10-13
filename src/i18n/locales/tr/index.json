@@ -5,7 +5,21 @@
     "update_available": "Güncellemeler Hazır! {version}",
     "sponsor_link": "GitHub üzerinden sponsorlukta bulunan {count, number} kişiye katılın",
     "whats_new": "Yenilikler",
-    "close_changelog": "Kapat"
+    "close_changelog": "Kapat",
+    "library_updates": "Kütüphane güncellemeleri",
+    "side_panel": "Güncellemeler",
+    "eject": "SD kartı çıkar",
+    "show_updates": "Güncellemeleri göster",
+    "hide_updates": "Güncellemeleri gizle",
+    "pocket_colours": "Pocket renkleri",
+    "colours": "Renkler",
+    "body_colour": "Gövde",
+    "button_colour": "Düğmeler",
+    "stats": {
+      "firmware": "Aygıt yazılımı",
+      "cores": "Çekirdekler",
+      "games": "Oyunlar"
+    }
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -47,11 +61,11 @@
   "core_info": {
     "author": "Geliştirici",
     "controls": {
-      "back": "Listeye geri dön",
-      "install": "Yükle",
-      "required_files": "Gerekli Dosyalar",
-      "uninstall": "Sil",
-      "update": "Güncelle",
+      "back": "Çekirdeklere geri dön",
+      "install": "Çekirdeği yükle",
+      "required_files": "Gerekli dosyaları yükle",
+      "uninstall": "Çekirdeği sil",
+      "update": "Çekirdeği güncelle",
       "hide_core": "Çekirdeği Gizle"
     },
     "inputs": "Kontroller",
@@ -59,7 +73,7 @@
       "close": "Kapat",
       "input_core": "Çekirdek",
       "no_settings_found": "Ayarlar bulnamadı!",
-      "reset_all": "Her şeyi sıfırla"
+      "reset_all": "Tüm ayarları sıfırla"
     },
     "analogizer": "Bu çekirdek <1>Analogizer-FPGA</1> destekler",
     "requires_license": {
@@ -180,15 +194,15 @@
   },
   "fetch": {
     "controls": {
-      "add_fetch_item": "Yeni getirme ekle",
-      "refresh": "Yenile"
+      "add_fetch_item": "Getirme kaynağı ekle",
+      "refresh": "Durumu yenile"
     },
-    "fetch_button": "Getir",
+    "fetch_button": "Dosyaları getir",
     "file_count": "{count} / {total, plural, one {# Dosya} other {# Dosyalar}}",
     "loading": "yükleniyor...",
     "new": {
-      "add_extension": "Ekle",
-      "add_fetch": "Getirme ekle",
+      "add_extension": "Uzantı ekle",
+      "add_fetch": "Getirme kaynağı ekle",
       "archive_name": "Arşiv adı: <i>https://archive.org/details/[this bit here]</i>",
       "archive_tip": "Bu, dosyaların sıkıştırılmış olduğu arşivler için işe yaramayacaktır ve meta veri dosyalarının indirilmesini istemediğiniz uzantıları ayarlamalısınız.",
       "close": "Kapat",
@@ -199,7 +213,7 @@
       "validating_archive_name": "\"{name}\" arşivi kontrol ediliyor...",
       "invalid_archive_name": "https://archive.org/details/{name} adresinde arşiv bulunamadı"
     },
-    "remove_button": "Kaldır",
+    "remove_button": "Kaynağı kaldır",
     "remove_confirm": "Bu getirme yapılandırmasını kaldıracak, ancak dosyaları kaldırmayacak. Emin misiniz?",
     "types": {
       "archive_org": "İnternet Arşivi",
@@ -209,7 +223,7 @@
   "firmware": {
     "current": "Mevcut Aygıt Yazılımı: v{version}",
     "downloading_firmware": "Aygıt yazılımı İndiriliyor...",
-    "load_firmware": "SD Karta yükle",
+    "load_firmware": "Aygıt yazılımını SD karta yükle",
     "loaded_firmware": "{Version} aygıt yazılımı SD karttadır",
     "loaded_firmware_info": "Pocket'ı takın ve kurmak için açın",
     "no_firmware_loaded": "SD kartta yüklenmeyi bekleyen bir aygıt yazılımı dosyası yok",
@@ -222,19 +236,28 @@
       "from": "Kaynak",
       "title": "v{version} - { published, date, short } Sürüm Notları:"
     },
-    "remove_button": "Kaldır"
+    "remove_button": "Aygıt yazılımını kaldır",
+    "current_label": "Yüklü aygıt yazılımı",
+    "versions_title": "Aygıt yazılımı sürümleri",
+    "jump_to": "Git",
+    "badge_latest": "En yeni",
+    "badge_installed": "Yüklü",
+    "published": "{date, date, medium}"
   },
   "games": {
     "controls": {
       "category": "Kategori",
-      "clean_files": "Dosyaları Temizle",
-      "instance_json": "Instance JSON",
+      "clean_files": "Dosyaları temizle",
+      "instance_json": "Instance JSON oluştur",
       "refresh": "Yenile",
-      "search": "Ara"
+      "search": "Ara",
+      "mrom": "MROM dökümlerini taşı"
     },
     "item": {
       "game_count": "{count, plural, =0 {Oyun yok} one {# Oyun} other {# Oyunlar}}"
-    }
+    },
+    "open_folder": "Klasörü aç",
+    "none": "Oyun bulunamadı. Bir çekirdek yükleyin, ardından oyunları SD karttaki klasörüne ekleyin."
   },
   "image_editor": {
     "cancel": "İptal",
@@ -242,18 +265,22 @@
     "remove": "Kaldır",
     "reset": "Sıfırla",
     "rotate": "Döndür",
-    "save": "Kaydet",
+    "save": "Görseli kaydet",
     "scale": "Ölçekle"
   },
   "layout": {
-    "plugins": "Eklentiler"
+    "plugins": "Eklentiler",
+    "saves": "Yedekler",
+    "collapse_sidebar": "Kenar çubuğunu daralt",
+    "expand_sidebar": "Kenar çubuğunu genişlet",
+    "views": "Görünümler"
   },
   "plugins": {
     "buttons": {
       "add": "Eklenti Ekle",
-      "refresh": "Yenile"
+      "refresh": "Eklentileri yenile"
     },
-    "remove": "Kaldırmak",
+    "remove": "Eklentiyi kaldır",
     "confirm_remove": "Bu işlem, eklentinin bu bilgisayarda depoladığı yerel verileri de silecektir, emin misiniz?",
     "confirm_exit": "Eklenti hala çalışıyor, pencereyi kapatmak istediğinizden emin misiniz?",
     "safe_to_close": "Eklenti işlemi tamamlandı, bu pencere kapatılabilir.",
@@ -268,7 +295,10 @@
   },
   "platforms": {
     "controls": {
-      "archive": "Arşiv Platformları"
+      "archive": "Arşiv Platformları",
+      "data_packs": "Veri paketlerini yönet",
+      "remove_coreless": "Çekirdeksiz platformları kaldır",
+      "image_packs": "Görsel paketlerini yönet"
     },
     "archive": {
       "apply_changes": "Değişiklikleri Kaydet",
@@ -281,6 +311,7 @@
         "manufacturer": "Üretici",
         "year": "Yıl"
       }
-    }
+    },
+    "save": "Değişiklikleri kaydet"
   }
 }

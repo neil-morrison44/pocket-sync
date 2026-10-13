@@ -62,10 +62,10 @@
 
   &.toggle--is-pressed {
     background-color: var(--theme-selection);
-    color: var(--theme-text);
+    color: var(--theme-selection-text);
   }
 
   &.toggle--is-pressed::after {
-    background-color: var(--theme-text);
+    background-color: var(--theme-selection-text);
   }
 }
