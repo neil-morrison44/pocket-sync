@@ -237,6 +237,8 @@ export type PocketColour =
   | "gbc_grape"
   | "gbc_berry"
   | "gbc_gold"
+  | "supreme_red"
+  | "supreme_gold"
 
 export type PocketSyncConfig = {
   version: string

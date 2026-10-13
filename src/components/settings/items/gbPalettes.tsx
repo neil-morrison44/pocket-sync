@@ -5,6 +5,7 @@ import { invokeConvertAllPalFiles } from "../../../utils/invokes"
 import { useProgress } from "../../../hooks/useProgress"
 import { ProgressLoader } from "../../loader/progress"
 import { useAtomValue } from "jotai"
+import Switch from "../../ui/Switch"
 
 export const GBPalettesConversion = () => {
   const updateConfig = useUpdateConfig()
@@ -13,24 +14,22 @@ export const GBPalettesConversion = () => {
   const { inProgress, percent } = useProgress("downconvert_all_pal_files")
 
   return (
-    <div className="settings__row">
+    <div className="settings__row" id="settings-gb_palettes_conversion">
       <h3 className="settings__row-title">
         {t("gb_palettes_conversion.title")}
       </h3>
       <div className="settings__ramble">
         {t("gb_palettes_conversion.ramble")}
       </div>
-      <label className="settings__checkbox">
-        {t("gb_palettes_conversion.checkbox")}
-        <input
-          type="checkbox"
-          checked={config.gb_palette_convert}
-          onChange={({ target }) => {
-            if (target.checked) invokeConvertAllPalFiles()
-            updateConfig("gb_palette_convert", target.checked)
-          }}
-        />
-      </label>
+      <Switch
+        className="settings__checkbox"
+        label={t("gb_palettes_conversion.checkbox")}
+        value={config.gb_palette_convert ?? false}
+        onChange={(checked) => {
+          if (checked) invokeConvertAllPalFiles()
+          updateConfig("gb_palette_convert", checked)
+        }}
+      />
       <ProgressLoader name="downconvert_all_pal_files" hideUntilProgress />
       {inProgress && (
         <progress

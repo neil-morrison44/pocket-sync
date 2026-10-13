@@ -54,6 +54,7 @@
   width: 80px;
   grid-area: p;
   background-color: var(--green-colour);
+  color: var(--theme-accent-text);
   border-radius: 100px;
   aspect-ratio: 1 / 1;
   place-self: center center;
@@ -73,11 +74,11 @@
   }
 
   &:hover{
-    transform: scale(1.05);
+    filter: brightness(110%);
   }
 
   &:active{
-    transform: scale(0.95);
+    transform: scale(0.97);
   }
 }
 
@@ -143,4 +144,5 @@
   bottom: 0;
   padding: 12px;
   left: var(--sidebar-width);
+  transition: left 150ms ease;
 }

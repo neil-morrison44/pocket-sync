@@ -114,6 +114,7 @@ const PaletteItem = ({ name, path, installed }: PaletteItemProps) => {
   return (
     <div
       className="palette-town__item"
+      role="button"
       onClick={() => savePalette(paletteData, `/${path}`)}
     >
       <PreviewCanvasInner palette={paletteData} />

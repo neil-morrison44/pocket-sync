@@ -1,27 +1,20 @@
 import { Suspense, useMemo } from "react"
-import { Modal } from "../../modal"
 import { pocketSyncChangelogSelector } from "../../../jotai/github/selectors"
 
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { Link } from "../../link"
 import { Loader } from "../../loader"
-import { useTranslation } from "react-i18next"
 import { useAtomValue } from "jotai"
 
-export const Changelog = ({ onClose }: { onClose: () => void }) => {
-  const { t } = useTranslation("about")
-  return (
-    <Modal>
-      <Suspense fallback={<Loader grow />}>
-        <div className="about__changelog-text">
-          <ChangelogInner />
-        </div>
-      </Suspense>
-      <button onClick={onClose}>{t("close_changelog")}</button>
-    </Modal>
-  )
-}
+/** Pocket Sync's release notes, shown in the start screen's side panel. */
+export const ChangelogPanel = () => (
+  <Suspense fallback={<Loader grow />}>
+    <div className="about__changelog-text">
+      <ChangelogInner />
+    </div>
+  </Suspense>
+)
 
 const ChangelogInner = () => {
   const changelogMarkdown = useAtomValue(pocketSyncChangelogSelector)

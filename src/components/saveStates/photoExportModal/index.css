@@ -28,7 +28,7 @@
     width: 100px;
 
     &:hover{
-      transform: scale(1.1);
+      outline: 2px solid var(--theme-surface-raised);
     }
   }
 }

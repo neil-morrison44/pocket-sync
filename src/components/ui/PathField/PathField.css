@@ -1,0 +1,41 @@
+.path-field {
+  --control-height: 32px;
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+/* Slanted code frame, shared look with TextInput's code variant */
+.path-field__value {
+  display: block;
+  flex-grow: 1;
+  min-width: 0;
+  height: var(--control-height);
+  box-sizing: border-box;
+  position: relative;
+  padding-inline: calc(var(--space-md) + var(--slant));
+  background-color: var(--theme-background);
+  clip-path: var(--shape-slant);
+  font-family: var(--font-code);
+  font-size: 0.8125rem;
+  line-height: var(--control-height);
+  color: var(--theme-text-body);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  /* Ellipsis at the start; <bdi> keeps the path itself left-to-right */
+  direction: rtl;
+  text-align: left;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--theme-separator);
+    clip-path: var(--shape-slant-outline);
+    pointer-events: none;
+  }
+}

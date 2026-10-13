@@ -1,6 +1,8 @@
-import { Children, ReactNode } from "react"
+import { Children, ReactNode, useRef } from "react"
 import "./index.css"
+import "../ui/Skeleton/Skeleton.css"
 import { OnlyLoadsWhenShown } from "../../utils/onlyLoadsWhenShown"
+import { useRovingFocus } from "../../hooks/useRovingFocus"
 
 type GridProps = {
   children: ReactNode
@@ -14,11 +16,15 @@ export const Grid = ({
   placeholderItemHeight = 200,
 }: GridProps) => {
   const items = Children.toArray(children)
+  const gridRef = useRef<HTMLDivElement>(null)
+  // the grid is one tab stop; arrow keys move between its items
+  const rovingFocus = useRovingFocus(gridRef, ':scope > [role="button"]')
 
   return (
-    <div className={`grid ${className ?? ""}`}>
+    <div className={`grid ${className ?? ""}`} ref={gridRef} {...rovingFocus}>
       {items.map((i) => (
         <OnlyLoadsWhenShown
+          className="skeleton"
           height={placeholderItemHeight}
           key={((i as any).key as string | undefined) || undefined}
         >

@@ -10,7 +10,13 @@ import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { Atom, atom } from "jotai"
 import { atomFamilyDeepEqual } from "../../utils/jotai"
 import { path } from "@tauri-apps/api"
-import { MROMInfo } from "../../types"
+import { MROMInfo, PlatformId } from "../../types"
+import {
+  CoreInfoSelectorFamily,
+  DataJSONSelectorFamily,
+  coresListSelector,
+} from "../selectors"
+import { decodeDataParams } from "../../utils/decodeDataParams"
 
 export const instancePackagerCoresListSelector = atom<Promise<string[]>>(
   async (get) => {
@@ -130,3 +136,70 @@ export const libraryImageSelector = atomFamilyDeepEqual<
     return URL.createObjectURL(canvasBlob)
   })
 )
+
+// Slots named like this hold games even when they aren't required
+const MAYBE_GAME_SLOT_NAMES = /(^slot)/i
+
+export type GameSystem = {
+  platformId: PlatformId
+  /** File extensions any installed core for this system loads as games. */
+  extensions: string[]
+  /** Fixed file names (BIOS etc.) in the folder that aren't games. */
+  namedFiles: string[]
+  /** Installed cores that read games from this system's folder. */
+  cores: string[]
+}
+
+/**
+ * Systems with a games folder (`Assets/<platform>`), derived from the
+ * installed cores' data slots, the same way the per-core game counts are.
+ */
+export const gameSystemsSelector = atom<Promise<GameSystem[]>>(async (get) => {
+  const coreNames = await get(coresListSelector)
+  const systems = new Map<
+    PlatformId,
+    { extensions: Set<string>; namedFiles: Set<string>; cores: string[] }
+  >()
+
+  for (const coreName of coreNames) {
+    try {
+      const data = await get(DataJSONSelectorFamily(coreName))
+      const romsSlot = data.data.data_slots.find(
+        ({ required, name, extensions }) =>
+          (required || name?.match(MAYBE_GAME_SLOT_NAMES)) && extensions
+      )
+      if (!romsSlot) continue
+
+      const { core } = await get(CoreInfoSelectorFamily(coreName))
+      const { platformIndex } = decodeDataParams(romsSlot.parameters)
+      const platformId = core.metadata.platform_ids[platformIndex]
+      if (!platformId) continue
+
+      const system = systems.get(platformId) ?? {
+        extensions: new Set<string>(),
+        namedFiles: new Set<string>(),
+        cores: [],
+      }
+      romsSlot.extensions?.forEach((extension) =>
+        system.extensions.add(extension)
+      )
+      data.data.data_slots.forEach(
+        ({ filename }) => filename && system.namedFiles.add(filename)
+      )
+      system.cores.push(coreName)
+      systems.set(platformId, system)
+    } catch (error) {
+      // a core with broken JSON shouldn't hide every other system
+      console.warn(`Skipping ${coreName} in games list`, error)
+    }
+  }
+
+  return [...systems]
+    .map(([platformId, { extensions, namedFiles, cores }]) => ({
+      platformId,
+      extensions: [...extensions],
+      namedFiles: [...namedFiles],
+      cores,
+    }))
+    .sort((a, b) => a.platformId.localeCompare(b.platformId))
+})

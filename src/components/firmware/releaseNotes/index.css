@@ -1,24 +1,26 @@
-.firmware-release-notes{
-  & h1,h2,h3,h4,h5,h6 {
-    font-family: initial;
-    font-size: initial;
+/* Release notes inside an expanded version row */
+.firmware-release-notes {
+  & h1,
+  & h2,
+  & h3,
+  & h4,
+  & h5,
+  & h6 {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.4;
+    padding: 0;
+    color: var(--theme-text-headline);
   }
 
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  background-color: var(--info-colour);
-  border-radius: 10px;
-  box-sizing: border-box;
-  padding: 5px 15px;
+  gap: var(--space-sm);
+  width: 100%;
+  color: var(--theme-text-body);
 }
 
-.firmware-release-notes__link{
-  text-align: center;
-}
-
-.firmware-release-notes__content{
-  overflow: auto;
-  flex-shrink: 1;
-  flex-grow: 0;
+.firmware-release-notes__link {
+  font-size: 0.875rem;
+  color: var(--theme-text-soft);
 }

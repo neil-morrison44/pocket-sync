@@ -1,28 +1,20 @@
 .about {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
+  align-items: stretch;
   height: 100vh;
   text-align: center;
   overflow: hidden;
-  width: calc(100vw - var(--sidebar-width));
+  width: 100%;
   flex-shrink: 1;
 }
 
+/* Update banners are primary buttons, a little larger than controls */
 .about__update-link {
-  font-size: 1.25rem;
-  background-color: var(--green-colour);
-  padding: 10px 30px;
-  border-radius: 25px;
-  white-space: nowrap;
-  margin-left: auto;
-  margin-right: auto;
-  cursor: pointer;
+  --control-height: 36px;
 
-  &:hover{
-    filter: brightness(90%);
-  }
+  align-self: center;
+  font-size: 1.125rem;
+  padding-inline: 24px;
 }
 
 .about__top {
@@ -34,7 +26,17 @@
   width: 100%;
 
   h1 {
-    margin-block-end: 15px;
+    margin-block: 0 15px;
+
+    /* Scales with the column so the title never overflows it */
+    font-size: clamp(2.5rem, 11cqi, 4rem);
+
+    /* The filter paints only inside the element's box. :root sets a fixed
+       24px line-height, which made the box much shorter than the glyphs, so
+       they were clipped until hover enlarged the painted area. A relative
+       line-height plus padding keeps the whole title inside the box. */
+    line-height: 1.2;
+    padding: 0.15em 0.25em;
     filter: drop-shadow(0 0 red) drop-shadow(0 0 blue) drop-shadow(0 0 green);
     transition: filter 1s;
     width: max-content;
@@ -59,47 +61,107 @@
 }
 
 .about__sponsor{
-  width: 100%;
-  padding: 5px;
-  padding-block-end: 0;
-  box-sizing: border-box;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  margin-block-end: var(--space-lg);
   gap: 10px;
   align-items: center;
 
+  /* Slanted like the other controls, so it reads as an action */
   .link{
     display: flex;
     align-items: center;
-    gap: 5px;
-    will-change: opacity, background-color;
-    opacity: 0.8;
+    gap: var(--space-sm);
+    height: 32px;
+    padding-inline: 16px;
     font-size: 1rem;
     text-decoration: none;
-    background-color: rgb(255 255 255 / 10%);
-    padding-inline: 15px;
-    border-radius: 50px;
-    border: 1px solid rgb(255 255 255 / 10%);
+    color: var(--theme-text-headline);
+    background-color: var(--theme-overlay);
+    clip-path: var(--shape-slant);
+    cursor: pointer;
   }
 
   .link:hover{
-    opacity: 1;
-    background-color: rgb(0 0 0 / 10%);
-    border-color: white;
+    background-color: var(--theme-sidebar-item-active);
   }
 }
 
-.about__news {
+.about__main {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+  min-width: 0;
+  padding: var(--space-lg);
+  box-sizing: border-box;
+}
+
+.about__toolbar {
+  display: flex;
+  justify-content: flex-end;
   width: 100%;
 }
 
+.about__eject {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--space-lg);
+}
+
+/* Side panel: library updates or the changelog, switched with tabs */
+.about__news {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 340px;
+  min-height: 0;
+  overflow: hidden;
+  border-left: 1px solid var(--theme-border);
+  background-color: var(--theme-surface-sunken);
+  transition:
+    width 150ms ease,
+    border-color 150ms ease;
+}
+
+/* Slides closed like the sidebar; the content keeps its width meanwhile */
+.about__news--closed {
+  width: 0;
+  border-left-color: transparent;
+}
+
+.about__news-inner {
+  display: flex;
+  flex-direction: column;
+  width: 340px;
+  height: 100%;
+  min-height: 0;
+}
+
+.about__pocket {
+  width: min(55vh, 520px);
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  align-self: center;
+
+  .three-pocket {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about__news {
+    transition: none;
+  }
+}
+
 .about__changelog-text{
-  overflow: auto;
   text-align: left;
-  padding-inline: 20px;
-  background-color: var(--hover-colour);
-  border-radius: inherit;
-  flex-grow: 1;
+  padding-inline: var(--space-xl);
+  font-size: 0.875rem;
 }
 
 .about__changelog-image{
@@ -121,4 +183,8 @@
   span {
     white-space: normal;
   }
+}
+
+.about__news-tabs {
+  flex-grow: 1;
 }

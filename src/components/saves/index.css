@@ -7,21 +7,19 @@
   --padding: 20px;
 }
 
+/* Empty state: plain centred text */
 .saves__none {
   width: 100%;
   height: calc(100vh - var(--controls-height));
-  font-size: 3rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: GamePocket;
-  font-smooth: never;
-  -webkit-font-smoothing: none;
+  color: var(--theme-text-soft);
   text-align: center;
-  line-height: 45px;
 }
 
 .saves__list {
+  max-width: var(--content-max-width);
   padding: var(--padding);
   overflow: auto;
   display: flex;
@@ -29,67 +27,58 @@
   flex-direction: column;
 }
 
+/* One backup location: title, path and stats, then actions */
 .saves__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
   padding: var(--padding);
-  border-radius: 15px;
-  background-color: var(--info-colour);
-  display: grid;
-  gap: var(--padding);
-  align-items: center;
-  grid-template-columns: 1fr max-content max-content;
-  grid-template-areas:
-    "b r c"
-    "d r c";
+  background-color: var(--theme-surface-sunken);
+  border: 1px solid var(--theme-separator);
 }
 
 .saves__item--not-found {
   cursor: unset;
 }
 
-.saves__item-path {
-  grid-area: b;
-  word-break: break-all;
+.saves__item-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--theme-text-headline);
+}
+
+.saves__item-folder {
+  font-weight: 400;
+  color: var(--theme-text-soft);
+  overflow-wrap: anywhere;
 }
 
 .saves__info {
-  grid-area: d;
-}
-
-.saves__item-remove-button {
-  grid-area: r;
-  cursor: pointer;
-  color: var(--red-colour);
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-.saves__item-restore-button {
-  grid-area: c;
-  padding: 10px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  font-size: 1.25rem;
-  cursor: pointer;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0;
+  color: var(--theme-text-soft);
+}
 
-  &::after {
-    content: "";
-    display: block;
-    width: 40px;
-    height: 40px;
-    border-right: 2px solid white;
-    border-top: 2px solid white;
-    flex-grow: 0;
-    flex-shrink: 0;
-    transform: rotate(45deg);
-  }
+.saves__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-xl);
+}
 
-  &:hover {
-    transform: scale(1.1);
-  }
+.saves__item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* Keep the destructive action apart from the others */
+.saves__item-remove {
+  margin-inline-start: auto;
 }
 
 .saves__info-save-files-timestamps {
@@ -165,6 +154,7 @@
 
   &:hover {
     background-color: var(--green-colour);
+    color: var(--theme-accent-text);
   }
 }
 

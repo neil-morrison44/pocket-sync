@@ -11,7 +11,6 @@ import { Version } from "./version"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { InventoryItem } from "../../types"
 import { useUpdateAvailable } from "../../hooks/useUpdateAvailable"
-import { KeyIcon } from "./icons/keyIcon"
 import { useTranslation } from "react-i18next"
 import { useInventoryItem } from "../../hooks/useInventoryItem"
 import {
@@ -19,11 +18,11 @@ import {
   PlatformInventoryImageSelectorFamily,
 } from "../../jotai/inventory/selectors"
 import { PlatformImage } from "./platformImage"
-import { AnalogizerIcon } from "./icons/AnalogizerIcon"
 import { PocketSyncConfigSelector } from "../../jotai/config/selectors"
 import { useAtomValue } from "jotai"
 import { aiCheckAtom } from "../../jotai/cores/atoms"
 import { useMemo } from "react"
+import Icon from "../ui/Icon"
 
 type CoreItemProps = {
   coreName: string
@@ -91,7 +90,7 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
         )}
         {coreName.endsWith("_Analogizer") && (
           <div className="cores__item-analogizer">
-            <AnalogizerIcon />
+            <Icon icon="analogizer" />
           </div>
         )}
         {showAIScore && coreAIScore > 0 && (
@@ -159,7 +158,7 @@ export const NotInstalledCoreItem = ({
         ></img>
         {identifier.endsWith("_Analogizer") && (
           <div className="cores__item-analogizer">
-            <AnalogizerIcon />
+            <Icon icon="analogizer" />
           </div>
         )}
         {showAIScore && coreAIScore > 0 && (
@@ -192,7 +191,7 @@ const SponsorBanner = () => {
       className="cores__item-sponsor-banner"
       title={t("requires_license.all")}
     >
-      <KeyIcon />
+      <Icon icon="key" />
     </div>
   )
 }

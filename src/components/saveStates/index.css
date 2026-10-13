@@ -47,7 +47,11 @@
   border: 2px solid transparent;
 
   &:hover {
-    transform: scale(1.05);
+    background-color: var(--theme-surface-raised);
+  }
+
+  &:active {
+    transform: scale(0.99);
   }
 }
 
@@ -59,6 +63,10 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.save-states__item--date {
+  color: var(--theme-text-soft);
 }
 
 .save-states__item-name {

@@ -6,16 +6,14 @@ import {
   DownloadURLSelectorFamily,
   PlatformInventoryImageSelectorFamily,
 } from "../../../jotai/inventory/selectors"
-import { Controls } from "../../controls"
+import { Controls, ControlsActions } from "../../controls"
 import { ErrorBoundary } from "../../errorBoundary"
 import { Link } from "../../link"
 import { Releases } from "./releases"
 import { SponsorLinks } from "./sponsorLinks"
 import { Trans, useTranslation } from "react-i18next"
-import { KeyIcon } from "../icons/keyIcon"
 import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
-import { AnalogizerIcon } from "../icons/AnalogizerIcon"
 import { DownloadCount } from "./downloadCounts"
 import { PocketSyncConfigSelector } from "../../../jotai/config/selectors"
 import { useUpdateConfig } from "../../settings/hooks/useUpdateConfig"
@@ -26,6 +24,7 @@ import { useAtomCallback } from "jotai/utils"
 import { aiCheckAtom } from "../../../jotai/cores/atoms"
 import { Details } from "../../shared/details"
 import { AIReport } from "./aiReport"
+import Icon from "../../ui/Icon"
 
 type NotInstalledCoreInfoProps = {
   onBack: () => void
@@ -79,16 +78,18 @@ export const NotInstalledCoreInfo = ({
           <ControlsBackButton onClick={onBack}>
             {t("controls.back")}
           </ControlsBackButton>
-          <HideCoreButton onBack={onBack} coreName={coreName} />
-          {download_url && (
-            <ControlsButton
-              onClick={() => {
-                installCore(coreName, download_url)
-              }}
-            >
-              {t("controls.install")}
-            </ControlsButton>
-          )}
+          <ControlsActions>
+            <HideCoreButton onBack={onBack} coreName={coreName} />
+            {download_url && (
+              <ControlsButton
+                onClick={() => {
+                  installCore(coreName, download_url)
+                }}
+              >
+                {t("controls.install")}
+              </ControlsButton>
+            )}
+          </ControlsActions>
         </Controls>
       )}
       {!inventoryItem && <div>{t("not_in_inventory", { coreName })}</div>}
@@ -105,7 +106,7 @@ export const NotInstalledCoreInfo = ({
           {requires_license && (
             <>
               <div className="core-info__requires-license">
-                <KeyIcon />
+                <Icon icon="key" />
                 {t("requires_license.all")}
               </div>
               {inventoryItem.id.startsWith("jotego") && (
@@ -118,7 +119,7 @@ export const NotInstalledCoreInfo = ({
 
           {coreName.endsWith("_Analogizer") && (
             <div className="core-info__analogizer">
-              <AnalogizerIcon />
+              <Icon icon="analogizer" />
               <div>
                 <Trans t={t} i18nKey={"analogizer"}>
                   {"_"}

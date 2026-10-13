@@ -14,7 +14,7 @@ import { Loader } from "../loader"
 import { ScreenshotInfo } from "./info"
 import { Grid } from "../grid"
 import { useSaveScroll } from "../../hooks/useSaveScroll"
-import { Controls } from "../controls"
+import { Controls, ControlsActions } from "../controls"
 import { SearchContextProvider } from "../search/context"
 import { selectedSubviewSelector } from "../../jotai/view/selectors"
 import { useMultiExport } from "./hooks/useMultiExport"
@@ -110,22 +110,6 @@ export const Screenshots = () => {
           onChange={setSearchQuery}
         />
 
-        {selectMode && (
-          <>
-            <ControlsButton onClick={() => exportMulti(selectedScreenshots)}>
-              {t("controls.export_selected", {
-                count: selectedScreenshots.length,
-              })}
-            </ControlsButton>
-            <ControlsButton
-              onClick={() => deleteScreenshots(selectedScreenshots)}
-            >
-              {t("controls.delete_selected", {
-                count: selectedScreenshots.length,
-              })}
-            </ControlsButton>
-          </>
-        )}
         <ControlsCheckbox
           checked={selectMode}
           onChange={(checked) => {
@@ -135,6 +119,26 @@ export const Screenshots = () => {
         >
           {t("controls.select")}
         </ControlsCheckbox>
+        <ControlsActions>
+          {selectMode && (
+            <>
+              <ControlsButton onClick={() => exportMulti(selectedScreenshots)}>
+                {t("controls.export_selected", {
+                  count: selectedScreenshots.length,
+                })}
+              </ControlsButton>
+              <ControlsButton
+                theme="destructive"
+                icon="trash"
+                onClick={() => deleteScreenshots(selectedScreenshots)}
+              >
+                {t("controls.delete_selected", {
+                  count: selectedScreenshots.length,
+                })}
+              </ControlsButton>
+            </>
+          )}
+        </ControlsActions>
       </Controls>
       <SearchContextProvider query={searchQuery}>
         <Grid className="screenshots">

@@ -1,10 +1,4 @@
-import React, {
-  Suspense,
-  useCallback,
-  useEffect,
-  useRef,
-  useTransition,
-} from "react"
+import React, { Suspense, useCallback, useTransition } from "react"
 
 import { currentViewAtom, VIEWS_LIST } from "../../jotai/view/atoms"
 import { About } from "../about"
@@ -12,8 +6,9 @@ import { ErrorBoundary } from "../errorBoundary"
 import { Loader } from "../loader"
 import { AutoBackup } from "../saves/autobackup"
 import { ZipInstall } from "../zipInstall"
+import * as RadixTabs from "@radix-ui/react-tabs"
+import { Sidebar, sidebarCollapsedAtom } from "./sidebar"
 import "./index.css"
-import { useTranslation } from "react-i18next"
 import { enableGlobalZipInstallAtom } from "../../jotai/atoms"
 import { useAtom, useAtomValue } from "jotai"
 
@@ -57,10 +52,23 @@ const Plugins = React.lazy(() =>
   import("../plugins").then((i) => ({ default: i.Plugins }))
 )
 
-export const Layout = () => {
+/** Whether an SD card / Pocket is connected, and how to connect one. */
+export type Connection = {
+  connected: boolean
+  onConnect: () => void
+  /** Failed connection attempts, to show a tip after the first one. */
+  attempts: number
+}
+
+/**
+ * The app shell: sidebar and current view. Without a connection only the
+ * home view is available, so the app looks the same before and after
+ * connecting.
+ */
+export const Layout = ({ connection }: { connection: Connection }) => {
   const [viewAndSubview, setViewAndSubview] = useAtom(currentViewAtom)
   const enableGlobalZipInstall = useAtomValue(enableGlobalZipInstallAtom)
-  const { t } = useTranslation("layout")
+  const sidebarCollapsed = useAtomValue(sidebarCollapsedAtom)
   const [isPending, startTransition] = useTransition()
 
   const changeView = useCallback(
@@ -73,50 +81,38 @@ export const Layout = () => {
     [setViewAndSubview]
   )
 
-  const sidebarRef = useRef<HTMLDivElement>(null)
-  const layoutRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const sidebar = sidebarRef.current
-    if (!sidebar) return
-
-    const { width } = sidebar.getBoundingClientRect()
-
-    const layout = layoutRef.current
-    if (!layout) return
-
-    layout.style.setProperty("--sidebar-width", `${width}px`)
-  }, [])
-
-  const { view } = viewAndSubview
+  const view = connection.connected ? viewAndSubview.view : "Pocket Sync"
 
   return (
-    <div className="layout" ref={layoutRef}>
-      {enableGlobalZipInstall && <ZipInstall />}
-      <Suspense>
-        <AutoBackup />
-      </Suspense>
-      <div className="layout__sidebar-menu" ref={sidebarRef}>
-        {VIEWS_LIST.map((v) => (
-          <div
-            className={`layout__sidebar-menu-item ${
-              view === v ? "layout__sidebar-menu-item--active" : ""
-            }`}
-            key={v}
-            onClick={() => changeView(v)}
-          >
-            {t(v.toLowerCase().replace(/\s/g, "_"))}
-          </div>
-        ))}
-        {isPending && <Loader />}
-      </div>
-      <div className="layout__content">
+    <RadixTabs.Root
+      className={`layout ${sidebarCollapsed ? "layout--sidebar-collapsed" : ""}`}
+      value={view as string}
+      onValueChange={(value) =>
+        changeView(value as (typeof VIEWS_LIST)[number])
+      }
+      orientation="vertical"
+      activationMode="manual"
+    >
+      {connection.connected && enableGlobalZipInstall && <ZipInstall />}
+      {connection.connected && (
+        <Suspense>
+          <AutoBackup />
+        </Suspense>
+      )}
+      {connection.connected && (
+        <Sidebar
+          view={view as (typeof VIEWS_LIST)[number]}
+          isPending={isPending}
+          connected={connection.connected}
+        />
+      )}
+      <RadixTabs.Content className="layout__content" value={view as string}>
         <ErrorBoundary>
           <Suspense fallback={<Loader fullHeight />}>
             <div>
               {view === "Screenshots" && <Screenshots />}
               {view === "Cores" && <Cores />}
-              {view === "Pocket Sync" && <About />}
+              {view === "Pocket Sync" && <About connection={connection} />}
               {view === "Settings" && <Settings />}
               {view === "Games" && <Games />}
               {view === "Update" && <Update />}
@@ -130,7 +126,7 @@ export const Layout = () => {
             </div>
           </Suspense>
         </ErrorBoundary>
-      </div>
-    </div>
+      </RadixTabs.Content>
+    </RadixTabs.Root>
   )
 }

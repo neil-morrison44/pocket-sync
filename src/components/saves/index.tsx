@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react"
 import { PocketSyncConfigSelector } from "../../jotai/config/selectors"
-import { Controls } from "../controls"
+import { Controls, ControlsActions } from "../controls"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { open } from "@tauri-apps/plugin-dialog"
 
@@ -62,12 +62,14 @@ export const Saves = () => {
   return (
     <div className="saves">
       <Controls>
-        <ControlsButton onClick={addBackupLocation}>
-          {t("controls.add_backup_location")}
-        </ControlsButton>
-        <ControlsButton onClick={() => setMisterSync(true)}>
-          {t("controls.mister_sync")}
-        </ControlsButton>
+        <ControlsActions>
+          <ControlsButton onClick={addBackupLocation} icon="folder-plus">
+            {t("controls.add_backup_location")}
+          </ControlsButton>
+          <ControlsButton onClick={() => setMisterSync(true)}>
+            {t("controls.mister_sync")}
+          </ControlsButton>
+        </ControlsActions>
       </Controls>
 
       {saves.length === 0 && <div className="saves__none">{t("none")}</div>}
@@ -78,6 +80,7 @@ export const Saves = () => {
               config={s}
               key={JSON.stringify(s)}
               onClickRestore={() => setSelectedSavebackup(index)}
+              number={index + 1}
             />
           ))}
         </div>

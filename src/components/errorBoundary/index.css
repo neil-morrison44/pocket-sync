@@ -26,7 +26,7 @@
 .error-boundary__repair-button{
   font-size: 1.1rem;
   background-color: var(--green-colour);
-  text-shadow: 0 0 2px rgb(0 0 0 / 80%);
+  color: var(--theme-accent-text);
   border: 2px solid white;
   animation: border-pulse 2s linear infinite;
   display: grid;

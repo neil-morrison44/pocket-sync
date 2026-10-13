@@ -2,9 +2,12 @@ import React, { useState } from "react"
 import ReactDOM from "react-dom/client"
 import { App } from "./app"
 // import i18n from "./i18n"
+import "./theme.css"
 import "./style.css"
 import { installPolyfills } from "./polyfills"
 import { I18nProvider } from "./i18n"
+import { TooltipProvider } from "./components/ui/Tooltip"
+import { useKeyboardFocus } from "./hooks/useKeyboardFocus"
 import { Disconnections } from "./components/disconnections"
 import { Link, Route, Switch } from "wouter"
 import { error } from "@tauri-apps/plugin-log"
@@ -47,19 +50,28 @@ const MainWindow = () => {
   )
 }
 
+// Shows focus rings only while the keyboard is used
+const KeyboardFocus = () => {
+  useKeyboardFocus()
+  return null
+}
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <I18nProvider>
-      <Switch>
-        <Route path="/" component={MainWindow} />
+      <KeyboardFocus />
+      <TooltipProvider>
+        <Switch>
+          <Route path="/" component={MainWindow} />
 
-        <Route path="/plugin/:id">
-          {(params) => <PluginWindow pluginId={params.id} />}
-        </Route>
+          <Route path="/plugin/:id">
+            {(params) => <PluginWindow pluginId={params.id} />}
+          </Route>
 
-        {/* Default route in a switch */}
-        <Route>404: No such page!</Route>
-      </Switch>
+          {/* Default route in a switch */}
+          <Route>404: No such page!</Route>
+        </Switch>
+      </TooltipProvider>
     </I18nProvider>
   </React.StrictMode>
 )

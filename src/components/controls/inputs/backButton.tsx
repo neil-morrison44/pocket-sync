@@ -1,4 +1,5 @@
 import { ReactNode, startTransition, useEffect } from "react"
+import Button from "../../ui/Button"
 
 type ControlsBackButtonProps = {
   children: ReactNode
@@ -12,8 +13,8 @@ export const ControlsBackButton = ({
   useEffect(() => {
     const listener = ({ key }: KeyboardEvent) => {
       if (key === "Escape") {
-        // ugly check to see if there's a modal open
-        if (document.getElementsByClassName("modal").length > 0) return
+        // ugly check to see if there's a modal or an open select list
+        if (document.querySelector(".modal, .select__content")) return
         onClick()
       }
     }
@@ -21,24 +22,12 @@ export const ControlsBackButton = ({
     return () => document.removeEventListener("keydown", listener)
   }, [onClick])
   return (
-    <div
-      role="button"
-      className="controls__item controls__button controls__button--back"
+    <Button
+      icon="chevron-left"
+      className="controls__back-button"
       onClick={() => startTransition(onClick)}
     >
-      <BackIcon />
       {children}
-    </div>
+    </Button>
   )
 }
-
-const BackIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    height="24"
-    viewBox="0 -960 960 960"
-    width="24"
-  >
-    <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z" />
-  </svg>
-)

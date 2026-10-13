@@ -7,11 +7,11 @@ import {
 } from "../../../../jotai/cores/selectors"
 import { useTranslation } from "react-i18next"
 import { Details } from "../../../shared/details"
-import { AnalogizerIcon } from "../../icons/AnalogizerIcon"
 import { SupportsBubble } from "../supportsBubble"
 
 import "./index.css"
 import { useAtom, useAtomValue } from "jotai"
+import Icon from "../../../ui/Icon"
 
 type JTAnalogizerSettingsProps = {
   coreName: string
@@ -45,7 +45,7 @@ const JTAnalogizerSettingsInner = () => {
   return (
     <Details
       title={t("jt_analogizer_config.title")}
-      renderIcon={() => <AnalogizerIcon />}
+      renderIcon={() => <Icon icon="analogizer" />}
     >
       <h4 className="jt-analogizer__options-title">
         {t("jt_analogizer_config.video")}

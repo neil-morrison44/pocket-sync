@@ -8,7 +8,7 @@ import {
 } from "../../jotai/archive/selectors"
 import { useInstallRequiredFiles } from "../../hooks/useInstallRequiredFiles"
 import { FetchFileMetadataWithStatus, FileCopy } from "../../types"
-import { Controls } from "../controls"
+import { Controls, ControlsActions } from "../controls"
 import { PocketSyncConfigSelector } from "../../jotai/config/selectors"
 import { NewFetch } from "./new"
 import { invokeCopyFiles } from "../../utils/invokes"
@@ -53,16 +53,18 @@ export const Fetch = () => {
   return (
     <div className="fetch">
       <Controls>
-        <ControlsButton onClick={() => setNewFetchOpen(true)}>
-          {t("controls.add_fetch_item")}
-        </ControlsButton>
-        <ControlsButton
-          onClick={() => {
-            setArchiveBumpAtom((c) => c + 1)
-          }}
-        >
-          {t("controls.refresh")}
-        </ControlsButton>
+        <ControlsActions>
+          <ControlsButton onClick={() => setNewFetchOpen(true)}>
+            {t("controls.add_fetch_item")}
+          </ControlsButton>
+          <ControlsButton
+            onClick={() => {
+              setArchiveBumpAtom((c) => c + 1)
+            }}
+          >
+            {t("controls.refresh")}
+          </ControlsButton>
+        </ControlsActions>
       </Controls>
       {newFetchOpen && <NewFetch onClose={() => setNewFetchOpen(false)} />}
       <div className="fetch__list">

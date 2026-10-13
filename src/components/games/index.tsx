@@ -1,44 +1,28 @@
-import { Suspense, useMemo, useState } from "react"
+import { Suspense, useState } from "react"
 import { cateogryListselector } from "../../jotai/inventory/selectors"
-import { coresListSelector } from "../../jotai/selectors"
-import { Controls } from "../controls"
-import { Grid } from "../grid"
-import { Loader } from "../loader"
+import { Controls, ControlsActions } from "../controls"
 import { SearchContextProvider } from "../search/context"
 import { InstanceJson } from "./instanceJson"
 import { CleanFilesModal } from "./cleanFiles"
-import { CoreFolderItem } from "./item"
 import { useTranslation } from "react-i18next"
 import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
 import { ControlsSelect } from "../controls/inputs/select"
-import "../cores/index.css"
 import { useAtomValue } from "jotai"
 import { CoreConditional } from "../shared/coreConditional"
 import { MROMModal } from "./mrom"
+import { gameSystemsSelector } from "../../jotai/games/selectors"
+import { GameSystemSection, GameSystemSkeleton } from "./system"
+import "./index.css"
 
 export const Games = () => {
-  const coresList = useAtomValue(coresListSelector)
+  const systems = useAtomValue(gameSystemsSelector)
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [filterCategory, setFilterCategory] = useState<string>("All")
   const [cleanFilesOpen, setCleanFilesOpen] = useState(false)
   const [instanceJsonOpen, setInstanceJsonOpen] = useState(false)
   const [mromOpen, setMROMOpen] = useState(false)
   const { t } = useTranslation("games")
-
-  const sortedList = useMemo(
-    () =>
-      [...coresList].sort((a, b) => {
-        const [authorA, coreA] = a.split(".")
-        const switchedA = `${coreA}.${authorA}`
-
-        const [authorB, coreB] = b.split(".")
-        const switchedB = `${coreB}.${authorB}`
-
-        return switchedA.localeCompare(switchedB)
-      }),
-    [coresList]
-  )
 
   const categoryList = useAtomValue(cateogryListselector)
 
@@ -57,17 +41,6 @@ export const Games = () => {
           onChange={setSearchQuery}
           placeholder={t("controls.search")}
         />
-        <CoreConditional core="NRL.MROM">
-          <ControlsButton onClick={() => setMROMOpen(true)}>
-            {t("controls.mrom")}
-          </ControlsButton>
-        </CoreConditional>
-        <ControlsButton onClick={() => setCleanFilesOpen(true)}>
-          {t("controls.clean_files")}
-        </ControlsButton>
-        <ControlsButton onClick={() => setInstanceJsonOpen(true)}>
-          {t("controls.instance_json")}
-        </ControlsButton>
         <ControlsSelect
           options={categoryList}
           selected={filterCategory}
@@ -75,18 +48,34 @@ export const Games = () => {
         >
           {t("controls.category")}
         </ControlsSelect>
+        <ControlsActions>
+          <CoreConditional core="NRL.MROM">
+            <ControlsButton onClick={() => setMROMOpen(true)}>
+              {t("controls.mrom")}
+            </ControlsButton>
+          </CoreConditional>
+          <ControlsButton onClick={() => setCleanFilesOpen(true)}>
+            {t("controls.clean_files")}
+          </ControlsButton>
+          <ControlsButton onClick={() => setInstanceJsonOpen(true)}>
+            {t("controls.instance_json")}
+          </ControlsButton>
+        </ControlsActions>
       </Controls>
       <SearchContextProvider
         query={searchQuery}
         other={{ category: filterCategory }}
       >
-        <Grid>
-          {sortedList.map((core) => (
-            <Suspense key={core} fallback={<Loader key={core} height={130} />}>
-              <CoreFolderItem coreName={core} />
+        <div className="games__systems">
+          {systems.length === 0 && (
+            <div className="games__none">{t("none")}</div>
+          )}
+          {systems.map((system) => (
+            <Suspense key={system.platformId} fallback={<GameSystemSkeleton />}>
+              <GameSystemSection system={system} />
             </Suspense>
           ))}
-        </Grid>
+        </div>
       </SearchContextProvider>
     </div>
   )

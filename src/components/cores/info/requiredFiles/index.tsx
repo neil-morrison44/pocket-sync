@@ -2,10 +2,10 @@ import { useMemo } from "react"
 
 import { useTranslation } from "react-i18next"
 import "./index.css"
-import { WarningIcon } from "./warningIcon"
 import { RequiredFileInfoSelectorFamily } from "../../../../jotai/requiredFiles/selectors"
 import { useAtomValue } from "jotai"
 import { useBEM } from "../../../../hooks/useBEM"
+import Icon from "../../../ui/Icon"
 
 type RequiredFilesProps = {
   coreName: string
@@ -51,7 +51,7 @@ export const RequiredFiles = ({ coreName, onClick }: RequiredFilesProps) => {
         {":"}
       </strong>
       <div className={className} onClick={onClick}>
-        {noFiles && <WarningIcon />}
+        {noFiles && <Icon icon="warning-diamond" />}
 
         {t("required_files_count", {
           count: foundFiles.length,

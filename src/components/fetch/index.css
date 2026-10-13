@@ -67,6 +67,7 @@
 
 .fetch__status--complete{
   background-color: var(--green-colour);
+  color: var(--theme-accent-text);
 }
 
 .fetch__new{

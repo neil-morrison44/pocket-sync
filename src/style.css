@@ -3,44 +3,20 @@
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
-  color: #f6f6f6;
-
-  --background-colour: #2f2f2f;
-  --hover-colour: #222;
-  --info-colour: #111;
-  --light-colour: #555;
-  --green-colour: #589050;
-  --red-colour: rgb(200 80 88);
-  --purple-colour: #885090;
-  --selection-colour: #396cd8;
-  --orange-colour: #c69327;
-
-  background-color: var(--background-colour);
+  color: var(--theme-text-body);
+  background-color: var(--theme-background);
   font-synthesis: none;
   text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-size-adjust: 100%;
-  accent-color: var(--green-colour);
+  accent-color: var(--theme-accent);
 }
 
 body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-}
-
-.container {
-  margin: 0;
-  padding: 10vh 0;
-  padding-bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-  height: 100vh;
-  box-sizing: border-box;
-  gap: 20px;
 }
 
 .logo {
@@ -54,11 +30,6 @@ body {
   filter: drop-shadow(0 0 2em #24c8db);
 }
 
-.row {
-  display: flex;
-  justify-content: center;
-}
-
 a {
   font-weight: 500;
   color: #646cff;
@@ -70,6 +41,7 @@ a:hover {
 }
 
 h1 {
+  color: var(--theme-text-headline);
   text-align: center;
   font-family: GamePocket;
   font-size: 4rem;
@@ -82,6 +54,7 @@ h1 {
 }
 
 h2 {
+  color: var(--theme-text-headline);
   text-align: left;
   font-family: GamePocket;
   font-size: 3rem;
@@ -113,11 +86,16 @@ button {
   }
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.97);
   }
 }
 
 input,
 button {
+  outline: none;
+}
+
+/* Focus rings only show for keyboard navigation (see useKeyboardFocus) */
+:root:not(.keyboard-focus) :focus {
   outline: none;
 }

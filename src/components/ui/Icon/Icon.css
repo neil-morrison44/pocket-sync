@@ -1,0 +1,22 @@
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  shape-rendering: crispedges;
+}
+
+.icon--is-brand {
+  shape-rendering: auto;
+}
+
+.icon--is-glyph {
+  font-family: var(--font-display);
+  font-variant-ligatures: discretionary-ligatures;
+  font-feature-settings: "dlig" 1;
+  font-weight: normal;
+  line-height: 1;
+  white-space: nowrap;
+
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-font-smoothing: none;
+}

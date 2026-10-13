@@ -59,8 +59,23 @@ export const FirmwareDetailsSelectorFamily = atomFamilyDeepEqual<
   Atom<Promise<FirmwareInfo>>
 >(({ version }) =>
   atom(async () => {
+    // A version's details never change, so they're cached across restarts to
+    // avoid refetching (and hitting rate limits)
+    const cacheKey = `pocket-sync:firmware-details:${version}`
+    try {
+      const cached = localStorage.getItem(cacheKey)
+      if (cached) return JSON.parse(cached) as FirmwareInfo
+    } catch {
+      // storage unavailable or corrupt: fetch instead
+    }
+
     const details = await invokeGetFirmwareDetails(version)
     details.file_name = details.download_url?.split("/").at(-1) || "unknown"
+    try {
+      localStorage.setItem(cacheKey, JSON.stringify(details))
+    } catch {
+      // caching is best effort
+    }
     return details
   })
 )

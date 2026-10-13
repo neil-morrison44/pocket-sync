@@ -5,7 +5,7 @@ import {
   platformsListSelector,
   platformsWithoutCoresSelector,
 } from "../../jotai/platforms/selectors"
-import { Controls } from "../controls"
+import { Controls, ControlsActions } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
 import { SearchContextProvider } from "../search/context"
@@ -23,6 +23,7 @@ import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
 import { useAtom, useAtomValue } from "jotai"
 import { useAtomCallback } from "jotai/utils"
+import { CardSkeleton } from "../ui/Skeleton"
 
 export const Platforms = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -84,15 +85,21 @@ export const Platforms = () => {
           value={searchQuery}
           onChange={setSearchQuery}
         />
-        <ControlsButton onClick={removeCorelessPlatforms}>
-          {t("controls.remove_coreless")}
-        </ControlsButton>
-        <ControlsButton onClick={() => setDataPacksOpen(true)}>
-          {t("controls.data_packs")}
-        </ControlsButton>
-        <ControlsButton onClick={() => setImagePacksOpen(true)}>
-          {t("controls.image_packs")}
-        </ControlsButton>
+        <ControlsActions>
+          <ControlsButton
+            theme="destructive"
+            icon="trash"
+            onClick={removeCorelessPlatforms}
+          >
+            {t("controls.remove_coreless")}
+          </ControlsButton>
+          <ControlsButton onClick={() => setDataPacksOpen(true)}>
+            {t("controls.data_packs")}
+          </ControlsButton>
+          <ControlsButton onClick={() => setImagePacksOpen(true)}>
+            {t("controls.image_packs")}
+          </ControlsButton>
+        </ControlsActions>
       </Controls>
 
       {imagePacksOpen && (
@@ -103,7 +110,7 @@ export const Platforms = () => {
       <SearchContextProvider query={searchQuery}>
         <Grid placeholderItemHeight={200}>
           {sortedPlatformIds.map((id) => (
-            <Suspense fallback={<Loader title={id} height={200} />} key={id}>
+            <Suspense fallback={<CardSkeleton height={200} />} key={id}>
               <PlatformItem
                 id={id}
                 onClick={() => {

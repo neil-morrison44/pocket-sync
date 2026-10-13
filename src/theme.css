@@ -1,0 +1,136 @@
+/*
+ * Theme tokens — the single source of truth for UI colours.
+ *
+ * 1. Themes: each theme sets the semantic `--theme-*` tokens. To add a theme,
+ *    copy the dark block, change the values, and set `data-theme="<name>"`
+ *    on <html>.
+ * 2. Aliases: legacy variable names used across the components point at the
+ *    theme tokens, so they follow the active theme automatically.
+ *
+ * Components should consume tokens from here (or alias them locally, e.g.
+ * `--sidebar-background: var(--theme-sidebar-background)`), never hard-code
+ * colours.
+ */
+
+/* ---------- Themes ---------- */
+
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --theme-background: #2f2f2f;
+  --theme-surface: #555;
+  --theme-surface-hover: #222;
+  --theme-surface-sunken: #111;
+  --theme-surface-raised: #2a2a2a; /* hover on cards and list items */
+  --theme-border: #333;
+  --theme-separator: rgb(255 255 255 / 14%); /* light dividers between rows */
+  --theme-overlay: rgb(255 255 255 / 10%);
+
+  /* Text: three levels from one colour, dimmed with alpha so they work on any
+     surface. Headline for titles, body for running text, soft for secondary
+     info like dates. */
+  --theme-text: #f6f6f6;
+  --theme-text-headline: var(--theme-text);
+  --theme-text-body: rgb(246 246 246 / 84%);
+  --theme-text-soft: rgb(246 246 246 / 53%);
+
+  /* Inverse (tooltips, toasts) */
+  --theme-inverse-background: #f6f6f6;
+  --theme-inverse-text: #1f1f1f;
+
+  /* Accents */
+  --theme-accent: #63db84; /* Analogue Pocket green */
+  --theme-accent-text: #111; /* text and icons on the accent */
+  --theme-danger: rgb(200 80 88);
+  --theme-warning: #c69327;
+  --theme-highlight: #885090;
+  --theme-selection: #396cd8;
+  --theme-focus: var(--theme-accent); /* keyboard focus rings */
+
+  /* Controls */
+  --theme-control-background: #eee;
+  --theme-control-text: #000;
+  --theme-input-background: #fff;
+  --theme-input-placeholder: #757575;
+
+  /* Media */
+  --theme-media-background: #fff;
+
+  /* Sidebar */
+  --theme-sidebar-background: #1f1f1f;
+  --theme-sidebar-item-hover: #2a2a2a;
+  --theme-sidebar-item-active: #333;
+}
+
+/* ---------- Theme-independent tokens & aliases ---------- */
+
+:root {
+  /* Layout & typography */
+  --content-max-width: 720px; /* text-heavy content; tiled grids may be wider */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-full: 999px;
+  --space-2xs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 10px;
+  --space-lg: 12px;
+  --space-xl: 16px;
+  --space-2xl: 20px;
+  --font-body: "Inter", "Avenir", "Helvetica", "Arial", sans-serif;
+  --font-display: "GamePocket", monospace;
+  --font-code: ui-monospace, "SF Mono", "Menlo", monospace;
+
+  /* Shapes: the slanted cut used by controls, sidebar items, tabs and
+     tooltips. Change --slant to adjust every slanted edge at once. The
+     outline (1px) and ring (2px, focus) are frames inside the shape, because
+     clip-path also clips borders, outlines and shadows; their inner corners
+     are approximated for 28–36px tall elements. */
+  --slant: 5px;
+  --shape-slant: polygon(
+    var(--slant) 0,
+    100% 0,
+    calc(100% - var(--slant)) 100%,
+    0 100%
+  );
+  --shape-slant-outline: polygon(
+    evenodd,
+    var(--slant) 0,
+    100% 0,
+    calc(100% - var(--slant)) 100%,
+    0 100%,
+    var(--slant) 0,
+    calc(var(--slant) + 0.9px) 1px,
+    calc(100% - 1.1px) 1px,
+    calc(100% - var(--slant) - 0.9px) calc(100% - 1px),
+    1.1px calc(100% - 1px),
+    calc(var(--slant) + 0.9px) 1px
+  );
+  --shape-slant-ring: polygon(
+    evenodd,
+    var(--slant) 0,
+    100% 0,
+    calc(100% - var(--slant)) 100%,
+    0 100%,
+    var(--slant) 0,
+    calc(var(--slant) + 1.7px) 2px,
+    calc(100% - 2.3px) 2px,
+    calc(100% - var(--slant) - 1.7px) calc(100% - 2px),
+    2.3px calc(100% - 2px),
+    calc(var(--slant) + 1.7px) 2px
+  );
+
+  /* ---------- Aliases (keep existing component CSS working) ---------- */
+  --background-colour: var(--theme-background);
+  --hover-colour: var(--theme-surface-hover);
+  --info-colour: var(--theme-surface-sunken);
+  --light-colour: var(--theme-surface);
+  --green-colour: var(--theme-accent);
+  --red-colour: var(--theme-danger);
+  --purple-colour: var(--theme-highlight);
+  --selection-colour: var(--theme-selection);
+  --orange-colour: var(--theme-warning);
+}

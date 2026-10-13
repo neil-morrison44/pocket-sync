@@ -1,5 +1,5 @@
 import { useAtom, useAtomValue } from "jotai"
-import { Controls } from "../controls"
+import { Controls, ControlsActions } from "../controls"
 import { ControlsButton } from "../controls/inputs/button"
 import { pluginListSelector } from "../../jotai/plugins/selectors"
 import { Modal } from "../modal"
@@ -27,12 +27,14 @@ export const Plugins = () => {
         <AddPluginModal onClose={() => setAddPluginModalOpen(false)} />
       )}
       <Controls>
-        <ControlsButton onClick={() => setAddPluginModalOpen(true)}>
-          {t("buttons.add")}
-        </ControlsButton>
-        <ControlsButton onClick={() => refreshPlugins()}>
-          {t("buttons.refresh")}
-        </ControlsButton>
+        <ControlsActions>
+          <ControlsButton onClick={() => setAddPluginModalOpen(true)}>
+            {t("buttons.add")}
+          </ControlsButton>
+          <ControlsButton onClick={() => refreshPlugins()}>
+            {t("buttons.refresh")}
+          </ControlsButton>
+        </ControlsActions>
       </Controls>
 
       <div className="plugins__list">

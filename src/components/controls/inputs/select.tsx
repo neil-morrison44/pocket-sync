@@ -1,5 +1,6 @@
 import { ReactNode, startTransition } from "react"
 import { useTranslation } from "react-i18next"
+import Select from "../../ui/Select"
 
 type ControlsSelectProps<T extends string> = {
   options: T[]
@@ -19,20 +20,14 @@ export const ControlsSelect = <T extends string>({
   const { t } = useTranslation()
 
   return (
-    <label className="controls__item controls__select">
-      {children}
-      <select
-        value={selected}
-        onChange={({ target }) =>
-          startTransition(() => onChange(target.value as T))
-        }
-      >
-        {options.map((v) => (
-          <option value={v} key={v}>
-            {i18nPrefix ? t(`${i18nPrefix}.${v}`) : v}
-          </option>
-        ))}
-      </select>
-    </label>
+    <Select
+      label={children}
+      value={selected}
+      onChange={(value) => startTransition(() => onChange(value))}
+      options={options.map((value) => ({
+        value,
+        label: i18nPrefix ? t(`${i18nPrefix}.${value}`) : value,
+      }))}
+    />
   )
 }

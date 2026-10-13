@@ -3,7 +3,7 @@ import {
   CoreMainPlatformIdSelectorFamily,
 } from "../../../jotai/selectors"
 import { DownloadURLSelectorFamily } from "../../../jotai/inventory/selectors"
-import { Controls } from "../../controls"
+import { Controls, ControlsActions } from "../../controls"
 import { Link } from "../../link"
 
 import "./index.css"
@@ -36,14 +36,12 @@ import { useReplacementAvailable } from "../../../hooks/useReplacementAvailable"
 import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
 import { currentFirmwareVersionSelector } from "../../../jotai/firmware/selectors"
-import { WarningIcon } from "./requiredFiles/warningIcon"
 import { Modal } from "../../modal"
 import { DisplayModes } from "./displayModes"
 import { SupportsBubble } from "./supportsBubble"
 import { Details } from "../../shared/details"
 import { CoreInfoTxtSelectorFamily } from "../../../jotai/cores/selectors"
 import { ProgressLoader } from "../../loader/progress"
-import { AnalogizerIcon } from "../icons/AnalogizerIcon"
 import { DownloadCount } from "./downloadCounts"
 import { JTAnalogizerSettings } from "./jtanalogizer"
 import { InstallOlderVersion } from "./installOlderVersion"
@@ -52,6 +50,7 @@ import { useSmoothedAtomValue } from "../../../utils/jotai"
 import { aiCheckAtom } from "../../../jotai/cores/atoms"
 import { AIReport } from "./aiReport"
 import { PocketSyncConfigSelector } from "../../../jotai/config/selectors"
+import Icon from "../../ui/Icon"
 
 type CoreInfoProps = {
   coreName: string
@@ -95,21 +94,27 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
         <ControlsBackButton onClick={onBack}>
           {t("controls.back")}
         </ControlsBackButton>
-        <ControlsButton onClick={() => uninstall(coreName)}>
-          {t("controls.uninstall")}
-        </ControlsButton>
-        <Suspense>
-          <RequiredFilesButton
-            coreName={coreName}
-            onClick={() => {
-              // setArchiveBump((a) => a + 1)
-              setRequiredFilesOpen(true)
-            }}
-          />
-        </Suspense>
-        <Suspense>
-          <DownloadButton coreName={coreName} />
-        </Suspense>
+        <ControlsActions>
+          <ControlsButton
+            theme="destructive"
+            icon="trash"
+            onClick={() => uninstall(coreName)}
+          >
+            {t("controls.uninstall")}
+          </ControlsButton>
+          <Suspense>
+            <RequiredFilesButton
+              coreName={coreName}
+              onClick={() => {
+                // setArchiveBump((a) => a + 1)
+                setRequiredFilesOpen(true)
+              }}
+            />
+          </Suspense>
+          <Suspense>
+            <DownloadButton coreName={coreName} />
+          </Suspense>
+        </ControlsActions>
       </Controls>
 
       {requiredFilesOpen && (
@@ -158,7 +163,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
 
       {coreName.endsWith("_Analogizer") && (
         <div className="core-info__analogizer">
-          <AnalogizerIcon />
+          <Icon icon="analogizer" />
           <div>
             <Trans t={t} i18nKey={"analogizer"}>
               {"_"}
@@ -418,7 +423,7 @@ const FirmwareWarning = ({ coreName }: { coreName: string }) => {
       className="core-info__firmware-warning"
       onClick={() => setViewAndSubview({ view: "Firmware", selected: null })}
     >
-      <WarningIcon />
+      <Icon icon="warning-diamond" />
       {t("firmware_too_low", {
         core_firmware: coreInfo.core.framework.version_required,
         pocket_firmware: currentFirmware.version,

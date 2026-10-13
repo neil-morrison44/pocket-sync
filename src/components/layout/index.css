@@ -3,50 +3,24 @@
   align-items: flex-start;
   max-width: 100vw;
   position: relative;
+
+  --sidebar-width: 220px;
 }
 
-.layout__sidebar-menu {
-  display: flex;
-  flex-direction: column;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  background-color: var(--light-colour);
-  flex-basis: min-content;
-  flex-shrink: 0;
-  z-index: 1000;
-
-  /* stylelint-disable-next-line property-no-vendor-prefix */
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.layout__sidebar-menu-item {
-  padding-inline: 16px;
-  padding-block: 14px;
-  font-size: 1.25rem;
-  cursor: pointer;
-  user-select: none;
-  border-bottom: 1px solid black;
-
-  &:hover {
-    background-color: var(--hover-colour);
-  }
-
-  &:first-child {
-    white-space: nowrap;
-  }
-}
-
-.layout__sidebar-menu-item--active {
-  background-color: var(--background-colour);
-}
-
-.layout__sidebar-menu-item--disabled {
-  cursor: unset;
+.layout--sidebar-collapsed {
+  /* 8px sidebar padding + 12px item padding on each side of a 16px icon,
+     plus the 1px border, so icons stay put when collapsing */
+  --sidebar-width: 57px;
 }
 
 .layout__content {
   flex-grow: 1;
+  min-width: 0;
   position: relative;
+
+  /* The content is the tab panel for the sidebar's view tabs */
+  :root.keyboard-focus &:focus {
+    outline: 2px solid var(--theme-focus);
+    outline-offset: -2px;
+  }
 }

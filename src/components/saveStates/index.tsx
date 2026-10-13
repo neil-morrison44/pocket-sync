@@ -5,7 +5,7 @@ import { SaveStateItem } from "./item"
 import { Loader } from "../loader"
 
 import "./index.css"
-import { Controls } from "../controls"
+import { Controls, ControlsActions } from "../controls"
 import { SearchContextProvider } from "../search/context"
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { invokeDeleteFiles } from "../../utils/invokes"
@@ -65,18 +65,24 @@ export const SaveStates = () => {
           value={searchQuery}
           onChange={setSearchQuery}
         />
-        {selectedStates.length !== 0 && (
-          <>
-            <ControlsButton onClick={() => setSelectedStates([])}>
-              {t("controls.clear_selection")}
-            </ControlsButton>
-            <ControlsButton onClick={deleteSelected}>
-              {t("controls.delete_selection", {
-                count: selectedStates.length,
-              })}
-            </ControlsButton>
-          </>
-        )}
+        <ControlsActions>
+          {selectedStates.length !== 0 && (
+            <>
+              <ControlsButton onClick={() => setSelectedStates([])}>
+                {t("controls.clear_selection")}
+              </ControlsButton>
+              <ControlsButton
+                theme="destructive"
+                icon="trash"
+                onClick={deleteSelected}
+              >
+                {t("controls.delete_selection", {
+                  count: selectedStates.length,
+                })}
+              </ControlsButton>
+            </>
+          )}
+        </ControlsActions>
       </Controls>
 
       {isExportingPhotos && (

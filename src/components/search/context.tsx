@@ -31,6 +31,9 @@ export const SearchContextProvider = ({
   )
 }
 
+/** The current search query and filters, for lists that filter themselves. */
+export const useSearchContext = () => useContext(SearchContext)
+
 export const SearchContextSelfHidingConsumer = ({
   fields,
   children,

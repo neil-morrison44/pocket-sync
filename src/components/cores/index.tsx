@@ -29,6 +29,7 @@ import {
 } from "../../jotai/cores/atoms"
 import { useAtom, useAtomValue } from "jotai"
 import { useSmoothedAtomValue } from "../../utils/jotai"
+import { CardSkeleton } from "../ui/Skeleton"
 
 export const Cores = () => {
   const [selectedCore, setSelectedCore] = useAtom(selectedSubviewSelector)
@@ -75,9 +76,9 @@ export const Cores = () => {
 
           <Suspense
             fallback={
-              <label className="controls__item controls__select">
+              <span className="select select--theme-control">
                 {t("controls.category")}
-              </label>
+              </span>
             }
           >
             <CategoryFilter
@@ -186,7 +187,7 @@ const CoreList = ({
       <Grid placeholderItemHeight={160}>
         {sortedList.map((core) => (
           <Suspense
-            fallback={<Loader title={core} height={160} key={core} />}
+            fallback={<CardSkeleton height={160} key={core} />}
             key={core}
           >
             <CoreItem coreName={core} onClick={() => onSelect(core)} />
@@ -198,7 +199,7 @@ const CoreList = ({
       <Grid placeholderItemHeight={160}>
         {notInstalledCores.map((item) => (
           <Suspense
-            fallback={<Loader title={item.id} height={160} key={item.id} />}
+            fallback={<CardSkeleton height={160} key={item.id} />}
             key={item.id}
           >
             <NotInstalledCoreItem

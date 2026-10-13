@@ -7,7 +7,7 @@ import { VideoJSONSelectorFamily } from "../../jotai/screenshots/selectors"
 import "./info.css"
 
 import { useSaveFile } from "../../hooks/saveFile"
-import { Controls } from "../controls"
+import { Controls, ControlsActions } from "../controls"
 import { CoreTag } from "../shared/coreTag"
 import { Loader } from "../loader"
 import { useUpscaler } from "./hooks/useUpscaler"
@@ -76,17 +76,6 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
         <ControlsBackButton onClick={onBack}>
           {t("controls.back")}
         </ControlsBackButton>
-        <ControlsButton
-          onClick={() => {
-            if (!imageSrc) return
-            saveFile(screenshot.file_name, imageSrc)
-          }}
-        >
-          {t("controls.save")}
-        </ControlsButton>
-        <ControlsButton onClick={openShareSheet}>
-          {t("controls.share")}
-        </ControlsButton>
         <ControlsCheckbox
           checked={imageMode === "upscaled"}
           onChange={(checked) =>
@@ -95,6 +84,19 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
         >
           {t("controls.upscaled")}
         </ControlsCheckbox>
+        <ControlsActions>
+          <ControlsButton
+            onClick={() => {
+              if (!imageSrc) return
+              saveFile(screenshot.file_name, imageSrc)
+            }}
+          >
+            {t("controls.save")}
+          </ControlsButton>
+          <ControlsButton onClick={openShareSheet}>
+            {t("controls.share")}
+          </ControlsButton>
+        </ControlsActions>
       </Controls>
       <img
         className="screenshot-info__raw-image"

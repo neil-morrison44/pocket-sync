@@ -1,17 +1,14 @@
+/* Empty state: plain centred text */
 .screenshots--none {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  font-size: 3rem;
   padding: 20px;
   box-sizing: border-box;
-  font-family: GamePocket;
-  font-smooth: never;
-  -webkit-font-smoothing: none;
+  color: var(--theme-text-soft);
   text-align: center;
-  line-height: 45px;
 }
 
 .screenshots__button {

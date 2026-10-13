@@ -13,7 +13,7 @@ import { useBEM } from "../../../hooks/useBEM"
 import { AllSavesSelector } from "../../../jotai/saves/selectors"
 import { invokeBeginMisterSaveSyncSession } from "../../../utils/invokes"
 import { splitAsPath } from "../../../utils/splitAsPath"
-import { Controls } from "../../controls"
+import { Controls, ControlsActions } from "../../controls"
 import { Loader } from "../../loader"
 import { PlatformLabel } from "../info/platformLabel"
 import { search } from "fast-fuzzy"
@@ -96,14 +96,16 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
 
         {connected && (
           <>
-            <ControlsButton onClick={() => setSaveMappingOpen(true)}>
-              {t("controls.save_mapping")}
-            </ControlsButton>
             <ControlsSearch
               placeholder={t("controls.search")}
               value={query}
               onChange={setQuery}
             />
+            <ControlsActions>
+              <ControlsButton onClick={() => setSaveMappingOpen(true)}>
+                {t("controls.save_mapping")}
+              </ControlsButton>
+            </ControlsActions>
           </>
         )}
       </Controls>

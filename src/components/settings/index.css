@@ -1,10 +1,113 @@
+/* Section menu on the left (like VS Code's settings), content on the right */
 .settings {
-  padding: 10px;
+  display: grid;
+  grid-template-columns: 200px minmax(0, var(--content-max-width));
+  align-items: start;
+  gap: var(--space-xl);
+  padding: var(--space-xl);
+
+  & > :not(.settings__nav) {
+    grid-column: 2;
+  }
 }
 
 .settings__items {
-  padding: 0 20px;
   margin-bottom: 149px;
+}
+
+/* Separated from the content by a light line */
+.settings__nav {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  position: sticky;
+  top: var(--space-xl);
+  max-height: calc(100vh - 2 * var(--space-xl));
+  overflow: hidden auto;
+  padding-inline-end: var(--space-lg);
+  border-right: 1px solid var(--theme-separator);
+}
+
+.settings__nav-list,
+.settings__nav-items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.settings__nav-list {
+  gap: var(--space-lg);
+}
+
+.settings__nav-section-title {
+  --nav-font-size: 0.75rem;
+
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.settings__nav-item {
+  --nav-indent: 20px;
+}
+
+/* Section titles and items share the sidebar's slanted rows */
+.settings__nav-section-title,
+.settings__nav-item {
+  position: relative;
+  width: 100%;
+  min-height: 30px;
+  margin: 0;
+  padding-block: var(--space-xs);
+  padding-inline: var(--nav-indent, 12px) 12px;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  color: var(--theme-text-soft);
+  font: inherit;
+  font-size: var(--nav-font-size, 0.875rem);
+  text-align: left;
+  cursor: pointer;
+  clip-path: var(--shape-slant);
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--theme-focus);
+    clip-path: var(--shape-slant-ring);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  &:hover {
+    background-color: var(--theme-surface-raised);
+    color: var(--theme-text-headline);
+  }
+
+  &:active {
+    transform: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  :root.keyboard-focus &:focus::after {
+    visibility: visible;
+  }
+}
+
+.settings__nav-section-title--active {
+  color: var(--theme-text-headline);
+}
+
+.settings__nav-item--active {
+  background-color: var(--theme-sidebar-item-active);
+  color: var(--theme-text-headline);
 }
 
 .settings__ramble {
@@ -16,12 +119,7 @@
 
 .settings__row {
   margin-bottom: 40px;
-
-  & input[type="text"],
-  & select {
-    font-size: 1.2rem;
-    width: 80%;
-  }
+  scroll-margin-top: var(--space-xl);
 }
 
 .settings__row-title {
@@ -30,7 +128,17 @@
 
 .settings__text-input-and-save {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.settings__text-input {
+  flex-grow: 1;
+}
+
+.settings__actions {
+  display: flex;
+  gap: var(--space-sm);
 }
 
 .settings__info {
@@ -44,18 +152,20 @@
   position: fixed;
   bottom: 0;
   left: var(--sidebar-width);
+  transition: left 150ms ease;
 }
 
+/* A setting row: label on the left, its control (switch or select) right,
+   framed so they read as one unit */
 .settings__checkbox {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   display: flex;
   gap: 10px;
   align-items: center;
-  border: 1px solid grey;
-  border-radius: 5px;
+  border: 1px solid var(--theme-separator);
+  background-color: var(--theme-overlay);
   justify-content: space-between;
   padding: 10px;
-  width: 80%;
 
   & input {
     transform: scale(1.2, 1.2);
@@ -85,7 +195,7 @@
   cursor: pointer;
 
   &:hover {
-    transform: scale(1.05);
+    background-color: var(--theme-surface-raised);
   }
 
   &::after {

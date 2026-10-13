@@ -36,13 +36,14 @@
   white-space: pre-wrap;
 
   &:active {
-    transform: scale(0.9);
+    transform: scale(0.97);
   }
 }
 
 .update__filter-item--all {
   font-weight: bold;
   background-color: color-mix(rgba(0, 0, 0, 0.2), var(--green-colour));
+  color: var(--theme-accent-text);
   border-bottom: 1px solid white;
   padding-inline-start: 12px;
   min-height: 24px;
@@ -121,7 +122,7 @@
     );
   }
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.97);
   }
 }
 
@@ -167,6 +168,7 @@
 
 .update__list-item-version-new {
   background-color: var(--green-colour);
+  color: var(--theme-accent-text);
 }
 
 .update__list-item-date {
@@ -181,20 +183,17 @@
   grid-area: s;
 }
 
+/* Footer: install new cores (tertiary) and update installed ones, at the
+   right like other actions */
 .update__action-buttons {
-  padding: 12px;
-  background: var(--hover-colour);
-  border-top: 2px solid white;
+  --control-height: 32px;
+
   display: flex;
-  justify-content: space-between;
-}
-
-.update__action-button-start {
-  background-color: var(--selection-colour);
-
-  &:hover {
-    border-color: white;
-  }
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  background-color: var(--theme-surface-sunken);
+  border-top: 1px solid var(--theme-border);
 }
 
 .update__modal {
@@ -336,7 +335,7 @@
   cursor: pointer;
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.97);
   }
 
   .author-tag img {

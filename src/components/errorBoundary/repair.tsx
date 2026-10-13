@@ -5,10 +5,10 @@ import { CoresForPlatformSelectorFamily } from "../../jotai/platforms/selectors"
 import { DownloadURLSelectorFamily } from "../../jotai/inventory/selectors"
 import { usePreventGlobalZipInstallModal } from "../../hooks/usePreventGlobalZipInstall"
 import { emit, once } from "@tauri-apps/api/event"
-import { RepairIcon } from "./repairIcon"
 import { Trans } from "react-i18next"
 import { githubTokenAtom } from "../../jotai/settings/atoms"
 import { useAtomValue } from "jotai"
+import Icon from "../ui/Icon"
 
 const CORE_FILE_REGEX = /Cores[\/\\]([^\/\\]+)[\/\\]/
 const PLATFORM_FILE_REGEX = /Platforms[\/\\]([^\/\\]+)\.json/
@@ -212,7 +212,7 @@ const RepairRedownloadFiles = ({
     return (
       <button className="error-boundary__repair-button">
         <div className="error-boundary__repair-button-title error-boundary__repair-button-title--in-progress">
-          <RepairIcon />
+          <Icon icon="tools" />
           <Trans i18nKey="error:repair:in_progress"></Trans>
         </div>
       </button>
@@ -222,7 +222,7 @@ const RepairRedownloadFiles = ({
   return (
     <button onClick={callback} className="error-boundary__repair-button">
       <div className="error-boundary__repair-button-title">
-        <RepairIcon />
+        <Icon icon="tools" />
         <Trans i18nKey="error:repair:title"></Trans>
       </div>
       <div>

@@ -1,0 +1,131 @@
+/* Resets the global `button` element styles from style.css */
+.select {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  font: inherit;
+  font-weight: 400;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: none;
+
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.select--is-disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.select__value {
+  font-weight: 700;
+}
+
+.select__chevron {
+  display: flex;
+  margin-inline-start: auto;
+}
+
+/* Slanted dropdown in the controls bar */
+.select--theme-control {
+  height: var(--control-height, 28px);
+  padding-block: 0;
+  padding-inline: 12px;
+  background-color: var(--theme-control-background);
+  color: var(--theme-control-text);
+  position: relative;
+  clip-path: var(--shape-slant);
+
+  /* clip-path also clips outlines, so focus is a ring drawn inside the shape */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--theme-focus);
+    clip-path: var(--shape-slant-ring);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  :root.keyboard-focus &:focus::after {
+    visibility: visible;
+  }
+
+  &:hover:not(.select--is-disabled) {
+    filter: brightness(80%);
+  }
+}
+
+/* The open list: square-cornered panel, like the device's menus */
+.select__content {
+  z-index: 2000;
+  min-width: var(--radix-select-trigger-width);
+  max-height: var(--radix-select-content-available-height);
+  overflow: hidden;
+  background-color: var(--theme-surface-sunken);
+  border: 1px solid var(--theme-surface);
+  color: var(--theme-text);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 50%);
+}
+
+.select__viewport {
+  padding: var(--space-xs);
+}
+
+.select__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-block: var(--space-xs);
+  padding-inline: var(--space-sm);
+  font-size: 1rem;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+
+  &[data-highlighted] {
+    background-color: var(--theme-selection);
+  }
+
+  &[data-disabled] {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+.select__group + .select__group,
+.select__item + .select__group {
+  margin-top: var(--space-xs);
+  padding-top: var(--space-xs);
+  border-top: 1px solid var(--theme-border);
+}
+
+.select__group-label {
+  padding-block: var(--space-xs);
+  padding-inline: var(--space-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--theme-text-soft);
+}
+
+.select__item-indicator {
+  display: flex;
+  color: var(--theme-accent);
+
+  .select__item[data-highlighted] & {
+    color: inherit;
+  }
+}

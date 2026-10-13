@@ -1,7 +1,7 @@
 .cores__platform-image {
   width: 100%;
   height: auto;
-  background-color: white;
+  background-color: var(--theme-media-background);
 }
 
 .cores__info-blurb {
@@ -58,9 +58,12 @@
   position: relative;
   overflow: hidden;
 
-  &:hover,
-  &:focus {
-    transform: scale(1.1);
+  &:hover .cores__info-blurb {
+    background-color: var(--theme-surface-raised);
+  }
+
+  &:active {
+    transform: scale(0.99);
   }
 }
 
@@ -72,6 +75,10 @@
 
   /* font-weight: bold; */
   cursor: pointer;
+
+  &:hover {
+    background-color: var(--theme-surface-raised);
+  }
 }
 
 .cores__item-archive-icon {

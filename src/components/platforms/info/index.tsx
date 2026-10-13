@@ -13,7 +13,7 @@ import {
 } from "../../../jotai/platforms/selectors"
 import { PlatformId } from "../../../types"
 import { PLATFORM_IMAGE } from "../../../values"
-import { Controls } from "../../controls"
+import { Controls, ControlsActions } from "../../controls"
 import { Loader } from "../../loader"
 import { useUpdatePlatformValue } from "../hooks/useUpdatePlatform"
 import { ImagePacks } from "../imagePacks"
@@ -65,15 +65,17 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
         <ControlsBackButton onClick={onBack}>
           {t("controls.back")}
         </ControlsBackButton>
-        <ControlsButton onClick={toggleArchiveStatus}>
-          {isArchived ? t("controls.unarchive") : t("controls.archive")}
-        </ControlsButton>
-        <ControlsButton onClick={() => setDataPacksOpen(true)}>
-          {t("controls.data_packs")}
-        </ControlsButton>
-        <ControlsButton onClick={() => setImagePacksOpen(true)}>
-          {t("controls.image_packs")}
-        </ControlsButton>
+        <ControlsActions>
+          <ControlsButton onClick={toggleArchiveStatus}>
+            {isArchived ? t("controls.unarchive") : t("controls.archive")}
+          </ControlsButton>
+          <ControlsButton onClick={() => setDataPacksOpen(true)}>
+            {t("controls.data_packs")}
+          </ControlsButton>
+          <ControlsButton onClick={() => setImagePacksOpen(true)}>
+            {t("controls.image_packs")}
+          </ControlsButton>
+        </ControlsActions>
       </Controls>
 
       {imagePacksOpen && (

@@ -17,6 +17,7 @@
 
 .version__update{
   background-color: var(--green-colour);
+  color: var(--theme-accent-text);
 }
 
 .version__replaced {

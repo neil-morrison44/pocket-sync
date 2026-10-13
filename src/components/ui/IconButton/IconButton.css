@@ -1,0 +1,11 @@
+/* Same slanted button, sized to its icon */
+.icon-button {
+  flex-shrink: 0;
+  width: calc(var(--control-height, 28px) + 6px);
+  padding-inline: 0;
+}
+
+/* Icon-only tertiary buttons drop the outline; hover still shows a background */
+.icon-button.button--theme-tertiary {
+  --button-outline: transparent;
+}

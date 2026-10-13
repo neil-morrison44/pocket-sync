@@ -5,7 +5,12 @@
     "update_available": "Update Available! {version}",
     "sponsor_link": "Join {count, number} people in sponsoring via GitHub",
     "whats_new": "What's new?",
-    "close_changelog": "Close"
+    "close_changelog": "Close",
+    "library_updates": "Library Updates",
+    "side_panel": "Updates",
+    "eject": "Eject SD Card",
+    "show_updates": "Show Updates",
+    "hide_updates": "Hide Updates"
   },
   "app": {
     "app_name": "Pocket Sync",
@@ -50,11 +55,11 @@
   "core_info": {
     "author": "Author",
     "controls": {
-      "back": "Back to list",
-      "install": "Install",
-      "required_files": "Required Files",
-      "uninstall": "Uninstall",
-      "update": "Update",
+      "back": "Back to Cores",
+      "install": "Install Core",
+      "required_files": "Load Required Files",
+      "uninstall": "Uninstall Core",
+      "update": "Update Core",
       "hide_core": "Hide Core"
     },
     "inputs": "Inputs",
@@ -62,7 +67,7 @@
       "close": "Close",
       "input_core": "Core",
       "no_settings_found": "No settings found!",
-      "reset_all": "Reset All"
+      "reset_all": "Reset All Settings"
     },
     "analogizer": "This core supports the <1>Analogizer-FPGA</1>",
     "requires_license": {
@@ -187,15 +192,15 @@
   },
   "fetch": {
     "controls": {
-      "add_fetch_item": "Add new fetch",
-      "refresh": "Refresh"
+      "add_fetch_item": "Add Fetch Source",
+      "refresh": "Refresh Status"
     },
-    "fetch_button": "Fetch",
+    "fetch_button": "Fetch Files",
     "file_count": "{count} / {total, plural, one {# File} other {# Files}}",
     "loading": "loading...",
     "new": {
-      "add_extension": "Add",
-      "add_fetch": "Add fetch",
+      "add_extension": "Add Extension",
+      "add_fetch": "Add Fetch Source",
       "archive_name": "Archive name: <i>https://archive.org/details/[this bit here]</i>",
       "archive_tip": "This won't work for achives where the files are zipped, and you should set which extensions you want to avoid downloading the metadata files.",
       "close": "Close",
@@ -206,7 +211,7 @@
       "validating_archive_name": "Checking archive \"{name}\"...",
       "invalid_archive_name": "No archive found at https://archive.org/details/{name}"
     },
-    "remove_button": "Remove",
+    "remove_button": "Remove Source",
     "remove_confirm": "This'll remove the fetch configuration, but not the files. Are you sure?",
     "types": {
       "archive_org": "Internet Archive",
@@ -216,7 +221,7 @@
   "firmware": {
     "current": "Current Firmware: v{version}",
     "downloading_firmware": "Downloading Firmware...",
-    "load_firmware": "Load on to SD Card",
+    "load_firmware": "Load Firmware onto SD Card",
     "loaded_firmware": "Firmware {version} is on the SD card",
     "loaded_firmware_info": "insert & turn the Pocket on to install",
     "no_firmware_loaded": "No firmware file on the SD card waiting to be installed",
@@ -229,20 +234,28 @@
       "from": "From ",
       "title": "v{version} - { published, date, short } Release Notes:"
     },
-    "remove_button": "Remove"
+    "remove_button": "Remove Firmware",
+    "current_label": "Installed Firmware",
+    "versions_title": "Firmware Versions",
+    "jump_to": "Jump to",
+    "badge_latest": "Latest",
+    "badge_installed": "Installed",
+    "published": "{date, date, medium}"
   },
   "games": {
     "controls": {
       "category": "Category",
-      "mrom": "MROM",
-      "clean_files": "Clean Files",
-      "instance_json": "Instance JSON",
+      "mrom": "Move MROM Dumps",
+      "clean_files": "Clean Up Files",
+      "instance_json": "Build Instance JSON",
       "refresh": "Refresh",
       "search": "Search"
     },
     "item": {
       "game_count": "{count, plural, =0 {No Games} one {# Game} other {# Games}}"
-    }
+    },
+    "open_folder": "Open Folder",
+    "none": "No games found. Install a core, then add games to its folder on the SD card."
   },
   "image_editor": {
     "cancel": "Cancel",
@@ -250,7 +263,7 @@
     "remove": "Remove",
     "reset": "Reset",
     "rotate": "Rotate",
-    "save": "Save",
+    "save": "Save Image",
     "scale": "Scale"
   },
   "instance_json": {
@@ -270,10 +283,13 @@
     "platforms": "Platforms",
     "pocket_sync": "Pocket Sync",
     "save_states": "Save States",
-    "saves": "Saves",
+    "saves": "Backups",
     "screenshots": "Screenshots",
     "plugins": "Plugins",
-    "settings": "Settings"
+    "settings": "Settings",
+    "collapse_sidebar": "Collapse sidebar",
+    "expand_sidebar": "Expand sidebar",
+    "views": "Views"
   },
   "update": {
     "overview": "{install_count, plural, =0 {No installed cores} one {# installed core} other {# installed cores}}, {update_count, plural, =0 {no updatable cores} one {# updatable core} other {# updatable cores}}, and {not_installed_count, plural, =0 {no installable cores} one {# installable core} other {# installable cores}}",
@@ -311,7 +327,6 @@
         "text": "This will skip all required files for this core, files can be installed later via the Cores tab"
       }
     },
-
     "donate_archive_org": "Some of these files are massive so please donate to the internet archive",
     "controls": {
       "filter_by_author": "Filter by Author {count, plural, =0 {} other {(#)}}",
@@ -351,14 +366,16 @@
         "in_progress": "Downloading file {file_name} ({file_bytes}) for {core_name} ({index}/{total})\n{remaining_bytes} remaining",
         "finished": "Downloaded required files ({index}/{total})"
       }
-    }
+    },
+    "update_button": "Update {count, plural, =0 {Installed Cores} one {# Installed Core} other {# Installed Cores}}",
+    "install_button": "Install {count, plural, =0 {New Cores} one {# New Core} other {# New Cores}}"
   },
   "plugins": {
     "buttons": {
       "add": "Add Plugin",
-      "refresh": "Refresh"
+      "refresh": "Refresh Plugins"
     },
-    "remove": "Remove",
+    "remove": "Remove Plugin",
     "confirm_remove": "This will also remove any local data the plugin has stored on this computer, are you sure?",
     "confirm_exit": "The plugin is still running, are you sure you want to close the window?",
     "safe_to_close": "Plugin has finished, this window can be closed",
@@ -373,10 +390,10 @@
   },
   "palettes": {
     "buttons": {
-      "add_via_code": "Add via code",
-      "new": "New Palette",
-      "back": "Back to list",
-      "palette_town": "Palette Town"
+      "add_via_code": "Add Palette via Code",
+      "new": "Create Palette",
+      "back": "Back to Palettes",
+      "palette_town": "Browse Palette Town"
     },
     "town": {
       "title": "Palette Town",
@@ -384,15 +401,15 @@
       "close": "Close"
     },
     "item": {
-      "duplicate": "Duplicate",
-      "rename": "Rename",
-      "copy_code": "Copy share code",
-      "delete": "Delete"
+      "duplicate": "Duplicate Palette",
+      "rename": "Rename Palette",
+      "copy_code": "Copy Share Code",
+      "delete": "Delete Palette"
     },
     "add_via_code": {
       "title": "Add via share code",
       "cancel": "Cancel",
-      "add": "Add"
+      "add": "Add Palette"
     },
     "full": {
       "inputs": {
@@ -402,19 +419,19 @@
         "window": "window",
         "off": "LCD off"
       },
-      "save": "Save",
-      "reset": "Reset",
+      "save": "Save Palette",
+      "reset": "Reset Colours",
       "emu_credit": "GB emulator adapted from <1>roblouie/gameboy-emulator</1>"
     }
   },
   "mister_sync": {
     "controls": {
-      "back": "Exit",
+      "back": "Exit MiSTer Sync",
       "search": "Search Saves",
       "save_mapping": "Save Mapping"
     },
     "login": {
-      "connect": "Connect",
+      "connect": "Connect to MiSTer",
       "host": "Host / IP Address:",
       "password": "Password:",
       "username": "Username:"
@@ -428,7 +445,7 @@
     "unsupported": "{platform} is not mapped",
     "mapping": {
       "close": "Close",
-      "clear": "Clear",
+      "clear": "Clear Mapping",
       "reset": "Reset to default"
     }
   },
@@ -438,11 +455,11 @@
   },
   "platform_info": {
     "controls": {
-      "back": "Back to list",
-      "data_packs": "Data Packs",
+      "back": "Back to Platforms",
+      "data_packs": "Manage Data Packs",
       "archive": "Archive Platform",
       "unarchive": "Unarchive Platform",
-      "image_packs": "Image Packs"
+      "image_packs": "Manage Image Packs"
     },
     "cores": "Cores",
     "edit": "Edit"
@@ -451,10 +468,10 @@
     "cancel": "Cancel",
     "count": "{count} Platforms",
     "controls": {
-      "data_packs": "Data Packs",
-      "remove_coreless": "Remove Coreless",
+      "data_packs": "Manage Data Packs",
+      "remove_coreless": "Remove Coreless Platforms",
       "archive": "Archive Platforms",
-      "image_packs": "Image Packs",
+      "image_packs": "Manage Image Packs",
       "search": "Search"
     },
     "archive": {
@@ -482,7 +499,7 @@
       "close": "Close",
       "current": "Current"
     },
-    "save": "Save"
+    "save": "Save Changes"
   },
   "progress": {
     "remaining_time": "Remaining Time (approx): {remainingTime}",
@@ -491,7 +508,7 @@
   "save_info": {
     "confirm_restore": "Restore from backup?",
     "controls": {
-      "back": "Back to list",
+      "back": "Back to Backups",
       "hide_unchanged": "Hide Unchanged",
       "search": "Search"
     },
@@ -532,21 +549,29 @@
     "backups": "Backups: {count}",
     "confirm_delete": "Are you sure you want to remove this backup location?",
     "controls": {
-      "add_backup_location": "Add backup location",
-      "mister_sync": "MiSTer Sync"
+      "add_backup_location": "Add Backup Location",
+      "mister_sync": "Open MiSTer Sync"
     },
     "latest_backup": "Last Backup: {date, date, long}, {date, time, short}",
     "none": "Add a backup location above",
     "not_found": "Not found",
     "oldest_backup": "Oldest Backup: {date, date, long}, {date, time, short}",
     "remove": "Remove Location",
-    "view_saves": "View Saves"
+    "view_saves": "View Saves",
+    "copy_path": "Copy Path",
+    "open_folder": "Open Folder",
+    "copied": "Copied",
+    "location_title": "Location {number}",
+    "back_up_now": "Back Up Now",
+    "backing_up": "Backing Up…",
+    "last_backup_label": "Last backup",
+    "never": "No backups yet"
   },
   "screenshot_info": {
     "controls": {
-      "back": "Back to list",
-      "save": "Save",
-      "share": "Share",
+      "back": "Back to Screenshots",
+      "save": "Save Screenshot",
+      "share": "Share Screenshot",
       "upscaled": "Upscaled"
     }
   },
@@ -619,22 +644,24 @@
       "checkbox": "Always use English (US)"
     },
     "archive": {
-      "save": "Save",
+      "save": "Save URL",
       "title": "ROM & BIOS archive (Required Files)",
-      "warning": "Please check with your local laws around the downloading of potentially copyrighted (arcade) ROM & BIOS files.\nIf you are comfortable with this, copy the following url into the input and hit \"save\"."
+      "warning": "Please check with your local laws around the downloading of potentially copyrighted (arcade) ROM & BIOS files.\nIf you are comfortable with this, copy the following url into the input and hit \"save\".",
+      "copy_url": "Copy URL",
+      "copied": "Copied"
     },
     "github_token": {
       "title": "Github Token",
-      "remove": "Remove",
+      "remove": "Remove Token",
       "ramble": "If you're having issues with the GitHub rate limit, then add a PAT token below.\nThe PAT token shouldn't have any scopes set, and is stored on your computer rather than on the Pocket's SD card."
     },
     "clear_file_cache": {
-      "button": "Clear file cache",
+      "button": "Clear File Cache",
       "ramble": "To help with USB & SD card transfer larger files are copied & stored on your computer's file system,\nwhich should be fine but if you're running into issues try clearing the file cache.",
       "title": "Clear file cache"
     },
     "disconnect": {
-      "button": "Disconnect",
+      "button": "Disconnect Pocket",
       "ramble": "Return to the \"Connect To Pocket\" screen (This doesn't eject the SD Card / USB drive)",
       "title": "Disconnect"
     },
@@ -660,14 +687,21 @@
     "hidden_cores": {
       "title": "Hidden Cores",
       "ramble": "These cores are hidden from the list of available uninstalled cores, if installed they are not hidden. \nYou can hide cores from their info pages.",
-      "button": "Clear hidden cores list"
+      "button": "Clear Hidden Cores List"
     },
     "gb_palettes_conversion": {
       "title": "GB Palettes Formats",
       "ramble": "Duplicate the .pal files into .gbp files. Copies the 4 colours used for the background into the new .gbp files.\nToggling will create a .gbp file for every .pal file in /Assets/gb/common/palettes",
       "checkbox": "Enable automatic .gbp files"
     },
-    "thanks": "Thanks to:"
+    "thanks": "Thanks to:",
+    "sections": "Settings sections",
+    "section_titles": {
+      "display": "Display",
+      "downloads": "Downloads",
+      "files": "Files",
+      "connection": "Connection"
+    }
   },
   "time_ago": {
     "less_than_1_min_ago": "less than one minute ago"
@@ -684,7 +718,7 @@
       "other": "Other"
     },
     "cancel_button": "Cancel",
-    "confirm_button": "Confirm",
+    "confirm_button": "Install Files",
     "remove_duplicate": "Remove duplicate existing files",
     "scanning": "Scanning files...",
     "moved_files_info": "Handles cases where files have moved, e.g. JSON files are now in `_alternatives`",

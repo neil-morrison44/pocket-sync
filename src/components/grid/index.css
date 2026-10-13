@@ -23,3 +23,8 @@
     grid-template-columns: repeat(5, minmax(100px, 1fr));
   }
 }
+
+:root.keyboard-focus .grid > [role="button"]:focus {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: 3px;
+}

@@ -10,7 +10,7 @@
 }
 
 .news-feed__title-last-updated{
-  opacity: 0.6;
+  color: var(--theme-text-soft);
   float: right;
 }
 
@@ -54,7 +54,11 @@
   cursor: pointer;
 
   &:hover {
-    transform: scale(1.025);
+    background-color: var(--theme-surface-raised);
+  }
+
+  &:active {
+    transform: scale(0.99);
   }
 }
 
@@ -68,6 +72,7 @@
 
 .news-feed__item-published {
   grid-area: d;
+  color: var(--theme-text-soft);
   text-align: right;
   font-size: 16px;
 }
@@ -78,4 +83,42 @@
   white-space: nowrap;
   width: 100%;
   overflow: hidden;
+}
+
+/* Vertical list, used beside the start screen's hero */
+.news-feed--vertical {
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  max-height: none;
+  min-height: 0;
+  height: 100%;
+
+  .news-feed__list {
+    flex-direction: column;
+    gap: 0;
+    flex-grow: 1;
+    min-height: 0;
+    overflow: hidden auto;
+    padding-inline: 10px;
+  }
+
+  /* Rows on the pane's background, split by dividers */
+  .news-feed__item {
+    width: auto;
+    min-width: 0;
+    flex-shrink: 0;
+    background-color: transparent;
+    border-bottom: 1px solid var(--theme-border);
+
+    &:first-child,
+    &:last-child {
+      margin-inline: 0;
+    }
+
+    :root.keyboard-focus &:focus {
+      outline: 2px solid var(--theme-focus);
+      outline-offset: -2px;
+    }
+  }
 }

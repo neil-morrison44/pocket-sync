@@ -1,0 +1,92 @@
+.tabs {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Segmented control: a framed row; the active tab looks like a light
+   secondary button */
+.tabs__list {
+  display: flex;
+  gap: 2px;
+  position: relative;
+  margin: var(--space-sm);
+  padding: 3px;
+  background-color: var(--theme-background);
+  clip-path: var(--shape-slant);
+
+  /* Slanted 1px frame; clip-path clips real borders */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--theme-separator);
+    clip-path: var(--shape-slant-outline);
+    pointer-events: none;
+  }
+}
+
+/* Slanted like the sidebar items */
+.tabs__trigger {
+  flex: 1 1 0;
+  position: relative;
+  height: 28px;
+  margin: 0;
+  padding-block: 0;
+  padding-inline: 12px;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  color: var(--theme-text-soft);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  clip-path: var(--shape-slant);
+
+  /* clip-path also clips outlines, so focus is a ring drawn inside the shape */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--theme-focus);
+    clip-path: var(--shape-slant-ring);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  :root.keyboard-focus &:focus::after {
+    visibility: visible;
+  }
+
+  &:hover:not([data-state="active"]) {
+    background-color: var(--theme-surface-raised);
+    color: var(--theme-text-headline);
+  }
+
+  &[data-state="active"] {
+    background-color: var(--theme-control-background);
+    color: var(--theme-control-text);
+  }
+}
+
+.tabs__content {
+  flex-grow: 1;
+  min-height: 0;
+  overflow: hidden auto;
+
+  :root.keyboard-focus &:focus {
+    outline: 2px solid var(--theme-focus);
+    outline-offset: -2px;
+  }
+
+  &[data-state="inactive"] {
+    display: none;
+  }
+}

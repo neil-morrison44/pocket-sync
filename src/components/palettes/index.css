@@ -4,24 +4,65 @@
   flex-direction: column;
 }
 
+/* Tiled cards; grids may use the full width */
 .palettes__list {
   list-style: none;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  padding: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-xl);
+  padding: var(--space-xl);
   overflow: auto;
 }
 
-.palettes__list-item {
+.palettes__card {
   display: flex;
-  align-items: center;
-  gap: 20px;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  background-color: var(--theme-surface-sunken);
+  border: 1px solid var(--theme-border);
 }
 
-.palettes__list-item-input {
-  font-size: 2rem;
+.palettes__card-open {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
+  color: var(--theme-text-headline);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  :root.keyboard-focus &:focus {
+    outline: 2px solid var(--theme-focus);
+    outline-offset: 2px;
+  }
+}
+
+.palettes__card-rename {
+  display: flex;
+  gap: var(--space-sm);
+
+  .text-input {
+    flex-grow: 1;
+    width: auto;
+  }
+}
+
+.palettes__card-actions {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+/* Keep the destructive action apart from the others */
+.palettes__card-delete {
+  margin-inline-start: auto;
 }
 
 .palettes_code-modal{
@@ -48,37 +89,12 @@
   align-items: center;
 }
 
-.palettes__list-item-info{
-  background-color: var(--info-colour);
-  padding: 15px;
-  border-radius: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 2rem;
-  font-family: GamePocket, sans-serif;
-  flex-grow: 1;
-  cursor: pointer;
-  gap: 20px;
-  line-height: 1.1em;
-
-  &:hover{
-    transform: scale(1.02);
-  }
-}
-
 .palettes__list-item-canvas{
   image-rendering: pixelated;
-  width: 100px;
-  height: 80px;
-  border: 1px solid white;
-  flex-shrink: 0;
-}
-
-.palettes__list-item-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 4;
+  border: 1px solid var(--theme-border);
   flex-shrink: 0;
 }
 

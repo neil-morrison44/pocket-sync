@@ -1,65 +1,46 @@
+/* Compact filter bar: one row of 28px controls */
 .controls {
+  --control-height: 28px;
+
   display: flex;
-  justify-content: space-between;
-  font-size: 1.125rem;
-  background-color: var(--info-colour);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.875rem;
+  background-color: var(--theme-surface-sunken);
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 2px var(--light-colour) solid;
-  box-shadow: 0 0 5px black;
-  padding-block: 8px;
-  padding-inline: 10px;
-  gap: 20px;
+  border-bottom: 1px solid var(--theme-border);
+  padding-block: var(--space-sm);
+  padding-inline: var(--space-lg);
 }
 
-.controls__item,
-.controls__button,
 .controls__popover-button {
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   accent-color: black;
-  padding-inline: 10px;
   text-align: center;
   /* stylelint-disable-next-line property-no-vendor-prefix */
   -webkit-user-select: none;
   user-select: none;
-}
-
-.controls__checkbox {
-  display: flex;
-  gap: 0.2em;
-  align-items: center;
-}
-
-.controls__search-input {
-  border: 0 solid transparent;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  width: 200px;
-  transition: border-color 0.25s;
-  min-height: 35px;
-}
-
-.controls__button,
-.controls__popover-button {
   border-radius: 0;
-  padding-block: 5px;
-  padding-inline: 15px;
-  background-color: #eee;
-  color: black;
+  height: var(--control-height);
+  padding-block: 0;
+  padding-inline: 12px;
+  background-color: var(--theme-control-background);
+  color: var(--theme-control-text);
   font-weight: 500;
-  clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
+  clip-path: var(--shape-slant);
 
   &:hover {
     filter: brightness(80%);
   }
 
   &:active {
-    transform: scale(0.9);
+    transform: scale(0.97);
   }
 }
 
@@ -91,111 +72,49 @@
   }
 }
 
-.controls__button--back {
-  padding-inline-start: 0;
-}
-
-.controls__checkbox {
-  clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
-  align-self: stretch;
-  padding-inline: 10px;
-  padding-block: 5px;
-  background-color: #eee;
-  color: black;
-  font-weight: 500;
+/* Actions sit at the far right, after search and filters */
+.controls__actions {
   display: flex;
-  align-items: flex-end;
-
-  input {
-    display: none;
-  }
-
-  &:hover {
-    filter: brightness(80%);
-  }
-
-  &:active {
-    filter: invert();
-  }
-}
-
-.controls__checkbox--checked {
-  background-color: var(--selection-colour);
-  color: white;
-
-  &:active {
-    background-color: #eee;
-    color: black;
-  }
-}
-
-.controls__select {
-  display: flex;
-  padding-inline: 10px;
-  clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
-  gap: 5px;
-  align-items: center;
-  font-size: 1.125rem;
   flex-wrap: wrap;
-
-  & > select {
-    font-size: 1.125rem;
-    font-weight: bold;
-  }
-
-  align-self: stretch;
-  padding-block: 2px;
-  background-color: #eee;
-  color: black;
-  font-weight: 400;
-
-  &:hover {
-    filter: brightness(80%);
-  }
+  align-items: center;
+  gap: var(--space-sm);
+  margin-inline-start: auto;
 }
 
-.controls__search {
-  align-self: center;
-  background-color: white;
-  border-radius: 10px;
-}
-
+/* Inline group: a small label, then its controls, set off by a slanted rule */
 .controls__group {
-  font-size: 1rem;
-  gap: 5px;
   display: flex;
-  flex-direction: column;
-  padding-block: 5px;
-  padding-inline: 10px;
+  align-items: center;
+  gap: var(--space-sm);
+  padding-inline-start: var(--space-lg);
   position: relative;
 
-  &::before,
-  &::after {
+  &::before {
     content: "";
-    height: 100%;
-    width: 2px;
-    background-color: white;
-    opacity: 0.6;
     position: absolute;
     left: 0;
-    top: 0;
-    transform: rotate(8deg);
-  }
-
-  &::after {
-    left: unset;
-    right: 0;
+    top: 50%;
+    height: var(--control-height);
+    width: 1px;
+    background-color: var(--theme-text-soft);
+    transform: translateY(-50%) rotate(10deg);
   }
 }
 
 .controls__group-title {
-  font-size: 1rem;
-  width: 100%;
-  line-height: 1em;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--theme-text-soft);
 }
 
 .controls__group-items {
   display: flex;
-  gap: 10px;
-  padding-inline: 5px;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.controls__back-button {
+  padding-inline-start: 8px;
 }

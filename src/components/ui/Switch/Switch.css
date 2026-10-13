@@ -1,0 +1,82 @@
+.switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+
+.switch__label {
+  cursor: pointer;
+}
+
+/* Slanted track with a square, pixel-like thumb */
+.switch__track {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  position: relative;
+  width: 44px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: var(--theme-surface);
+  clip-path: var(--shape-slant);
+  cursor: pointer;
+  transition: background-color 100ms ease;
+
+  /* clip-path also clips outlines, so focus is a ring drawn inside the shape */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--theme-focus);
+    clip-path: var(--shape-slant-ring);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  :root.keyboard-focus &:focus::after {
+    visibility: visible;
+  }
+
+  &[data-state="checked"] {
+    background-color: var(--theme-accent);
+  }
+}
+
+.switch__thumb {
+  display: block;
+  width: 14px;
+  height: 14px;
+  background-color: var(--theme-text);
+  transform: translateX(9px);
+  transition: transform 100ms ease;
+
+  &[data-state="checked"] {
+    background-color: var(--theme-accent-text);
+    transform: translateX(21px);
+  }
+}
+
+.switch--is-disabled {
+  opacity: 0.4;
+
+  .switch__label,
+  .switch__track {
+    cursor: default;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .switch__track,
+  .switch__thumb {
+    transition: none;
+  }
+}

@@ -12,7 +12,7 @@ import {
 } from "react"
 
 import "./index.css"
-import { Controls } from "../controls"
+import { Controls, ControlsActions } from "../controls"
 import { ControlsButton } from "../controls/inputs/button"
 import { PaletteFull } from "./paletteFull"
 import { ControlsBackButton } from "../controls/inputs/backButton"
@@ -32,6 +32,9 @@ import { useTranslation } from "react-i18next"
 import { PreviewCanvas } from "./previewCanvas"
 import { PaletteTown } from "./town"
 import { useAtomValue } from "jotai"
+import Icon from "../ui/Icon"
+import IconButton from "../ui/IconButton"
+import TextInput from "../ui/TextInput"
 
 type PaletteUIModes =
   { name: "list" } | { name: "new" } | { name: "selected"; palette: string }
@@ -70,23 +73,25 @@ export const Palettes = () => {
           </ControlsBackButton>
         )}
 
-        {mode.name === "list" && (
-          <>
-            <ControlsButton onClick={() => setCodeModalOpen(true)}>
-              {t("buttons.add_via_code")}
-            </ControlsButton>
-            <ControlsButton
-              onClick={() => {
-                setTownOpen(true)
-              }}
-            >
-              {t("buttons.palette_town")}
-            </ControlsButton>
-            <ControlsButton onClick={() => createNewPalette()}>
-              {t("buttons.new")}
-            </ControlsButton>
-          </>
-        )}
+        <ControlsActions>
+          {mode.name === "list" && (
+            <>
+              <ControlsButton onClick={() => setCodeModalOpen(true)}>
+                {t("buttons.add_via_code")}
+              </ControlsButton>
+              <ControlsButton
+                onClick={() => {
+                  setTownOpen(true)
+                }}
+              >
+                {t("buttons.palette_town")}
+              </ControlsButton>
+              <ControlsButton onClick={() => createNewPalette()}>
+                {t("buttons.new")}
+              </ControlsButton>
+            </>
+          )}
+        </ControlsActions>
       </Controls>
 
       {townOpen && <PaletteTown onClose={() => setTownOpen(false)} />}
@@ -186,55 +191,59 @@ export const PaletteListItem = ({
   }, [interimName, name, pocketPath])
 
   return (
-    <li className="palettes__list-item">
-      <div
-        className="palettes__list-item-info"
-        onClick={renameMode ? undefined : onClick}
-      >
-        {renameMode ? (
-          <div>
-            <input
-              type="text"
-              className="palettes__list-item-input"
-              value={interimName}
-              onChange={({ target }) => setInterimName(target.value)}
-              onKeyDown={({ key }) => {
-                if (key === "Enter") renamePalette()
-              }}
-            />
-            <button onClick={renamePalette}>
-              <CheckIcon />
-            </button>
-          </div>
-        ) : (
+    <li className="palettes__card">
+      {renameMode ? (
+        <div className="palettes__card-rename">
+          <TextInput
+            label={t("item.rename")}
+            value={interimName}
+            onChange={setInterimName}
+            onKeyDown={({ key }) => {
+              if (key === "Enter") renamePalette()
+            }}
+            autoFocus
+          />
+          <IconButton
+            icon="check"
+            label={t("item.rename")}
+            onClick={renamePalette}
+          />
+        </div>
+      ) : (
+        <button type="button" className="palettes__card-open" onClick={onClick}>
+          <Suspense>
+            <PreviewCanvas name={name} />
+          </Suspense>
           <PaletteName name={name} />
-        )}
-
-        <Suspense>
-          <PreviewCanvas name={name} />
-        </Suspense>
-      </div>
-      <div className="palettes__list-item-buttons">
-        <button onClick={duplicatePalette}>{t("item.duplicate")}</button>
-        <button
-          onClick={() => {
-            writeText(paletteCode)
-          }}
-        >
-          {t("item.copy_code")}
         </button>
-      </div>
+      )}
 
-      <div className="palettes__list-item-buttons">
-        <button
+      <div className="palettes__card-actions">
+        <IconButton
+          icon="copy"
+          label={t("item.duplicate")}
+          onClick={duplicatePalette}
+        />
+        <IconButton
+          icon="code"
+          label={t("item.copy_code")}
+          onClick={() => writeText(paletteCode)}
+        />
+        <IconButton
+          icon="pencil"
+          label={t("item.rename")}
           onClick={() => {
             setInterimName(name.replace(".pal", ""))
             setRenameMode(true)
           }}
-        >
-          {t("item.rename")}
-        </button>
-        <button onClick={deletePalette}>{t("item.delete")}</button>
+        />
+        <IconButton
+          icon="trash"
+          theme="destructive"
+          label={t("item.delete")}
+          onClick={deletePalette}
+          className="palettes__card-delete"
+        />
       </div>
     </li>
   )
@@ -300,17 +309,3 @@ const AddViaCodeModal = ({ onClose }: { onClose: () => void }) => {
     </Modal>
   )
 }
-
-const CheckIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    height="1.1em"
-    viewBox="0 -960 960 960"
-    width="1.1em"
-  >
-    <path
-      fill="currentColor"
-      d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"
-    />
-  </svg>
-)

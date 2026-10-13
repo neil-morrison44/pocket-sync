@@ -27,7 +27,6 @@ import {
 import { installedCoresWithUpdatesSelector } from "../../jotai/cores/selectors"
 import { PlatformImage } from "../cores/platformImage"
 import { coreInventoryAtom } from "../../jotai/inventory/atoms"
-import { KeyIcon } from "../cores/icons/keyIcon"
 import { aiCheckAtom } from "../../jotai/cores/atoms"
 import { Controls } from "../controls"
 import { ControlsPopoverButton } from "../controls/inputs/popoverButton"
@@ -46,6 +45,8 @@ import {
 import { OtherFilterType, UpdateControls } from "./controls"
 import { turboDownloadsAtom } from "../../jotai/settings/atoms"
 import { currentViewAtom } from "../../jotai/view/atoms"
+import Icon from "../ui/Icon"
+import Button from "../ui/Button"
 
 export const Update = () => {
   const [updateFilterDefaultsOptions, setUpdateFilterDefaultsOptions] = useAtom(
@@ -132,34 +133,38 @@ const UpdateOptions = ({ onStart, listElement }: UpdateOptionsProps) => {
   const config = useAtomValue(PocketSyncConfigSelector)
   const turboDownloads = useAtomValue(turboDownloadsAtom)
 
-  const startCallback = useCallback(async () => {
-    if (config.archive_url === "" || config.archive_url === null) {
-      const confirmNoArchiveUrl = await confirm(
-        t("no_archive_url_warning.text"),
-        {
-          title: t("no_archive_url_warning.title"),
-          kind: "warning",
-        }
-      )
-      if (!confirmNoArchiveUrl) return
-    }
+  /** Updates the installed cores or installs the new ones, never both. */
+  const startCallback = useCallback(
+    async (mode: "update" | "install") => {
+      if (config.archive_url === "" || config.archive_url === null) {
+        const confirmNoArchiveUrl = await confirm(
+          t("no_archive_url_warning.text"),
+          {
+            title: t("no_archive_url_warning.title"),
+            kind: "warning",
+          }
+        )
+        if (!confirmNoArchiveUrl) return
+      }
 
-    onStart()
+      onStart()
 
-    await invokeInstallAndUpdateCores({
-      installList: selectedCores.install,
-      updateList: selectedCores.update,
-      options: {
-        include_alternate_files: !config.skipAlternateAssets,
-        retain_platform_files: true,
-        archive_url: config.archive_url ?? undefined,
-        fast_downloads: turboDownloads.enabled,
-      },
-    })
+      await invokeInstallAndUpdateCores({
+        installList: mode === "install" ? selectedCores.install : [],
+        updateList: mode === "update" ? selectedCores.update : [],
+        options: {
+          include_alternate_files: !config.skipAlternateAssets,
+          retain_platform_files: true,
+          archive_url: config.archive_url ?? undefined,
+          fast_downloads: turboDownloads.enabled,
+        },
+      })
 
-    // shouldn't need to do this but the observer might break when the list suspends
-    setSelectedCores({ install: [], update: [] })
-  }, [config, selectedCores])
+      // shouldn't need to do this but the observer might break when the list suspends
+      setSelectedCores({ install: [], update: [] })
+    },
+    [config, selectedCores]
+  )
 
   // bad React but I don't care,
   // can't think of a better way to have each core item manage wether it's hidden or shown
@@ -190,13 +195,21 @@ const UpdateOptions = ({ onStart, listElement }: UpdateOptionsProps) => {
 
   return (
     <div className="update__action-buttons">
-      <div className="update__options"></div>
-      <button className="update__action-button-start" onClick={startCallback}>
-        {t("start_button", {
-          update_count: selectedCores.update.length,
-          install_count: selectedCores.install.length,
-        })}
-      </button>
+      <Button
+        theme="tertiary"
+        icon="download"
+        disabled={selectedCores.install.length === 0}
+        onClick={() => startCallback("install")}
+      >
+        {t("install_button", { count: selectedCores.install.length })}
+      </Button>
+      <Button
+        icon="reload"
+        disabled={selectedCores.update.length === 0}
+        onClick={() => startCallback("update")}
+      >
+        {t("update_button", { count: selectedCores.update.length })}
+      </Button>
     </div>
   )
 }
@@ -331,7 +344,7 @@ const InstalledCoreItem = ({
 
       <div className="update__list-item-version">
         <div className="update__list-item-version-old">{installedVersion}</div>
-        <ArrowIcon />
+        <Icon icon="arrow-right" />
         <div className="update__list-item-version-new">{latestVersion}</div>
       </div>
       <div className="update__list-item-date">
@@ -428,7 +441,7 @@ const NotInstalledCoreItem = ({ coreName }: { coreName: string }) => {
           className="update__list-item-license"
           title={t("requires_license")}
         >
-          <KeyIcon />
+          <Icon icon="key" />
         </div>
       )}
 
@@ -440,15 +453,3 @@ const NotInstalledCoreItem = ({ coreName }: { coreName: string }) => {
     </div>
   )
 }
-
-const ArrowIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    height="24px"
-    viewBox="0 -960 960 960"
-    width="24px"
-    fill="currentColor"
-  >
-    <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z" />
-  </svg>
-)
