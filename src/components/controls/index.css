@@ -6,14 +6,50 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-sm);
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   background-color: var(--theme-background);
   position: sticky;
   top: 0;
   z-index: 100;
   border-bottom: 1px solid var(--theme-separator);
   padding-block: var(--space-sm);
-  padding-inline: var(--space-lg);
+  padding-inline: var(--page-padding-inline);
+
+  &.controls--variant-static {
+    position: relative;
+    z-index: auto;
+    border-bottom: none;
+  }
+}
+
+/* Title after the back button: name, then soft secondary info */
+.controls__title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--theme-text-headline);
+  transition: opacity 150ms ease;
+}
+
+.controls__title-detail {
+  font-weight: normal;
+  color: var(--theme-text-soft);
+}
+
+.controls__title--is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .controls__title {
+    transition: none;
+  }
 }
 
 /* Actions sit at the far right, after search and filters */
@@ -46,7 +82,7 @@
 }
 
 .controls__group-title {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;

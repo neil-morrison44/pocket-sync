@@ -1,9 +1,14 @@
 import React, { ReactNode, useContext, useDeferredValue, useMemo } from "react"
 import { fuzzy } from "fast-fuzzy"
+import type { CoreFeature } from "../cores/features"
 
 type Other = {
   onlyUpdates?: boolean
   category?: string
+  /** Only show cores that support all of these. */
+  features?: CoreFeature[]
+  /** Only show cores for this platform id ("All" for any). */
+  platform?: string
 }
 
 const SearchContext = React.createContext<{

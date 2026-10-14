@@ -19,6 +19,8 @@ import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { useTranslation } from "react-i18next"
 import { ControlsButton } from "../controls/inputs/button"
+import Button from "../ui/Button"
+import EmptyState from "../ui/EmptyState"
 import { ProgressLoader, ProgressLoaderInner } from "../loader/progress"
 import { usePreventGlobalZipInstallModal } from "../../hooks/usePreventGlobalZipInstall"
 import { FetchInfoSelectorFamily } from "../../jotai/fetch/selectors"
@@ -67,6 +69,19 @@ export const Fetch = () => {
         </ControlsActions>
       </Controls>
       {newFetchOpen && <NewFetch onClose={() => setNewFetchOpen(false)} />}
+      {list.length === 0 && (
+        <EmptyState
+          icon="download"
+          title={t("empty.title")}
+          action={
+            <Button theme="primary" onClick={() => setNewFetchOpen(true)}>
+              {t("controls.add_fetch_item")}
+            </Button>
+          }
+        >
+          {t("empty.text")}
+        </EmptyState>
+      )}
       <div className="fetch__list">
         {list.map((item, index) => {
           switch (item.type) {

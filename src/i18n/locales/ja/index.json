@@ -19,12 +19,17 @@
       "firmware": "ファームウェア",
       "cores": "コア",
       "games": "ゲーム"
-    }
+    },
+    "show_updates_new": "アップデートを表示（新着あり）",
+    "open_sd_card": "SD カードを開く"
   },
   "app": {
     "app_name": "Pocket Sync",
     "connect_button": "Pocket / SD Card に接続",
-    "not_pocket_tip": "このフォルダに Pocket システムファイルが存在しないようです、SD Card を少なくとも一度 Pocket に挿入する必要があります"
+    "not_pocket_tip": "このフォルダに Pocket システムファイルが存在しないようです、SD Card を少なくとも一度 Pocket に挿入する必要があります",
+    "close": "閉じる",
+    "loading": "読み込み中",
+    "dismiss": "閉じる"
   },
   "clean_files": {
     "close_button": "閉じる",
@@ -65,7 +70,9 @@
       "install": "コアをインストール",
       "required_files": "必要なファイルを読み込む",
       "uninstall": "コアをアンインストール",
-      "update": "コアをアップデート"
+      "update_to": "{version} にアップデート",
+      "install_version": "選択したバージョンをインストール",
+      "install_release": "このバージョンをインストール"
     },
     "inputs": "Inputs",
     "modal": {
@@ -82,18 +89,20 @@
     "firmware_too_low": "このコアにはファームウェア v{core_firmware} が必要です、現在インストールされているバージョンは v{pocket_firmware} です",
     "not_in_inventory": "{coreName} はインベントリにありません",
     "platform": {
-      "edit": "編集",
-      "wikipedia": "Wikipedia"
+      "wikipedia": "Wikipedia",
+      "open": "プラットフォームを開く"
     },
     "replaced": "このコアは <1>{replacementCore}</1> に置き換えられました",
     "platforms": "プラットフォーム",
     "release_date": "リリース日",
     "releases": {
       "release_history": "履歴",
-      "show_previous": "過去のバージョンを表示"
+      "show_previous": "過去のバージョンを表示",
+      "latest": "最新",
+      "prerelease": "プレリリース",
+      "on_github": "GitHub で見る"
     },
     "required_files": "必要なファイル",
-    "required_files_count": "{count} / {total} ファイル",
     "settings": "Settings",
     "sponsor": "スポンサー",
     "download_count": "Downloads",
@@ -105,14 +114,54 @@
       "cartridges": "カートリッジ",
       "dock": "Dock",
       "dock_dac": "Dock (Analog)",
-      "save_states_and_sleep": "セーブステート / スリープ"
+      "save_states_and_sleep": "セーブステート / スリープ",
+      "link_port": "通信ケーブル",
+      "analogizer": "Analogizer"
     },
     "url": "URL",
     "version": "バージョン",
     "display_modes_title": "Display Modes",
     "display_mode_warning": "この Display Mode を適用するにはコアのアップデートが必要です、それでも有効にしますか？",
     "previous_version": "以前のバージョン",
-    "display_modes_limit": "コアは最大 16 個の表示モードのみをサポートします。{count} 個が選択されています"
+    "display_modes_limit": "コアは最大 16 個の表示モードのみをサポートします。{count} 個が選択されています",
+    "tabs": {
+      "label": "コアの詳細",
+      "overview": "概要",
+      "releases": "リリース"
+    },
+    "tags": {
+      "installed": "インストール済み",
+      "update": "アップデート {version}",
+      "ai": "AI {score, number, percent}",
+      "license": "ライセンス",
+      "manual": "手動",
+      "manual_hint": "手動でインストールされました（.zip からなど）。コア一覧にないため、Pocket Sync ではアップデートできません。"
+    },
+    "guide": {
+      "install": "インストールすると、バージョン {version} が SD カードの Cores フォルダにダウンロードされます。BIOS ファイルなどの追加ファイルが必要な場合は、その後ここで読み込めます。",
+      "update": "バージョン {version} が利用可能です。現在のバージョンは {installed} です。",
+      "up_to_date": "インストール済みで最新です。",
+      "required_files_missing": "必要なファイル {total} 個中 {count} 個が見つかりました。コアを動かすには不足しているファイルを読み込んでください。",
+      "required_files_found": "必要なファイル {total} 個がすべて見つかりました。",
+      "update_title": "アップデートがあります"
+    },
+    "preset": "プリセット",
+    "inputs_empty": "このコアはボタン割り当てを定義していません。",
+    "input_keys": {
+      "pad_btn_a": "A",
+      "pad_btn_b": "B",
+      "pad_btn_x": "X",
+      "pad_btn_y": "Y",
+      "pad_trig_l": "L",
+      "pad_trig_r": "R",
+      "pad_btn_start": "Start",
+      "pad_btn_select": "Select"
+    },
+    "firmware_required": "必要なファームウェア",
+    "core_settings_title": "コア設定",
+    "display_modes_hint": "Pocket で選択できるようにしたいディスプレイモードをオンにしてください。",
+    "previous_version_hint": "公開済みの任意のバージョンをインストールできます（アップデート後に元に戻す場合など）。",
+    "core_settings_hint": "変更はすぐに SD カードに保存されます。"
   },
   "core_info_required_files": {
     "close": "閉じる",
@@ -142,11 +191,16 @@
       "sort_options": {
         "name": "名前",
         "last_update": "最新アップデート"
-      }
+      },
+      "features": "機能",
+      "features_count": "機能 ({count})",
+      "platform": "プラットフォーム",
+      "update_all_count": "すべてアップデート ({count})"
     },
     "install_tip": "コア（またはその他の ZIP ファイル）をこのウィンドウにドラッグしてインストールすることもできます",
     "installed": "インストール済み ({count})",
-    "not_installed": "利用可能 ({count})"
+    "not_installed": "利用可能 ({count})",
+    "updates": "利用可能なアップデート ({count})"
   },
   "error": {
     "report": "GitHubでエラーを報告できます。報告する際は以下のテキストと直前のアクションを含めてください",
@@ -186,6 +240,10 @@
     "types": {
       "archive_org": "archive.org ファイル",
       "filesystem": "ローカルファイル"
+    },
+    "empty": {
+      "title": "フェッチ元がまだありません",
+      "text": "フェッチは PC のフォルダや archive.org から SD カードにファイルをコピーします。ソースを追加して始めましょう。"
     }
   },
   "firmware": {
@@ -210,7 +268,10 @@
     "jump_to": "ジャンプ",
     "badge_latest": "最新",
     "badge_installed": "インストール済み",
-    "published": "{date, date, medium}"
+    "published": "{date, date, medium}",
+    "loaded_current": "インストール済みファームウェア (v{version}) のインストーラーが SD カードに残っています。",
+    "loaded_current_info": "もう必要ないので削除できます。",
+    "remove_installer": "インストーラーを削除"
   },
   "games": {
     "controls": {
@@ -219,13 +280,17 @@
       "instance_json": "Instance JSON を作成",
       "refresh": "更新",
       "search": "検索",
-      "mrom": "MROM ダンプを移動"
+      "mrom": "MROM ダンプを移動",
+      "platform": "プラットフォーム",
+      "all": "すべて"
     },
     "item": {
       "game_count": "{count, plural, =0 {ゲームなし} one {# 個のゲーム} other {# 個のゲーム}}"
     },
     "open_folder": "フォルダを開く",
-    "none": "ゲームが見つかりません。コアをインストールしてから、SD Card のコアのフォルダにゲームを追加してください。"
+    "none": "ゲームが見つかりません。コアをインストールしてから、SD Card のコアのフォルダにゲームを追加してください。",
+    "show_in_folder": "フォルダで表示",
+    "empty_title": "ゲームがまだありません"
   },
   "image_editor": {
     "cancel": "キャンセル",
@@ -234,7 +299,10 @@
     "reset": "リセット",
     "rotate": "回転",
     "save": "画像を保存",
-    "scale": "スケール"
+    "scale": "スケール",
+    "title": "画像を編集",
+    "move_up": "上へ移動",
+    "move_down": "下へ移動"
   },
   "instance_json": {
     "available_for": "以下のコアは自動的にinstance.jsonファイルを作成できます:",
@@ -258,7 +326,9 @@
     "settings": "Settings",
     "collapse_sidebar": "サイドバーを折りたたむ",
     "expand_sidebar": "サイドバーを展開",
-    "views": "ビュー"
+    "views": "ビュー",
+    "core_updates": "{count} 件のコアアップデート",
+    "firmware_update": "ファームウェア {version} が利用可能"
   },
   "plugins": {
     "buttons": {
@@ -276,6 +346,10 @@
       "add": "プラグインの検証とインストール",
       "cancel": "キャンセル",
       "invalid": "そのURLには有効なプラグインが見つかりませんでした"
+    },
+    "empty": {
+      "title": "プラグインはインストールされていません",
+      "text": "プラグインは Pocket Sync にツールを追加します。"
     }
   },
   "palettes": {
@@ -312,6 +386,10 @@
       "save": "パレットを保存",
       "reset": "色をリセット",
       "emu_credit": "GB エミュレータは <1>roblouie/gameboy-emulator</1> をもとに作成されています"
+    },
+    "empty": {
+      "title": "パレットがまだありません",
+      "text": "パレットを作成するか、コードから追加するか、Palette Town を見てみましょう。"
     }
   },
   "mister_sync": {
@@ -336,7 +414,8 @@
     "mapping": {
       "close": "閉じる",
       "clear": "マッピングをクリア",
-      "reset": "初期値にリセット"
+      "reset": "初期値にリセット",
+      "title": "セーブの対応付け"
     }
   },
   "news_feed": {
@@ -349,8 +428,10 @@
       "data_packs": "データパックを管理",
       "image_packs": "イメージパックを管理"
     },
-    "cores": "コア",
-    "edit": "編集"
+    "cores": "インストール済みのコア",
+    "edit": "編集",
+    "details": "詳細",
+    "no_cores": "このプラットフォームを使うインストール済みのコアはありません。"
   },
   "platforms": {
     "cancel": "キャンセル",
@@ -385,7 +466,12 @@
       "close": "閉じる",
       "current": "既存"
     },
-    "save": "変更を保存"
+    "save": "変更を保存",
+    "archived": "アーカイブ済み",
+    "empty": {
+      "title": "SD カードにプラットフォームがありません",
+      "text": "コアをインストールするとプラットフォームが追加されます。"
+    }
   },
   "progress": {
     "remaining_time": "残り時間: 約 {remainingTime}",
@@ -410,7 +496,10 @@
     "controls": {
       "clear_selection": "選択をクリア",
       "delete_selection": "選択項目を削除 ({count})",
-      "search": "検索"
+      "search": "検索",
+      "core": "コア",
+      "platform": "プラットフォーム",
+      "all": "すべて"
     },
     "count": "( {count} / 128 )",
     "item": {
@@ -429,6 +518,10 @@
         "gb_player": "GB Player",
         "black_and_white": "Black & White"
       }
+    },
+    "empty": {
+      "title": "セーブステートがまだありません",
+      "text": "プレイ中に Analogue ボタンと上を押すとメモリーを保存できます。ここに表示されます。"
     }
   },
   "saves": {
@@ -451,7 +544,8 @@
     "back_up_now": "今すぐバックアップ",
     "backing_up": "バックアップ中…",
     "last_backup_label": "最終バックアップ",
-    "never": "バックアップはまだありません"
+    "never": "バックアップはまだありません",
+    "empty_title": "バックアップがまだありません"
   },
   "screenshot_info": {
     "controls": {
@@ -468,7 +562,9 @@
       "search": "検索",
       "select": "選択"
     },
-    "no_screenshots": "スクリーンショットを保存すると、ここに表示されます"
+    "no_screenshots": "スクリーンショットを保存すると、ここに表示されます",
+    "how_to": "プレイ中に Analogue ボタンと Start を同時に押してください。スクリーンショットは SD カードに保存され、ここに表示されます。",
+    "empty_title": "スクリーンショットがまだありません"
   },
   "settings": {
     "3d_pocket": {
@@ -584,6 +680,11 @@
       "style_label": "スタイル",
       "style_slanted": "斜め",
       "style_modern": "モダン"
+    },
+    "dismissed_notes": {
+      "title": "非表示にしたメモ",
+      "ramble": "閉じたメモ（.zip ファイルのドラッグに関するヒントなど）を再表示できます。",
+      "button": "メモを再表示 ({count})"
     }
   },
   "time_ago": {
@@ -610,7 +711,12 @@
       "cancel": "スキップ",
       "text": "{list}\\n\\nアセット、セーブなどのファイルが移動され、古いコアは削除されます。",
       "title": "コアを置き換えますか？"
-    }
+    },
+    "drop": {
+      "title": "ドロップしてインストール",
+      "text": "Pocket Sync が .zip 内のコアとファイルを SD カードにインストールします。"
+    },
+    "downloading": "ダウンロード中…"
   },
   "version": {
     "update_alt": "アップデート {version} が利用可能です",
@@ -620,5 +726,18 @@
   "jobs": {
     "Running": "キャンセル",
     "Stopping": "キャンセル中..."
+  },
+  "pocket_buttons": {
+    "select": "Select",
+    "analogue": "Analogue",
+    "start": "Start",
+    "a": "A",
+    "b": "B",
+    "x": "X",
+    "y": "Y",
+    "up": "上",
+    "down": "下",
+    "left": "左",
+    "right": "右"
   }
 }

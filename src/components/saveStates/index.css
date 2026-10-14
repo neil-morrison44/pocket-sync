@@ -1,42 +1,44 @@
-.save-states {
-  --controls-height: 55px;
-}
-
-.save-states__list {
+/* One group per core (Cartridge first), each with a sticky header */
+.save-states__group {
   display: flex;
-  flex-direction: column-reverse;
-}
+  flex-direction: column;
 
-.save-states__items {
-  display: flex;
-  gap: 8px;
-  padding: 10px;
-  flex-wrap: wrap;
-}
-
-.save-states__items:empty {
-  display: none;
-
-  & + .save-states__core-header {
+  /* Hidden when the search or filters leave it empty */
+  &:not(:has(.save-states__item)) {
     display: none;
   }
 }
 
-.save-states__core-header {
-  background-color: var(--hover-colour);
-  padding: 10px 20px;
+/* Sticks just below the header bar, on the page background */
+.save-states__header {
   position: sticky;
-  top: var(--controls-height);
+  top: var(--header-bar-height);
+  z-index: 10;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-lg);
+  min-height: 48px;
+  padding: var(--space-sm) var(--page-padding-inline);
+  border-bottom: 1px solid var(--theme-separator);
+  background-color: var(--theme-background);
+  color: var(--theme-text-headline);
 }
 
-.save-states__core-header-count {
+.save-states__header-count {
   margin-left: auto;
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+}
+
+.save-states__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  padding: var(--space-lg) var(--page-padding-inline) var(--space-2xl);
 }
 
 .save-states__item {
+  border-radius: var(--radius-card);
   display: flex;
   align-items: center;
   background-color: var(--info-colour);

@@ -23,7 +23,11 @@
   top: var(--space-xl);
   max-height: calc(100vh - 2 * var(--space-xl));
   overflow: hidden auto;
-  padding-inline-end: var(--space-lg);
+
+  /* Room for focus rings outside the items (modern style); the negative
+     margin keeps the menu where it was */
+  margin: -4px 0 0 -4px;
+  padding: 4px var(--space-lg) 4px 4px;
   border-right: 1px solid var(--theme-separator);
 }
 
@@ -42,7 +46,7 @@
 }
 
 .settings__nav-section-title {
-  --nav-font-size: 0.75rem;
+  --nav-font-size: var(--font-size-xs);
 
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -68,7 +72,7 @@
   background: transparent;
   color: var(--theme-text-soft);
   font: inherit;
-  font-size: var(--nav-font-size, 0.875rem);
+  font-size: var(--nav-font-size, var(--font-size-sm));
   text-align: left;
   cursor: pointer;
   clip-path: var(--shape-slant);
@@ -76,8 +80,8 @@
   &::after {
     content: "";
     position: absolute;
-    inset: 0;
-    background-color: var(--theme-focus);
+    inset: var(--focus-ring-inset, 0);
+    background-color: var(--focus-ring-colour, var(--theme-focus));
     clip-path: var(--shape-slant-ring);
     pointer-events: none;
     visibility: hidden;
@@ -162,7 +166,7 @@
 h2.settings__thanks-title {
   margin: 0 0 var(--space-sm);
   padding: 0;
-  font-size: 1.125rem;
+  font-size: var(--font-size-lg);
   line-height: 1.3;
   color: var(--theme-text-headline);
 }
@@ -179,7 +183,7 @@ h2.settings__thanks-title {
 /* A setting row: label on the left, its control (switch or select) right,
    framed so they read as one unit */
 .settings__checkbox {
-  font-size: 1.125rem;
+  font-size: var(--font-size-lg);
   display: flex;
   gap: 10px;
   align-items: center;
@@ -222,7 +226,7 @@ h2.settings__thanks-title {
   &::after {
     content: "x";
     font-family: monospace;
-    font-size: 1.1rem;
+    font-size: var(--font-size-lg);
     margin-inline-start: 5px;
   }
 }

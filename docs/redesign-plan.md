@@ -1,10 +1,10 @@
 # UI redesign — plan
 
 Started 2026-10-13 on the fork branch `ob/redesign`. Status: **in progress.
-Foundations, icons, UI primitives and two interaction/layout passes are done
-in code and not yet committed (@olivierbrcknr's call, 2026-10-13). The firmware
-picker, a by-system games list and a detailed Saves design session are
-next. This PR is frontend-only; backend work (e.g. Eject) is a stretch goal.** See **Current status** below.
+Foundations, icons, UI primitives, layout passes, the firmware picker and the
+by-system games list are committed (`b14e23f`, `b7963a3`). The core detail
+page (q) is done in code and waiting for review. This PR is frontend-only;
+backend work (e.g. Eject) is a stretch goal.** See **Current status** below.
 
 The goal is a cleaner, more consistent and more accessible Pocket Sync that
 still looks and feels like an Analogue Pocket companion app, and that can be
@@ -370,18 +370,22 @@ about what's built and what's next belongs here.
 - ✅ **Page checklist (2026-10-13).** See **Page checklist** below: every
   screen, sub-page, panel and modal, with how far each is restyled.
 
+- ✅ **(q) Core detail page (2026-10-14).** Not committed yet. See the
+  milestone below.
+
 ### In progress
 
-- Nothing.
+- (q) waits for @olivierbrcknr's review in the running app (not run yet:
+  checked with `tsc`, ESLint and stylelint only).
 
 ### Next
 
 - (n) Resizable sidebar and side panel (split panes).
 - (h) Migration and clean-up.
-- (f2) Modals on Radix Dialog, with a close button (see below).
 - Stretch: (k) Eject.
 
 ### Waiting on
+
 
 - Committing: only when @olivierbrcknr asks. `b14e23f` is the in-between
   commit; later work is uncommitted. Never push, and no AI attribution in
@@ -417,6 +421,8 @@ The tag after each item says how far it's restyled:
 - [ ] Error screen (error boundary, stack trace, repair buttons): tokens
       only
 - [ ] App self-update prompt: native
+- [ ] Drop overlay while dragging a .zip over the window: restyled
+- [ ] Search shortcut (⌘F / Ctrl+F) and its key caps: restyled
 
 ### Home (Pocket Sync)
 
@@ -430,7 +436,8 @@ The tag after each item says how far it's restyled:
 
 ### Games
 
-- [ ] Games by system, search, category filter: restyled
+- [ ] Games by system (full width, Show in Folder per game), search,
+      category filter: restyled
 - [ ] Empty state (no games): restyled
 - [ ] Modal: Move MROM Dumps: tokens only
 - [ ] Modal: Clean Up Files: tokens only
@@ -438,36 +445,36 @@ The tag after each item says how far it's restyled:
 
 ### Cores
 
-- [ ] Cores list (cards, search, category filter, Analogizer badge,
-      hidden cores): restyled
-- [ ] Core detail, not installed (info, platform, releases, sponsor links,
-      Install): partly
-- [ ] Core detail, installed (version, Update, Uninstall, display modes,
-      AI report, download counts, Analogizer / JT Analogizer section):
-      partly
-- [ ] Install older version picker: tokens only
-- [ ] Required files list: tokens only
+- [ ] Cores list (cards with tags incl. Manual, search, category,
+      platform and features filters, zip tip on top, hidden cores):
+      restyled
+- [ ] Core detail, not installed (hero, Install step, license / firmware
+      notices, Overview and Releases tabs): restyled
+- [ ] Core detail, installed (hero, Update / Load Required Files /
+      Uninstall step, replaced and firmware notices): restyled
+- [ ] Core detail tabs: Overview (description, features, platforms,
+      Info.txt, AI report, facts), Inputs (button list + 3D Pocket),
+      Settings (core settings, display modes, JT Analogizer), Releases
+      (install another version, release notes): restyled
 - [ ] Modal: Load Required Files (incl. its loading state): tokens only
-- [ ] Modal: Inputs: tokens only
-- [ ] Modal: Settings (core settings): tokens only
 - [ ] Modal: zip install progress and replace prompt (installing a single
       core): tokens only
 
-### Update
+### Update (page removed 2026-10-14)
 
-- [ ] Overview stats, filters (Author, AI-ness, Category, Other), list:
-      restyled
-- [ ] Install / update split buttons: restyled
+The page is gone; updating happens on Cores (Updates section, Update All).
+
 - [ ] Modal: update progress (download phases, 3D scene, per-core
-      prompts, finished report): tokens only
+      prompts, finished report), opened from Cores: tokens only
 - [ ] Skip warnings and missing-archive confirmation: native
 
 ### Platforms
 
-- [ ] Platforms list, Manage Data Packs / Image Packs, Remove Coreless
-      Platforms: tokens only
-- [ ] Platform detail (editable fields, cores for the platform): tokens
-      only
+- [ ] Platforms list (cards with tags, search), Manage Data Packs / Image
+      Packs, Remove Coreless Platforms: restyled (the buttons are still the
+      Controls ones)
+- [ ] Platform detail (banner opens the image editor, editable fields,
+      cores as cards): restyled
 - [ ] Modal: Manage Data Packs: tokens only
 - [ ] Modal: Manage Image Packs: tokens only
 - [ ] Modal: Image editor (stamps, import): tokens only
@@ -562,7 +569,8 @@ general "modern UI" defaults, including shadcn and Lucide styling.
    icons don't fit.
 4. **Device-like surfaces.** Dark, matte greys like the Pocket's body.
    Colour is sparse and means something. The accent is the **Analogue Pocket
-   green `#63DB84`**, used for active and update states, always with dark
+   green `#84E38F`** (`--analogue-green`, the green Analogue uses for its
+   buttons; was `#63DB84` until 2026-10-14), used for active and update states, always with dark
    text on top. Blue is for selection, red for danger.
 5. **Keep the playful details.** The 3D Pocket on the home screen, the
    RGB-split title hover and the cartridge-like core cards are part of the
@@ -606,7 +614,7 @@ here.
 | 6   | Icons                               | **REVISED 2026-10-13: Pixelarticons (MIT, 24px pixel grid) for UI and company icons, plus the GamePocket font's ligature glyphs for Analogue Pocket icons, through one `Icon` component with a fixed name registry. Default size 16px**: 24px is pixel-perfect but too large next to the UI text, and in-between sizes stay sharp via `crispEdges`. Its pixel grid matches GamePocket and the handheld (principles 2 and 3). Phosphor Bold, Remix Line and Material Symbols were compared and rejected. Only marks neither source covers (Analogizer) stay custom SVGs. An inline SVG is deleted only after its replacement has been reviewed. Where Pixelarticons lacks an icon, pick the closest pixel icon (e.g. `tools` for repair); never mix in another set. _Was: Lucide everywhere. Its thin, rounded strokes read as generic next to the pixel type and slanted controls._ |
 | 7   | Sidebar                             | **Icon + label rows with the controls' slanted cut, grouped** (Home / library / media and data / tools), with Settings pinned at the bottom. Collapsible to icons only, with Radix tooltips; the collapsed state is saved via jotai `atomWithStorage`. `--sidebar-width` is a token, not measured. New strings exist in English only; other locales fall back to it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | 8   | Typography                          | **Inter for UI, GamePocket for display**, exposed as `--font-body` / `--font-display`. Figma text styles bind their family to matching variables. The Figma MCP can't use local fonts, so Figma uses Silkscreen as a stand-in until switched by hand.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| 9   | Accent colour                       | **Analogue Pocket green `#63DB84`** (`--theme-accent`), replacing `#589050`. Anything placed on it uses `--theme-accent-text` (#111): off-white text on the lighter green is about 1.6:1 contrast, dark text about 11:1.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| 9   | Accent colour                       | **Analogue green `#84E38F`** (`--analogue-green` → `--theme-accent` in the dark themes; revised 2026-10-14 from `#63DB84`, which replaced `#589050`). Anything placed on it uses `--theme-accent-text` (#111): off-white text on the lighter green is about 1.6:1 contrast, dark text about 11:1.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | 10  | Keyboard navigation                 | **Lists and grids are tab groups with a roving tabindex.** Sidebar: Radix Tabs (vertical, manual activation, so arrowing doesn't load every screen). Grids and other lists: `useRovingFocus` + `getSpatialNeighbor`, ported from an earlier implementation, because arrow keys must follow the visual layout of a wrapping grid and items may be lazily rendered or filtered out. `react-roving-tabindex` was considered; the in-house hook handles spatial grids and DOM-filtered items without extra wiring.                                                                                                                                                                                                                                                                                                                                                                      |
 | 11  | Content width                       | **`--content-max-width: 800px`** for text-heavy views (Settings first, then Saves, Firmware, core info…). Tiled grids are exempt.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | 12  | Checkbox vs switch                  | **Settings that apply immediately use `Switch`**; checkboxes or `Toggle`s are for choices that need a separate save or submit, or for filters.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -672,7 +680,17 @@ dropdown becoming a styled popover.
 The modal keeps the native `<dialog>` (restyled); Radix Popover replaces
 `ControlsPopoverButton`'s experimental popover/anchor APIs.
 
-### (f2) Modals on Radix Dialog
+### (f2) Modals on Radix Dialog ✅ (2026-10-14)
+
+Done: `components/modal` is now Radix Dialog (`@radix-ui/react-dialog`
+1.3.1, the same release train as Popover). Every modal has a `title` (in the
+header) and, when it can be dismissed, an `onClose` that adds the close
+icon button (top right) and Escape. Outside clicks never close it.
+Standalone "Close" buttons were removed (the X replaces them); "Cancel" next
+to a confirming action stays. The zip install modal's X answers the backend
+like its Cancel. Their old `close` strings are unused now and can go in (h).
+
+Original plan:
 
 Replace `components/modal` with a Radix Dialog primitive (`ui/Dialog`):
 title, close button, Escape and overlay click call `onClose`. Each of the
@@ -790,6 +808,328 @@ to pick another version, show a list underneath that loads progressively
 ("Load previous 10 firmwares"), where each entry previews its release notes
 and can be loaded directly. Keep a dropdown or search next to it for jumping
 straight to a known version.
+
+### (q) Core detail page ✅ (2026-10-14, awaiting review)
+
+- **`ui/Tag`** (slanted chip; themes neutral, accent, warning, danger,
+  highlight, muted) and **`ui/Accordion`** (extracted from the Firmware list,
+  which now uses both). `cores/tags.tsx` (`CoreTags`) shows a core's status:
+  Installed, Update {version}, Replaced, Analogizer, AI score, License.
+- **Cards:** name, author, a smaller soft version line, and tags at the
+  bottom instead of the corner overlays (AI letters, Analogizer icon, sponsor
+  ribbon). Not-installed cards got `role="button"`, so arrow keys reach them.
+- **Features** (`cores/features.ts`): save states / sleep, dock, analog dock,
+  cartridges, link cable, Analogizer, read from `core.json` (installed) or the
+  inventory. Shown as tags on the Overview, and a **Features** filter
+  (MultiSelect) on the Cores list. RTC isn't in `core.json`, so it can't be a
+  feature yet.
+- **Detail layout:** hero (image; title, author, version, tags; next steps)
+  side by side from 720px container width, stacked below. Notices (replaced,
+  firmware too low, license) under it. Then tabs: **Overview** (description,
+  features, platforms, Info.txt, AI report; facts column from 860px),
+  **Inputs**, **Settings**, **Releases**. Regular page background, framed
+  panels, no black fills.
+- **Guidance:** one panel says what to do and why. Not installed: what Install
+  does and that required files come after, with a primary Install button.
+  Installed: Update to {version} (primary when available), Load Required
+  Files with a found / missing count (primary when files are missing), and
+  Uninstall. The header keeps only Back (and Hide Core).
+- **Inputs and Settings left their modals** and are tabs. Inputs lists every
+  button (key cap + action) next to the 3D Pocket. Settings uses Select and
+  Switch, and holds Display Modes (now keyboard-reachable toggles) and the JT
+  Analogizer options (selects).
+- **Releases:** "install another version" on top, then the GitHub release
+  notes in the Firmware accordion style, with Latest / Installed /
+  Pre-release tags; 10 at a time.
+- **Modal bug:** Escape closed the native `<dialog>` without telling React,
+  so the modal stayed "open" invisibly and couldn't be reopened. `Modal` now
+  stops the native close and calls an optional `onClose`; without it, Escape
+  does nothing. Dismissible modals pass `onClose` (busy ones only when idle).
+- Removed: `cores/version`, `info/requiredFiles`, `info/supportsBubble`, the
+  `core_info` keys `required_files_count` and `controls.update`.
+
+Second pass (2026-10-14, after review):
+
+- The platform image is a **full-width banner** right under the header again;
+  name / status and the next-steps panel sit side by side below it.
+- **Header title:** the core's name and main platform fade into the header
+  bar once the page title scrolls under it (`ControlsTitle`,
+  `useScrolledPast`).
+- **Shared side padding:** `--page-padding-inline` (16px) is used by header
+  bars, the core page and Firmware, so content lines up with the header.
+  Header bars were 12px before.
+- **Analogizer tags** use the Analogizer blue (`--theme-analogizer`, a brand
+  colour; the "no blue" rule is about selection and hover).
+- **Feature tags** only show supported features; the section is hidden if
+  there are none. The `muted` tag theme went with it.
+- **Missing images:** `PlatformImage` shows a placeholder in
+  `--theme-surface` with the core's name when the SD card has no image;
+  `InventoryPlatformImage` does the same when the online image fails to load
+  (cards, banner, Update list).
+- **Platforms:** a line under the title ("Nintendo Game Boy, 1989"), and
+  platform cards on both pages, from the SD card's platform files or else
+  the inventory. Cores with several platforms show each platform's image.
+- **Releases:** each release has an "Install This Version" button (tertiary),
+  matched to the inventory download by version; the installed one has none.
+  The version picker only remains as a fallback for non-GitHub cores or when
+  no version matches.
+- **Hide Core** moved from the header into the next-steps panel (tertiary,
+  at the end, tooltip explains Settings). It keeps not-installed cores out
+  of the Available list and the Update page.
+
+Third pass (2026-10-14, after review):
+
+- **`DetailPage`** (`components/shared/detailPage`) for one item (a core, a
+  platform): the back button (and actions) above a full-width banner; the
+  sticky header bar only slides in, with the title, once the banner has
+  scrolled away. It also holds the shared content styles
+  (`detail-page__content`, `__hero`, `__heading`, `__title`, `__section`,
+  `__facts`, `__hint`) and `DetailSection` / `DetailFacts`.
+- **Platforms:** cards like the core cards (placeholder image, name, maker,
+  year, category and Archived tags instead of the corner icon). The detail
+  page uses `DetailPage`: the banner image is a button that opens the image
+  editor, fields are label / value / Edit rows (`TextInput`, Save / Cancel),
+  and its cores are core cards that open the core.
+- **Cross-links:** platform names on the core page (line under the title,
+  platform cards) open the platform's page, when its file is on the SD card.
+- **Tag icons** scale with the tag's text (`Icon size="text"`), so the
+  Analogizer glyph is no longer too big.
+- **Releases:** the install button sits in the accordion's header row
+  (`AccordionItem` `action`).
+- **Inputs:** OrbitControls' zoom is off; it caught the mouse wheel (the
+  distance is fixed anyway), so the page couldn't scroll over the Pocket.
+- **Core settings** are written to the SD card on every change (no save
+  button needed); a hint says so.
+- **Search shortcut:** ⌘F / Ctrl+F focuses the page's search (`SearchInput`
+  `shortcut`, on by default in `ControlsSearch`), shown as key caps (`Kbd`)
+  that light up while held; hidden while typing.
+- **Cores list:** a **Platform** filter (searchable, grouped by
+  manufacturer, only platforms some core uses); the drag-a-zip tip moved to
+  the top; installed cores missing from the inventory get a **Manual** tag.
+- **Drop overlay:** dragging a .zip over the window shows "Drop to Install"
+  (`zipInstall/dropOverlay.tsx`, Tauri webview drag events; the drop itself
+  is still handled by the backend).
+
+Fifteenth pass (2026-10-14, after review):
+
+- **Focus rings outside in the modern style:** `--shape-slant: none` there,
+  so controls aren't clipped; corners come from `border-radius` (a modern
+  rule in `style.css` listing the formerly clipped controls). The ring
+  pseudo-elements use `inset: var(--focus-ring-inset, 0)`: 0 in the slanted
+  style (ring 2px inside the edge, as clip-path requires), −4px in modern
+  (2px gap, 2px ring outside). On green controls the ring uses the focus
+  colour in modern (`--focus-ring-on-accent`), the text colour inside the
+  shape in slanted. The settings menu got 4px of room so rings aren't
+  clipped by its scroll area.
+
+Fourteenth pass (2026-10-14, after review):
+
+- **Dismissible notes:** `Callout dismissId="…"` adds a close button; the
+  ids are stored (`dismissedNotesAtom`, `ui_dismissed_notes.json`).
+  Settings → Display → Dismissed Notes shows them all again. Used for the
+  Cores zip-drag tip and the Plugins info; warnings next to settings stay
+  undismissible.
+- **Callout look:** no coloured edge, card radius, icon centred on the first
+  line (line height 1.5, icon offset (1.5em − 16px) / 2); Tip aligned the
+  same way.
+- **Home on short windows:** the column is centred vertically, with the
+  Pocket beside it (absolutely placed). The grid version spread the Pocket's
+  height over the right column's rows, so the text sat at the top.
+
+Thirteenth pass (2026-10-14, after review):
+
+- **Empty states** fill the page below the header bar and centre their
+  content (minus room for a note above).
+- **Info notes at the top:** the Plugins info and the Cores zip-drag tip
+  are info `Callout`s (`callout--in-page`) right below the header bar.
+- **Sidebar badges:** the firmware dot is the same 18px circle as the core
+  count, just empty; both shrink to the same dot when collapsed.
+- **Home on short windows** (height ≤ 700px): two columns, the Pocket left,
+  title / stats / buttons right, toolbar in the corner; scrolls as a last
+  resort, so the bottom buttons are never cut off.
+
+Twelfth pass (2026-10-14, after review):
+
+- **Firmware file not detected:** files at the top of the SD card (the
+  firmware .bin, root files for the archive) only notified their own path,
+  never the root that `downloadedFirmwareSelector` watches ("/"). Root-level
+  changes now notify "/" too.
+- **Firmware page:** full width, release-note text capped at
+  `--content-max-width`. "Nothing waiting" is a quiet soft line with a green
+  check. If the file on the card is the installer of the version already
+  installed, it says so and offers "Remove Installer File". Accordion rows
+  showed a padded strip when closed (`display: flex` overrode Radix's
+  `hidden`); fixed in `Accordion`.
+- **Demo firmware update** (dev only): Settings → Developer → "Pretend a
+  firmware update is out" (`demoFirmwareUpdateAtom`).
+- **`EmptyState`** (`ui/EmptyState`: icon, title, text, action): Fetch,
+  Plugins, Palettes, Platforms, Save States (with the Analogue + Up combo for
+  a memory), and Games, Backups, Screenshots moved onto it.
+- **`Callout`** (`ui/Callout`, info grey / warning yellow, with icon):
+  Settings' "turning this off…" and archive legal note, the display mode
+  limit, Load Required Files' archive hint.
+- **Save States:** one section per core (Cartridge first) with a sticky
+  header on the page background below the header bar
+  (`--header-bar-height`), overview padding, Core and Platform filters next
+  to the search; emptied groups hide.
+- **Home:** an icon button opens the SD card folder.
+- **Games:** the category filter was the platform's category; there's no
+  per-game category on the SD card. Replaced by a Platform filter; the
+  system header shows its category as a tag, each game its file type.
+
+Eleventh pass (2026-10-14, after review):
+
+- **GamePocket glyphs, checked in the font:** the ligatures go up to
+  `@key08@` (no `@key10@`). `@key06@` is the small round button, the same
+  size as the Analogue button (`@key05@`): Start and Select. `@key07@` /
+  `@key08@` are large filled / ring circles that overflow the glyph box
+  (purpose unknown). `@key01@`–`@key04@` are single dots in a face button's
+  place, so `ButtonCombo` and the keypad `Spinner` draw them over a dim
+  `@key00@` cross. The D-pad glyphs are complete pads with the direction
+  marked. Select is the small-button glyph as a ring (text stroke).
+- **Games:** the list spans the full width, and every game row has a "Show
+  in Folder" button that opens Finder / Explorer with the file selected
+  (`revealFile`, opener plugin; allowed by `opener:default`).
+
+Tenth pass (2026-10-14, after review):
+
+- **Analogue green:** `--analogue-green: #84E38F` (the green Analogue uses
+  for its buttons) is now the dark themes' `--theme-accent`, replacing
+  `#63DB84`; dark text on it is 12:1. Light themes keep their darker green.
+  **Figma:** the Theme variable `theme/accent` still has the old value.
+- **`ButtonCombo`** (`ui/ButtonCombo`): a Pocket button combination drawn
+  with the GamePocket glyphs, like Analogue's guides. The row of small
+  buttons (Select ring, Analogue, Start dot) with the pressed ones lit and
+  the rest dim, so Start / Select need no label; D-pad and face buttons as
+  their glyphs; groups joined by "+". Screen readers get the names
+  (`pocket_buttons` strings). Used for the screenshot hint (Analogue +
+  Start) and the Inputs list (A / B / X / Y / Start / Select; L and R have
+  no glyph and stay text).
+
+Ninth pass (2026-10-14, after review):
+
+- **Spinner** (`ui/Spinner`): the Pocket's D-pad (default) or face buttons,
+  pressed in a circle (up, right, down, left; the first glyph of each set
+  left out), 160ms per frame, still with reduced motion. `Loader` renders it,
+  so every loading state in the app uses it; `Loader` no longer has a
+  background (it takes the container's).
+- **What's New:** the changelog is fetched once but rendered per release,
+  10 at a time; the next 10 render when the end is within ~600px of the
+  panel's scroll area.
+- **Developer section** is listed in the settings menu in dev builds.
+- **Tip icon:** 16px, like icons in buttons.
+
+Eighth pass (2026-10-14, after review):
+
+- **Toggles suspended:** `atomWithAppLocalStorage` reads always return a
+  promise, so every write re-suspended the UI (loader instead of the sidebar
+  and panel transitions). New `atomWithAppLocalSetting` returns the plain
+  value after a write; theme, style, sidebar, news panel and last-read use
+  it. The original helper is unchanged.
+- **Focus rings:** `--focus-offset` (2px). Slanted rings sit 2px inside the
+  edge (a gap of the control's colour), since clip-path can't show anything
+  outside; on green fills (primary button, checked switch)
+  `--focus-ring-colour` switches to the accent text colour. Outline rings
+  inside clipped containers keep the same 2px gap.
+- **Download graph:** each bar's numbers (release, downloads, days as
+  latest) show in our Tooltip on hover; the pointer cursor is gone (no
+  click action).
+- **Demo flag (dev builds only):** Settings → Developer → "Pretend cores
+  have updates" marks the first three installed cores as updatable
+  (`demoCoreUpdatesAtom`, `demoUpdateCoreNamesSelector`), to preview tags,
+  the Updates section, the sidebar count and the detail panel. Nothing on
+  the SD card changes. Strings are English only (dev tool).
+- **Image editor:** the layer's remove button is a destructive icon button.
+
+Seventh pass (2026-10-14, after review):
+
+- **Font sizes:** one scale in `theme.css` (`--font-size-2xs` … `-hero`,
+  plus `-code`). Every hard-coded rem / px size in the app's CSS (44 files)
+  now uses it, snapped to the nearest step (e.g. 15px → sm, 17.6px → lg).
+  Only relative (em) and responsive sizes remain.
+- **Modals:** focus goes to the dialog, not the close button, so its
+  tooltip no longer covers the title on open. Escape closes only the modal
+  (it used to reach the page's Escape-to-go-back too); clicking outside
+  closes dismissible modals.
+- **Image editor:** preview on top, layers below (thumbnail, labelled
+  sliders, move up / down, reset, remove as real buttons), then Import /
+  Cancel / Save. The old grid put the new modal header in a cell.
+- **Switch:** the off track uses `--theme-control-off` (black in the dark
+  themes); the thumb's inset is equal on all sides without a slant.
+- **Tip:** our info icon, default size, soft colour.
+- **Screenshots hint:** the Pocket's button glyphs from the font (40px),
+  the plain button labelled "Start".
+- **Sidebar:** no loading spinner when changing views.
+
+Sixth pass (2026-10-14, after review):
+
+- **Update page removed** (@olivierbrcknr's call): Cores has the Updates
+  section with Update All. Lost with it: bulk-installing new cores with the
+  author / category / AI-ness / license filters, and the saved filter
+  defaults (`update_filter_options.json` stays on disk, unused). The
+  `update` strings for the page are unused now. Kept: the progress modal
+  (`update/modal`, its styles in `update/index.css`), `update/shared.tsx`
+  and `useInstallAndUpdateCores`.
+- **Sidebar badges:** Cores shows the number of core updates, Firmware a
+  dot when a newer firmware is out (green; a dot on the icon when
+  collapsed).
+- **Unread library updates:** a green dot on the home panel's toggle while
+  there are updates newer than the last seen (`ui_news_last_read`); opening
+  the panel marks them seen. The panel's open state is stored as a file
+  (`ui_news_panel_open.json`, verified on disk).
+- **Modals:** always centred (`inset: 0; margin: auto`, no transform, so
+  popovers inside keep working), also when a modal sets its own size.
+  `ModalSuspense` shows the modal with its title, close button and a loader
+  while its data loads; the data-loading modals wrap themselves in it, so
+  the page no longer turns into a loader.
+- **Load Required Files:** status as tags (Downloaded green with a check,
+  Downloadable, Updatable, Not in archive red …), "Skip alternative files"
+  is a Switch, Download All a primary button.
+- **Buttons:** icon buttons are square (control height); buttons, selects
+  and toggles have ~1.35× their vertical space as side padding, plus half
+  the slant.
+- **⌘F / Ctrl+F** turns on keyboard focus rings, so the focused search
+  field shows its ring.
+- **Overview padding:** section headings (`h2`), the card grid and tips use
+  `--page-padding-inline`, like the header bar.
+
+Fifth pass (2026-10-14, after review):
+
+- **Modals** on Radix Dialog with a title and close button, see (f2).
+- **Updates:** the next-steps panel gets an accent frame and an "Update
+  available" title when there's an update. The Cores list starts with an
+  "Updates Available (n)" section (the cores, plus **Update All**, which runs
+  the same bulk updater and progress modal as the Update page, via
+  `update/useInstallAndUpdateCores.ts`). Cards already carry the Update tag
+  and the Updatable filter.
+- **Screenshots:** the empty state shows how to take one: the Analogue
+  button + Start (the firmware's "Menu + Start"; the manual calls the
+  Analogue button "Menu").
+- **Radii:** `--radius` (2px) with `--radius-button`, `-chip`, `-card`,
+  `-input`, `-modal` pointing at it. Cards, accordion rows, notices, panels,
+  key caps and modals use them. Slanted shapes can't show a radius; in the
+  Modern style `--shape-slant` becomes `inset(0 round var(--radius))`, so
+  controls round there. The old `--radius-sm/md/lg` are gone.
+
+Fourth pass (2026-10-14, after review):
+
+- **Detail page pattern:** no bar at the top. The back button floats on the
+  banner; the sticky header bar (back, title, actions) slides in after a few
+  pixels of scrolling. `DetailHeading` puts the title and its actions (icon
+  buttons) on one row, with subtitle lines and tags below. The core and
+  platform pages both use it; the platform page's Archive / Data Packs /
+  Image Packs are icon buttons there and in the header bar. "Cores" reads
+  "Installed Cores".
+- **Icons:** brand marks (the Analogizer) now follow `size` like pixel
+  icons (height 0.75 × size, width from the mark), and `size="text"`. One
+  `Icon` component scales every kind of icon.
+- **Drop overlay** renders on `<body>` (portal), so it covers the sidebar.
+- **Persistence:** the window state was only saved on a clean quit (the
+  frontend listened to a `resize` event that doesn't exist); it's now saved
+  (debounced) on every move and resize. The webview's localStorage isn't
+  kept between launches, so theme, style, sidebar collapsed and news panel
+  moved to `atomWithAppLocalStorage` (JSON files in the app data folder,
+  like other app settings).
 
 ## Design rationale (from @olivierbrcknr)
 
@@ -1020,6 +1360,125 @@ Newest at the bottom.
   don't belong in the repo.
 - **Process (2026-10-13):** explanations @olivierbrcknr gives should always be
   documented, so the reasoning can go into the PR later.
+- **Core cards (2026-10-14):** cards need tags (chips) that say whether a
+  core is AI-made or an Analogizer core, using the different text levels;
+  the version number should be smaller; and an installed core should show
+  when an update is available, like the Update page.
+- **Core detail layout (2026-10-14):** a responsive, multi-column grid. The
+  information hierarchy was messy: status and facts belong on top, like the
+  tags, including whether the core is installed. The creator wasn't shown.
+- **Guidance (2026-10-14):** "for me it was not clear what i need to do when
+  installing a core". One prominent Install button (not only in the header),
+  Uninstall when installed, and Update when available.
+- **Release notes (2026-10-14):** in a list like the other release notes
+  (Firmware). Previous versions belong with the releases.
+- **Background (2026-10-14):** the detail page was too dark; use the regular
+  background, not black.
+- **Inputs (2026-10-14):** the 3D Pocket input overview is fun and stays, but
+  the button mapping should be easier to read.
+- **Core settings (2026-10-14):** not in a modal; maybe tabs. Display modes
+  belong with the settings; Info.txt belongs on the info (Overview) page.
+- **Features (2026-10-14):** distil features into tags, so cores can later be
+  filtered by them (e.g. RTC), if that's easily possible.
+- **Modal bug (2026-10-14):** opening and closing modals (e.g. with Escape)
+  left a modal that "stays somehow but not really".
+- **Review 14 (2026-10-14):** focus outlines should be offset outside if
+  possible, at least in the modern style; in the slanted style it's fine on
+  the edge if the slant prevents an offset.
+- **Review 13 (2026-10-14):** info boxes could be dismissed, stored, and
+  resurfaced from the settings; no left border, the icon aligned with the
+  first line, border radii. The compact home screen should be centred
+  vertically.
+- **Review 12 (2026-10-14):** empty states centred; the Plugins info at the
+  top like the zip-drag info, which should be an info component (not a
+  warning); the firmware dot the same size and position as the core count;
+  the home screen cut off its bottom buttons on short windows, maybe side by
+  side.
+- **Review 11 (2026-10-14):** a pretend firmware update; empty states on
+  every page without one; sticky save state section headers in the page
+  colour with the overview padding, and filters (platform, core); firmware
+  accordions full width with capped text, and no strip when closed; the "no
+  firmware waiting" note was too prominent (soft, with a check); a
+  downloaded firmware of the installed version still showed "nothing
+  waiting" (say it's the current one and offer to remove it); an icon
+  button on the home screen to open the SD card; game categories don't
+  make sense, show tags and offer a platform filter. Warnings like
+  "turning this off…" belong in an information component with an info or
+  warning icon and grey or yellow colour.
+- **Review 10 (2026-10-14):** Start and Select are probably the glyph after
+  the Analogue button; what the large buttons are is open. The Games list
+  should use the full width, and each game row needs an open-folder button
+  to locate its file.
+- **Review 9 (2026-10-14):** Analogue's button green is `#84E38F`: use it,
+  or at least keep it in a variable. To avoid labelling buttons, Analogue
+  shows the row of buttons with the pressed one highlighted: a component
+  that takes a key combination and draws the relevant buttons with the
+  font, e.g. "start" shows all three small buttons with Start lit,
+  "analogue + start" lights both.
+- **Review 8 (2026-10-14):** What's New slowed everything down by
+  rendering all of it: lazy-render 10 at a time near the end, without
+  refetching; its loading state had a different background than the panel;
+  a custom spinner looping through the D-pad or key pad glyphs (without the
+  first of each), one as default, used for every loading spinner; couldn't
+  find the demo switch; the tip icon was still too large, it should have the
+  buttons' icon-to-text ratio.
+- **Review 7 (2026-10-14):** opening / closing the sidebar and the updates
+  panel re-rendered with a loader instead of transitioning (it worked
+  before); focus outlines need a 2px offset to be clear (invisible on an
+  active switch); the download graph had a pointer but no action; a demo
+  flag to see a core with an update; the layer remove button should be a
+  destructive icon button.
+- **Review 6 (2026-10-14):** no loader in the sidebar on page changes; the
+  screenshot hint should use the Pocket's button glyphs, not key caps, with
+  a label for buttons that aren't distinct (like Start); the off switch was
+  invisible on its background, make it black, and equal padding in the
+  modern style; the modal close button's tooltip covered content on open;
+  Escape should close the modal (it needed two presses and then left the
+  page) and clicking outside should close too; the image editor layout was
+  broken; tips should use our icons, the default size and soft colour; font
+  sizes should come from defaults defined in one theme file.
+- **Review 5 (2026-10-14):** icon buttons square, a bit less side padding
+  on buttons; a visible focus on the search after ⌘F; remember the updates
+  panel and show a green notification dot for new updates (store when the
+  user last read them); overview pages should use the padding variable;
+  modals always centred, and showing their own loading state instead of
+  the screen going black; Load Required Files with a green "Downloaded" tag
+  and our own checkbox. "I think we can remove the updates page", with a
+  counter in the menu for core and firmware updates.
+- **Review 4 (2026-10-14):** the pack modals weren't Radix; one modal
+  component with a close icon button (top right) and a title, for a
+  consistent UX. An available update should be emphasised on the core page,
+  and tagged and filterable on the overview. Asked whether the Update page
+  only shows cores and could move into the Cores page. Screenshots' empty
+  state should say how to take one on the Pocket. General radii for buttons,
+  chips, cards etc., 2px by default (may change).
+- **Core page review 3 (2026-10-14):** special icons like the Analogizer
+  should go through the one icon component so they scale the same; the
+  drop overlay has to sit above everything, including the sidebar; window
+  size / position and the theme weren't kept on reopen; on the platform
+  page, the actions (as icon buttons) belong on the title's row, with the
+  same header bar treatment as the core page, as the pattern for detail
+  pages; "Installed Cores" makes the list clear; the back button should be
+  a single button on the image (no bar at the top), and the bar can appear
+  earlier and stay sticky.
+- **Core page review 2 (2026-10-14):** tags should be able to carry icons
+  sized relative to their text (the Analogizer icon was too big); asked
+  whether core settings save on change; the release install button belongs
+  in the accordion's title bar; the 3D Pocket trapped the mouse wheel; link
+  to a core's platform; the Platforms list and detail should follow the new
+  layout; on the core page, the header bar should only appear on scroll,
+  with the back button above the image; a platform filter for cores; a
+  ⌘F / Ctrl+F search shortcut, shown as key caps that react to key presses;
+  the drag-a-zip tip belongs at the top; manually installed cores (not in
+  the list) get a "Manual" tag; dragging a file over the window needs a
+  "drop here" overlay.
+- **Core page review (2026-10-14):** the Analogizer tag can be Analogizer
+  blue; releases get a tertiary "install this release" button; the big image
+  banner should stay on top; only show features that are available, not
+  struck-through ones; missing images need at least a default colour; the
+  platforms should connect to the core better; the core name (and platform)
+  can go back into the header; the page's side padding should match the
+  header so it lines up, as a variable. Asked whether "Hide Core" is useful.
 
 ## Open questions
 

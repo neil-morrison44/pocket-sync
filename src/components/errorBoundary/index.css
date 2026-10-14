@@ -24,7 +24,7 @@
 }
 
 .error-boundary__repair-button{
-  font-size: 1.1rem;
+  font-size: var(--font-size-lg);
   background-color: var(--green-colour);
   color: var(--theme-accent-text);
   border: 2px solid var(--theme-text-headline);
@@ -53,7 +53,7 @@
   justify-content: center;
   align-items: center;
   gap: 0.2em;
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   font-weight: bold;
 }
 

@@ -18,11 +18,16 @@
       "firmware": "Firmware",
       "cores": "Cœurs",
       "games": "Jeux"
-    }
+    },
+    "show_updates_new": "Afficher les mises à jour (nouvelles)",
+    "open_sd_card": "Ouvrir la carte SD"
   },
   "app": {
     "connect_button": "Connecter la Pocket / Carte SD",
-    "not_pocket_tip": "Ce répertoire ne ressemble pas au système de fichier de la Pocket. La carte SD doit être formatée par la Pocket au moins une fois."
+    "not_pocket_tip": "Ce répertoire ne ressemble pas au système de fichier de la Pocket. La carte SD doit être formatée par la Pocket au moins une fois.",
+    "close": "Fermer",
+    "loading": "Chargement",
+    "dismiss": "Masquer"
   },
   "clean_files": {
     "close_button": "Fermer",
@@ -63,7 +68,9 @@
       "install": "Installer le cœur",
       "required_files": "Charger les fichiers requis",
       "uninstall": "Désinstaller le cœur",
-      "update": "Mettre à jour le cœur"
+      "update_to": "Mettre à jour vers {version}",
+      "install_version": "Installer la version",
+      "install_release": "Installer cette version"
     },
     "inputs": "Contrôles",
     "modal": {
@@ -80,17 +87,19 @@
     "firmware_too_low": "Ce cœur a besoin du firmware v{core_firmware}, la version actuellement installée est v{pocket_firmware}",
     "not_in_inventory": "{coreName} ne figure pas dans l'inventaire des cœurs",
     "platform": {
-      "edit": "Modifier"
+      "open": "Ouvrir la plateforme"
     },
     "replaced": "Ce cœur a été remplacé par <1>{replacementCore}</1>",
     "platforms": "Plateformes",
     "release_date": "Date de sortie",
     "releases": {
       "release_history": "Historique des versions",
-      "show_previous": "Afficher les versions précédentes"
+      "show_previous": "Afficher les versions précédentes",
+      "latest": "Dernière",
+      "prerelease": "Préversion",
+      "on_github": "Voir sur GitHub"
     },
     "required_files": "Fichiers requis",
-    "required_files_count": "{count} / {total} fichiers",
     "settings": "Configuration",
     "sponsor": "Parrainer",
     "download_count": "Téléchargements",
@@ -101,12 +110,52 @@
     "supports_items": {
       "cartridges": "Cartouches",
       "dock_dac": "Dock (Analogique)",
-      "save_states_and_sleep": "États sauvegardés / Veille"
+      "save_states_and_sleep": "États sauvegardés / Veille",
+      "link_port": "Câble Link",
+      "analogizer": "Analogizer"
     },
     "display_modes_title": "Modes d'affichage",
     "display_mode_warning": "Ce mode d'affichage nécessite la mise à jour du cœur, êtes-vous sûr de vouloir l'activer ?",
     "previous_version": "Versions précédentes",
-    "display_modes_limit": "Les cœurs ne prennent en charge que jusqu'à 16 modes d'affichage, vous avez sélectionné {count}"
+    "display_modes_limit": "Les cœurs ne prennent en charge que jusqu'à 16 modes d'affichage, vous avez sélectionné {count}",
+    "tabs": {
+      "label": "Détails du cœur",
+      "overview": "Aperçu",
+      "releases": "Versions"
+    },
+    "tags": {
+      "installed": "Installé",
+      "update": "Mise à jour {version}",
+      "ai": "IA {score, number, percent}",
+      "license": "Licence",
+      "manual": "Manuel",
+      "manual_hint": "Installé à la main (par ex. depuis un .zip). Ce cœur n'est pas dans la liste des cœurs, Pocket Sync ne peut donc pas le mettre à jour."
+    },
+    "guide": {
+      "install": "L'installation télécharge la version {version} dans le dossier Cores de votre carte SD. Si le cœur a besoin de fichiers supplémentaires, comme des fichiers BIOS, vous pourrez ensuite les charger ici.",
+      "update": "La version {version} est disponible. Vous avez la {installed}.",
+      "up_to_date": "Installé et à jour.",
+      "required_files_missing": "{count} fichiers requis sur {total} trouvés. Chargez ceux qui manquent pour que le cœur fonctionne.",
+      "required_files_found": "Les {total} fichiers requis ont été trouvés.",
+      "update_title": "Mise à jour disponible"
+    },
+    "preset": "Préréglage",
+    "inputs_empty": "Ce cœur ne définit pas d'attribution des boutons.",
+    "input_keys": {
+      "pad_btn_a": "A",
+      "pad_btn_b": "B",
+      "pad_btn_x": "X",
+      "pad_btn_y": "Y",
+      "pad_trig_l": "L",
+      "pad_trig_r": "R",
+      "pad_btn_start": "Start",
+      "pad_btn_select": "Select"
+    },
+    "firmware_required": "Firmware requis",
+    "core_settings_title": "Paramètres du cœur",
+    "display_modes_hint": "Activez les modes d'affichage parmi lesquels vous voulez choisir sur la Pocket.",
+    "previous_version_hint": "Installez n'importe quelle version publiée, par exemple pour revenir en arrière après une mise à jour.",
+    "core_settings_hint": "Les modifications sont enregistrées immédiatement sur la carte SD."
   },
   "core_info_required_files": {
     "close": "Fermer",
@@ -136,11 +185,16 @@
       "sort_options": {
         "name": "Nom",
         "last_update": "Dernière mise à jour"
-      }
+      },
+      "features": "Fonctionnalités",
+      "features_count": "Fonctionnalités ({count})",
+      "platform": "Plateforme",
+      "update_all_count": "Tout mettre à jour ({count})"
     },
     "install_tip": "Vous pouvez également installer des cœurs (ou tout autre élément dans un zip) en faisant glisser le .zip dans cette fenêtre",
     "installed": "Installés ({count})",
-    "not_installed": "Disponibles ({count})"
+    "not_installed": "Disponibles ({count})",
+    "updates": "Mises à jour disponibles ({count})"
   },
   "error": {
     "report": "Vous pouvez signaler cela via GitHub, inclure le texte ci-dessous et tout ce que vous venez de faire",
@@ -177,7 +231,11 @@
     "types": {
       "filesystem": "Fichiers locaux"
     },
-    "fetch_button": "Récupérer les fichiers"
+    "fetch_button": "Récupérer les fichiers",
+    "empty": {
+      "title": "Aucune source pour l'instant",
+      "text": "La récupération copie des fichiers sur la carte SD, depuis un dossier de votre ordinateur ou depuis archive.org. Ajoutez une source pour commencer."
+    }
   },
   "firmware": {
     "current": "Firmware actuel : v{version}",
@@ -200,7 +258,10 @@
     "jump_to": "Aller à",
     "badge_latest": "Dernière",
     "badge_installed": "Installée",
-    "published": "{date, date, medium}"
+    "published": "{date, date, medium}",
+    "loaded_current": "Le fichier d'installation du firmware installé (v{version}) est toujours sur la carte SD.",
+    "loaded_current_info": "Il n'est plus nécessaire et peut être supprimé.",
+    "remove_installer": "Supprimer le fichier d'installation"
   },
   "games": {
     "controls": {
@@ -209,13 +270,17 @@
       "refresh": "Rafraîchir",
       "search": "Rechercher",
       "mrom": "Déplacer les dumps MROM",
-      "instance_json": "Créer le JSON d'instance"
+      "instance_json": "Créer le JSON d'instance",
+      "platform": "Plateforme",
+      "all": "Toutes"
     },
     "item": {
       "game_count": "{count, plural, =0 {Pas de jeu} one {# jeu} other {# jeux}}"
     },
     "open_folder": "Ouvrir le dossier",
-    "none": "Aucun jeu trouvé. Installez un cœur, puis ajoutez des jeux dans son dossier sur la carte SD."
+    "none": "Aucun jeu trouvé. Installez un cœur, puis ajoutez des jeux dans son dossier sur la carte SD.",
+    "show_in_folder": "Afficher dans le dossier",
+    "empty_title": "Aucun jeu pour l'instant"
   },
   "image_editor": {
     "cancel": "Annuler",
@@ -224,7 +289,10 @@
     "reset": "Réinitialiser",
     "rotate": "Faire pivoter",
     "save": "Enregistrer l'image",
-    "scale": "Mettre à l'échelle"
+    "scale": "Mettre à l'échelle",
+    "title": "Modifier l'image",
+    "move_up": "Monter",
+    "move_down": "Descendre"
   },
   "instance_json": {
     "available_for": "Création automatique de fichier instance.json disponible pour :",
@@ -244,7 +312,9 @@
     "settings": "Paramètres",
     "collapse_sidebar": "Réduire la barre latérale",
     "expand_sidebar": "Développer la barre latérale",
-    "views": "Vues"
+    "views": "Vues",
+    "core_updates": "{count, plural, one {# mise à jour de cœur} other {# mises à jour de cœurs}}",
+    "firmware_update": "Firmware {version} disponible"
   },
   "plugins": {
     "buttons": {
@@ -262,6 +332,10 @@
       "add": "Vérifier et installer le plugin",
       "cancel": "Annuler",
       "invalid": "Aucun plugin valide n'a été trouvé à cette URL."
+    },
+    "empty": {
+      "title": "Aucun plugin installé",
+      "text": "Les plugins ajoutent des outils à Pocket Sync."
     }
   },
   "palettes": {
@@ -294,6 +368,10 @@
       "save": "Enregistrer la palette",
       "reset": "Réinitialiser les couleurs",
       "emu_credit": "Émulateur GB adapté de <1>roblouie/gameboy-emulator</1>"
+    },
+    "empty": {
+      "title": "Aucune palette pour l'instant",
+      "text": "Créez une palette, ajoutez-en une via un code ou parcourez Palette Town."
     }
   },
   "mister_sync": {
@@ -316,7 +394,8 @@
     "mapping": {
       "close": "Fermer",
       "clear": "Effacer l'association",
-      "reset": "Réinitialiser aux valeurs par défaut"
+      "reset": "Réinitialiser aux valeurs par défaut",
+      "title": "Correspondance des sauvegardes"
     }
   },
   "news_feed": {
@@ -329,8 +408,10 @@
       "data_packs": "Gérer les packs de données",
       "image_packs": "Gérer les packs d'images"
     },
-    "cores": "Cœurs",
-    "edit": "Modifier"
+    "cores": "Cœurs installés",
+    "edit": "Modifier",
+    "details": "Détails",
+    "no_cores": "Aucun cœur installé n'utilise cette plateforme."
   },
   "platforms": {
     "cancel": "Annuler",
@@ -365,7 +446,12 @@
       "close": "Fermer",
       "current": "Actuel"
     },
-    "save": "Enregistrer les modifications"
+    "save": "Enregistrer les modifications",
+    "archived": "Archivée",
+    "empty": {
+      "title": "Aucune plateforme sur la carte SD",
+      "text": "Les plateformes sont ajoutées en installant des cœurs."
+    }
   },
   "progress": {
     "remaining_time": "Temps restant (environ) : {remainingTime}",
@@ -388,7 +474,10 @@
     "controls": {
       "clear_selection": "Effacer la sélection",
       "delete_selection": "Supprimer la sélection ({count})",
-      "search": "Rechercher"
+      "search": "Rechercher",
+      "core": "Cœur",
+      "platform": "Plateforme",
+      "all": "Tous"
     },
     "photos": {
       "title": "Exportation de photos",
@@ -398,6 +487,10 @@
       "colours": {
         "black_and_white": "Noir & blanc"
       }
+    },
+    "empty": {
+      "title": "Aucun état sauvegardé pour l'instant",
+      "text": "Appuyez sur le bouton Analogue et Haut pendant le jeu pour enregistrer un souvenir. Il apparaîtra ici."
     }
   },
   "saves": {
@@ -420,7 +513,8 @@
     "back_up_now": "Sauvegarder maintenant",
     "backing_up": "Sauvegarde…",
     "last_backup_label": "Dernière sauvegarde",
-    "never": "Aucune sauvegarde"
+    "never": "Aucune sauvegarde",
+    "empty_title": "Aucune sauvegarde pour l'instant"
   },
   "screenshot_info": {
     "controls": {
@@ -437,7 +531,9 @@
       "search": "Rechercher",
       "select": "Sélectionner"
     },
-    "no_screenshots": "Une fois que vous aurez pris quelques captures d'écran, elles apparaîtront ici"
+    "no_screenshots": "Une fois que vous aurez pris quelques captures d'écran, elles apparaîtront ici",
+    "how_to": "Appuyez en même temps sur le bouton Analogue et Start pendant le jeu. La capture est enregistrée sur la carte SD et apparaît ici.",
+    "empty_title": "Aucune capture pour l'instant"
   },
   "settings": {
     "3d_pocket": {
@@ -543,6 +639,11 @@
       "style_label": "Style",
       "style_slanted": "Biseauté",
       "style_modern": "Moderne"
+    },
+    "dismissed_notes": {
+      "title": "Notes masquées",
+      "ramble": "Les notes que vous avez fermées, comme l'astuce sur le glisser-déposer de fichiers .zip, peuvent être réaffichées.",
+      "button": "{count, plural, =0 {Réafficher les notes} one {Réafficher # note} other {Réafficher # notes}}"
     }
   },
   "time_ago": {
@@ -569,7 +670,12 @@
       "cancel": "Passer",
       "text": "{list}\n\nLes Assets, sauvegardes, etc. seront déplacés et l'ancien cœur sera supprimé.",
       "title": "Remplacer les cœurs ?"
-    }
+    },
+    "drop": {
+      "title": "Déposez pour installer",
+      "text": "Pocket Sync installe les cœurs et fichiers du .zip sur votre carte SD."
+    },
+    "downloading": "Téléchargement…"
   },
   "version": {
     "update_alt": "Mise à jour {version} disponible",
@@ -579,5 +685,18 @@
   "jobs": {
     "Running": "Annuler",
     "Stopping": "Annulation..."
+  },
+  "pocket_buttons": {
+    "select": "Select",
+    "analogue": "Analogue",
+    "start": "Start",
+    "a": "A",
+    "b": "B",
+    "x": "X",
+    "y": "Y",
+    "up": "Haut",
+    "down": "Bas",
+    "left": "Gauche",
+    "right": "Droite"
   }
 }

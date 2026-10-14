@@ -19,12 +19,17 @@
       "firmware": "Aygıt yazılımı",
       "cores": "Çekirdekler",
       "games": "Oyunlar"
-    }
+    },
+    "show_updates_new": "Güncellemeleri göster (yeni)",
+    "open_sd_card": "SD kartı aç"
   },
   "app": {
     "app_name": "Pocket Sync",
     "connect_button": "Pocket / SD Karta bağlan",
-    "not_pocket_tip": "Bu dosya Pocket dosya sistemi gibi görünmüyor. SD Kartınızın en az bir kez Pocket ile beraber çalıştırılması gerek."
+    "not_pocket_tip": "Bu dosya Pocket dosya sistemi gibi görünmüyor. SD Kartınızın en az bir kez Pocket ile beraber çalıştırılması gerek.",
+    "close": "Kapat",
+    "loading": "Yükleniyor",
+    "dismiss": "Kapat"
   },
   "clean_files": {
     "close_button": "Kapat",
@@ -65,8 +70,10 @@
       "install": "Çekirdeği yükle",
       "required_files": "Gerekli dosyaları yükle",
       "uninstall": "Çekirdeği sil",
-      "update": "Çekirdeği güncelle",
-      "hide_core": "Çekirdeği Gizle"
+      "hide_core": "Çekirdeği Gizle",
+      "update_to": "{version} sürümüne güncelle",
+      "install_version": "Sürümü yükle",
+      "install_release": "Bu sürümü yükle"
     },
     "inputs": "Kontroller",
     "modal": {
@@ -83,18 +90,20 @@
     "firmware_too_low": "Bu çekirdeğin v{core_firmware} yazılımına ihtiyacı var, şu anda yüklü sürüm v{pocket_firmware}",
     "not_in_inventory": "{coreName} çekirdek envanterinde değil",
     "platform": {
-      "edit": "Düzenle",
-      "wikipedia": "Vikipedi"
+      "wikipedia": "Vikipedi",
+      "open": "Platformu aç"
     },
     "replaced": "Bu çekirdek <1>{replacementCore</1> ile değiştirildi",
     "platforms": "Platformlar",
     "release_date": "Yayın tarihi",
     "releases": {
       "release_history": "Yayın geçmişi",
-      "show_previous": "Eski yayınları göster"
+      "show_previous": "Eski yayınları göster",
+      "latest": "En yeni",
+      "prerelease": "Ön sürüm",
+      "on_github": "GitHub'da görüntüle"
     },
     "required_files": "Gerekli Dosyalar",
-    "required_files_count": "{count} / {total} Dosyalar",
     "hide_core_confirm": "Bu, çekirdeği listeden gizleyecektir, gizli çekirdekler Ayarlar'dan değiştirilebilir",
     "settings": "Ayarlar",
     "sponsor": "Destek Ol",
@@ -107,7 +116,9 @@
       "cartridges": "Kasetler",
       "dock": "Dock",
       "dock_dac": "Dock {Analog}",
-      "save_states_and_sleep": "Kayıtlar / Uyku"
+      "save_states_and_sleep": "Kayıtlar / Uyku",
+      "link_port": "Link kablosu",
+      "analogizer": "Analogizer"
     },
     "url": "URL",
     "version": "Versiyon",
@@ -144,7 +155,45 @@
       "title": "Analogizer Config",
       "video": "Analog Video",
       "snac": "SNAC Kontrolleri"
-    }
+    },
+    "tabs": {
+      "label": "Çekirdek ayrıntıları",
+      "overview": "Genel bakış",
+      "releases": "Yayınlar"
+    },
+    "tags": {
+      "installed": "Yüklü",
+      "update": "Güncelleme {version}",
+      "ai": "YZ {score, number, percent}",
+      "license": "Lisans",
+      "manual": "Manuel",
+      "manual_hint": "Elle yüklendi (örn. bir .zip dosyasından). Çekirdek listesinde olmadığı için Pocket Sync onu güncelleyemez."
+    },
+    "guide": {
+      "install": "Yükleme, {version} sürümünü SD kartınızdaki Cores klasörüne indirir. Çekirdeğin BIOS dosyaları gibi ek dosyalara ihtiyacı varsa, bunları daha sonra buradan yükleyebilirsiniz.",
+      "update": "{version} sürümü mevcut. Yüklü sürüm: {installed}.",
+      "up_to_date": "Yüklü ve güncel.",
+      "required_files_missing": "{total} gerekli dosyadan {count} tanesi bulundu. Çekirdeğin çalışması için eksik olanları yükleyin.",
+      "required_files_found": "Gerekli {total} dosyanın tümü bulundu.",
+      "update_title": "Güncelleme mevcut"
+    },
+    "preset": "Ön ayar",
+    "inputs_empty": "Bu çekirdek bir tuş eşlemesi tanımlamıyor.",
+    "input_keys": {
+      "pad_btn_a": "A",
+      "pad_btn_b": "B",
+      "pad_btn_x": "X",
+      "pad_btn_y": "Y",
+      "pad_trig_l": "L",
+      "pad_trig_r": "R",
+      "pad_btn_start": "Start",
+      "pad_btn_select": "Select"
+    },
+    "firmware_required": "Gerekli yazılım",
+    "core_settings_title": "Çekirdek ayarları",
+    "display_modes_hint": "Pocket'ta aralarından seçim yapmak istediğiniz görüntüleme modlarını açın.",
+    "previous_version_hint": "Yayınlanmış herhangi bir sürümü yükleyin, örneğin bir güncellemeden sonra geri dönmek için.",
+    "core_settings_hint": "Değişiklikler SD karta hemen kaydedilir."
   },
   "core_info_required_files": {
     "close": "Kapat",
@@ -174,11 +223,16 @@
       "sort_options": {
         "name": "İsim",
         "last_update": "Son güncelleme"
-      }
+      },
+      "features": "Özellikler",
+      "features_count": "Özellikler ({count})",
+      "platform": "Platform",
+      "update_all_count": "Tümünü güncelle ({count})"
     },
     "install_tip": ".zip dosyasını bu pencereye sürükleyerek çekirdekleri (veya zip dosyasındaki başka herhangi bir şeyi) de yükleyebilirsiniz",
     "installed": "Yüklenmiş ({count})",
-    "not_installed": "Kullanılabilir ({count})"
+    "not_installed": "Kullanılabilir ({count})",
+    "updates": "Mevcut güncellemeler ({count})"
   },
   "error": {
     "report": "Bunu GitHub üzerinden bildirebilir, aşağıdaki metni ve az önce yaptığınız her şeyi ekleyebilirsiniz",
@@ -218,6 +272,10 @@
     "types": {
       "archive_org": "İnternet Arşivi",
       "filesystem": "Yerel Dosyalar"
+    },
+    "empty": {
+      "title": "Henüz kaynak yok",
+      "text": "Getirme, dosyaları bilgisayarınızdaki bir klasörden veya archive.org'dan SD karta kopyalar. Başlamak için bir kaynak ekleyin."
     }
   },
   "firmware": {
@@ -242,7 +300,10 @@
     "jump_to": "Git",
     "badge_latest": "En yeni",
     "badge_installed": "Yüklü",
-    "published": "{date, date, medium}"
+    "published": "{date, date, medium}",
+    "loaded_current": "Yüklü yazılımın (v{version}) yükleyici dosyası hâlâ SD kartta.",
+    "loaded_current_info": "Artık gerekli değil, kaldırılabilir.",
+    "remove_installer": "Yükleyici dosyasını kaldır"
   },
   "games": {
     "controls": {
@@ -251,13 +312,17 @@
       "instance_json": "Instance JSON oluştur",
       "refresh": "Yenile",
       "search": "Ara",
-      "mrom": "MROM dökümlerini taşı"
+      "mrom": "MROM dökümlerini taşı",
+      "platform": "Platform",
+      "all": "Tümü"
     },
     "item": {
       "game_count": "{count, plural, =0 {Oyun yok} one {# Oyun} other {# Oyunlar}}"
     },
     "open_folder": "Klasörü aç",
-    "none": "Oyun bulunamadı. Bir çekirdek yükleyin, ardından oyunları SD karttaki klasörüne ekleyin."
+    "none": "Oyun bulunamadı. Bir çekirdek yükleyin, ardından oyunları SD karttaki klasörüne ekleyin.",
+    "show_in_folder": "Klasörde göster",
+    "empty_title": "Henüz oyun yok"
   },
   "image_editor": {
     "cancel": "İptal",
@@ -266,14 +331,19 @@
     "reset": "Sıfırla",
     "rotate": "Döndür",
     "save": "Görseli kaydet",
-    "scale": "Ölçekle"
+    "scale": "Ölçekle",
+    "title": "Görseli düzenle",
+    "move_up": "Yukarı taşı",
+    "move_down": "Aşağı taşı"
   },
   "layout": {
     "plugins": "Eklentiler",
     "saves": "Yedekler",
     "collapse_sidebar": "Kenar çubuğunu daralt",
     "expand_sidebar": "Kenar çubuğunu genişlet",
-    "views": "Görünümler"
+    "views": "Görünümler",
+    "core_updates": "{count} çekirdek güncellemesi",
+    "firmware_update": "Yazılım {version} mevcut"
   },
   "plugins": {
     "buttons": {
@@ -291,6 +361,10 @@
       "add": "Eklentiyi doğrulayın ve yükleyin.",
       "cancel": "İptal etmek",
       "invalid": "Bu URL'de geçerli bir eklenti bulunamadı."
+    },
+    "empty": {
+      "title": "Yüklü eklenti yok",
+      "text": "Eklentiler Pocket Sync'e araçlar ekler."
     }
   },
   "platforms": {
@@ -312,6 +386,36 @@
         "year": "Yıl"
       }
     },
-    "save": "Değişiklikleri kaydet"
+    "save": "Değişiklikleri kaydet",
+    "archived": "Arşivlendi",
+    "empty": {
+      "title": "SD kartta platform yok",
+      "text": "Çekirdek yüklediğinizde platformlar eklenir."
+    }
+  },
+  "platform_info": {
+    "details": "Ayrıntılar",
+    "no_cores": "Bu platformu kullanan yüklü çekirdek yok.",
+    "cores": "Yüklü çekirdekler"
+  },
+  "zip_install": {
+    "drop": {
+      "title": "Yüklemek için bırakın",
+      "text": "Pocket Sync, .zip içindeki çekirdekleri ve dosyaları SD kartınıza yükler."
+    },
+    "downloading": "İndiriliyor…"
+  },
+  "pocket_buttons": {
+    "select": "Select",
+    "analogue": "Analogue",
+    "start": "Start",
+    "a": "A",
+    "b": "B",
+    "x": "X",
+    "y": "Y",
+    "up": "Yukarı",
+    "down": "Aşağı",
+    "left": "Sol",
+    "right": "Sağ"
   }
 }

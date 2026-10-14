@@ -28,8 +28,7 @@ export const NewFetch = ({ onClose }: NewFetchProps) => {
   const [fetchType, setFetchType] = useState<FetchType["type"]>("filesystem")
 
   return (
-    <Modal className="fetch__new">
-      <h2>{t("new.title")}</h2>
+    <Modal className="fetch__new" title={t("new.title")} onClose={onClose}>
       <select
         className="fetch__type-select"
         onChange={(e) => setFetchType(e.target.value as FetchType["type"])}
@@ -44,9 +43,6 @@ export const NewFetch = ({ onClose }: NewFetchProps) => {
         {fetchType === "archive.org" && <NewFetchArchive addFetch={addFetch} />}
       </div>
 
-      <button className="fetch__close-button" onClick={onClose}>
-        {t("new.close")}
-      </button>
     </Modal>
   )
 }

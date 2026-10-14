@@ -8,10 +8,11 @@ import { PlatformInfoSelectorFamily } from "../../jotai/platforms/selectors"
 import { WalkDirSelectorFamily } from "../../jotai/selectors"
 import { pocketPathAtom } from "../../jotai/atoms"
 import { invokeCreateFolderIfMissing } from "../../utils/invokes"
-import { openFolder } from "../../utils/openFolder"
+import { openFolder, revealFile } from "../../utils/openFolder"
 import { useSearchContext } from "../search/context"
 import IconButton from "../ui/IconButton"
 import Skeleton from "../ui/Skeleton"
+import Tag from "../ui/Tag"
 
 const SEARCH_THRESHOLD = 0.8
 
@@ -37,6 +38,7 @@ export const GameSystemSection = ({ system }: { system: GameSystem }) => {
         const parts = file.split(separator).filter(Boolean)
         return {
           path: file,
+          parts,
           name: parts.at(-1) ?? file,
           folder: parts.slice(0, -1).join(" / "),
         }
@@ -55,8 +57,12 @@ export const GameSystemSection = ({ system }: { system: GameSystem }) => {
     )
   }, [games, query, platform.name])
 
-  const category = other?.category
-  if (category && category !== "All" && platform.category !== category)
+  const platformFilter = other?.platform
+  if (
+    platformFilter &&
+    platformFilter !== "All" &&
+    platformFilter !== system.platformId
+  )
     return null
   if (visibleGames.length === 0) return null
 
@@ -69,6 +75,7 @@ export const GameSystemSection = ({ system }: { system: GameSystem }) => {
         <div className="games__system-heading">
           <h3 className="games__system-title" id={titleId}>
             {platform.name}
+            {platform.category && <Tag>{platform.category}</Tag>}
           </h3>
           <span className="games__system-meta">
             {[
@@ -90,12 +97,24 @@ export const GameSystemSection = ({ system }: { system: GameSystem }) => {
         />
       </header>
       <ul className="games__list">
-        {visibleGames.map(({ path, name, folder: subfolder }) => (
+        {visibleGames.map(({ path, parts, name, folder: subfolder }) => (
           <li key={path} className="games__game">
             <span className="games__game-name">{name}</span>
+            {name.includes(".") && (
+              <Tag className="games__game-type">
+                {name.split(".").pop()?.toUpperCase()}
+              </Tag>
+            )}
             {subfolder && (
               <span className="games__game-folder">{subfolder}</span>
             )}
+            <IconButton
+              theme="tertiary"
+              icon="folder"
+              label={t("show_in_folder")}
+              className="games__game-reveal"
+              onClick={() => revealFile(`${folder}/${parts.join("/")}`)}
+            />
           </li>
         ))}
       </ul>

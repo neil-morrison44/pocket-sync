@@ -1,4 +1,4 @@
-import { Modal } from "../../modal"
+import { Modal, ModalSuspense } from "../../modal"
 import { PhotoExportImageSelectorFamily } from "../../../jotai/saveStates/selectors"
 import { Suspense, useState } from "react"
 
@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next"
 import { useAtom, useAtomValue, useSetAtom } from "jotai"
 import { useResetAtom } from "jotai/utils"
 
-export const PhotoExportModal = ({
+const PhotoExportModalContent = ({
   path,
   onClose,
 }: {
@@ -21,8 +21,11 @@ export const PhotoExportModal = ({
   const { t } = useTranslation("save_states")
 
   return (
-    <Modal className="photo-export-modal">
-      <h2>{t("photos.title")}</h2>
+    <Modal
+      className="photo-export-modal"
+      title={t("photos.title")}
+      onClose={onClose}
+    >
       <ColourMapPicker />
       <div className="photo-export-modal__layout">
         <LargePhotoView index={selectedIndex} path={path} />
@@ -47,7 +50,6 @@ export const PhotoExportModal = ({
           {t("photos.export_all")}
         </button>
       </div>
-      <button onClick={onClose}>{t("photos.close")}</button>
     </Modal>
   )
 }
@@ -134,3 +136,20 @@ const LargePhotoView = ({
 }
 
 const toHex = (colour: number) => colour.toString(16).padStart(2, "0")
+
+/** Opens right away with a loader while its data loads. */
+export const PhotoExportModal = (props: {
+  path: string
+  onClose: () => void
+}) => {
+  const { t } = useTranslation("save_states")
+  return (
+    <ModalSuspense
+      className="photo-export-modal"
+      title={t("photos.title")}
+      onClose={props.onClose}
+    >
+      <PhotoExportModalContent {...props} />
+    </ModalSuspense>
+  )
+}

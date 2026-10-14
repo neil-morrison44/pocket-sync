@@ -1,10 +1,11 @@
 import { useId, useState } from "react"
 import { useTranslation } from "react-i18next"
+import Button from "../../ui/Button"
+import TextInput from "../../ui/TextInput"
 
 type EditableProps = {
-  type: "freetext" | "freetext-with-choices" | "number"
-  initialValue: string | number
-  options?: string[]
+  /** Names the field, e.g. "Manufacturer". */
+  label: string
 } & (
   | {
       type: "freetext"
@@ -14,6 +15,7 @@ type EditableProps = {
     }
   | {
       type: "freetext-with-choices"
+      /** Suggestions while typing; any other value is allowed too. */
       options: string[]
       initialValue: string
       onSave: (v: string) => void
@@ -26,83 +28,73 @@ type EditableProps = {
     }
 )
 
-export const Editable = ({
-  type,
-  initialValue,
-  options,
-  onSave,
-}: EditableProps) => {
+/** One platform field: its value with an Edit button, or a field to change it. */
+export const Editable = (props: EditableProps) => {
+  const { type, label, initialValue, options } = props
   const [editMode, setEditMode] = useState(false)
-  const [localValue, setLocalValue] =
-    useState<typeof initialValue>(initialValue)
-  const uuid = useId()
+  const [localValue, setLocalValue] = useState(`${initialValue}`)
+  const listId = useId()
   const { t } = useTranslation("platforms")
 
-  if (!editMode)
-    return (
-      <div className="platforms__editable platforms__editable--pre-edit">
-        {initialValue}
-        <div
-          className="platforms__edit-button"
-          onClick={() => setEditMode(true)}
-        >
-          {t("edit")}
-        </div>
-      </div>
-    )
+  const save = () => {
+    if (props.type === "number") props.onSave(parseInt(localValue))
+    else props.onSave(localValue)
+    setEditMode(false)
+  }
 
-  if (type === "freetext-with-choices" || type === "freetext") {
-    return (
-      <div className="platforms__editable">
-        <>
-          <input
-            type="text"
-            list={uuid}
+  return (
+    <div className="platforms__editable">
+      <span className="platforms__editable-label">{label}</span>
+      {editMode ? (
+        <form
+          className="platforms__editable-form"
+          onSubmit={(event) => {
+            event.preventDefault()
+            save()
+          }}
+        >
+          <TextInput
+            className="platforms__editable-input"
+            label={label}
+            type={type === "number" ? "number" : "text"}
+            list={type === "freetext-with-choices" ? listId : undefined}
             value={localValue}
-            onChange={({ target }) => setLocalValue(target.value)}
+            onChange={setLocalValue}
+            autoFocus
           />
           {type === "freetext-with-choices" && (
-            <datalist id={uuid}>
-              {options.map((s) => (
-                <option key={s}>{s}</option>
+            <datalist id={listId}>
+              {options.map((option) => (
+                <option key={option}>{option}</option>
               ))}
             </datalist>
           )}
+          <Button theme="primary" type="submit">
+            {t("save")}
+          </Button>
+          <Button
+            theme="tertiary"
+            onClick={() => {
+              setLocalValue(`${initialValue}`)
+              setEditMode(false)
+            }}
+          >
+            {t("cancel")}
+          </Button>
+        </form>
+      ) : (
+        <>
+          <span className="platforms__editable-value">{initialValue}</span>
+          <Button
+            theme="tertiary"
+            icon="pencil"
+            className="platforms__edit-button"
+            onClick={() => setEditMode(true)}
+          >
+            {t("edit")}
+          </Button>
         </>
-        <button
-          onClick={() => {
-            onSave(localValue as string)
-            setEditMode(false)
-          }}
-        >
-          {t("save")}
-        </button>
-        <button onClick={() => setEditMode(false)}>{t("cancel")}</button>
-      </div>
-    )
-  }
-
-  if (type === "number") {
-    return (
-      <div className="platforms__editable">
-        <input
-          type="number"
-          list={uuid}
-          value={localValue}
-          onChange={({ target }) => setLocalValue(parseInt(target.value))}
-        />
-        <button
-          onClick={() => {
-            onSave(localValue as number)
-            setEditMode(false)
-          }}
-        >
-          {t("save")}
-        </button>
-        <button onClick={() => setEditMode(false)}>{t("cancel")}</button>
-      </div>
-    )
-  }
-
-  return null
+      )}
+    </div>
+  )
 }

@@ -21,11 +21,11 @@
 
 .fetch__list-item-type{
   font-weight: bold;
-  font-size: 1.125rem;
+  font-size: var(--font-size-lg);
 }
 
 .fetch__type-select{
-  font-size: 1.5rem;
+  font-size: var(--font-size-title-sm);
 }
 
 .fetch__list-item-info {
@@ -43,7 +43,7 @@
     font-family: GamePocket;
     content: "@face00@";
     font-variant-ligatures: discretionary-ligatures;
-    font-size: 1.5rem;
+    font-size: var(--font-size-title-sm);
   }
 }
 
@@ -51,7 +51,7 @@
   place-self: center center;
   text-align: center;
   border-radius: 5px;
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   padding: 10px;
   margin-inline-start: auto;
 }
@@ -95,14 +95,14 @@
   gap: 10px;
 
   > input {
-    font-size: 1rem;
+    font-size: var(--font-size-md);
     padding: 5px 10px;
   }
 }
 
 .fetch__folder-picker-value{
   box-sizing: border-box;
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   background-color: var(--theme-overlay);
   display: flex;
   align-items: center;
@@ -143,7 +143,7 @@
 
   > * {
     flex-basis: min-content;
-    font-size: 1rem;
+    font-size: var(--font-size-md);
   }
 
   > input {
@@ -155,9 +155,5 @@
 .fetch__archive-check{
   width: 100%;
   text-align: center;
-  font-size: 1.25rem;
-}
-
-.fetch__close-button{
-  margin-block-start: auto;
+  font-size: var(--font-size-xl);
 }

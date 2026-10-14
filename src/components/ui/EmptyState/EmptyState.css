@@ -1,0 +1,43 @@
+/* Fills the page below the header bar and centres its content */
+.empty-state {
+  --control-height: 32px;
+
+  flex-grow: 1;
+  align-self: stretch;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+
+  /* The page minus the header bar, and room for a note above (e.g. on
+     Plugins), so it centres without scrolling */
+  min-height: calc(100vh - var(--header-bar-height) - 4rem);
+  padding: var(--space-2xl) var(--page-padding-inline);
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.empty-state__icon {
+  color: var(--theme-text-soft);
+}
+
+h2.empty-state__title {
+  margin: var(--space-sm) 0 0;
+  padding: 0;
+  font-size: var(--font-size-title-sm);
+}
+
+.empty-state__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+  max-width: 44ch;
+  color: var(--theme-text-soft);
+}
+
+.empty-state__action {
+  margin-top: var(--space-sm);
+}

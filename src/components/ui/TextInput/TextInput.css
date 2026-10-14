@@ -17,8 +17,8 @@
   &::after {
     content: "";
     position: absolute;
-    inset: 0;
-    background-color: var(--theme-focus);
+    inset: var(--focus-ring-inset, 0);
+    background-color: var(--focus-ring-colour, var(--theme-focus));
     clip-path: var(--shape-slant-ring);
     pointer-events: none;
     visibility: hidden;
@@ -63,7 +63,7 @@
 
   .text-input__field {
     font-family: var(--font-code);
-    font-size: 0.8125rem;
+    font-size: var(--font-size-code);
     font-weight: 400;
   }
 }

@@ -8,7 +8,7 @@ import {
   platformsListSelector,
 } from "../../../jotai/platforms/selectors"
 import { PlatformId, ImagePack, PlatformInfoJSON } from "../../../types"
-import { Modal } from "../../modal"
+import { Modal, ModalSuspense } from "../../modal"
 
 import "./index.css"
 import { useTranslation } from "react-i18next"
@@ -22,7 +22,7 @@ type DataPacksProps = {
   onClose: () => void
 }
 
-export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
+const DataPacksContent = ({ onClose, platformId }: DataPacksProps) => {
   const imagePacks = useAtomValue(imagePackListSelector)
   const platformIds = useAtomValue(platformsListSelector)
   const { t } = useTranslation("platforms")
@@ -75,7 +75,11 @@ export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
   )
 
   return (
-    <Modal className="data-packs">
+    <Modal
+      className="data-packs"
+      title={t("controls.data_packs")}
+      onClose={onClose}
+    >
       <div className="data-packs__content">
         {sortedPlatformIds.map((platformId) => (
           <OnlyLoadsWhenShown height={166}>
@@ -109,7 +113,6 @@ export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
         <button onClick={apply}>
           {t("data_packs.apply_changes", { count: applyCount })}
         </button>
-        <button onClick={onClose}>{t("data_packs.close")}</button>
       </div>
     </Modal>
   )
@@ -194,4 +197,18 @@ const comparePlatforms = (a: PlatformInfoJSON, b: PlatformInfoJSON) => {
     //@ts-ignore TS not being smart enough
     return b.platform[key] == value
   })
+}
+
+/** Opens right away with a loader while its data loads. */
+export const DataPacks = (props: DataPacksProps) => {
+  const { t } = useTranslation("platforms")
+  return (
+    <ModalSuspense
+      className="data-packs"
+      title={t("controls.data_packs")}
+      onClose={props.onClose}
+    >
+      <DataPacksContent {...props} />
+    </ModalSuspense>
+  )
 }

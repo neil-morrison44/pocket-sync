@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 
 import { instancePackagerCoresListSelector } from "../../../jotai/games/selectors"
 import { invokeRunPackagerForCore } from "../../../utils/invokes"
-import { Modal } from "../../modal"
+import { Modal, ModalSuspense } from "../../modal"
 import { CoreTag } from "../../shared/coreTag"
 
 import "./index.css"
@@ -14,14 +14,13 @@ type InstanceJsonProps = {
   onClose: () => void
 }
 
-export const InstanceJson = ({ onClose }: InstanceJsonProps) => {
+const InstanceJsonContent = ({ onClose }: InstanceJsonProps) => {
   const coresList = useAtomValue(instancePackagerCoresListSelector)
   const buildLog = useBuildLog()
   const { t } = useTranslation("instance_json")
 
   return (
-    <Modal className="instance-json">
-      <h2>{t("title")}</h2>
+    <Modal className="instance-json" title={t("title")} onClose={onClose}>
       <div className="instance-json--top-content">
         <div>{t("available_for")}</div>
         <div className="instance-json__cores-list">
@@ -58,7 +57,6 @@ export const InstanceJson = ({ onClose }: InstanceJsonProps) => {
           })}
         </div>
       )}
-      <button onClick={onClose}>{t("close_button")}</button>
     </Modal>
   )
 }
@@ -83,4 +81,18 @@ type InstanceBuildEventPlayload = {
   file_name: string
   success: boolean
   message?: string
+}
+
+/** Opens right away with a loader while its data loads. */
+export const InstanceJson = (props: InstanceJsonProps) => {
+  const { t } = useTranslation("instance_json")
+  return (
+    <ModalSuspense
+      className="instance-json"
+      title={t("title")}
+      onClose={props.onClose}
+    >
+      <InstanceJsonContent {...props} />
+    </ModalSuspense>
+  )
 }

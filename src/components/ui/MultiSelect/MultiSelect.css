@@ -32,7 +32,7 @@
   background: transparent;
   color: var(--theme-text-headline);
   font: inherit;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   outline: none;
 
   &::placeholder {
@@ -63,7 +63,7 @@
   background: transparent;
   color: inherit;
   font: inherit;
-  font-size: 1rem;
+  font-size: var(--font-size-md);
   text-align: left;
   cursor: pointer;
   outline: none;

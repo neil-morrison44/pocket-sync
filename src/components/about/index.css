@@ -13,7 +13,7 @@
   --control-height: 36px;
 
   align-self: center;
-  font-size: 1.125rem;
+  font-size: var(--font-size-lg);
   padding-inline: 24px;
 }
 
@@ -29,7 +29,7 @@
     margin-block: 0 15px;
 
     /* Scales with the column so the title never overflows it */
-    font-size: clamp(2.5rem, 11cqi, 4rem);
+    font-size: clamp(var(--font-size-title-lg), 11cqi, var(--font-size-hero));
 
     /* The filter paints only inside the element's box. :root sets a fixed
        24px line-height, which made the box much shorter than the glyphs, so
@@ -46,21 +46,22 @@
     --x: calc(15px * var(--scale-x));
     --y: calc(5px * var(--scale-y));
 
-    &:hover{
-      filter: drop-shadow(var(--x) var(--y) red) drop-shadow(var(--x) var(--y) blue) drop-shadow(var(--x) var(--y) green);
+    &:hover {
+      filter: drop-shadow(var(--x) var(--y) red)
+        drop-shadow(var(--x) var(--y) blue) drop-shadow(var(--x) var(--y) green);
       transition: none;
     }
   }
 }
 
-.about__title{
+.about__title {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
 
-.about__sponsor{
+.about__sponsor {
   display: flex;
   justify-content: center;
   margin-block-end: var(--space-lg);
@@ -68,13 +69,13 @@
   align-items: center;
 
   /* Slanted like the other controls, so it reads as an action */
-  .link{
+  .link {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
     height: 32px;
     padding-inline: 16px;
-    font-size: 1rem;
+    font-size: var(--font-size-md);
     text-decoration: none;
     color: var(--theme-text-headline);
     background-color: var(--theme-overlay);
@@ -82,7 +83,7 @@
     cursor: pointer;
   }
 
-  .link:hover{
+  .link:hover {
     background-color: var(--theme-sidebar-item-active);
   }
 }
@@ -133,7 +134,7 @@
   position: absolute;
   right: var(--space-lg);
   bottom: var(--space-lg);
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   color: var(--theme-text-soft);
 }
 
@@ -142,6 +143,12 @@
   justify-content: center;
   gap: var(--space-sm);
   padding-block: var(--space-lg);
+}
+
+/* Holds the unread dot on the panel toggle */
+.about__news-toggle {
+  position: relative;
+  display: inline-flex;
 }
 
 /* Side panel: library updates or the changelog, switched with tabs */
@@ -193,9 +200,9 @@
 }
 
 /* Same row style as the library updates beside it */
-.about__changelog-text{
+.about__changelog-text {
   text-align: left;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   color: var(--theme-text-body);
 
   & > :not(.about__changelog-title, .about__changelog-break) {
@@ -203,25 +210,25 @@
   }
 }
 
-.about__changelog-image{
+.about__changelog-image {
   max-width: 60%;
 }
 
-.about__changelog-break:not(:first-of-type){
+.about__changelog-break:not(:first-of-type) {
   width: 100%;
   height: 1px;
   margin-top: var(--space-md);
   background-color: var(--theme-separator);
 }
 
-.about__changelog-title{
+.about__changelog-title {
   display: flex;
   justify-content: space-between;
   gap: var(--space-sm);
   margin: 0;
   padding: var(--space-md) var(--space-lg) 0;
   font-family: var(--font-body);
-  font-size: 0.9375rem;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--theme-text-headline);
   white-space: nowrap;
@@ -233,4 +240,45 @@
 
 .about__news-tabs {
   flex-grow: 1;
+}
+
+/* Marks the end of the rendered releases; more load as it nears */
+.about__changelog-more {
+  height: 1px;
+}
+
+/* Short windows: the Pocket on the left, title, stats and buttons in a
+   column on the right, both centred vertically, so nothing is cut off;
+   scrolls as a last resort */
+@media (height <= 700px) {
+  .about__main {
+    --compact-pocket-width: min(80vh, 40vw);
+
+    justify-content: center;
+    padding-inline-start: calc(
+      var(--compact-pocket-width) + 2 * var(--space-2xl)
+    );
+    overflow-y: auto;
+  }
+
+  .about__top {
+    flex-grow: 0;
+    justify-content: center;
+  }
+
+  .about__pocket {
+    position: absolute;
+    top: 50%;
+    left: var(--space-2xl);
+    width: var(--compact-pocket-width);
+    transform: translateY(-50%);
+  }
+
+  /* Out of the flow, in the top-right corner */
+  .about__toolbar {
+    position: absolute;
+    top: var(--space-lg);
+    right: var(--space-lg);
+    width: auto;
+  }
 }

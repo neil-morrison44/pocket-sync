@@ -83,3 +83,23 @@ export const PlatformInventoryImageSelectorFamily = atomFamily<
       : undefined
   )
 )
+
+/** Platforms that at least one core runs, sorted by manufacturer and name. */
+export const corePlatformListSelector = atom<
+  Promise<{ id: PlatformId; name: string; manufacturer: string }[]>
+>(async (get) => {
+  const inventory = await get(coreInventoryAtom)
+  const usedIds = new Set(
+    inventory.cores.data.flatMap(
+      ({ releases }) => releases[0]?.core.metadata.platform_ids ?? []
+    )
+  )
+  return inventory.platforms.data
+    .filter(({ id }) => usedIds.has(id))
+    .map(({ id, name, manufacturer }) => ({ id, name, manufacturer }))
+    .sort(
+      (a, b) =>
+        a.manufacturer.localeCompare(b.manufacturer) ||
+        a.name.localeCompare(b.name)
+    )
+})

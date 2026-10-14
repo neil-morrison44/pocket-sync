@@ -5,7 +5,9 @@
   shape-rendering: crispedges;
 }
 
+/* Height from `size`, width from the mark's own proportions */
 .icon--is-brand {
+  width: auto;
   shape-rendering: auto;
 }
 
@@ -19,4 +21,23 @@
 
   /* stylelint-disable-next-line property-no-vendor-prefix */
   -webkit-font-smoothing: none;
+}
+
+/* Follows the surrounding text: pixel icons a bit taller than the letters
+   (16px next to 12px text), glyphs and brand marks as tall as the letters */
+.icon--size-text {
+  width: 1.3334em;
+  height: 1.3334em;
+
+  &.icon--is-glyph {
+    width: auto;
+    height: auto;
+    font-size: 1em;
+  }
+
+  /* 0.75 of a pixel icon, like brand marks at fixed sizes */
+  &.icon--is-brand {
+    width: auto;
+    height: 1em;
+  }
 }

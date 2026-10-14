@@ -33,6 +33,7 @@ import { PreviewCanvas } from "./previewCanvas"
 import { PaletteTown } from "./town"
 import { useAtomValue } from "jotai"
 import Icon from "../ui/Icon"
+import EmptyState from "../ui/EmptyState"
 import IconButton from "../ui/IconButton"
 import TextInput from "../ui/TextInput"
 
@@ -124,11 +125,20 @@ type PaletteListProps = {
 
 const PaletteList = ({ setMode }: PaletteListProps) => {
   const palettesList = useAtomValue(palettesListSelector)
+  const { t } = useTranslation("palettes")
 
   const sortedPalettesList = useMemo(
     () => [...palettesList].sort((a, b) => a.localeCompare(b)),
     [palettesList]
   )
+
+  if (sortedPalettesList.length === 0) {
+    return (
+      <EmptyState icon="colors-swatch" title={t("empty.title")}>
+        {t("empty.text")}
+      </EmptyState>
+    )
+  }
 
   return (
     <ul className="palettes__list">
@@ -290,8 +300,11 @@ const AddViaCodeModal = ({ onClose }: { onClose: () => void }) => {
   }, [onClose, parsedPalette, pocketPath])
 
   return (
-    <Modal className="palettes_code-modal">
-      <h2>{t("add_via_code.title")}</h2>
+    <Modal
+      className="palettes_code-modal"
+      title={t("add_via_code.title")}
+      onClose={onClose}
+    >
       <textarea
         className="palettes_code-modal-input"
         value={inputedCode}

@@ -1,6 +1,9 @@
 import { useAtom, useAtomValue } from "jotai"
 import { Controls, ControlsActions } from "../controls"
 import { ControlsButton } from "../controls/inputs/button"
+import Button from "../ui/Button"
+import EmptyState from "../ui/EmptyState"
+import Callout from "../ui/Callout"
 import { pluginListSelector } from "../../jotai/plugins/selectors"
 import { Modal } from "../modal"
 import { useCallback, useState } from "react"
@@ -37,13 +40,7 @@ export const Plugins = () => {
         </ControlsActions>
       </Controls>
 
-      <div className="plugins__list">
-        {plugins.map((plugin) => (
-          <PluginItem plugin={plugin} key={plugin.id} />
-        ))}
-      </div>
-
-      <div className="plugins__info">
+      <Callout className="callout--in-page" dismissId="plugins-info">
         <Trans
           t={t}
           i18nKey="info"
@@ -54,6 +51,25 @@ export const Plugins = () => {
             {"_"}
           </Link>
         </Trans>
+      </Callout>
+
+      {plugins.length === 0 && (
+        <EmptyState
+          icon="plug"
+          title={t("empty.title")}
+          action={
+            <Button theme="primary" onClick={() => setAddPluginModalOpen(true)}>
+              {t("buttons.add")}
+            </Button>
+          }
+        >
+          {t("empty.text")}
+        </EmptyState>
+      )}
+      <div className="plugins__list">
+        {plugins.map((plugin) => (
+          <PluginItem plugin={plugin} key={plugin.id} />
+        ))}
       </div>
     </div>
   )
@@ -172,8 +188,11 @@ const AddPluginModal = ({ onClose }: AddPluginModalProps) => {
   )
 
   return (
-    <Modal className="modal--fit-content">
-      <h2>{t("add_modal.title")}</h2>
+    <Modal
+      className="modal--fit-content"
+      title={t("add_modal.title")}
+      onClose={onClose}
+    >
       <input
         type="text"
         className="plugins__add-input"

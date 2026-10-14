@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { Suspense, useState } from "react"
 import ReactDOM from "react-dom/client"
 import { App } from "./app"
 // import i18n from "./i18n"
@@ -18,7 +18,7 @@ import {
   restoreStateCurrent,
   StateFlags,
 } from "@tauri-apps/plugin-window-state"
-import { listen } from "@tauri-apps/api/event"
+import { getCurrentWindow } from "@tauri-apps/api/window"
 import { AutoUpdate } from "./components/autoUpdate"
 import { createStore, getDefaultStore, Provider } from "jotai"
 import { PluginWindow } from "./components/plugins/pluginWindow"
@@ -34,19 +34,32 @@ window.addEventListener("error", (event) => {
   error(`${event.message}`)
 })
 
-listen<string>("resize", (event) => {
-  saveWindowState(StateFlags.ALL)
-})
+// Save size and position as they change (debounced), not only on a clean
+// quit, so a crash or a stopped dev build still reopens where it was
+let saveWindowTimeout: ReturnType<typeof setTimeout> | undefined
+const saveWindowSoon = () => {
+  clearTimeout(saveWindowTimeout)
+  saveWindowTimeout = setTimeout(() => saveWindowState(StateFlags.ALL), 500)
+}
+getCurrentWindow().onResized(saveWindowSoon)
+getCurrentWindow().onMoved(saveWindowSoon)
 
 const jotaiStore = getDefaultStore()
 
 initGlobalFSEvents()
 
 // Applies the chosen theme; inside the Provider so it shares Settings' store
-const ApplyTheme = () => {
+const ApplyThemeInner = () => {
   useApplyTheme()
   return null
 }
+
+// The theme is read from a file, so it suspends briefly on launch
+const ApplyTheme = () => (
+  <Suspense fallback={null}>
+    <ApplyThemeInner />
+  </Suspense>
+)
 
 const MainWindow = () => {
   return (

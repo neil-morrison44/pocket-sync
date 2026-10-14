@@ -1,0 +1,63 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  height: 20px;
+  padding-inline: var(--space-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  background-color: var(--tag-background);
+  color: var(--tag-text);
+  clip-path: var(--shape-slant);
+
+  & .icon {
+    color: var(--tag-icon, currentcolor);
+  }
+}
+
+.tag--theme-neutral {
+  --tag-background: var(--theme-overlay);
+  --tag-text: var(--theme-text-headline);
+}
+
+.tag--theme-accent {
+  --tag-background: var(--theme-accent);
+  --tag-text: var(--theme-accent-text);
+}
+
+/* Tinted tags keep the regular text colour, so they read in both themes; the
+   icon carries the colour */
+.tag--theme-warning {
+  --tag-background: color-mix(in srgb, var(--theme-warning) 24%, transparent);
+  --tag-text: var(--theme-text-headline);
+  --tag-icon: var(--theme-warning);
+}
+
+.tag--theme-danger {
+  --tag-background: color-mix(in srgb, var(--theme-danger) 28%, transparent);
+  --tag-text: var(--theme-text-headline);
+  --tag-icon: var(--theme-danger);
+}
+
+.tag--theme-highlight {
+  --tag-background: color-mix(in srgb, var(--theme-highlight) 32%, transparent);
+  --tag-text: var(--theme-text-headline);
+}
+
+.tag--theme-analogizer {
+  --tag-background: color-mix(
+    in srgb,
+    var(--theme-analogizer) 28%,
+    transparent
+  );
+  --tag-text: var(--theme-text-headline);
+  --tag-icon: var(--theme-analogizer);
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}

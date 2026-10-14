@@ -77,7 +77,7 @@
   background: transparent;
   color: var(--sidebar-foreground);
   font: inherit;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   text-align: left;
   white-space: nowrap;
@@ -92,8 +92,8 @@
   &::after {
     content: "";
     position: absolute;
-    inset: 0;
-    background-color: var(--theme-focus);
+    inset: var(--focus-ring-inset, 0);
+    background-color: var(--focus-ring-colour, var(--theme-focus));
     clip-path: var(--shape-slant-ring);
     pointer-events: none;
     visibility: hidden;
@@ -160,15 +160,45 @@
   }
 }
 
-.sidebar__pending {
-  width: 36px;
-  height: 36px;
-  align-self: center;
-}
-
 /* Window drag area above the items (holds the macOS traffic lights) */
 .sidebar__drag-region {
   position: absolute;
   inset: 0 0 auto;
   height: calc(var(--titlebar-inset) + 8px);
+}
+
+/* Notification count (or dot) in the accent green, at the item's end; on
+   the icon when the sidebar is collapsed */
+.sidebar__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  margin-inline-start: auto;
+  padding-inline: var(--space-xs);
+  box-sizing: border-box;
+  border-radius: var(--radius-full);
+  background-color: var(--theme-accent);
+  color: var(--theme-accent-text);
+  font-size: var(--font-size-2xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* No number (e.g. firmware): the same circle, empty */
+.sidebar__badge--dot {
+  padding: 0;
+}
+
+.sidebar--collapsed .sidebar__badge {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  min-width: 8px;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  font-size: 0;
 }

@@ -44,6 +44,9 @@ export const SaveStateItem = ({
   return (
     <SearchContextSelfHidingConsumer
       fields={[metadata.game, metadata.platform]}
+      otherFn={({ platform }) =>
+        !platform || platform === "All" || metadata.platform === platform
+      }
     >
       <div
         className={`save-states__item save-states__item--${

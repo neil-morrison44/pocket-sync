@@ -78,7 +78,7 @@
 
 .palettes_code-modal-input{
   width: 60vw;
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   padding: 10px;
 }
 
@@ -121,7 +121,7 @@
 
 .palette__name {
   grid-area: n;
-  font-size: 2.5rem;
+  font-size: var(--font-size-title-lg);
   font-family: GamePocket, sans-serif;
   border-bottom: 2px solid var(--theme-text-headline);
   padding: 25px;
@@ -137,7 +137,7 @@
 
 
   select{
-    font-size: 2rem;
+    font-size: var(--font-size-title-md);
     width: 60%;
   }
 }
@@ -173,7 +173,7 @@
 }
 
 .palette__inputs-set-title {
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   font-family: GamePocket, sans-serif;
 }
 

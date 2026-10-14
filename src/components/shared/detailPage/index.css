@@ -1,0 +1,187 @@
+.detail-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--theme-background);
+  color: var(--theme-text-body);
+}
+
+/* Takes no space; its header bar slides down over the page once the banner
+   has scrolled away */
+.detail-page__sticky {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 0;
+
+  & > .controls {
+    position: absolute;
+    inset: 0 0 auto;
+    transform: translateY(-100%);
+    opacity: 0;
+    transition:
+      transform 150ms ease,
+      opacity 150ms ease;
+  }
+}
+
+.detail-page__sticky--is-visible > .controls {
+  transform: none;
+  opacity: 1;
+}
+
+/* Banner with the back button floating on it */
+.detail-page__top {
+  position: relative;
+  min-height: calc(var(--control-height, 28px) + 2 * var(--space-lg));
+}
+
+.detail-page__back {
+  position: absolute;
+  top: var(--space-lg);
+  left: var(--page-padding-inline);
+}
+
+.detail-page__sentinel {
+  position: absolute;
+  top: calc(var(--control-height, 28px) + 2 * var(--space-lg) + 48px);
+  height: 0;
+}
+
+/* The banner image, edge to edge */
+.detail-page__banner {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 521 / 165;
+  image-rendering: pixelated;
+  background-color: var(--theme-media-background);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detail-page__sticky > .controls {
+    transition: none;
+  }
+}
+
+/* ---------- Content: hero, sections, facts ---------- */
+
+.detail-page__content {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  padding: var(--space-2xl) var(--page-padding-inline);
+}
+
+/* Name and status next to the next steps when there's room */
+.detail-page__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-xl) var(--space-2xl);
+  align-items: start;
+
+  @container (min-width: 720px) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.detail-page__title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+
+.detail-page__actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--space-xs);
+  padding-top: var(--space-xs);
+}
+
+.detail-page__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+h2.detail-page__title {
+  margin: 0;
+  padding: 0;
+  font-size: var(--font-size-title-lg);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.detail-page__byline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.detail-page__hint {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin: 0;
+  color: var(--theme-text-body);
+
+  & .icon {
+    margin-top: 0.15em;
+    color: var(--theme-text-soft);
+  }
+}
+
+.detail-page__section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  min-width: 0;
+}
+
+h3.detail-page__section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-title-sm);
+  font-weight: normal;
+  line-height: 1.2;
+  color: var(--theme-text-headline);
+}
+
+/* Spec-sheet facts */
+.detail-page__facts {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  border-top: 1px solid var(--theme-separator);
+}
+
+.detail-page__fact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  padding-block: var(--space-md);
+  border-bottom: 1px solid var(--theme-separator);
+}
+
+.detail-page__fact-label {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--theme-text-soft);
+}
+
+.detail-page__fact-value {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--theme-text-headline);
+}

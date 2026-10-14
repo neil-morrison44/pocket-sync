@@ -1,14 +1,15 @@
-/* Status on top, versions below; capped like other text-heavy views */
+/* Status on top, versions below, full width; the release notes' text is
+   capped to a readable width */
 .firmware {
   display: flex;
   flex-direction: column;
   gap: var(--space-2xl);
-  max-width: var(--content-max-width);
-  padding: var(--space-2xl);
+  padding: var(--space-2xl) var(--page-padding-inline);
   box-sizing: border-box;
 }
 
 .firmware__status {
+  border-radius: var(--radius-card);
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
@@ -24,7 +25,7 @@
 }
 
 .firmware__label {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -33,7 +34,7 @@
 
 .firmware__current-version {
   font-family: var(--font-display);
-  font-size: 2.5rem;
+  font-size: var(--font-size-title-lg);
   line-height: 1.2;
   color: var(--theme-text-headline);
 }
@@ -48,8 +49,26 @@
   color: var(--theme-text-body);
 }
 
+.firmware__downloaded-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
 .firmware__downloaded-info {
   color: var(--theme-text-soft);
+}
+
+/* Nothing waiting on the SD card: fine, so quiet */
+.firmware__downloaded--none {
+  justify-content: flex-start;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+
+  & .icon {
+    color: var(--theme-accent);
+  }
 }
 
 .firmware__progress {
@@ -75,105 +94,9 @@
 h2.firmware__heading {
   margin: 0;
   padding: 0;
-  font-size: 1.5rem;
+  font-size: var(--font-size-title-sm);
   line-height: 1.2;
   color: var(--theme-text-headline);
-}
-
-/* Each version is its own light card */
-.firmware__list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.firmware__item {
-  border: 1px solid var(--theme-separator);
-}
-
-.firmware__item-header {
-  margin: 0;
-}
-
-.firmware__item-chevron {
-  margin-inline-start: auto;
-  transition: transform 150ms ease;
-}
-
-/* The whole header row toggles the release notes */
-.firmware__item-trigger {
-  display: flex;
-  align-items: center;
-  gap: var(--space-lg);
-  width: 100%;
-  min-height: 44px;
-  margin: 0;
-  padding-inline: var(--space-lg);
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  background-color: var(--theme-overlay);
-  color: var(--theme-text-body);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-
-  &:hover {
-    background-color: var(--theme-separator);
-  }
-
-  /* Rows don't scale when pressed */
-  &:active {
-    transform: none;
-  }
-
-  &:focus {
-    outline: none;
-  }
-
-  :root.keyboard-focus &:focus {
-    outline: 2px solid var(--theme-focus);
-    outline-offset: -2px;
-  }
-
-  &[data-state="open"] {
-    border-bottom: 1px solid var(--theme-separator);
-
-    .firmware__item-chevron {
-      transform: rotate(180deg);
-    }
-  }
-}
-
-.firmware__item-version {
-  font-weight: 700;
-  color: var(--theme-text-headline);
-}
-
-.firmware__item-date {
-  color: var(--theme-text-soft);
-}
-
-.firmware__badge {
-  padding: 2px 8px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  background-color: var(--theme-surface);
-  color: var(--theme-text-headline);
-  clip-path: var(--shape-slant);
-}
-
-.firmware__badge--latest {
-  background-color: var(--theme-accent);
-  color: var(--theme-accent-text);
-}
-
-.firmware__item-content {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-lg);
-  padding: var(--space-lg);
 }
 
 .firmware__notes-skeleton {
@@ -181,10 +104,4 @@ h2.firmware__heading {
   flex-direction: column;
   gap: var(--space-sm);
   width: 100%;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .firmware__item-chevron {
-    transition: none;
-  }
 }

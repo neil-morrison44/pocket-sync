@@ -27,7 +27,11 @@
 .toggle--theme-control {
   height: var(--control-height, 28px);
   padding-block: 0;
-  padding-inline: 12px;
+
+  /* Like Button: ~1.35× the space above and below the text */
+  padding-inline: calc(
+    (var(--control-height, 28px) - 16px) / 2 * 1.35 + var(--slant) / 2
+  );
   background-color: var(--theme-control-background);
   color: var(--theme-control-text);
   position: relative;
@@ -37,8 +41,8 @@
   &::after {
     content: "";
     position: absolute;
-    inset: 0;
-    background-color: var(--theme-focus);
+    inset: var(--focus-ring-inset, 0);
+    background-color: var(--focus-ring-colour, var(--theme-focus));
     clip-path: var(--shape-slant-ring);
     pointer-events: none;
     visibility: hidden;

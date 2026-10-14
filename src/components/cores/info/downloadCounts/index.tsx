@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next"
 import { parseISO, differenceInMilliseconds } from "date-fns"
 import { scaleLinear, scalePow } from "d3-scale"
 import { useAtomValue } from "jotai"
+import Tooltip from "../../../ui/Tooltip"
 
 type DownloadCountProps = {
   coreName: string
@@ -147,20 +148,27 @@ const DownloadGraph = ({ perVersions }: DownloadGraphProps) => {
           daysAsLatest,
           daysAgo,
         }) => (
-          <div
+          <Tooltip
             key={release}
-            className="core-info__download-graph-bar"
-            style={{
-              left: scaleX(daysAgo),
-              width: Math.max(2, BAR_WIDTH - scaleX(daysAsLatest)),
-              height: scaleY(downloadsPerDay),
-            }}
-            title={t("download_bar_title", {
-              release,
-              count: downloadCount,
-              days: Math.round(daysAsLatest),
-            })}
-          ></div>
+            label={
+              <span className="core-info__download-graph-tooltip">
+                {t("download_bar_title", {
+                  release,
+                  count: downloadCount,
+                  days: Math.round(daysAsLatest),
+                })}
+              </span>
+            }
+          >
+            <div
+              className="core-info__download-graph-bar"
+              style={{
+                left: scaleX(daysAgo),
+                width: Math.max(2, BAR_WIDTH - scaleX(daysAsLatest)),
+                height: scaleY(downloadsPerDay),
+              }}
+            ></div>
+          </Tooltip>
         )
       )}
     </div>

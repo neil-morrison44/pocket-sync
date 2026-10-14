@@ -1,4 +1,4 @@
-import { Modal } from "../../modal"
+import { Modal, ModalSuspense } from "../../modal"
 import {
   DownloadablePaletteColoursSelectorFamily,
   downloadablePalettesSelector,
@@ -21,7 +21,7 @@ type PaletteTownProps = {
   onClose: () => void
 }
 
-export const PaletteTown = ({ onClose }: PaletteTownProps) => {
+const PaletteTownContent = ({ onClose }: PaletteTownProps) => {
   const repo = useAtomValue(paletteRepoAtom)
   const palettes = useAtomValue(downloadablePalettesSelector)
   const palettesList = useAtomValue(palettesListSelector)
@@ -65,8 +65,7 @@ export const PaletteTown = ({ onClose }: PaletteTownProps) => {
   }, [sortedPalettes])
 
   return (
-    <Modal className="palette-town">
-      <h2>{t("town.title")}</h2>
+    <Modal className="palette-town" title={t("town.title")} onClose={onClose}>
       <div className="palette-town--list">
         {groupedPalettes &&
           Object.entries(groupedPalettes).map(([folder, palettes]) => (
@@ -92,9 +91,6 @@ export const PaletteTown = ({ onClose }: PaletteTownProps) => {
           <Link href={repoUrl}>{"_"}</Link>
         </Trans>
       </div>
-      <button className="palette-town__close-button" onClick={onClose}>
-        {t("town.close")}
-      </button>
     </Modal>
   )
 }
@@ -130,3 +126,17 @@ const PaletteItem = ({ name, path, installed }: PaletteItemProps) => {
 }
 
 const undash = (path: string) => path.replaceAll("/", "").replaceAll("\\", "")
+
+/** Opens right away with a loader while its data loads. */
+export const PaletteTown = (props: PaletteTownProps) => {
+  const { t } = useTranslation("palettes")
+  return (
+    <ModalSuspense
+      className="palette-town"
+      title={t("town.title")}
+      onClose={props.onClose}
+    >
+      <PaletteTownContent {...props} />
+    </ModalSuspense>
+  )
+}

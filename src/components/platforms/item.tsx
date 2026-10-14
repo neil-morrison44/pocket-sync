@@ -1,52 +1,50 @@
-import { useMemo } from "react"
-
 import {
-  PlatformImageSelectorFamily,
   PlatformInfoSelectorFamily,
   PlatformIsArchivedSelectorFamily,
 } from "../../jotai/platforms/selectors"
 import { PlatformId } from "../../types"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { useAtomValue } from "jotai"
-import Icon from "../ui/Icon"
+import { useTranslation } from "react-i18next"
+import { PlatformImage } from "../cores/platformImage"
+import Tag, { TagList } from "../ui/Tag"
 
 type PlatformItemProps = {
   id: PlatformId
   onClick: () => void
 }
 
+/** A platform card like the core cards: image, name, maker, year, tags. */
 export const PlatformItem = ({ id, onClick }: PlatformItemProps) => {
   const { platform } = useAtomValue(PlatformInfoSelectorFamily(id))
-  const platformImage = useAtomValue(PlatformImageSelectorFamily(id))
   const isArchived = useAtomValue(PlatformIsArchivedSelectorFamily(id))
-
-  const category = useMemo(
-    () => platform.category || "Uncategorised",
-    [platform.category]
-  )
+  const { t } = useTranslation("platforms")
 
   return (
     <SearchContextSelfHidingConsumer
-      fields={[platform.name, id, category, platform.manufacturer]}
+      fields={[
+        platform.name,
+        id,
+        platform.category ?? "",
+        platform.manufacturer,
+      ]}
     >
       <div className="cores__item" role="button" onClick={onClick}>
-        {isArchived && <ArchiveIcon />}
-        <img src={platformImage} />
+        <PlatformImage
+          className="cores__platform-image"
+          platformId={id}
+          label={platform.name}
+        />
         <div className="cores__info-blurb">
-          <strong>{platform.name}</strong>
-          <div>{category}</div>
-          <div>{platform.manufacturer}</div>
-          <div>{platform.year}</div>
+          <div className="cores__info-blurb-name">{platform.name}</div>
+          <div className="cores__author-tag">{platform.manufacturer}</div>
+          <div className="cores__version">{platform.year}</div>
+          <TagList>
+            {platform.category && <Tag>{platform.category}</Tag>}
+            {isArchived && <Tag icon="archive">{t("archived")}</Tag>}
+          </TagList>
         </div>
       </div>
     </SearchContextSelfHidingConsumer>
-  )
-}
-
-const ArchiveIcon = () => {
-  return (
-    <div className="cores__item-archive-icon">
-      <Icon icon="archive" />
-    </div>
   )
 }

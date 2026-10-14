@@ -1,39 +1,57 @@
 .core-settings {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-lg);
 }
 
+/* One row per setting: name on the left, control on the right */
 .core-settings__settings {
-  flex-grow: 1;
-  overflow: auto;
   display: flex;
-  gap: 15px;
   flex-direction: column;
-  padding: 10px;
+  width: 100%;
 }
 
 .core-settings__variable {
   display: flex;
   align-items: center;
-  font-size: 1.25em;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  min-height: 44px;
+  border-bottom: 1px solid var(--theme-separator);
+  color: var(--theme-text-body);
 
   & label {
     display: flex;
+    flex-grow: 1;
     align-items: center;
-    justify-content: center;
-    flex-direction: row;
+    justify-content: space-between;
+    gap: var(--space-lg);
   }
 
-  & select {
-    font-size: inherit;
+  & input[type="range"],
+  & input[type="radio"] {
+    accent-color: var(--theme-accent);
   }
+}
+
+.core-settings__switch {
+  flex-grow: 1;
+  justify-content: space-between;
 }
 
 .core-settings__variable--non-persist {
-  opacity: 0.8;
+  color: var(--theme-text-soft);
   cursor: not-allowed;
-  pointer-events: none;
 }
 
 .core-settings__variable-name {
-  margin-right: 10px;
+  margin-inline-end: auto;
+}
+
+.core-settings__value {
+  min-width: 3ch;
+  color: var(--theme-text-soft);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
 }

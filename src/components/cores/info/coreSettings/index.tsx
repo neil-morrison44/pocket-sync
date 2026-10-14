@@ -1,4 +1,3 @@
-import { Loader } from "@react-three/drei"
 import { Suspense, useCallback, useState } from "react"
 import { PersistInteractFileAtomFamily } from "../../../../jotai/coreSettings/atoms"
 import {
@@ -6,26 +5,22 @@ import {
   ListPresetInteractSelectorFamily,
   PresetInteractFileSelectorFamily,
 } from "../../../../jotai/coreSettings/selectors"
-import { InteractPersistJSON } from "../../../../types/interact"
 import {
   hex16bitSignedToNumber,
   numberTo16bitSignedHex,
 } from "../../../../utils/hexStrings"
-import { Modal } from "../../../modal"
+import Button from "../../../ui/Button"
+import Select from "../../../ui/Select"
+import Skeleton from "../../../ui/Skeleton"
+import Switch from "../../../ui/Switch"
 import { Tip } from "../../../tip"
 import { useTranslation } from "react-i18next"
 
 import "./index.css"
 import { useAtom, useAtomValue } from "jotai"
-import { useAtomCallback } from "jotai/utils"
 
-export const CoreSettings = ({
-  coreName,
-  onClose,
-}: {
-  coreName: string
-  onClose: () => void
-}) => {
+/** The core's own settings (interact.json), saved to its persist file. */
+export const CoreSettings = ({ coreName }: { coreName: string }) => {
   const interactFileList = useAtomValue(
     ListPresetInteractSelectorFamily(coreName)
   )
@@ -33,40 +28,34 @@ export const CoreSettings = ({
   const { t } = useTranslation("core_info")
 
   return (
-    <Modal className="core-settings">
+    <div className="core-settings">
       {interactFileList.length > 0 && (
-        <select
-          style={{ fontSize: "2rem" }}
-          onChange={({ target }) => setChosenInteractFile(target.value)}
+        <Select
+          label={t("preset")}
           value={chosenInteractFile}
-        >
-          <option value={"core"}>{t("modal.input_core")}</option>
-          {interactFileList.map((fileName) => (
-            <option key={fileName} value={fileName}>
-              {fileName}
-            </option>
-          ))}
-        </select>
-      )}
-      <Suspense fallback={<Loader />}>
-        <InteractSettings
-          coreName={coreName}
-          filePath={chosenInteractFile}
-          onClose={onClose}
+          onChange={setChosenInteractFile}
+          options={[
+            { value: "core", label: t("modal.input_core") },
+            ...interactFileList.map((fileName) => ({
+              value: fileName,
+              label: fileName,
+            })),
+          ]}
         />
+      )}
+      <Suspense fallback={<Skeleton height={120} />}>
+        <InteractSettings coreName={coreName} filePath={chosenInteractFile} />
       </Suspense>
-    </Modal>
+    </div>
   )
 }
 
 const InteractSettings = ({
   coreName,
   filePath,
-  onClose,
 }: {
   coreName: string
   filePath: "core" | string
-  onClose: () => void
 }) => {
   const interactJSON = useAtomValue(
     PresetInteractFileSelectorFamily({ coreName, filePath })
@@ -105,10 +94,6 @@ const InteractSettings = ({
         ({ id: oid }) => oid === id
       )
       if (variable?.type !== "radio") throw Error("not a radio button")
-
-      if (variable.type === "radio") {
-        variable.group
-      }
 
       const otherIds = interactJSON.interact.variables
         .filter((v) => {
@@ -162,57 +147,39 @@ const InteractSettings = ({
           switch (v.type) {
             case "list": {
               const selectedIndex = persistedValue?.val ?? v.defaultval ?? 0
-              const valueOfSelected =
-                v.options[
-                  typeof selectedIndex === "number"
-                    ? selectedIndex
-                    : parseInt(selectedIndex)
-                ].value
+              const index =
+                typeof selectedIndex === "number"
+                  ? selectedIndex
+                  : parseInt(selectedIndex)
               return (
                 <div className={varClassName} key={v.id}>
-                  <label>
-                    <span className="core-settings__variable-name">
-                      {v.name}
-                    </span>
-                    <select
-                      value={valueOfSelected}
-                      onChange={({ target }) => {
-                        if (!v.persist) return
-                        updateValue(
-                          v.id,
-                          v.type,
-                          parseInt(
-                            target.selectedOptions[0].dataset.index || "0"
-                          )
-                        )
-                      }}
-                    >
-                      {v.options.map(({ name, value }, index) => (
-                        <option value={value} key={value} data-index={index}>
-                          {name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  <span className="core-settings__variable-name">{v.name}</span>
+                  <Select
+                    value={`${index}`}
+                    disabled={!v.persist}
+                    onChange={(value) =>
+                      updateValue(v.id, v.type, parseInt(value))
+                    }
+                    options={v.options.map(({ name }, optionIndex) => ({
+                      value: `${optionIndex}`,
+                      label: name,
+                    }))}
+                  />
                 </div>
               )
             }
             case "check":
               return (
                 <div className={varClassName} key={v.id}>
-                  <label>
-                    <span className="core-settings__variable-name">
-                      {v.name}
-                    </span>
-                    <input
-                      checked={Boolean(persistedValue?.val ?? v.defaultval)}
-                      onChange={({ target }) => {
-                        if (!v.persist) return
-                        updateValue(v.id, v.type, target.checked ? 1 : 0)
-                      }}
-                      type="checkbox"
-                    ></input>
-                  </label>
+                  <Switch
+                    className="core-settings__switch"
+                    label={v.name}
+                    disabled={!v.persist}
+                    value={Boolean(persistedValue?.val ?? v.defaultval)}
+                    onChange={(checked) =>
+                      updateValue(v.id, v.type, checked ? 1 : 0)
+                    }
+                  />
                 </div>
               )
             case "slider_u32": {
@@ -231,6 +198,7 @@ const InteractSettings = ({
                     </span>
                     <input
                       type="range"
+                      disabled={!v.persist}
                       min={v.graphical.min}
                       max={v.graphical.max}
                       value={value}
@@ -246,7 +214,9 @@ const InteractSettings = ({
                       }}
                     ></input>
 
-                    <span>{persistedValue?.val ?? v.defaultval}</span>
+                    <span className="core-settings__value">
+                      {persistedValue?.val ?? v.defaultval}
+                    </span>
                   </label>
                 </div>
               )
@@ -266,6 +236,7 @@ const InteractSettings = ({
                         updateRadioButton(v.id)
                       }}
                       type="radio"
+                      disabled={!v.persist}
                       value={v.value}
                       name={`${v.group}`}
                     ></input>
@@ -284,12 +255,17 @@ const InteractSettings = ({
           }
         })}
       </div>
-      <button onClick={() => setPersistJSON(EMPTY_PERSIST)}>
-        {t("modal.reset_all")}
-      </button>
-      <button className="core-settings__close-button" onClick={onClose}>
-        {t("modal.close")}
-      </button>
+      {interactJSON.interact.variables.length > 0 && (
+        <div>
+          <Button
+            theme="tertiary"
+            icon="reload"
+            onClick={() => setPersistJSON(EMPTY_PERSIST)}
+          >
+            {t("modal.reset_all")}
+          </Button>
+        </div>
+      )}
     </>
   )
 }

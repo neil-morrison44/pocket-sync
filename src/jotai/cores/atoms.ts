@@ -1,5 +1,7 @@
 import { atom } from "jotai"
+import { atomWithAppLocalSetting } from "../../utils/jotai"
 import { AICheckJSON, SortMode } from "../../types"
+import type { CoreFeature } from "../../components/cores/features"
 import { atomWithRefresh } from "jotai/utils"
 import { withAtomEffect } from "jotai-effect"
 import { startTransition } from "react"
@@ -12,6 +14,11 @@ const INTERVAL_MINS = 30
 export const sortingOptionAtom = atom<SortMode>("name")
 
 export const categoryFilterOptionAtom = atom<string>("All")
+
+export const featureFilterOptionAtom = atom<CoreFeature[]>([])
+
+/** A platform id, or "All". */
+export const platformFilterOptionAtom = atom<string>("All")
 
 const getAIInfo = async () => {
   const aiCheckResponse = await fetch(
@@ -32,3 +39,21 @@ export const aiCheckAtom = withAtomEffect(aiCheckAtomBase, (_get, set) => {
   )
   return () => clearInterval(interval)
 })
+
+/**
+ * Development only (Settings → Developer): pretend a few installed cores
+ * have an update, to preview the update UI. Nothing on the SD card changes.
+ */
+export const demoCoreUpdatesAtom = atomWithAppLocalSetting<boolean>(
+  "dev_demo_core_updates",
+  false
+)
+
+/**
+ * Development only (Settings → Developer): pretend a newer firmware is out,
+ * to preview the firmware update UI.
+ */
+export const demoFirmwareUpdateAtom = atomWithAppLocalSetting<boolean>(
+  "dev_demo_firmware_update",
+  false
+)

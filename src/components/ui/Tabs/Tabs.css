@@ -40,7 +40,7 @@
   background: transparent;
   color: var(--theme-text-soft);
   font: inherit;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
@@ -50,8 +50,8 @@
   &::after {
     content: "";
     position: absolute;
-    inset: 0;
-    background-color: var(--theme-focus);
+    inset: var(--focus-ring-inset, 0);
+    background-color: var(--focus-ring-colour, var(--theme-focus));
     clip-path: var(--shape-slant-ring);
     pointer-events: none;
     visibility: hidden;

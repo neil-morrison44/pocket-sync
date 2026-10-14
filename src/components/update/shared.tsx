@@ -1,9 +1,8 @@
 import { useAtomValue } from "jotai"
 import { coreInventoryAtom } from "../../jotai/inventory/atoms"
 import { useMemo } from "react"
-import { PlatformInventoryImageSelectorFamily } from "../../jotai/inventory/selectors"
 import { CoreMainPlatformIdSelectorFamily } from "../../jotai/selectors"
-import { PlatformImage } from "../cores/platformImage"
+import { InventoryPlatformImage, PlatformImage } from "../cores/platformImage"
 
 export const NotInstalledCoreImage = ({ coreName }: { coreName: string }) => {
   const coreInventory = useAtomValue(coreInventoryAtom)
@@ -14,17 +13,11 @@ export const NotInstalledCoreImage = ({ coreName }: { coreName: string }) => {
     return foundCore.releases[0].core.metadata.platform_ids[0]
   }, [coreName])
 
-  const imageUrl = useAtomValue(
-    PlatformInventoryImageSelectorFamily(mainPlatformId)
-  )
-
   return (
-    <img
+    <InventoryPlatformImage
       className="update__list-item-image"
-      src={imageUrl}
-      height="165"
-      width="521"
-    ></img>
+      platformId={mainPlatformId}
+    />
   )
 }
 

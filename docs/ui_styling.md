@@ -77,7 +77,7 @@ To add a theme: add a mode to the Figma "Theme" collection and a matching `:root
 
 ## UI primitives
 
-`src/components/ui/<Name>/` holds the shared building blocks: `Icon`, `Button` (themes `primary`, `secondary`, `tertiary`, `destructive`), `IconButton`, `Toggle`, `Switch`, `Select` (option groups, `searchable` combobox mode), `MultiSelect` (checklist with search and Select All / Clear All), `TextInput` (`code` variant), `SearchInput`, `PathField`, `Tabs`, `Tooltip`, `Popover`, `Stats`, `StickySection` and `Skeleton` / `CardSkeleton`. Document props with JSDoc comments. Each has `Name.tsx`, `Name.css` and `index.ts`, uses `clsx` with `--theme-*` / `--is-*` modifiers, and is built on a Radix primitive where one exists. Use these instead of raw `<button>`, `<select>` or `<input>` elements. The `Controls*` components in `src/components/controls` are thin wrappers around them for the top controls bar.
+`src/components/ui/<Name>/` holds the shared building blocks: `Icon`, `Button` (themes `primary`, `secondary`, `tertiary`, `destructive`), `IconButton`, `Toggle`, `Switch`, `Select` (option groups, `searchable` combobox mode), `MultiSelect` (checklist with search and Select All / Clear All), `TextInput` (`code` variant), `SearchInput`, `PathField`, `Tabs`, `Tooltip`, `Popover`, `Stats`, `StickySection`, `Tag` / `TagList` (slanted status chips; themes `neutral`, `accent`, `warning`, `danger`, `highlight`, `analogizer`), `Accordion` / `AccordionItem` (expandable rows, e.g. release notes; `action` puts a button in the header row), `Kbd` (keyboard shortcut key caps that light up while held; `mod` is ⌘ on macOS, Ctrl elsewhere) and `Skeleton` / `CardSkeleton`. Document props with JSDoc comments. Each has `Name.tsx`, `Name.css` and `index.ts`, uses `clsx` with `--theme-*` / `--is-*` modifiers, and is built on a Radix primitive where one exists. Use these instead of raw `<button>`, `<select>` or `<input>` elements. The `Controls*` components in `src/components/controls` are thin wrappers around them for the top controls bar.
 
 ## Conventions for new UI
 
@@ -90,8 +90,26 @@ To add a theme: add a mode to the Figma "Theme" collection and a matching `:root
 - Anything placed on the accent green (`--theme-accent`) uses `--theme-accent-text` for its text and icons.
 - Never hard-code colours in component CSS. Use `--theme-*` tokens directly, or alias them on the block when a component needs its own names: `.sidebar { --sidebar-background: var(--theme-sidebar-background) }`.
 - If a component needs a colour the theme doesn't have yet, add a `--theme-*` token to **every** theme in `src/theme.css`. Don't add a hex value to the component.
-- Radii: 6px for controls. Item height: 36px. Spacing: multiples of 4px.
+- Pages for one item (a core, a platform) use `DetailPage` (`components/shared/detailPage`): a back button floating on the banner, a header bar that slides in on scroll, `DetailHeading` (title and icon-button actions on one row, details below), and `DetailSection` / `DetailFacts` for the content.
+- UI preferences that toggle with a transition use `atomWithAppLocalSetting` (it doesn't suspend after a write); other stored settings may use `atomWithAppLocalStorage`.
+- Focus rings sit `--focus-offset` (2px) inside the edge; on accent fills set `--focus-ring-colour: var(--theme-accent-text)`.
+- Settings that should survive a restart use `atomWithAppLocalStorage` (a JSON file in the app data folder). Don't use `localStorage` / `atomWithStorage`; the webview doesn't keep it between launches.
+- The page's main search is a `ControlsSearch`; it gets the ⌘F / Ctrl+F shortcut. Only one per screen.
+- Every icon goes through `Icon`, including brand marks (e.g. the Analogizer), so `size` works the same for all. Icons inside text-sized elements (tags, key caps) use `<Icon size="text" />`, so they scale with the font.
+- Pages use `--page-padding-inline` for their side padding, the same as the header bar, so content lines up with it.
+- Platform images go through `PlatformImage` (SD card) or `InventoryPlatformImage` (online); both fall back to a placeholder in `--theme-surface`.
+- Font sizes come from the scale in `theme.css`: `--font-size-2xs` (11px), `-xs` (12), `-sm` (14), `-code` (13), `-md` (16, body), `-lg` (18), `-xl` (20), `-title-sm` (24), `-title-md` (32), `-title-lg` (40), `-title-xl` (48), `-hero` (64). Never hard-code a rem / px size; em is fine for things that follow their surroundings.
+- Pocket buttons and shortcuts are shown with `ButtonCombo` (`keys={["analogue", "start"]}`), never as text caps, except L / R, which have no glyph.
+- The accent in the dark themes is `--analogue-green` (#84E38F); use `--theme-accent`, not the brand token, in components.
+- Loading states use `Loader` (which renders `Spinner`, D-pad by default) or `Skeleton` for content placeholders; no other spinners.
+- Page-level info notes can be dismissible: `Callout dismissId="area-topic"` (stable id); warnings tied to a setting shouldn't be.
+- Notes next to settings or content use `Callout` (`variant="info"` grey, `"warning"` yellow). Empty pages use `EmptyState` (icon, title, text, action).
+- Hints use `Tip` (info icon, soft text); `<Tip warning>` for warnings.
+- Radii come from tokens: `--radius` (default, 2px) and `--radius-button`, `--radius-chip`, `--radius-card`, `--radius-input`, `--radius-modal`. Never hard-code a radius. Slanted shapes use `--shape-slant`, which is rounded in the Modern style. Item height: 36px. Spacing: multiples of 4px.
 - Every visible string goes through i18n (`react/jsx-no-literals`). Add new keys to `src/i18n/locales/en/index.json`. Other locales fall back to English.
+- A modal component that loads data wraps itself in `ModalSuspense` (same title / onClose), so the modal and a loader show at once.
+- Notification dots use `.notification-dot` (accent green, on a `position: relative` parent); sidebar items take a count badge (`sidebar__badge`).
+- Modals (`components/modal`, Radix Dialog) always get a `title`. Pass `onClose` whenever the modal can be dismissed: it adds the close icon button and Escape. Leave it out (or pass `undefined` while busy) when it mustn't close. Don't add a separate "Close" button; "Cancel" next to a confirming action is fine.
 - Use real `<button>`s for clickable elements, with `aria-current` / `aria-label` where needed and a `:focus-visible` outline.
 
 ## Redesign progress

@@ -18,6 +18,7 @@ import {
   coresListSelector,
 } from "../selectors"
 import { decodeDataParams } from "../../utils/decodeDataParams"
+import { PlatformInfoSelectorFamily } from "../platforms/selectors"
 
 export const instancePackagerCoresListSelector = atom<Promise<string[]>>(
   async (get) => {
@@ -224,3 +225,21 @@ export const installedGamesCountSelector = atom<Promise<number>>(
     return counts.reduce((total, count) => total + count, 0)
   }
 )
+
+/** Each game system's platform name, for the platform filter. */
+export const gameSystemOptionsSelector = atom<
+  Promise<{ platformId: PlatformId; name: string }[]>
+>(async (get) => {
+  const systems = await get(gameSystemsSelector)
+  const options = await Promise.all(
+    systems.map(async ({ platformId }) => {
+      try {
+        const { platform } = await get(PlatformInfoSelectorFamily(platformId))
+        return { platformId, name: platform.name }
+      } catch {
+        return { platformId, name: platformId }
+      }
+    })
+  )
+  return options.sort((a, b) => a.name.localeCompare(b.name))
+})

@@ -19,12 +19,17 @@
       "firmware": "Phần mềm",
       "cores": "Cores",
       "games": "Trò chơi"
-    }
+    },
+    "show_updates_new": "Hiện cập nhật (mới)",
+    "open_sd_card": "Mở thẻ SD"
   },
   "app": {
     "app_name": "Pocket Sync",
     "connect_button": "Kết nối với Pocket / SD Card",
-    "not_pocket_tip": "Nội dung thư mục không giống với hệ thống tập tin của Pocket. Thẻ SD phải được Pocket khởi tạo ít nhất một lần."
+    "not_pocket_tip": "Nội dung thư mục không giống với hệ thống tập tin của Pocket. Thẻ SD phải được Pocket khởi tạo ít nhất một lần.",
+    "close": "Đóng",
+    "loading": "Đang tải",
+    "dismiss": "Ẩn"
   },
   "clean_files": {
     "close_button": "Đóng",
@@ -68,8 +73,10 @@
       "install": "Cài đặt core",
       "required_files": "Tải các tập tin được yêu cầu",
       "uninstall": "Gỡ cài đặt core",
-      "update": "Cập nhật core",
-      "hide_core": "Hide Core"
+      "hide_core": "Hide Core",
+      "update_to": "Cập nhật lên {version}",
+      "install_version": "Cài đặt phiên bản",
+      "install_release": "Cài đặt phiên bản này"
     },
     "inputs": "Nhập đầu vào",
     "modal": {
@@ -86,18 +93,20 @@
     "firmware_too_low": "Core này cần có phần mềm v{core_firmware}, phiên bản hiện tại được cài đặt là v{pocket_firmware}",
     "not_in_inventory": "{coreName} không có trong kho core",
     "platform": {
-      "edit": "Chỉnh sửa",
-      "wikipedia": "Wikipedia"
+      "wikipedia": "Wikipedia",
+      "open": "Mở nền tảng"
     },
     "replaced": "Core này đã được thay thế bằng <1>{replacementCore}</1>",
     "platforms": "Nền tảng",
     "release_date": "Ngày phát hành",
     "releases": {
       "release_history": "Lịch sử phát hành",
-      "show_previous": "Hiện phiên bản cũ hơn"
+      "show_previous": "Hiện phiên bản cũ hơn",
+      "latest": "Mới nhất",
+      "prerelease": "Bản thử nghiệm",
+      "on_github": "Xem trên GitHub"
     },
     "required_files": "Tập tin được yêu cầu",
-    "required_files_count": "{count} / {total} tập tin",
     "hide_core_confirm": "Thao tác này sẽ ẩn lõi xử lý khỏi danh sách; bạn có thể quản lý các lõi xử lý bị ẩn trong phần Cài đặt.",
     "settings": "Cài đặt",
     "sponsor": "Tài trợ",
@@ -110,7 +119,9 @@
       "cartridges": "Băng",
       "dock": "Dock",
       "dock_dac": "Dock (Analog)",
-      "save_states_and_sleep": "Lưu Trạng thái / Ngủ"
+      "save_states_and_sleep": "Lưu Trạng thái / Ngủ",
+      "link_port": "Cáp Link",
+      "analogizer": "Analogizer"
     },
     "url": "Đường dẫn",
     "version": "Phiên bản",
@@ -147,7 +158,45 @@
       "title": "Analogizer Config",
       "video": "Analog Video",
       "snac": "SNAC Controllers"
-    }
+    },
+    "tabs": {
+      "label": "Chi tiết core",
+      "overview": "Tổng quan",
+      "releases": "Bản phát hành"
+    },
+    "tags": {
+      "installed": "Đã cài",
+      "update": "Cập nhật {version}",
+      "ai": "AI {score, number, percent}",
+      "license": "Giấy phép",
+      "manual": "Thủ công",
+      "manual_hint": "Được cài thủ công (ví dụ từ tệp .zip). Core này không có trong danh sách core nên Pocket Sync không thể cập nhật."
+    },
+    "guide": {
+      "install": "Khi cài đặt, phiên bản {version} sẽ được tải vào thư mục Cores trên thẻ SD của bạn. Nếu core cần thêm tập tin, chẳng hạn tập tin BIOS, bạn có thể tải chúng tại đây sau đó.",
+      "update": "Đã có phiên bản {version}. Bạn đang dùng {installed}.",
+      "up_to_date": "Đã cài và là bản mới nhất.",
+      "required_files_missing": "Đã tìm thấy {count} trên {total} tập tin được yêu cầu. Hãy tải các tập tin còn thiếu để core có thể chạy.",
+      "required_files_found": "Đã tìm thấy đủ {total} tập tin được yêu cầu.",
+      "update_title": "Có bản cập nhật"
+    },
+    "preset": "Thiết lập sẵn",
+    "inputs_empty": "Core này không định nghĩa cách gán nút.",
+    "input_keys": {
+      "pad_btn_a": "A",
+      "pad_btn_b": "B",
+      "pad_btn_x": "X",
+      "pad_btn_y": "Y",
+      "pad_trig_l": "L",
+      "pad_trig_r": "R",
+      "pad_btn_start": "Start",
+      "pad_btn_select": "Select"
+    },
+    "firmware_required": "Phần mềm yêu cầu",
+    "core_settings_title": "Cài đặt core",
+    "display_modes_hint": "Bật các chế độ hiển thị bạn muốn chọn trên Pocket.",
+    "previous_version_hint": "Cài đặt bất kỳ phiên bản đã phát hành nào, ví dụ để quay lại sau khi cập nhật.",
+    "core_settings_hint": "Thay đổi được lưu vào thẻ SD ngay lập tức."
   },
   "core_info_required_files": {
     "close": "Đóng",
@@ -177,11 +226,16 @@
       "sort_options": {
         "name": "Tên",
         "last_update": "Cập nhật mới nhất"
-      }
+      },
+      "features": "Tính năng",
+      "features_count": "Tính năng ({count})",
+      "platform": "Nền tảng",
+      "update_all_count": "Cập nhật tất cả ({count})"
     },
     "install_tip": "Bạn cũng có thể cài đặt core (hoặc bất kỳ thứ gì khác trong tệp zip) bằng cách kéo tệp .zip vào cửa sổ này",
     "installed": "Đã cài đặt ({count})",
-    "not_installed": "Khả dụng ({count})"
+    "not_installed": "Khả dụng ({count})",
+    "updates": "Có bản cập nhật ({count})"
   },
   "error": {
     "report": "Bạn có thể báo cáo điều này qua GitHub bao gồm văn bản bên dưới và bất cứ điều gì bạn vừa làm",
@@ -221,6 +275,10 @@
     "types": {
       "archive_org": "Lưu trữ trên Internet",
       "filesystem": "Tập tin trong máy"
+    },
+    "empty": {
+      "title": "Chưa có nguồn tải",
+      "text": "Tải về sẽ chép tập tin vào thẻ SD từ một thư mục trên máy tính hoặc từ archive.org. Thêm một nguồn để bắt đầu."
     }
   },
   "firmware": {
@@ -245,7 +303,10 @@
     "jump_to": "Đi tới",
     "badge_latest": "Mới nhất",
     "badge_installed": "Đã cài",
-    "published": "{date, date, medium}"
+    "published": "{date, date, medium}",
+    "loaded_current": "Tập tin cài đặt của phần mềm đã cài (v{version}) vẫn còn trên thẻ SD.",
+    "loaded_current_info": "Không còn cần nữa và có thể xoá.",
+    "remove_installer": "Xoá tập tin cài đặt"
   },
   "games": {
     "controls": {
@@ -254,13 +315,17 @@
       "clean_files": "Dọn dẹp tập tin",
       "instance_json": "Tạo Instance JSON",
       "refresh": "Làm mới",
-      "search": "Tìm kiếm"
+      "search": "Tìm kiếm",
+      "platform": "Nền tảng",
+      "all": "Tất cả"
     },
     "item": {
       "game_count": "{count, plural, =0 {Không có trò chơi nào} one {# trò chơi} other {# trò chơi}}"
     },
     "open_folder": "Mở thư mục",
-    "none": "Không tìm thấy trò chơi. Hãy cài một core, sau đó thêm trò chơi vào thư mục của nó trên thẻ SD."
+    "none": "Không tìm thấy trò chơi. Hãy cài một core, sau đó thêm trò chơi vào thư mục của nó trên thẻ SD.",
+    "show_in_folder": "Hiện trong thư mục",
+    "empty_title": "Chưa có trò chơi"
   },
   "image_editor": {
     "cancel": "Hủy bỏ",
@@ -269,7 +334,10 @@
     "reset": "Làm lại",
     "rotate": "Xoay",
     "save": "Lưu hình ảnh",
-    "scale": "Tỉ lệ"
+    "scale": "Tỉ lệ",
+    "title": "Chỉnh sửa hình ảnh",
+    "move_up": "Di chuyển lên",
+    "move_down": "Di chuyển xuống"
   },
   "instance_json": {
     "available_for": "Tự động tạo tệp instance.json có sẵn cho:",
@@ -293,7 +361,9 @@
     "settings": "Cài đặt",
     "collapse_sidebar": "Thu gọn thanh bên",
     "expand_sidebar": "Mở rộng thanh bên",
-    "views": "Chế độ xem"
+    "views": "Chế độ xem",
+    "core_updates": "{count} bản cập nhật core",
+    "firmware_update": "Có phần mềm {version}"
   },
   "plugins": {
     "buttons": {
@@ -311,6 +381,10 @@
       "add": "Xác minh và cài đặt plugin",
       "cancel": "Hủy bỏ",
       "invalid": "Không tìm thấy plugin hợp lệ nào tại URL đó."
+    },
+    "empty": {
+      "title": "Chưa cài plugin nào",
+      "text": "Plugin bổ sung công cụ cho Pocket Sync."
     }
   },
   "palettes": {
@@ -347,6 +421,10 @@
       "save": "Lưu palette",
       "reset": "Đặt lại màu",
       "emu_credit": "Trình giả lập GB được chuyển thể từ <1>roblouie/gameboy-emulator</1>"
+    },
+    "empty": {
+      "title": "Chưa có bảng màu",
+      "text": "Tạo bảng màu, thêm từ mã chia sẻ hoặc xem Palette Town."
     }
   },
   "mister_sync": {
@@ -371,7 +449,8 @@
     "mapping": {
       "close": "Đóng",
       "clear": "Xóa ánh xạ",
-      "reset": "Trả về mặc định"
+      "reset": "Trả về mặc định",
+      "title": "Ánh xạ bản lưu"
     }
   },
   "news_feed": {
@@ -384,8 +463,10 @@
       "data_packs": "Quản lý gói dữ liệu",
       "image_packs": "Quản lý gói hình ảnh"
     },
-    "cores": "Cores",
-    "edit": "Chỉnh sửa"
+    "cores": "Core đã cài",
+    "edit": "Chỉnh sửa",
+    "details": "Chi tiết",
+    "no_cores": "Không có core đã cài nào dùng nền tảng này."
   },
   "platforms": {
     "cancel": "Hủy bỏ",
@@ -420,7 +501,12 @@
       "close": "Đóng",
       "current": "Hiện tại"
     },
-    "save": "Lưu thay đổi"
+    "save": "Lưu thay đổi",
+    "archived": "Đã lưu trữ",
+    "empty": {
+      "title": "Không có nền tảng trên thẻ SD",
+      "text": "Nền tảng được thêm khi bạn cài core."
+    }
   },
   "progress": {
     "remaining_time": "Thời gian còn lại (khoảng): {remainingTime}",
@@ -445,7 +531,10 @@
     "controls": {
       "clear_selection": "Xóa lựa chọn",
       "delete_selection": "Xóa đã chọn ({count})",
-      "search": "Tìm kiếm"
+      "search": "Tìm kiếm",
+      "core": "Core",
+      "platform": "Nền tảng",
+      "all": "Tất cả"
     },
     "count": "( {count} / 128 )",
     "item": {
@@ -464,6 +553,10 @@
         "gb_player": "GB Player",
         "black_and_white": "Trắng & Đen"
       }
+    },
+    "empty": {
+      "title": "Chưa có trạng thái lưu",
+      "text": "Nhấn nút Analogue và Lên khi đang chơi để lưu một kỷ niệm. Nó sẽ hiện ở đây."
     }
   },
   "saves": {
@@ -486,7 +579,8 @@
     "back_up_now": "Sao lưu ngay",
     "backing_up": "Đang sao lưu…",
     "last_backup_label": "Lần sao lưu cuối",
-    "never": "Chưa có bản sao lưu"
+    "never": "Chưa có bản sao lưu",
+    "empty_title": "Chưa có bản sao lưu"
   },
   "screenshot_info": {
     "controls": {
@@ -503,7 +597,9 @@
       "search": "Tìm kiếm",
       "select": "Chọn"
     },
-    "no_screenshots": "Khi bạn chụp một số ảnh chụp màn hình, chúng sẽ xuất hiện ở đây"
+    "no_screenshots": "Khi bạn chụp một số ảnh chụp màn hình, chúng sẽ xuất hiện ở đây",
+    "how_to": "Nhấn đồng thời nút Analogue và Start khi đang chơi. Ảnh chụp màn hình được lưu vào thẻ SD và hiện ở đây.",
+    "empty_title": "Chưa có ảnh chụp màn hình"
   },
   "settings": {
     "3d_pocket": {
@@ -624,6 +720,11 @@
       "style_label": "Phong cách",
       "style_slanted": "Vát chéo",
       "style_modern": "Hiện đại"
+    },
+    "dismissed_notes": {
+      "title": "Ghi chú đã ẩn",
+      "ramble": "Các ghi chú bạn đã đóng, như mẹo kéo tệp .zip vào, có thể được hiện lại.",
+      "button": "Hiện lại ghi chú ({count})"
     }
   },
   "time_ago": {
@@ -650,7 +751,12 @@
       "cancel": "Bỏ qua",
       "text": "{list}\n\nAssets, Saves v.v. sẽ được di chuyển và core cũ sẽ bị loại bỏ.",
       "title": "Thay thế Cores?"
-    }
+    },
+    "drop": {
+      "title": "Thả để cài đặt",
+      "text": "Pocket Sync sẽ cài các core và tập tin trong tệp .zip vào thẻ SD của bạn."
+    },
+    "downloading": "Đang tải xuống…"
   },
   "version": {
     "update_alt": "Bản cập nhật {version} có sẵn",
@@ -660,5 +766,18 @@
   "jobs": {
     "Running": "Hủy bỏ",
     "Stopping": "Đang hủy bỏ..."
+  },
+  "pocket_buttons": {
+    "select": "Select",
+    "analogue": "Analogue",
+    "start": "Start",
+    "a": "A",
+    "b": "B",
+    "x": "X",
+    "y": "Y",
+    "up": "Lên",
+    "down": "Xuống",
+    "left": "Trái",
+    "right": "Phải"
   }
 }

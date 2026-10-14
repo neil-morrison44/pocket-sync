@@ -2,6 +2,7 @@ import React, {
   ReactNode,
   startTransition,
   Suspense,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -11,6 +12,7 @@ import { AppVersionSelector } from "../../jotai/selectors"
 import { ErrorBoundary } from "../errorBoundary"
 import { Link } from "../link"
 import { NewsFeed } from "../newsFeed"
+import { newsFeedAtom, newsLastReadAtom } from "../../jotai/newsFeed/atoms"
 
 import "./index.css"
 import { updateAvailableSelector } from "../../jotai/firmware/selectors"
@@ -40,7 +42,9 @@ import { PocketColour } from "../../types"
 import { Tip } from "../tip"
 import type { Connection } from "../layout"
 import IconButton from "../ui/IconButton"
-import { atomWithStorage } from "jotai/utils"
+import { pocketPathAtom } from "../../jotai/atoms"
+import { openFolder } from "../../utils/openFolder"
+import { atomWithAppLocalSetting } from "../../utils/jotai"
 import { open } from "@tauri-apps/plugin-shell"
 import { useDisconnectPocket } from "../../hooks/useDisconnectPocket"
 
@@ -59,8 +63,8 @@ const StaticScreen = React.lazy(() =>
 )
 
 /** Whether the start screen's updates panel is shown; remembered locally. */
-export const newsPanelOpenAtom = atomWithStorage(
-  "pocket-sync:news-panel-open",
+export const newsPanelOpenAtom = atomWithAppLocalSetting(
+  "ui_news_panel_open",
   true
 )
 
@@ -83,13 +87,19 @@ export const About = ({ connection }: { connection: Connection }) => {
       )}
       <div className="about__main">
         <div className="about__toolbar" data-tauri-drag-region>
-          <IconButton
-            theme="tertiary"
-            icon="article"
-            label={newsPanelOpen ? t("hide_updates") : t("show_updates")}
-            aria-expanded={newsPanelOpen}
-            onClick={() => setNewsPanelOpen((open) => !open)}
-          />
+          <Suspense
+            fallback={
+              <NewsToggleButton
+                open={newsPanelOpen}
+                onToggle={() => setNewsPanelOpen(!newsPanelOpen)}
+              />
+            }
+          >
+            <NewsToggle
+              open={newsPanelOpen}
+              onToggle={() => setNewsPanelOpen(!newsPanelOpen)}
+            />
+          </Suspense>
         </div>
         <div className="about__top">
           <div className="about__title">
@@ -148,6 +158,7 @@ export const About = ({ connection }: { connection: Connection }) => {
               <Suspense>
                 <PocketColoursPopover />
               </Suspense>
+              <OpenSDCardButton />
               <Button theme="tertiary" icon="logout" onClick={onEject}>
                 {t("eject")}
               </Button>
@@ -193,6 +204,74 @@ export const About = ({ connection }: { connection: Connection }) => {
         </div>
       </aside>
     </div>
+  )
+}
+
+/** Opens the SD card (the connected folder) in Finder / Explorer. */
+const OpenSDCardButton = () => {
+  const pocketPath = useAtomValue(pocketPathAtom)
+  const { t } = useTranslation("about")
+  if (!pocketPath) return null
+  return (
+    <IconButton
+      theme="tertiary"
+      icon="folder"
+      label={t("open_sd_card")}
+      onClick={() => openFolder(pocketPath)}
+    />
+  )
+}
+
+type NewsToggleProps = {
+  open: boolean
+  onToggle: () => void
+}
+
+/**
+ * Shows / hides the updates panel. A green dot marks library updates newer
+ * than the last ones seen; opening the panel marks them as seen.
+ */
+const NewsToggle = ({ open, onToggle }: NewsToggleProps) => {
+  const { items } = useAtomValue(newsFeedAtom)
+  const [lastRead, setLastRead] = useAtom(newsLastReadAtom)
+
+  const newest = useMemo(
+    () => Math.max(0, ...items.map(({ published }) => published.getTime())),
+    [items]
+  )
+  const unread = newest > lastRead
+
+  useEffect(() => {
+    if (open && unread) setLastRead(newest)
+  }, [open, unread, newest, setLastRead])
+
+  return <NewsToggleButton open={open} onToggle={onToggle} unread={unread} />
+}
+
+const NewsToggleButton = ({
+  open,
+  onToggle,
+  unread = false,
+}: NewsToggleProps & { unread?: boolean }) => {
+  const { t } = useTranslation("about")
+  const showDot = unread && !open
+  return (
+    <span className="about__news-toggle">
+      <IconButton
+        theme="tertiary"
+        icon="article"
+        label={
+          open
+            ? t("hide_updates")
+            : showDot
+              ? t("show_updates_new")
+              : t("show_updates")
+        }
+        aria-expanded={open}
+        onClick={onToggle}
+      />
+      {showDot && <span className="notification-dot" aria-hidden />}
+    </span>
   )
 }
 

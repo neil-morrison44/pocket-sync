@@ -19,13 +19,13 @@
   & label {
     display: flex;
     justify-content: space-between;
-    font-size: 1.125rem;
+    font-size: var(--font-size-lg);
     align-items: center;
 
     & input {
       width: 50%;
       padding: 10px;
-      font-size: 1rem;
+      font-size: var(--font-size-md);
     }
   }
 }

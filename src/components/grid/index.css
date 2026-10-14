@@ -3,7 +3,7 @@
   grid-auto-flow: row;
   grid-template-columns: repeat(2, minmax(100px, 1fr));
   gap: 15px;
-  padding: 10px;
+  padding: 10px var(--page-padding-inline); /* lines up with the header bar */
   align-items: stretch;
   justify-items: stretch;
   grid-template-rows: repeat(auto-fill, minmax(100px, 1fr));

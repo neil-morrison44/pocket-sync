@@ -54,7 +54,7 @@ h1 {
   color: var(--theme-text-headline);
   text-align: center;
   font-family: GamePocket;
-  font-size: 4rem;
+  font-size: var(--font-size-hero);
   /* stylelint-disable-next-line property-no-unknown */
   font-smooth: never;
   -webkit-font-smoothing: none;
@@ -67,11 +67,11 @@ h2 {
   color: var(--theme-text-headline);
   text-align: left;
   font-family: GamePocket;
-  font-size: 3rem;
+  font-size: var(--font-size-title-xl);
   /* stylelint-disable-next-line property-no-unknown */
   font-smooth: never;
   -webkit-font-smoothing: none;
-  padding: 0 10px;
+  padding: 0 var(--page-padding-inline); /* lines up with the header bar */
   margin-bottom: 15px;
   font-variant-ligatures: discretionary-ligatures;
 
@@ -123,8 +123,8 @@ h2 {
   &::after {
     content: "";
     position: absolute;
-    inset: 0;
-    background-color: var(--theme-focus);
+    inset: var(--focus-ring-inset, 0);
+    background-color: var(--focus-ring-colour, var(--theme-focus));
     clip-path: var(--shape-slant-ring);
     pointer-events: none;
     visibility: hidden;
@@ -156,4 +156,43 @@ button {
 /* Focus rings only show for keyboard navigation (see useKeyboardFocus) */
 :root:not(.keyboard-focus) :focus {
   outline: none;
+}
+
+/* A small accent dot on a button, e.g. for unread updates. Its parent needs
+   position: relative. */
+.notification-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background-color: var(--theme-accent);
+  box-shadow: 0 0 0 2px var(--theme-background);
+  pointer-events: none;
+}
+
+/* Modern style: the controls that are slanted in the slanted style aren't
+   clipped (so focus rings can sit outside); their corners come from here */
+:root[data-style="modern"]
+  :is(
+    .button,
+    .tag,
+    .text-input,
+    .select--theme-control,
+    .toggle--theme-control,
+    .tabs__list,
+    .tabs__trigger,
+    .sidebar__item,
+    .settings__nav-item,
+    .settings__nav-section-title,
+    .switch__track,
+    .tooltip,
+    .path-field__value,
+    .core-inputs__key,
+    .platform-info__banner-edit,
+    .about__sponsor .link,
+    button:not([class])
+  ) {
+  border-radius: var(--radius);
 }

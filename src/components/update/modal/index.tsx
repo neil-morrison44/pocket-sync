@@ -17,6 +17,8 @@ import { useUpdateEventManager } from "./hooks"
 import { useAtomValue } from "jotai"
 import { PocketSyncConfigSelector } from "../../../jotai/config/selectors"
 import { Link } from "../../link"
+// Its styles live with the Update page; the Cores list opens it too
+import "../index.css"
 
 type UpdateModalProps = {
   onClose: () => void
@@ -27,7 +29,10 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
   const updateState = useUpdateEventManager()
 
   return (
-    <Modal>
+    <Modal
+      title={t("modal_title")}
+      onClose={updateState.phases.three === "finished" ? onClose : undefined}
+    >
       <div className="update__modal">
         <div className="update__modal-status">
           <ol>
@@ -58,9 +63,6 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
           {updateState.currentEvent?.type ==
             "PhaseThreeDownloadProgressEvent" && (
             <PhaseThreeControls coreName={updateState.currentEvent.core_name} />
-          )}
-          {updateState.phases.three === "finished" && (
-            <button onClick={onClose}>{t("buttons.close")}</button>
           )}
         </div>
 

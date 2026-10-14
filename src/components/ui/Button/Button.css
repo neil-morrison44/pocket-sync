@@ -28,6 +28,8 @@
 .button--theme-primary {
   --button-background: var(--theme-accent);
   --button-text: var(--theme-accent-text);
+  /* Inside the shape the ring sits on green, so it takes the text colour */
+  --focus-ring-colour: var(--focus-ring-on-accent, var(--theme-accent-text));
 }
 
 .button--theme-secondary {
@@ -56,7 +58,12 @@
 .button--theme-destructive {
   height: var(--control-height, 28px);
   padding-block: 0;
-  padding-inline: 12px;
+
+  /* ~1.35× the space above and below the text (6px at 28px), plus half the
+     slant, so text keeps the same distance from the slanted edge */
+  padding-inline: calc(
+    (var(--control-height, 28px) - 16px) / 2 * 1.35 + var(--slant) / 2
+  );
   position: relative;
   background-color: var(--button-background);
   color: var(--button-text);
@@ -76,8 +83,8 @@
   &::after {
     content: "";
     position: absolute;
-    inset: 0;
-    background-color: var(--theme-focus);
+    inset: var(--focus-ring-inset, 0);
+    background-color: var(--focus-ring-colour, var(--theme-focus));
     clip-path: var(--shape-slant-ring);
     pointer-events: none;
     visibility: hidden;

@@ -19,12 +19,17 @@
       "firmware": "Firmware",
       "cores": "Kerne",
       "games": "Spiele"
-    }
+    },
+    "show_updates_new": "Updates anzeigen (neu)",
+    "open_sd_card": "SD-Karte öffnen"
   },
   "app": {
     "app_name": "Pocket Sync",
     "connect_button": "Mit Pocket/SD-Karte verbinden",
-    "not_pocket_tip": "In diesem Ordner befindet sich scheinbar kein Pocket-Dateisystem. Die SD-Karte muss zuerst vom Pocket initialisiert werden."
+    "not_pocket_tip": "In diesem Ordner befindet sich scheinbar kein Pocket-Dateisystem. Die SD-Karte muss zuerst vom Pocket initialisiert werden.",
+    "close": "Schließen",
+    "loading": "Wird geladen",
+    "dismiss": "Ausblenden"
   },
   "clean_files": {
     "close_button": "Schließen",
@@ -65,7 +70,9 @@
       "install": "Kern installieren",
       "required_files": "Benötigte Dateien laden",
       "uninstall": "Kern deinstallieren",
-      "update": "Kern aktualisieren"
+      "update_to": "Auf {version} aktualisieren",
+      "install_version": "Version installieren",
+      "install_release": "Diese Version installieren"
     },
     "inputs": "Eingaben",
     "modal": {
@@ -82,18 +89,20 @@
     "firmware_too_low": "Dieser Kern benötigt Firmware v{core_firmware}. Die derzeit installierte Version ist v{pocket_firmware}",
     "not_in_inventory": "{coreName} nicht im Inventar",
     "platform": {
-      "edit": "Bearbeiten",
-      "wikipedia": "Wikipedia"
+      "wikipedia": "Wikipedia",
+      "open": "Plattform öffnen"
     },
     "replaced": "Dieser Kern wurde durch <1>{replacementCore}</1> ersetzt",
     "platforms": "Plattformen",
     "release_date": "Veröffentlichungsdatum",
     "releases": {
       "release_history": "Veröffentlichungsverlauf",
-      "show_previous": "Vorherige Veröffentlichungen anzeigen"
+      "show_previous": "Vorherige Veröffentlichungen anzeigen",
+      "latest": "Neueste",
+      "prerelease": "Vorabversion",
+      "on_github": "Auf GitHub ansehen"
     },
     "required_files": "Benötigte Dateien",
-    "required_files_count": "{count} / {total} Dateien",
     "settings": "Einstellungen",
     "sponsor": "Unterstützen",
     "download_count": "Downloads",
@@ -105,7 +114,9 @@
       "cartridges": "Module",
       "dock": "Dock",
       "dock_dac": "Dock (Analog)",
-      "save_states_and_sleep": "Speicherstände / Ruhemodus"
+      "save_states_and_sleep": "Speicherstände / Ruhemodus",
+      "link_port": "Link-Kabel",
+      "analogizer": "Analogizer"
     },
     "url": "URL",
     "version": "Version",
@@ -137,7 +148,45 @@
       "original_lynx_plus": "Original Lynx+",
       "pinball_neon_matrix": "Pinball Neon Matrix",
       "vacuum_fluorescent": "Vacuum Fluorescent"
-    }
+    },
+    "tabs": {
+      "label": "Kerndetails",
+      "overview": "Übersicht",
+      "releases": "Veröffentlichungen"
+    },
+    "tags": {
+      "installed": "Installiert",
+      "update": "Update {version}",
+      "ai": "KI {score, number, percent}",
+      "license": "Lizenz",
+      "manual": "Manuell",
+      "manual_hint": "Von Hand installiert (z. B. aus einer .zip). Der Kern ist nicht in der Kernliste, daher kann Pocket Sync ihn nicht aktualisieren."
+    },
+    "guide": {
+      "install": "Bei der Installation wird Version {version} in den Ordner „Cores“ auf Ihrer SD-Karte geladen. Braucht der Kern zusätzliche Dateien, etwa BIOS-Dateien, können Sie diese danach hier laden.",
+      "update": "Version {version} ist verfügbar. Installiert ist {installed}.",
+      "up_to_date": "Installiert und aktuell.",
+      "required_files_missing": "{count} von {total} benötigten Dateien gefunden. Laden Sie die fehlenden, damit der Kern läuft.",
+      "required_files_found": "Alle {total} benötigten Dateien gefunden.",
+      "update_title": "Update verfügbar"
+    },
+    "preset": "Voreinstellung",
+    "inputs_empty": "Dieser Kern legt keine Tastenbelegung fest.",
+    "input_keys": {
+      "pad_btn_a": "A",
+      "pad_btn_b": "B",
+      "pad_btn_x": "X",
+      "pad_btn_y": "Y",
+      "pad_trig_l": "L",
+      "pad_trig_r": "R",
+      "pad_btn_start": "Start",
+      "pad_btn_select": "Select"
+    },
+    "firmware_required": "Benötigte Firmware",
+    "core_settings_title": "Kerneinstellungen",
+    "display_modes_hint": "Schalten Sie die Anzeigemodi ein, die auf dem Pocket zur Auswahl stehen sollen.",
+    "previous_version_hint": "Installieren Sie eine beliebige veröffentlichte Version, z. B. um nach einem Update zurückzugehen.",
+    "core_settings_hint": "Änderungen werden sofort auf der SD-Karte gespeichert."
   },
   "core_info_required_files": {
     "close": "Schließen",
@@ -167,11 +216,16 @@
       "sort_options": {
         "name": "Name",
         "last_update": "Letztes Update"
-      }
+      },
+      "features": "Funktionen",
+      "features_count": "Funktionen ({count})",
+      "platform": "Plattform",
+      "update_all_count": "Alle aktualisieren ({count})"
     },
     "install_tip": "Kerne (oder andere Komponenten in einer ZIP-Datei) können auch durch Ziehen der .zip in dieses Fenster installiert werden",
     "installed": "Installiert ({count})",
-    "not_installed": "Verfügbar ({count})"
+    "not_installed": "Verfügbar ({count})",
+    "updates": "Verfügbare Updates ({count})"
   },
   "error": {
     "report": "Dies kann über GitHub gemeldet werden. Den folgenden Text und eine Anleitung zum Reproduzieren anhängen",
@@ -211,6 +265,10 @@
     "types": {
       "archive_org": "Internetarchiv",
       "filesystem": "Lokale Dateien"
+    },
+    "empty": {
+      "title": "Noch keine Abrufquellen",
+      "text": "Abrufen kopiert Dateien auf die SD-Karte, aus einem Ordner auf Ihrem Computer oder von archive.org. Fügen Sie eine Quelle hinzu."
     }
   },
   "firmware": {
@@ -235,7 +293,10 @@
     "jump_to": "Springe zu",
     "badge_latest": "Neueste",
     "badge_installed": "Installiert",
-    "published": "{date, date, medium}"
+    "published": "{date, date, medium}",
+    "loaded_current": "Die Installationsdatei der installierten Firmware (v{version}) liegt noch auf der SD-Karte.",
+    "loaded_current_info": "Sie wird nicht mehr gebraucht und kann entfernt werden.",
+    "remove_installer": "Installationsdatei entfernen"
   },
   "games": {
     "controls": {
@@ -244,13 +305,17 @@
       "instance_json": "Instanz-JSON erstellen",
       "refresh": "Aktualisieren",
       "search": "Suchen",
-      "mrom": "MROM-Dumps verschieben"
+      "mrom": "MROM-Dumps verschieben",
+      "platform": "Plattform",
+      "all": "Alle"
     },
     "item": {
       "game_count": "{count, plural, =0 {Keine Spiele} one {# Spiel} other {# Spiele}}"
     },
     "open_folder": "Ordner öffnen",
-    "none": "Keine Spiele gefunden. Installieren Sie einen Kern und legen Sie dann Spiele in dessen Ordner auf der SD-Karte ab."
+    "none": "Keine Spiele gefunden. Installieren Sie einen Kern und legen Sie dann Spiele in dessen Ordner auf der SD-Karte ab.",
+    "show_in_folder": "Im Ordner anzeigen",
+    "empty_title": "Noch keine Spiele"
   },
   "image_editor": {
     "cancel": "Abbrechen",
@@ -259,7 +324,10 @@
     "reset": "Zurücksetzen",
     "rotate": "Rotieren",
     "save": "Bild speichern",
-    "scale": "Skalieren"
+    "scale": "Skalieren",
+    "title": "Bild bearbeiten",
+    "move_up": "Nach oben",
+    "move_down": "Nach unten"
   },
   "instance_json": {
     "available_for": "Automatische instance.json-Dateigenerierung verfügbar für:",
@@ -283,7 +351,9 @@
     "settings": "Einstellungen",
     "collapse_sidebar": "Seitenleiste einklappen",
     "expand_sidebar": "Seitenleiste ausklappen",
-    "views": "Ansichten"
+    "views": "Ansichten",
+    "core_updates": "{count, plural, one {# Kern-Update} other {# Kern-Updates}}",
+    "firmware_update": "Firmware {version} verfügbar"
   },
   "plugins": {
     "buttons": {
@@ -301,6 +371,10 @@
       "add": "Plugin prüfen und installieren",
       "cancel": "Stornieren",
       "invalid": "Unter dieser URL wurde kein gültiges Plugin gefunden."
+    },
+    "empty": {
+      "title": "Keine Plugins installiert",
+      "text": "Plugins ergänzen Pocket Sync um weitere Werkzeuge."
     }
   },
   "palettes": {
@@ -337,6 +411,10 @@
       "save": "Palette speichern",
       "reset": "Farben zurücksetzen",
       "emu_credit": "GB-Emulator übernommen von <1>roblouie/gameboy-emulator</1>"
+    },
+    "empty": {
+      "title": "Noch keine Paletten",
+      "text": "Erstellen Sie eine Palette, fügen Sie eine per Code hinzu oder stöbern Sie in Palette Town."
     }
   },
   "mister_sync": {
@@ -361,7 +439,8 @@
     "mapping": {
       "close": "Schließen",
       "clear": "Zuordnung leeren",
-      "reset": "Auf Standard zurücksetzen"
+      "reset": "Auf Standard zurücksetzen",
+      "title": "Spielstand-Zuordnung"
     }
   },
   "news_feed": {
@@ -374,8 +453,10 @@
       "data_packs": "Datenpakete verwalten",
       "image_packs": "Bildpakete verwalten"
     },
-    "cores": "Kerne",
-    "edit": "Bearbeiten"
+    "cores": "Installierte Kerne",
+    "edit": "Bearbeiten",
+    "details": "Details",
+    "no_cores": "Keine installierten Kerne nutzen diese Plattform."
   },
   "platforms": {
     "cancel": "Abbrechen",
@@ -410,7 +491,12 @@
       "close": "Schließen",
       "current": "Aktuell"
     },
-    "save": "Änderungen speichern"
+    "save": "Änderungen speichern",
+    "archived": "Archiviert",
+    "empty": {
+      "title": "Keine Plattformen auf der SD-Karte",
+      "text": "Plattformen kommen mit der Installation von Kernen hinzu."
+    }
   },
   "progress": {
     "remaining_time": "Verbleibende Zeit (ungefähr): {remainingTime}",
@@ -435,7 +521,10 @@
     "controls": {
       "clear_selection": "Auswahl aufheben",
       "delete_selection": "Ausgewählte löschen ({count})",
-      "search": "Suchen"
+      "search": "Suchen",
+      "core": "Kern",
+      "platform": "Plattform",
+      "all": "Alle"
     },
     "count": "( {count} / 128 )",
     "item": {
@@ -454,6 +543,10 @@
         "gb_player": "GB Player",
         "black_and_white": "Schwarz & Weiß"
       }
+    },
+    "empty": {
+      "title": "Noch keine Speicherstände",
+      "text": "Drücken Sie während des Spiels die Analogue-Taste und Oben, um eine Memory zu speichern. Sie erscheint dann hier."
     }
   },
   "saves": {
@@ -476,7 +569,8 @@
     "back_up_now": "Jetzt sichern",
     "backing_up": "Wird gesichert…",
     "last_backup_label": "Letzte Sicherung",
-    "never": "Noch keine Sicherungen"
+    "never": "Noch keine Sicherungen",
+    "empty_title": "Noch keine Sicherungen"
   },
   "screenshot_info": {
     "controls": {
@@ -493,7 +587,9 @@
       "search": "Suchen",
       "select": "Auswählen"
     },
-    "no_screenshots": "Sobald Sie Bildschirmfotos erstellen, erscheinen diese hier"
+    "no_screenshots": "Sobald Sie Bildschirmfotos erstellen, erscheinen diese hier",
+    "how_to": "Drücken Sie während des Spiels die Analogue-Taste und Start gleichzeitig. Das Bildschirmfoto wird auf der SD-Karte gespeichert und erscheint hier.",
+    "empty_title": "Noch keine Bildschirmfotos"
   },
   "settings": {
     "3d_pocket": {
@@ -609,6 +705,11 @@
       "style_label": "Stil",
       "style_slanted": "Schräg",
       "style_modern": "Modern"
+    },
+    "dismissed_notes": {
+      "title": "Ausgeblendete Hinweise",
+      "ramble": "Hinweise, die Sie geschlossen haben, etwa der Tipp zum Hineinziehen von .zip-Dateien, können wieder angezeigt werden.",
+      "button": "{count, plural, =0 {Hinweise wieder anzeigen} one {# Hinweis wieder anzeigen} other {# Hinweise wieder anzeigen}}"
     }
   },
   "time_ago": {
@@ -634,7 +735,12 @@
       "cancel": "Überspringen",
       "text": "{list}\n\nAssets, Speicherstände, etc. werden verschoben und der alte Kern wird entfernt.",
       "title": "Kerne ersetzen?"
-    }
+    },
+    "drop": {
+      "title": "Zum Installieren ablegen",
+      "text": "Pocket Sync installiert die Kerne und Dateien aus der .zip auf Ihrer SD-Karte."
+    },
+    "downloading": "Wird heruntergeladen …"
   },
   "version": {
     "update_alt": "Aktualisierung {version} verfügbar",
@@ -644,5 +750,18 @@
   "jobs": {
     "Running": "Abbrechen",
     "Stopping": "Breche ab..."
+  },
+  "pocket_buttons": {
+    "select": "Select",
+    "analogue": "Analogue",
+    "start": "Start",
+    "a": "A",
+    "b": "B",
+    "x": "X",
+    "y": "Y",
+    "up": "Oben",
+    "down": "Unten",
+    "left": "Links",
+    "right": "Rechts"
   }
 }

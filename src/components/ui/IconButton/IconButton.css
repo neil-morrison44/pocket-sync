@@ -1,7 +1,7 @@
-/* Same slanted button, sized to its icon */
+/* Same button, square: as wide as it's tall */
 .icon-button {
   flex-shrink: 0;
-  width: calc(var(--control-height, 28px) + 6px);
+  width: var(--control-height, 28px);
   padding-inline: 0;
 }
 

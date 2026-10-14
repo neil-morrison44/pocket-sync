@@ -8,6 +8,7 @@ import {
   Camera,
   Check,
   CheckboxOn,
+  Close,
   ChevronDown,
   ChevronLeft,
   ChevronUp,
@@ -28,6 +29,7 @@ import {
   Grid2x22,
   Home,
   Image,
+  InfoBox,
   Key,
   Layout,
   Logout,
@@ -58,6 +60,7 @@ const PIXEL_ICONS = {
   "arrow-right": ArrowRight,
   camera: Camera,
   check: Check,
+  close: Close,
   "checkbox-on": CheckboxOn,
   "chevron-down": ChevronDown,
   "chevron-left": ChevronLeft,
@@ -79,6 +82,7 @@ const PIXEL_ICONS = {
   "grid-2x2-2": Grid2x22,
   home: Home,
   image: Image,
+  info: InfoBox,
   key: Key,
   layout: Layout,
   logout: Logout,
@@ -94,6 +98,10 @@ const PIXEL_ICONS = {
   upload: Upload,
   "warning-diamond": WarningDiamond,
 } satisfies Record<string, IconComponent>
+
+// Pixelarticons leave about a pixel of space around their drawing, so brand
+// marks are drawn this much shorter than the icon size to look as large
+const BRAND_HEIGHT = 0.75
 
 const BRAND_ICONS = {
   analogizer: AnalogizerMark,
@@ -136,13 +144,16 @@ export type IconOptions =
 // pixel-perfect everywhere, 12 on 2× displays. Sizes in between keep sharp
 // edges (crispEdges) but some pixel rows render a device pixel thicker.
 // Glyph icons use `size` as their font size; GamePocket's pixels are 1/20 em,
-// so 20 is pixel-perfect (and 10 on 2× displays).
-export type IconSize = 12 | 16 | 20 | 24 | 48
+// so 20 and 40 are pixel-perfect (and 10 on 2× displays).
+export type IconSize = 12 | 16 | 20 | 24 | 40 | 48
 
 export interface IconProps {
   icon: IconOptions
-  /** Defaults to 16 for pixel icons and 20 (pixel-perfect) for glyph icons. */
-  size?: IconSize
+  /**
+   * Defaults to 16 for pixel icons and 20 (pixel-perfect) for glyph icons.
+   * `"text"` scales with the surrounding font size, e.g. inside a tag.
+   */
+  size?: IconSize | "text"
   className?: string
   /** Accessible name. Leave out for decorative icons next to visible text. */
   label?: string
@@ -156,8 +167,13 @@ const Icon = ({ icon, size, className, label }: IconProps) => {
   if (icon in GLYPH_ICONS) {
     return (
       <span
-        className={clsx("icon", "icon--is-glyph", className)}
-        style={{ fontSize: size ?? 20 }}
+        className={clsx(
+          "icon",
+          "icon--is-glyph",
+          size === "text" && "icon--size-text",
+          className
+        )}
+        style={size === "text" ? undefined : { fontSize: size ?? 20 }}
         {...a11y}
       >
         {GLYPH_ICONS[icon as keyof typeof GLYPH_ICONS]}
@@ -169,7 +185,13 @@ const Icon = ({ icon, size, className, label }: IconProps) => {
     const BrandIcon = BRAND_ICONS[icon as keyof typeof BRAND_ICONS]
     return (
       <BrandIcon
-        className={clsx("icon", "icon--is-brand", className)}
+        height={size === "text" ? undefined : (size ?? 16) * BRAND_HEIGHT}
+        className={clsx(
+          "icon",
+          "icon--is-brand",
+          size === "text" && "icon--size-text",
+          className
+        )}
         focusable="false"
         {...a11y}
       />
@@ -179,9 +201,9 @@ const Icon = ({ icon, size, className, label }: IconProps) => {
   const PixelIcon = PIXEL_ICONS[icon as keyof typeof PIXEL_ICONS]
   return (
     <PixelIcon
-      className={clsx("icon", className)}
-      width={size ?? 16}
-      height={size ?? 16}
+      className={clsx("icon", size === "text" && "icon--size-text", className)}
+      width={size === "text" ? undefined : (size ?? 16)}
+      height={size === "text" ? undefined : (size ?? 16)}
       focusable="false"
       {...a11y}
     />

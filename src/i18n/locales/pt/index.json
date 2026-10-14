@@ -19,12 +19,17 @@
       "firmware": "Firmware",
       "cores": "Núcleos",
       "games": "Jogos"
-    }
+    },
+    "show_updates_new": "Mostrar atualizações (novas)",
+    "open_sd_card": "Abrir cartão SD"
   },
   "app": {
     "app_name": "Pocket Sync",
     "connect_button": "Conectar ao Pocket / Cartão SD",
-    "not_pocket_tip": "Essa pasta não parece ser o sistema de arquivos do Pocket. O cartão SD deve ser inicializado pelo Pocket pelo menos uma vez."
+    "not_pocket_tip": "Essa pasta não parece ser o sistema de arquivos do Pocket. O cartão SD deve ser inicializado pelo Pocket pelo menos uma vez.",
+    "close": "Fechar",
+    "loading": "Carregando",
+    "dismiss": "Dispensar"
   },
   "clean_files": {
     "close_button": "Fechar",
@@ -65,7 +70,9 @@
       "install": "Instalar núcleo",
       "required_files": "Carregar arquivos necessários",
       "uninstall": "Desinstalar núcleo",
-      "update": "Atualizar núcleo"
+      "update_to": "Atualizar para {version}",
+      "install_version": "Instalar versão",
+      "install_release": "Instalar esta versão"
     },
     "inputs": "Entradas",
     "modal": {
@@ -82,18 +89,20 @@
     "firmware_too_low": "Este núcleo precisa do firmware v{core_firmware}, a versão atualmente instalada é v{pocket_firmware}",
     "not_in_inventory": "{coreName} não está no inventário de núcleos",
     "platform": {
-      "edit": "Editar",
-      "wikipedia": "Wikipedia"
+      "wikipedia": "Wikipedia",
+      "open": "Abrir plataforma"
     },
     "replaced": "Este núcleo foi substituído por <1>{replacementCore}</1>",
     "platforms": "Plataformas",
     "release_date": "Data de Lançamento",
     "releases": {
       "release_history": "Histórico de Lançamentos",
-      "show_previous": "Mostrar lançamentos anteriores"
+      "show_previous": "Mostrar lançamentos anteriores",
+      "latest": "Mais recente",
+      "prerelease": "Pré-lançamento",
+      "on_github": "Ver no GitHub"
     },
     "required_files": "Arquivos Necessários",
-    "required_files_count": "{count} / {total} Arquivos",
     "settings": "Configurações",
     "sponsor": "Patrocinador",
     "download_count": "Descargas",
@@ -105,7 +114,9 @@
       "cartridges": "Cartuchos",
       "dock": "Dock",
       "dock_dac": "Dock (Analógico)",
-      "save_states_and_sleep": "Estados de Gravação / Sono"
+      "save_states_and_sleep": "Estados de Gravação / Sono",
+      "link_port": "Cabo Link",
+      "analogizer": "Analogizer"
     },
     "url": "URL",
     "version": "Versão",
@@ -137,7 +148,45 @@
       "original_lynx_plus": "Original Lynx+",
       "pinball_neon_matrix": "Matriz de Néon Pinball",
       "vacuum_fluorescent": "Vacuum Fluorescent"
-    }
+    },
+    "tabs": {
+      "label": "Detalhes do núcleo",
+      "overview": "Visão geral",
+      "releases": "Lançamentos"
+    },
+    "tags": {
+      "installed": "Instalado",
+      "update": "Atualização {version}",
+      "ai": "IA {score, number, percent}",
+      "license": "Licença",
+      "manual": "Manual",
+      "manual_hint": "Instalado manualmente (por ex. de um .zip). Não está na lista de núcleos, então o Pocket Sync não pode atualizá-lo."
+    },
+    "guide": {
+      "install": "A instalação baixa a versão {version} para a pasta Cores do seu cartão SD. Se o núcleo precisar de arquivos extras, como arquivos de BIOS, você pode carregá-los aqui depois.",
+      "update": "A versão {version} está disponível. Você tem a {installed}.",
+      "up_to_date": "Instalado e atualizado.",
+      "required_files_missing": "{count} de {total} arquivos necessários encontrados. Carregue os que faltam para que o núcleo funcione.",
+      "required_files_found": "Todos os {total} arquivos necessários foram encontrados.",
+      "update_title": "Atualização disponível"
+    },
+    "preset": "Predefinição",
+    "inputs_empty": "Este núcleo não define um mapeamento de botões.",
+    "input_keys": {
+      "pad_btn_a": "A",
+      "pad_btn_b": "B",
+      "pad_btn_x": "X",
+      "pad_btn_y": "Y",
+      "pad_trig_l": "L",
+      "pad_trig_r": "R",
+      "pad_btn_start": "Start",
+      "pad_btn_select": "Select"
+    },
+    "firmware_required": "Firmware necessário",
+    "core_settings_title": "Configurações do núcleo",
+    "display_modes_hint": "Ative os modos de exibição que você quer poder escolher no Pocket.",
+    "previous_version_hint": "Instale qualquer versão lançada, por exemplo para voltar depois de uma atualização.",
+    "core_settings_hint": "As alterações são salvas no cartão SD na hora."
   },
   "core_info_required_files": {
     "close": "Fechar",
@@ -167,11 +216,16 @@
       "sort_options": {
         "name": "Nome",
         "last_update": "Última atualização"
-      }
+      },
+      "features": "Recursos",
+      "features_count": "Recursos ({count})",
+      "platform": "Plataforma",
+      "update_all_count": "Atualizar tudo ({count})"
     },
     "install_tip": "Você também pode instalar núcleos (ou qualquer outra coisa em um zip) arrastando o .zip para esta janela",
     "installed": "Instalado ({count})",
-    "not_installed": "Disponível ({count})"
+    "not_installed": "Disponível ({count})",
+    "updates": "Atualizações disponíveis ({count})"
   },
   "error": {
     "report": "Você pode reportar isso via GitHub inclua o texto abaixo e qualquer coisa que você acabou de fazer",
@@ -211,6 +265,10 @@
     "types": {
       "archive_org": "Internet Archive",
       "filesystem": "Arquivos Locais"
+    },
+    "empty": {
+      "title": "Ainda não há fontes",
+      "text": "A busca copia arquivos para o cartão SD, de uma pasta no seu computador ou do archive.org. Adicione uma fonte para começar."
     }
   },
   "firmware": {
@@ -235,7 +293,10 @@
     "jump_to": "Ir para",
     "badge_latest": "Mais recente",
     "badge_installed": "Instalado",
-    "published": "{date, date, medium}"
+    "published": "{date, date, medium}",
+    "loaded_current": "O instalador do firmware instalado (v{version}) ainda está no cartão SD.",
+    "loaded_current_info": "Ele não é mais necessário e pode ser removido.",
+    "remove_installer": "Remover instalador"
   },
   "games": {
     "controls": {
@@ -244,13 +305,17 @@
       "instance_json": "Criar Instance JSON",
       "refresh": "Atualizar",
       "search": "Pesquisar",
-      "mrom": "Mover dumps MROM"
+      "mrom": "Mover dumps MROM",
+      "platform": "Plataforma",
+      "all": "Todas"
     },
     "item": {
       "game_count": "{count, plural, =0 {Nenhum Jogo} one {# Jogo} other {# Jogos}}"
     },
     "open_folder": "Abrir pasta",
-    "none": "Nenhum jogo encontrado. Instale um núcleo e depois adicione jogos à pasta dele no cartão SD."
+    "none": "Nenhum jogo encontrado. Instale um núcleo e depois adicione jogos à pasta dele no cartão SD.",
+    "show_in_folder": "Mostrar na pasta",
+    "empty_title": "Ainda não há jogos"
   },
   "image_editor": {
     "cancel": "Cancelar",
@@ -259,7 +324,10 @@
     "reset": "Reiniciar",
     "rotate": "Rodar",
     "save": "Guardar imagem",
-    "scale": "Redimensionar"
+    "scale": "Redimensionar",
+    "title": "Editar imagem",
+    "move_up": "Mover para cima",
+    "move_down": "Mover para baixo"
   },
   "instance_json": {
     "available_for": "Criação automática do arquivo instance.json disponível para:",
@@ -283,7 +351,9 @@
     "settings": "Configurações",
     "collapse_sidebar": "Recolher barra lateral",
     "expand_sidebar": "Expandir barra lateral",
-    "views": "Visualizações"
+    "views": "Visualizações",
+    "core_updates": "{count, plural, one {# atualização de núcleo} other {# atualizações de núcleos}}",
+    "firmware_update": "Firmware {version} disponível"
   },
   "plugins": {
     "buttons": {
@@ -301,6 +371,10 @@
       "add": "Verifique e instale o plugin.",
       "cancel": "Cancelar",
       "invalid": "Nenhum plugin válido encontrado nesse URL."
+    },
+    "empty": {
+      "title": "Nenhum plugin instalado",
+      "text": "Plugins adicionam ferramentas ao Pocket Sync."
     }
   },
   "palettes": {
@@ -337,6 +411,10 @@
       "save": "Guardar paleta",
       "reset": "Redefinir cores",
       "emu_credit": "Emulador GB adaptado de <1>roblouie/gameboy-emulator</1>"
+    },
+    "empty": {
+      "title": "Ainda não há paletas",
+      "text": "Crie uma paleta, adicione uma por código ou explore o Palette Town."
     }
   },
   "mister_sync": {
@@ -361,7 +439,8 @@
     "mapping": {
       "close": "Fechar",
       "clear": "Limpar mapeamento",
-      "reset": "Restaurar padrão"
+      "reset": "Restaurar padrão",
+      "title": "Mapeamento de saves"
     }
   },
   "news_feed": {
@@ -374,8 +453,10 @@
       "data_packs": "Gerenciar pacotes de dados",
       "image_packs": "Gerenciar pacotes de imagens"
     },
-    "cores": "Núcleos",
-    "edit": "Editar"
+    "cores": "Núcleos instalados",
+    "edit": "Editar",
+    "details": "Detalhes",
+    "no_cores": "Nenhum núcleo instalado usa esta plataforma."
   },
   "platforms": {
     "cancel": "Cancelar",
@@ -410,7 +491,12 @@
       "close": "Fechar",
       "current": "Atual"
     },
-    "save": "Guardar alterações"
+    "save": "Guardar alterações",
+    "archived": "Arquivada",
+    "empty": {
+      "title": "Nenhuma plataforma no cartão SD",
+      "text": "As plataformas são adicionadas ao instalar núcleos."
+    }
   },
   "progress": {
     "remaining_time": "Tempo Restante (aprox.): {remainingTime}",
@@ -435,7 +521,10 @@
     "controls": {
       "clear_selection": "Limpar Seleção",
       "delete_selection": "Eliminar Selecionados ({count})",
-      "search": "Pesquisar"
+      "search": "Pesquisar",
+      "core": "Núcleo",
+      "platform": "Plataforma",
+      "all": "Todos"
     },
     "count": "({count} / 128)",
     "item": {
@@ -454,6 +543,10 @@
         "gb_player": "GB Player",
         "black_and_white": "Preto e Branco"
       }
+    },
+    "empty": {
+      "title": "Ainda não há estados salvos",
+      "text": "Pressione o botão Analogue e Cima durante o jogo para salvar uma memória. Ela aparece aqui."
     }
   },
   "saves": {
@@ -476,7 +569,8 @@
     "back_up_now": "Fazer backup agora",
     "backing_up": "Fazendo backup…",
     "last_backup_label": "Último backup",
-    "never": "Nenhum backup ainda"
+    "never": "Nenhum backup ainda",
+    "empty_title": "Ainda não há backups"
   },
   "screenshot_info": {
     "controls": {
@@ -493,7 +587,9 @@
       "search": "Pesquisar",
       "select": "Selecionar"
     },
-    "no_screenshots": "Uma vez que você tirar algumas capturas de tela, elas aparecerão aqui"
+    "no_screenshots": "Uma vez que você tirar algumas capturas de tela, elas aparecerão aqui",
+    "how_to": "Pressione o botão Analogue e Start ao mesmo tempo durante o jogo. A captura é salva no cartão SD e aparece aqui.",
+    "empty_title": "Ainda não há capturas"
   },
   "settings": {
     "3d_pocket": {
@@ -609,6 +705,11 @@
       "style_label": "Estilo",
       "style_slanted": "Inclinado",
       "style_modern": "Moderno"
+    },
+    "dismissed_notes": {
+      "title": "Notas dispensadas",
+      "ramble": "As notas que você fechou, como a dica sobre arrastar arquivos .zip, podem ser exibidas novamente.",
+      "button": "{count, plural, =0 {Mostrar notas novamente} one {Mostrar # nota novamente} other {Mostrar # notas novamente}}"
     }
   },
   "time_ago": {
@@ -635,7 +736,12 @@
       "cancel": "Saltar",
       "text": "{list}\n\nAtivos, Gravações etc serão transferidos e o núcleo antigo será removido.",
       "title": "Substituir Núcleos?"
-    }
+    },
+    "drop": {
+      "title": "Solte para instalar",
+      "text": "O Pocket Sync instala os núcleos e arquivos do .zip no seu cartão SD."
+    },
+    "downloading": "Baixando…"
   },
   "version": {
     "update_alt": "Atualização {version} disponível",
@@ -645,5 +751,18 @@
   "jobs": {
     "Running": "Cancelar",
     "Stopping": "Cancelando..."
+  },
+  "pocket_buttons": {
+    "select": "Select",
+    "analogue": "Analogue",
+    "start": "Start",
+    "a": "A",
+    "b": "B",
+    "x": "X",
+    "y": "Y",
+    "up": "Cima",
+    "down": "Baixo",
+    "left": "Esquerda",
+    "right": "Direita"
   }
 }

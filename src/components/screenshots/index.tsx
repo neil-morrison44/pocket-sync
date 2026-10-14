@@ -20,6 +20,8 @@ import { selectedSubviewSelector } from "../../jotai/view/selectors"
 import { useMultiExport } from "./hooks/useMultiExport"
 import { invokeDeleteFiles } from "../../utils/invokes"
 import { useTranslation } from "react-i18next"
+import ButtonCombo from "../ui/ButtonCombo"
+import EmptyState from "../ui/EmptyState"
 import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
 import { ControlsCheckbox } from "../controls/inputs/checkbox"
@@ -95,9 +97,10 @@ export const Screenshots = () => {
 
   if (sortedScreenshots.length === 0) {
     return (
-      <div className="screenshots screenshots--none">
-        <p>{t("no_screenshots")}</p>
-      </div>
+      <EmptyState icon="image" title={t("empty_title")}>
+        {t("no_screenshots")}
+        <HowToScreenshot />
+      </EmptyState>
     )
   }
 
@@ -170,5 +173,17 @@ export const Screenshots = () => {
         </Grid>
       </SearchContextProvider>
     </>
+  )
+}
+
+/** How to take a screenshot on the Pocket: Analogue button + Start. */
+const HowToScreenshot = () => {
+  const { t } = useTranslation("screenshots")
+
+  return (
+    <div className="screenshots__how-to">
+      <ButtonCombo keys={["analogue", "start"]} size={40} />
+      <span>{t("how_to")}</span>
+    </div>
   )
 }

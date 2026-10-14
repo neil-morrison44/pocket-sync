@@ -135,6 +135,17 @@ export const AllPlatformImagesSelector = atom<
   return await invokeReadAllPlatformImages()
 })
 
+/** Whether the SD card has an image for the platform. */
+export const PlatformImageExistsSelectorFamily = atomFamily<
+  PlatformId,
+  Atom<Promise<boolean>>
+>((platformId: PlatformId) =>
+  atom(async (get) => {
+    const allPlatformImages = await get(AllPlatformImagesSelector)
+    return Boolean(allPlatformImages[platformId])
+  })
+)
+
 export const PlatformImageSelectorFamily = atomFamily<
   PlatformId,
   Atom<Promise<string>>

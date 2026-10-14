@@ -5,12 +5,13 @@ import {
   latestFirmwareSelector,
 } from "../../jotai/firmware/selectors"
 import { allFirmwaresAtom } from "../../jotai/firmware/atoms"
-import * as RadixAccordion from "@radix-ui/react-accordion"
 import { FirmwareListItem } from "../../types"
+import Accordion, { AccordionItem } from "../ui/Accordion"
 import Button from "../ui/Button"
 import Icon from "../ui/Icon"
 import Select from "../ui/Select"
 import Skeleton from "../ui/Skeleton"
+import Tag from "../ui/Tag"
 import "./index.css"
 import { FirmwareReleaseNotes } from "./releaseNotes"
 import { Suspense, useCallback, useState, useTransition } from "react"
@@ -72,10 +73,9 @@ export const Firmware = () => {
           />
         </div>
 
-        <RadixAccordion.Root
+        <Accordion
           type="single"
           collapsible
-          className="firmware__list"
           value={expanded}
           onValueChange={setExpanded}
         >
@@ -94,7 +94,7 @@ export const Firmware = () => {
               }
             />
           ))}
-        </RadixAccordion.Root>
+        </Accordion>
       </section>
     </div>
   )
@@ -122,43 +122,31 @@ const FirmwareItem = ({
   const downloadedFirmware = useAtomValue(downloadedFirmwareSelector)
 
   return (
-    <RadixAccordion.Item
+    <AccordionItem
       value={firmware.version}
-      className="firmware__item"
       id={`firmware-${firmware.version}`}
+      title={`v${firmware.version}`}
+      meta={t("published", { date: firmware.publishedAt })}
+      aside={
+        <>
+          {isLatest && <Tag theme="accent">{t("badge_latest")}</Tag>}
+          {isInstalled && <Tag>{t("badge_installed")}</Tag>}
+        </>
+      }
     >
-      <RadixAccordion.Header className="firmware__item-header">
-        <RadixAccordion.Trigger className="firmware__item-trigger">
-          <span className="firmware__item-version">{`v${firmware.version}`}</span>
-          <span className="firmware__item-date">
-            {t("published", { date: firmware.publishedAt })}
-          </span>
-          {isLatest && (
-            <span className="firmware__badge firmware__badge--latest">
-              {t("badge_latest")}
-            </span>
-          )}
-          {isInstalled && (
-            <span className="firmware__badge">{t("badge_installed")}</span>
-          )}
-          <Icon icon="chevron-down" className="firmware__item-chevron" />
-        </RadixAccordion.Trigger>
-      </RadixAccordion.Header>
-      <RadixAccordion.Content className="firmware__item-content">
-        {!downloadedFirmware && !isDownloading && (
-          <Suspense>
-            <DownloadButton
-              version={firmware.version}
-              onDownloadStart={onDownloadStart}
-              onDownloadEnd={onDownloadEnd}
-            />
-          </Suspense>
-        )}
-        <Suspense fallback={<ReleaseNotesSkeleton />}>
-          <FirmwareReleaseNotes version={firmware.version} />
+      {!downloadedFirmware && !isDownloading && (
+        <Suspense>
+          <DownloadButton
+            version={firmware.version}
+            onDownloadStart={onDownloadStart}
+            onDownloadEnd={onDownloadEnd}
+          />
         </Suspense>
-      </RadixAccordion.Content>
-    </RadixAccordion.Item>
+      )}
+      <Suspense fallback={<ReleaseNotesSkeleton />}>
+        <FirmwareReleaseNotes version={firmware.version} />
+      </Suspense>
+    </AccordionItem>
   )
 }
 
@@ -233,34 +221,76 @@ const FirmwareDownloaded = ({ downloading }: FirmwareDownloadedProps) => {
   const downloadedFirmware = useAtomValue(downloadedFirmwareSelector)
   const { t } = useTranslation("firmware")
 
-  const onRemove = useCallback(async () => {
-    if (downloadedFirmware) {
-      await invokeDeleteFiles([downloadedFirmware])
-    }
-  }, [downloadedFirmware])
-
-  if (!downloadedFirmware) {
+  if (downloading) {
     return (
       <div className="firmware__downloaded">
-        {downloading ? (
-          <div className="firmware__progress">
-            <ProgressLoader name="firmware_download" />
-            {t("downloading_firmware")}
-          </div>
-        ) : (
-          t("no_firmware_loaded")
-        )}
+        <div className="firmware__progress">
+          <ProgressLoader name="firmware_download" />
+          {t("downloading_firmware")}
+        </div>
+      </div>
+    )
+  }
+
+  // Nothing waiting: all fine, so it's a quiet line with a check
+  if (!downloadedFirmware) {
+    return (
+      <div className="firmware__downloaded firmware__downloaded--none">
+        <Icon icon="check" />
+        {t("no_firmware_loaded")}
+      </div>
+    )
+  }
+
+  return (
+    <Suspense fallback={<div className="firmware__downloaded" />}>
+      <DownloadedFile fileName={downloadedFirmware} />
+    </Suspense>
+  )
+}
+
+/**
+ * A firmware file at the top of the SD card: either an update the Pocket
+ * installs when it starts, or the installer of the version it already runs
+ * (left over), which can go.
+ */
+const DownloadedFile = ({ fileName }: { fileName: string }) => {
+  const currentFirmware = useAtomValue(currentFirmwareVersionSelector)
+  const currentDetails = useAtomValue(
+    FirmwareDetailsSelectorFamily({ version: currentFirmware.version })
+  )
+  const { t } = useTranslation("firmware")
+  const isInstalledVersion = currentDetails.file_name === fileName
+
+  const onRemove = useCallback(async () => {
+    await invokeDeleteFiles([fileName])
+  }, [fileName])
+
+  if (isInstalledVersion) {
+    return (
+      <div className="firmware__downloaded">
+        <div className="firmware__downloaded-text">
+          <span>
+            {t("loaded_current", { version: currentFirmware.version })}
+          </span>
+          <span className="firmware__downloaded-info">
+            {t("loaded_current_info")}
+          </span>
+        </div>
+        <Button theme="tertiary" icon="trash" onClick={onRemove}>
+          {t("remove_installer")}
+        </Button>
       </div>
     )
   }
 
   return (
     <div className="firmware__downloaded">
-      <div>
-        <strong>{t("loaded_firmware", { version: downloadedFirmware })}</strong>
-        <div className="firmware__downloaded-info">
+      <div className="firmware__downloaded-text">
+        <strong>{t("loaded_firmware", { version: fileName })}</strong>
+        <span className="firmware__downloaded-info">
           {t("loaded_firmware_info")}
-        </div>
+        </span>
       </div>
       <Button theme="destructive" icon="trash" onClick={onRemove}>
         {t("remove_button")}

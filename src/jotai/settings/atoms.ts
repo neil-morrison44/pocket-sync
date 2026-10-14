@@ -1,4 +1,7 @@
-import { atomWithAppLocalStorage } from "../../utils/jotai"
+import {
+  atomWithAppLocalSetting,
+  atomWithAppLocalStorage,
+} from "../../utils/jotai"
 
 export const alwaysUseEnglishAtom = atomWithAppLocalStorage<{ value: boolean }>(
   "only-use-english",
@@ -25,3 +28,9 @@ export const githubTokenAtom = atomWithAppLocalStorage<{
 }>("github-token-atom", {
   value: null,
 })
+
+/** Ids of info notes the user dismissed; Settings can show them again. */
+export const dismissedNotesAtom = atomWithAppLocalSetting<string[]>(
+  "ui_dismissed_notes",
+  []
+)

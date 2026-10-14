@@ -6,52 +6,51 @@
 
 .cores__info-blurb {
   background-color: var(--info-colour);
-  padding: 10px;
+  padding: var(--space-md);
   display: flex;
-  gap: 5px;
+  gap: var(--space-xs);
   flex-direction: column;
   justify-content: flex-start;
   flex-grow: 1;
+  color: var(--theme-text-body);
 }
 
 .cores__info-blurb-name {
   font-weight: bold;
+  color: var(--theme-text-headline);
 }
 
 .cores__author-tag {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
 }
 
 .cores__author-tag-image {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
+  image-rendering: pixelated;
 }
 
-.cores__item-analogizer {
-  position: absolute;
-  color: rgb(101, 156, 222);
-  right: 0;
-  top: 0;
-  margin: 2px;
-  font-size: 1.2rem;
-  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
+.cores__version {
+  font-size: var(--font-size-xs);
+  color: var(--theme-text-soft);
+  font-variant-numeric: tabular-nums;
 }
 
-.cores__item-ai-score {
-  position: absolute;
-  color: var(--theme-warning);
-  left: 0;
-  top: 0;
-  margin: 2px;
-  font-size: 1.45rem;
-  /*font-family: GamePocket, sans-serif;*/
-  font-weight: bold;
-  text-shadow: 0 0 4px rgba(0, 0, 0, 1);
+/* Tags sit at the bottom, so cards in a row line up */
+.cores__info-blurb .tag-list {
+  margin-top: auto;
+  padding-top: var(--space-xs);
+
+  &:empty {
+    display: none;
+  }
 }
 
 .cores__item {
+  border-radius: var(--radius-card);
   display: flex;
   flex-direction: column;
   cursor: pointer;
@@ -81,37 +80,20 @@
   }
 }
 
-.cores__item-archive-icon {
-  color: var(--red-colour);
-  position: absolute;
-  right: 0;
-  height: 120px;
-  width: 50px;
-  height: 50px;
+/* Heading with an action on the right, e.g. Updates + Update All */
+.cores__section-header {
   display: flex;
-  justify-content: flex-end;
-  clip-path: polygon(100% 0, 0 0, 100% 100%);
-  background: linear-gradient(
-    4rad,
-    rgba(255, 245, 245, 0.9) 45%,
-    transparent 50%
-  );
-  backdrop-filter: blur(2px);
-}
-
-.cores__not-installed-item-id {
-  font-weight: normal;
-  font-size: 0.825rem;
-}
-
-.cores__item-sponsor-banner {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-color: var(--purple-colour);
-  transform: translateX(40px) translateY(5px) rotate(35deg);
-  width: 120px;
-  display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding-inline-end: var(--page-padding-inline);
+
+  & h2 {
+    margin-bottom: 0;
+  }
+}
+
+.cores__updates {
+  --control-height: 32px;
 }

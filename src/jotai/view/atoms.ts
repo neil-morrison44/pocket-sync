@@ -4,7 +4,6 @@ export const VIEWS_LIST = [
   "Pocket Sync",
   "Games",
   "Cores",
-  "Update",
   "Screenshots",
   "Saves",
   "Save States",

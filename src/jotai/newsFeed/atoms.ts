@@ -3,6 +3,7 @@ import { FeedItem, RawFeedItem } from "../../types"
 import { invokeGetNewsFeed } from "../../utils/invokes"
 import { withAtomEffect } from "jotai-effect"
 import { startTransition } from "react"
+import { atomWithAppLocalSetting } from "../../utils/jotai"
 
 const INTERVAL_MINS = 5
 
@@ -33,3 +34,12 @@ export const newsFeedAtom = withAtomEffect(baseNewsFeedAtom, (_get, set) => {
   )
   return () => clearInterval(interval)
 })
+
+/**
+ * Publish time (ms) of the newest library update the user has seen, so the
+ * panel toggle can show a dot for newer ones.
+ */
+export const newsLastReadAtom = atomWithAppLocalSetting<number>(
+  "ui_news_last_read",
+  0
+)

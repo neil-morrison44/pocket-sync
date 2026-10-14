@@ -6,6 +6,7 @@ import { ErrorBoundary } from "../errorBoundary"
 import { Loader } from "../loader"
 import { AutoBackup } from "../saves/autobackup"
 import { ZipInstall } from "../zipInstall"
+import { ZipDropOverlay } from "../zipInstall/dropOverlay"
 import * as RadixTabs from "@radix-ui/react-tabs"
 import { SIDEBAR_TOGGLE_VALUE, Sidebar, sidebarCollapsedAtom } from "./sidebar"
 import "./index.css"
@@ -19,9 +20,6 @@ const Cores = React.lazy(() =>
   import("../cores").then((i) => ({ default: i.Cores }))
 )
 
-const Update = React.lazy(() =>
-  import("../update").then((i) => ({ default: i.Update }))
-)
 const Palettes = React.lazy(() =>
   import("../palettes").then((i) => ({ default: i.Palettes }))
 )
@@ -69,7 +67,7 @@ export const Layout = ({ connection }: { connection: Connection }) => {
   const [viewAndSubview, setViewAndSubview] = useAtom(currentViewAtom)
   const enableGlobalZipInstall = useAtomValue(enableGlobalZipInstallAtom)
   const [sidebarCollapsed, setSidebarCollapsed] = useAtom(sidebarCollapsedAtom)
-  const [isPending, startTransition] = useTransition()
+  const [, startTransition] = useTransition()
 
   const changeView = useCallback(
     (viewName: (typeof VIEWS_LIST)[number]) => {
@@ -89,7 +87,7 @@ export const Layout = ({ connection }: { connection: Connection }) => {
       value={view as string}
       onValueChange={(value) => {
         if (value === SIDEBAR_TOGGLE_VALUE) {
-          setSidebarCollapsed((collapsed) => !collapsed)
+          setSidebarCollapsed(!sidebarCollapsed)
           return
         }
         changeView(value as (typeof VIEWS_LIST)[number])
@@ -98,6 +96,7 @@ export const Layout = ({ connection }: { connection: Connection }) => {
       activationMode="manual"
     >
       {connection.connected && enableGlobalZipInstall && <ZipInstall />}
+      {connection.connected && enableGlobalZipInstall && <ZipDropOverlay />}
       {connection.connected && (
         <Suspense>
           <AutoBackup />
@@ -106,7 +105,6 @@ export const Layout = ({ connection }: { connection: Connection }) => {
       {connection.connected && (
         <Sidebar
           view={view as (typeof VIEWS_LIST)[number]}
-          isPending={isPending}
           connected={connection.connected}
         />
       )}
@@ -124,7 +122,6 @@ export const Layout = ({ connection }: { connection: Connection }) => {
               {view === "Pocket Sync" && <About connection={connection} />}
               {view === "Settings" && <Settings />}
               {view === "Games" && <Games />}
-              {view === "Update" && <Update />}
               {view === "Saves" && <Saves />}
               {view === "Save States" && <SaveStates />}
               {view === "Firmware" && <Firmware />}

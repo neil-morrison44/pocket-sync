@@ -7,17 +7,6 @@
   --padding: 20px;
 }
 
-/* Empty state: plain centred text */
-.saves__none {
-  width: 100%;
-  height: calc(100vh - var(--controls-height));
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--theme-text-soft);
-  text-align: center;
-}
-
 .saves__list {
   padding: var(--padding);
   overflow: auto;
@@ -44,7 +33,7 @@
   display: flex;
   align-items: baseline;
   gap: var(--space-sm);
-  font-size: 1.125rem;
+  font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--theme-text-headline);
 }
@@ -133,7 +122,7 @@
 }
 
 .saves__info-save-file-path {
-  font-size: 1rem;
+  font-size: var(--font-size-md);
   padding: 5px var(--padding);
 }
 

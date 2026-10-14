@@ -1,4 +1,4 @@
-import { Modal } from "../../../modal"
+import { Modal, ModalSuspense } from "../../../modal"
 import {
   platformListPocketSelector,
   platformsListMiSTerSelector,
@@ -30,12 +30,16 @@ type SaveMappingProps = {
   onClose: () => void
 }
 
-export const SaveMapping = ({ onClose }: SaveMappingProps) => {
+const SaveMappingContent = ({ onClose }: SaveMappingProps) => {
   const [joins, setJoins] = useSmoothedAtom(saveMappingAtom)
   const { t } = useTranslation("mister_sync")
 
   return (
-    <Modal className="mister-sync__mapping">
+    <Modal
+      className="mister-sync__mapping"
+      title={t("mapping.title")}
+      onClose={onClose}
+    >
       <Suspense>
         <div className="mister-sync__mapping-platform-list-header">
           <div>{t("pocket")}</div>
@@ -47,7 +51,6 @@ export const SaveMapping = ({ onClose }: SaveMappingProps) => {
         {t("mapping.reset")}
       </button>
       <button onClick={() => setJoins([])}>{t("mapping.clear")}</button>
-      <button onClick={onClose}>{t("mapping.close")}</button>
     </Modal>
   )
 }
@@ -383,5 +386,19 @@ const PlatformsList = ({ joins }: PlatformsListProps) => {
         ></canvas>
       </div>
     </div>
+  )
+}
+
+/** Opens right away with a loader while its data loads. */
+export const SaveMapping = (props: SaveMappingProps) => {
+  const { t } = useTranslation("mister_sync")
+  return (
+    <ModalSuspense
+      className="mister-sync__mapping"
+      title={t("mapping.title")}
+      onClose={props.onClose}
+    >
+      <SaveMappingContent {...props} />
+    </ModalSuspense>
   )
 }

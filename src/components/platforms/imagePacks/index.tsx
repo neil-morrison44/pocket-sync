@@ -8,7 +8,7 @@ import { ImagePack, PlatformId } from "../../../types"
 import { PlatformImage } from "../../cores/platformImage"
 import { Link } from "../../link"
 import { Loader } from "../../loader"
-import { Modal } from "../../modal"
+import { Modal, ModalSuspense } from "../../modal"
 import { useTranslation } from "react-i18next"
 
 import "./index.css"
@@ -23,7 +23,7 @@ type ImagePacksProps = {
   singlePlatformId?: PlatformId
 }
 
-export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
+const ImagePacksContent = ({ onClose, singlePlatformId }: ImagePacksProps) => {
   const allPlatformIds = useAtomValue(platformsListSelector)
   const platformIds = useMemo(() => {
     if (singlePlatformId) return [singlePlatformId]
@@ -80,7 +80,11 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
   )
 
   return (
-    <Modal className="image-packs">
+    <Modal
+      className="image-packs"
+      title={t("controls.image_packs")}
+      onClose={onClose}
+    >
       <div className="image-packs__content">
         <div className="image-packs__column image-packs__column--current">
           <div className="image-packs__column-name">
@@ -156,7 +160,6 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
         <button onClick={applyChanges}>
           {t("image_packs.apply_changes", { count: changeCount })}
         </button>
-        <button onClick={onClose}>{t("image_packs.close")}</button>
       </div>
     </Modal>
   )
@@ -193,5 +196,19 @@ const PackColumnItem = ({
       <PlatformName platformId={platformId} />
       <img src={imagePackImage.imageSrc}></img>
     </div>
+  )
+}
+
+/** Opens right away with a loader while its data loads. */
+export const ImagePacks = (props: ImagePacksProps) => {
+  const { t } = useTranslation("platforms")
+  return (
+    <ModalSuspense
+      className="image-packs"
+      title={t("controls.image_packs")}
+      onClose={props.onClose}
+    >
+      <ImagePacksContent {...props} />
+    </ModalSuspense>
   )
 }

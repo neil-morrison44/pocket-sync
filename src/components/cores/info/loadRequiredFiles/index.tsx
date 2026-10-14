@@ -2,9 +2,11 @@ import { Suspense, useMemo } from "react"
 
 import { useInstallRequiredFiles } from "../../../../hooks/useInstallRequiredFiles"
 import { skipAlternateAssetsSelector } from "../../../../jotai/config/selectors"
-import { Modal } from "../../../modal"
+import { Modal, ModalSuspense } from "../../../modal"
+import Button from "../../../ui/Button"
+import Switch from "../../../ui/Switch"
 import { Progress } from "../../../progress"
-import { Tip } from "../../../tip"
+import Callout from "../../../ui/Callout"
 import { useTranslation } from "react-i18next"
 
 import "./index.css"
@@ -32,7 +34,7 @@ type LoadRequiredFilesProps = {
   onClose: () => void
 }
 
-export const LoadRequiredFiles = ({
+const LoadRequiredFilesContent = ({
   coreName,
   onClose,
 }: LoadRequiredFilesProps) => {
@@ -51,9 +53,11 @@ export const LoadRequiredFiles = ({
   const hasArchiveLink = useHasArchiveLink()
 
   return (
-    <Modal className="load-required-files">
-      <h2>{t("title")}</h2>
-
+    <Modal
+      className="load-required-files"
+      title={t("title")}
+      onClose={inProgress ? undefined : onClose}
+    >
       {inProgress && (
         <>
           <Progress
@@ -80,23 +84,17 @@ export const LoadRequiredFiles = ({
           >
             <RequiredFilesList coreName={coreName} />
           </Suspense>
-          {!hasArchiveLink && <Tip>{t("no_link_tip")}</Tip>}
-
-          <div className="load-required-files__skip-notice">
-            <label className="load-required-files__skip-input">
-              {t("skip_alternates_label")}
-              <input
-                type="checkbox"
-                checked={skipAlternateAssets}
-                onChange={({ target }) =>
-                  updateConfig("skipAlternateAssets", target.checked)
-                }
-              />
-            </label>
-          </div>
+          {!hasArchiveLink && <Callout>{t("no_link_tip")}</Callout>}
 
           <div className="load-required-files__buttons">
-            <button onClick={onClose}>{t("close")}</button>
+            <Switch
+              className="load-required-files__skip"
+              label={t("skip_alternates_label")}
+              value={skipAlternateAssets}
+              onChange={(checked) =>
+                updateConfig("skipAlternateAssets", checked)
+              }
+            />
 
             {hasArchiveLink && (
               <Suspense>
@@ -127,19 +125,18 @@ const RequiredFilesButton = ({
 }: RequiredFilesButtonProps) => {
   const requiredFiles = useAtomValue(RequiredFileInfoSelectorFamily(coreName))
   const { t } = useTranslation("core_info_required_files")
+  const toDownload = requiredFiles.filter(
+    ({ status }) => status.type !== "Exists" && status.type !== "NotFound"
+  )
   return (
-    <button
-      onClick={() =>
-        installRequiredFiles(
-          requiredFiles.filter(
-            ({ status }) =>
-              status.type !== "Exists" && status.type !== "NotFound"
-          )
-        )
-      }
+    <Button
+      theme="primary"
+      icon="download"
+      disabled={toDownload.length === 0}
+      onClick={() => installRequiredFiles(toDownload)}
     >
       {t("download_all")}
-    </button>
+    </Button>
   )
 }
 
@@ -179,5 +176,19 @@ const RequiredFilesList = ({ coreName }: RequiredFilesListProps) => {
         <RequiredFileRow info={r} key={r.path} />
       ))}
     </div>
+  )
+}
+
+/** Opens right away with a loader while its data loads. */
+export const LoadRequiredFiles = (props: LoadRequiredFilesProps) => {
+  const { t } = useTranslation("core_info_required_files")
+  return (
+    <ModalSuspense
+      className="load-required-files"
+      title={t("title")}
+      onClose={props.onClose}
+    >
+      <LoadRequiredFilesContent {...props} />
+    </ModalSuspense>
   )
 }

@@ -133,16 +133,3 @@
   place-self: center center;
   background-color: var(--red-colour);
 }
-
-.plugins__info {
-  background-color: var(--info-colour);
-  width: calc(100% + 20px);
-  max-height: fit-content;
-  justify-self: flex-end;
-  text-align: left;
-  position: fixed;
-  bottom: 0;
-  padding: 12px;
-  left: var(--sidebar-width);
-  transition: left 150ms ease;
-}

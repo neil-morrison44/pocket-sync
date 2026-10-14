@@ -4,7 +4,7 @@
   padding: var(--space-xs) calc(var(--space-sm) + var(--slant));
   background-color: var(--theme-inverse-background);
   color: var(--theme-inverse-text);
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   clip-path: var(--shape-slant);
 }

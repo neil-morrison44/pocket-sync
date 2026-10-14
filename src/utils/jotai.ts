@@ -57,6 +57,31 @@ export const atomWithAppLocalStorage = <T>(
   )
 }
 
+/**
+ * Like `atomWithAppLocalStorage`, but after a write the value is returned
+ * as-is instead of as a promise, so setting it never suspends the UI. Use it
+ * for UI preferences that toggle with an animation (sidebar, panels, theme);
+ * a suspended toggle shows a loader instead of the transition.
+ */
+export const atomWithAppLocalSetting = <T>(
+  fileName: string,
+  initialValue: T
+) => {
+  const fileAtom = atomWithAppLocalStorage(fileName, initialValue)
+  const valueAtom = atom<{ value: T } | null>(null)
+
+  return atom(
+    (get): T | Promise<T> => {
+      const stored = get(valueAtom)
+      return stored ? stored.value : get(fileAtom)
+    },
+    async (_get, set, newValue: T) => {
+      set(valueAtom, { value: newValue })
+      await set(fileAtom, newValue)
+    }
+  )
+}
+
 export const useSmoothedAtomValue = <T>(atom: Atom<Promise<T>>) => {
   const store = useStore()
   const [firstProm] = useState(() => store.get(atom))

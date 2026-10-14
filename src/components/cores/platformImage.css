@@ -1,0 +1,22 @@
+/* Keeps the 521 × 165 platform image shape; the size comes from the class
+   it replaces (a width or a height) */
+.platform-image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 521 / 165;
+  overflow: hidden;
+  container-type: size;
+  background-color: var(--theme-surface);
+  color: var(--theme-text-soft);
+}
+
+.platform-image-placeholder__label {
+  padding-inline: 4cqw;
+  font-family: var(--font-display);
+  font-size: 28cqh;
+  line-height: 1;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

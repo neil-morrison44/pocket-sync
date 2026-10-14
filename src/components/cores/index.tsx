@@ -14,7 +14,6 @@ import { Controls } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
 import { SearchContextProvider } from "../search/context"
-import { Tip } from "../tip"
 import { CoreInfo } from "./info"
 import { CoreItem, NotInstalledCoreItem } from "./item"
 import { useTranslation } from "react-i18next"
@@ -25,8 +24,19 @@ import { ControlsSearch } from "../controls/inputs/search"
 import { InventoryItem, SortMode } from "../../types"
 import {
   categoryFilterOptionAtom,
+  featureFilterOptionAtom,
+  platformFilterOptionAtom,
   sortingOptionAtom,
 } from "../../jotai/cores/atoms"
+import MultiSelect from "../ui/MultiSelect"
+import Callout from "../ui/Callout"
+import Select from "../ui/Select"
+import Button from "../ui/Button"
+import { installedCoresWithUpdatesSelector } from "../../jotai/cores/selectors"
+import { useInstallAndUpdateCores } from "../update/useInstallAndUpdateCores"
+import { UpdateModal } from "../update/modal"
+import { corePlatformListSelector } from "../../jotai/inventory/selectors"
+import { CORE_FEATURES, CoreFeature } from "./features"
 import { useAtom, useAtomValue } from "jotai"
 import { useSmoothedAtomValue } from "../../utils/jotai"
 import { CardSkeleton } from "../ui/Skeleton"
@@ -37,6 +47,8 @@ export const Cores = () => {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [onlyUpdates, setOnlyUpdates] = useState(false)
   const [filterCategory, setFilterCategory] = useAtom(categoryFilterOptionAtom)
+  const [filterFeatures, setFilterFeatures] = useAtom(featureFilterOptionAtom)
+  const [filterPlatform, setFilterPlatform] = useAtom(platformFilterOptionAtom)
   const { t } = useTranslation("cores")
   const [updateAllOpen, setUpdateAllOpen] = useState(false)
   const [sortMode, setSortMode] = useAtom(sortingOptionAtom)
@@ -86,12 +98,39 @@ export const Cores = () => {
               setFilterCategory={setFilterCategory}
             />
           </Suspense>
+
+          <Suspense
+            fallback={
+              <span className="select select--theme-control">
+                {t("controls.platform")}
+              </span>
+            }
+          >
+            <PlatformFilter
+              filterPlatform={filterPlatform}
+              setFilterPlatform={setFilterPlatform}
+            />
+          </Suspense>
+
+          <FeatureFilter
+            filterFeatures={filterFeatures}
+            setFilterFeatures={setFilterFeatures}
+          />
         </ControlsGroup>
       </Controls>
 
+      <Callout className="callout--in-page" dismissId="cores-zip-install">
+        {t("install_tip")}
+      </Callout>
+
       <SearchContextProvider
         query={searchQuery}
-        other={{ onlyUpdates, category: filterCategory }}
+        other={{
+          onlyUpdates,
+          category: filterCategory,
+          features: filterFeatures,
+          platform: filterPlatform,
+        }}
       >
         <Suspense fallback={<Loader />}>
           <CoreList
@@ -103,8 +142,6 @@ export const Cores = () => {
           />
         </Suspense>
       </SearchContextProvider>
-
-      <Tip>{t("install_tip")}</Tip>
     </div>
   )
 }
@@ -183,6 +220,10 @@ const CoreList = ({
 
   return (
     <>
+      <Suspense>
+        <UpdatesSection onSelect={onSelect} />
+      </Suspense>
+
       <h2>{t("installed", { count: sortedList.length })}</h2>
       <Grid placeholderItemHeight={160}>
         {sortedList.map((core) => (
@@ -232,6 +273,111 @@ const CategoryFilter = ({
     >
       {t("controls.category")}
     </ControlsSelect>
+  )
+}
+
+/**
+ * Installed cores with an update, on top of the list, with Update All. Uses
+ * the same bulk updater and progress modal as the Update page.
+ */
+const UpdatesSection = ({ onSelect }: { onSelect: (core: string) => void }) => {
+  const updates = useAtomValue(installedCoresWithUpdatesSelector)
+  const { start, running, finish } = useInstallAndUpdateCores()
+  const { t } = useTranslation("cores")
+
+  if (updates.length === 0 && !running) return null
+
+  return (
+    <section className="cores__updates">
+      <div className="cores__section-header">
+        <h2>{t("updates", { count: updates.length })}</h2>
+        {updates.length > 0 && (
+          <Button
+            theme="primary"
+            icon="upload"
+            onClick={() =>
+              start({ updateList: updates.map(({ coreName }) => coreName) })
+            }
+          >
+            {t("controls.update_all_count", { count: updates.length })}
+          </Button>
+        )}
+      </div>
+      <Grid placeholderItemHeight={160}>
+        {updates.map(({ coreName }) => (
+          <Suspense
+            fallback={<CardSkeleton height={160} key={coreName} />}
+            key={coreName}
+          >
+            <CoreItem coreName={coreName} onClick={() => onSelect(coreName)} />
+          </Suspense>
+        ))}
+      </Grid>
+      {running && <UpdateModal onClose={finish} />}
+    </section>
+  )
+}
+
+/** Only shows cores for one platform; grouped by manufacturer, searchable. */
+const PlatformFilter = ({
+  filterPlatform,
+  setFilterPlatform,
+}: {
+  filterPlatform: string
+  setFilterPlatform: (platform: string) => void
+}) => {
+  const platforms = useAtomValue(corePlatformListSelector)
+  const { t } = useTranslation("cores")
+  const { t: tPlatforms } = useTranslation("platforms")
+
+  return (
+    <Select
+      label={t("controls.platform")}
+      searchable
+      searchPlaceholder={t("controls.search")}
+      value={filterPlatform}
+      onChange={(value) => startTransition(() => setFilterPlatform(value))}
+      options={[
+        { value: "All", label: tPlatforms("archive.filters.all") },
+        ...platforms.map(({ id, name, manufacturer }) => ({
+          value: id,
+          label: name,
+          group: manufacturer,
+        })),
+      ]}
+    />
+  )
+}
+
+/** Only shows cores that support every checked feature. */
+const FeatureFilter = ({
+  filterFeatures,
+  setFilterFeatures,
+}: {
+  filterFeatures: CoreFeature[]
+  setFilterFeatures: (features: CoreFeature[]) => void
+}) => {
+  const { t } = useTranslation("cores")
+  const { t: tInfo } = useTranslation("core_info")
+  const { t: tUpdate } = useTranslation("update")
+
+  return (
+    <MultiSelect
+      options={CORE_FEATURES.map((feature) => ({
+        value: feature,
+        label: tInfo(`supports_items.${feature}`),
+      }))}
+      value={filterFeatures}
+      onChange={(features) =>
+        startTransition(() => setFilterFeatures(features))
+      }
+      selectAllLabel={tUpdate("controls.select_all")}
+      clearAllLabel={tUpdate("controls.clear_all")}
+    >
+      {filterFeatures.length > 0
+        ? t("controls.features_count", { count: filterFeatures.length })
+        : t("controls.features")}
+    </MultiSelect>
   )
 }
 

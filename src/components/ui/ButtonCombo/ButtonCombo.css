@@ -1,0 +1,45 @@
+.button-combo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.button-combo__row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+}
+
+/* Buttons not pressed stay dim, like on the device's guides */
+.button-combo__glyph {
+  color: color-mix(in srgb, var(--theme-text-headline) 22%, transparent);
+}
+
+.button-combo__glyph--is-pressed {
+  color: var(--theme-text-headline);
+}
+
+/* Select: the button glyph as a ring */
+.button-combo__glyph--ring {
+  -webkit-text-stroke: 0.06em currentcolor;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glyphs drawn on top of each other, e.g. a lit face button on the cross */
+.button-combo__stack {
+  display: inline-grid;
+
+  & > * {
+    grid-area: 1 / 1;
+  }
+}
+
+/* The "+" between groups is punctuation, not translatable text */
+.button-combo__plus {
+  color: var(--theme-text-soft);
+  font-weight: 600;
+
+  &::before {
+    content: "+";
+  }
+}

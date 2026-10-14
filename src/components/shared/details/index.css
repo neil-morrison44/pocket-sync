@@ -6,7 +6,7 @@
 }
 
 .details__title {
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   border-bottom: 1px solid var(--theme-separator);
   padding: 10px;
   font-weight: bold;

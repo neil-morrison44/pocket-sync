@@ -1,7 +1,6 @@
 .core-info__display-modes-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  place-items: flex-start start;
-  justify-content: start;
+  gap: var(--space-sm);
+  align-items: flex-start;
 }

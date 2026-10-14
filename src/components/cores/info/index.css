@@ -1,190 +1,237 @@
-.core-info {
+/* Core detail, inside a DetailPage: the hero (name, status, next steps),
+   notices and tabs. Panels are framed, not filled. */
+
+/* ---------- Hero ---------- */
+
+.core-info__author {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--theme-text-body);
+}
+
+.core-info__author-image {
+  width: 18px;
+  height: 18px;
+  image-rendering: pixelated;
+}
+
+.core-info__version {
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Next steps: a short explanation, then the buttons */
+.core-info__actions {
+  --control-height: 36px;
+
+  border-radius: var(--radius-card);
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  border: 1px solid var(--theme-separator);
 }
 
-.core-info__image {
-  width: 100%;
-  height: auto;
-  image-rendering: pixelated;
-  background-color: var(--theme-media-background);
+/* An update is the most important next step: accent frame and title */
+.core-info__actions--update {
+  border-color: var(--theme-accent);
+  border-inline-start-width: 3px;
+  background-color: color-mix(in srgb, var(--theme-accent) 8%, transparent);
 }
 
-.core-info__title {
-  padding: 0 20px;
-  font-size: 2rem;
-}
-
-.core-info__replaced{
-  background-color: var(--red-colour);
-  font-size: 1.8rem;
-  padding: 2rem;
-  text-align: center;
-  cursor: pointer;
+.core-info__actions-title {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.25em;
+  gap: var(--space-sm);
+  color: var(--theme-text-headline);
 
-  &::after{
-    content: "";
-    width: 1.5rem;
-    height: 1.5rem;
-    display: inline-block;
-    border-right: 5px solid var(--theme-text-headline);
-    border-bottom: 5px solid var(--theme-text-headline);
-    transform: rotate(-45deg);
-    opacity: 0.5;
+  & .icon {
+    color: var(--theme-accent);
   }
+}
+
+.core-info__action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+
+  /* Uninstall and Hide sit apart at the end */
+  & .button--theme-destructive,
+  & .core-info__action-aside {
+    margin-inline-start: auto;
+  }
+}
+
+/* ---------- Notices ---------- */
+
+.core-info__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  width: 100%;
+  margin: 0;
+  padding: var(--space-lg);
+  border: none;
+  border-inline-start: 3px solid var(--notice-colour);
+  border-radius: var(--radius-card);
+  box-shadow: none;
+  background-color: color-mix(in srgb, var(--notice-colour) 18%, transparent);
+  color: var(--theme-text-headline);
+  font: inherit;
+  text-align: start;
+  white-space: pre-wrap;
+
+  & > .icon:first-child {
+    color: var(--notice-colour);
+    margin-top: 0.15em;
+  }
+
+  & p {
+    margin: var(--space-sm) 0 0;
+  }
+}
+
+button.core-info__notice {
+  cursor: pointer;
 
   &:hover {
-    /* filter: brightness(110%); */
+    background-color: color-mix(in srgb, var(--notice-colour) 28%, transparent);
+  }
 
-    &::after{
-      opacity: 1;
-    }
+  &:active {
+    transform: none;
+  }
 
-    & strong{
-      text-decoration: underline;
-    }
+  & > .icon:last-child {
+    margin-inline-start: auto;
+    align-self: center;
   }
 }
 
-.core-info__requires-license, .core-info__analogizer{
-  background-color: var(--purple-colour);
-  white-space: pre-wrap;
-  display: flex;
-  gap: 12px;
-  padding: 12px;
-}
-
-.core-info__analogizer{
-  background-color: rgb(101 156 222);
-}
-
-.core-info__firmware-warning{
-  background-color: var(--red-colour);
-  cursor: pointer;
-  white-space: pre-wrap;
-  display: flex;
-  gap: 12px;
-  padding: 12px;
-}
-
-.core-info__info {
-  background-color: var(--info-colour);
-  padding: 10px;
-  display: flex;
-  gap: 5px;
-  flex-direction: column;
+.core-info__notice-text {
   flex-grow: 1;
 }
 
-.core-info__info-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  grid-column: 1;
+.core-info__notice--danger {
+  --notice-colour: var(--theme-danger);
 }
 
-.core-info__info-row--stretch {
-  grid-column: 1 / 2;
-  display: flex;
-  justify-content: space-between;
-  gap: inherit;
+.core-info__notice--highlight {
+  --notice-colour: var(--theme-highlight);
+}
 
-  & * {
-    flex-grow: 1;
+.core-info__notice--neutral {
+  --notice-colour: var(--theme-text-soft);
+}
+
+/* ---------- Tabs ---------- */
+
+.core-info__tabs {
+  & .tabs__list {
+    margin: var(--space-sm) 0 0;
+  }
+
+  /* The page scrolls, not the tab */
+  & .tabs__content {
+    overflow: visible;
+    padding-top: var(--space-2xl);
   }
 }
 
-.core-info__info-row--hide-if-null {
-  &:has(>:first-child:last-child){
-    display: none;
-  }
-}
-
-.core-info__info-row--right {
-  grid-column: 2;
-}
-
-.core-info__info-grid {
+/* Overview: content and a facts column when there's room */
+.core-info__overview {
   display: grid;
-  gap: inherit;
-  grid-template-columns: 1fr auto;
-  grid-auto-flow: dense;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2xl);
+
+  @container (min-width: 860px) {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+    align-items: start;
+  }
 }
 
-.core-info__supports-bubbles {
+.core-info__main {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-direction: column;
+  gap: var(--space-2xl);
+  min-width: 0;
+  max-width: var(--content-max-width);
+
+  & > .accordion {
+    width: 100%;
+  }
 }
 
-.core-info__supports {
-  white-space: nowrap;
-  background-color: var(--light-colour);
-  padding: 0 5px;
-  border-radius: 5px;
+.core-info__description {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  line-height: 1.5;
+  color: var(--theme-text-body);
 }
 
 .core-info__platforms {
-  padding: 10px 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.core-info__platform-loader {
-  width: 100px;
-  aspect-ratio: 4 / 2;
-  border-radius: 15px;
-}
-
-.core-info__supports--false {
-  opacity: 0.45;
-}
-
-.core-info__supports--button {
-  cursor: pointer;
-
-  &:hover{
-    opacity: 1;
-    filter: brightness(150%);
-  }
+  gap: var(--space-sm);
+  width: 100%;
 }
 
 .core-info__info-txt {
+  width: 100%;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: var(--font-code);
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-body);
 }
 
-
-.core-info__download-graph-bar{
+/* Download history: one bar per release (width = time as latest, height =
+   downloads per day); hovering shows the numbers in a tooltip */
+.core-info__download-graph-bar {
   display: block;
   position: absolute;
-  background-color: var(--theme-text-headline);
-  opacity: 0.6;
+  background-color: var(--theme-text-soft);
   bottom: 0;
-  cursor: pointer;
+  cursor: default;
 
-  &:hover{
-    opacity: 1;
+  &:hover {
+    background-color: var(--theme-text-headline);
   }
 }
 
-.core-info__previous-select{
-  font-size: 1.5rem;
-  min-width: 25vw;
-  accent-color: var(--selection-colour);
+/* ---------- Settings and releases tabs ---------- */
+
+.core-info__settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+  max-width: var(--content-max-width);
+
+  &
+    .detail-page__section
+    > :not(.detail-page__section-title, .detail-page__hint) {
+    width: 100%;
+  }
 }
 
-.core-info__previous-install-button{
-  background-color: var(--selection-colour);
-  color: var(--theme-selection-text);
-  margin-left: 12px;
+.core-info__other-version {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
 
-  &:active{
-    transform: scale(0.97);
-  }
+.core-info__other-version-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* The bar tooltip's text has line breaks */
+.core-info__download-graph-tooltip {
+  white-space: pre-line;
 }

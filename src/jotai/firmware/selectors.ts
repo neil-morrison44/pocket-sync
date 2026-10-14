@@ -7,6 +7,7 @@ import { FirmwareInfo, FirmwareListItem } from "../../types"
 import { allFirmwaresAtom } from "./atoms"
 import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { Atom, atom } from "jotai"
+import { demoFirmwareUpdateAtom } from "../cores/atoms"
 import { atomFamilyDeepEqual } from "../../utils/jotai"
 
 export const latestFirmwareSelector = atom<Promise<FirmwareListItem>>(
@@ -98,6 +99,10 @@ export const updateAvailableSelector = atom<Promise<string | null>>(
 
     if (currentFirmware.version !== latestFirmware.version)
       return latestFirmware.version
+
+    // Dev demo flag: preview the update UI with the firmware up to date
+    if (import.meta.env.DEV && (await get(demoFirmwareUpdateAtom)))
+      return `${latestFirmware.version}-demo`
 
     return null
   }

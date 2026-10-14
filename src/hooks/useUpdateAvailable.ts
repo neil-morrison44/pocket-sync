@@ -3,10 +3,15 @@ import { useMemo } from "react"
 import { coreInventoryAtom } from "../jotai/inventory/atoms"
 import { CoreInfoSelectorFamily } from "../jotai/selectors"
 import { useAtomValue } from "jotai"
+import {
+  demoUpdateCoreNamesSelector,
+  demoUpdateVersion,
+} from "../jotai/cores/selectors"
 
 export const useUpdateAvailable = (coreName: string) => {
   const coreInfo = useAtomValue(CoreInfoSelectorFamily(coreName))
   const coreInventory = useAtomValue(coreInventoryAtom)
+  const demoCores = useAtomValue(demoUpdateCoreNamesSelector)
 
   return useMemo<string | null>(() => {
     const inventoryCore = coreInventory.cores.data.find(
@@ -25,6 +30,14 @@ export const useUpdateAvailable = (coreName: string) => {
       return version
     }
 
+    // Dev demo flag: preview the update UI on an up-to-date core
+    if (demoCores.includes(coreName)) return demoUpdateVersion(metadataVersion)
+
     return null
-  }, [coreInfo.core.metadata.version, coreInventory.cores.data, coreName])
+  }, [
+    coreInfo.core.metadata.version,
+    coreInventory.cores.data,
+    coreName,
+    demoCores,
+  ])
 }

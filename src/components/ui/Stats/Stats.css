@@ -12,7 +12,7 @@
 }
 
 .stats__label {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -22,7 +22,7 @@
 .stats__value {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 2rem;
+  font-size: var(--font-size-title-md);
   line-height: 1.2;
   color: var(--theme-text-headline);
 }

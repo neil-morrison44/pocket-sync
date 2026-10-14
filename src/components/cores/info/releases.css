@@ -1,48 +1,56 @@
-.releases__title{
+.releases {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px;
-  font-weight: bold;
-  font-size: 1.25rem;
+  flex-direction: column;
+  gap: var(--space-2xl);
 }
 
-
-.releases__body{
-  border-left: 2px solid var(--theme-separator);
-  padding-left: 10px;
-  box-sizing: border-box;
-  margin-left: 10px;
+.releases__history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
 }
 
+/* Markdown from GitHub, in the body font like the firmware notes */
+.releases__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+  color: var(--theme-text-body);
 
-.releases__body--collapsed {
-  max-height: 110px;
-  overflow: hidden;
-  position: relative;
-  cursor: pointer;
-
-  &::after{
-    content: "";
-    position: absolute;
-    display: block;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-
-    background: linear-gradient(transparent, var(--info-colour));
+  & h4,
+  & h5,
+  & h6 {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-md);
+    line-height: 1.4;
+    color: var(--theme-text-headline);
   }
 
-  & * {
-    pointer-events: none;
+  & p,
+  & ul,
+  & ol {
+    margin: 0;
+  }
+
+  & img {
+    max-width: 100%;
   }
 }
 
-.releases__more-button{
-  cursor: pointer;
-  font-size: 1.25rem;
-  padding: 10px;
-  &:hover{
-    text-decoration: underline;
-  }
+.releases__name {
+  color: var(--theme-text-headline);
+}
+
+.releases__link {
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+}
+
+.releases__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }

@@ -10,7 +10,14 @@ import { useScrollSpy } from "../../hooks/useScrollSpy"
 export const SETTINGS_SECTIONS = [
   {
     key: "display",
-    items: ["theme", "3d_pocket", "language", "hide_ai_score", "hidden_cores"],
+    items: [
+      "theme",
+      "3d_pocket",
+      "language",
+      "hide_ai_score",
+      "hidden_cores",
+      "dismissed_notes",
+    ],
   },
   {
     key: "downloads",
@@ -29,7 +36,15 @@ export const SETTINGS_SECTIONS = [
   { key: "connection", items: ["reconnect", "disconnect"] },
 ] as const
 
-const ITEM_IDS = SETTINGS_SECTIONS.flatMap(({ items }) =>
+/** In development builds the Developer section (demo tools) is listed too. */
+const NAV_SECTIONS: readonly {
+  key: string
+  items: readonly string[]
+}[] = import.meta.env.DEV
+  ? [...SETTINGS_SECTIONS, { key: "developer", items: ["demo_updates"] }]
+  : SETTINGS_SECTIONS
+
+const ITEM_IDS = NAV_SECTIONS.flatMap(({ items }) =>
   items.map((item) => `settings-${item}`)
 )
 
@@ -43,14 +58,14 @@ export const SettingsNav = () => {
   const listRef = useRef<HTMLUListElement>(null)
   const rovingFocus = useRovingFocus(listRef, "button")
 
-  const activeSection = SETTINGS_SECTIONS.find(({ items }) =>
+  const activeSection = NAV_SECTIONS.find(({ items }) =>
     items.some((item) => `settings-${item}` === activeId)
   )?.key
 
   return (
     <nav className="settings__nav" aria-label={t("sections")}>
       <ul className="settings__nav-list" ref={listRef} {...rovingFocus}>
-        {SETTINGS_SECTIONS.map(({ key, items }) => (
+        {NAV_SECTIONS.map(({ key, items }) => (
           <li key={key} className="settings__nav-section">
             <button
               type="button"

@@ -36,7 +36,7 @@ const ModalProgressBar = ({
   totalSize: number
   downloaded: number
 }) => (
-  <Modal className="zip-install__progress-modal">
+  <Modal className="zip-install__progress-modal" title={<DownloadingTitle />}>
     <label htmlFor="download" className="zip-install__progress-bar-label">
       {url}
     </label>
@@ -48,6 +48,11 @@ const ModalProgressBar = ({
     ></progress>
   </Modal>
 )
+
+const DownloadingTitle = () => {
+  const { t } = useTranslation("zip_install")
+  return <>{t("downloading")}</>
+}
 
 const ZipInstallInner = ({
   files,
@@ -93,16 +98,14 @@ const ZipInstallInner = ({
 
   if (progress) {
     return (
-      <Modal>
-        <h2>{title}</h2>
+      <Modal title={title}>
         <Progress percent={(progress.value / progress.max) * 100} />
       </Modal>
     )
   }
 
   return (
-    <Modal>
-      <h2 className="zip-install__title">{title}</h2>
+    <Modal title={title} onClose={cancel}>
       {tree && (
         <GroupedFiles
           tree={tree}

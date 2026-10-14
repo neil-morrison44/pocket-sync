@@ -1,0 +1,47 @@
+/* Tinted note with its icon centred on the first line of text */
+.callout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-card);
+  background-color: color-mix(in srgb, var(--callout-colour) 14%, transparent);
+  color: var(--theme-text-body);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  white-space: pre-line;
+
+  & > .icon {
+    flex-shrink: 0;
+
+    /* (line height - icon height) / 2 */
+    margin-top: calc((1.5em - 16px) / 2);
+    color: var(--callout-colour);
+  }
+}
+
+.callout--variant-info {
+  --callout-colour: var(--theme-text-soft);
+}
+
+.callout--variant-warning {
+  --callout-colour: var(--theme-warning);
+}
+
+.callout__text {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+/* Small close button, aligned with the first line */
+.callout__dismiss {
+  --control-height: 24px;
+
+  margin-block: calc((1.5em - 24px) / 2);
+  margin-inline-end: calc(-1 * var(--space-sm));
+}
+
+/* As a note at the top of a page, inside the page padding */
+.callout--in-page {
+  margin: var(--space-lg) var(--page-padding-inline) 0;
+}

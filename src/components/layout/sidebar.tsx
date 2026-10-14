@@ -1,10 +1,12 @@
 import * as RadixTabs from "@radix-ui/react-tabs"
+import { Suspense } from "react"
+import { installedCoresWithUpdatesSelector } from "../../jotai/cores/selectors"
+import { updateAvailableSelector } from "../../jotai/firmware/selectors"
 import { useAtomValue } from "jotai"
-import { atomWithStorage } from "jotai/utils"
+import { atomWithAppLocalSetting } from "../../utils/jotai"
 import { useTranslation } from "react-i18next"
 import { VIEWS_LIST } from "../../jotai/view/atoms"
 import { useBEM } from "../../hooks/useBEM"
-import { Loader } from "../loader"
 import Icon, { IconOptions } from "../ui/Icon"
 import Tooltip from "../ui/Tooltip"
 import "./sidebar.css"
@@ -15,7 +17,6 @@ const VIEW_ICONS: Record<View, IconOptions> = {
   "Pocket Sync": "pocket",
   Games: "gamepad",
   Cores: "cpu",
-  Update: "reload",
   Screenshots: "image",
   Saves: "save",
   "Save States": "clock",
@@ -31,7 +32,7 @@ const NAV_GROUPS: View[][] = [
   ["Pocket Sync"],
   ["Games", "Cores", "Platforms", "Firmware"],
   ["Screenshots", "Saves", "Save States", "Palettes"],
-  ["Update", "Fetch", "Plugins"],
+  ["Fetch", "Plugins"],
 ]
 
 const FOOTER_VIEWS: View[] = ["Settings"]
@@ -39,14 +40,13 @@ const FOOTER_VIEWS: View[] = ["Settings"]
 /** Tab value of the collapse toggle; the layout handles it as a toggle. */
 export const SIDEBAR_TOGGLE_VALUE = "__toggle-sidebar"
 
-export const sidebarCollapsedAtom = atomWithStorage(
-  "pocket-sync:sidebar-collapsed",
+export const sidebarCollapsedAtom = atomWithAppLocalSetting(
+  "ui_sidebar_collapsed",
   false
 )
 
 type SidebarProps = {
   view: View
-  isPending: boolean
   /** Without a connection, every view except home is disabled. */
   connected: boolean
 }
@@ -54,7 +54,7 @@ type SidebarProps = {
 // The view list is the tab list of the layout's Radix Tabs root: arrow keys
 // move between views, Enter/Space opens one (manual activation, so arrowing
 // through doesn't load every screen).
-export const Sidebar = ({ view, isPending, connected }: SidebarProps) => {
+export const Sidebar = ({ view, connected }: SidebarProps) => {
   const { t } = useTranslation("layout")
   const collapsed = useAtomValue(sidebarCollapsedAtom)
   const className = useBEM({ block: "sidebar", modifiers: { collapsed } })
@@ -74,6 +74,11 @@ export const Sidebar = ({ view, isPending, connected }: SidebarProps) => {
         >
           <Icon className="sidebar__icon" icon={VIEW_ICONS[v]} />
           <span className="sidebar__label">{label}</span>
+          {connected && (v === "Cores" || v === "Firmware") && (
+            <Suspense>
+              {v === "Cores" ? <CoreUpdatesBadge /> : <FirmwareUpdateBadge />}
+            </Suspense>
+          )}
         </RadixTabs.Trigger>
       </Tooltip>
     )
@@ -91,11 +96,6 @@ export const Sidebar = ({ view, isPending, connected }: SidebarProps) => {
               {group.map(renderItem)}
             </div>
           ))}
-          {isPending && (
-            <div className="sidebar__pending">
-              <Loader className="loader--no-background" />
-            </div>
-          )}
         </div>
 
         <div className="sidebar__footer">
@@ -116,5 +116,33 @@ export const Sidebar = ({ view, isPending, connected }: SidebarProps) => {
         </div>
       </RadixTabs.List>
     </nav>
+  )
+}
+
+/** How many installed cores have an update, like a notification count. */
+const CoreUpdatesBadge = () => {
+  const updates = useAtomValue(installedCoresWithUpdatesSelector)
+  const { t } = useTranslation("layout")
+  if (updates.length === 0) return null
+  return (
+    <span
+      className="sidebar__badge"
+      title={t("core_updates", { count: updates.length })}
+    >
+      {updates.length}
+    </span>
+  )
+}
+
+/** A dot when a newer firmware is out. */
+const FirmwareUpdateBadge = () => {
+  const latest = useAtomValue(updateAvailableSelector)
+  const { t } = useTranslation("layout")
+  if (!latest) return null
+  return (
+    <span
+      className="sidebar__badge sidebar__badge--dot"
+      title={t("firmware_update", { version: latest })}
+    />
   )
 }

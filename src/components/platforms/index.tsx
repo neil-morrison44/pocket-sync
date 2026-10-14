@@ -24,6 +24,7 @@ import { ControlsButton } from "../controls/inputs/button"
 import { useAtom, useAtomValue } from "jotai"
 import { useAtomCallback } from "jotai/utils"
 import { CardSkeleton } from "../ui/Skeleton"
+import EmptyState from "../ui/EmptyState"
 
 export const Platforms = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -107,6 +108,11 @@ export const Platforms = () => {
       )}
       {dataPacksOpen && <DataPacks onClose={() => setDataPacksOpen(false)} />}
 
+      {sortedPlatformIds.length === 0 && (
+        <EmptyState icon="grid-2x2-2" title={t("empty.title")}>
+          {t("empty.text")}
+        </EmptyState>
+      )}
       <SearchContextProvider query={searchQuery}>
         <Grid placeholderItemHeight={200}>
           {sortedPlatformIds.map((id) => (

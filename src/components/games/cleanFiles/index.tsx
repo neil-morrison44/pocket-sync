@@ -4,7 +4,7 @@ import { pocketPathAtom } from "../../../jotai/atoms"
 import { CleanableFilesSelectorFamily } from "../../../jotai/selectors"
 import { invokeDeleteFiles } from "../../../utils/invokes"
 import { Loader } from "../../loader"
-import { Modal } from "../../modal"
+import { Modal, ModalSuspense } from "../../modal"
 
 import "./index.css"
 import { useTranslation } from "react-i18next"
@@ -15,7 +15,7 @@ type CleanFilesModalProp = {
   path?: string
 }
 
-export const CleanFilesModal = ({
+const CleanFilesModalContent = ({
   onClose,
   path = "Assets",
 }: CleanFilesModalProp) => {
@@ -35,8 +35,11 @@ export const CleanFilesModal = ({
   }, [files])
 
   return (
-    <Modal className="clean-files">
-      <h2>{t("title")}</h2>
+    <Modal
+      className="clean-files"
+      title={t("title")}
+      onClose={deleteInprogress ? undefined : onClose}
+    >
       <div>{t("files_found", { count: files.length })}</div>
 
       <div className="clean-files__list">
@@ -47,15 +50,28 @@ export const CleanFilesModal = ({
 
       {deleteInprogress && (
         <button>
-          <Loader className="clean-files_button-loader" />
+          <Loader className="clean-files_button-loader" size={20} />
         </button>
       )}
       {!deleteInprogress && (
         <>
           <button onClick={deleteFiles}>{t("delete_files_button")}</button>
-          <button onClick={onClose}>{t("close_button")}</button>
         </>
       )}
     </Modal>
+  )
+}
+
+/** Opens right away with a loader while its data loads. */
+export const CleanFilesModal = (props: CleanFilesModalProp) => {
+  const { t } = useTranslation("clean_files")
+  return (
+    <ModalSuspense
+      className="clean-files"
+      title={t("title")}
+      onClose={props.onClose}
+    >
+      <CleanFilesModalContent {...props} />
+    </ModalSuspense>
   )
 }

@@ -11,5 +11,10 @@ export const ControlsSearch = ({
   placeholder,
   onChange,
 }: ControlsSearchProps) => (
-  <SearchInput value={value} placeholder={placeholder} onChange={onChange} />
+  <SearchInput
+    value={value}
+    placeholder={placeholder}
+    onChange={onChange}
+    shortcut
+  />
 )

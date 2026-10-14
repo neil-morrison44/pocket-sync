@@ -11,7 +11,7 @@ h2.sticky-section__title {
   padding: var(--space-lg) 0 var(--space-sm);
   background-color: var(--theme-background);
   border-bottom: 1px solid var(--theme-separator);
-  font-size: 1.5rem;
+  font-size: var(--font-size-title-sm);
   line-height: 1.2;
   color: var(--theme-text-headline);
 }

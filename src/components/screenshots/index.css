@@ -1,14 +1,14 @@
 /* Empty state: plain centred text */
-.screenshots--none {
+
+/* Small hint under the empty state: the key combo, then how it works */
+.screenshots__how-to {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  height: 100vh;
-  padding: 20px;
-  box-sizing: border-box;
-  color: var(--theme-text-soft);
-  text-align: center;
+  gap: var(--space-sm);
+  max-width: 36ch;
+  margin-top: var(--space-lg);
+  font-size: var(--font-size-sm);
 }
 
 .screenshots__button {
@@ -90,7 +90,7 @@
 .screenshots__item-info {
   background-color: var(--info-colour);
   padding: 5px;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   position: absolute;
   bottom: 0;
   width: 100%;

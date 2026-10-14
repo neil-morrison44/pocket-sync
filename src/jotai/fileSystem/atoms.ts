@@ -19,6 +19,10 @@ export const initGlobalFSEvents = async () => {
       const parts = splitAsPath(relativePath)
       let currentPath = ""
 
+      // Files at the top of the SD card (e.g. a firmware .bin) change the
+      // root listing, which is watched as "/"
+      if (parts.length <= 1) store.set(fsWatchAtomFamily("/"), Date.now())
+
       for (const part of parts) {
         currentPath = currentPath ? `${currentPath}/${part}` : part
         store.set(fsWatchAtomFamily(currentPath), Date.now())

@@ -35,6 +35,12 @@ import {
   themePreferenceAtom,
 } from "../../jotai/theme/atoms"
 import StickySection from "../ui/StickySection"
+import Callout from "../ui/Callout"
+import { dismissedNotesAtom } from "../../jotai/settings/atoms"
+import {
+  demoCoreUpdatesAtom,
+  demoFirmwareUpdateAtom,
+} from "../../jotai/cores/atoms"
 import PathField from "../ui/PathField"
 import { openFolder } from "../../utils/openFolder"
 
@@ -175,6 +181,17 @@ export const Settings = () => {
             />
           </div>
           <HiddenCores />
+          <div className="settings__row" id="settings-dismissed_notes">
+            <h3 className="settings__row-title">
+              {t("dismissed_notes.title")}
+            </h3>
+            <div className="settings__ramble">
+              {t("dismissed_notes.ramble")}
+            </div>
+            <Suspense>
+              <ResetDismissedNotes />
+            </Suspense>
+          </div>
         </StickySection>
 
         <StickySection
@@ -183,7 +200,7 @@ export const Settings = () => {
         >
           <div className="settings__row" id="settings-archive">
             <h3 className="settings__row-title">{t("archive.title")}</h3>
-            <div className="settings__ramble">{t("archive.warning")}</div>
+            <Callout variant="warning">{t("archive.warning")}</Callout>
             <PathField
               value={DEFAULT_ARCHIVE_URL}
               copyLabel={t("archive.copy_url")}
@@ -230,10 +247,13 @@ export const Settings = () => {
             <div className="settings__ramble">
               {t("alternate_skip.ramble_1")}
             </div>
-            <div
-              className="settings__ramble"
-              dangerouslySetInnerHTML={{ __html: t("alternate_skip.ramble_2") }}
-            ></div>
+            <Callout variant="warning">
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: t("alternate_skip.ramble_2"),
+                }}
+              />
+            </Callout>
             <Switch
               className="settings__checkbox"
               label={t("alternate_skip.checkbox")}
@@ -351,7 +371,60 @@ export const Settings = () => {
             </div>
           </div>
         </StickySection>
+
+        {import.meta.env.DEV && <DeveloperSettings />}
       </div>
+    </div>
+  )
+}
+
+/**
+ * Development builds only: tools for previewing UI states, e.g. cores with
+ * updates. Not in the section menu.
+ */
+const DeveloperSettings = () => {
+  const { t } = useTranslation("settings")
+  const [demoUpdates, setDemoUpdates] = useAtom(demoCoreUpdatesAtom)
+  const [demoFirmware, setDemoFirmware] = useAtom(demoFirmwareUpdateAtom)
+
+  return (
+    <StickySection
+      id="settings-section-developer"
+      title={t("section_titles.developer")}
+    >
+      <div className="settings__row" id="settings-demo_updates">
+        <h3 className="settings__row-title">{t("demo_updates.title")}</h3>
+        <div className="settings__ramble">{t("demo_updates.ramble")}</div>
+        <Switch
+          className="settings__checkbox"
+          label={t("demo_updates.checkbox")}
+          value={demoUpdates}
+          onChange={setDemoUpdates}
+        />
+        <Switch
+          className="settings__checkbox"
+          label={t("demo_updates.firmware_checkbox")}
+          value={demoFirmware}
+          onChange={setDemoFirmware}
+        />
+      </div>
+    </StickySection>
+  )
+}
+
+/** Shows the info notes the user closed again. */
+const ResetDismissedNotes = () => {
+  const { t } = useTranslation("settings")
+  const [dismissed, setDismissed] = useAtom(dismissedNotesAtom)
+  return (
+    <div className="settings__actions">
+      <Button
+        icon="reload"
+        disabled={dismissed.length === 0}
+        onClick={() => setDismissed([])}
+      >
+        {t("dismissed_notes.button", { count: dismissed.length })}
+      </Button>
     </div>
   )
 }

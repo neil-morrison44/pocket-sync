@@ -1,0 +1,13 @@
+/* Key caps on the light input; hidden while typing */
+.search-input__shortcut {
+  --kbd-border: color-mix(in srgb, var(--theme-input-text) 25%, transparent);
+  --kbd-text: var(--theme-input-placeholder);
+  --kbd-pressed-background: var(--theme-input-text);
+  --kbd-pressed-text: var(--theme-input-background);
+
+  flex-shrink: 0;
+
+  .text-input:focus-within & {
+    display: none;
+  }
+}

@@ -51,7 +51,7 @@
 
 .mrom__list-item-platform{
   font-family: GamePocket, sans-serif;
-  font-size: 2rem;
+  font-size: var(--font-size-title-md);
   margin-inline: 10px;
   transform: rotate(-45deg);
 }

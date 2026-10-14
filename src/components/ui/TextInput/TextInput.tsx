@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes } from "react"
+import React, { InputHTMLAttributes, ReactNode } from "react"
 
 import clsx from "clsx"
 
@@ -17,33 +17,49 @@ export interface TextInputProps
    * Accessible name; defaults to the placeholder. Prefer a visible `<label>`.
    */
   label?: string
+  /** Shown at the end of the field, e.g. a keyboard shortcut. */
+  suffix?: ReactNode
 }
 
-const TextInput = ({
-  value,
-  onChange,
-  icon,
-  label,
-  placeholder,
-  className,
-  type = "text",
-  variant = "default",
-  ...otherProps
-}: TextInputProps) => (
-  <span
-    className={clsx("text-input", `text-input--variant-${variant}`, className)}
-  >
-    {icon && <Icon icon={icon} />}
-    <input
-      {...otherProps}
-      className="text-input__field"
-      type={type}
-      value={value}
-      placeholder={placeholder}
-      aria-label={label ?? otherProps["aria-label"] ?? placeholder}
-      onChange={({ target }) => onChange(target.value)}
-    />
-  </span>
+const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
+  (
+    {
+      value,
+      onChange,
+      icon,
+      label,
+      suffix,
+      placeholder,
+      className,
+      type = "text",
+      variant = "default",
+      ...otherProps
+    },
+    ref
+  ) => (
+    <span
+      className={clsx(
+        "text-input",
+        `text-input--variant-${variant}`,
+        className
+      )}
+    >
+      {icon && <Icon icon={icon} />}
+      <input
+        {...otherProps}
+        ref={ref}
+        className="text-input__field"
+        type={type}
+        value={value}
+        placeholder={placeholder}
+        aria-label={label ?? otherProps["aria-label"] ?? placeholder}
+        onChange={({ target }) => onChange(target.value)}
+      />
+      {suffix}
+    </span>
+  )
 )
+
+TextInput.displayName = "TextInput"
 
 export default React.memo(TextInput)

@@ -137,3 +137,16 @@ export const PhotoExportImageSelectorFamily = atomFamilyDeepEqual<
     return canvas.toDataURL()
   })
 )
+
+/** The platforms that have save states, for the platform filter. */
+export const saveStatePlatformsSelector = atom<Promise<string[]>>(
+  async (get) => {
+    const paths = await get(AllSaveStatesSelector)
+    const metadata = await Promise.all(
+      paths.map((path) => get(SaveStateMetadataSelectorFamily(path)))
+    )
+    return Array.from(
+      new Set(metadata.map(({ platform }) => platform).filter(Boolean))
+    ).sort((a, b) => a.localeCompare(b))
+  }
+)

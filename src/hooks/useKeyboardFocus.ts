@@ -26,7 +26,10 @@ export const useKeyboardFocus = () => {
     const root = document.documentElement
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!FOCUS_KEYS.includes(event.key)) return
+      // ⌘F / Ctrl+F focuses the search field, so it counts too
+      const isSearchShortcut =
+        (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "f"
+      if (!FOCUS_KEYS.includes(event.key) && !isSearchShortcut) return
       root.classList.add(KEYBOARD_FOCUS_CLASS)
       window.removeEventListener("keydown", handleKeyDown)
       window.addEventListener("mousedown", handleMouseDown)

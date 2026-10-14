@@ -7,7 +7,7 @@
   & h5,
   & h6 {
     font-family: var(--font-body);
-    font-size: 1rem;
+    font-size: var(--font-size-md);
     line-height: 1.4;
     padding: 0;
     color: var(--theme-text-headline);
@@ -17,10 +17,11 @@
   flex-direction: column;
   gap: var(--space-sm);
   width: 100%;
+  max-width: var(--content-max-width);
   color: var(--theme-text-body);
 }
 
 .firmware-release-notes__link {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   color: var(--theme-text-soft);
 }

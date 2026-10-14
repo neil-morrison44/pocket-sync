@@ -4,6 +4,7 @@ import { Controls, ControlsActions } from "../controls"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { open } from "@tauri-apps/plugin-dialog"
 
+import EmptyState from "../ui/EmptyState"
 import "./index.css"
 import { SavesItem } from "./item"
 import { SaveInfo } from "./info"
@@ -72,7 +73,11 @@ export const Saves = () => {
         </ControlsActions>
       </Controls>
 
-      {saves.length === 0 && <div className="saves__none">{t("none")}</div>}
+      {saves.length === 0 && (
+        <EmptyState icon="save" title={t("empty_title")}>
+          {t("none")}
+        </EmptyState>
+      )}
       {saves.length > 0 && (
         <div className="saves__list">
           {saves.map((s, index) => (

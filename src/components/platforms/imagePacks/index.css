@@ -45,7 +45,7 @@
   top: 0;
   z-index: 100;
   background-color: var(--light-colour);
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   height: 75px;
   overflow: hidden;
   white-space: nowrap;
@@ -90,7 +90,7 @@
   background-color: var(--selection-colour);
   color: var(--theme-selection-text);
   border-radius: 15px;
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
 }
 
 .image-packs__item--missing {

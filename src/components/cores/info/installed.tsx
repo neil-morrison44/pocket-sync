@@ -1,18 +1,25 @@
 import {
+  CoreAuthorImageSelectorFamily,
   CoreInfoSelectorFamily,
   CoreMainPlatformIdSelectorFamily,
 } from "../../../jotai/selectors"
 import { DownloadURLSelectorFamily } from "../../../jotai/inventory/selectors"
-import { Controls, ControlsActions } from "../../controls"
+import {
+  DetailFact,
+  DetailFacts,
+  DetailHeading,
+  DetailPage,
+  DetailSection,
+} from "../../shared/detailPage"
 import { Link } from "../../link"
 
 import "./index.css"
 import { PlatformImage } from "../platformImage"
 import { useInventoryItem } from "../../../hooks/useInventoryItem"
 import { Releases } from "./releases"
-import { Version } from "../version"
 import { useUninstallCore } from "../../../hooks/useUninstallCore"
 import { useInstallCore } from "../../../hooks/useInstallCore"
+import { useUpdateAvailable } from "../../../hooks/useUpdateAvailable"
 import {
   startTransition,
   Suspense,
@@ -20,419 +27,388 @@ import {
   useMemo,
   useState,
 } from "react"
-import { CorePlatformInfo } from "./platform"
-import { Loader } from "../../loader"
+import {
+  CorePlatformInfo,
+  CorePlatformLine,
+  CorePlatformName,
+} from "./platform"
 import { SponsorLinks } from "./sponsorLinks"
-import { RequiredFiles } from "./requiredFiles"
 import { LoadRequiredFiles } from "./loadRequiredFiles"
 import { ErrorBoundary } from "../../errorBoundary"
-import { AuthorTag } from "../../shared/authorTag"
 import { CoreInputs } from "./coreInputs"
 import { CoreSettings } from "./coreSettings"
 import { RequiredFileInfoSelectorFamily } from "../../../jotai/requiredFiles/selectors"
 import { Trans, useTranslation } from "react-i18next"
 import { currentViewAtom } from "../../../jotai/view/atoms"
 import { useReplacementAvailable } from "../../../hooks/useReplacementAvailable"
-import { ControlsBackButton } from "../../controls/inputs/backButton"
-import { ControlsButton } from "../../controls/inputs/button"
-import { currentFirmwareVersionSelector } from "../../../jotai/firmware/selectors"
-import { Modal } from "../../modal"
 import { DisplayModes } from "./displayModes"
-import { SupportsBubble } from "./supportsBubble"
-import { Details } from "../../shared/details"
-import { CoreInfoTxtSelectorFamily } from "../../../jotai/cores/selectors"
-import { ProgressLoader } from "../../loader/progress"
 import { DownloadCount } from "./downloadCounts"
 import { JTAnalogizerSettings } from "./jtanalogizer"
-import { InstallOlderVersion } from "./installOlderVersion"
 import { useAtomValue, useSetAtom } from "jotai"
 import { useSmoothedAtomValue } from "../../../utils/jotai"
 import { aiCheckAtom } from "../../../jotai/cores/atoms"
 import { AIReport } from "./aiReport"
 import { PocketSyncConfigSelector } from "../../../jotai/config/selectors"
+import Accordion, { AccordionItem } from "../../ui/Accordion"
+import Button from "../../ui/Button"
 import Icon from "../../ui/Icon"
+import clsx from "clsx"
+import Skeleton from "../../ui/Skeleton"
+import Tabs from "../../ui/Tabs"
+import { CoreTags } from "../tags"
+import {
+  CoreAuthor,
+  CoreFeatureTags,
+  CoreNotice,
+  FirmwareWarning,
+  InfoTxt,
+} from "./shared"
 
 type CoreInfoProps = {
   coreName: string
   onBack: () => void
 }
 
+/**
+ * An installed core: who made it and its status on top, with what to do next
+ * (update, load required files, uninstall); details in tabs below.
+ */
 export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   const coreInfo = useSmoothedAtomValue(CoreInfoSelectorFamily(coreName))
-  const uninstall = useUninstallCore()
+  const authorImageSrc = useAtomValue(CoreAuthorImageSelectorFamily(coreName))
   const inventoryItem = useInventoryItem(coreName)
-  const config = useAtomValue(PocketSyncConfigSelector)
-
   const [requiredFilesOpen, setRequiredFilesOpen] = useState(false)
-  const [inputsOpen, setInputsOpen] = useState(false)
-  const [coreSettingsOpen, setCoreSettingsOpen] = useState(false)
   const { t } = useTranslation("core_info")
   const setViewAndSubview = useSetAtom(currentViewAtom)
   const replacementCore = useReplacementAvailable(coreName)
+  const { metadata, framework } = coreInfo.core
 
   const goToReplacement = useCallback(() => {
     setViewAndSubview({ view: "Cores", selected: replacementCore })
   }, [replacementCore, setViewAndSubview])
 
+  const closeRequiredFiles = useCallback(() => setRequiredFilesOpen(false), [])
+
   const mainPlatformId = useSmoothedAtomValue(
     CoreMainPlatformIdSelectorFamily(coreName)
   )
 
-  const funding = inventoryItem?.repository.funding
-
-  const aiCheck = useAtomValue(aiCheckAtom)
-  const coreAIScore = useMemo(
-    () => aiCheck[coreName]?.overall_score ?? 0,
-    [coreName, aiCheck]
-  )
-
-  const showAIReport = config.hide_ai_score !== true && coreAIScore > 0
+  const tabs = [
+    {
+      value: "overview",
+      label: t("tabs.overview"),
+      content: <InstalledOverview coreName={coreName} />,
+    },
+    {
+      value: "inputs",
+      label: t("inputs"),
+      content: (
+        <Suspense fallback={<Skeleton height={320} />}>
+          <CoreInputs coreName={coreName} />
+        </Suspense>
+      ),
+    },
+    {
+      value: "settings",
+      label: t("settings"),
+      content: <SettingsTab coreName={coreName} />,
+    },
+    ...(inventoryItem
+      ? [
+          {
+            value: "releases",
+            label: t("tabs.releases"),
+            content: (
+              <Releases
+                coreName={coreName}
+                inventoryItem={inventoryItem}
+                installedVersion={metadata.version}
+              />
+            ),
+          },
+        ]
+      : []),
+  ]
 
   return (
-    <div className="core-info">
-      <Controls>
-        <ControlsBackButton onClick={onBack}>
-          {t("controls.back")}
-        </ControlsBackButton>
-        <ControlsActions>
-          <ControlsButton
-            theme="destructive"
-            icon="trash"
-            onClick={() => uninstall(coreName)}
-          >
-            {t("controls.uninstall")}
-          </ControlsButton>
+    <DetailPage
+      className="core-info"
+      backLabel={t("controls.back")}
+      onBack={onBack}
+      title={metadata.shortname}
+      titleDetail={
+        <Suspense>
+          <CorePlatformName platformId={mainPlatformId} />
+        </Suspense>
+      }
+      banner={
+        <PlatformImage
+          className="detail-page__banner"
+          platformId={mainPlatformId}
+          label={metadata.shortname}
+        />
+      }
+    >
+      {requiredFilesOpen && (
+        <LoadRequiredFiles coreName={coreName} onClose={closeRequiredFiles} />
+      )}
+
+      <div className="detail-page__content">
+        <div className="detail-page__hero">
+          <DetailHeading title={metadata.shortname}>
+            <Suspense>
+              <CorePlatformLine platformId={mainPlatformId} />
+            </Suspense>
+            <div className="detail-page__byline">
+              <CoreAuthor name={metadata.author} imageSrc={authorImageSrc} />
+              <span className="core-info__version">{metadata.version}</span>
+            </div>
+            <CoreTags coreName={coreName} installed showInstalled />
+          </DetailHeading>
           <Suspense>
-            <RequiredFilesButton
+            <InstalledActions
               coreName={coreName}
-              onClick={() => {
-                // setArchiveBump((a) => a + 1)
-                setRequiredFilesOpen(true)
-              }}
+              onLoadRequiredFiles={() => setRequiredFilesOpen(true)}
             />
           </Suspense>
-          <Suspense>
-            <DownloadButton coreName={coreName} />
-          </Suspense>
-        </ControlsActions>
-      </Controls>
-
-      {requiredFilesOpen && (
-        <Suspense
-          fallback={
-            <Modal className="load-required-files">
-              <Loader />
-            </Modal>
-          }
-        >
-          <LoadRequiredFiles
-            coreName={coreName}
-            onClose={() => setRequiredFilesOpen(false)}
-          />
-        </Suspense>
-      )}
-
-      {inputsOpen && (
-        <Suspense>
-          <CoreInputs
-            coreName={coreName}
-            onClose={() => setInputsOpen(false)}
-            platformId={mainPlatformId}
-          />
-        </Suspense>
-      )}
-
-      {coreSettingsOpen && (
-        <CoreSettings
-          coreName={coreName}
-          onClose={() => setCoreSettingsOpen(false)}
-        />
-      )}
-
-      <h3 className="core-info__title">{coreInfo.core.metadata.shortname}</h3>
-      {replacementCore && (
-        <div className="core-info__replaced" onClick={goToReplacement}>
-          <Trans t={t} i18nKey={"replaced"} values={{ replacementCore }}>
-            {"_"}
-            <strong>{"_"}</strong>
-          </Trans>
         </div>
-      )}
 
-      <PlatformImage className="core-info__image" platformId={mainPlatformId} />
-
-      {coreName.endsWith("_Analogizer") && (
-        <div className="core-info__analogizer">
-          <Icon icon="analogizer" />
-          <div>
-            <Trans t={t} i18nKey={"analogizer"}>
+        {replacementCore && (
+          <CoreNotice theme="danger" icon="reload" onClick={goToReplacement}>
+            <Trans t={t} i18nKey={"replaced"} values={{ replacementCore }}>
               {"_"}
-              <Link href={"https://analogizer-fpga.com/en"}>{"_"}</Link>
+              <strong>{"_"}</strong>
             </Trans>
-          </div>
-        </div>
+          </CoreNotice>
+        )}
+        <FirmwareWarning versionRequired={framework.version_required} />
+
+        <Tabs className="core-info__tabs" label={t("tabs.label")} tabs={tabs} />
+      </div>
+    </DetailPage>
+  )
+}
+
+/** Next steps for an installed core, most important first. */
+const InstalledActions = ({
+  coreName,
+  onLoadRequiredFiles,
+}: {
+  coreName: string
+  onLoadRequiredFiles: () => void
+}) => {
+  const { t } = useTranslation("core_info")
+  const coreInfo = useAtomValue(CoreInfoSelectorFamily(coreName))
+  const updateVersion = useUpdateAvailable(coreName)
+  const downloadUrl = useAtomValue(DownloadURLSelectorFamily(coreName))
+  const requiredFiles = useAtomValue(RequiredFileInfoSelectorFamily(coreName))
+  const uninstall = useUninstallCore()
+  const { installCore } = useInstallCore()
+
+  const foundCount = useMemo(
+    () => requiredFiles.filter(({ status }) => status.type === "Exists").length,
+    [requiredFiles]
+  )
+  const canUpdate = Boolean(updateVersion && downloadUrl)
+  const filesMissing = foundCount < requiredFiles.length
+
+  return (
+    <div
+      className={clsx(
+        "core-info__actions",
+        canUpdate && "core-info__actions--update"
+      )}
+    >
+      {canUpdate ? (
+        <>
+          <strong className="core-info__actions-title">
+            <Icon icon="upload" />
+            {t("guide.update_title")}
+          </strong>
+          <p className="detail-page__hint">
+            {t("guide.update", {
+              version: updateVersion,
+              installed: coreInfo.core.metadata.version,
+            })}
+          </p>
+        </>
+      ) : (
+        <p className="detail-page__hint">
+          <Icon icon="check" />
+          {t("guide.up_to_date")}
+        </p>
       )}
 
-      <FirmwareWarning coreName={coreName} />
+      {requiredFiles.length > 0 && (
+        <p className="detail-page__hint">
+          <Icon icon={filesMissing ? "warning-diamond" : "check"} />
+          {filesMissing
+            ? t("guide.required_files_missing", {
+                count: foundCount,
+                total: requiredFiles.length,
+              })
+            : t("guide.required_files_found", {
+                total: requiredFiles.length,
+              })}
+        </p>
+      )}
 
-      <section className="core-info__info">
-        <p>{coreInfo.core.metadata.description}</p>
-
-        <div className="core-info__info-grid">
-          <div className="core-info__info-row">
-            <strong>
-              {t("version")}
-              {":"}
-            </strong>
-            <Version coreName={coreName} />
-          </div>
-
-          <div className="core-info__info-row">
-            <strong>
-              {t("author")}
-              {":"}
-            </strong>
-            <AuthorTag coreName={coreName} />
-          </div>
-
-          <Suspense>
-            <div className="core-info__info-row core-info__info-row--right core-info__info-row--hide-if-null">
-              <strong>
-                {t("download_count")}
-                {":"}
-              </strong>
-              <DownloadCount coreName={coreName} />
-            </div>
-          </Suspense>
-
-          {coreInfo.core.metadata.url && (
-            <div className="core-info__info-row">
-              <strong>
-                {t("url")}
-                {":"}
-              </strong>
-              <Link href={coreInfo.core.metadata.url}>
-                {coreInfo.core.metadata.url}
-              </Link>
-            </div>
-          )}
-
-          {funding && (
-            <div className="core-info__info-row core-info__info-row--right">
-              <strong>
-                {t("sponsor")}
-                {":"}
-              </strong>
-              <ErrorBoundary>
-                <SponsorLinks links={funding} />
-              </ErrorBoundary>
-            </div>
-          )}
-
-          <Suspense
-            fallback={
-              <div className="core-info__info-row">
-                <strong>
-                  {t("required_files")}
-                  {":"}
-                </strong>
-                <ProgressLoader name="required_files_for_core" />
-              </div>
+      <div className="core-info__action-buttons">
+        {canUpdate && downloadUrl && (
+          <Button
+            theme="primary"
+            icon="upload"
+            onClick={() =>
+              startTransition(() => installCore(coreName, downloadUrl))
             }
           >
-            <RequiredFiles
-              coreName={coreName}
-              onClick={() => setRequiredFilesOpen(true)}
-            />
-          </Suspense>
-
-          {coreInfo.core.metadata.date_release && (
-            <div className="core-info__info-row">
-              <strong>
-                {t("release_date")}
-                {":"}
-              </strong>
-
-              {coreInfo.core.metadata.date_release}
-            </div>
-          )}
-        </div>
-
-        <div className="core-info__info-row">
-          <strong>
-            {t("supports")}
-            {":"}
-          </strong>
-          <div className="core-info__supports-bubbles">
-            <SupportsBubble supports={coreInfo.core.framework.sleep_supported}>
-              {t("supports_items.save_states_and_sleep")}
-            </SupportsBubble>
-
-            <SupportsBubble supports={coreInfo.core.framework.dock.supported}>
-              {t("supports_items.dock")}
-            </SupportsBubble>
-
-            <SupportsBubble
-              supports={coreInfo.core.framework.dock.analog_output}
-            >
-              {t("supports_items.dock_dac")}
-            </SupportsBubble>
-
-            <SupportsBubble
-              supports={
-                coreInfo.core.framework.hardware.cartridge_adapter !== -1
-              }
-            >
-              {t("supports_items.cartridges")}
-            </SupportsBubble>
-          </div>
-        </div>
-
-        <div className="core-info__info-row">
-          <strong>
-            {t("platforms")}
-            {":"}
-          </strong>
-          <Suspense
-            fallback={<Loader className="core-info__platform-loader" />}
+            {t("controls.update_to", { version: updateVersion })}
+          </Button>
+        )}
+        {requiredFiles.length > 0 && (
+          <Button
+            theme={filesMissing && !canUpdate ? "primary" : "secondary"}
+            icon="folder"
+            onClick={onLoadRequiredFiles}
           >
+            {t("controls.required_files")}
+          </Button>
+        )}
+        <Button
+          theme="destructive"
+          icon="trash"
+          onClick={() => uninstall(coreName)}
+        >
+          {t("controls.uninstall")}
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+const InstalledOverview = ({ coreName }: { coreName: string }) => {
+  const { t } = useTranslation("core_info")
+  const coreInfo = useAtomValue(CoreInfoSelectorFamily(coreName))
+  const authorImageSrc = useAtomValue(CoreAuthorImageSelectorFamily(coreName))
+  const inventoryItem = useInventoryItem(coreName)
+  const config = useAtomValue(PocketSyncConfigSelector)
+  const aiCheck = useAtomValue(aiCheckAtom)
+  const { metadata, framework } = coreInfo.core
+  const funding = inventoryItem?.repository.funding
+
+  const coreAIScore = aiCheck[coreName]?.overall_score ?? 0
+  const showAIReport = config.hide_ai_score !== true && coreAIScore > 0
+
+  const facts: DetailFact[] = [
+    {
+      label: t("author"),
+      value: <CoreAuthor name={metadata.author} imageSrc={authorImageSrc} />,
+    },
+    { label: t("version"), value: metadata.version },
+  ]
+  if (metadata.date_release)
+    facts.push({ label: t("release_date"), value: metadata.date_release })
+  facts.push({
+    label: t("firmware_required"),
+    value: framework.version_required,
+  })
+  if (inventoryItem?.repository.platform === "github")
+    facts.push({
+      label: t("download_count"),
+      value: (
+        <Suspense fallback={<Skeleton width={120} />}>
+          <DownloadCount coreName={coreName} />
+        </Suspense>
+      ),
+    })
+  if (metadata.url)
+    facts.push({
+      label: t("url"),
+      value: <Link href={metadata.url}>{metadata.url}</Link>,
+    })
+  if (funding)
+    facts.push({
+      label: t("sponsor"),
+      value: (
+        <ErrorBoundary>
+          <SponsorLinks links={funding} />
+        </ErrorBoundary>
+      ),
+    })
+
+  return (
+    <div className="core-info__overview">
+      <div className="core-info__main">
+        {metadata.description && (
+          <p className="core-info__description">{metadata.description}</p>
+        )}
+
+        <CoreFeatureTags
+          coreName={coreName}
+          framework={inventoryItem?.releases[0].core.framework ?? framework}
+        />
+
+        <DetailSection title={t("platforms")}>
+          <Suspense fallback={<Skeleton height={44} />}>
             <div className="core-info__platforms">
-              {coreInfo.core.metadata.platform_ids.map((id) => (
-                <CorePlatformInfo platformId={id} key={id} />
+              {metadata.platform_ids.map((id) => (
+                <CorePlatformInfo
+                  platformId={id}
+                  key={id}
+                  showImage={metadata.platform_ids.length > 1}
+                />
               ))}
             </div>
           </Suspense>
-        </div>
-        <div className="core-info__info-row core-info__info-row--stretch">
-          <button
-            style={{ backgroundColor: "var(--light-colour)" }}
-            onClick={() => setInputsOpen(true)}
-          >
-            {t("inputs")}
-          </button>
-          <button
-            style={{ backgroundColor: "var(--light-colour)" }}
-            onClick={() => setCoreSettingsOpen(true)}
-          >
-            {t("settings")}
-          </button>
-        </div>
+        </DetailSection>
 
-        {coreInfo.core.metadata.platform_ids.includes("jtpatreon") && (
-          <JTAnalogizerSettings coreName={coreName} />
-        )}
+        <Suspense fallback={<Skeleton height={80} />}>
+          <InfoTxt coreName={coreName} />
+        </Suspense>
 
         {showAIReport && (
-          <div className="core-info__info-row">
-            <Details
-              title={t("ai_ness_score", {
-                score: coreAIScore,
-              })}
+          <Accordion type="single" collapsible>
+            <AccordionItem
+              value="ai"
+              title={t("ai_ness_score", { score: coreAIScore })}
             >
               <AIReport coreName={coreName} />
-            </Details>
-          </div>
+            </AccordionItem>
+          </Accordion>
         )}
+      </div>
 
-        <div className="core-info__info-row">
-          <Details title={t("info_txt_title")}>
-            <InfoTxt coreName={coreName} />
-          </Details>
-        </div>
-
-        {inventoryItem && (
-          <div className="core-info__info-row">
-            <InstallOlderVersion
-              coreName={coreName}
-              inventoryItem={inventoryItem}
-            />
-          </div>
-        )}
-
-        <div className="core-info__info-row">
-          <Details title={t("display_modes_title")}>
-            <DisplayModes coreName={coreName} />
-          </Details>
-        </div>
-
-        {inventoryItem && inventoryItem.repository.platform === "github" && (
-          <Suspense fallback={<div></div>}>
-            <Releases inventoryItem={inventoryItem} />
-          </Suspense>
-        )}
-      </section>
+      <aside className="core-info__aside">
+        <DetailFacts facts={facts} />
+      </aside>
     </div>
   )
 }
 
-const DownloadButton = ({ coreName }: { coreName: string }) => {
+/** The core's own settings, its display modes and Analogizer options. */
+const SettingsTab = ({ coreName }: { coreName: string }) => {
   const { t } = useTranslation("core_info")
-  const { installCore } = useInstallCore()
-  const downloadUrl = useAtomValue(DownloadURLSelectorFamily(coreName))
-
-  if (!downloadUrl) return null
-  return (
-    <ControlsButton
-      onClick={() => startTransition(() => installCore(coreName, downloadUrl))}
-    >
-      {t("controls.update")}
-    </ControlsButton>
-  )
-}
-
-const RequiredFilesButton = ({
-  coreName,
-  onClick,
-}: {
-  coreName: string
-  onClick: () => void
-}) => {
-  const requiredFiles = useAtomValue(RequiredFileInfoSelectorFamily(coreName))
-  const { t } = useTranslation("core_info")
-
-  if (requiredFiles.length === 0) return null
-  return (
-    <ControlsButton onClick={onClick}>
-      {t("controls.required_files")}
-    </ControlsButton>
-  )
-}
-
-const FirmwareWarning = ({ coreName }: { coreName: string }) => {
   const coreInfo = useAtomValue(CoreInfoSelectorFamily(coreName))
-  const currentFirmware = useAtomValue(currentFirmwareVersionSelector)
-  const setViewAndSubview = useSetAtom(currentViewAtom)
-  const { t } = useTranslation("core_info")
 
-  const firmwareTooLow = useMemo(() => {
-    const [coreMajor, coreMinor] = coreInfo.core.framework.version_required
-      .split(".")
-      .map((v) => parseInt(v))
-    const [pocketMajor, pocketMinor] = currentFirmware.version
-      .split(".")
-      .map((v) => parseInt(v))
-
-    if (pocketMajor > coreMajor) return false
-    if (pocketMajor === coreMajor && pocketMinor >= coreMinor) return false
-    return true
-  }, [coreInfo.core.framework.version_required, currentFirmware.version])
-
-  if (!firmwareTooLow) return null
   return (
-    <div
-      className="core-info__firmware-warning"
-      onClick={() => setViewAndSubview({ view: "Firmware", selected: null })}
-    >
-      <Icon icon="warning-diamond" />
-      {t("firmware_too_low", {
-        core_firmware: coreInfo.core.framework.version_required,
-        pocket_firmware: currentFirmware.version,
-      })}
+    <div className="core-info__settings">
+      <DetailSection title={t("core_settings_title")}>
+        <p className="detail-page__hint">{t("core_settings_hint")}</p>
+        <Suspense fallback={<Skeleton height={120} />}>
+          <CoreSettings coreName={coreName} />
+        </Suspense>
+      </DetailSection>
+
+      <DetailSection title={t("display_modes_title")}>
+        <p className="detail-page__hint">{t("display_modes_hint")}</p>
+        <Suspense fallback={<Skeleton height={80} />}>
+          <DisplayModes coreName={coreName} />
+        </Suspense>
+      </DetailSection>
+
+      {coreInfo.core.metadata.platform_ids.includes("jtpatreon") && (
+        <JTAnalogizerSettings coreName={coreName} />
+      )}
     </div>
   )
-}
-
-const InfoTxt = ({ coreName }: { coreName: string }) => {
-  const infoTxt = useAtomValue(CoreInfoTxtSelectorFamily(coreName))
-  return <div className="core-info__info-txt">{infoTxt}</div>
 }

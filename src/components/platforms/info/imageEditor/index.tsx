@@ -1,7 +1,9 @@
 import { useCallback, useRef, useState } from "react"
 
 import { ImageBinSrcSelectorFamily } from "../../../../jotai/selectors"
-import { Modal } from "../../../modal"
+import Button from "../../../ui/Button"
+import IconButton from "../../../ui/IconButton"
+import { Modal, ModalSuspense } from "../../../modal"
 import { invokeSaveFile } from "../../../../utils/invokes"
 import { pocketPathAtom } from "../../../../jotai/atoms"
 import { ImageInfo } from "./types"
@@ -25,7 +27,7 @@ type ImageEditorProps = {
   height: number
 }
 
-export const ImageEditor = ({
+const ImageEditorContent = ({
   onClose,
   path,
   width,
@@ -73,115 +75,135 @@ export const ImageEditor = ({
   }, [width, height, pocketPath, path, onClose])
 
   return (
-    <Modal className="image-editor">
+    <Modal className="image-editor" title={t("title")} onClose={onClose}>
       <canvas
         className="image-editor__preview-canvas"
         width={width}
         height={height}
         ref={canvasRef}
       ></canvas>
-      <div className="image-editor__stamps-etc">
-        <div className="image-editor__stamps">
-          {imageStamps.map((stamp, index) => {
-            const selected = index === selectedStampIndex
 
-            return (
-              <div
-                className={`image-editor__stamp image-editor__stamp--${
-                  selected ? "selected" : "not-selected"
-                }`}
-                key={index}
-                onMouseDown={() => setSelectedStampIndex(index)}
-              >
-                <img
-                  className="image-editor__stamp-image"
-                  src={stamp.src}
-                  onClick={() => {
-                    setSelectedStampIndex(index)
-                  }}
-                ></img>
+      {/* One row per image layer, top layer first */}
+      <div className="image-editor__stamps">
+        {imageStamps.map((stamp, index) => {
+          const selected = index === selectedStampIndex
 
-                <div className="image-editor__stamp-controls">
-                  {t("scale")}
-                  <input
-                    type="range"
-                    className="image-editor__range"
-                    max={5}
-                    step={0.001}
-                    min={0.001}
-                    value={stamp.scale}
-                    onChange={({ target }) =>
-                      updateImageStampValues(stamp, {
-                        scale: parseFloat(target.value),
-                      })
-                    }
-                  ></input>
-                  {t("rotate")}
-                  <input
-                    type="range"
-                    className="image-editor__range"
-                    max={180}
-                    min={-180}
-                    value={stamp.rotate}
-                    onChange={({ target }) =>
-                      updateImageStampValues(stamp, {
-                        rotate: parseInt(target.value),
-                      })
-                    }
-                  ></input>
-                </div>
+          return (
+            <div
+              className={`image-editor__stamp image-editor__stamp--${
+                selected ? "selected" : "not-selected"
+              }`}
+              key={index}
+              onMouseDown={() => setSelectedStampIndex(index)}
+            >
+              <img
+                className="image-editor__stamp-image"
+                src={stamp.src}
+                alt=""
+                onClick={() => setSelectedStampIndex(index)}
+              ></img>
 
-                <div className="image-editor__stamp-controls">
-                  <div
-                    className="image-editor__stamp-control"
-                    onClick={() => {
-                      setImageStamps((stamps) =>
-                        stamps.filter((s) => s !== stamp)
-                      )
-                    }}
-                  >
-                    {t("remove")}
-                  </div>
-                  <div
-                    className="image-editor__stamp-control"
-                    onClick={() =>
-                      updateImageStampValues(stamp, {
-                        y: 0,
-                        x: 0,
-                        scale: 1,
-                        rotate: 0,
-                      })
-                    }
-                  >
-                    {t("reset")}
-                  </div>
-                </div>
-                <div className="image-editor__stamp-controls">
-                  {index !== 0 && (
-                    <div
-                      className="image-editor__layer-move-button image-editor__layer-move-button--up"
-                      onClick={() => moveStamp(stamp, -1)}
-                    ></div>
-                  )}
-                  {index !== imageStamps.length - 1 && (
-                    <div
-                      className="image-editor__layer-move-button image-editor__layer-move-button--down"
-                      onClick={() => moveStamp(stamp, 1)}
-                    ></div>
-                  )}
-                </div>
+              <label className="image-editor__slider">
+                <span>{t("scale")}</span>
+                <input
+                  type="range"
+                  max={5}
+                  step={0.001}
+                  min={0.001}
+                  value={stamp.scale}
+                  onChange={({ target }) =>
+                    updateImageStampValues(stamp, {
+                      scale: parseFloat(target.value),
+                    })
+                  }
+                ></input>
+              </label>
+              <label className="image-editor__slider">
+                <span>{t("rotate")}</span>
+                <input
+                  type="range"
+                  max={180}
+                  min={-180}
+                  value={stamp.rotate}
+                  onChange={({ target }) =>
+                    updateImageStampValues(stamp, {
+                      rotate: parseInt(target.value),
+                    })
+                  }
+                ></input>
+              </label>
+
+              <div className="image-editor__stamp-actions">
+                <IconButton
+                  icon="chevron-up"
+                  theme="tertiary"
+                  label={t("move_up")}
+                  disabled={index === 0}
+                  onClick={() => moveStamp(stamp, -1)}
+                />
+                <IconButton
+                  icon="chevron-down"
+                  theme="tertiary"
+                  label={t("move_down")}
+                  disabled={index === imageStamps.length - 1}
+                  onClick={() => moveStamp(stamp, 1)}
+                />
+                <Button
+                  theme="tertiary"
+                  icon="reload"
+                  onClick={() =>
+                    updateImageStampValues(stamp, {
+                      y: 0,
+                      x: 0,
+                      scale: 1,
+                      rotate: 0,
+                    })
+                  }
+                >
+                  {t("reset")}
+                </Button>
+                <IconButton
+                  icon="trash"
+                  theme="destructive"
+                  label={t("remove")}
+                  onClick={() =>
+                    setImageStamps((stamps) =>
+                      stamps.filter((s) => s !== stamp)
+                    )
+                  }
+                />
               </div>
-            )
-          })}
-        </div>
-        <button onClick={addNewImage}>{t("import_image")}</button>
+            </div>
+          )
+        })}
       </div>
-      <div className="image-editor__bottom-buttons">
-        <button onClick={saveBinary}>{t("save")}</button>
-        <button className="image-editor__close-button" onClick={onClose}>
+
+      {/* Import on the left; Cancel and Save on the right */}
+      <div className="image-editor__buttons">
+        <Button icon="folder-plus" onClick={addNewImage}>
+          {t("import_image")}
+        </Button>
+        <Button theme="tertiary" onClick={onClose}>
           {t("cancel")}
-        </button>
+        </Button>
+        <Button theme="primary" icon="save" onClick={saveBinary}>
+          {t("save")}
+        </Button>
       </div>
     </Modal>
+  )
+}
+
+/** Opens right away with a loader while its data loads. */
+export const ImageEditor = (props: ImageEditorProps) => {
+  const { t } = useTranslation("image_editor")
+  return (
+    <ModalSuspense
+      className="image-editor"
+      title={t("title")}
+      onClose={props.onClose}
+    >
+      <ImageEditorContent {...props} />
+    </ModalSuspense>
   )
 }

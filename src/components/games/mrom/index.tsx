@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { pocketPathAtom } from "../../../jotai/atoms"
-import { Modal } from "../../modal"
+import { Modal, ModalSuspense } from "../../modal"
 
 import "./index.css"
 import { useTranslation } from "react-i18next"
@@ -21,7 +21,7 @@ type MROMInfoAndState = MROMInfo & {
   save: "none" | "dump" | "pocket"
 }
 
-export const MROMModal = ({ onClose }: MROMModalProps) => {
+const MROMModalContent = ({ onClose }: MROMModalProps) => {
   const romDumps = useAtomValue(mromDumpedROMSListSelector)
   const [isMovingDumps, setIsMovingDumps] = useState<boolean>(false)
   const { t } = useTranslation("mrom")
@@ -73,9 +73,7 @@ export const MROMModal = ({ onClose }: MROMModalProps) => {
   }, [dumps])
 
   return (
-    <Modal className="mrom">
-      <h2>{t("title")}</h2>
-
+    <Modal className="mrom" title={t("title")} onClose={onClose}>
       <ol className="mrom__items-list">
         <div className="mrom__items-header">
           <div>{t("headers.platform")}</div>
@@ -102,7 +100,6 @@ export const MROMModal = ({ onClose }: MROMModalProps) => {
       {!isMovingDumps && (
         <button onClick={onMoveDumps}>{t("move_dumps")}</button>
       )}
-      <button onClick={onClose}>{t("close_button")}</button>
     </Modal>
   )
 }
@@ -146,5 +143,15 @@ const MROMItem = ({ dump, onChange }: MROMItemProps) => {
         }}
       />
     </li>
+  )
+}
+
+/** Opens right away with a loader while its data loads. */
+export const MROMModal = (props: MROMModalProps) => {
+  const { t } = useTranslation("mrom")
+  return (
+    <ModalSuspense className="mrom" title={t("title")} onClose={props.onClose}>
+      <MROMModalContent {...props} />
+    </ModalSuspense>
   )
 }

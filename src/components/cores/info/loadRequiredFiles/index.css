@@ -6,52 +6,55 @@
   min-height: 50%;
 }
 
+/* One row per file: name, size, path, status tag */
 .load-required-files__files {
-  background-color: var(--info-colour);
-  padding-block: 10px;
-  gap: 5px;
-  border-radius: 10px;
-  overflow: auto;
-  flex-grow: 1;
-
   display: grid;
-  grid-template-columns: auto auto auto auto;
-  column-gap: 0.5em;
-  row-gap: 0.5em;
+  flex-grow: 1;
+  grid-template-columns: auto auto 1fr auto;
+  align-content: start;
+  overflow: auto;
+  border-top: 1px solid var(--theme-separator);
 }
 
 .load-required-files__row {
   display: grid;
   grid-column: 1 / 5;
   grid-template-columns: subgrid;
-  border-bottom: 1px solid var(--theme-separator);
-  padding-inline: 20px;
-  padding-block-end: 5px;
-}
-
-.load-required-files__row--exists {
-  opacity: 0.75;
-}
-
-.load-required-files__buttons {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.load-required-files__skip-notice {
-  text-align: right;
-  opacity: 0.6;
-  font-size: 0.87rem;
-
-  &:hover {
-    opacity: 0.8;
-  }
-}
-
-.load-required-files__skip-input {
-  display: inline-flex;
-  gap: 4px;
   align-items: center;
-  cursor: pointer;
+  column-gap: var(--space-lg);
+  min-height: 40px;
+  border-bottom: 1px solid var(--theme-separator);
+  color: var(--theme-text-body);
+}
+
+.load-required-files__row-name {
+  font-weight: 600;
+  color: var(--theme-text-headline);
+}
+
+.load-required-files__row-size,
+.load-required-files__row-path {
+  color: var(--theme-text-soft);
+  font-size: var(--font-size-sm);
+  overflow-wrap: anywhere;
+}
+
+/* Downloaded files step back; the tag says why */
+.load-required-files__row--exists .load-required-files__row-name {
+  color: var(--theme-text-body);
+}
+
+/* Skip switch on the left, Download All on the right */
+.load-required-files__buttons {
+  --control-height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+
+.load-required-files__skip {
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
 }

@@ -19,12 +19,17 @@
       "firmware": "固件",
       "cores": "核心",
       "games": "游戏"
-    }
+    },
+    "show_updates_new": "显示更新（有新内容）",
+    "open_sd_card": "打开 SD 卡"
   },
   "app": {
     "app_name": "Pocket Sync",
     "connect_button": "连接至Pocket/SD卡",
-    "not_pocket_tip": "目录无法识别, 请确认SD卡已经由Pocket完成初始化"
+    "not_pocket_tip": "目录无法识别, 请确认SD卡已经由Pocket完成初始化",
+    "close": "关闭",
+    "loading": "加载中",
+    "dismiss": "关闭"
   },
   "clean_files": {
     "close_button": "关闭",
@@ -65,7 +70,9 @@
       "install": "安装核心",
       "required_files": "加载必要文件",
       "uninstall": "卸载核心",
-      "update": "更新核心"
+      "update_to": "更新到 {version}",
+      "install_version": "安装所选版本",
+      "install_release": "安装此版本"
     },
     "inputs": "按键提示",
     "modal": {
@@ -82,18 +89,20 @@
     "firmware_too_low": "该核心需要固件v{core_firmware}，当前安装的版本是v{pocket_firmware}",
     "not_in_inventory": "核心{coreName}尚未加入清单",
     "platform": {
-      "edit": "编辑",
-      "wikipedia": "维基百科"
+      "wikipedia": "维基百科",
+      "open": "打开平台"
     },
     "replaced": "此核心已经由<1>{replacementCore}</1>核心替代",
     "platforms": "平台",
     "release_date": "发布日期",
     "releases": {
       "release_history": "版本发布历史",
-      "show_previous": "显示之前的版本发布历史信息"
+      "show_previous": "显示之前的版本发布历史信息",
+      "latest": "最新",
+      "prerelease": "预发布",
+      "on_github": "在 GitHub 上查看"
     },
     "required_files": "必要文件",
-    "required_files_count": "{count} / {total} 文件",
     "settings": "配置",
     "sponsor": "赞助作者",
     "download_count": "下载",
@@ -105,14 +114,54 @@
       "cartridges": "卡带",
       "dock": "Analogue 底座",
       "dock_dac": "Analogue DAC解码器",
-      "save_states_and_sleep": "即时存档/睡眠"
+      "save_states_and_sleep": "即时存档/睡眠",
+      "link_port": "联机线",
+      "analogizer": "Analogizer"
     },
     "url": "网页地址",
     "version": "版本",
     "display_modes_title": "显示模式",
     "display_mode_warning": "此显示模式需要更新核心，您确定要打开它吗？",
     "previous_version": "先前版本",
-    "display_modes_limit": "核心仅支持最多 16 种显示模式，您已选择 {count} 种"
+    "display_modes_limit": "核心仅支持最多 16 种显示模式，您已选择 {count} 种",
+    "tabs": {
+      "label": "核心详情",
+      "overview": "概览",
+      "releases": "版本发布"
+    },
+    "tags": {
+      "installed": "已安装",
+      "update": "可更新 {version}",
+      "ai": "AI {score, number, percent}",
+      "license": "许可证",
+      "manual": "手动",
+      "manual_hint": "手动安装（例如通过 .zip）。该核心不在核心列表中，因此 Pocket Sync 无法更新它。"
+    },
+    "guide": {
+      "install": "安装会将版本 {version} 下载到 SD 卡的 Cores 文件夹。如果核心需要额外文件（例如 BIOS 文件），之后可以在这里加载。",
+      "update": "版本 {version} 可用。当前版本为 {installed}。",
+      "up_to_date": "已安装且为最新版本。",
+      "required_files_missing": "已找到 {total} 个必要文件中的 {count} 个。请加载缺失的文件以运行核心。",
+      "required_files_found": "已找到全部 {total} 个必要文件。",
+      "update_title": "有可用更新"
+    },
+    "preset": "预设",
+    "inputs_empty": "该核心未定义按键映射。",
+    "input_keys": {
+      "pad_btn_a": "A",
+      "pad_btn_b": "B",
+      "pad_btn_x": "X",
+      "pad_btn_y": "Y",
+      "pad_trig_l": "L",
+      "pad_trig_r": "R",
+      "pad_btn_start": "Start",
+      "pad_btn_select": "Select"
+    },
+    "firmware_required": "所需固件",
+    "core_settings_title": "核心设置",
+    "display_modes_hint": "打开你希望在 Pocket 上可选的显示模式。",
+    "previous_version_hint": "可安装任意已发布的版本，例如在更新后回退。",
+    "core_settings_hint": "更改会立即保存到 SD 卡。"
   },
   "core_info_required_files": {
     "close": "关闭",
@@ -142,11 +191,16 @@
       "sort_options": {
         "name": "姓名",
         "last_update": "最后更新"
-      }
+      },
+      "features": "功能",
+      "features_count": "功能 ({count})",
+      "platform": "平台",
+      "update_all_count": "全部更新（{count}）"
     },
     "install_tip": "您也可以通过拖拽ZIP压缩包到窗口内的方式安装核心或其他内容",
     "installed": "已安装({count})",
-    "not_installed": "可安装({count})"
+    "not_installed": "可安装({count})",
+    "updates": "可用更新（{count}）"
   },
   "error": {
     "report": "您可以通过GitHub报告错误信息（含错误信息和错误发生的描述性文字）",
@@ -186,6 +240,10 @@
     "types": {
       "archive_org": "archive.org网站在线文件",
       "filesystem": "本地文件"
+    },
+    "empty": {
+      "title": "还没有获取来源",
+      "text": "获取会将电脑上的文件夹或 archive.org 中的文件复制到 SD 卡。添加一个来源即可开始。"
     }
   },
   "firmware": {
@@ -210,7 +268,10 @@
     "jump_to": "跳转到",
     "badge_latest": "最新",
     "badge_installed": "已安装",
-    "published": "{date, date, medium}"
+    "published": "{date, date, medium}",
+    "loaded_current": "已安装固件 (v{version}) 的安装文件仍在 SD 卡上。",
+    "loaded_current_info": "它已不再需要，可以删除。",
+    "remove_installer": "删除安装文件"
   },
   "games": {
     "controls": {
@@ -219,13 +280,17 @@
       "instance_json": "生成实例配置JSON",
       "refresh": "刷新",
       "search": "搜索",
-      "mrom": "移动 MROM 转储"
+      "mrom": "移动 MROM 转储",
+      "platform": "平台",
+      "all": "全部"
     },
     "item": {
       "game_count": "共找到{count, plural, =0 {0个游戏} one {# 个游戏} other {# 个游戏}}"
     },
     "open_folder": "打开文件夹",
-    "none": "未找到游戏。请先安装核心，然后将游戏添加到SD卡上该核心的文件夹中。"
+    "none": "未找到游戏。请先安装核心，然后将游戏添加到SD卡上该核心的文件夹中。",
+    "show_in_folder": "在文件夹中显示",
+    "empty_title": "还没有游戏"
   },
   "image_editor": {
     "cancel": "取消",
@@ -234,7 +299,10 @@
     "reset": "重置",
     "rotate": "旋转",
     "save": "保存图像",
-    "scale": "缩放"
+    "scale": "缩放",
+    "title": "编辑图像",
+    "move_up": "上移",
+    "move_down": "下移"
   },
   "instance_json": {
     "available_for": "以下核心可以自动生成实例配置JSON文件:",
@@ -258,7 +326,9 @@
     "settings": "设置",
     "collapse_sidebar": "收起侧边栏",
     "expand_sidebar": "展开侧边栏",
-    "views": "视图"
+    "views": "视图",
+    "core_updates": "{count} 个核心更新",
+    "firmware_update": "固件 {version} 可用"
   },
   "plugins": {
     "buttons": {
@@ -276,6 +346,10 @@
       "add": "验证并安装插件",
       "cancel": "取消",
       "invalid": "该URL未找到有效的插件"
+    },
+    "empty": {
+      "title": "没有安装插件",
+      "text": "插件为 Pocket Sync 添加更多工具。"
     }
   },
   "palettes": {
@@ -312,6 +386,10 @@
       "save": "保存调色板",
       "reset": "重置颜色",
       "emu_credit": "GB模拟器改编自<1>roblouie/gameboy-emulator</1>"
+    },
+    "empty": {
+      "title": "还没有调色板",
+      "text": "创建调色板、通过代码添加，或浏览 Palette Town。"
     }
   },
   "mister_sync": {
@@ -336,7 +414,8 @@
     "mapping": {
       "close": "关闭",
       "clear": "清除映射",
-      "reset": "重置为默认值"
+      "reset": "重置为默认值",
+      "title": "存档映射"
     }
   },
   "news_feed": {
@@ -349,8 +428,10 @@
       "data_packs": "管理数据包",
       "image_packs": "管理图像包"
     },
-    "cores": "核心",
-    "edit": "编辑"
+    "cores": "已安装的核心",
+    "edit": "编辑",
+    "details": "详情",
+    "no_cores": "没有已安装的核心使用此平台。"
   },
   "platforms": {
     "cancel": "取消",
@@ -385,7 +466,12 @@
       "close": "关闭",
       "current": "现有"
     },
-    "save": "保存更改"
+    "save": "保存更改",
+    "archived": "已归档",
+    "empty": {
+      "title": "SD 卡上没有平台",
+      "text": "安装核心时会添加平台。"
+    }
   },
   "progress": {
     "remaining_time": "剩余时间 (预计): {remainingTime}",
@@ -410,7 +496,10 @@
     "controls": {
       "clear_selection": "取消勾选",
       "delete_selection": "删除勾选 ({count})",
-      "search": "搜索"
+      "search": "搜索",
+      "core": "核心",
+      "platform": "平台",
+      "all": "全部"
     },
     "count": "( {count} / 128 )",
     "item": {
@@ -429,6 +518,10 @@
         "gb_player": "GB Player",
         "black_and_white": "黑&白"
       }
+    },
+    "empty": {
+      "title": "还没有即时存档",
+      "text": "游戏中按 Analogue 键和上即可保存记忆，它会显示在这里。"
     }
   },
   "saves": {
@@ -451,7 +544,8 @@
     "back_up_now": "立即备份",
     "backing_up": "正在备份…",
     "last_backup_label": "上次备份",
-    "never": "尚无备份"
+    "never": "尚无备份",
+    "empty_title": "还没有备份"
   },
   "screenshot_info": {
     "controls": {
@@ -468,7 +562,9 @@
       "search": "搜索",
       "select": "选择"
     },
-    "no_screenshots": "您的截屏都会在此显示"
+    "no_screenshots": "您的截屏都会在此显示",
+    "how_to": "游戏中同时按下 Analogue 键和 Start 键即可截屏。截图会保存到 SD 卡并显示在这里。",
+    "empty_title": "还没有截图"
   },
   "settings": {
     "3d_pocket": {
@@ -584,6 +680,11 @@
       "style_label": "风格",
       "style_slanted": "斜角",
       "style_modern": "现代"
+    },
+    "dismissed_notes": {
+      "title": "已关闭的提示",
+      "ramble": "你关闭的提示（例如拖入 .zip 文件的提示）可以重新显示。",
+      "button": "重新显示提示（{count}）"
     }
   },
   "time_ago": {
@@ -610,7 +711,12 @@
       "cancel": "跳过",
       "text": "{list}\n\n 资源及存档文件将会被移动到指定目录，旧核心文件将被删除。",
       "title": "替换现有核心文件?"
-    }
+    },
+    "drop": {
+      "title": "拖放以安装",
+      "text": "Pocket Sync 会将 .zip 中的核心和文件安装到你的 SD 卡。"
+    },
+    "downloading": "正在下载…"
   },
   "version": {
     "update_alt": "核心有更新版本 {version}",
@@ -620,5 +726,18 @@
   "jobs": {
     "Running": "取消",
     "Stopping": "取消正在进行中..."
+  },
+  "pocket_buttons": {
+    "select": "Select",
+    "analogue": "Analogue",
+    "start": "Start",
+    "a": "A",
+    "b": "B",
+    "x": "X",
+    "y": "Y",
+    "up": "上",
+    "down": "下",
+    "left": "左",
+    "right": "右"
   }
 }

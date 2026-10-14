@@ -48,7 +48,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Component
         {...otherProps}
         ref={ref}
-        type={asChild ? undefined : "button"}
+        type={asChild ? undefined : (otherProps.type ?? "button")}
         className={clsx(
           "button",
           `button--theme-${theme}`,
