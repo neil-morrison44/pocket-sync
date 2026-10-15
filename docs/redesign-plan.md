@@ -1,10 +1,11 @@
 # UI redesign — plan
 
 Started 2026-10-13 on the fork branch `ob/redesign`. Status: **in progress.
-Foundations, icons, UI primitives, layout passes, the firmware picker and the
-by-system games list are committed (`b14e23f`, `b7963a3`). The core detail
-page (q) is done in code and waiting for review. This PR is frontend-only;
-backend work (e.g. Eject) is a stretch goal.** See **Current status** below.
+Foundations, icons, UI primitives, layout passes, the firmware picker, the
+by-system games list and the core detail page (q) with its review passes are
+committed (`b14e23f`, `b7963a3`, `2970e32`). Review rounds continue, screen
+by screen. This PR is frontend-only; backend work (e.g. Eject) is a stretch
+goal.** See **Current status** below.
 
 The goal is a cleaner, more consistent and more accessible Pocket Sync that
 still looks and feels like an Analogue Pocket companion app, and that can be
@@ -43,7 +44,7 @@ describes:
   with **REVISED (date)**, keep the old decision in italics, and mention the
   change in Current status so it's discoverable;
 - **whenever @olivierbrcknr explains why they want something, add it to Design
-  rationale** below (dated, in his words as closely as possible). That
+  rationale** below (dated, in @olivierbrcknr's words as closely as possible). That
   section is the source for the reasoning in the PR description, so never
   skip it, even for small requests;
 - **whenever an English string is added or reworded, update the other
@@ -370,26 +371,59 @@ about what's built and what's next belongs here.
 - ✅ **Page checklist (2026-10-13).** See **Page checklist** below: every
   screen, sub-page, panel and modal, with how far each is restyled.
 
-- ✅ **(q) Core detail page (2026-10-14).** Not committed yet. See the
-  milestone below.
+- ✅ **(q) Core detail page (2026-10-14).** Committed with its review passes
+  (up to the fifteenth) in `2970e32`. See the milestone below.
+- ✅ **Sixteenth pass (2026-10-15).** See the (q) milestone. Also closes the
+  fifteenth pass, which was cut off before its last lint check: a missing
+  blank line in `Button.css` (and the old `theme.css` comment warning) are
+  fixed.
+- ✅ **Seventeenth pass (2026-10-15).** See the (q) milestone: one `Tile`
+  for every grid of items, Save States and Palettes in a `Grid`, settings
+  type, header bars, rounded focus rings in modern.
+- ✅ **Eighteenth pass (2026-10-15).** See the (q) milestone: tabs keep the
+  scroll position, horizontal save state tiles at 10:9, settings at 16px
+  without stray line breaks, and a check of the Games grouping.
+- ✅ **Nineteenth pass (2026-10-15).** Home fits the window without
+  scrolling, "Disconnect Pocket" instead of Eject, colour swatches in the
+  Pocket colour selects.
+- ✅ **Twentieth pass (2026-10-15).** Plugins and Fetch on `Tile`, our
+  buttons and the new `Field`; search and an author filter on Plugins; the
+  Add Fetch Source modal explains every field.
+- ✅ **Twenty-first pass (2026-10-15).** Tooltip padding, Pocket Colours
+  as an icon button, full-width plugin tiles, a themed plugin window.
+- ✅ **Twenty-second pass (2026-10-15).** "Nothing matches" for emptied
+  lists, Fetch status that refreshes (and a last-fetch time), a new
+  `ProgressBar`, a loading preview, What's New and Library Updates fixes.
+- ✅ **Twenty-third pass (2026-10-15).** Long fetch names, Palettes
+  flicker, 160ms spinner, Select press, the Updatable filter, search field
+  focus, What's New dates and bullets, Library Updates' time.
 
 ### In progress
 
-- (q) waits for @olivierbrcknr's review in the running app (not run yet:
-  checked with `tsc`, ESLint and stylelint only).
+- The sixteenth to twenty-third passes wait for @olivierbrcknr's review in
+  the running app (checked with `tsc`, ESLint, stylelint and Prettier
+  only).
 
 ### Next
 
 - (n) Resizable sidebar and side panel (split panes).
+- Modals: Manage Data Packs and Manage Image Packs need a pass (layout,
+  primitives, explanations), requested 2026-10-15.
+- (r) Palette detail screen.
+- (s) Game names and images: a separate PR (decided 2026-10-15), see the
+  milestone.
 - (h) Migration and clean-up.
 - Stretch: (k) Eject.
 
 ### Waiting on
 
-
-- Committing: only when @olivierbrcknr asks. `b14e23f` is the in-between
-  commit; later work is uncommitted. Never push, and no AI attribution in
-  commit messages.
+- Committing: only when @olivierbrcknr asks. Committed so far: `b14e23f`,
+  `b7963a3`, `2970e32`; the sixteenth to twenty-third passes are uncommitted. Never push, and
+  no AI attribution in commit messages.
+- Plugins: whether the page should explain what a plugin is in one line
+  (the info note only links to the specification).
+- Games: whether Clean Up Files and Build Instance JSON stay in the Games
+  header, move elsewhere, or go (see the sixteenth pass for what they do).
 - Figma MCP call limit (Starter plan) for the remaining Figma work (g).
 
 ## Page checklist
@@ -504,31 +538,33 @@ The page is gone; updating happens on Cores (Updates section, Update All).
 
 ### Save States
 
-- [ ] Save states grid, search, selection, delete: tokens only
+- [ ] Save states (tiles in a grid per core, sticky core headers, search,
+      core / platform filters, selection, delete): restyled
 - [ ] Modal: Game Boy Camera photo export (colours, single / all):
       tokens only
 - [ ] Delete confirmation: native
 
 ### Palettes
 
-- [ ] Palettes list (cards, share code, rename, duplicate, delete):
-      restyled
+- [ ] Palettes list (tiles in a grid, share code, rename, duplicate,
+      delete): restyled
 - [ ] New palette / palette editor (colour inputs, save, reset): tokens
-      only
+      only, see (r)
 - [ ] Modal: Add Palette via Code: tokens only
 - [ ] Modal: Browse Palette Town: tokens only
 
 ### Fetch
 
-- [ ] Fetch list (sources, status, Fetch Files, remove): tokens only
-- [ ] Modal: Add Fetch Source (types, folder picker, extensions): tokens
-      only
+- [ ] Fetch list (sources as tiles, status tag, Fetch Files, remove):
+      restyled
+- [ ] Modal: Add Fetch Source (source, folder pickers, archive name check,
+      extensions, explanations): restyled
 - [ ] Remove confirmation: native
 
 ### Plugins
 
-- [ ] Plugins list, refresh, remove: tokens only
-- [ ] Modal: Add plugin: tokens only
+- [ ] Plugins list (tiles, search, author filter, Run, Remove): restyled
+- [ ] Modal: Add plugin (GitHub URL with hint and check): restyled
 - [ ] Plugin window (separate window, own light frame): tokens only
 - [ ] Remove / exit confirmations: native
 
@@ -571,7 +607,8 @@ general "modern UI" defaults, including shadcn and Lucide styling.
    Colour is sparse and means something. The accent is the **Analogue Pocket
    green `#84E38F`** (`--analogue-green`, the green Analogue uses for its
    buttons; was `#63DB84` until 2026-10-14), used for active and update states, always with dark
-   text on top. Blue is for selection, red for danger.
+   text on top (darker green only for text and icons on the light theme's
+   page). Green also marks selection (decision #26), red is for danger.
 5. **Keep the playful details.** The 3D Pocket on the home screen, the
    RGB-split title hover and the cartridge-like core cards are part of the
    charm and stay unless deliberately redesigned.
@@ -582,7 +619,7 @@ general "modern UI" defaults, including shadcn and Lucide styling.
    that you move through with arrow keys (a tab group / roving tabindex).
    Focus is always visible.
 8. **Readable widths.** Text-heavy content is at most `--content-max-width`
-   (800px). Tiled grids may use the full width, since their text blocks
+   (720px). Tiled grids may use the full width, since their text blocks
    don't span the screen.
 
 When a change can't satisfy a principle, note the trade-off here.
@@ -612,16 +649,16 @@ here.
 | 4   | How do Figma and code stay aligned? | **Figma's Theme / Layout / Typography variables mirror `theme.css` one-to-one**, with web code syntax `var(--…)`. A Figma mode equals a `data-theme` block. Tokens are kept in sync by hand; one-off helper scripts (like the token export used for the first Figma import) are not committed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | 5   | How are components built?           | **`src/components/ui/<Name>/` per component, on Radix primitives where Radix has one** (Toggle, Select, Dialog, Popover, Tooltip, Slot). Structure follows a conventional design-system layout: `Name.tsx` + `Name.css` + `index.ts`, default export with exported prop and theme types, `clsx` with BEM `--theme-*` / `--is-*` modifiers, `React.memo` / `forwardRef` with `displayName`, `* as RadixX` imports. Existing `Controls*` components are re-implemented on the primitives first, so call sites keep working.                                                                                                                                                                                                                                                                                                                                                           |
 | 6   | Icons                               | **REVISED 2026-10-13: Pixelarticons (MIT, 24px pixel grid) for UI and company icons, plus the GamePocket font's ligature glyphs for Analogue Pocket icons, through one `Icon` component with a fixed name registry. Default size 16px**: 24px is pixel-perfect but too large next to the UI text, and in-between sizes stay sharp via `crispEdges`. Its pixel grid matches GamePocket and the handheld (principles 2 and 3). Phosphor Bold, Remix Line and Material Symbols were compared and rejected. Only marks neither source covers (Analogizer) stay custom SVGs. An inline SVG is deleted only after its replacement has been reviewed. Where Pixelarticons lacks an icon, pick the closest pixel icon (e.g. `tools` for repair); never mix in another set. _Was: Lucide everywhere. Its thin, rounded strokes read as generic next to the pixel type and slanted controls._ |
-| 7   | Sidebar                             | **Icon + label rows with the controls' slanted cut, grouped** (Home / library / media and data / tools), with Settings pinned at the bottom. Collapsible to icons only, with Radix tooltips; the collapsed state is saved via jotai `atomWithStorage`. `--sidebar-width` is a token, not measured. New strings exist in English only; other locales fall back to it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| 7   | Sidebar                             | **Icon + label rows with the controls' slanted cut, grouped** (Home / library / media and data / tools), with Settings pinned at the bottom. Collapsible to icons only, with Radix tooltips; the collapsed state is saved via jotai `atomWithStorage`. `--sidebar-width` is a token, not measured. Its strings are translated like all others (see Translations in Current status).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 8   | Typography                          | **Inter for UI, GamePocket for display**, exposed as `--font-body` / `--font-display`. Figma text styles bind their family to matching variables. The Figma MCP can't use local fonts, so Figma uses Silkscreen as a stand-in until switched by hand.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| 9   | Accent colour                       | **Analogue green `#84E38F`** (`--analogue-green` → `--theme-accent` in the dark themes; revised 2026-10-14 from `#63DB84`, which replaced `#589050`). Anything placed on it uses `--theme-accent-text` (#111): off-white text on the lighter green is about 1.6:1 contrast, dark text about 11:1.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| 9   | Accent colour                       | **REVISED 2026-10-15: Analogue green `#84E38F` as the accent fill in both themes** (`--analogue-green` → `--theme-accent`; revised 2026-10-14 from `#63DB84`, which replaced `#589050`). Anything placed on it uses `--theme-accent-text` (#111): off-white text on the green is about 1.6:1 contrast, dark text about 11:1. Green text, icons and borders on the page use `--theme-accent-foreground`: the same green in dark, `#1e8e4e` in light, where the Analogue green on white is too faint. _Was: the light theme used `#1e8e4e` with white text as its accent fill._                                                                                                                                                                                                                                                                                                       |
 | 10  | Keyboard navigation                 | **Lists and grids are tab groups with a roving tabindex.** Sidebar: Radix Tabs (vertical, manual activation, so arrowing doesn't load every screen). Grids and other lists: `useRovingFocus` + `getSpatialNeighbor`, ported from an earlier implementation, because arrow keys must follow the visual layout of a wrapping grid and items may be lazily rendered or filtered out. `react-roving-tabindex` was considered; the in-house hook handles spatial grids and DOM-filtered items without extra wiring.                                                                                                                                                                                                                                                                                                                                                                      |
-| 11  | Content width                       | **`--content-max-width: 800px`** for text-heavy views (Settings first, then Saves, Firmware, core info…). Tiled grids are exempt.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| 11  | Content width                       | **REVISED 2026-10-13: `--content-max-width: 720px`** for text-heavy views (Settings first, then Saves, Firmware, core info…). Tiled grids are exempt. _Was: 800px._                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 12  | Checkbox vs switch                  | **Settings that apply immediately use `Switch`**; checkboxes or `Toggle`s are for choices that need a separate save or submit, or for filters.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | 13  | AI disclosure                       | **The upstream PR (and any other public write-up) states that AI (Claude Code) was used to help with the redesign**: what it did (code, docs, translations) and that every change was directed and reviewed by @olivierbrcknr. Translations get their own note, because @olivierbrcknr can't check every language.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 14  | Text colours                        | **Three levels from one colour with alpha:** headline (100%), body (84%, default), soft (53%, dates and secondary info). Use these instead of ad-hoc `opacity` on text.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | 15  | Scope                               | **REVISED 2026-10-13: this PR is frontend-only.** It does not touch backend code in `src-tauri`; the only exception is window styling in `tauri.conf.json`. Features that need new backend commands (e.g. ejecting the SD card volume) are stretch goals for a follow-up.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| 16  | Focus colour                        | **`--theme-focus`** (the accent green) for every keyboard focus ring, separate from `--theme-selection` (blue), which marks selected items.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 16  | Focus colour                        | **`--theme-focus`** (the accent green; the darker foreground green in light) for every keyboard focus ring, separate from `--theme-selection`, which marks selected items (also green since decision #26).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | 17  | Header bars                         | **Search and filters on the left, actions on the right** (`ControlsActions`). Destructive actions use `theme="destructive"` with the `trash` icon.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 18  | Button labels                       | **Verb + noun**, e.g. "Add Core", "Remove Plugin", "Back to Cores". Dialog dismiss buttons ("Close", "Cancel") may stay short, because the dialog names the subject. A button never lacks a label: icon-only buttons use `IconButton`, whose label is the tooltip and accessible name.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | 19  | Focus visibility                    | **Focus rings only for keyboard users** (`useKeyboardFocus`, `:root.keyboard-focus`), not after mouse clicks.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
@@ -632,9 +669,9 @@ here.
 | 24  | App shell                           | **REVISED 2026-10-13: the same home view with or without an SD card, but no sidebar while disconnected.** Home offers Connect instead of Eject. _Was: the sidebar showed with every view but Home disabled._                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | 25  | Naming                              | **"Saves" is shown as "Backups"**, to separate backup locations from save states. Internal names (`Saves` view, `saves` namespace) are unchanged.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | 26  | Selection colour                    | **REVISED 2026-10-13: selection is the accent green** (`--theme-selection` → `--theme-accent`); hovers are light grey. Blue is not used. _Was: blue (`#396cd8`)._                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| 27  | Themes                              | **Dark (default), Light and System**, via `data-theme` on `<html>` set from a stored preference. Light mirrors the white Pocket with a darker green for contrast.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| 27  | Themes                              | **REVISED 2026-10-15: Dark (default), Light and System**, via `data-theme` on `<html>` set from a stored preference. Light mirrors the white Pocket and uses the same Analogue green fills as dark, with a darker green only for text and icons. _Was: light used a darker green for everything._                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | 28  | macOS window                        | **Overlay title bar** with the traffic lights inside the sidebar; other platforms keep native decorations. Config and capability change only.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| 29  | Modals                              | **App modals move to Radix Dialog** (close button, Escape, `onClose`) in (f2); until then the restyled native `<dialog>` stays. OS dialogs from the Tauri dialog plugin stay native.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| 29  | Modals                              | **App modals are Radix Dialog** (close button, Escape, `onClose`; done in (f2)). OS dialogs from the Tauri dialog plugin stay native.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | 30  | Styles                              | **Two styles: "Slanted" (default) and "Modern" (straight edges, more contrast)**, via `data-style` on `<html>`, independent of the dark/light theme. Whether both ship is decided later.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 
 ## Milestones
@@ -711,10 +748,10 @@ data would help.
 ### (h) Migration and clean-up
 
 Move the remaining raw `<button>` / `<input>` / `<select>` elements to
-primitives (Settings is done). `Link` renders a non-focusable `<span>`; make
-it a real link or button so keyboard users can reach links (e.g. the sponsor
-link). Remove legacy colour aliases once unused. Update the other languages
-for the relabelled buttons and new strings.
+primitives (Settings is done). Remove legacy colour aliases once unused, and
+the strings left unused by removed screens and buttons (the `update` page
+strings, modal `close_button` keys). Already done along the way: `Link` is a
+real `<a>` (sixth pass), and the other languages are translated.
 
 ### (i) Upstream PR
 
@@ -779,7 +816,7 @@ following the SD card folders (`Assets/<platform>`). This is possible without
 backend changes: `WalkDirSelectorFamily` already lists a platform folder's
 files (it drives the current game counts).
 
-### (o) Combobox for filter selects
+### (o) Combobox for filter selects ✅
 
 Searchable selects (type to filter options) for long lists like categories
 and authors, built on Radix Popover. Keep the slanted trigger and the
@@ -794,6 +831,43 @@ The home screen should reflect the user's own Pocket:
 - installed firmware, number of installed games and SD card usage (needs a
   disk-space source; check what the frontend can read first);
 - total play time, if the Pocket stores it on the SD card (to investigate).
+
+### (r) Palette detail screen
+
+The palette editor (`palettes/paletteFull.tsx`) is still the old layout:
+hard-coded radii (15px), GamePocket name with a thick underline, raw colour
+inputs and selects. Redo it like the other detail pages (`DetailPage`
+pattern where it fits): preview and emulator canvas, colour sets as labelled
+rows with our inputs, Save / Reset as `Button`s, credits as a `Callout` or
+facts. Requested 2026-10-15 ("eventually").
+
+### (s) Game names and images (proposal, separate PR)
+
+Decided 2026-10-15: not part of the redesign PR; tackled separately,
+maybe as its own PR.
+
+The Games list shows file names. Getting proper names and box art,
+frontend only:
+
+1. **CRC32 per game file:** `invokeFileMetadata` already returns it (the
+   backend reads the whole file, so it's fine for cartridge-sized ROMs but
+   slow for CD images; compute lazily per visible row and cache).
+2. **Images from the SD card first:** the Pocket's own library images,
+   `System/Library/Images/<platform>/<crc32>.bin`, which
+   `libraryImageSelector` already decodes (used by the MROM modal). They
+   exist only for the cartridge platforms (GB, GBC, GBA, GG, …) and only if
+   the user installed an image set.
+3. **Names from a public database:** libretro-database's per-system DAT
+   files (`metadat/no-intro/<System>.dat`, CC-BY-SA-4.0) map CRC32 to the
+   No-Intro name; fetch per system on demand and cache. Many files are
+   already named that way, so the file name stays the fallback.
+4. **Box art online (optional):** thumbnails.libretro.com serves
+   `<System>/Named_Boxarts/<No-Intro name>.png`. Needs a platform-id →
+   libretro system name table, a setting to turn online images off, and a
+   note about the images' copyright (they're scans of commercial boxes).
+
+Open: whether online lookups are wanted at all (privacy and offline use),
+and which platforms to start with.
 
 ### (n) Resizable sidebar and side panel
 
@@ -909,6 +983,285 @@ Third pass (2026-10-14, after review):
 - **Drop overlay:** dragging a .zip over the window shows "Drop to Install"
   (`zipInstall/dropOverlay.tsx`, Tauri webview drag events; the drop itself
   is still handled by the backend).
+
+Sixteenth pass (2026-10-15, after review):
+
+- **Games tools, explained (no change):** _Clean Up Files_ lists the
+  macOS metadata files under `Assets` (`._*` resource forks and `.DS_Store`,
+  which Finder writes to the SD card) and deletes them; the Pocket can show
+  `._` files as broken games. _Build Instance JSON_ runs the instance
+  packager for cores that ship an `instance-packager.json` in their
+  `Cores` folder (mostly CD-based cores): it scans their game folders and
+  writes the `instance.json` files the Pocket needs to launch multi-file
+  games, and logs each file written or skipped. Both work and have no other entry point, so
+  they stay; where they live is open (see Waiting on).
+- **Home:** the update banners pushed Colours / Eject below the window
+  (fixed 55vh Pocket, `overflow: hidden`). The Pocket is now at most what's
+  left of the window height (`100vh - 340px`), minus 46px per update banner
+  (`:has(.about__update-link)`), and the column scrolls as a last resort.
+- **Concentric radii:** a frame around rounded items gets their radius plus
+  its padding: the tab frame (`--radius` + 3px, modern), and dropdown lists
+  and popovers (new `--radius-popover`, `--radius` + 4px, with rounded rows).
+- **Modern frames:** the 1px frames drawn with clip-path (tertiary buttons,
+  the tab frame, code fields) kept square corners under the rounded
+  background; in modern they're inset box shadows that follow the radius.
+  Tertiary buttons have no outline in modern, only the hover background.
+- **Multi-select dropdowns:** the panel and its rows use the radius; the
+  Select All / Clear All buttons follow the frame fix above.
+- **Cores list:** Updates, Installed and Available share one section header
+  (`cores__section-header`: same margins, padding and height, with or
+  without an action). The Updates heading had no bottom margin and the
+  others the browser's default margins.
+- **Core detail links:** the author links to their GitHub profile (hero and
+  facts), a new **Source Code** fact links the repository when it differs
+  from the URL, URLs show without `https://`, and Firmware Required opens
+  the Firmware page. `Link` takes `onClick` for in-app links.
+- **Settings:** notes (`Callout`) inside a setting have the same 15px gap to
+  the next element as text. The section menu's scroll area now reaches the
+  window's top and bottom, with the 16px padding inside it, so items no
+  longer get cut off 16px from the edge.
+- **Light themes:** the green fills (primary buttons, tags, switches,
+  badges) use the Analogue green with dark text, like dark. Green text,
+  icons and borders on the page use the new `--theme-accent-foreground`
+  (`#1e8e4e` in light). Focus rings stay the Analogue green (the darker
+  one looked off; seventeenth pass). Destructive buttons have
+  white text in both themes (`--theme-danger-text`). Light modern's sidebar
+  is `#f0f0f0` against the white content, like dark's darker sidebar. Core
+  and platform cards get a 1px separator frame in light, drawn above the
+  image, so white platform images don't blend into the page.
+
+Twenty-third pass (2026-10-15, after review):
+
+- **Long names in tiles:** the archive source `ping-pong-diplomacy-gb-rom-v-1`
+  broke the tile: the text column couldn't shrink (`min-width: auto` in a
+  flex row), so the long title and `archive.org/details/…` link pushed the
+  actions out. `tile__body` / `tile__open` get `min-width: 0`, subtitle
+  links and fetch paths are one truncated line.
+- **Palettes flicker:** the list's `Suspense` had no fallback (blank page,
+  then tiles) and the previews none either (tiles jumped). Now skeleton
+  tiles while the list loads, and a 5:4 placeholder per preview.
+- **Spinner:** `SPINNER_FRAME_MS` is 160.
+- **Select** no longer scales on press: its trigger is a classed `<button>`
+  and picked up the legacy `button[class]:active` scale.
+- **Updatable filter:** only installed cores checked it, so the whole
+  Available list stayed; not-installed cores now hide while it's on.
+- **Search fields:** pressing anywhere in a `TextInput`'s frame (icon, key
+  caps, padding) focuses the field; buttons and links inside keep their
+  clicks.
+- **What's New:** the release date moved out of the heading onto its own
+  soft line, formatted with `toLocaleDateString()` like the other dates.
+  The bullets are inset now (the side-padding rule out-ranked the list
+  rule; it's `:where()` now, without specificity).
+- **Library Updates:** "Last updated … ago" sits on its own line under the
+  source, left aligned and small; the panel title uses the rows' padding.
+
+Twenty-second pass (2026-10-15, after review):
+
+- **"Nothing matches":** `ui/NoResults`, a soft line with a search icon,
+  last inside a `.search-results` wrapper. Pure CSS: it shows once the
+  wrapper holds no tiles, game sections, screenshots or loading
+  placeholders, so the lists that hide their own items need no count. On
+  Cores, Platforms, Games, Save States, Screenshots and Plugins (only when
+  there are items at all; otherwise the `EmptyState` shows). Cores also
+  hides the heading of a section the search emptied.
+- **Fetch status didn't refresh:** file events notify paths without a
+  leading slash ("Fetch Example"), but fetch watched "/Fetch Example".
+  `fsWatchAtomFamily` now normalises paths (leading / trailing slashes;
+  "/" stays the root), which fixes any watch with a leading slash. Refresh
+  Status now re-reads local sources too (it only re-checked archive.org).
+- **Fetch status text:** "All 5 files up to date" (green), "2 of 5 files
+  to fetch" (yellow when some are there; newer files at the source count as
+  to fetch), "No files found". **Last fetched … ago** in the meta line,
+  stored on this computer per source (`fetch_last_run`), since the SD
+  card's config has no field for it.
+- **Fetch tile:** the icon sits at the top left; Fetch Files is secondary;
+  a tertiary **Open Folder on SD Card** icon button opens the destination.
+  Run Plugin is secondary too; the plugin logo also sits at the top.
+- **`ui/ProgressBar`:** a framed rectangle with the shared radius, a solid
+  accent fill 2px inside, the label (cut at the start, so file names show)
+  and percentage above, an indeterminate mode, reduced motion respected.
+  `ProgressLoaderInner` renders it, so Fetch, Firmware and the GB palette
+  conversion use it; the update and zip install modals still have their
+  own bars ((h)).
+- **Loading preview** (Settings → Developer, dev builds): both spinners at
+  40 and 20px with a speed slider (16–400ms per frame, preview only), and a
+  determinate and an indeterminate progress bar. `Spinner` takes
+  `frameMs`. (`SPINNER_FRAME_MS` was 16 in the code; set back to 160 in
+  the twenty-third pass.)
+- **What's New:** paragraphs and list items are explicitly body colour,
+  sub-headings ("Fixes", …) headline at the body size, and lists keep their
+  bullets inside the side padding (the 12px padding had replaced the list
+  indent).
+- **Library Updates:** the list's extra 10px side padding is gone, so rows
+  line up with What's New; each row shows the core's platform image (from
+  the inventory) on the left and an **Installed** tag when the core is on
+  the SD card.
+- Strings: `app.no_results` and the new fetch strings in every locale; the
+  loading preview is English only (dev tool).
+
+Twenty-first pass (2026-10-15, after review):
+
+- **Tooltip:** its own line height (`1.4`; `:root`'s fixed 24px made the
+  12px label as tall as a button) and the buttons' ratio: side padding
+  1.35× the vertical space plus half the slant.
+- **Pocket Colours** on Home is a tertiary icon button (tooltip "Pocket
+  Colours"), so it doesn't compete with Disconnect. `about.colours` is
+  removed in every locale.
+- **Plugin tiles** span the full width (descriptions and links were cut
+  off in columns), with a 120px logo.
+- **Plugin window:** it now applies the theme and style itself (it's a
+  separate webview; the settings are files, so it reads the same ones), and
+  its native title bar follows the theme. The log is a framed code panel in
+  the theme's colours instead of a white box; the plugin's questions use
+  `Button` (choices) and `TextInput` + a primary Submit.
+- **What plugins are:** small WebAssembly programs from a GitHub release,
+  shared with other Pocket updaters (e.g. pupdate). They run sandboxed with
+  access to the SD card, a private data folder on the computer and the web
+  hosts their `plugin.json` allows; they print a log, ask multiple-choice or
+  text questions, and can open links. The example plugin only shows the
+  flow. Worth a sentence on the Plugins page; see Waiting on.
+- **Example fetch sources** (not in the repo): two added to the test SD
+  card's `pocket-sync.json` for reviewing the styling, a local folder and
+  an archive.org item, both into an empty `/Fetch Example` folder.
+
+Twentieth pass (2026-10-15, after review):
+
+- **What Play does:** it opens the plugin in its own window (600 × 900,
+  always on top), where the plugin runs, asks its questions and works on
+  the SD card; the button shows that it's running until the window closes.
+  It's now a primary **Run Plugin** button (play icon, "Running…" and
+  disabled while open).
+- **Plugin tiles:** `Tile orientation="horizontal"` with the logo (or a
+  plug icon), the name as the title (18px in horizontal tiles), the
+  repository as a soft link, the description, the version as meta, and Run
+  / Remove (destructive icon button) as actions. Grid columns of at least
+  380px.
+- **Plugin search and filter:** a search over name, description and
+  repository, and an **Author** filter (the GitHub owner) once plugins come
+  from more than one author. Plugins have no other data worth filtering by
+  (name, description, version, URL only).
+- **Add plugin modal:** a `Field` with label, hint (the release needs
+  `plugin.wasm` and `plugin.json`) and error, a code-style `TextInput`
+  (Enter submits), Cancel / Verify & Install as `Button`s, a "Checking…"
+  state.
+- **Fetch sources:** horizontal tiles with an icon (folder or archive), the
+  folder or archive name as the title, the full path (cut at the start) or
+  the archive.org link as the subtitle, "To … on the SD card" and the
+  extension filter as meta, the file count as a tag (green with a check
+  when complete, yellow when partial) or the progress while fetching, and
+  Fetch Files (primary while files are missing) / Remove as actions.
+- **Add Fetch Source modal:** an intro saying what Fetch does, then fields
+  with labels and hints: Source (Local Files / Internet Archive, each
+  explained), Folder on This Computer (subfolders are copied too), Archive
+  Name (the part after archive.org/details/, with an example; checked
+  against archive.org half a second after typing stops, with a found / not
+  found line), File Extensions (optional, as removable chips; what leaving
+  it empty means), the zipped-archives note as an info `Callout`, and
+  Folder on the SD Card (e.g. `/Assets/gb/common`). Folder fields show the
+  choice in a code frame next to a Choose Folder button. Add Fetch Source
+  stays disabled until the source is complete.
+- **New primitives:** `ui/Field` (label, control, hint or error),
+  `modal--form` (a readable width, content height) and `modal__actions`
+  (dismiss first, main action last). `Tile` got an optional `media`, a
+  `description` slot and `tile__icon` for items without a picture; its
+  subtitle is soft. The `play` icon is registered.
+- Strings: the new ones are translated in every locale. Now unused (for
+  (h)): `fetch.loading`, `fetch.new.archive_name`, `.origin`,
+  `.destination`, `.extensions`, `.close`.
+- **Game names and images:** asked how hard it would be; written up as
+  milestone (s).
+
+Nineteenth pass (2026-10-15, after review):
+
+- **Home doesn't scroll:** the column's last-resort scrolling is gone
+  (`overflow: hidden`). Instead of guessing the Pocket's size from the
+  window height (`100vh - 340px` minus banners), it sits in
+  `about__pocket-area`, which takes the height left after the title,
+  banners, stats and buttons (`container-type: size`), and is square at
+  `min(100cqh, 100cqw, 520px)`. The compact layout (≤ 700px tall) keeps the
+  Pocket beside the column (`display: contents` on the area).
+- **Disconnect instead of Eject:** the home button uses Settings'
+  "Disconnect Pocket" (`settings:disconnect.button`, already translated),
+  since it only disconnects the folder; Eject comes with (k). The
+  `about.eject` string is removed in every locale, and `about__eject` is
+  `about__actions`.
+- **Colour swatches:** `SelectOption.swatch` (a CSS colour) puts a small
+  circle before the label, in the list and the closed select. The Pocket
+  colour options use the 3D model's colours (`three/hooks/colours.ts`), in
+  the home popover and in Settings. The "Colours" label stays: the popover
+  sets body and button colours, and the editions (Classic, Transparent,
+  Aluminium, …) are already its group headings.
+
+Eighteenth pass (2026-10-15, after review):
+
+- **Tabs keep the scroll position:** a tab opened for the first time
+  (Settings, Releases) suspended up to the page's boundary, so the page
+  turned into a loader and jumped to the top. Each tab now has its own
+  `Suspense` with a loader, and the core page's tab panel is at least a
+  screen tall, so switching to a short tab doesn't pull the page up.
+- **Save state tiles:** back to the old layout (small image left, game and
+  date beside it, camera export on the right) as `Tile
+orientation="horizontal"`, so frame, background, radius, hover and
+  selection stay shared. The image takes the Pocket screen's 10:9 again:
+  save states are stored at the core's own resolution and stretched to the
+  screen, which the vertical tile didn't do, so they looked distorted. The
+  grid uses columns of at least 280px.
+- **Regular font size is 16px** (`--font-size-md`, the root size). Settings
+  use it throughout, now also for their notes (`Callout` is 14px
+  elsewhere); the header bars' compact controls stay at 14px.
+- **Line breaks in Settings:** the descriptions contain hard `\n` breaks
+  mid-sentence (written for an older, narrow layout) and were shown with
+  `pre-wrap`. They now read as spaces; the strings are unchanged. The
+  `--collapse-spaces` modifier became redundant and is gone.
+- **Games by system, checked:** it matches the SD card. Games live in
+  `Assets/<platform>/` (mostly `common/`), shared by every core for that
+  platform, so the old per-core list showed the same folder once per core
+  (e.g. several Game Boy cores). Known gaps: cores whose games are
+  `instance.json` files (CD and many arcade cores) are only listed through
+  their data slot's extensions, so CD tracks can count as separate games
+  and arcade sets may be missing; the system header doesn't say which
+  cores play it yet.
+- Removed an unused `SelectOption` import in Settings (the lint error noted
+  earlier).
+
+Seventeenth pass (2026-10-15, after review):
+
+- **Light focus ring:** back to the Analogue green (`--theme-focus:
+var(--theme-accent)`); the darker foreground green looked too dark next
+  to the light green fills.
+- **`ui/Tile`:** one card for every grid of items: media on top (full
+  width, on the media background), title, subtitle (e.g. the author with
+  `tile__avatar`), soft meta line, tags pinned to the bottom, optional
+  action row. Card radius, hover lightens, `selected` draws a 2px
+  selection frame, and the light theme's separator frame lives here. Without
+  actions the whole tile is a `role="button"`; with actions, media and text
+  become its open button, so the buttons aren't nested. `Grid`'s arrow-key
+  navigation includes those open buttons. Cores, platforms, save states and
+  palettes use it; the `cores__item` card styles are gone.
+- **Save States:** tiles in a `Grid` per core (screenshot on top, game,
+  date and time), like the cores; the Game Boy Camera export is a tertiary
+  icon button ("Export Photos") in the action row. Groups with unloaded
+  placeholders stay visible, so they still load. The sticky core headers'
+  separator is inset like the header bar's.
+- **Palettes:** tiles in a `Grid` (preview, name, actions); the page grows
+  with its content, so the header bar stays sticky.
+- **Icon buttons (slanted):** as wide as tall plus the slant, since the
+  slant cuts into two corners and made them look narrow.
+- **Settings type:** row titles are the one emphasised level (18px,
+  semibold, headline colour); setting rows, their controls and descriptions
+  use the regular 16px in body colour (rows were 18px, titles the browser's
+  default `h3`, everything the same colour).
+- **Header bars:** 12px vertical padding (was 8px), and the separator stops
+  at the side padding instead of running edge to edge
+  (`--header-bar-height` is 53px now).
+- **Screenshots empty state:** centred in the whole window (`EmptyState
+fullPage`; the page has no header bar). The button names in the hint are
+  emphasised (`<key>` in the `how_to` strings, headline colour), in every
+  language.
+- **Focus rings in modern** follow the control's radius: a 2px inset shadow
+  rounded with the radius plus the ring's 4px offset, instead of the
+  rectangular clip-path frame (inputs, buttons, selects, toggles, tabs,
+  switches, menu items).
 
 Fifteenth pass (2026-10-14, after review):
 
@@ -1382,6 +1735,91 @@ Newest at the bottom.
   filtered by them (e.g. RTC), if that's easily possible.
 - **Modal bug (2026-10-14):** opening and closing modals (e.g. with Escape)
   left a modal that "stays somehow but not really".
+- **Review 15 (2026-10-15):** asked what Clean Up Files and Build Instance
+  JSON do and whether they're needed. The home screen's bottom buttons
+  disappeared when a Pocket update was available. Radii of framed elements
+  like the tab selector should be concentric (the outer frame's radius grows
+  with the padding); "currently it looks a bit weird". The multi-select
+  dropdown's buttons and popover didn't use the radius; make them
+  consistent with the other buttons. The Cores section headings (especially
+  "Updates available") weren't consistent; all sections need the same
+  paddings. On the core page, the author "and any other elements that
+  might be relevant" should be links. In Settings, the warning had no
+  bottom margin, and the section menu was clipped by the padding at the top
+  and bottom; the padding belongs inside. The light modern theme should be
+  closer to the dark theme's colour separation (sidebar and background were
+  the same colour). In light mode, destructive buttons weren't readable
+  (white text, as in dark), the green looked too dark ("closer to the
+  analogue green"), and core tiles need a border because the mostly white
+  images blend into the background. Maybe tertiary buttons don't need a
+  border in modern.
+- **Review 22 (2026-10-15):** the fetch source
+  `ping-pong-diplomacy-gb-rom-v-1` didn't display correctly; the Palettes
+  page flickered while loading; the spinner should be 160ms; the fetch
+  source dropdown scaled on press, which looked off for such a big control;
+  the Manage Data Packs and Image Packs modals still need a pass; the
+  Updatable filter on Cores did nothing; clicking the search field's key
+  caps didn't focus it ("clicking anywhere on the input should focus the
+  input field"); in What's New the date belongs on its own dimmed row in the
+  app's date format, and the bullets still weren't inset; the library
+  updates' "… ago" should be left aligned and smaller.
+- **Review 21 (2026-10-15):** add empty states when a search or filters
+  leave nothing, e.g. a simple line like "there is no entry matching your
+  search / filters". Fetch said 0/1 files after fetching; maybe show the
+  last fetch time or whether updates are there. Align the fetch icon top
+  left, make Fetch secondary, maybe add "open directory" for the fetched
+  files. A new loading bar matching the app's vibe, rectangular with the
+  same radius and a clear bar, e.g. for fetch downloads. Run Plugin should
+  probably be secondary. Show the loading spinner somewhere to debug its
+  speed. What's New should use the body colour for text, and its list items
+  weren't inset. Library updates were too inset and should get a reference
+  image of the core they update, maybe with a tag if it's one the user has.
+- **Review 20 (2026-10-15):** the tooltip's vertical padding was too large;
+  match the buttons' ratio. The Home colours button could be an icon button,
+  so it isn't too prominent. Plugin tiles can be full width, otherwise things
+  get clipped, and the logo was too small. Asked for an example fetch source
+  to see the styling. Running a plugin opened a window that didn't use the
+  app's theme ("still a bit irritated what a plugin actually does"). Box art
+  is tackled separately, maybe in a separate PR, with a reminder when we
+  work on it again.
+- **Review 19 (2026-10-15):** the plugin tiles should use our tile system
+  and buttons; asked what the play button does. The plugin title should be
+  "more title-y" and the rest softer, like the cores; add search and
+  filters that make sense. The Fetch page lacked styling, especially the
+  modal: "I am not sure what to enter where, so maybe some explanations are
+  missing." Asked how difficult it would be to show the correct names and
+  images of games, whether there's a public library for it, or whether
+  it's in the files.
+- **Review 18 (2026-10-15):** the home page could scroll, which shouldn't
+  be possible. "Eject" on the home screen should be called "Disconnect" as
+  in Settings, since eject isn't implemented yet, to avoid confusion. Maybe
+  label the colours button "Edition", or leave it; the dropdown should show
+  a colour example, like a little circle.
+- **Review 17 (2026-10-15):** clicking a tab on the core page scrolled
+  back to the top; it should keep the scroll position. The old save state
+  tiles were better as a layout: "I wanted only the frame (and maybe
+  background) of a tile to be unified so that we do not have issues with
+  background edges"; otherwise the image needs the Pocket screen's aspect
+  ratio (the screenshots were distorted). Asked what the regular font size
+  is (14 or 16px); the settings should follow it, and some line breaks
+  shouldn't be there. Before the redesign, games were listed by core,
+  "which did not make sense in my opinion"; asked to check whether the new
+  grouping makes sense. Asked for example Fetch and Plugin entries to
+  review their styling.
+- **Review 16 (2026-10-15):** in the slanted style, icon buttons should be
+  roughly square too. Settings' font styles felt "a bit random": settings
+  and their inputs belong in the regular size, and the default text colour
+  should be body; "currently everything seems to have the same font
+  colour". Header borders shouldn't run all the way through but respect the
+  side padding, and the header rows' vertical padding can be closer to the
+  horizontal one ("it seems a bit squished"). The screenshots empty state
+  wasn't vertically centred, and the words tied to buttons ("Analogue
+  button", "Start") should be emphasised. Focus outlines on inputs ignored
+  the border radius. Save state tiles should be in a grid like the cores,
+  with rounded corners, and palettes too: "we likely should have a unified
+  style for tiles in general, so it is consistent across the app". The
+  palette detail screen should be tackled eventually. On light, the darker
+  focus ring looked off.
 - **Review 14 (2026-10-14):** focus outlines should be offset outside if
   possible, at least in the modern style; in the slanted style it's fine on
   the edge if the slant prevents an offset.

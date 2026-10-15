@@ -32,13 +32,17 @@ import { useTranslation } from "react-i18next"
 import { PreviewCanvas } from "./previewCanvas"
 import { PaletteTown } from "./town"
 import { useAtomValue } from "jotai"
-import Icon from "../ui/Icon"
 import EmptyState from "../ui/EmptyState"
 import IconButton from "../ui/IconButton"
+import Tile from "../ui/Tile"
+import { Grid } from "../grid"
+import { CardSkeleton } from "../ui/Skeleton"
 import TextInput from "../ui/TextInput"
 
 type PaletteUIModes =
-  { name: "list" } | { name: "new" } | { name: "selected"; palette: string }
+  | { name: "list" }
+  | { name: "new" }
+  | { name: "selected"; palette: string }
 
 export const Palettes = () => {
   const { t } = useTranslation("palettes")
@@ -111,13 +115,22 @@ export const Palettes = () => {
         </Suspense>
       )}
       {mode.name === "list" && (
-        <Suspense>
+        // Skeleton tiles while the list loads, instead of a blank page
+        <Suspense fallback={<PaletteListSkeleton />}>
           <PaletteList setMode={setMode} />
         </Suspense>
       )}
     </div>
   )
 }
+
+const PaletteListSkeleton = () => (
+  <div className="grid" aria-hidden>
+    {Array.from({ length: 6 }, (_, index) => (
+      <CardSkeleton key={index} height={260} />
+    ))}
+  </div>
+)
 
 type PaletteListProps = {
   setMode: Dispatch<SetStateAction<PaletteUIModes>>
@@ -141,7 +154,7 @@ const PaletteList = ({ setMode }: PaletteListProps) => {
   }
 
   return (
-    <ul className="palettes__list">
+    <Grid placeholderItemHeight={260}>
       {sortedPalettesList.map((palette) => (
         <PaletteListItem
           key={palette}
@@ -149,7 +162,7 @@ const PaletteList = ({ setMode }: PaletteListProps) => {
           onClick={() => setMode({ name: "selected", palette })}
         />
       ))}
-    </ul>
+    </Grid>
   )
 }
 
@@ -201,61 +214,69 @@ export const PaletteListItem = ({
   }, [interimName, name, pocketPath])
 
   return (
-    <li className="palettes__card">
-      {renameMode ? (
-        <div className="palettes__card-rename">
-          <TextInput
-            label={t("item.rename")}
-            value={interimName}
-            onChange={setInterimName}
-            onKeyDown={({ key }) => {
-              if (key === "Enter") renamePalette()
-            }}
-            autoFocus
+    <Tile
+      onClick={renameMode ? undefined : onClick}
+      media={
+        // Same shape as the preview, so the tile doesn't jump when it loads
+        <Suspense fallback={<div className="palettes__preview-placeholder" />}>
+          <PreviewCanvas name={name} />
+        </Suspense>
+      }
+      title={
+        renameMode ? (
+          <div className="palettes__card-rename">
+            <TextInput
+              label={t("item.rename")}
+              value={interimName}
+              onChange={setInterimName}
+              onKeyDown={({ key }) => {
+                if (key === "Enter") renamePalette()
+              }}
+              autoFocus
+            />
+            <IconButton
+              icon="check"
+              label={t("item.rename")}
+              onClick={renamePalette}
+            />
+          </div>
+        ) : (
+          <PaletteName name={name} />
+        )
+      }
+      actions={
+        <>
+          <IconButton
+            theme="tertiary"
+            icon="copy"
+            label={t("item.duplicate")}
+            onClick={duplicatePalette}
           />
           <IconButton
-            icon="check"
-            label={t("item.rename")}
-            onClick={renamePalette}
+            theme="tertiary"
+            icon="code"
+            label={t("item.copy_code")}
+            onClick={() => writeText(paletteCode)}
           />
-        </div>
-      ) : (
-        <button type="button" className="palettes__card-open" onClick={onClick}>
-          <Suspense>
-            <PreviewCanvas name={name} />
-          </Suspense>
-          <PaletteName name={name} />
-        </button>
-      )}
-
-      <div className="palettes__card-actions">
-        <IconButton
-          icon="copy"
-          label={t("item.duplicate")}
-          onClick={duplicatePalette}
-        />
-        <IconButton
-          icon="code"
-          label={t("item.copy_code")}
-          onClick={() => writeText(paletteCode)}
-        />
-        <IconButton
-          icon="pencil"
-          label={t("item.rename")}
-          onClick={() => {
-            setInterimName(name.replace(".pal", ""))
-            setRenameMode(true)
-          }}
-        />
-        <IconButton
-          icon="trash"
-          theme="destructive"
-          label={t("item.delete")}
-          onClick={deletePalette}
-          className="palettes__card-delete"
-        />
-      </div>
-    </li>
+          <IconButton
+            theme="tertiary"
+            icon="pencil"
+            label={t("item.rename")}
+            onClick={() => {
+              setInterimName(name.replace(".pal", ""))
+              setRenameMode(true)
+            }}
+          />
+          <IconButton
+            icon="trash"
+            theme="destructive"
+            label={t("item.delete")}
+            onClick={deletePalette}
+            className="palettes__card-delete"
+          />
+        </>
+      }
+    />
   )
 }
 

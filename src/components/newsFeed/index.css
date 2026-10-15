@@ -9,7 +9,7 @@
   overflow: hidden;
 }
 
-.news-feed__title-last-updated{
+.news-feed__title-last-updated {
   color: var(--theme-text-soft);
   float: right;
 }
@@ -43,7 +43,7 @@
 }
 
 .news-feed__item--new {
-  border-right: 2px solid var(--theme-accent);
+  border-right: 2px solid var(--theme-accent-foreground);
 }
 
 .news-feed__item--update {
@@ -86,6 +86,21 @@
 }
 
 /* Vertical list, used beside the start screen's hero */
+.news-feed--vertical .news-feed__title {
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--font-size-sm);
+  border-bottom: 1px solid var(--theme-separator);
+}
+
+/* "Last updated … ago" on its own line, small, under the source link */
+.news-feed--vertical .news-feed__title-last-updated {
+  display: block;
+  float: none;
+  margin-top: var(--space-2xs);
+  font-size: var(--font-size-xs);
+}
+
+/* Vertical list, used beside the start screen's hero */
 .news-feed--vertical {
   background-color: transparent;
   display: flex;
@@ -100,15 +115,16 @@
     flex-grow: 1;
     min-height: 0;
     overflow: hidden auto;
-    padding-inline: 10px;
   }
 
-  /* Rows on the pane's background, split by dividers; same type as the
-     changelog entries next to it */
+  /* Rows on the pane's background, split by dividers; same type and side
+     padding as the What's New rows. Platform image on the left, title,
+     date and tag beside it. */
   .news-feed__item {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-md);
     width: auto;
     min-width: 0;
     flex-shrink: 0;
@@ -129,6 +145,30 @@
       outline: 2px solid var(--theme-focus);
       outline-offset: calc(-2px - var(--focus-offset));
     }
+  }
+
+  .news-feed__item-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .news-feed__item-image {
+    display: block;
+    flex-shrink: 0;
+    width: 64px;
+    height: auto;
+    aspect-ratio: 521 / 165;
+    margin-top: 2px;
+    border-radius: var(--radius);
+    background-color: var(--theme-media-background);
+    image-rendering: pixelated;
+    object-fit: cover;
+  }
+
+  .news-feed__item-tags {
+    margin-top: var(--space-2xs);
   }
 
   .news-feed__item-title {

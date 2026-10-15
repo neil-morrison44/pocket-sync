@@ -8,11 +8,9 @@
     "close_changelog": "关闭",
     "library_updates": "资料库更新",
     "side_panel": "更新",
-    "eject": "弹出SD卡",
     "show_updates": "显示更新",
     "hide_updates": "隐藏更新",
     "pocket_colours": "Pocket 颜色",
-    "colours": "颜色",
     "body_colour": "机身",
     "button_colour": "按键",
     "stats": {
@@ -29,7 +27,8 @@
     "not_pocket_tip": "目录无法识别, 请确认SD卡已经由Pocket完成初始化",
     "close": "关闭",
     "loading": "加载中",
-    "dismiss": "关闭"
+    "dismiss": "关闭",
+    "no_results": "没有符合搜索或筛选条件的内容。"
   },
   "clean_files": {
     "close_button": "关闭",
@@ -119,6 +118,7 @@
       "analogizer": "Analogizer"
     },
     "url": "网页地址",
+    "source_code": "源代码",
     "version": "版本",
     "display_modes_title": "显示模式",
     "display_mode_warning": "此显示模式需要更新核心，您确定要打开它吗？",
@@ -233,7 +233,27 @@
       "origin": "源目录",
       "title": "添加新的同步",
       "validating_archive_name": "正在检查存档“{name}”...",
-      "invalid_archive_name": "在 https://archive.org/details/{name} 上找不到存档"
+      "invalid_archive_name": "在 https://archive.org/details/{name} 上找不到存档",
+      "intro": "同步会把文件复制到 SD 卡并保持最新。“同步文件”会复制卡上缺少的文件，以及源中较新的文件。",
+      "type_label": "来源",
+      "type_hint": {
+        "filesystem": "这台电脑上的一个文件夹，例如你的 BIOS 或游戏收藏。",
+        "archive_org": "archive.org 上文件未压缩打包（zip）的条目。"
+      },
+      "origin_label": "这台电脑上的文件夹",
+      "origin_hint": "其中的所有内容都会被复制，包括子文件夹。",
+      "archive_label": "存档名称",
+      "archive_hint": "条目地址中 archive.org/details/ 之后的部分，例如 <code>openFPGA-Files</code>。",
+      "archive_found": "已在 archive.org 找到",
+      "extensions_label": "文件扩展名（可选）",
+      "extensions_hint": "只下载这些扩展名的文件，例如 bin 或 rom。留空则下载所有文件，包括 archive.org 自身的元数据文件。",
+      "extension_placeholder": "例如 bin",
+      "remove_extension": "移除 {extension}",
+      "destination_label": "SD 卡上的文件夹",
+      "destination_hint": "文件存放的位置，例如 Game Boy 游戏或 BIOS 文件放在 <code>/Assets/gb/common</code>。",
+      "choose_folder": "选择文件夹",
+      "no_folder": "未选择文件夹",
+      "cancel": "取消"
     },
     "remove_button": "移除同步源",
     "remove_confirm": "这一操作将移除选定的同步设置但是并不会删除已经存在的文件，您确定吗?",
@@ -244,7 +264,17 @@
     "empty": {
       "title": "还没有获取来源",
       "text": "获取会将电脑上的文件夹或 archive.org 中的文件复制到 SD 卡。添加一个来源即可开始。"
-    }
+    },
+    "to_destination": "到 SD 卡的 {destination}",
+    "only_extensions": "仅 {extensions}",
+    "archive_link": "archive.org/details/{name}",
+    "status": {
+      "empty": "未找到文件",
+      "complete": "{total, plural, other {全部 # 个文件均为最新}}",
+      "to_fetch": "{total, plural, other {# 个文件}}中有 {missing} 个待同步"
+    },
+    "last_fetched": "上次同步 <time></time>",
+    "open_destination": "打开 SD 卡上的文件夹"
   },
   "firmware": {
     "current": "现有固件版本: v{version}",
@@ -333,7 +363,8 @@
   "plugins": {
     "buttons": {
       "add": "添加插件",
-      "refresh": "刷新插件"
+      "refresh": "刷新插件",
+      "run": "运行插件"
     },
     "remove": "移除插件",
     "confirm_remove": "这将同时删除插件在此计算机上存储的所有本地数据，您确定吗？",
@@ -345,11 +376,20 @@
       "title": "通过 URL 添加插件",
       "add": "验证并安装插件",
       "cancel": "取消",
-      "invalid": "该URL未找到有效的插件"
+      "invalid": "该URL未找到有效的插件",
+      "url_label": "GitHub 仓库",
+      "hint": "插件仓库的地址。其最新版本需要包含 plugin.wasm 和 plugin.json 文件。",
+      "checking": "检查中…"
     },
     "empty": {
       "title": "没有安装插件",
       "text": "插件为 Pocket Sync 添加更多工具。"
+    },
+    "running": "运行中…",
+    "controls": {
+      "search": "搜索",
+      "author": "作者",
+      "all": "全部"
     }
   },
   "palettes": {
@@ -508,6 +548,7 @@
     },
     "photos": {
       "title": "图片输出",
+      "open_export": "输出图片",
       "palette": "调色板",
       "custom": "自定义",
       "close": "关闭",
@@ -563,7 +604,7 @@
       "select": "选择"
     },
     "no_screenshots": "您的截屏都会在此显示",
-    "how_to": "游戏中同时按下 Analogue 键和 Start 键即可截屏。截图会保存到 SD 卡并显示在这里。",
+    "how_to": "游戏中同时按下 <key>Analogue 键</key>和 <key>Start 键</key>即可截屏。截图会保存到 SD 卡并显示在这里。",
     "empty_title": "还没有截图"
   },
   "settings": {

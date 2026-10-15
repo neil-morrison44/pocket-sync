@@ -41,6 +41,21 @@
   height: fit-content;
 }
 
+/* A form: a readable width, as tall as its content */
+.modal--form {
+  width: min(560px, calc(100% - 100px));
+  height: fit-content;
+  gap: var(--space-xl);
+}
+
+/* Buttons at the end of a modal: dismiss first, the main action last */
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
 /* Title left, close button right */
 .modal__header {
   display: flex;

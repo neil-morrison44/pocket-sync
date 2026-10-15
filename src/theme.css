@@ -42,9 +42,11 @@
   --theme-inverse-text: #1f1f1f;
 
   /* Accents */
-  --theme-accent: var(--analogue-green);
+  --theme-accent: var(--analogue-green); /* fills: buttons, tags, switches */
   --theme-accent-text: #111; /* text and icons on the accent */
+  --theme-accent-foreground: var(--theme-accent); /* text, icons, borders */
   --theme-danger: rgb(200 80 88);
+  --theme-danger-text: #fff; /* text on the danger colour */
   --theme-warning: #c69327;
   --theme-highlight: #885090;
   --theme-analogizer: #659cde; /* Analogizer brand blue, only for its tags */
@@ -69,9 +71,10 @@
   --theme-sidebar-item-active: #333;
 }
 
-/* Light: the white Analogue Pocket. Black controls like the Analogue site,
-   and a darker green, because the Analogue green on white is too low in contrast for
-   text and icons. */
+/* Light: the white Analogue Pocket. Black controls like the Analogue site.
+   Fills use the Analogue green with dark text, as in the dark theme; green
+   text, icons and borders on the light page use a darker green, because the
+   Analogue green on white is too low in contrast for them. */
 :root[data-theme="light"] {
   color-scheme: light;
 
@@ -96,15 +99,17 @@
   --theme-inverse-text: #f4f4f1;
 
   /* Accents */
-  --theme-accent: #1e8e4e;
-  --theme-accent-text: #fff;
+  --theme-accent: var(--analogue-green);
+  --theme-accent-text: #111;
+  --theme-accent-foreground: #1e8e4e;
   --theme-danger: #c03a44;
+  --theme-danger-text: #fff;
   --theme-warning: #a8710f;
   --theme-highlight: #885090;
   --theme-analogizer: #2f6fbf;
   --theme-selection: var(--theme-accent);
   --theme-selection-text: var(--theme-accent-text);
-  --theme-focus: var(--theme-accent);
+  --theme-focus: var(--theme-accent); /* matches the green fills */
 
   /* Controls */
   --theme-control-background: #222;
@@ -187,9 +192,11 @@
   --theme-control-background: #000;
   --theme-control-text: #fff;
   --theme-control-off: #cfcfcf;
-  --theme-sidebar-background: #fff;
-  --theme-sidebar-item-hover: #f0f0f0;
-  --theme-sidebar-item-active: #e6e6e6;
+
+  /* Set apart from the white content, like the dark sidebar */
+  --theme-sidebar-background: #f0f0f0;
+  --theme-sidebar-item-hover: #e6e6e6;
+  --theme-sidebar-item-active: #dcdcdc;
 }
 
 /* ---------- Theme-independent tokens & aliases ---------- */
@@ -202,6 +209,7 @@
   /* Layout & typography */
   --content-max-width: 720px; /* text-heavy content; tiled grids may be wider */
   --titlebar-inset: 0px; /* room for the macOS traffic lights */
+
   /* 8px sidebar padding + 12px item padding on each side of a 16px icon,
      plus the 1px border */
   --sidebar-collapsed-width: 57px;
@@ -210,9 +218,9 @@
      line up */
   --page-padding-inline: var(--space-xl);
 
-  /* Height of the sticky header bar (28px controls + padding + border),
-     for things that stick just below it */
-  --header-bar-height: 45px;
+  /* Height of the sticky header bar (28px controls + 2 × 12px padding +
+     1px separator), for things that stick just below it */
+  --header-bar-height: 53px;
 
   /* Corner radii: one default, and a token per kind of element that points
      at it, so each can change on its own. Slanted shapes (clip-path) don't
@@ -223,6 +231,10 @@
   --radius-card: var(--radius);
   --radius-input: var(--radius);
   --radius-modal: var(--radius);
+
+  /* Nested corners stay concentric: a frame around rounded items gets their
+     radius plus its padding, e.g. the tab frame, popovers and dropdown lists */
+  --radius-popover: calc(var(--radius) + var(--space-xs));
   --radius-full: 999px;
   --space-2xs: 2px;
   --space-xs: 4px;

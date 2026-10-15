@@ -20,14 +20,18 @@
   grid-column: 1;
   grid-row: 1 / span 2;
   position: sticky;
-  top: var(--space-xl);
-  max-height: calc(100vh - 2 * var(--space-xl));
-  overflow: hidden auto;
+  top: 0;
 
-  /* Room for focus rings outside the items (modern style); the negative
-     margin keeps the menu where it was */
-  margin: -4px 0 0 -4px;
-  padding: 4px var(--space-lg) 4px 4px;
+  /* The scroll area reaches the window's top and bottom edges, with the
+     page padding inside it, so items scroll out at the edge instead of
+     being cut off 16px short of it. The negative margins keep the menu in
+     place; the 4px on the left is room for focus rings outside the items
+     (modern style). */
+  max-height: 100vh;
+  overflow: hidden auto;
+  box-sizing: border-box;
+  margin: calc(-1 * var(--space-xl)) 0 calc(-1 * var(--space-xl)) -4px;
+  padding: var(--space-xl) var(--space-lg) var(--space-xl) 4px;
   border-right: 1px solid var(--theme-separator);
 }
 
@@ -117,13 +121,12 @@
 .settings__ramble {
   margin: 0;
   padding: 0;
-  white-space: pre-wrap;
-  margin-bottom: 15px;
-}
+  color: var(--theme-text-body);
 
-/* Collapses the double space left where a placeholder was dropped */
-.settings__ramble--collapse-spaces {
+  /* The strings wrap mid-sentence with \n (for an older, narrow layout);
+     they read as spaces, and the text wraps to the column */
   white-space: normal;
+  margin-bottom: 15px;
 }
 
 .settings__row {
@@ -133,8 +136,28 @@
   scroll-margin-top: 4.5rem;
 }
 
+/* Type in Settings: the row title is the only emphasised text; settings,
+   descriptions and their controls use the regular size in body colour */
 .settings__row-title {
+  margin-block: 0 var(--space-md);
+  padding-bottom: var(--space-xs);
   border-bottom: solid var(--theme-separator) 1px;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--theme-text-headline);
+}
+
+/* Notes inside a setting: the same size as the rest of the settings, the
+   same distance to what follows as text, and no hard line breaks (see
+   .settings__ramble) */
+.settings__row > .callout {
+  font-size: var(--font-size-md);
+  white-space: normal;
+
+  &:not(:last-child) {
+    margin-bottom: 15px;
+  }
 }
 
 .settings__path {
@@ -183,7 +206,8 @@ h2.settings__thanks-title {
 /* A setting row: label on the left, its control (switch or select) right,
    framed so they read as one unit */
 .settings__checkbox {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
+  color: var(--theme-text-body);
   display: flex;
   gap: 10px;
   align-items: center;
@@ -226,9 +250,23 @@ h2.settings__thanks-title {
   &::after {
     content: "x";
     font-family: monospace;
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-md);
     margin-inline-start: 5px;
   }
+}
+
+.settings__loading-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xl);
+  margin-bottom: 15px;
+}
+
+.settings__loading-preview--bars {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-lg);
+  margin-top: 15px;
 }
 
 .settings__progress-bar {

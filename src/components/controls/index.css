@@ -11,14 +11,30 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 1px solid var(--theme-separator);
-  padding-block: var(--space-sm);
+
+  /* Close to the side padding, so the bar doesn't look squeezed */
+  padding-block: var(--space-lg);
   padding-inline: var(--page-padding-inline);
+
+  /* The separator stops at the side padding, in line with the content */
+  &::after {
+    content: "";
+    position: absolute;
+    right: var(--page-padding-inline);
+    bottom: 0;
+    left: var(--page-padding-inline);
+    height: 1px;
+    background-color: var(--theme-separator);
+    pointer-events: none;
+  }
 
   &.controls--variant-static {
     position: relative;
     z-index: auto;
-    border-bottom: none;
+
+    &::after {
+      content: none;
+    }
   }
 }
 

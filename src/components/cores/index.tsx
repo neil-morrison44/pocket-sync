@@ -40,6 +40,7 @@ import { CORE_FEATURES, CoreFeature } from "./features"
 import { useAtom, useAtomValue } from "jotai"
 import { useSmoothedAtomValue } from "../../utils/jotai"
 import { CardSkeleton } from "../ui/Skeleton"
+import NoResults from "../ui/NoResults"
 
 export const Cores = () => {
   const [selectedCore, setSelectedCore] = useAtom(selectedSubviewSelector)
@@ -193,12 +194,14 @@ const CoreList = ({
           }
 
           const dateA = new Date(
-            (inventoryItemA as InventoryItem).releases[0].core.metadata
-              .date_release
+            (
+              inventoryItemA as InventoryItem
+            ).releases[0].core.metadata.date_release
           )
           const dateB = new Date(
-            (inventoryItemB as InventoryItem).releases[0].core.metadata
-              .date_release
+            (
+              inventoryItemB as InventoryItem
+            ).releases[0].core.metadata.date_release
           )
 
           return dateB.getTime() - dateA.getTime()
@@ -219,12 +222,14 @@ const CoreList = ({
   }, [coreInventory.cores.data, coresList, sortMode])
 
   return (
-    <>
+    <div className="search-results">
       <Suspense>
         <UpdatesSection onSelect={onSelect} />
       </Suspense>
 
-      <h2>{t("installed", { count: sortedList.length })}</h2>
+      <div className="cores__section-header">
+        <h2>{t("installed", { count: sortedList.length })}</h2>
+      </div>
       <Grid placeholderItemHeight={160}>
         {sortedList.map((core) => (
           <Suspense
@@ -236,7 +241,9 @@ const CoreList = ({
         ))}
       </Grid>
 
-      <h2>{t("not_installed", { count: notInstalledCores.length })}</h2>
+      <div className="cores__section-header">
+        <h2>{t("not_installed", { count: notInstalledCores.length })}</h2>
+      </div>
       <Grid placeholderItemHeight={160}>
         {notInstalledCores.map((item) => (
           <Suspense
@@ -250,7 +257,8 @@ const CoreList = ({
           </Suspense>
         ))}
       </Grid>
-    </>
+      {sortedList.length + notInstalledCores.length > 0 && <NoResults />}
+    </div>
   )
 }
 

@@ -8,7 +8,8 @@ import { parse } from "date-fns"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { useTranslation } from "react-i18next"
 import { useAtomValue } from "jotai"
-import Icon from "../ui/Icon"
+import IconButton from "../ui/IconButton"
+import Tile from "../ui/Tile"
 
 type SaveStateItemProps = {
   path: string
@@ -48,37 +49,32 @@ export const SaveStateItem = ({
         !platform || platform === "All" || metadata.platform === platform
       }
     >
-      <div
-        className={`save-states__item save-states__item--${
-          selected ? "selected" : "unselected"
-        }`}
+      <Tile
+        className="save-states__item"
+        orientation="horizontal"
         onClick={onClick}
-      >
-        <img className="save-states__item-image" src={imageSrc}></img>
-
-        <div className="save-states__item-info">
-          <div className="save-states__item-name">{gameName}</div>
-          {date && (
-            <div className="save-states__item--date">
-              <div>{t("item.date", { date })}</div>
-              <div>{t("item.time", { date })}</div>
-            </div>
-          )}
-        </div>
-
-        {GB_CAMERA_NAMES.includes(metadata.game) && (
-          <div
-            className="save-states__camera-export-button"
-            title={t("photos.title")}
-            onClick={(e) => {
-              e.stopPropagation()
-              onExportPhotos()
-            }}
-          >
-            <Icon icon="camera" />
-          </div>
-        )}
-      </div>
+        selected={selected}
+        media={<img className="save-states__image" src={imageSrc} alt="" />}
+        title={gameName}
+        meta={
+          date && (
+            <>
+              <span>{t("item.date", { date })}</span>
+              <span>{t("item.time", { date })}</span>
+            </>
+          )
+        }
+        actions={
+          GB_CAMERA_NAMES.includes(metadata.game) && (
+            <IconButton
+              theme="tertiary"
+              icon="camera"
+              label={t("photos.open_export")}
+              onClick={onExportPhotos}
+            />
+          )
+        }
+      />
     </SearchContextSelfHidingConsumer>
   )
 }

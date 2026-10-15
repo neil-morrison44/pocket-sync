@@ -6,9 +6,11 @@ import {
 } from "../../jotai/saveStates/selectors"
 import Select from "../ui/Select"
 import EmptyState from "../ui/EmptyState"
+import NoResults from "../ui/NoResults"
 import ButtonCombo from "../ui/ButtonCombo"
 import { SaveStateItem } from "./item"
-import { Loader } from "../loader"
+import { Grid } from "../grid"
+import { CardSkeleton } from "../ui/Skeleton"
 
 import "./index.css"
 import { Controls, ControlsActions } from "../controls"
@@ -132,46 +134,47 @@ export const SaveStates = () => {
       )}
 
       <SearchContextProvider query={searchQuery} other={searchFilters}>
-        {groups
-          .filter(
-            ([coreName]) => coreFilter === "All" || coreName === coreFilter
-          )
-          .map(([coreName, saveStates]) => (
-            <section className="save-states__group" key={coreName}>
-              {coreName === CARTRIDGE ? (
-                <CartridgeHeader count={saveStates.length} />
-              ) : (
-                <Suspense fallback={<div className="save-states__header" />}>
-                  <CoreNameHeader
-                    coreName={coreName}
-                    count={saveStates.length}
-                  />
-                </Suspense>
-              )}
-              <div className="save-states__items">
-                {saveStates.map((p) => (
-                  <Suspense
-                    fallback={
-                      <Loader className="save-states__item" size={20} />
-                    }
-                    key={p}
-                  >
-                    <SaveStateItem
-                      path={p}
-                      selected={selectedStates.includes(p)}
-                      onClick={() =>
-                        setSelectedStates((s) => {
-                          if (s.includes(p)) return s.filter((os) => os !== p)
-                          return [...s, p]
-                        })
-                      }
-                      onExportPhotos={() => setIsExportingPhotos(p)}
+        <div className="search-results">
+          {groups
+            .filter(
+              ([coreName]) => coreFilter === "All" || coreName === coreFilter
+            )
+            .map(([coreName, saveStates]) => (
+              <section className="save-states__group" key={coreName}>
+                {coreName === CARTRIDGE ? (
+                  <CartridgeHeader count={saveStates.length} />
+                ) : (
+                  <Suspense fallback={<div className="save-states__header" />}>
+                    <CoreNameHeader
+                      coreName={coreName}
+                      count={saveStates.length}
                     />
                   </Suspense>
-                ))}
-              </div>
-            </section>
-          ))}
+                )}
+                <Grid
+                  className="save-states__items"
+                  placeholderItemHeight={240}
+                >
+                  {saveStates.map((p) => (
+                    <Suspense fallback={<CardSkeleton height={240} />} key={p}>
+                      <SaveStateItem
+                        path={p}
+                        selected={selectedStates.includes(p)}
+                        onClick={() =>
+                          setSelectedStates((s) => {
+                            if (s.includes(p)) return s.filter((os) => os !== p)
+                            return [...s, p]
+                          })
+                        }
+                        onExportPhotos={() => setIsExportingPhotos(p)}
+                      />
+                    </Suspense>
+                  ))}
+                </Grid>
+              </section>
+            ))}
+          {allSaveStates.length > 0 && <NoResults />}
+        </div>
       </SearchContextProvider>
     </div>
   )

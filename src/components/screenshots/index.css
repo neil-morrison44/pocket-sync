@@ -11,6 +11,11 @@
   font-size: var(--font-size-sm);
 }
 
+.screenshots__key {
+  font-weight: 600;
+  color: var(--theme-text-headline);
+}
+
 .screenshots__button {
   position: absolute;
   background-color: var(--light-colour);

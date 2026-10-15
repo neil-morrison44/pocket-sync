@@ -28,6 +28,7 @@
 .button--theme-primary {
   --button-background: var(--theme-accent);
   --button-text: var(--theme-accent-text);
+
   /* Inside the shape the ring sits on green, so it takes the text colour */
   --focus-ring-colour: var(--focus-ring-on-accent, var(--theme-accent-text));
 }
@@ -48,7 +49,7 @@
 
 .button--theme-destructive {
   --button-background: var(--theme-danger);
-  --button-text: var(--theme-text-headline);
+  --button-text: var(--theme-danger-text);
 }
 
 /* Slanted button, the app's signature shape */

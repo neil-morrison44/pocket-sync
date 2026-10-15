@@ -8,11 +8,9 @@
     "close_changelog": "Schließen",
     "library_updates": "Bibliotheks-Updates",
     "side_panel": "Updates",
-    "eject": "SD-Karte auswerfen",
     "show_updates": "Updates anzeigen",
     "hide_updates": "Updates ausblenden",
     "pocket_colours": "Pocket-Farben",
-    "colours": "Farben",
     "body_colour": "Gehäuse",
     "button_colour": "Tasten",
     "stats": {
@@ -29,7 +27,8 @@
     "not_pocket_tip": "In diesem Ordner befindet sich scheinbar kein Pocket-Dateisystem. Die SD-Karte muss zuerst vom Pocket initialisiert werden.",
     "close": "Schließen",
     "loading": "Wird geladen",
-    "dismiss": "Ausblenden"
+    "dismiss": "Ausblenden",
+    "no_results": "Nichts passt zu deiner Suche oder deinen Filtern."
   },
   "clean_files": {
     "close_button": "Schließen",
@@ -119,6 +118,7 @@
       "analogizer": "Analogizer"
     },
     "url": "URL",
+    "source_code": "Quellcode",
     "version": "Version",
     "display_modes_title": "Anzeigemodi",
     "display_mode_warning": "Dieser Anzeigemodus benötigt eine Aktualisierung des Kerns. Trotzdem aktivieren?",
@@ -258,7 +258,27 @@
       "origin": "Ursprungsordner",
       "title": "Neuen Abruf hinzufügen",
       "validating_archive_name": "Archiv „{name}“ wird überprüft...",
-      "invalid_archive_name": "Kein Archiv unter https://archive.org/details/{name} gefunden"
+      "invalid_archive_name": "Kein Archiv unter https://archive.org/details/{name} gefunden",
+      "intro": "Fetch kopiert Dateien auf die SD-Karte und hält sie aktuell. „Dateien abrufen“ kopiert alles, was auf der Karte fehlt oder in der Quelle neuer ist.",
+      "type_label": "Quelle",
+      "type_hint": {
+        "filesystem": "Ein Ordner auf diesem Computer, z. B. deine BIOS- oder Spielesammlung.",
+        "archive_org": "Ein Eintrag auf archive.org, dessen Dateien nicht gezippt sind."
+      },
+      "origin_label": "Ordner auf diesem Computer",
+      "origin_hint": "Alles darin wird kopiert, auch die Unterordner.",
+      "archive_label": "Archivname",
+      "archive_hint": "Der Teil nach archive.org/details/ in der Adresse des Eintrags, z. B. <code>openFPGA-Files</code>.",
+      "archive_found": "Auf archive.org gefunden",
+      "extensions_label": "Dateiendungen (optional)",
+      "extensions_hint": "Nur Dateien mit diesen Endungen werden geladen, z. B. bin oder rom. Leer lassen für alle Dateien, auch die Metadaten-Dateien von archive.org.",
+      "extension_placeholder": "z. B. bin",
+      "remove_extension": "{extension} entfernen",
+      "destination_label": "Ordner auf der SD-Karte",
+      "destination_hint": "Wohin die Dateien kommen, z. B. <code>/Assets/gb/common</code> für Game-Boy-Spiele oder -BIOS-Dateien.",
+      "choose_folder": "Ordner wählen",
+      "no_folder": "Kein Ordner gewählt",
+      "cancel": "Abbrechen"
     },
     "remove_button": "Quelle entfernen",
     "remove_confirm": "Dieser Vorgang entfernt die Abrufkonfiguration, aber nicht die Dateien. Sind Sie sicher?",
@@ -269,7 +289,17 @@
     "empty": {
       "title": "Noch keine Abrufquellen",
       "text": "Abrufen kopiert Dateien auf die SD-Karte, aus einem Ordner auf Ihrem Computer oder von archive.org. Fügen Sie eine Quelle hinzu."
-    }
+    },
+    "to_destination": "Nach {destination} auf der SD-Karte",
+    "only_extensions": "Nur {extensions}",
+    "archive_link": "archive.org/details/{name}",
+    "status": {
+      "empty": "Keine Dateien gefunden",
+      "complete": "{total, plural, one {# Datei, aktuell} other {Alle # Dateien aktuell}}",
+      "to_fetch": "{missing} von {total, plural, one {# Datei} other {# Dateien}} abzurufen"
+    },
+    "last_fetched": "Zuletzt abgerufen <time></time>",
+    "open_destination": "Ordner auf der SD-Karte öffnen"
   },
   "firmware": {
     "current": "Aktuelle Firmware: v{version}",
@@ -358,7 +388,8 @@
   "plugins": {
     "buttons": {
       "add": "Plugin hinzufügen",
-      "refresh": "Plugins aktualisieren"
+      "refresh": "Plugins aktualisieren",
+      "run": "Plugin starten"
     },
     "remove": "Plugin entfernen",
     "confirm_remove": "Dadurch werden auch alle lokalen Daten gelöscht, die das Plugin auf diesem Computer gespeichert hat. Sind Sie sicher?",
@@ -370,11 +401,20 @@
       "title": "Plugin per URL hinzufügen",
       "add": "Plugin prüfen und installieren",
       "cancel": "Stornieren",
-      "invalid": "Unter dieser URL wurde kein gültiges Plugin gefunden."
+      "invalid": "Unter dieser URL wurde kein gültiges Plugin gefunden.",
+      "url_label": "GitHub-Repository",
+      "hint": "Die Adresse des Plugin-Repositorys. Sein neuestes Release braucht eine plugin.wasm- und eine plugin.json-Datei.",
+      "checking": "Wird geprüft …"
     },
     "empty": {
       "title": "Keine Plugins installiert",
       "text": "Plugins ergänzen Pocket Sync um weitere Werkzeuge."
+    },
+    "running": "Läuft …",
+    "controls": {
+      "search": "Suchen",
+      "author": "Autor",
+      "all": "Alle"
     }
   },
   "palettes": {
@@ -533,6 +573,7 @@
     },
     "photos": {
       "title": "Fotoexport",
+      "open_export": "Fotos exportieren",
       "palette": "Palette",
       "custom": "Benutzerdefiniert",
       "close": "Schließen",
@@ -588,7 +629,7 @@
       "select": "Auswählen"
     },
     "no_screenshots": "Sobald Sie Bildschirmfotos erstellen, erscheinen diese hier",
-    "how_to": "Drücken Sie während des Spiels die Analogue-Taste und Start gleichzeitig. Das Bildschirmfoto wird auf der SD-Karte gespeichert und erscheint hier.",
+    "how_to": "Drücken Sie während des Spiels die <key>Analogue-Taste</key> und <key>Start</key> gleichzeitig. Das Bildschirmfoto wird auf der SD-Karte gespeichert und erscheint hier.",
     "empty_title": "Noch keine Bildschirmfotos"
   },
   "settings": {

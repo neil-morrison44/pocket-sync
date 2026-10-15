@@ -18,6 +18,7 @@ import { useAtomValue } from "jotai"
 import { useMemo } from "react"
 import { CoreTags } from "./tags"
 import { getCoreFeatures, hasFeatures } from "./features"
+import Tile from "../ui/Tile"
 
 type CoreItemProps = {
   coreName: string
@@ -70,28 +71,24 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
         return canUpdate !== null
       }}
     >
-      <div className="cores__item" role="button" onClick={onClick}>
-        <PlatformImage
-          className="cores__platform-image"
-          platformId={mainPlatformId}
-          label={core.metadata.shortname}
-        />
-
-        <div className="cores__info-blurb">
-          <div className="cores__info-blurb-name">
-            {core.metadata.shortname}
-          </div>
-
-          <div className="cores__author-tag">
-            <img className="cores__author-tag-image" src={imageSrc} />
+      <Tile
+        onClick={onClick}
+        media={
+          <PlatformImage
+            platformId={mainPlatformId}
+            label={core.metadata.shortname}
+          />
+        }
+        title={core.metadata.shortname}
+        subtitle={
+          <>
+            <img className="tile__avatar" src={imageSrc} alt="" />
             {core.metadata.author}
-          </div>
-
-          <div className="cores__version">{core.metadata.version}</div>
-
-          <CoreTags coreName={coreName} installed />
-        </div>
-      </div>
+          </>
+        }
+        meta={core.metadata.version}
+        tags={<CoreTags coreName={coreName} installed />}
+      />
     </SearchContextSelfHidingConsumer>
   )
 }
@@ -126,7 +123,9 @@ export const NotInstalledCoreItem = ({
   return (
     <SearchContextSelfHidingConsumer
       fields={[platform_id, identifier, inventoryItem.repository?.owner || ""]}
-      otherFn={({ category, features, platform: platformId }) => {
+      otherFn={({ onlyUpdates, category, features, platform: platformId }) => {
+        // Not installed, so there's nothing to update
+        if (onlyUpdates) return false
         if (!hasFeatures(coreFeatures, features)) return false
         if (
           platformId &&
@@ -140,26 +139,24 @@ export const NotInstalledCoreItem = ({
         return category === platform?.category
       }}
     >
-      <div
-        className="cores__item cores__item--not-installed"
-        role="button"
+      <Tile
         onClick={onClick}
-      >
-        <InventoryPlatformImage
-          className="cores__platform-image"
-          platformId={platform_id}
-          label={platform_id}
-        />
-        <div className="cores__info-blurb">
-          <div className="cores__info-blurb-name">{platform_id}</div>
-          <div className="cores__author-tag">
-            <img className="cores__author-tag-image" src={authorImageUrl} />
+        media={
+          <InventoryPlatformImage
+            platformId={platform_id}
+            label={platform_id}
+          />
+        }
+        title={platform_id}
+        subtitle={
+          <>
+            <img className="tile__avatar" src={authorImageUrl} alt="" />
             {author}
-          </div>
-          <div className="cores__version">{version}</div>
-          <CoreTags coreName={identifier} installed={false} />
-        </div>
-      </div>
+          </>
+        }
+        meta={version}
+        tags={<CoreTags coreName={identifier} installed={false} />}
+      />
     </SearchContextSelfHidingConsumer>
   )
 }

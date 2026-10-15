@@ -1,7 +1,9 @@
-import React, { ReactNode, useState } from "react"
+import React, { ReactNode, Suspense, useState } from "react"
 
 import * as RadixTabs from "@radix-ui/react-tabs"
 import clsx from "clsx"
+
+import { Loader } from "../../loader"
 
 import "./Tabs.css"
 
@@ -55,7 +57,12 @@ const Tabs = ({ tabs, defaultValue, label, className }: TabsProps) => {
             forceMount
             tabIndex={-1}
           >
-            {content}
+            {/* A tab that loads data on first open shows its own loader,
+                instead of suspending the whole page (which lost the scroll
+                position) */}
+            <Suspense fallback={<Loader className="tabs__loader" />}>
+              {content}
+            </Suspense>
           </RadixTabs.Content>
         ) : null
       )}

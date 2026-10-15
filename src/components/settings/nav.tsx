@@ -41,7 +41,10 @@ const NAV_SECTIONS: readonly {
   key: string
   items: readonly string[]
 }[] = import.meta.env.DEV
-  ? [...SETTINGS_SECTIONS, { key: "developer", items: ["demo_updates"] }]
+  ? [
+      ...SETTINGS_SECTIONS,
+      { key: "developer", items: ["demo_updates", "loading_preview"] },
+    ]
   : SETTINGS_SECTIONS
 
 const ITEM_IDS = NAV_SECTIONS.flatMap(({ items }) =>

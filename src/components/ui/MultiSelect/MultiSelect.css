@@ -1,10 +1,12 @@
-/* Square panel, like the Select list */
+/* Panel like the Select list; its radius is concentric with the rows */
 .multi-select__content {
   z-index: 2000;
   display: flex;
   flex-direction: column;
   min-width: max(var(--radix-popover-trigger-width), 240px);
   max-height: min(60vh, var(--radix-popover-content-available-height));
+  overflow: hidden;
+  border-radius: var(--radius-popover);
   background-color: var(--theme-surface-sunken);
   border: 1px solid var(--theme-surface);
   color: var(--theme-text);
@@ -58,7 +60,7 @@
   padding-block: var(--space-xs);
   padding-inline: var(--space-sm);
   border: none;
-  border-radius: 0;
+  border-radius: var(--radius);
   box-shadow: none;
   background: transparent;
   color: inherit;
@@ -92,7 +94,7 @@
   height: 18px;
   box-sizing: border-box;
   border: 1px solid var(--theme-separator);
-  color: var(--theme-accent);
+  color: var(--theme-accent-foreground);
 }
 
 /* Some labels contain line breaks for narrow layouts; they read as spaces */

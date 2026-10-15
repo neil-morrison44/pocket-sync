@@ -71,10 +71,12 @@ export const newsPanelOpenAtom = atomWithAppLocalSetting(
 export const About = ({ connection }: { connection: Connection }) => {
   const { t } = useTranslation("about")
   const { t: tApp } = useTranslation("app")
+  const { t: tSettings } = useTranslation("settings")
   const { connected } = connection
   const AppVersion = useAtomValue(AppVersionSelector)
-  // Leaves the folder, but keeps its path so Reconnect still works
-  const onEject = useDisconnectPocket()
+  // Leaves the folder, but keeps its path so Reconnect still works. Called
+  // "Disconnect" like in Settings until the SD card can really be ejected
+  const onDisconnect = useDisconnectPocket()
   const [newsPanelOpen, setNewsPanelOpen] = useAtom(newsPanelOpenAtom)
   const version = `v${AppVersion}`
 
@@ -120,28 +122,32 @@ export const About = ({ connection }: { connection: Connection }) => {
             <AppUpdateAvailable />
           </Suspense>
 
-          {/* Fixed size, so the canvas only moves (never resizes) while the
-              sidebar or the updates panel animate */}
-          <div className="about__pocket">
-            <Suspense fallback={<div className="three-pocket"></div>}>
-              <ErrorBoundary>
-                <ColourContextProviderAuto
-                  fromConfig={connected}
-                  changeInterval={15000}
-                >
-                  <Pocket
-                    move={connected ? "back-and-forth" : "spin"}
-                    screenMaterial={
-                      connected ? (
-                        <Suspense fallback={<StaticScreen />}>
-                          <RandomScreenshotScreen />
-                        </Suspense>
-                      ) : undefined
-                    }
-                  />
-                </ColourContextProviderAuto>
-              </ErrorBoundary>
-            </Suspense>
+          {/* Takes the height left after the title, banners, stats and
+              buttons; the Pocket fits into it, so the page never scrolls.
+              Its size follows the window height, not the width, so the
+              canvas doesn't resize while the sidebar or panel animate. */}
+          <div className="about__pocket-area">
+            <div className="about__pocket">
+              <Suspense fallback={<div className="three-pocket"></div>}>
+                <ErrorBoundary>
+                  <ColourContextProviderAuto
+                    fromConfig={connected}
+                    changeInterval={15000}
+                  >
+                    <Pocket
+                      move={connected ? "back-and-forth" : "spin"}
+                      screenMaterial={
+                        connected ? (
+                          <Suspense fallback={<StaticScreen />}>
+                            <RandomScreenshotScreen />
+                          </Suspense>
+                        ) : undefined
+                      }
+                    />
+                  </ColourContextProviderAuto>
+                </ErrorBoundary>
+              </Suspense>
+            </div>
           </div>
         </div>
         {connected && (
@@ -150,7 +156,7 @@ export const About = ({ connection }: { connection: Connection }) => {
           </Suspense>
         )}
         <span className="about__version">{version}</span>
-        <div className="about__eject">
+        <div className="about__actions">
           {connected ? (
             <>
               {/* Beside Eject, so it reads as a setting of the Pocket, not
@@ -159,8 +165,8 @@ export const About = ({ connection }: { connection: Connection }) => {
                 <PocketColoursPopover />
               </Suspense>
               <OpenSDCardButton />
-              <Button theme="tertiary" icon="logout" onClick={onEject}>
-                {t("eject")}
+              <Button theme="tertiary" icon="logout" onClick={onDisconnect}>
+                {tSettings("disconnect.button")}
               </Button>
             </>
           ) : (
@@ -379,9 +385,12 @@ const PocketColoursPopover = () => {
     <Popover
       title={t("pocket_colours")}
       trigger={
-        <Button theme="tertiary" icon="colors-swatch">
-          {t("colours")}
-        </Button>
+        // An icon button, so it doesn't compete with Disconnect
+        <IconButton
+          theme="tertiary"
+          icon="colors-swatch"
+          label={t("pocket_colours")}
+        />
       }
     >
       <div className="about__colour-field">

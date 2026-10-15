@@ -8,11 +8,9 @@
     "close_changelog": "Close",
     "library_updates": "Library Updates",
     "side_panel": "Updates",
-    "eject": "Eject SD Card",
     "show_updates": "Show Updates",
     "hide_updates": "Hide Updates",
     "pocket_colours": "Pocket Colours",
-    "colours": "Colours",
     "body_colour": "Body",
     "button_colour": "Buttons",
     "stats": {
@@ -29,7 +27,8 @@
     "not_pocket_tip": "That folder doesn't look like the Pocket's file system. The SD card must be initialised by the Pocket at least once.",
     "close": "Close",
     "loading": "Loading",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "no_results": "Nothing matches your search or filters."
   },
   "clean_files": {
     "close_button": "Close",
@@ -124,6 +123,7 @@
       "analogizer": "Analogizer"
     },
     "url": "URL",
+    "source_code": "Source Code",
     "version": "Version",
     "display_modes_title": "Display Modes",
     "ai_ness_score": "AI-ness score {score, number, percent}",
@@ -272,7 +272,27 @@
       "origin": "Origin Folder",
       "title": "Add new Fetch",
       "validating_archive_name": "Checking archive \"{name}\"...",
-      "invalid_archive_name": "No archive found at https://archive.org/details/{name}"
+      "invalid_archive_name": "No archive found at https://archive.org/details/{name}",
+      "intro": "Fetch copies files onto the SD card and keeps them up to date. Fetch Files copies whatever is missing on the card or newer at the source.",
+      "type_label": "Source",
+      "type_hint": {
+        "filesystem": "A folder on this computer, e.g. your BIOS or game collection.",
+        "archive_org": "An item on archive.org whose files aren't zipped."
+      },
+      "origin_label": "Folder on This Computer",
+      "origin_hint": "Everything in it is copied, including its subfolders.",
+      "archive_label": "Archive Name",
+      "archive_hint": "The part after archive.org/details/ in the item's address, e.g. <code>openFPGA-Files</code>.",
+      "archive_found": "Found on archive.org",
+      "extensions_label": "File Extensions (Optional)",
+      "extensions_hint": "Only files ending in these are downloaded, e.g. bin or rom. Leave it empty for every file, including archive.org's own metadata files.",
+      "extension_placeholder": "e.g. bin",
+      "remove_extension": "Remove {extension}",
+      "destination_label": "Folder on the SD Card",
+      "destination_hint": "Where the files go, e.g. <code>/Assets/gb/common</code> for Game Boy games or BIOS files.",
+      "choose_folder": "Choose Folder",
+      "no_folder": "No folder chosen",
+      "cancel": "Cancel"
     },
     "remove_button": "Remove Source",
     "remove_confirm": "This'll remove the fetch configuration, but not the files. Are you sure?",
@@ -283,7 +303,17 @@
     "empty": {
       "title": "No fetch sources yet",
       "text": "Fetch copies files onto the SD card, from a folder on your computer or from archive.org. Add a source to start."
-    }
+    },
+    "to_destination": "To {destination} on the SD card",
+    "only_extensions": "Only {extensions}",
+    "archive_link": "archive.org/details/{name}",
+    "status": {
+      "empty": "No files found",
+      "complete": "{total, plural, one {# file, up to date} other {All # files up to date}}",
+      "to_fetch": "{missing} of {total, plural, one {# file} other {# files}} to fetch"
+    },
+    "last_fetched": "Last fetched <time></time>",
+    "open_destination": "Open Folder on SD Card"
   },
   "firmware": {
     "current": "Current Firmware: v{version}",
@@ -461,7 +491,8 @@
   "plugins": {
     "buttons": {
       "add": "Add Plugin",
-      "refresh": "Refresh Plugins"
+      "refresh": "Refresh Plugins",
+      "run": "Run Plugin"
     },
     "remove": "Remove Plugin",
     "confirm_remove": "This will also remove any local data the plugin has stored on this computer, are you sure?",
@@ -473,11 +504,20 @@
       "title": "Add plugin via URL",
       "add": "Verify & install plugin",
       "cancel": "Cancel",
-      "invalid": "No valid plugin found at that URL"
+      "invalid": "No valid plugin found at that URL",
+      "url_label": "GitHub Repository",
+      "hint": "The address of the plugin's repository. Its latest release needs a plugin.wasm and a plugin.json file.",
+      "checking": "Checking…"
     },
     "empty": {
       "title": "No plugins installed",
       "text": "Plugins add extra tools to Pocket Sync."
+    },
+    "running": "Running…",
+    "controls": {
+      "search": "Search",
+      "author": "Author",
+      "all": "All"
     }
   },
   "palettes": {
@@ -640,6 +680,7 @@
     },
     "photos": {
       "title": "Photo Export",
+      "open_export": "Export Photos",
       "palette": "Palette",
       "custom": "Custom",
       "close": "Close",
@@ -695,7 +736,7 @@
       "select": "Select"
     },
     "no_screenshots": "Once you take some screenshots they'll appear here",
-    "how_to": "Press the Analogue button and Start together while playing. The screenshot is saved to the SD card and shows up here.",
+    "how_to": "Press the <key>Analogue button</key> and <key>Start</key> together while playing. The screenshot is saved to the SD card and shows up here.",
     "empty_title": "No screenshots yet"
   },
   "settings": {
@@ -837,6 +878,11 @@
       "title": "Dismissed Notes",
       "ramble": "Info notes you've closed, like the tip about dragging in .zip files, can be shown again.",
       "button": "{count, plural, =0 {Show Notes Again} one {Show # Note Again} other {Show # Notes Again}}"
+    },
+    "loading_preview": {
+      "title": "Loading Preview",
+      "ramble": "The spinners and progress bars used while something loads. The slider changes the spinner's speed here only; the app uses {default} ms per frame.",
+      "speed": "{ms} ms per frame"
     }
   },
   "time_ago": {

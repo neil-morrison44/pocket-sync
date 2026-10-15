@@ -11,22 +11,25 @@ type LinkProps = {
 
 /**
  * A link that opens in the system browser. It renders a real `<a>`, so it can
- * be focused and activated with the keyboard.
+ * be focused and activated with the keyboard. With `onClick` and no `href`,
+ * it's an in-app link (e.g. to another view) instead.
  */
 export const Link = ({
   children,
   className,
   href,
+  onClick,
   ...otherProps
 }: LinkProps) => {
   return (
     <a
       {...otherProps}
-      href={href}
+      href={href ?? "#"}
       className={`link ${className ?? ""}`}
       onClick={(event) => {
         event.preventDefault()
-        if (href) open(href)
+        if (onClick) onClick(event)
+        else if (href) open(href)
       }}
     >
       {children}

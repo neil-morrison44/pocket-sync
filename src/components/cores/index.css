@@ -1,9 +1,4 @@
-.cores__platform-image {
-  width: 100%;
-  height: auto;
-  background-color: var(--theme-media-background);
-}
-
+/* Info block in the Data Packs modal; cards use the shared Tile */
 .cores__info-blurb {
   background-color: var(--info-colour);
   padding: var(--space-md);
@@ -15,85 +10,32 @@
   color: var(--theme-text-body);
 }
 
-.cores__info-blurb-name {
-  font-weight: bold;
-  color: var(--theme-text-headline);
-}
-
-.cores__author-tag {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-size: var(--font-size-sm);
-}
-
-.cores__author-tag-image {
-  width: 18px;
-  height: 18px;
-  image-rendering: pixelated;
-}
-
-.cores__version {
-  font-size: var(--font-size-xs);
-  color: var(--theme-text-soft);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Tags sit at the bottom, so cards in a row line up */
-.cores__info-blurb .tag-list {
-  margin-top: auto;
-  padding-top: var(--space-xs);
-
-  &:empty {
-    display: none;
-  }
-}
-
-.cores__item {
-  border-radius: var(--radius-card);
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-
-  &:hover .cores__info-blurb {
-    background-color: var(--theme-surface-raised);
-  }
-
-  &:active {
-    transform: scale(0.99);
-  }
-}
-
-.cores__item--not-installed {
-  background-color: var(--info-colour);
-  justify-content: space-between;
-
-  /* padding: 10px; */
-
-  /* font-weight: bold; */
-  cursor: pointer;
-
-  &:hover {
-    background-color: var(--theme-surface-raised);
-  }
-}
-
-/* Heading with an action on the right, e.g. Updates + Update All */
+/* Every section heading (Updates, Installed, Available), with an optional
+   action on the right, e.g. Update All; the same spacing for all of them */
 .cores__section-header {
+  --control-height: 32px;
+
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-lg);
-  padding-inline-end: var(--page-padding-inline);
+  min-height: var(--control-height);
+  margin-block: var(--space-2xl) 0; /* the grid below adds 10px */
+  padding-inline: var(--page-padding-inline);
 
   & h2 {
-    margin-bottom: 0;
+    margin: 0;
+    padding: 0;
+
+    /* :root's fixed 24px line-height is shorter than the 48px glyphs */
+    line-height: 1.1;
   }
 }
 
-.cores__updates {
-  --control-height: 32px;
+/* A section the search or filters emptied hides its heading too */
+.cores__section-header:has(
+    + .grid:not(:has(.tile, .skeleton, .skeleton-card))
+  ) {
+  display: none;
 }

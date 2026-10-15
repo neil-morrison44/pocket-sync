@@ -8,11 +8,9 @@
     "close_changelog": "Đóng",
     "library_updates": "Cập nhật thư viện",
     "side_panel": "Cập nhật",
-    "eject": "Đẩy thẻ SD ra",
     "show_updates": "Hiện cập nhật",
     "hide_updates": "Ẩn cập nhật",
     "pocket_colours": "Màu Pocket",
-    "colours": "Màu sắc",
     "body_colour": "Thân máy",
     "button_colour": "Nút bấm",
     "stats": {
@@ -29,7 +27,8 @@
     "not_pocket_tip": "Nội dung thư mục không giống với hệ thống tập tin của Pocket. Thẻ SD phải được Pocket khởi tạo ít nhất một lần.",
     "close": "Đóng",
     "loading": "Đang tải",
-    "dismiss": "Ẩn"
+    "dismiss": "Ẩn",
+    "no_results": "Không có mục nào khớp với tìm kiếm hoặc bộ lọc."
   },
   "clean_files": {
     "close_button": "Đóng",
@@ -124,6 +123,7 @@
       "analogizer": "Analogizer"
     },
     "url": "Đường dẫn",
+    "source_code": "Mã nguồn",
     "version": "Phiên bản",
     "display_modes_title": "Chế độ Hiển thị",
     "display_mode_warning": "Chế độ hiển thị này yêu cầu phải cập nhật core, bạn có chắc chắn muốn bật nó không?",
@@ -268,7 +268,27 @@
       "origin": "Thư mục gốc",
       "title": "Thêm mới fetch",
       "validating_archive_name": "Đang kiểm tra file lưu trữ \"{name}\"...",
-      "invalid_archive_name": "Không có file lưu trữ nào ở https://archive.org/details/{name}"
+      "invalid_archive_name": "Không có file lưu trữ nào ở https://archive.org/details/{name}",
+      "intro": "Fetch sao chép tập tin vào thẻ SD và giữ chúng luôn cập nhật. “Fetch tập tin” sao chép những gì còn thiếu trên thẻ hoặc mới hơn ở nguồn.",
+      "type_label": "Nguồn",
+      "type_hint": {
+        "filesystem": "Một thư mục trên máy tính này, ví dụ bộ sưu tập BIOS hoặc game của bạn.",
+        "archive_org": "Một mục trên archive.org có tập tin không bị nén zip."
+      },
+      "origin_label": "Thư mục trên máy tính này",
+      "origin_hint": "Mọi thứ bên trong đều được sao chép, kể cả thư mục con.",
+      "archive_label": "Tên archive",
+      "archive_hint": "Phần sau archive.org/details/ trong địa chỉ của mục, ví dụ <code>openFPGA-Files</code>.",
+      "archive_found": "Đã tìm thấy trên archive.org",
+      "extensions_label": "Phần mở rộng tập tin (tùy chọn)",
+      "extensions_hint": "Chỉ tải các tập tin có phần mở rộng này, ví dụ bin hoặc rom. Để trống để tải mọi tập tin, kể cả tập tin metadata của archive.org.",
+      "extension_placeholder": "ví dụ bin",
+      "remove_extension": "Xóa {extension}",
+      "destination_label": "Thư mục trên thẻ SD",
+      "destination_hint": "Nơi chứa tập tin, ví dụ <code>/Assets/gb/common</code> cho game hoặc BIOS Game Boy.",
+      "choose_folder": "Chọn thư mục",
+      "no_folder": "Chưa chọn thư mục",
+      "cancel": "Hủy"
     },
     "remove_button": "Xóa nguồn",
     "remove_confirm": "Thao tác này sẽ xóa cấu hình fetch nhưng không xóa các tệp. Bạn có chắc không?",
@@ -279,7 +299,17 @@
     "empty": {
       "title": "Chưa có nguồn tải",
       "text": "Tải về sẽ chép tập tin vào thẻ SD từ một thư mục trên máy tính hoặc từ archive.org. Thêm một nguồn để bắt đầu."
-    }
+    },
+    "to_destination": "Đến {destination} trên thẻ SD",
+    "only_extensions": "Chỉ {extensions}",
+    "archive_link": "archive.org/details/{name}",
+    "status": {
+      "empty": "Không tìm thấy tập tin",
+      "complete": "{total, plural, other {Cả # tập tin đều đã cập nhật}}",
+      "to_fetch": "Cần fetch {missing} trên {total, plural, other {# tập tin}}"
+    },
+    "last_fetched": "Lần fetch gần nhất <time></time>",
+    "open_destination": "Mở thư mục trên thẻ SD"
   },
   "firmware": {
     "current": "Phiên bản phần mềm hiện tại: v{version}",
@@ -368,7 +398,8 @@
   "plugins": {
     "buttons": {
       "add": "Thêm Plugin",
-      "refresh": "Làm mới plugin"
+      "refresh": "Làm mới plugin",
+      "run": "Chạy plugin"
     },
     "remove": "Xóa plugin",
     "confirm_remove": "Thao tác này cũng sẽ xóa mọi dữ liệu cục bộ mà plugin đã lưu trữ trên máy tính này, bạn có chắc không?",
@@ -380,11 +411,20 @@
       "title": "Thêm plugin thông qua URL",
       "add": "Xác minh và cài đặt plugin",
       "cancel": "Hủy bỏ",
-      "invalid": "Không tìm thấy plugin hợp lệ nào tại URL đó."
+      "invalid": "Không tìm thấy plugin hợp lệ nào tại URL đó.",
+      "url_label": "Kho GitHub",
+      "hint": "Địa chỉ kho của plugin. Bản phát hành mới nhất cần có tập tin plugin.wasm và plugin.json.",
+      "checking": "Đang kiểm tra…"
     },
     "empty": {
       "title": "Chưa cài plugin nào",
       "text": "Plugin bổ sung công cụ cho Pocket Sync."
+    },
+    "running": "Đang chạy…",
+    "controls": {
+      "search": "Tìm kiếm",
+      "author": "Tác giả",
+      "all": "Tất cả"
     }
   },
   "palettes": {
@@ -543,6 +583,7 @@
     },
     "photos": {
       "title": "Trích xuất hình ảnh",
+      "open_export": "Trích xuất hình ảnh",
       "palette": "Palette",
       "custom": "Tùy chọn",
       "close": "Đóng",
@@ -598,7 +639,7 @@
       "select": "Chọn"
     },
     "no_screenshots": "Khi bạn chụp một số ảnh chụp màn hình, chúng sẽ xuất hiện ở đây",
-    "how_to": "Nhấn đồng thời nút Analogue và Start khi đang chơi. Ảnh chụp màn hình được lưu vào thẻ SD và hiện ở đây.",
+    "how_to": "Nhấn đồng thời <key>nút Analogue</key> và <key>Start</key> khi đang chơi. Ảnh chụp màn hình được lưu vào thẻ SD và hiện ở đây.",
     "empty_title": "Chưa có ảnh chụp màn hình"
   },
   "settings": {

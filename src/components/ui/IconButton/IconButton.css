@@ -1,7 +1,8 @@
-/* Same button, square: as wide as it's tall */
+/* Same button, square: as wide as it's tall, plus the slant (0 in the
+   modern style), which cuts into two corners and made it look narrow */
 .icon-button {
   flex-shrink: 0;
-  width: var(--control-height, 28px);
+  width: calc(var(--control-height, 28px) + var(--slant));
   padding-inline: 0;
 }
 

@@ -6,7 +6,17 @@ import { splitAsPath } from "../../utils/splitAsPath"
 import { FSEvent } from "../../types"
 import { sep } from "@tauri-apps/api/path"
 
-export const fsWatchAtomFamily = atomFamily((path: string) => atom(Date.now()))
+const fsWatchAtoms = atomFamily((path: string) => atom(Date.now()))
+
+/**
+ * Changes whenever something under `path` (relative to the SD card) changes.
+ * Paths are normalised, so "/Fetch Example" and "Fetch Example/" watch the
+ * same folder as the file events ("Fetch Example"); "/" is the card's root.
+ */
+export const fsWatchAtomFamily = (path: string) => {
+  const trimmed = path.replace(/^[\\/]+|[\\/]+$/g, "")
+  return fsWatchAtoms(trimmed === "" ? "/" : trimmed)
+}
 
 export const initGlobalFSEvents = async () => {
   const store = getDefaultStore()

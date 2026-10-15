@@ -18,7 +18,8 @@
 }
 
 .about__top {
-  flex-grow: 1;
+  flex: 1 1 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -98,6 +99,9 @@
   min-width: 0;
   padding: var(--space-lg);
   box-sizing: border-box;
+
+  /* The home screen fits the window and never scrolls */
+  overflow: hidden;
 }
 
 .about__toolbar {
@@ -138,7 +142,7 @@
   color: var(--theme-text-soft);
 }
 
-.about__eject {
+.about__actions {
   display: flex;
   justify-content: center;
   gap: var(--space-sm);
@@ -180,12 +184,20 @@
   min-height: 0;
 }
 
+.about__pocket-area {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  container-type: size;
+}
+
+/* Square, as large as the area allows, at most 520px */
 .about__pocket {
-  width: min(55vh, 520px);
-  max-width: 100%;
+  width: min(100cqh, 100cqw, 520px);
   aspect-ratio: 1 / 1;
   flex-shrink: 0;
-  align-self: center;
 
   .three-pocket {
     width: 100%;
@@ -205,8 +217,34 @@
   font-size: var(--font-size-sm);
   color: var(--theme-text-body);
 
-  & > :not(.about__changelog-title, .about__changelog-break) {
+  /* No specificity, so the list rule below can add the bullets' room */
+  & > :where(:not(.about__changelog-title, .about__changelog-break)) {
     padding-inline: var(--space-lg);
+  }
+
+  /* Running text is body colour; only titles are headline */
+  & :is(p, li) {
+    color: var(--theme-text-body);
+  }
+
+  /* Lists keep room for their bullets inside the side padding */
+  & > :is(ul, ol) {
+    margin-block: var(--space-xs);
+    padding-inline: calc(var(--space-lg) + 1.25em) var(--space-lg);
+  }
+
+  & li + li {
+    margin-top: var(--space-2xs);
+  }
+
+  /* Sub-headings inside a release (e.g. "Fixes") */
+  & > :is(h3, h4, h5):not(.about__changelog-title) {
+    margin: var(--space-md) 0 var(--space-2xs);
+    font-family: var(--font-body);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--theme-text-headline);
   }
 }
 
@@ -219,6 +257,12 @@
   height: 1px;
   margin-top: var(--space-md);
   background-color: var(--theme-separator);
+}
+
+.about__changelog-date {
+  padding: 0 var(--space-lg);
+  font-size: var(--font-size-code);
+  color: var(--theme-text-soft);
 }
 
 .about__changelog-title {
@@ -248,8 +292,7 @@
 }
 
 /* Short windows: the Pocket on the left, title, stats and buttons in a
-   column on the right, both centred vertically, so nothing is cut off;
-   scrolls as a last resort */
+   column on the right, both centred vertically, so nothing is cut off */
 @media (height <= 700px) {
   .about__main {
     --compact-pocket-width: min(80vh, 40vw);
@@ -258,11 +301,15 @@
     padding-inline-start: calc(
       var(--compact-pocket-width) + 2 * var(--space-2xl)
     );
-    overflow-y: auto;
+  }
+
+  /* The Pocket sits beside the column, placed against .about__main */
+  .about__pocket-area {
+    display: contents;
   }
 
   .about__top {
-    flex-grow: 0;
+    flex: 0 0 auto;
     justify-content: center;
   }
 

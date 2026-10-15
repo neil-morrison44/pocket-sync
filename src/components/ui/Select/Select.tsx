@@ -28,6 +28,11 @@ export interface SelectOption<T extends string> {
   disabled?: boolean
   /** Options with the same group are listed together under that heading. */
   group?: string
+  /**
+   * A CSS colour shown as a small circle before the label, in the list and
+   * in the closed select, e.g. a Pocket body colour.
+   */
+  swatch?: string
 }
 
 export interface SelectProps<T extends string> {
@@ -67,7 +72,18 @@ const renderItem =
     const content = (
       <>
         <RadixSelect.ItemText>
-          {option.label ?? option.value}
+          {option.swatch ? (
+            <span className="select__option">
+              <span
+                className="select__swatch"
+                style={{ backgroundColor: option.swatch }}
+                aria-hidden
+              />
+              {option.label ?? option.value}
+            </span>
+          ) : (
+            (option.label ?? option.value)
+          )}
         </RadixSelect.ItemText>
         <RadixSelect.ItemIndicator className="select__item-indicator">
           <Icon icon="check" />

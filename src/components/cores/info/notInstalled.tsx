@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useMemo } from "react"
+import { Suspense, useCallback } from "react"
 
 import { useInstallCore } from "../../../hooks/useInstallCore"
 import { useInventoryItem } from "../../../hooks/useInventoryItem"
@@ -17,7 +17,6 @@ import {
   CorePlatformName,
 } from "./platform"
 import { ErrorBoundary } from "../../errorBoundary"
-import { Link } from "../../link"
 import { Releases } from "./releases"
 import { SponsorLinks } from "./sponsorLinks"
 import { useTranslation } from "react-i18next"
@@ -38,7 +37,10 @@ import {
   CoreAuthor,
   CoreFeatureTags,
   CoreNotice,
+  FirmwareRequiredLink,
   FirmwareWarning,
+  getRepositoryLinks,
+  UrlLink,
 } from "./shared"
 
 import "./index.css"
@@ -111,6 +113,7 @@ export const NotInstalledCoreInfo = ({
                 <CoreAuthor
                   name={metadata.author || author}
                   imageSrc={authorImageUrl}
+                  href={getRepositoryLinks(inventoryItem.repository).authorUrl}
                 />
                 <span className="core-info__version">{metadata.version}</span>
               </div>
@@ -199,10 +202,9 @@ const NotInstalledOverview = ({ coreName }: { coreName: string }) => {
   const coreAIScore = aiCheck[coreName]?.overall_score ?? 0
   const showAIReport = config.hide_ai_score !== true && coreAIScore > 0
 
-  const repositoryUrl = useMemo(() => {
-    if (inventoryItem?.repository.platform !== "github") return null
-    return `https://github.com/${inventoryItem.repository.owner}/${inventoryItem.repository.name}`
-  }, [inventoryItem])
+  const { authorUrl, repositoryUrl } = getRepositoryLinks(
+    inventoryItem?.repository
+  )
 
   if (!inventoryItem) return null
   const { metadata, framework } = inventoryItem.releases[0].core
@@ -216,6 +218,7 @@ const NotInstalledOverview = ({ coreName }: { coreName: string }) => {
         <CoreAuthor
           name={metadata.author || author}
           imageSrc={`https://openfpga-library.github.io/analogue-pocket/assets/images/authors/${coreName}.png`}
+          href={authorUrl}
         />
       ),
     },
@@ -226,7 +229,7 @@ const NotInstalledOverview = ({ coreName }: { coreName: string }) => {
   if (framework?.version_required)
     facts.push({
       label: t("firmware_required"),
-      value: framework.version_required,
+      value: <FirmwareRequiredLink version={framework.version_required} />,
     })
   if (repositoryUrl)
     facts.push({
@@ -237,8 +240,13 @@ const NotInstalledOverview = ({ coreName }: { coreName: string }) => {
         </Suspense>
       ),
     })
-  const url = metadata.url || repositoryUrl
-  if (url) facts.push({ label: t("url"), value: <Link href={url}>{url}</Link> })
+  if (metadata.url)
+    facts.push({ label: t("url"), value: <UrlLink href={metadata.url} /> })
+  if (repositoryUrl && repositoryUrl !== metadata.url)
+    facts.push({
+      label: t("source_code"),
+      value: <UrlLink href={repositoryUrl} />,
+    })
   if (funding)
     facts.push({
       label: t("sponsor"),

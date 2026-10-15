@@ -1,4 +1,4 @@
-/* Square panel, like the Select list */
+/* Panel like the Select list */
 .popover {
   z-index: 1500;
   display: flex;
@@ -6,6 +6,7 @@
   gap: var(--space-md);
   min-width: 260px;
   padding: var(--space-lg);
+  border-radius: var(--radius-popover);
   background-color: var(--theme-surface-sunken);
   border: 1px solid var(--theme-separator);
   color: var(--theme-text-body);

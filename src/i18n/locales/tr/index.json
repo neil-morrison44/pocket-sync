@@ -8,11 +8,9 @@
     "close_changelog": "Kapat",
     "library_updates": "Kütüphane güncellemeleri",
     "side_panel": "Güncellemeler",
-    "eject": "SD kartı çıkar",
     "show_updates": "Güncellemeleri göster",
     "hide_updates": "Güncellemeleri gizle",
     "pocket_colours": "Pocket renkleri",
-    "colours": "Renkler",
     "body_colour": "Gövde",
     "button_colour": "Düğmeler",
     "stats": {
@@ -29,7 +27,8 @@
     "not_pocket_tip": "Bu dosya Pocket dosya sistemi gibi görünmüyor. SD Kartınızın en az bir kez Pocket ile beraber çalıştırılması gerek.",
     "close": "Kapat",
     "loading": "Yükleniyor",
-    "dismiss": "Kapat"
+    "dismiss": "Kapat",
+    "no_results": "Aramanız veya filtrelerinizle eşleşen bir şey yok."
   },
   "clean_files": {
     "close_button": "Kapat",
@@ -121,6 +120,7 @@
       "analogizer": "Analogizer"
     },
     "url": "URL",
+    "source_code": "Kaynak kodu",
     "version": "Versiyon",
     "display_modes_title": "Görüntüleme Modları",
     "display_mode_warning": "Bu görüntüleme modu çekirdeğin güncellenmesini gerektiriyor, bunu açmak istediğinizden emin misiniz?",
@@ -265,7 +265,27 @@
       "origin": "Kaynak Klasör",
       "title": "Yeni getirme ekle",
       "validating_archive_name": "\"{name}\" arşivi kontrol ediliyor...",
-      "invalid_archive_name": "https://archive.org/details/{name} adresinde arşiv bulunamadı"
+      "invalid_archive_name": "https://archive.org/details/{name} adresinde arşiv bulunamadı",
+      "intro": "Fetch, dosyaları SD karta kopyalar ve güncel tutar. “Dosyaları getir”, kartta eksik olan veya kaynakta daha yeni olan her şeyi kopyalar.",
+      "type_label": "Kaynak",
+      "type_hint": {
+        "filesystem": "Bu bilgisayardaki bir klasör, ör. BIOS veya oyun koleksiyonunuz.",
+        "archive_org": "Dosyaları zip'lenmemiş bir archive.org öğesi."
+      },
+      "origin_label": "Bu bilgisayardaki klasör",
+      "origin_hint": "Alt klasörleri dahil içindeki her şey kopyalanır.",
+      "archive_label": "Arşiv adı",
+      "archive_hint": "Öğenin adresinde archive.org/details/ sonrasındaki kısım, ör. <code>openFPGA-Files</code>.",
+      "archive_found": "archive.org'da bulundu",
+      "extensions_label": "Dosya uzantıları (isteğe bağlı)",
+      "extensions_hint": "Yalnızca bu uzantılara sahip dosyalar indirilir, ör. bin veya rom. archive.org'un meta veri dosyaları dahil tüm dosyalar için boş bırakın.",
+      "extension_placeholder": "ör. bin",
+      "remove_extension": "{extension} kaldır",
+      "destination_label": "SD karttaki klasör",
+      "destination_hint": "Dosyaların gideceği yer, ör. Game Boy oyunları veya BIOS dosyaları için <code>/Assets/gb/common</code>.",
+      "choose_folder": "Klasör seç",
+      "no_folder": "Klasör seçilmedi",
+      "cancel": "İptal"
     },
     "remove_button": "Kaynağı kaldır",
     "remove_confirm": "Bu getirme yapılandırmasını kaldıracak, ancak dosyaları kaldırmayacak. Emin misiniz?",
@@ -276,7 +296,17 @@
     "empty": {
       "title": "Henüz kaynak yok",
       "text": "Getirme, dosyaları bilgisayarınızdaki bir klasörden veya archive.org'dan SD karta kopyalar. Başlamak için bir kaynak ekleyin."
-    }
+    },
+    "to_destination": "SD karttaki {destination} klasörüne",
+    "only_extensions": "Yalnızca {extensions}",
+    "archive_link": "archive.org/details/{name}",
+    "status": {
+      "empty": "Dosya bulunamadı",
+      "complete": "{total, plural, one {# dosya, güncel} other {# dosyanın tümü güncel}}",
+      "to_fetch": "{total, plural, one {# dosyadan} other {# dosyadan}} {missing} tanesi getirilecek"
+    },
+    "last_fetched": "Son getirme <time></time>",
+    "open_destination": "SD karttaki klasörü aç"
   },
   "firmware": {
     "current": "Mevcut Aygıt Yazılımı: v{version}",
@@ -348,7 +378,8 @@
   "plugins": {
     "buttons": {
       "add": "Eklenti Ekle",
-      "refresh": "Eklentileri yenile"
+      "refresh": "Eklentileri yenile",
+      "run": "Eklentiyi çalıştır"
     },
     "remove": "Eklentiyi kaldır",
     "confirm_remove": "Bu işlem, eklentinin bu bilgisayarda depoladığı yerel verileri de silecektir, emin misiniz?",
@@ -360,11 +391,20 @@
       "title": "URL üzerinden eklenti ekle",
       "add": "Eklentiyi doğrulayın ve yükleyin.",
       "cancel": "İptal etmek",
-      "invalid": "Bu URL'de geçerli bir eklenti bulunamadı."
+      "invalid": "Bu URL'de geçerli bir eklenti bulunamadı.",
+      "url_label": "GitHub deposu",
+      "hint": "Eklentinin deposunun adresi. Son sürümünde plugin.wasm ve plugin.json dosyaları bulunmalıdır.",
+      "checking": "Kontrol ediliyor…"
     },
     "empty": {
       "title": "Yüklü eklenti yok",
       "text": "Eklentiler Pocket Sync'e araçlar ekler."
+    },
+    "running": "Çalışıyor…",
+    "controls": {
+      "search": "Ara",
+      "author": "Geliştirici",
+      "all": "Tümü"
     }
   },
   "platforms": {

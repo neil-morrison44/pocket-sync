@@ -42,7 +42,7 @@ body {
 
 a {
   font-weight: 500;
-  color: var(--theme-accent);
+  color: var(--theme-accent-foreground);
   text-decoration: inherit;
 }
 
@@ -181,7 +181,6 @@ button {
     .text-input,
     .select--theme-control,
     .toggle--theme-control,
-    .tabs__list,
     .tabs__trigger,
     .sidebar__item,
     .settings__nav-item,
@@ -195,4 +194,57 @@ button {
     button:not([class])
   ) {
   border-radius: var(--radius);
+}
+
+/* Focus rings follow the control's radius in modern: a 2px inset shadow
+   instead of the clip-path frame, rounded concentrically with the control
+   (its radius plus the ring's offset outside it) */
+:root[data-style="modern"]
+  :is(
+    .button,
+    .text-input,
+    .select--theme-control,
+    .toggle--theme-control,
+    .tabs__trigger,
+    .sidebar__item,
+    .settings__nav-item,
+    .settings__nav-section-title,
+    .switch__track,
+    button:not([class])
+  )::after {
+  border-radius: calc(var(--radius) - var(--focus-ring-inset, 0px));
+  background-color: transparent;
+  box-shadow: inset 0 0 0 2px var(--focus-ring-colour, var(--theme-focus));
+  clip-path: none;
+}
+
+/* Frames around rounded items are concentric: the item's radius plus the
+   frame's padding (3px) */
+:root[data-style="modern"] .tabs__list {
+  border-radius: calc(var(--radius) + 3px);
+}
+
+/* The 1px frames drawn with clip-path in the slanted style would keep square
+   corners; in modern they are an inset border that follows the radius */
+:root[data-style="modern"]
+  :is(
+    .button,
+    .tabs__list,
+    .path-field__value,
+    .text-input--variant-code
+  )::before {
+  border-radius: inherit;
+  background-color: transparent;
+  box-shadow: inset 0 0 0 1px var(--theme-separator);
+  clip-path: none;
+}
+
+/* Buttons only show the frame when their theme sets an outline */
+:root[data-style="modern"] .button::before {
+  box-shadow: inset 0 0 0 1px var(--button-outline, transparent);
+}
+
+/* Tertiary buttons have no outline in modern, only the hover background */
+:root[data-style="modern"] .button--theme-tertiary {
+  --button-outline: transparent;
 }

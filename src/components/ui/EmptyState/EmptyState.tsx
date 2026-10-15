@@ -13,6 +13,8 @@ export interface EmptyStateProps {
   children?: ReactNode
   /** E.g. the button that adds the first item. */
   action?: ReactNode
+  /** The page has no header bar, so it centres in the whole window. */
+  fullPage?: boolean
   className?: string
 }
 
@@ -22,9 +24,16 @@ const EmptyState = ({
   title,
   children,
   action,
+  fullPage = false,
   className,
 }: EmptyStateProps) => (
-  <div className={clsx("empty-state", className)}>
+  <div
+    className={clsx(
+      "empty-state",
+      fullPage && "empty-state--is-full-page",
+      className
+    )}
+  >
     <Icon icon={icon} size={48} className="empty-state__icon" />
     <h2 className="empty-state__title">{title}</h2>
     {children && <div className="empty-state__text">{children}</div>}

@@ -128,7 +128,7 @@
   color: var(--sidebar-foreground-active);
 
   & .sidebar__icon {
-    color: var(--theme-accent);
+    color: var(--theme-accent-foreground);
   }
 }
 

@@ -1,6 +1,8 @@
 import { listen } from "@tauri-apps/api/event"
 import { useEffect, useState } from "react"
 
+import ProgressBar from "../../ui/ProgressBar"
+
 import "./index.css"
 import { ProgressEvent } from "../../../types"
 
@@ -51,24 +53,20 @@ export const ProgressLoaderInner = ({
   showToken: boolean
 }) => {
   const pocketPath = useAtomValue(pocketPathAtom)
+  const param = message?.param?.replace(pocketPath || "", "").replace("//", "/")
   return (
-    <div className="progress-loader">
-      <div
-        className="progress-loader__bar"
-        style={{ "--percent": `${percent.toFixed(0)}%` }}
-      ></div>
-      {message && (
-        <div className="progress-loader__info">
-          {showToken && (
-            <div className="progress-loader__info-token">{message.token}</div>
-          )}
-          {message.param && (
-            <div className="progress-loader__info-param">
-              {message.param?.replace(pocketPath || "", "").replace("//", "/")}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+    <ProgressBar
+      className="progress-loader"
+      value={percent}
+      label={
+        message && (
+          <>
+            {showToken && message.token}
+            {showToken && param && " "}
+            {param}
+          </>
+        )
+      }
+    />
   )
 }

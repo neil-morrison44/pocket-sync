@@ -1,30 +1,66 @@
-import { ReactNode, useMemo } from "react"
+import { ReactNode, startTransition, useMemo } from "react"
 import { Trans, useTranslation } from "react-i18next"
 import { useAtomValue, useSetAtom } from "jotai"
 
 import { currentFirmwareVersionSelector } from "../../../jotai/firmware/selectors"
 import { CoreInfoTxtSelectorFamily } from "../../../jotai/cores/selectors"
 import { currentViewAtom } from "../../../jotai/view/atoms"
-import { CoreInfoJSON } from "../../../types"
+import { CoreInfoJSON, InventoryItem } from "../../../types"
 import { Link } from "../../link"
 import Icon, { IconOptions } from "../../ui/Icon"
 import Tag, { TagList } from "../../ui/Tag"
 import { CORE_FEATURES, getCoreFeatures } from "../features"
 import { DetailSection } from "../../shared/detailPage"
 
-/** The author's pixel icon and name. */
+/** The author's pixel icon and name; a link to their profile when known. */
 export const CoreAuthor = ({
   name,
   imageSrc,
+  href,
 }: {
   name: string
   imageSrc: string
+  /** The author's page, e.g. their GitHub profile. */
+  href?: string | null
 }) => (
   <span className="core-info__author">
     <img className="core-info__author-image" src={imageSrc} alt="" />
-    {name}
+    {href ? <Link href={href}>{name}</Link> : name}
   </span>
 )
+
+/** The GitHub profile and repository of a core from the inventory, if any. */
+export const getRepositoryLinks = (
+  repository: InventoryItem["repository"] | undefined
+) => {
+  if (repository?.platform !== "github")
+    return { authorUrl: null, repositoryUrl: null }
+  return {
+    authorUrl: `https://github.com/${repository.owner}`,
+    repositoryUrl: `https://github.com/${repository.owner}/${repository.name}`,
+  }
+}
+
+/** A URL as a link, shown without its protocol. */
+export const UrlLink = ({ href }: { href: string }) => (
+  <Link href={href}>{href.replace(/^https?:\/\//, "").replace(/\/$/, "")}</Link>
+)
+
+/** The firmware a core needs, linking to the Firmware page. */
+export const FirmwareRequiredLink = ({ version }: { version: string }) => {
+  const setViewAndSubview = useSetAtom(currentViewAtom)
+  return (
+    <Link
+      onClick={() =>
+        startTransition(() =>
+          setViewAndSubview({ view: "Firmware", selected: null })
+        )
+      }
+    >
+      {version}
+    </Link>
+  )
+}
 
 /** The features the core supports, as tags; nothing if it has none. */
 export const CoreFeatureTags = ({

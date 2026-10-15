@@ -43,6 +43,14 @@ const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
         `text-input--variant-${variant}`,
         className
       )}
+      // Pressing anywhere in the frame (icon, key caps, padding) focuses the
+      // field; buttons and links inside keep their own clicks
+      onMouseDown={(event) => {
+        const target = event.target as HTMLElement
+        if (target.closest("input, button, a")) return
+        event.preventDefault()
+        event.currentTarget.querySelector("input")?.focus()
+      }}
     >
       {icon && <Icon icon={icon} />}
       <input

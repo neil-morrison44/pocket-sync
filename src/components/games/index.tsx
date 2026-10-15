@@ -1,6 +1,7 @@
 import { Suspense, useState } from "react"
 import { Controls, ControlsActions } from "../controls"
 import { SearchContextProvider } from "../search/context"
+import NoResults from "../ui/NoResults"
 import { InstanceJson } from "./instanceJson"
 import { CleanFilesModal } from "./cleanFiles"
 import { useTranslation } from "react-i18next"
@@ -63,7 +64,7 @@ export const Games = () => {
         query={searchQuery}
         other={{ platform: filterPlatform }}
       >
-        <div className="games__systems">
+        <div className="games__systems search-results">
           {systems.length === 0 && (
             <EmptyState icon="gamepad" title={t("empty_title")}>
               {t("none")}
@@ -74,6 +75,7 @@ export const Games = () => {
               <GameSystemSection system={system} />
             </Suspense>
           ))}
+          {systems.length > 0 && <NoResults />}
         </div>
       </SearchContextProvider>
     </div>

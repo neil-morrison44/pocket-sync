@@ -1,187 +1,283 @@
 import { Modal } from "../modal"
-import { ReactNode, Suspense, useCallback, useMemo, useState } from "react"
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react"
 import { FetchType } from "../../types"
 import { open } from "@tauri-apps/plugin-dialog"
 import { pocketPathAtom } from "../../jotai/atoms"
 import { homeDirSelector } from "../../jotai/selectors"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
-import { useTranslation } from "react-i18next"
-import { Tip } from "../tip"
+import { Trans, useTranslation } from "react-i18next"
 import { ArchiveMetadataSelectorFamily } from "../../jotai/archive/selectors"
 import { useAtomValue } from "jotai"
+import Button from "../ui/Button"
+import Callout from "../ui/Callout"
+import Field from "../ui/Field"
+import Icon from "../ui/Icon"
+import Select from "../ui/Select"
+import TextInput from "../ui/TextInput"
 
 type NewFetchProps = {
   onClose: () => void
 }
 
+type Draft = {
+  type: FetchType["type"]
+  /** Local Files: the folder on this computer. */
+  path?: string
+  /** Internet Archive: the item's identifier. */
+  name?: string
+  extensions: string[]
+  destination?: string
+}
+
+/**
+ * Adds a fetch source: where the files come from (a folder on this computer
+ * or an archive.org item) and where they go on the SD card. Every field says
+ * what to enter, with an example.
+ */
 export const NewFetch = ({ onClose }: NewFetchProps) => {
   const { t } = useTranslation("fetch")
   const updateConfig = useUpdateConfig()
+  const [draft, setDraft] = useState<Draft>({
+    type: "filesystem",
+    extensions: [],
+  })
+  const [archiveValid, setArchiveValid] = useState(false)
 
-  const addFetch = useCallback(
-    async (newFetch: FetchType) => {
-      await updateConfig("fetches", (fetches) => [...(fetches || []), newFetch])
-      onClose()
-    },
-    [updateConfig, onClose]
+  const update = useCallback(
+    (changes: Partial<Draft>) => setDraft((d) => ({ ...d, ...changes })),
+    []
   )
-  const [fetchType, setFetchType] = useState<FetchType["type"]>("filesystem")
+
+  const newFetch = useMemo<FetchType | null>(() => {
+    if (!draft.destination) return null
+    if (draft.type === "filesystem") {
+      if (!draft.path) return null
+      return {
+        type: "filesystem",
+        path: draft.path,
+        destination: draft.destination,
+      }
+    }
+    if (!draft.name || !archiveValid) return null
+    return {
+      type: "archive.org",
+      name: draft.name,
+      destination: draft.destination,
+      extensions: draft.extensions,
+    }
+  }, [archiveValid, draft])
+
+  const addFetch = useCallback(async () => {
+    if (!newFetch) return
+    await updateConfig("fetches", (fetches) => [...(fetches || []), newFetch])
+    onClose()
+  }, [newFetch, updateConfig, onClose])
 
   return (
-    <Modal className="fetch__new" title={t("new.title")} onClose={onClose}>
-      <select
-        className="fetch__type-select"
-        onChange={(e) => setFetchType(e.target.value as FetchType["type"])}
-      >
-        <option value="filesystem">{t("types.filesystem")}</option>
-        <option value="archive.org">{t("types.archive_org")}</option>
-      </select>
-      <div className="fetch__new-content">
-        {fetchType === "filesystem" && (
-          <NewFetchFileSystem addFetch={addFetch} />
-        )}
-        {fetchType === "archive.org" && <NewFetchArchive addFetch={addFetch} />}
-      </div>
+    <Modal className="modal--form" title={t("new.title")} onClose={onClose}>
+      <p className="fetch__intro">{t("new.intro")}</p>
 
+      <Field
+        label={t("new.type_label")}
+        htmlFor="fetch-type"
+        hint={t(
+          draft.type === "archive.org"
+            ? "new.type_hint.archive_org"
+            : "new.type_hint.filesystem"
+        )}
+      >
+        <Select<FetchType["type"]>
+          id="fetch-type"
+          value={draft.type}
+          onChange={(type) => update({ type })}
+          options={[
+            { value: "filesystem", label: t("types.filesystem") },
+            { value: "archive.org", label: t("types.archive_org") },
+          ]}
+        />
+      </Field>
+
+      {draft.type === "filesystem" && (
+        <Field
+          label={t("new.origin_label")}
+          htmlFor="fetch-origin"
+          hint={t("new.origin_hint")}
+        >
+          <FolderPicker
+            id="fetch-origin"
+            value={draft.path}
+            onChange={(path) => update({ path })}
+          />
+        </Field>
+      )}
+
+      {draft.type === "archive.org" && (
+        <>
+          <ArchiveNameField
+            value={draft.name ?? ""}
+            onChange={(name) => update({ name })}
+            onValidChange={setArchiveValid}
+          />
+          <Field
+            label={t("new.extensions_label")}
+            htmlFor="fetch-extensions"
+            hint={t("new.extensions_hint")}
+          >
+            <ListInput
+              id="fetch-extensions"
+              value={draft.extensions}
+              onChange={(extensions) => update({ extensions })}
+            />
+          </Field>
+          <Callout variant="info">{t("new.archive_tip")}</Callout>
+        </>
+      )}
+
+      <Field
+        label={t("new.destination_label")}
+        htmlFor="fetch-destination"
+        hint={
+          <Trans
+            t={t}
+            i18nKey="new.destination_hint"
+            components={{ code: <code /> }}
+          />
+        }
+      >
+        <FolderPicker
+          id="fetch-destination"
+          fileIsOnPocket
+          value={draft.destination}
+          onChange={(destination) => update({ destination })}
+        />
+      </Field>
+
+      <div className="modal__actions">
+        <Button theme="tertiary" onClick={onClose}>
+          {t("new.cancel")}
+        </Button>
+        <Button theme="primary" disabled={!newFetch} onClick={addFetch}>
+          {t("new.add_fetch")}
+        </Button>
+      </div>
     </Modal>
   )
 }
 
-type NewFetchTypeProps = {
-  addFetch: (newFetch: FetchType) => void
+type ArchiveNameFieldProps = {
+  value: string
+  onChange: (name: string) => void
+  /** Whether the name was found on archive.org. */
+  onValidChange: (valid: boolean) => void
 }
 
-const NewFetchFileSystem = ({ addFetch }: NewFetchTypeProps) => {
-  const [info, setInfo] = useState<Partial<FetchType>>({ type: "filesystem" })
-  if (info.type !== "filesystem") throw new Error("Wrong type")
-
-  const isValid = useMemo(() => {
-    return info.destination !== undefined && info.path !== undefined
-  }, [info])
-
+/** The archive's name, checked against archive.org once typing pauses. */
+const ArchiveNameField = ({
+  value,
+  onChange,
+  onValidChange,
+}: ArchiveNameFieldProps) => {
   const { t } = useTranslation("fetch")
+  const [checkedName, setCheckedName] = useState("")
+
+  // Only look the name up after a short pause, not on every key press
+  useEffect(() => {
+    onValidChange(false)
+    const timeout = setTimeout(() => setCheckedName(value.trim()), 500)
+    return () => clearTimeout(timeout)
+  }, [value, onValidChange])
+
+  const status =
+    checkedName && checkedName === value.trim() ? (
+      <Suspense
+        fallback={t("new.validating_archive_name", { name: checkedName })}
+      >
+        <ArchiveCheck
+          key={checkedName}
+          name={checkedName}
+          onValidChange={onValidChange}
+        />
+      </Suspense>
+    ) : null
 
   return (
-    <>
-      <FolderPicker
-        text={t("new.origin")}
-        onChange={(path) => setInfo((i) => ({ ...i, path }))}
-        value={info.path}
+    <Field
+      label={t("new.archive_label")}
+      htmlFor="fetch-archive-name"
+      hint={
+        <>
+          <Trans
+            t={t}
+            i18nKey="new.archive_hint"
+            components={{ code: <code /> }}
+          />
+          {status && <span className="fetch__archive-status">{status}</span>}
+        </>
+      }
+    >
+      <TextInput
+        id="fetch-archive-name"
+        variant="code"
+        value={value}
+        onChange={onChange}
+        placeholder="openFPGA-Files"
+        autoCapitalize="off"
+        autoComplete="off"
+        spellCheck={false}
       />
-
-      <FolderPicker
-        fileIsOnPocket
-        text={t("new.destination")}
-        onChange={(path) => setInfo((i) => ({ ...i, destination: path }))}
-        value={info.destination}
-      />
-
-      {isValid && (
-        <button onClick={() => addFetch(info as FetchType)}>
-          {t("new.add_fetch")}
-        </button>
-      )}
-    </>
+    </Field>
   )
 }
 
-const NewFetchArchive = ({ addFetch }: NewFetchTypeProps) => {
-  const [info, setInfo] = useState<Partial<FetchType>>({
-    type: "archive.org",
-    extensions: [],
-  })
-  if (info.type !== "archive.org") throw new Error("Wrong type")
-  const { t } = useTranslation("fetch")
-
-  const isValid = useMemo(() => {
-    return (
-      info.name !== undefined &&
-      info.destination !== undefined &&
-      info.extensions !== undefined
-    )
-  }, [info])
-
-  return (
-    <>
-      <label className="fetch__text-input">
-        <span dangerouslySetInnerHTML={{ __html: t("new.archive_name") }} />
-        <input
-          type="text"
-          placeholder=""
-          value={info.name ?? ""}
-          onChange={(e) => setInfo((i) => ({ ...i, name: e.target.value }))}
-        />
-      </label>
-
-      <FolderPicker
-        fileIsOnPocket
-        text={t("new.destination")}
-        onChange={(path) => setInfo((i) => ({ ...i, destination: path }))}
-        value={info.destination}
-      />
-      <div className="fetch__text-input">
-        {t("new.extensions")}
-        <ListInput
-          value={info.extensions || []}
-          onChange={(ext) => setInfo((i) => ({ ...i, extensions: ext }))}
-        />
-      </div>
-
-      <Tip>{t("new.archive_tip")}</Tip>
-
-      {isValid && info.name && (
-        <Suspense
-          fallback={
-            <div className="fetch__archive-check">
-              {t("new.validating_archive_name", { name: info.name })}
-            </div>
-          }
-        >
-          <CheckArchiveValidity key={info.name} archiveName={info.name}>
-            <button onClick={() => addFetch(info as FetchType)}>
-              {t("new.add_fetch")}
-            </button>
-          </CheckArchiveValidity>
-        </Suspense>
-      )}
-    </>
-  )
-}
-
-const CheckArchiveValidity = ({
-  archiveName,
-  children,
+/** Looks the archive up; says whether it exists. */
+const ArchiveCheck = ({
+  name,
+  onValidChange,
 }: {
-  archiveName: string
-  children: ReactNode
+  name: string
+  onValidChange: (valid: boolean) => void
 }) => {
   const { t } = useTranslation("fetch")
-  const metadata = useAtomValue(ArchiveMetadataSelectorFamily({ archiveName }))
+  const metadata = useAtomValue(
+    ArchiveMetadataSelectorFamily({ archiveName: name })
+  )
+  const valid = Boolean(metadata)
 
-  if (!metadata)
+  useEffect(() => onValidChange(valid), [onValidChange, valid])
+
+  if (!valid)
     return (
-      <div className="fetch__archive-check">
-        {t("new.invalid_archive_name", { name: archiveName })}
-      </div>
+      <span className="fetch__archive-status--invalid">
+        <Icon icon="warning-diamond" />
+        {t("new.invalid_archive_name", { name })}
+      </span>
     )
-  return children
+  return (
+    <span className="fetch__archive-status--valid">
+      <Icon icon="check" />
+      {t("new.archive_found")}
+    </span>
+  )
 }
 
 type FolderPickerProps = {
-  text: string
+  id?: string
   onChange: (path: string) => void
   value: string | undefined
+  /** Picks a folder on the SD card, stored relative to it. */
   fileIsOnPocket?: boolean
 }
 
+/** The chosen folder in a code frame, and a button to choose it. */
 const FolderPicker = ({
-  text,
+  id,
   value,
   fileIsOnPocket = false,
   onChange,
 }: FolderPickerProps) => {
   const pocketPath = useAtomValue(pocketPathAtom)
   const homeDir = useAtomValue(homeDirSelector)
+  const { t } = useTranslation("fetch")
   if (!pocketPath) throw new Error("Missing PocketPath")
 
   const onClick = useCallback(async () => {
@@ -197,64 +293,86 @@ const FolderPicker = ({
   }, [fileIsOnPocket, homeDir, onChange, pocketPath])
 
   return (
-    <label className="fetch__folder-picker">
-      <div className="fetch__folder-picker-value">
-        {value?.replace(pocketPath, "")}
-      </div>
-      <button className="fetch__folder-button" onClick={onClick}>
-        {text}
-      </button>
-    </label>
+    <div className="fetch__folder-picker">
+      <TextInput
+        id={id}
+        className="fetch__folder-picker-value"
+        variant="code"
+        value={value?.replace(pocketPath, "") ?? ""}
+        onChange={() => {}}
+        placeholder={t("new.no_folder")}
+        readOnly
+        onClick={onClick}
+      />
+      <Button icon="folder" onClick={onClick}>
+        {t("new.choose_folder")}
+      </Button>
+    </div>
   )
 }
 
 type ListInputProps = {
+  id?: string
   value: string[]
   onChange: (newList: string[]) => void
 }
 
-const ListInput = ({ value, onChange }: ListInputProps) => {
+/** File extensions as removable chips, with a field to add one. */
+const ListInput = ({ id, value, onChange }: ListInputProps) => {
   const [interimValue, setInterimValue] = useState("")
   const { t } = useTranslation("fetch")
 
   const submitValue = useCallback(() => {
-    if (interimValue.length === 0) return
-    if (value.includes(interimValue)) return
-    onChange([...value, interimValue])
+    const extension = interimValue.trim().replace(/^\./, "")
+    if (extension.length === 0) return
+    if (!value.includes(extension)) onChange([...value, extension])
     setInterimValue("")
   }, [interimValue, onChange, value])
 
   return (
     <div className="fetch__list-input">
-      <ol className="fetch__list-input-list">
-        {value.map((v, index) => (
-          <li key={v} className="fetch__list-input-list-item">
-            {v}
-            <button
-              onClick={() => {
-                const array = [...value]
-                array.splice(index, 1)
-                onChange(array)
-              }}
-            >
-              {"X"}
-            </button>
-          </li>
-        ))}
-      </ol>
+      {value.length > 0 && (
+        <ul className="fetch__extensions">
+          {value.map((extension, index) => (
+            <li key={extension} className="fetch__extension">
+              {extension}
+              <button
+                type="button"
+                className="fetch__extension-remove"
+                aria-label={t("new.remove_extension", { extension })}
+                onClick={() => {
+                  const array = [...value]
+                  array.splice(index, 1)
+                  onChange(array)
+                }}
+              >
+                <Icon icon="close" size={12} />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
       <div className="fetch__list-input-add">
-        <input
-          type="text"
-          onChange={(e) => setInterimValue(e.target.value.toLowerCase())}
+        <TextInput
+          id={id}
+          variant="code"
           value={interimValue}
+          onChange={(text) => setInterimValue(text.toLowerCase())}
+          placeholder={t("new.extension_placeholder")}
           autoCapitalize="off"
           autoComplete="off"
-          spellCheck="false"
+          spellCheck={false}
           onKeyDown={(e) => {
-            if (e.code === "Enter") submitValue()
+            if (e.key === "Enter") submitValue()
           }}
         />
-        <button onClick={submitValue}>{t("new.add_extension")}</button>
+        <Button
+          theme="tertiary"
+          disabled={interimValue.trim().length === 0}
+          onClick={submitValue}
+        >
+          {t("new.add_extension")}
+        </Button>
       </div>
     </div>
   )

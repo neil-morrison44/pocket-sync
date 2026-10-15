@@ -46,7 +46,9 @@ import { openFolder } from "../../utils/openFolder"
 
 const DEFAULT_ARCHIVE_URL = "https://archive.org/download/openFPGA-Files"
 import Button from "../ui/Button"
-import Select, { SelectOption } from "../ui/Select"
+import Select from "../ui/Select"
+import Spinner, { SPINNER_FRAME_MS } from "../ui/Spinner/Spinner"
+import ProgressBar from "../ui/ProgressBar"
 import TextInput from "../ui/TextInput"
 
 export const Settings = () => {
@@ -330,7 +332,7 @@ export const Settings = () => {
         >
           <div className="settings__row" id="settings-reconnect">
             <h3 className="settings__row-title">{t("reconnect.title")}</h3>
-            <div className="settings__ramble settings__ramble--collapse-spaces">
+            <div className="settings__ramble">
               {/* The translations embed the path; it's shown below in a
                   PathField instead, so it can't overflow the column */}
               <Trans t={t} i18nKey="reconnect.ramble" values={{ ppath: "" }}>
@@ -408,7 +410,43 @@ const DeveloperSettings = () => {
           onChange={setDemoFirmware}
         />
       </div>
+      <LoadingPreview />
     </StickySection>
+  )
+}
+
+/** The loading spinners and progress bar, with the spinner's speed. */
+const LoadingPreview = () => {
+  const { t } = useTranslation("settings")
+  const [frameMs, setFrameMs] = useState(SPINNER_FRAME_MS)
+  return (
+    <div className="settings__row" id="settings-loading_preview">
+      <h3 className="settings__row-title">{t("loading_preview.title")}</h3>
+      <div className="settings__ramble">
+        {t("loading_preview.ramble", { default: SPINNER_FRAME_MS })}
+      </div>
+      <div className="settings__loading-preview">
+        <Spinner frameMs={frameMs} />
+        <Spinner variant="keypad" frameMs={frameMs} />
+        <Spinner size={20} frameMs={frameMs} />
+        <Spinner variant="keypad" size={20} frameMs={frameMs} />
+      </div>
+      <label className="settings__checkbox">
+        <span>{t("loading_preview.speed", { ms: frameMs })}</span>
+        <input
+          type="range"
+          min={16}
+          max={400}
+          step={4}
+          value={frameMs}
+          onChange={({ target }) => setFrameMs(Number(target.value))}
+        />
+      </label>
+      <div className="settings__loading-preview settings__loading-preview--bars">
+        <ProgressBar value={62} label="Assets/gb/common/Example.gb" />
+        <ProgressBar ariaLabel={t("loading_preview.title")} />
+      </div>
+    </div>
   )
 }
 

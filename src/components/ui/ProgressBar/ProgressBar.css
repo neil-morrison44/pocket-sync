@@ -1,0 +1,77 @@
+.progress-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+  min-width: 0;
+}
+
+.progress-bar__info {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  font-size: var(--font-size-xs);
+  color: var(--theme-text-soft);
+}
+
+/* Long file paths: one line, cut at the start so the file name shows */
+.progress-bar__label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  direction: rtl;
+  text-align: left;
+}
+
+.progress-bar__value {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--theme-text-body);
+}
+
+/* A framed rectangle; the fill sits 2px inside it */
+.progress-bar__track {
+  position: relative;
+  height: 12px;
+  padding: 2px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background-color: var(--theme-surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--theme-separator);
+}
+
+.progress-bar__fill {
+  height: 100%;
+  border-radius: max(0px, calc(var(--radius) - 1px));
+  background-color: var(--theme-accent);
+  transition: width 200ms ease-out;
+}
+
+/* Unknown total: a block slides through */
+.progress-bar__track--is-indeterminate .progress-bar__fill {
+  width: 30%;
+  animation: progress-bar-slide 1.2s ease-in-out infinite;
+}
+
+@keyframes progress-bar-slide {
+  from {
+    transform: translateX(-110%);
+  }
+
+  to {
+    transform: translateX(350%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-bar__fill {
+    transition: none;
+  }
+
+  .progress-bar__track--is-indeterminate .progress-bar__fill {
+    animation: none;
+    width: 100%;
+    opacity: 0.4;
+  }
+}

@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next"
 import { PocketColour } from "../../types"
 import { SelectOption } from "../ui/Select"
+import { COLOUR } from "../three/hooks/colours"
 
 const COLOUR_GROUPS: { label?: string; values: PocketColour[] }[] = [
   { values: ["black", "white", "glow"] },
@@ -52,7 +53,10 @@ const COLOUR_GROUPS: { label?: string; values: PocketColour[] }[] = [
   { label: "3d_pocket.supreme_label", values: ["supreme_red", "supreme_gold"] },
 ]
 
-/** Select options for the 3D Pocket colours, grouped by edition. */
+/**
+ * Select options for the 3D Pocket colours, grouped by edition, each with a
+ * swatch of the colour the 3D model uses.
+ */
 export const useColourOptions = (): SelectOption<PocketColour>[] => {
   const { t } = useTranslation("settings")
   return COLOUR_GROUPS.flatMap(({ label, values }) =>
@@ -60,6 +64,7 @@ export const useColourOptions = (): SelectOption<PocketColour>[] => {
       value,
       label: t(`3d_pocket.colours.${value}`),
       group: label && t(label),
+      swatch: COLOUR[value],
     }))
   )
 }

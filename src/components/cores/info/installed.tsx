@@ -11,7 +11,6 @@ import {
   DetailPage,
   DetailSection,
 } from "../../shared/detailPage"
-import { Link } from "../../link"
 
 import "./index.css"
 import { PlatformImage } from "../platformImage"
@@ -60,8 +59,11 @@ import {
   CoreAuthor,
   CoreFeatureTags,
   CoreNotice,
+  FirmwareRequiredLink,
   FirmwareWarning,
+  getRepositoryLinks,
   InfoTxt,
+  UrlLink,
 } from "./shared"
 
 type CoreInfoProps = {
@@ -160,7 +162,11 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
               <CorePlatformLine platformId={mainPlatformId} />
             </Suspense>
             <div className="detail-page__byline">
-              <CoreAuthor name={metadata.author} imageSrc={authorImageSrc} />
+              <CoreAuthor
+                name={metadata.author}
+                imageSrc={authorImageSrc}
+                href={getRepositoryLinks(inventoryItem?.repository).authorUrl}
+              />
               <span className="core-info__version">{metadata.version}</span>
             </div>
             <CoreTags coreName={coreName} installed showInstalled />
@@ -295,6 +301,9 @@ const InstalledOverview = ({ coreName }: { coreName: string }) => {
   const aiCheck = useAtomValue(aiCheckAtom)
   const { metadata, framework } = coreInfo.core
   const funding = inventoryItem?.repository.funding
+  const { authorUrl, repositoryUrl } = getRepositoryLinks(
+    inventoryItem?.repository
+  )
 
   const coreAIScore = aiCheck[coreName]?.overall_score ?? 0
   const showAIReport = config.hide_ai_score !== true && coreAIScore > 0
@@ -302,7 +311,13 @@ const InstalledOverview = ({ coreName }: { coreName: string }) => {
   const facts: DetailFact[] = [
     {
       label: t("author"),
-      value: <CoreAuthor name={metadata.author} imageSrc={authorImageSrc} />,
+      value: (
+        <CoreAuthor
+          name={metadata.author}
+          imageSrc={authorImageSrc}
+          href={authorUrl}
+        />
+      ),
     },
     { label: t("version"), value: metadata.version },
   ]
@@ -310,9 +325,9 @@ const InstalledOverview = ({ coreName }: { coreName: string }) => {
     facts.push({ label: t("release_date"), value: metadata.date_release })
   facts.push({
     label: t("firmware_required"),
-    value: framework.version_required,
+    value: <FirmwareRequiredLink version={framework.version_required} />,
   })
-  if (inventoryItem?.repository.platform === "github")
+  if (repositoryUrl)
     facts.push({
       label: t("download_count"),
       value: (
@@ -322,9 +337,11 @@ const InstalledOverview = ({ coreName }: { coreName: string }) => {
       ),
     })
   if (metadata.url)
+    facts.push({ label: t("url"), value: <UrlLink href={metadata.url} /> })
+  if (repositoryUrl && repositoryUrl !== metadata.url)
     facts.push({
-      label: t("url"),
-      value: <Link href={metadata.url}>{metadata.url}</Link>,
+      label: t("source_code"),
+      value: <UrlLink href={repositoryUrl} />,
     })
   if (funding)
     facts.push({

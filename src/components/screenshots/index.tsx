@@ -19,9 +19,10 @@ import { SearchContextProvider } from "../search/context"
 import { selectedSubviewSelector } from "../../jotai/view/selectors"
 import { useMultiExport } from "./hooks/useMultiExport"
 import { invokeDeleteFiles } from "../../utils/invokes"
-import { useTranslation } from "react-i18next"
+import { Trans, useTranslation } from "react-i18next"
 import ButtonCombo from "../ui/ButtonCombo"
 import EmptyState from "../ui/EmptyState"
+import NoResults from "../ui/NoResults"
 import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
 import { ControlsCheckbox } from "../controls/inputs/checkbox"
@@ -97,7 +98,7 @@ export const Screenshots = () => {
 
   if (sortedScreenshots.length === 0) {
     return (
-      <EmptyState icon="image" title={t("empty_title")}>
+      <EmptyState icon="image" title={t("empty_title")} fullPage>
         {t("no_screenshots")}
         <HowToScreenshot />
       </EmptyState>
@@ -144,33 +145,38 @@ export const Screenshots = () => {
         </ControlsActions>
       </Controls>
       <SearchContextProvider query={searchQuery}>
-        <Grid className="screenshots">
-          {sortedScreenshots.map((fileName) => (
-            <Suspense
-              fallback={<Loader className="screenshots__loading-item" />}
-              key={fileName}
-            >
-              <Screenshot
-                fileName={fileName}
-                selected={selectMode && selectedScreenshots.includes(fileName)}
-                onClick={() => {
-                  if (selectMode) {
-                    setSelectedScreenshots((s) => {
-                      if (s.includes(fileName)) {
-                        return s.filter((f) => f !== fileName)
-                      } else {
-                        return [...s, fileName]
-                      }
-                    })
-                  } else {
-                    pushScroll()
-                    setSelected(fileName)
+        <div className="search-results">
+          <Grid className="screenshots">
+            {sortedScreenshots.map((fileName) => (
+              <Suspense
+                fallback={<Loader className="screenshots__loading-item" />}
+                key={fileName}
+              >
+                <Screenshot
+                  fileName={fileName}
+                  selected={
+                    selectMode && selectedScreenshots.includes(fileName)
                   }
-                }}
-              />
-            </Suspense>
-          ))}
-        </Grid>
+                  onClick={() => {
+                    if (selectMode) {
+                      setSelectedScreenshots((s) => {
+                        if (s.includes(fileName)) {
+                          return s.filter((f) => f !== fileName)
+                        } else {
+                          return [...s, fileName]
+                        }
+                      })
+                    } else {
+                      pushScroll()
+                      setSelected(fileName)
+                    }
+                  }}
+                />
+              </Suspense>
+            ))}
+          </Grid>
+          <NoResults />
+        </div>
       </SearchContextProvider>
     </>
   )
@@ -183,7 +189,14 @@ const HowToScreenshot = () => {
   return (
     <div className="screenshots__how-to">
       <ButtonCombo keys={["analogue", "start"]} size={40} />
-      <span>{t("how_to")}</span>
+      <span>
+        {/* The Pocket's button names stand out, like the lit buttons above */}
+        <Trans
+          t={t}
+          i18nKey="how_to"
+          components={{ key: <strong className="screenshots__key" /> }}
+        />
+      </span>
     </div>
   )
 }

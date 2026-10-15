@@ -1,48 +1,7 @@
 .palettes {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-}
-
-/* Tiled cards; grids may use the full width */
-.palettes__list {
-  list-style: none;
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: var(--space-xl);
-  padding: var(--space-xl);
-  overflow: auto;
-}
-
-.palettes__card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  padding: var(--space-sm);
-  background-color: var(--theme-surface-sunken);
-  border: 1px solid var(--theme-border);
-}
-
-.palettes__card-open {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin: 0;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  background: none;
-  color: var(--theme-text-headline);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-
-  :root.keyboard-focus &:focus {
-    outline: 2px solid var(--theme-focus);
-    outline-offset: 2px;
-  }
 }
 
 .palettes__card-rename {
@@ -53,11 +12,6 @@
     flex-grow: 1;
     width: auto;
   }
-}
-
-.palettes__card-actions {
-  display: flex;
-  gap: var(--space-xs);
 }
 
 /* Keep the destructive action apart from the others */
@@ -87,6 +41,12 @@
   justify-content: space-between;
   gap: 20px;
   align-items: center;
+}
+
+/* Holds the preview's place while it loads */
+.palettes__preview-placeholder {
+  aspect-ratio: 5 / 4;
+  background-color: var(--theme-surface);
 }
 
 .palettes__list-item-canvas{
@@ -185,4 +145,9 @@
 .palettes__name {
   display: flex;
   align-items: center;
+}
+
+/* In a tile the preview is the media, edge to edge */
+.tile .palettes__list-item-canvas {
+  border: none;
 }

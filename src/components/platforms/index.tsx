@@ -9,6 +9,7 @@ import { Controls, ControlsActions } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
 import { SearchContextProvider } from "../search/context"
+import NoResults from "../ui/NoResults"
 import { PlatformInfo } from "./info"
 import { PlatformItem } from "./item"
 import "./index.css"
@@ -114,19 +115,22 @@ export const Platforms = () => {
         </EmptyState>
       )}
       <SearchContextProvider query={searchQuery}>
-        <Grid placeholderItemHeight={200}>
-          {sortedPlatformIds.map((id) => (
-            <Suspense fallback={<CardSkeleton height={200} />} key={id}>
-              <PlatformItem
-                id={id}
-                onClick={() => {
-                  setSelectedPlatform(id)
-                  pushScroll()
-                }}
-              />
-            </Suspense>
-          ))}
-        </Grid>
+        <div className="search-results">
+          <Grid placeholderItemHeight={200}>
+            {sortedPlatformIds.map((id) => (
+              <Suspense fallback={<CardSkeleton height={200} />} key={id}>
+                <PlatformItem
+                  id={id}
+                  onClick={() => {
+                    setSelectedPlatform(id)
+                    pushScroll()
+                  }}
+                />
+              </Suspense>
+            ))}
+          </Grid>
+          {sortedPlatformIds.length > 0 && <NoResults />}
+        </div>
       </SearchContextProvider>
     </div>
   )

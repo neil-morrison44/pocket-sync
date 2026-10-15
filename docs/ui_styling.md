@@ -16,7 +16,7 @@ The reasoning behind these choices, the character principles and the current sta
 
 `src/theme.css` (imported first in `src/main.tsx`) has two layers:
 
-1. **Theme blocks** set the semantic tokens, grouped by comment headers: surfaces (`--theme-background`, `--theme-surface`, `--theme-surface-hover`, `--theme-surface-sunken`, `--theme-border`), text, inverse, accents (`--theme-accent`, `--theme-danger`, `--theme-warning`, `--theme-highlight`, `--theme-selection`) and sidebar. `:root` / `[data-theme="dark"]` is the default.
+1. **Theme blocks** set the semantic tokens, grouped by comment headers: surfaces (`--theme-background`, `--theme-surface`, `--theme-surface-hover`, `--theme-surface-sunken`, `--theme-border`), text, inverse, accents (`--theme-accent`, `--theme-accent-text`, `--theme-accent-foreground`, `--theme-danger`, `--theme-danger-text`, `--theme-warning`, `--theme-highlight`, `--theme-selection`) and sidebar. `:root` / `[data-theme="dark"]` is the default.
 2. **Aliases** map the older names (`--background-colour`, `--info-colour`, `--green-colour`, …) to theme tokens, so existing component CSS follows the active theme. New code should use `--theme-*` directly. Over time the aliases can be removed.
 
 | Legacy alias | Theme token |
@@ -77,7 +77,7 @@ To add a theme: add a mode to the Figma "Theme" collection and a matching `:root
 
 ## UI primitives
 
-`src/components/ui/<Name>/` holds the shared building blocks: `Icon`, `Button` (themes `primary`, `secondary`, `tertiary`, `destructive`), `IconButton`, `Toggle`, `Switch`, `Select` (option groups, `searchable` combobox mode), `MultiSelect` (checklist with search and Select All / Clear All), `TextInput` (`code` variant), `SearchInput`, `PathField`, `Tabs`, `Tooltip`, `Popover`, `Stats`, `StickySection`, `Tag` / `TagList` (slanted status chips; themes `neutral`, `accent`, `warning`, `danger`, `highlight`, `analogizer`), `Accordion` / `AccordionItem` (expandable rows, e.g. release notes; `action` puts a button in the header row), `Kbd` (keyboard shortcut key caps that light up while held; `mod` is ⌘ on macOS, Ctrl elsewhere) and `Skeleton` / `CardSkeleton`. Document props with JSDoc comments. Each has `Name.tsx`, `Name.css` and `index.ts`, uses `clsx` with `--theme-*` / `--is-*` modifiers, and is built on a Radix primitive where one exists. Use these instead of raw `<button>`, `<select>` or `<input>` elements. The `Controls*` components in `src/components/controls` are thin wrappers around them for the top controls bar.
+`src/components/ui/<Name>/` holds the shared building blocks: `Icon`, `Button` (themes `primary`, `secondary`, `tertiary`, `destructive`), `IconButton`, `Toggle`, `Switch`, `Select` (option groups, `searchable` combobox mode), `MultiSelect` (checklist with search and Select All / Clear All), `TextInput` (`code` variant), `SearchInput`, `PathField`, `Tabs`, `Tooltip`, `Popover`, `Stats`, `StickySection`, `Tag` / `TagList` (slanted status chips; themes `neutral`, `accent`, `warning`, `danger`, `highlight`, `analogizer`), `Accordion` / `AccordionItem` (expandable rows, e.g. release notes; `action` puts a button in the header row), `Kbd` (keyboard shortcut key caps that light up while held; `mod` is ⌘ on macOS, Ctrl elsewhere) and `Skeleton` / `CardSkeleton`, and `Tile` (the card for every grid of items: media, title, subtitle, meta, tags, optional actions; `orientation="horizontal"` for a small image beside the text, e.g. save states; put it in a `Grid`). Document props with JSDoc comments. Each has `Name.tsx`, `Name.css` and `index.ts`, uses `clsx` with `--theme-*` / `--is-*` modifiers, and is built on a Radix primitive where one exists. Use these instead of raw `<button>`, `<select>` or `<input>` elements. The `Controls*` components in `src/components/controls` are thin wrappers around them for the top controls bar.
 
 ## Conventions for new UI
 
@@ -87,7 +87,7 @@ To add a theme: add a mode to the Figma "Theme" collection and a matching `:root
 - Button labels are verb + noun ("Add Core", "Remove Plugin"). Icon-only buttons are `IconButton`s with a required `label` (tooltip + accessible name); never ship a button without a label.
 - Keyboard focus uses `--theme-focus`; selection uses `--theme-selection`. Focus styles go under `:root.keyboard-focus` (set by `useKeyboardFocus`), so they only show for keyboard users.
 - Hover lightens the background (`--theme-surface-raised`); never scale on hover. Press may scale to 0.97–0.99.
-- Anything placed on the accent green (`--theme-accent`) uses `--theme-accent-text` for its text and icons.
+- Anything placed on the accent green (`--theme-accent`) uses `--theme-accent-text` for its text and icons. Green text, icons and borders on the page itself (links, check marks, frames) use `--theme-accent-foreground`: the Analogue green in dark, a darker green in light, where `#84E38F` on white is unreadable. Text on red (`--theme-danger`) uses `--theme-danger-text` (white in both themes).
 - Never hard-code colours in component CSS. Use `--theme-*` tokens directly, or alias them on the block when a component needs its own names: `.sidebar { --sidebar-background: var(--theme-sidebar-background) }`.
 - If a component needs a colour the theme doesn't have yet, add a `--theme-*` token to **every** theme in `src/theme.css`. Don't add a hex value to the component.
 - Pages for one item (a core, a platform) use `DetailPage` (`components/shared/detailPage`): a back button floating on the banner, a header bar that slides in on scroll, `DetailHeading` (title and icon-button actions on one row, details below), and `DetailSection` / `DetailFacts` for the content.
@@ -97,15 +97,26 @@ To add a theme: add a mode to the Figma "Theme" collection and a matching `:root
 - The page's main search is a `ControlsSearch`; it gets the ⌘F / Ctrl+F shortcut. Only one per screen.
 - Every icon goes through `Icon`, including brand marks (e.g. the Analogizer), so `size` works the same for all. Icons inside text-sized elements (tags, key caps) use `<Icon size="text" />`, so they scale with the font.
 - Pages use `--page-padding-inline` for their side padding, the same as the header bar, so content lines up with it.
+- Separators under header bars and sticky section headers stop at `--page-padding-inline` (an inset `::after` line), they don't run edge to edge.
+- Text colour defaults to `--theme-text-body`; only titles use `--theme-text-headline`. Settings: row titles are the one emphasised level, settings and their controls use the regular size (`--font-size-md`).
+- Grids of items (cores, platforms, save states, palettes) use `Tile` inside `Grid`; don't build new card styles.
+- `EmptyState fullPage` on pages without a header bar, so it centres in the window.
+- The regular font size is 16px (`--font-size-md`); only header-bar controls (14px) and secondary text go smaller.
+- `Tabs` wrap each tab in its own `Suspense`; a tab that loads data never suspends the page.
+- Save state images use the Pocket screen's 10:9 aspect ratio.
+- Colour choices show a swatch: `SelectOption.swatch` (any CSS colour).
+- Forms use `Field` (label, control, hint or error) for every input, so each says what to enter, ideally with an example. Form modals use `className="modal--form"` and end with a `modal__actions` row: dismiss (tertiary) first, the main action (primary) last, disabled until the form is complete.
+- Searchable lists sit in a `.search-results` wrapper ending with `<NoResults />`; it shows by itself when the search or filters leave nothing. Progress uses `ProgressBar` (or `ProgressLoader` for backend progress events).
+- Tiles for items without a picture use `<span className="tile__icon"><Icon … /></span>` as `media`; running text goes in `description`.
 - Platform images go through `PlatformImage` (SD card) or `InventoryPlatformImage` (online); both fall back to a placeholder in `--theme-surface`.
 - Font sizes come from the scale in `theme.css`: `--font-size-2xs` (11px), `-xs` (12), `-sm` (14), `-code` (13), `-md` (16, body), `-lg` (18), `-xl` (20), `-title-sm` (24), `-title-md` (32), `-title-lg` (40), `-title-xl` (48), `-hero` (64). Never hard-code a rem / px size; em is fine for things that follow their surroundings.
 - Pocket buttons and shortcuts are shown with `ButtonCombo` (`keys={["analogue", "start"]}`), never as text caps, except L / R, which have no glyph.
-- The accent in the dark themes is `--analogue-green` (#84E38F); use `--theme-accent`, not the brand token, in components.
+- The accent fill in both themes is `--analogue-green` (#84E38F); use `--theme-accent`, not the brand token, in components.
 - Loading states use `Loader` (which renders `Spinner`, D-pad by default) or `Skeleton` for content placeholders; no other spinners.
 - Page-level info notes can be dismissible: `Callout dismissId="area-topic"` (stable id); warnings tied to a setting shouldn't be.
 - Notes next to settings or content use `Callout` (`variant="info"` grey, `"warning"` yellow). Empty pages use `EmptyState` (icon, title, text, action).
 - Hints use `Tip` (info icon, soft text); `<Tip warning>` for warnings.
-- Radii come from tokens: `--radius` (default, 2px) and `--radius-button`, `--radius-chip`, `--radius-card`, `--radius-input`, `--radius-modal`. Never hard-code a radius. Slanted shapes use `--shape-slant`, which is rounded in the Modern style. Item height: 36px. Spacing: multiples of 4px.
+- Radii come from tokens: `--radius` (default, 2px) and `--radius-button`, `--radius-chip`, `--radius-card`, `--radius-input`, `--radius-modal`. Never hard-code a radius. Nested corners are concentric: a frame around rounded items gets the items' radius plus its padding (`--radius-popover` for dropdown lists and popovers; the tab frame is `--radius` + 3px). Slanted shapes use `--shape-slant`, which is rounded in the Modern style; there, 1px frames are inset box shadows that follow the radius instead of clip-path outlines, and tertiary buttons have no outline. Item height: 36px. Spacing: multiples of 4px.
 - Every visible string goes through i18n (`react/jsx-no-literals`). Add new keys to `src/i18n/locales/en/index.json`. Other locales fall back to English.
 - A modal component that loads data wraps itself in `ModalSuspense` (same title / onClose), so the modal and a loader show at once.
 - Notification dots use `.notification-dot` (accent green, on a `position: relative` parent); sidebar items take a count badge (`sidebar__badge`).

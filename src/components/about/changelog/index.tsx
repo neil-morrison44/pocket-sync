@@ -1,4 +1,12 @@
-import { Suspense, useEffect, useMemo, useRef, useState } from "react"
+import {
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  Children,
+  ReactNode,
+} from "react"
 import { pocketSyncChangelogSelector } from "../../../jotai/github/selectors"
 
 import ReactMarkdown, { Components } from "react-markdown"
@@ -19,13 +27,40 @@ export const ChangelogPanel = () => (
   </Suspense>
 )
 
-const MARKDOWN_COMPONENTS: Components = {
-  h1: ({ children }) => (
+const RELEASE_DATE = /\s*(\d{4})-(\d{2})-(\d{2})\s*$/
+
+/**
+ * Splits the release date off the end of a release heading ("[v7.0.2 - …]
+ * 2026-10-11"), formatted like the other dates in the app.
+ */
+const splitReleaseDate = (children: ReactNode) => {
+  const parts = Children.toArray(children)
+  const last = parts[parts.length - 1]
+  const match = typeof last === "string" ? last.match(RELEASE_DATE) : null
+  if (!match || typeof last !== "string") return { title: children, date: null }
+
+  const [, year, month, day] = match
+  const date = new Date(Number(year), Number(month) - 1, Number(day))
+  const rest = last.slice(0, match.index)
+  return {
+    title: [...parts.slice(0, -1), ...(rest ? [rest] : [])],
+    date: date.toLocaleDateString(),
+  }
+}
+
+const ReleaseHeading = ({ children }: { children?: ReactNode }) => {
+  const { title, date } = splitReleaseDate(children)
+  return (
     <>
       <div className="about__changelog-break" />
-      <h3 className="about__changelog-title">{children}</h3>
+      <h3 className="about__changelog-title">{title}</h3>
+      {date && <div className="about__changelog-date">{date}</div>}
     </>
-  ),
+  )
+}
+
+const MARKDOWN_COMPONENTS: Components = {
+  h1: ({ children }) => <ReleaseHeading>{children}</ReleaseHeading>,
   h2: "h3",
   h3: "h4",
   h4: "h5",

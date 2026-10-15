@@ -76,6 +76,10 @@
   }
 }
 
+.tabs__loader {
+  min-height: 160px;
+}
+
 .tabs__content {
   flex-grow: 1;
   min-height: 0;

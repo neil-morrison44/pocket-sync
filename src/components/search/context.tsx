@@ -9,6 +9,8 @@ type Other = {
   features?: CoreFeature[]
   /** Only show cores for this platform id ("All" for any). */
   platform?: string
+  /** Only show items by this author, e.g. a plugin's GitHub owner. */
+  author?: string
 }
 
 const SearchContext = React.createContext<{

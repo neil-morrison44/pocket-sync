@@ -8,11 +8,9 @@
     "close_changelog": "Затвори",
     "library_updates": "Обновления в библиотеката",
     "side_panel": "Обновления",
-    "eject": "Извади SD картата",
     "show_updates": "Покажи обновленията",
     "hide_updates": "Скрий обновленията",
     "pocket_colours": "Цветове на Pocket",
-    "colours": "Цветове",
     "body_colour": "Корпус",
     "button_colour": "Бутони",
     "stats": {
@@ -29,7 +27,8 @@
     "not_pocket_tip": "Тази папка не изглежда като файловата система на Pocket. SD картата трябва да бъде инициализирана през Pocket поне веднъж.",
     "close": "Затвори",
     "loading": "Зареждане",
-    "dismiss": "Скрий"
+    "dismiss": "Скрий",
+    "no_results": "Нищо не отговаря на търсенето или филтрите."
   },
   "clean_files": {
     "close_button": "Затвори",
@@ -121,6 +120,7 @@
       "analogizer": "Analogizer"
     },
     "url": "URL",
+    "source_code": "Изходен код",
     "version": "Версия",
     "display_modes_title": "Режими на екран",
     "display_mode_warning": "Този режим на екрана изисква обновление на ядрото, сигурни ли сте, че искате да го включите?",
@@ -265,7 +265,27 @@
       "origin": "Папка източник",
       "title": "Добави нов източник",
       "validating_archive_name": "Проверка на архив \"{name}\"...",
-      "invalid_archive_name": "Не е намерен архив в https://archive.org/details/{name}"
+      "invalid_archive_name": "Не е намерен архив в https://archive.org/details/{name}",
+      "intro": "Fetch копира файлове на SD картата и ги поддържа актуални. „Извлечи файлове“ копира всичко, което липсва на картата или е по-ново в източника.",
+      "type_label": "Източник",
+      "type_hint": {
+        "filesystem": "Папка на този компютър, напр. колекцията ти от BIOS файлове или игри.",
+        "archive_org": "Елемент в archive.org, чиито файлове не са архивирани (zip)."
+      },
+      "origin_label": "Папка на този компютър",
+      "origin_hint": "Копира се всичко в нея, включително подпапките.",
+      "archive_label": "Име на архива",
+      "archive_hint": "Частта след archive.org/details/ в адреса на елемента, напр. <code>openFPGA-Files</code>.",
+      "archive_found": "Намерен в archive.org",
+      "extensions_label": "Разширения на файловете (по избор)",
+      "extensions_hint": "Изтеглят се само файлове с тези разширения, напр. bin или rom. Остави празно за всички файлове, включително метаданните на archive.org.",
+      "extension_placeholder": "напр. bin",
+      "remove_extension": "Премахни {extension}",
+      "destination_label": "Папка на SD картата",
+      "destination_hint": "Къде отиват файловете, напр. <code>/Assets/gb/common</code> за игри или BIOS файлове за Game Boy.",
+      "choose_folder": "Избери папка",
+      "no_folder": "Няма избрана папка",
+      "cancel": "Отказ"
     },
     "remove_button": "Премахни източник",
     "remove_confirm": "Това ще премахне конфигурацията на източника, но не и файловете. Сигурни ли сте?",
@@ -276,7 +296,17 @@
     "empty": {
       "title": "Все още няма източници",
       "text": "Изтеглянето копира файлове на SD картата от папка на компютъра или от archive.org. Добави източник, за да започнеш."
-    }
+    },
+    "to_destination": "Към {destination} на SD картата",
+    "only_extensions": "Само {extensions}",
+    "archive_link": "archive.org/details/{name}",
+    "status": {
+      "empty": "Няма намерени файлове",
+      "complete": "{total, plural, one {# файл, актуален} other {Всички # файла са актуални}}",
+      "to_fetch": "{missing} от {total, plural, one {# файл} other {# файла}} за извличане"
+    },
+    "last_fetched": "Последно извличане <time></time>",
+    "open_destination": "Отвори папката на SD картата"
   },
   "firmware": {
     "current": "Текущ фърмуер: v{version}",
@@ -365,7 +395,8 @@
   "plugins": {
     "buttons": {
       "add": "Добавяне на плъгин",
-      "refresh": "Опресни плъгините"
+      "refresh": "Опресни плъгините",
+      "run": "Стартирай плъгин"
     },
     "remove": "Премахни плъгин",
     "confirm_remove": "Това ще премахне и всички локални данни, които плъгинът е съхранил на този компютър. Сигурни ли сте?",
@@ -377,11 +408,20 @@
       "title": "Добавяне на плъгин чрез URL адрес",
       "add": "Проверете и инсталирайте плъгина",
       "cancel": "Отказ",
-      "invalid": "Не е намерен валиден плъгин на този URL адрес"
+      "invalid": "Не е намерен валиден плъгин на този URL адрес",
+      "url_label": "GitHub хранилище",
+      "hint": "Адресът на хранилището на плъгина. Последното му издание трябва да съдържа файловете plugin.wasm и plugin.json.",
+      "checking": "Проверка…"
     },
     "empty": {
       "title": "Няма инсталирани плъгини",
       "text": "Плъгините добавят още инструменти към Pocket Sync."
+    },
+    "running": "Работи…",
+    "controls": {
+      "search": "Търсене",
+      "author": "Автор",
+      "all": "Всички"
     }
   },
   "palettes": {
@@ -540,6 +580,7 @@
     },
     "photos": {
       "title": "Експорт на снимка",
+      "open_export": "Експорт на снимки",
       "palette": "Палитра",
       "custom": "По избор",
       "close": "Затвори",
@@ -595,7 +636,7 @@
       "select": "Избери"
     },
     "no_screenshots": "След като направиш няколко скрийншота ще се появят тук",
-    "how_to": "Натисни бутона Analogue и Start едновременно по време на игра. Скрийншотът се запазва на SD картата и се появява тук.",
+    "how_to": "Натисни <key>бутона Analogue</key> и <key>Start</key> едновременно по време на игра. Скрийншотът се запазва на SD картата и се появява тук.",
     "empty_title": "Все още няма скрийншоти"
   },
   "settings": {

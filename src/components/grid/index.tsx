@@ -17,8 +17,12 @@ export const Grid = ({
 }: GridProps) => {
   const items = Children.toArray(children)
   const gridRef = useRef<HTMLDivElement>(null)
-  // the grid is one tab stop; arrow keys move between its items
-  const rovingFocus = useRovingFocus(gridRef, ':scope > [role="button"]')
+  // the grid is one tab stop; arrow keys move between its items (whole-tile
+  // buttons, or the open button of tiles that have their own actions)
+  const rovingFocus = useRovingFocus(
+    gridRef,
+    ':scope > [role="button"], :scope > .tile > .tile__open:is(button)'
+  )
 
   return (
     <div className={`grid ${className ?? ""}`} ref={gridRef} {...rovingFocus}>

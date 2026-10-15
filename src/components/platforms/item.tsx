@@ -7,6 +7,7 @@ import { SearchContextSelfHidingConsumer } from "../search/context"
 import { useAtomValue } from "jotai"
 import { useTranslation } from "react-i18next"
 import { PlatformImage } from "../cores/platformImage"
+import Tile from "../ui/Tile"
 import Tag, { TagList } from "../ui/Tag"
 
 type PlatformItemProps = {
@@ -29,22 +30,19 @@ export const PlatformItem = ({ id, onClick }: PlatformItemProps) => {
         platform.manufacturer,
       ]}
     >
-      <div className="cores__item" role="button" onClick={onClick}>
-        <PlatformImage
-          className="cores__platform-image"
-          platformId={id}
-          label={platform.name}
-        />
-        <div className="cores__info-blurb">
-          <div className="cores__info-blurb-name">{platform.name}</div>
-          <div className="cores__author-tag">{platform.manufacturer}</div>
-          <div className="cores__version">{platform.year}</div>
+      <Tile
+        onClick={onClick}
+        media={<PlatformImage platformId={id} label={platform.name} />}
+        title={platform.name}
+        subtitle={platform.manufacturer}
+        meta={platform.year}
+        tags={
           <TagList>
             {platform.category && <Tag>{platform.category}</Tag>}
             {isArchived && <Tag icon="archive">{t("archived")}</Tag>}
           </TagList>
-        </div>
-      </div>
+        }
+      />
     </SearchContextSelfHidingConsumer>
   )
 }

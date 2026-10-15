@@ -24,17 +24,25 @@ const FRAMES: Record<SpinnerVariant, IconOptions[]> = {
   ],
 }
 
-const FRAME_MS = 16
+/** How long each frame shows. */
+export const SPINNER_FRAME_MS = 160
 
 export interface SpinnerProps {
   variant?: SpinnerVariant
   /** Glyph size; 20 and 40 are pixel-perfect. */
   size?: IconSize
+  /** Milliseconds per frame; only for tuning (Settings → Developer). */
+  frameMs?: number
   className?: string
 }
 
 /** Loading indicator: the Pocket's D-pad or buttons, pressed in a circle. */
-const Spinner = ({ variant = "dpad", size = 40, className }: SpinnerProps) => {
+const Spinner = ({
+  variant = "dpad",
+  size = 40,
+  frameMs = SPINNER_FRAME_MS,
+  className,
+}: SpinnerProps) => {
   const [frame, setFrame] = useState(0)
   const { t } = useTranslation("app")
   const frames = FRAMES[variant]
@@ -43,10 +51,10 @@ const Spinner = ({ variant = "dpad", size = 40, className }: SpinnerProps) => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
     const interval = setInterval(
       () => setFrame((current) => (current + 1) % frames.length),
-      FRAME_MS
+      frameMs
     )
     return () => clearInterval(interval)
-  }, [frames.length])
+  }, [frames.length, frameMs])
 
   return (
     <span

@@ -8,11 +8,9 @@
     "close_changelog": "近い",
     "library_updates": "ライブラリの更新",
     "side_panel": "アップデート情報",
-    "eject": "SD Card を取り出す",
     "show_updates": "アップデート情報を表示",
     "hide_updates": "アップデート情報を隠す",
     "pocket_colours": "Pocket のカラー",
-    "colours": "カラー",
     "body_colour": "本体",
     "button_colour": "ボタン",
     "stats": {
@@ -29,7 +27,8 @@
     "not_pocket_tip": "このフォルダに Pocket システムファイルが存在しないようです、SD Card を少なくとも一度 Pocket に挿入する必要があります",
     "close": "閉じる",
     "loading": "読み込み中",
-    "dismiss": "閉じる"
+    "dismiss": "閉じる",
+    "no_results": "検索またはフィルターに一致する項目はありません。"
   },
   "clean_files": {
     "close_button": "閉じる",
@@ -119,6 +118,7 @@
       "analogizer": "Analogizer"
     },
     "url": "URL",
+    "source_code": "ソースコード",
     "version": "バージョン",
     "display_modes_title": "Display Modes",
     "display_mode_warning": "この Display Mode を適用するにはコアのアップデートが必要です、それでも有効にしますか？",
@@ -233,7 +233,27 @@
       "origin": "ソースフォルダ",
       "title": "新規同期項目",
       "validating_archive_name": "archive {name} を確認中...",
-      "invalid_archive_name": "https://archive.org/details/{name} に archive を見つかりませんでした"
+      "invalid_archive_name": "https://archive.org/details/{name} に archive を見つかりませんでした",
+      "intro": "Fetch はファイルを SD カードにコピーし、最新の状態に保ちます。「ファイルを同期」は、カードにないファイルやソース側で新しいファイルをコピーします。",
+      "type_label": "ソース",
+      "type_hint": {
+        "filesystem": "このコンピューター上のフォルダー（例: BIOS やゲームのコレクション）。",
+        "archive_org": "ファイルが ZIP 圧縮されていない archive.org のアイテム。"
+      },
+      "origin_label": "このコンピューターのフォルダー",
+      "origin_hint": "サブフォルダーを含め、中身はすべてコピーされます。",
+      "archive_label": "アーカイブ名",
+      "archive_hint": "アイテムのアドレスの archive.org/details/ 以降の部分（例: <code>openFPGA-Files</code>）。",
+      "archive_found": "archive.org で見つかりました",
+      "extensions_label": "ファイル拡張子（任意）",
+      "extensions_hint": "これらの拡張子のファイルだけがダウンロードされます（例: bin、rom）。空欄にすると、archive.org のメタデータファイルを含むすべてのファイルが対象になります。",
+      "extension_placeholder": "例: bin",
+      "remove_extension": "{extension} を削除",
+      "destination_label": "SD カードのフォルダー",
+      "destination_hint": "ファイルの保存先（例: Game Boy のゲームや BIOS なら <code>/Assets/gb/common</code>）。",
+      "choose_folder": "フォルダーを選択",
+      "no_folder": "フォルダーが選択されていません",
+      "cancel": "キャンセル"
     },
     "remove_button": "同期項目を削除",
     "remove_confirm": "この操作は同期設定を削除しますが、ファイルは削除されません。実行しますか？",
@@ -244,7 +264,17 @@
     "empty": {
       "title": "フェッチ元がまだありません",
       "text": "フェッチは PC のフォルダや archive.org から SD カードにファイルをコピーします。ソースを追加して始めましょう。"
-    }
+    },
+    "to_destination": "SD カードの {destination} へ",
+    "only_extensions": "{extensions} のみ",
+    "archive_link": "archive.org/details/{name}",
+    "status": {
+      "empty": "ファイルが見つかりません",
+      "complete": "{total, plural, other {# 個のファイルはすべて最新}}",
+      "to_fetch": "{total, plural, other {# 個}}中 {missing} 個のファイルを同期"
+    },
+    "last_fetched": "最終同期 <time></time>",
+    "open_destination": "SD カードのフォルダーを開く"
   },
   "firmware": {
     "current": "使用中のファームウェア: v{version}",
@@ -333,7 +363,8 @@
   "plugins": {
     "buttons": {
       "add": "プラグインを追加",
-      "refresh": "プラグインを更新"
+      "refresh": "プラグインを更新",
+      "run": "プラグインを実行"
     },
     "remove": "プラグインを削除",
     "confirm_remove": "これにより、プラグインがこのコンピューターに保存しているローカルデータもすべて削除されますが、よろしいですか？",
@@ -345,11 +376,20 @@
       "title": "URL経由でプラグインを追加する",
       "add": "プラグインの検証とインストール",
       "cancel": "キャンセル",
-      "invalid": "そのURLには有効なプラグインが見つかりませんでした"
+      "invalid": "そのURLには有効なプラグインが見つかりませんでした",
+      "url_label": "GitHub リポジトリ",
+      "hint": "プラグインのリポジトリのアドレス。最新リリースに plugin.wasm と plugin.json が必要です。",
+      "checking": "確認中…"
     },
     "empty": {
       "title": "プラグインはインストールされていません",
       "text": "プラグインは Pocket Sync にツールを追加します。"
+    },
+    "running": "実行中…",
+    "controls": {
+      "search": "検索",
+      "author": "作者",
+      "all": "すべて"
     }
   },
   "palettes": {
@@ -508,6 +548,7 @@
     },
     "photos": {
       "title": "画像エクスポート",
+      "open_export": "画像をエクスポート",
       "palette": "パレット",
       "custom": "カスタム",
       "close": "閉じる",
@@ -563,7 +604,7 @@
       "select": "選択"
     },
     "no_screenshots": "スクリーンショットを保存すると、ここに表示されます",
-    "how_to": "プレイ中に Analogue ボタンと Start を同時に押してください。スクリーンショットは SD カードに保存され、ここに表示されます。",
+    "how_to": "プレイ中に <key>Analogue ボタン</key>と <key>Start</key> を同時に押してください。スクリーンショットは SD カードに保存され、ここに表示されます。",
     "empty_title": "スクリーンショットがまだありません"
   },
   "settings": {

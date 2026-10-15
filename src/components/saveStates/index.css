@@ -4,7 +4,7 @@
   flex-direction: column;
 
   /* Hidden when the search or filters leave it empty */
-  &:not(:has(.save-states__item)) {
+  &:not(:has(.save-states__item, .skeleton, .skeleton-card)) {
     display: none;
   }
 }
@@ -19,9 +19,19 @@
   gap: var(--space-lg);
   min-height: 48px;
   padding: var(--space-sm) var(--page-padding-inline);
-  border-bottom: 1px solid var(--theme-separator);
   background-color: var(--theme-background);
   color: var(--theme-text-headline);
+
+  /* Separator inside the side padding, like the header bar's */
+  &::after {
+    content: "";
+    position: absolute;
+    right: var(--page-padding-inline);
+    bottom: 0;
+    left: var(--page-padding-inline);
+    height: 1px;
+    background-color: var(--theme-separator);
+  }
 }
 
 .save-states__header-count {
@@ -30,65 +40,16 @@
   color: var(--theme-text-soft);
 }
 
-.save-states__items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  padding: var(--space-lg) var(--page-padding-inline) var(--space-2xl);
+/* A grid of horizontal tiles (wider than the cores' columns), with room
+   before the next header */
+.grid.save-states__items {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  padding-block: var(--space-lg) var(--space-2xl);
 }
 
-.save-states__item {
-  border-radius: var(--radius-card);
-  display: flex;
-  align-items: center;
-  background-color: var(--info-colour);
-  padding: 10px;
-  box-sizing: border-box;
-  gap: 20px;
-  cursor: pointer;
-  border: 2px solid transparent;
-
-  &:hover {
-    background-color: var(--theme-surface-raised);
-  }
-
-  &:active {
-    transform: scale(0.99);
-  }
-}
-
-.save-states__item--selected {
-  border-color: var(--selection-colour);
-}
-
-.save-states__item-info {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.save-states__item--date {
-  color: var(--theme-text-soft);
-}
-
-.save-states__item-name {
-  font-weight: bold;
-  overflow-wrap: break-word;
-}
-
-.save-states__item-image {
-  flex-shrink: 0;
-  width: 123px;
-  height: auto;
-  aspect-ratio: 160 / 144;
-}
-
-
-.save-states__camera-export-button {
-  align-self: flex-start;
-  opacity: 0.6;
-
-  &:hover{
-    opacity: 1;
-  }
+/* The Pocket's screen is 10:9 (1600 × 1440). Save state images are stored
+   at the core's own resolution and shown stretched to the screen, so they
+   take its shape here too, like on the device */
+.save-states__image {
+  aspect-ratio: 10 / 9;
 }

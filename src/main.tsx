@@ -94,7 +94,13 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
           <Route path="/" component={MainWindow} />
 
           <Route path="/plugin/:id">
-            {(params) => <PluginWindow pluginId={params.id} />}
+            {(params) => (
+              <>
+                {/* A separate window: it applies the theme itself */}
+                <ApplyTheme />
+                <PluginWindow pluginId={params.id} />
+              </>
+            )}
           </Route>
 
           {/* Default route in a switch */}

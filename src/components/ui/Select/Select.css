@@ -16,6 +16,11 @@
   /* stylelint-disable-next-line property-no-vendor-prefix */
   -webkit-user-select: none;
   user-select: none;
+
+  /* A field, not a button: no press scaling (wide selects looked off) */
+  &:active {
+    transform: none;
+  }
 }
 
 .select--is-disabled {
@@ -70,12 +75,13 @@
   }
 }
 
-/* The open list: square-cornered panel, like the device's menus */
+/* The open list; its radius is concentric with the rows */
 .select__content {
   z-index: 2000;
   min-width: var(--radix-select-trigger-width);
   max-height: var(--radix-select-content-available-height);
   overflow: hidden;
+  border-radius: var(--radius-popover);
   background-color: var(--theme-surface-sunken);
   border: 1px solid var(--theme-surface);
   color: var(--theme-text);
@@ -93,6 +99,7 @@
   gap: var(--space-sm);
   padding-block: var(--space-xs);
   padding-inline: var(--space-sm);
+  border-radius: var(--radius);
   font-size: var(--font-size-md);
   cursor: pointer;
   outline: none;
@@ -125,12 +132,29 @@
   color: var(--theme-text-soft);
 }
 
+/* Label with a colour circle in front (SelectOption.swatch) */
+.select__option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.select__swatch {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-full);
+
+  /* Keeps white and black visible on any background */
+  box-shadow: inset 0 0 0 1px var(--theme-separator);
+}
+
 .select__item-indicator {
   display: flex;
-  color: var(--theme-accent);
+  color: var(--theme-accent-foreground);
 
   .select__item[data-highlighted] & {
-    color: var(--theme-accent);
+    color: var(--theme-accent-foreground);
   }
 }
 
