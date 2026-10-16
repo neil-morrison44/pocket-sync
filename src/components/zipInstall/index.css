@@ -1,14 +1,70 @@
+/* The zip's files as a tree, in a scrolling box */
 .zip-install__paths {
   flex-grow: 1;
+  min-height: 0;
+  padding: var(--space-sm);
   overflow: auto;
-  background-color: var(--info-colour);
-  border-radius: 10px;
-  box-sizing: border-box;
-  padding: 10px;
+  border: 1px solid var(--theme-separator);
+  border-radius: var(--radius-card);
+  background-color: var(--theme-surface-sunken);
+  font-size: var(--font-size-sm);
 }
 
 .zip-install__title {
   line-height: 3.2rem;
+}
+
+/* Each level indented under its folder */
+.zip-install__tree-node {
+  display: flex;
+  flex-direction: column;
+  margin-left: var(--space-lg);
+}
+
+.zip-install__tree-node-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 24px;
+}
+
+.zip-install__tree-checkbox {
+  margin: 0;
+  accent-color: var(--theme-accent);
+}
+
+/* A folder: a plain row that opens and closes */
+.zip-install__tree-node-name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin: 0;
+  padding: 0 var(--space-2xs);
+  border: none;
+  border-radius: var(--radius);
+  background: none;
+  box-shadow: none;
+  color: var(--theme-text-headline);
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    border: none;
+    background-color: var(--theme-overlay);
+  }
+
+  &:active {
+    transform: none;
+  }
+}
+
+.zip-install__tree-node-name--file {
+  color: var(--theme-text-body);
+  cursor: default;
+
+  &:hover {
+    background: none;
+  }
 }
 
 .zip-install__controls {
@@ -38,63 +94,11 @@
   margin: 0 0 0 auto;
 }
 
-.zip-install__tree-node {
-  margin-left: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.zip-install__tree-node-info {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-}
-
-.zip-install__progress {
-  width: 100%;
-  accent-color: unset;
-}
-
-.zip-install__tree-node-name {
-  display: flex;
-  gap: inherit;
-  cursor: pointer;
-  align-items: center;
-}
-
-.zip-install__tree-arrow {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  background-color: var(--theme-text-headline);
-  clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
-}
-
-.zip-install__tree-arrow--collapsed {
-  transform: rotate(-90deg);
-}
-
-.zip-install__progress-modal {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: stretch;
-  font-size: var(--font-size-xl);
-  height: fit-content;
-  padding-block: 40px;
-
-  /* background-color: var(--light-colour); */
-  border: 5px solid var(--info-colour);
-}
-
-.zip-install__progress-bar-label {
-  word-wrap: break-word;
-  font-weight: bold;
-}
-
-.zip-install__progress-bar {
-  width: 100%;
-  accent-color: var(--selection-colour);
+/* The download's URL above its bar */
+.zip-install__progress-url {
+  font-family: var(--font-code);
+  font-size: var(--font-size-xs);
+  overflow-wrap: anywhere;
 }
 
 /* Groups of files (cores, platform files) as checkbox toggles, like the
@@ -111,4 +115,10 @@
   font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--theme-text-headline);
+}
+
+:root.keyboard-focus
+  :is(.zip-install__tree-node-name, .zip-install__tree-checkbox):focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: 1px;
 }

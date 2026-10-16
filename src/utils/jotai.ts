@@ -183,15 +183,23 @@ export const keepPrevious = <Value>(
 /**
  * Like `keepPrevious`, but suspends on the first load instead of returning
  * `undefined`, so it drops in for the atom itself: a refresh keeps showing
- * the previous value instead of the Suspense fallback.
+ * the previous value instead of the Suspense fallback. With `areEqual`, a
+ * re-read that gives an equal value returns the previous one itself, so
+ * atoms built on it don't run (and suspend) again.
  */
 export const keepPreviousOrSuspend = <Value>(
-  anAtom: Atom<Value>
+  anAtom: Atom<Value>,
+  areEqual?: (a: Awaited<Value>, b: Awaited<Value>) => boolean
 ): Atom<Value | Awaited<Value>> => {
   const PENDING = Symbol("pending")
   const unwrapped = unwrap(anAtom, (previous) => previous ?? PENDING)
+  let last: { value: Awaited<Value> } | null = null
   return atom((get) => {
     const value = get(unwrapped)
-    return value === PENDING ? get(anAtom) : (value as Awaited<Value>)
+    if (value === PENDING) return get(anAtom)
+    const current = value as Awaited<Value>
+    if (areEqual && last && areEqual(last.value, current)) return last.value
+    last = { value: current }
+    return current
   })
 }

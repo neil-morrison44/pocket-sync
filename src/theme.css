@@ -1,12 +1,11 @@
 /*
  * Theme tokens — the single source of truth for UI colours.
  *
- * 1. Themes: each theme sets the semantic `--theme-*` tokens. To add a theme,
+ * Themes: each theme sets the semantic `--theme-*` tokens. To add a theme,
  *    copy the dark block, change the values, and set `data-theme="<name>"`
  *    on <html>.
- *    Styles (`data-style`: slanted or modern) layer on top of either theme: shapes and contrast.
- * 2. Aliases: legacy variable names used across the components point at the
- *    theme tokens, so they follow the active theme automatically.
+ *    Styles (`data-style`: slanted or modern, shown as Straight) layer on
+ *    top of either theme: shapes and contrast.
  *
  * Components should consume tokens from here (or alias them locally, e.g.
  * `--sidebar-background: var(--theme-sidebar-background)`), never hard-code
@@ -312,15 +311,4 @@
   /* The gap between controls in a row. Two slanted edges side by side look
      the gap plus the slant apart, so the slant comes off (8px in modern) */
   --control-gap: calc(var(--space-sm) - var(--slant));
-
-  /* ---------- Aliases (keep existing component CSS working) ---------- */
-  --background-colour: var(--theme-background);
-  --hover-colour: var(--theme-surface-hover);
-  --info-colour: var(--theme-surface-sunken);
-  --light-colour: var(--theme-surface);
-  --green-colour: var(--theme-accent);
-  --red-colour: var(--theme-danger);
-  --purple-colour: var(--theme-highlight);
-  --selection-colour: var(--theme-selection);
-  --orange-colour: var(--theme-warning);
 }

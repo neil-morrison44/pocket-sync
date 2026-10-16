@@ -1,5 +1,6 @@
 import { Modal } from "../modal"
 import Button from "../ui/Button"
+import ProgressBar from "../ui/ProgressBar"
 import Icon from "../ui/Icon"
 import Toggle from "../ui/Toggle"
 import Tooltip from "../ui/Tooltip"
@@ -40,16 +41,14 @@ const ModalProgressBar = ({
   totalSize: number
   downloaded: number
 }) => (
-  <Modal className="zip-install__progress-modal" title={<DownloadingTitle />}>
-    <label htmlFor="download" className="zip-install__progress-bar-label">
-      {url}
-    </label>
-    <progress
-      id="download"
-      className="zip-install__progress-bar"
-      max={totalSize}
-      value={downloaded}
-    ></progress>
+  <Modal
+    className="modal--form zip-install__progress-modal"
+    title={<DownloadingTitle />}
+  >
+    <ProgressBar
+      label={<span className="zip-install__progress-url">{url}</span>}
+      value={totalSize > 0 ? (downloaded / totalSize) * 100 : undefined}
+    />
   </Modal>
 )
 

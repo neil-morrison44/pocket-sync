@@ -1,15 +1,3 @@
-/* Info block in the Data Packs modal; cards use the shared Tile */
-.cores__info-blurb {
-  background-color: var(--info-colour);
-  padding: var(--space-md);
-  display: flex;
-  gap: var(--space-xs);
-  flex-direction: column;
-  justify-content: flex-start;
-  flex-grow: 1;
-  color: var(--theme-text-body);
-}
-
 /* Every section heading (Updates, Installed, Available), with an optional
    action on the right, e.g. Update All; the same spacing for all of them */
 .cores__section-header {

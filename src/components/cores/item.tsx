@@ -66,9 +66,12 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
         category,
         features,
         platform: platformId,
+        author,
         license,
         maxAi,
       }) => {
+        if (author && author !== "All" && coreName.split(".")[0] !== author)
+          return false
         if (!passesTagFilters(tagInfo, { license, maxAi })) return false
         if (category !== "All") {
           if (platform.category !== category) return false

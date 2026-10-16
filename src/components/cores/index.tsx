@@ -2,7 +2,6 @@ import {
   ReactNode,
   startTransition,
   Suspense,
-  useCallback,
   useDeferredValue,
   useMemo,
   useRef,
@@ -37,6 +36,7 @@ import {
   sortingOptionAtom,
   aiCheckAtom,
   aiFilterOptionAtom,
+  authorFilterOptionAtom,
   licenseFilterOptionAtom,
 } from "../../jotai/cores/atoms"
 import MultiSelect from "../ui/MultiSelect"
@@ -46,6 +46,7 @@ import Button from "../ui/Button"
 import { installedCoresWithUpdatesSelector } from "../../jotai/cores/selectors"
 import { useInstallAndUpdateCores } from "../update/useInstallAndUpdateCores"
 import { UpdateModal } from "../update/modal"
+import { UpdateSelectionModal } from "../update/selectionModal"
 import { corePlatformListSelector } from "../../jotai/inventory/selectors"
 import {
   CORE_FEATURES,
@@ -70,21 +71,17 @@ export const Cores = () => {
   const [filterCategory, setFilterCategory] = useAtom(categoryFilterOptionAtom)
   const [filterFeatures, setFilterFeatures] = useAtom(featureFilterOptionAtom)
   const [filterPlatform, setFilterPlatform] = useAtom(platformFilterOptionAtom)
+  const [filterAuthor, setFilterAuthor] = useAtom(authorFilterOptionAtom)
   const [filterLicense, setFilterLicense] = useAtom(licenseFilterOptionAtom)
   const [filterAi, setFilterAi] = useAtom(aiFilterOptionAtom)
   const { t } = useTranslation("cores")
-  const [updateAllOpen, setUpdateAllOpen] = useState(false)
   const [sortMode, setSortMode] = useAtom(sortingOptionAtom)
-
-  const closeUpdateAllCallback = useCallback(
-    () => setUpdateAllOpen(false),
-    [setUpdateAllOpen]
-  )
 
   const filtersSet =
     onlyUpdates ||
     filterCategory !== "All" ||
     filterPlatform !== "All" ||
+    filterAuthor !== "All" ||
     filterFeatures.length > 0 ||
     filterLicense !== "all" ||
     filterAi !== null
@@ -97,6 +94,7 @@ export const Cores = () => {
       category: filterCategory,
       features: filterFeatures,
       platform: filterPlatform,
+      author: filterAuthor,
       license: filterLicense,
       maxAi: filterAi,
     }),
@@ -105,6 +103,7 @@ export const Cores = () => {
       filterCategory,
       filterFeatures,
       filterPlatform,
+      filterAuthor,
       filterLicense,
       filterAi,
     ]
@@ -142,6 +141,7 @@ export const Cores = () => {
                     setOnlyUpdates(false)
                     setFilterCategory("All")
                     setFilterPlatform("All")
+                    setFilterAuthor("All")
                     setFilterFeatures([])
                     setFilterLicense("all")
                     setFilterAi(null)
@@ -177,6 +177,16 @@ export const Cores = () => {
               filterPlatform={filterPlatform}
               setFilterPlatform={setFilterPlatform}
             />
+          </Suspense>
+
+          <Suspense
+            fallback={
+              <span className="select select--theme-control">
+                {t("controls.author")}
+              </span>
+            }
+          >
+            <AuthorFilter value={filterAuthor} onChange={setFilterAuthor} />
           </Suspense>
 
           <FeatureFilter
@@ -255,6 +265,10 @@ const CoreList = ({
   const aiCheck = useAtomValue(aiCheckAtom)
   const config = useAtomValue(PocketSyncConfigSelector)
   const { query, other } = useSearchContext()
+  // Update All and Install Several open the selection; it starts the
+  // bulk updater, whose progress modal shows until it's closed
+  const { start, running, finish } = useInstallAndUpdateCores()
+  const [selecting, setSelecting] = useState(false)
 
   const notInstalledCores = useMemo(
     () =>
@@ -336,7 +350,10 @@ const CoreList = ({
   return (
     <div className="search-results">
       <Suspense>
-        <UpdatesSection onSelect={onSelect} />
+        <UpdatesSection
+          onSelect={onSelect}
+          onUpdateAll={() => setSelecting(true)}
+        />
       </Suspense>
 
       <CoreSection
@@ -368,6 +385,15 @@ const CoreList = ({
         }
         filtering={filtering}
         lazy
+        action={
+          <Button
+            theme="tertiary"
+            icon="download"
+            onClick={() => setSelecting(true)}
+          >
+            {t("selection.install_several")}
+          </Button>
+        }
       >
         {visibleNotInstalled.map((item) => (
           <Suspense
@@ -381,6 +407,21 @@ const CoreList = ({
           </Suspense>
         ))}
       </CoreSection>
+
+      {selecting && (
+        <Suspense>
+          <UpdateSelectionModal
+            available={visibleNotInstalled}
+            filtered={filtering}
+            onStart={(lists) => {
+              setSelecting(false)
+              start(lists)
+            }}
+            onClose={() => setSelecting(false)}
+          />
+        </Suspense>
+      )}
+      {running && <UpdateModal onClose={finish} />}
     </div>
   )
 }
@@ -395,6 +436,7 @@ const CoreSection = ({
   title,
   filtering,
   lazy = false,
+  action,
   children,
 }: {
   title: (shown: number) => string
@@ -404,6 +446,8 @@ const CoreSection = ({
    * view even while filtering (the count comes from the list).
    */
   lazy?: boolean
+  /** A button at the end of the heading, e.g. Install Several. */
+  action?: ReactNode
   children: ReactNode
 }) => {
   const ref = useRef<HTMLElement>(null)
@@ -412,6 +456,7 @@ const CoreSection = ({
     <section className="cores__section search-results" ref={ref}>
       <div className="cores__section-header">
         <h2>{title(shown)}</h2>
+        {action}
       </div>
       <Grid placeholderItemHeight={160} eager={filtering && !lazy}>
         {children}
@@ -458,6 +503,12 @@ const filterNotInstalledCores = (
 
     if (other?.onlyUpdates) return false // not installed: nothing to update
     if (
+      other?.author &&
+      other.author !== "All" &&
+      item.id.split(".")[0] !== other.author
+    )
+      return false
+    if (
       other?.platform &&
       other.platform !== "All" &&
       !core.metadata.platform_ids.includes(other.platform)
@@ -496,6 +547,48 @@ const filterNotInstalledCores = (
   })
 }
 
+/**
+ * Only shows cores by one author (the part of the core's name before the
+ * dot), installed or available; searchable, as there are many.
+ */
+const AuthorFilter = ({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (author: string) => void
+}) => {
+  const { t } = useTranslation("cores")
+  const installed = useAtomValue(coresListSelector)
+  const inventory = useAtomValue(coreInventoryAtom)
+  const authors = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          [...installed, ...inventory.cores.data.map(({ id }) => id)].map(
+            (core) => core.split(".")[0]
+          )
+        )
+      ).sort((a, b) => a.localeCompare(b)),
+    [installed, inventory]
+  )
+
+  return (
+    <Select
+      label={t("controls.author")}
+      active={value !== "All"}
+      value={value}
+      onChange={(author) => startTransition(() => onChange(author))}
+      searchable
+      searchPlaceholder={t("controls.search")}
+      options={[
+        { value: "All", label: t("controls.all") },
+        ...authors.map((author) => ({ value: author })),
+      ]}
+    />
+  )
+}
+
 const CategoryFilter = ({
   filterCategory,
   setFilterCategory,
@@ -523,25 +616,25 @@ const CategoryFilter = ({
  * Installed cores with an update, on top of the list, with Update All. Uses
  * the same bulk updater and progress modal as the Update page.
  */
-const UpdatesSection = ({ onSelect }: { onSelect: (core: string) => void }) => {
+const UpdatesSection = ({
+  onSelect,
+  onUpdateAll,
+}: {
+  onSelect: (core: string) => void
+  /** Opens the selection of what to update (and install) first. */
+  onUpdateAll: () => void
+}) => {
   const updates = useAtomValue(installedCoresWithUpdatesSelector)
-  const { start, running, finish } = useInstallAndUpdateCores()
   const { t } = useTranslation("cores")
 
-  if (updates.length === 0 && !running) return null
+  if (updates.length === 0) return null
 
   return (
     <section className="cores__updates">
       <div className="cores__section-header">
         <h2>{t("updates", { count: updates.length })}</h2>
         {updates.length > 0 && (
-          <Button
-            theme="primary"
-            icon="upload"
-            onClick={() =>
-              start({ updateList: updates.map(({ coreName }) => coreName) })
-            }
-          >
+          <Button theme="primary" icon="upload" onClick={onUpdateAll}>
             {t("controls.update_all_count", { count: updates.length })}
           </Button>
         )}
@@ -556,7 +649,6 @@ const UpdatesSection = ({ onSelect }: { onSelect: (core: string) => void }) => {
           </Suspense>
         ))}
       </Grid>
-      {running && <UpdateModal onClose={finish} />}
     </section>
   )
 }

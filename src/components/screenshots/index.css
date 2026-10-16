@@ -33,31 +33,11 @@
   right: var(--space-sm);
 }
 
-.screenshots__item {
-  overflow: hidden;
-  position: relative;
-  aspect-ratio: 160 / 144;
-  cursor: pointer;
-  border: 2px solid transparent;
-  box-sizing: border-box;
-}
-
-/* A frame in the light theme, like tiles: white screenshots would blend
-   into the page */
-:root[data-theme="light"] .screenshots__item {
-  border: 1px solid var(--theme-separator);
-}
-
-:root .screenshots__item.screenshots__item--selected {
-  border: 2px solid var(--theme-selection);
-}
-
-.screenshots__item-image {
-  width: 100%;
-  height: 100%;
+/* The picture in the Pocket's 10:9 screen, letterboxed in black */
+.screenshots__image {
+  aspect-ratio: 10 / 9;
   object-fit: contain;
-  background-color: var(--theme-surface-sunken);
-  image-rendering: pixelated;
+  background-color: black;
 }
 
 /* One section per game, core or day; room before the next header */
@@ -69,33 +49,4 @@
 .screenshots__skeleton {
   height: auto;
   aspect-ratio: 160 / 144;
-}
-
-.screenshots__item-info {
-  background-color: var(--info-colour);
-  padding: 5px;
-  font-size: var(--font-size-sm);
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  opacity: 0;
-  transform: translateY(80%);
-  transition:
-    opacity 0.25s linear,
-    transform 0.2s ease-out;
-}
-
-.screenshots__item:hover .screenshots__item-info {
-  opacity: 0.8;
-  transform: translateY(0);
-}
-
-.screenshots__item-date {
-  color: var(--theme-text-soft);
-}
-
-.screenshots__item-info-line {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
 }

@@ -1,4 +1,4 @@
-import React, { ReactNode, Suspense, useState } from "react"
+import React, { ReactNode, Suspense, useRef, useState } from "react"
 
 import * as RadixTabs from "@radix-ui/react-tabs"
 import clsx from "clsx"
@@ -26,16 +26,25 @@ const Tabs = ({ tabs, defaultValue, label, className }: TabsProps) => {
   // Tabs stay mounted once opened, so their content (and anything it loaded)
   // survives switching back and forth
   const [visited, setVisited] = useState<string[]>([initialValue])
+  const [active, setActive] = useState(initialValue)
+
+  // The tab switched to starts at least as tall as the one before: a shorter
+  // tab (or its loader) would make the page shorter than where it's
+  // scrolled, and the browser would jump up towards the top
+  const contentRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const [minHeight, setMinHeight] = useState<number | undefined>(undefined)
 
   return (
     <RadixTabs.Root
       className={clsx("tabs", className)}
-      defaultValue={initialValue}
-      onValueChange={(value) =>
+      value={active}
+      onValueChange={(value) => {
+        setMinHeight(contentRefs.current[active]?.offsetHeight)
+        setActive(value)
         setVisited((current) =>
           current.includes(value) ? current : [...current, value]
         )
-      }
+      }}
     >
       <RadixTabs.List className="tabs__list" aria-label={label}>
         {tabs.map(({ value, label: tabLabel }) => (
@@ -56,6 +65,10 @@ const Tabs = ({ tabs, defaultValue, label, className }: TabsProps) => {
             className="tabs__content"
             forceMount
             tabIndex={-1}
+            ref={(element) => {
+              contentRefs.current[value] = element
+            }}
+            style={value === active ? { minHeight } : undefined}
           >
             {/* A tab that loads data on first open shows its own loader,
                 instead of suspending the whole page (which lost the scroll

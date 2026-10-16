@@ -73,17 +73,6 @@ export const CoresForPlatformSelectorFamily = atomFamily<
   })
 )
 
-export const MainPlatformForCoreSelectorFamily = atomFamily<
-  string,
-  Atom<Promise<PlatformInfoJSON>>
->((coreName: string) =>
-  atom(async (get) => {
-    const coreInfo = await get(CoreInfoSelectorFamily(coreName))
-    const mainPlatformId = coreInfo.core.metadata.platform_ids[0]
-    return get(PlatformInfoSelectorFamily(mainPlatformId))
-  })
-)
-
 export const PlatformExistsSelectorFamily = atomFamily<
   PlatformId,
   Atom<Promise<boolean>>

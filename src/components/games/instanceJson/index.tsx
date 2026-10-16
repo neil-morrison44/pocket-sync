@@ -4,7 +4,9 @@ import { useEffect, useState } from "react"
 import { instancePackagerCoresListSelector } from "../../../jotai/games/selectors"
 import { invokeRunPackagerForCore } from "../../../utils/invokes"
 import { Modal, ModalSuspense } from "../../modal"
-import { CoreTag } from "../../shared/coreTag"
+import Button from "../../ui/Button"
+import Callout from "../../ui/Callout"
+import Icon from "../../ui/Icon"
 
 import "./index.css"
 import { useTranslation } from "react-i18next"
@@ -12,51 +14,96 @@ import { useAtomValue } from "jotai"
 
 type InstanceJsonProps = {
   onClose: () => void
+  /**
+   * Development only (Settings → Developer): made-up cores; Build adds
+   * made-up written and skipped files to the log.
+   */
+  demo?: boolean
 }
 
-const InstanceJsonContent = ({ onClose }: InstanceJsonProps) => {
-  const coresList = useAtomValue(instancePackagerCoresListSelector)
-  const buildLog = useBuildLog()
+const RealInstanceJson = ({ onClose }: InstanceJsonProps) => (
+  <InstanceJsonContent
+    onClose={onClose}
+    coresList={useAtomValue(instancePackagerCoresListSelector)}
+    buildLog={useBuildLog()}
+    onBuild={(core) => invokeRunPackagerForCore(core)}
+  />
+)
+
+const DemoInstanceJson = ({ onClose }: InstanceJsonProps) => {
+  const [buildLog, setBuildLog] = useState<InstanceBuildEventPlayload[]>([])
+  return (
+    <InstanceJsonContent
+      onClose={onClose}
+      coresList={["Mazamars312.NeoGeoCD", "Mazamars312.PC Engine CD"]}
+      buildLog={buildLog}
+      onBuild={(core) =>
+        setBuildLog((log) => [
+          ...log,
+          { file_name: `${core}/Game One.json`, success: true },
+          { file_name: `${core}/Game Two.json`, success: true },
+          { file_name: `${core}/Broken Game.json`, success: false },
+        ])
+      }
+    />
+  )
+}
+
+const InstanceJsonContent = ({
+  onClose,
+  coresList,
+  buildLog,
+  onBuild,
+}: InstanceJsonProps & {
+  coresList: string[]
+  buildLog: InstanceBuildEventPlayload[]
+  onBuild: (core: string) => void
+}) => {
   const { t } = useTranslation("instance_json")
 
   return (
     <Modal className="instance-json" title={t("title")} onClose={onClose}>
-      <div className="instance-json--top-content">
-        <div>{t("available_for")}</div>
-        <div className="instance-json__cores-list">
-          {coresList.map((f) => (
-            <CoreTag
-              key={f}
-              coreName={f}
-              onClick={() => {
-                invokeRunPackagerForCore(f)
-              }}
-            />
-          ))}
-        </div>
-      </div>
+      <p className="instance-json__intro">{t("intro")}</p>
 
-      {buildLog.length > 0 && (
-        <div className="instance-json__build-log">
-          {buildLog.map(({ file_name, success }) => {
-            if (success) {
-              return (
-                <div key={file_name} className="instance-json__build-log-item">
-                  {t("wrote_file", { file_name })}
-                </div>
-              )
-            }
-            return (
-              <div
-                key={file_name}
-                className="instance-json__build-log-item instance-json__build-log-item--warn"
-              >
-                {t("skipped_file", { file_name })}
-              </div>
-            )
-          })}
-        </div>
+      {coresList.length === 0 ? (
+        <Callout>{t("none_available")}</Callout>
+      ) : (
+        <ul className="instance-json__cores">
+          {coresList.map((core) => (
+            <li key={core} className="instance-json__core">
+              <span className="instance-json__core-name">{core}</span>
+              <Button icon="tools" onClick={() => onBuild(core)}>
+                {t("build")}
+              </Button>
+            </li>
+          ))}
+        </ul>
       )}
+
+      {/* What was written or skipped, as it happens */}
+      {buildLog.length > 0 && (
+        <ul className="instance-json__build-log" aria-live="polite">
+          {buildLog.map(({ file_name, success }, index) => (
+            <li
+              key={`${index}-${file_name}`}
+              className={`instance-json__build-log-item ${
+                success ? "" : "instance-json__build-log-item--warn"
+              }`}
+            >
+              <Icon icon={success ? "check" : "warning-diamond"} />
+              {success
+                ? t("wrote_file", { file_name })
+                : t("skipped_file", { file_name })}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="modal__actions">
+        <Button theme="tertiary" onClick={onClose}>
+          {t("close_button")}
+        </Button>
+      </div>
     </Modal>
   )
 }
@@ -92,7 +139,11 @@ export const InstanceJson = (props: InstanceJsonProps) => {
       title={t("title")}
       onClose={props.onClose}
     >
-      <InstanceJsonContent {...props} />
+      {props.demo ? (
+        <DemoInstanceJson {...props} />
+      ) : (
+        <RealInstanceJson {...props} />
+      )}
     </ModalSuspense>
   )
 }

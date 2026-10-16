@@ -1,18 +1,19 @@
-import { ReactNode, startTransition, useMemo } from "react"
+import { Fragment, ReactNode, startTransition, Suspense, useMemo } from "react"
 import { Link } from "../link"
 import { useAtomValue, useSetAtom } from "jotai"
 import { currentViewAtom } from "../../jotai/view/atoms"
 import { platformFilterOptionAtom } from "../../jotai/cores/atoms"
 import Button from "../ui/Button"
-import { useTranslation } from "react-i18next"
+import { Trans, useTranslation } from "react-i18next"
 import { fuzzy } from "fast-fuzzy"
 import { sep } from "@tauri-apps/api/path"
 import {
   GameSystem,
+  GameSystemFilesSelectorFamily,
   GameSystemPlatformSelectorFamily,
   filterGameFiles,
 } from "../../jotai/games/selectors"
-import { WalkDirSelectorFamily } from "../../jotai/selectors"
+import { FolderSizeSelectorFamily } from "../../jotai/selectors"
 import { pocketPathAtom } from "../../jotai/atoms"
 import { invokeCreateFolderIfMissing } from "../../utils/invokes"
 import { openFolder, revealFile } from "../../utils/openFolder"
@@ -44,7 +45,7 @@ export const GameSystemSection = ({
     GameSystemPlatformSelectorFamily(system.platformId)
   )
   const files = useAtomValue(
-    WalkDirSelectorFamily({
+    GameSystemFilesSelectorFamily({
       path: `Assets/${system.platformId}`,
       extensions: system.extensions,
     })
@@ -87,6 +88,14 @@ export const GameSystemSection = ({
       ({ name }) => fuzzy(search, name.toLowerCase()) > SEARCH_THRESHOLD
     )
   }, [games, query, platform.name])
+
+  const categoryFilter = other?.category
+  if (
+    categoryFilter &&
+    categoryFilter !== "All" &&
+    categoryFilter !== platform.category
+  )
+    return null
 
   const platformFilter = other?.platform
   if (
@@ -138,6 +147,33 @@ export const GameSystemSection = ({
               ]
                 .filter(Boolean)
                 .join(" · ")}
+              {/* The folder's size on the card, like the old Games list */}
+              <Suspense>
+                <FolderSize path={`Assets/${system.platformId}`} />
+              </Suspense>
+            </span>
+            {/* Which files go here, and which cores read them (links) */}
+            <span className="games__system-meta">
+              {system.extensions.length > 0 &&
+                t("accepts", {
+                  extensions: Array.from(
+                    new Set(
+                      system.extensions.map(
+                        (e) => `.${e.replace(/^\./, "").toLowerCase()}`
+                      )
+                    )
+                  ).join(", "),
+                })}
+              {system.extensions.length > 0 && system.cores.length > 0 && " · "}
+              {system.cores.length > 0 && (
+                <Trans
+                  t={t}
+                  i18nKey="read_by"
+                  components={{
+                    cores: <CoreLinks coreNames={system.cores} />,
+                  }}
+                />
+              )}
             </span>
           </div>
           {system.cores.length === 0 && (
@@ -184,6 +220,29 @@ export const GameSystemSection = ({
       </ul>
     </section>
   )
+}
+
+/** Each core's name, opening its page; separated by commas. */
+const CoreLinks = ({ coreNames }: { coreNames: string[] }) => {
+  const setView = useSetAtom(currentViewAtom)
+  return coreNames.map((coreName, index) => (
+    <Fragment key={coreName}>
+      {index > 0 && ", "}
+      <Link
+        subtle
+        onClick={() =>
+          startTransition(() => setView({ view: "Cores", selected: coreName }))
+        }
+      >
+        {coreName}
+      </Link>
+    </Fragment>
+  ))
+}
+
+const FolderSize = ({ path }: { path: string }) => {
+  const size = useAtomValue(FolderSizeSelectorFamily(path))
+  return ` · ${size}`
 }
 
 /** Placeholder while a system's games load. */

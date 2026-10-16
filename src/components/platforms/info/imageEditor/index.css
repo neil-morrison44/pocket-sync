@@ -51,17 +51,17 @@
   background-color: var(--theme-media-background);
 }
 
-.image-editor__slider {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2xs);
-  font-size: var(--font-size-xs);
-  color: var(--theme-text-soft);
+/* Scale and rotation, then the position, two by two */
+.image-editor__sliders {
+  display: grid;
+  grid-template-columns: repeat(2, clamp(100px, 14vw, 180px));
+  gap: var(--space-sm) var(--space-lg);
+}
 
-  & input {
-    width: clamp(80px, 12vw, 180px);
-    accent-color: var(--theme-accent);
-  }
+.image-editor__hint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
 }
 
 .image-editor__stamp-actions {

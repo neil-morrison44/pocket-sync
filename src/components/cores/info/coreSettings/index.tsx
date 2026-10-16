@@ -1,3 +1,4 @@
+import Slider from "../../../ui/Slider"
 import Callout from "../../../ui/Callout"
 import { Suspense, useCallback, useState } from "react"
 import { PersistInteractFileAtomFamily } from "../../../../jotai/coreSettings/atoms"
@@ -192,32 +193,27 @@ const InteractSettings = ({
 
               return (
                 <div className={varClassName} key={v.id}>
-                  <label>
-                    <span className="core-settings__variable-name">
-                      {v.name}
-                    </span>
-                    <input
-                      type="range"
-                      disabled={!v.persist}
-                      min={v.graphical.min}
-                      max={v.graphical.max}
-                      value={value}
-                      onChange={({ target }) => {
-                        if (!v.persist) return
+                  <Slider
+                    label={
+                      <span className="core-settings__variable-name">
+                        {v.name}
+                      </span>
+                    }
+                    disabled={!v.persist}
+                    min={Number(v.graphical.min)}
+                    max={Number(v.graphical.max)}
+                    value={Number(value)}
+                    onChange={(next) => {
+                      if (!v.persist) return
 
-                        const newValue =
-                          typeof rawValue === "string"
-                            ? numberTo16bitSignedHex(parseInt(target.value))
-                            : parseInt(target.value)
+                      const newValue =
+                        typeof rawValue === "string"
+                          ? numberTo16bitSignedHex(next)
+                          : next
 
-                        updateValue(v.id, v.type, newValue)
-                      }}
-                    ></input>
-
-                    <span className="core-settings__value">
-                      {persistedValue?.val ?? v.defaultval}
-                    </span>
-                  </label>
+                      updateValue(v.id, v.type, newValue)
+                    }}
+                  />
                 </div>
               )
             }

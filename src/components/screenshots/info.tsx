@@ -1,8 +1,5 @@
-import { Suspense, useCallback, useEffect, useState } from "react"
-import {
-  ImageDimensionsSelectorFamily,
-  SingleScreenshotSelectorFamily,
-} from "../../jotai/screenshots/selectors"
+import { useCallback, useEffect, useState } from "react"
+import { SingleScreenshotSelectorFamily } from "../../jotai/screenshots/selectors"
 import { VideoJSONSelectorFamily } from "../../jotai/screenshots/selectors"
 import "./info.css"
 
@@ -34,6 +31,11 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
   )
   const upscaler = useUpscaler()
   const [imageSrc, setImageSrc] = useState<string | null>(null)
+  // Read off the shown image when it loads, so the size appears with it
+  // (loading it a second time to measure showed it a moment later)
+  const [size, setSize] = useState<{ width: number; height: number } | null>(
+    null
+  )
   const { t } = useTranslation("screenshot_info")
   const { t: tScreenshots } = useTranslation("screenshots")
   const viewCore = useSetAtom(currentViewAtom)
@@ -109,6 +111,12 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
           className="screenshot-info__image"
           src={imageSrc || undefined}
           alt={screenshot.game}
+          onLoad={({ currentTarget }) =>
+            setSize({
+              width: currentTarget.naturalWidth,
+              height: currentTarget.naturalHeight,
+            })
+          }
         />
       </div>
 
@@ -135,6 +143,7 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
           {screenshot.platform && <span>{screenshot.platform}</span>}
           {screenshot.core && screenshot.author && (
             <Link
+              subtle
               onClick={() =>
                 viewCore({
                   view: "Cores",
@@ -145,11 +154,7 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
               {`${screenshot.author}.${screenshot.core}`}
             </Link>
           )}
-          {imageSrc && (
-            <Suspense>
-              <ImageDimensions imageSrc={imageSrc} />
-            </Suspense>
-          )}
+          {size && <span>{t("dimensions", size)}</span>}
           <span className="screenshot-info__file-name">
             {screenshot.file_name}
           </span>
@@ -157,10 +162,4 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
       </footer>
     </div>
   )
-}
-
-const ImageDimensions = ({ imageSrc }: { imageSrc: string }) => {
-  const size = useAtomValue(ImageDimensionsSelectorFamily(imageSrc))
-  const { t } = useTranslation("screenshot_info")
-  return <span>{t("dimensions", size)}</span>
 }

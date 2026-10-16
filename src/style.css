@@ -1,5 +1,5 @@
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
@@ -53,7 +53,7 @@ a:hover {
 h1 {
   color: var(--theme-text-headline);
   text-align: center;
-  font-family: GamePocket;
+  font-family: var(--font-display);
   font-size: var(--font-size-hero);
   /* stylelint-disable-next-line property-no-unknown */
   font-smooth: never;
@@ -66,7 +66,7 @@ h1 {
 h2 {
   color: var(--theme-text-headline);
   text-align: left;
-  font-family: GamePocket;
+  font-family: var(--font-display);
   font-size: var(--font-size-title-xl);
   /* stylelint-disable-next-line property-no-unknown */
   font-smooth: never;
@@ -250,4 +250,15 @@ button {
 /* Tertiary buttons have no outline in modern, only the hover background */
 :root[data-style="modern"] .button--theme-tertiary {
   --button-outline: transparent;
+}
+
+/* Native radios and checkboxes (e.g. core settings, the zip file tree):
+   the accent when checked, our focus ring instead of the browser's */
+input:is([type="radio"], [type="checkbox"]) {
+  accent-color: var(--theme-accent);
+}
+
+:root.keyboard-focus input:is([type="radio"], [type="checkbox"]):focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: 2px;
 }

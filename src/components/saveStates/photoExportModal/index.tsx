@@ -1,6 +1,7 @@
+import { useRovingFocus } from "../../../hooks/useRovingFocus"
 import { Modal, ModalSuspense } from "../../modal"
 import { PhotoExportImageSelectorFamily } from "../../../jotai/saveStates/selectors"
-import { Suspense, useState } from "react"
+import { Suspense, useRef, useState } from "react"
 
 import "./index.css"
 import { ColourMap, PhotoColourMapAtom } from "../../../jotai/saveStates/atoms"
@@ -68,6 +69,9 @@ const PhotoExportModalContent = ({
   demo = false,
 }: PhotoExportModalProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0)
+  // The 30 photos are one tab stop; arrow keys move between them
+  const gridRef = useRef<HTMLDivElement>(null)
+  const rovingFocus = useRovingFocus(gridRef, ".photo-export-modal__thumb")
   const exportPhotos = useExportPhotos()
   // The demo's generated photos export like real ones
   const photoAtom = (index: number) =>
@@ -99,6 +103,8 @@ const PhotoExportModalContent = ({
         </div>
         <div
           className="photo-export-modal__image-grid"
+          ref={gridRef}
+          {...rovingFocus}
           role="listbox"
           aria-label={t("photos.title")}
         >

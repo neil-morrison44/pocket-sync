@@ -1,4 +1,4 @@
-# UI styling guide & redesign plan
+# UI styling guide
 
 The reasoning behind these choices, the character principles and the current status are in [redesign-plan.md](redesign-plan.md).
 
@@ -14,66 +14,23 @@ The reasoning behind these choices, the character principles and the current sta
 
 ## Theming
 
-`src/theme.css` (imported first in `src/main.tsx`) has two layers:
+`src/theme.css` (imported first in `src/main.tsx`) holds the **theme blocks**, which set the semantic tokens, grouped by comment headers: surfaces (`--theme-background`, `--theme-surface`, `--theme-surface-hover`, `--theme-surface-sunken`, `--theme-border`), text, inverse, accents (`--theme-accent`, `--theme-accent-text`, `--theme-accent-foreground`, `--theme-danger`, `--theme-danger-text`, `--theme-warning`, `--theme-highlight`, `--theme-selection`) and sidebar. `:root` / `[data-theme="dark"]` is the default. Components use `--theme-*` directly (the older aliases like `--info-colour` are gone).
 
-1. **Theme blocks** set the semantic tokens, grouped by comment headers: surfaces (`--theme-background`, `--theme-surface`, `--theme-surface-hover`, `--theme-surface-sunken`, `--theme-border`), text, inverse, accents (`--theme-accent`, `--theme-accent-text`, `--theme-accent-foreground`, `--theme-danger`, `--theme-danger-text`, `--theme-warning`, `--theme-highlight`, `--theme-selection`) and sidebar. `:root` / `[data-theme="dark"]` is the default.
-2. **Aliases** map the older names (`--background-colour`, `--info-colour`, `--green-colour`, …) to theme tokens, so existing component CSS follows the active theme. New code should use `--theme-*` directly. Over time the aliases can be removed.
-
-| Legacy alias | Theme token |
-| --- | --- |
-| `--background-colour` | `--theme-background` |
-| `--hover-colour` | `--theme-surface-hover` |
-| `--info-colour` | `--theme-surface-sunken` |
-| `--light-colour` | `--theme-surface` |
-| `--green-colour` | `--theme-accent` |
-| `--red-colour` | `--theme-danger` |
-| `--orange-colour` | `--theme-warning` |
-| `--purple-colour` | `--theme-highlight` |
-| `--selection-colour` | `--theme-selection` |
-
-**Adding a theme:** copy the dark block, rename the selector to `:root[data-theme="<name>"]`, change the values (and `color-scheme`), and switch to it with `document.documentElement.dataset.theme = "<name>"`. Set the attribute on `<html>`: the aliases are resolved there, so they don't follow a theme set on a nested element.
+**Adding a theme:** copy the dark block, rename the selector to `:root[data-theme="<name>"]`, change the values (and `color-scheme`), and switch to it with `document.documentElement.dataset.theme = "<name>"`. Set the attribute on `<html>`.
 
 **Styles:** `data-style` on `<html>` layers on top of the theme. `slanted` (default, shown as "Slanted") keeps the slanted edges; `modern` (shown as "Straight", so the two read as equals) sets `--slant: 0px` (straight edges) and overrides surface and text tokens for more contrast, per theme. Build shapes from `--shape-slant*` and colours from tokens, and both styles work without extra CSS.
 
 **Layout & typography** tokens (`--radius-*`, `--space-*`, `--font-body`, `--font-display`) live in the same file, outside the theme blocks, because they don't change per theme.
 
-**Figma:** each Figma variable stores its CSS variable as its web code syntax (e.g. `var(--theme-accent)`), so the mapping lives in Figma. When you add or rename a token, update the matching Figma variable by hand.
-
 Some colours are still hard-coded outside the theme, e.g. link colours and the overlay in `style.css`, and various component files. Move them into tokens as each area is redesigned.
-
-## Figma
-
-The design lives in a Figma file (ask @olivierbrcknr for access).
-
-- **Variables**
-  - **Theme** (mode `Dark`) mirrors the `--theme-*` tokens. Every variable's web code syntax is its CSS variable.
-  - **Layout** holds radius and spacing.
-  - **Typography** holds `font/body` and `font/display`. Text styles bind their font family to these variables.
-- **Text styles:** `Display/H1`, `Display/H2`, `Display/Small`, `Control/*`, `Body/*`, `Label/*`, `Caption/Medium`.
-- **Components** (Components page → "Pocket Sync Components"):
-  - Sidebar Item (State × Show Label)
-  - Sidebar (Collapsed)
-  - Button
-  - Toggle (Checked)
-  - Select
-  - Search
-  - Link Pill
-  - Platform Image
-  - Core Card
-  - Game Card
-  - News Item (Update/New)
-  - Icons currently come from a Lucide set on the same page via instance swap; this is to be replaced with Pixelarticons to match the code.
-- **Screens** (Page 1 → "Screens"): Pocket Sync, Games and Cores, built entirely from component instances.
-
-To add a theme: add a mode to the Figma "Theme" collection and a matching `:root[data-theme="<name>"]` block in `theme.css`.
 
 ## UI libraries
 
-| Tool                                                    | Status                              | Notes                                                                                                                                                                                                                                                                            |
-| ------------------------------------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Pixelarticons](https://pixelarticons.com) + GamePocket glyphs | installed | Always use the `Icon` component (`src/components/ui/Icon`) with a registered name, e.g. `<Icon icon="search" />` or `<Icon icon="analogue-logo" size={20} />`. Add new icons to its registry. Pixel icons default to 16px (24px is pixel-perfect). Glyph icons use `size` as their font size (20px is pixel-perfect). |
-| [Radix Primitives](https://www.radix-ui.com/primitives) | `react-tooltip`, `react-toggle`, `react-select`, `react-slot`, `react-switch`, `react-tabs`, `react-dropdown-menu` installed | Add other primitives one package at a time (`@radix-ui/react-dialog`, `-popover`, …), wrapped in a `src/components/ui` component and styled with BEM classes. |
-| [shadcn/ui](https://ui.shadcn.com/)                     | **not installed**                   | shadcn components need Tailwind. For now we copy its _look_ (spacing, radii, muted colours) in plain CSS on top of Radix. To adopt it fully, add Tailwind v4 with Preflight scoped or disabled so existing component CSS isn't reset, then add components with `npx shadcn add`. |
+| Tool                                                           | Status                                                                                                                                                                                           | Notes                                                                                                                                                                                                                                                                                                                 |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Pixelarticons](https://pixelarticons.com) + GamePocket glyphs | installed                                                                                                                                                                                        | Always use the `Icon` component (`src/components/ui/Icon`) with a registered name, e.g. `<Icon icon="search" />` or `<Icon icon="analogue-logo" size={20} />`. Add new icons to its registry. Pixel icons default to 16px (24px is pixel-perfect). Glyph icons use `size` as their font size (20px is pixel-perfect). |
+| [Radix Primitives](https://www.radix-ui.com/primitives)        | `react-accordion`, `react-dialog`, `react-dropdown-menu`, `react-popover`, `react-select`, `react-slider`, `react-slot`, `react-switch`, `react-tabs`, `react-toggle`, `react-tooltip` installed | Add other primitives one package at a time (`@radix-ui/react-dialog`, `-popover`, …), wrapped in a `src/components/ui` component and styled with BEM classes.                                                                                                                                                         |
+| [shadcn/ui](https://ui.shadcn.com/)                            | **not installed**                                                                                                                                                                                | shadcn components need Tailwind. For now we copy its _look_ (spacing, radii, muted colours) in plain CSS on top of Radix. To adopt it fully, add Tailwind v4 with Preflight scoped or disabled so existing component CSS isn't reset, then add components with `npx shadcn add`.                                      |
 
 ## UI primitives
 

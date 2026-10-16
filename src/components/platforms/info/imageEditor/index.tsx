@@ -1,4 +1,6 @@
-import { useCallback, useRef, useState } from "react"
+import Slider from "../../../ui/Slider"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { confirm } from "@tauri-apps/plugin-dialog"
 
 import { ImageBinSrcSelectorFamily } from "../../../../jotai/selectors"
 import Button from "../../../ui/Button"
@@ -51,6 +53,26 @@ const ImageEditorContent = ({
   const addNewImage = useAddNewImageCallback(setImageStamps)
   const moveStamp = useMoveStampCallback(setImageStamps, setSelectedStampIndex)
 
+  // The layers as opened, to tell whether anything was changed since
+  const openedStampsRef = useRef<ImageInfo[] | null>(null)
+  useEffect(() => {
+    if (!openedStampsRef.current && imageStamps.length > 0)
+      openedStampsRef.current = imageStamps
+  }, [imageStamps])
+
+  // Closing (also by clicking outside or Escape) discards the changes, so
+  // it asks first when there are any
+  const requestClose = useCallback(async () => {
+    const opened = openedStampsRef.current
+    if (opened === null || opened === imageStamps) return onClose()
+    const discard = await confirm(t("discard_confirm"), {
+      kind: "warning",
+      okLabel: t("discard"),
+      cancelLabel: t("keep_editing"),
+    })
+    if (discard) onClose()
+  }, [imageStamps, onClose, t])
+
   const saveBinary = useCallback(async () => {
     if (!canvasRef.current) return
     const context = canvasRef.current.getContext("2d")
@@ -75,13 +97,16 @@ const ImageEditorContent = ({
   }, [width, height, pocketPath, path, onClose])
 
   return (
-    <Modal className="image-editor" title={t("title")} onClose={onClose}>
+    <Modal className="image-editor" title={t("title")} onClose={requestClose}>
       <canvas
         className="image-editor__preview-canvas"
         width={width}
         height={height}
         ref={canvasRef}
       ></canvas>
+      <p className="image-editor__hint">
+        {imageStamps.length === 0 ? t("hint_empty") : t("hint")}
+      </p>
 
       {/* One row per image layer, top layer first */}
       <div className="image-editor__stamps">
@@ -103,35 +128,44 @@ const ImageEditorContent = ({
                 onClick={() => setSelectedStampIndex(index)}
               ></img>
 
-              <label className="image-editor__slider">
-                <span>{t("scale")}</span>
-                <input
-                  type="range"
+              {/* Position too, not only by dragging: exact, and by keyboard */}
+              <div className="image-editor__sliders">
+                <Slider
+                  label={t("scale")}
+                  min={0.01}
                   max={5}
-                  step={0.001}
-                  min={0.001}
+                  step={0.01}
                   value={stamp.scale}
-                  onChange={({ target }) =>
-                    updateImageStampValues(stamp, {
-                      scale: parseFloat(target.value),
-                    })
-                  }
-                ></input>
-              </label>
-              <label className="image-editor__slider">
-                <span>{t("rotate")}</span>
-                <input
-                  type="range"
-                  max={180}
+                  formatValue={(v) => `${Math.round(v * 100)}%`}
+                  onChange={(scale) => updateImageStampValues(stamp, { scale })}
+                />
+                <Slider
+                  label={t("rotate")}
                   min={-180}
+                  max={180}
                   value={stamp.rotate}
-                  onChange={({ target }) =>
-                    updateImageStampValues(stamp, {
-                      rotate: parseInt(target.value),
-                    })
+                  formatValue={(v) => `${v}°`}
+                  onChange={(rotate) =>
+                    updateImageStampValues(stamp, { rotate })
                   }
-                ></input>
-              </label>
+                />
+                <Slider
+                  label={t("position_x")}
+                  min={-width}
+                  max={width}
+                  value={Math.round(stamp.x)}
+                  formatValue={(v) => `${v} px`}
+                  onChange={(x) => updateImageStampValues(stamp, { x })}
+                />
+                <Slider
+                  label={t("position_y")}
+                  min={-height}
+                  max={height}
+                  value={Math.round(stamp.y)}
+                  formatValue={(v) => `${v} px`}
+                  onChange={(y) => updateImageStampValues(stamp, { y })}
+                />
+              </div>
 
               <div className="image-editor__stamp-actions">
                 <IconButton
@@ -166,11 +200,21 @@ const ImageEditorContent = ({
                 <Button
                   icon="trash"
                   theme="destructive"
-                  onClick={() =>
+                  onClick={() => {
                     setImageStamps((stamps) =>
                       stamps.filter((s) => s !== stamp)
                     )
-                  }
+                    // Keeps the selection on a layer that's still there
+                    setSelectedStampIndex((selected) =>
+                      Math.max(
+                        0,
+                        Math.min(
+                          selected > index ? selected - 1 : selected,
+                          imageStamps.length - 2
+                        )
+                      )
+                    )
+                  }}
                 >
                   {t("remove")}
                 </Button>
@@ -185,7 +229,7 @@ const ImageEditorContent = ({
         <Button icon="folder-plus" onClick={addNewImage}>
           {t("import_image")}
         </Button>
-        <Button theme="tertiary" onClick={onClose}>
+        <Button theme="tertiary" onClick={requestClose}>
           {t("cancel")}
         </Button>
         <Button theme="primary" icon="save" onClick={saveBinary}>

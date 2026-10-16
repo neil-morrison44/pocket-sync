@@ -69,8 +69,10 @@ h2.screenshot-info__title {
   font-size: var(--font-size-sm);
   color: var(--theme-text-soft);
 
+  /* inline-block: inside a link, the dot isn't underlined with it */
   & > * + *::before {
     content: "·";
+    display: inline-block;
     margin-inline-end: var(--space-sm);
     color: var(--theme-text-soft);
   }

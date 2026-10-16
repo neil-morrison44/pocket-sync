@@ -1,5 +1,5 @@
 import { coresListSelector } from "../../../jotai/selectors"
-import { useSmoothedAtomValue } from "../../../utils/jotai"
+import { useAtomValue } from "jotai"
 import { InstalledCoreInfo } from "./installed"
 import { NotInstalledCoreInfo } from "./notInstalled"
 
@@ -9,7 +9,8 @@ type CoreInfoProps = {
 }
 
 export const CoreInfo = (props: CoreInfoProps) => {
-  const coresList = useSmoothedAtomValue(coresListSelector)
+  // Kept while re-read, so it doesn't suspend the page on file changes
+  const coresList = useAtomValue(coresListSelector)
 
   if (coresList.includes(props.coreName)) {
     return <InstalledCoreInfo {...props} />

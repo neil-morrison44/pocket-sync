@@ -37,7 +37,6 @@
 /* An update is the most important next step: accent frame and title */
 .core-info__actions--update {
   border-color: var(--theme-accent-foreground);
-  border-inline-start-width: 3px;
   background-color: color-mix(in srgb, var(--theme-accent) 8%, transparent);
 }
 
@@ -237,4 +236,9 @@ button.core-info__notice {
 /* The bar tooltip's text has line breaks */
 .core-info__download-graph-tooltip {
   white-space: pre-line;
+}
+
+:root.keyboard-focus button.core-info__notice:focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: var(--focus-offset);
 }

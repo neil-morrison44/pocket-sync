@@ -66,38 +66,6 @@ const ALL_COLOURS: PocketColour[] = [
   "gbc_gold",
 ]
 
-export const ColourContextProviderRandomised = ({
-  children,
-  changeInterval,
-}: {
-  children: ReactNode
-  changeInterval: number
-}) => {
-  const [bodyColour, setBodyColour] = useState<PocketColour>("black")
-  const [buttonsColour, setButtonsColour] = useState<PocketColour>("black")
-
-  useLayoutEffect(() => {
-    const interval = setInterval(() => {
-      startTransition(() => {
-        setBodyColour(
-          ALL_COLOURS[Math.floor(ALL_COLOURS.length * Math.random())]
-        )
-        setButtonsColour(
-          ALL_COLOURS[Math.floor(ALL_COLOURS.length * Math.random())]
-        )
-      })
-    }, changeInterval)
-
-    return () => clearInterval(interval)
-  }, [setBodyColour, setButtonsColour, changeInterval])
-
-  return (
-    <ColourContextProvider body={bodyColour} buttons={buttonsColour}>
-      {children}
-    </ColourContextProvider>
-  )
-}
-
 export const ColourContextProviderFromConfig = ({
   children,
 }: {

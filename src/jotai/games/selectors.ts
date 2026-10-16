@@ -9,7 +9,7 @@ import {
 } from "../../utils/invokes"
 import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { Atom, atom } from "jotai"
-import { atomFamilyDeepEqual } from "../../utils/jotai"
+import { atomFamilyDeepEqual, keepPreviousOrSuspend } from "../../utils/jotai"
 import { path } from "@tauri-apps/api"
 import { MROMInfo, PlatformId } from "../../types"
 import {
@@ -189,7 +189,7 @@ const KNOWN_GAME_SYSTEMS: Record<
 export const knownGameSystemName = (platformId: string) =>
   KNOWN_GAME_SYSTEMS[platformId]?.name
 
-export const gameSystemsSelector = atom<Promise<GameSystem[]>>(async (get) => {
+const gameSystemsLoadSelector = atom<Promise<GameSystem[]>>(async (get) => {
   get(fsWatchAtomFamily("Assets"))
   const coreNames = await get(coresListSelector)
   const systems = new Map<
@@ -252,6 +252,21 @@ export const gameSystemsSelector = atom<Promise<GameSystem[]>>(async (get) => {
     }))
     .sort((a, b) => a.platformId.localeCompare(b.platformId))
 })
+
+/**
+ * The systems with games on the SD card. When files in Assets change (e.g.
+ * after Clean Up Files) the previous list stays until the new one is read,
+ * so the Games page doesn't flash back to its loading state.
+ */
+export const gameSystemsSelector = keepPreviousOrSuspend(
+  gameSystemsLoadSelector
+)
+
+/** A system's files (like `WalkDirSelectorFamily`), kept while re-read. */
+export const GameSystemFilesSelectorFamily = atomFamilyDeepEqual(
+  (params: { path: string; extensions: string[] }) =>
+    keepPreviousOrSuspend(WalkDirSelectorFamily(params))
+)
 
 /** Game files in a system's folder: everything but its fixed (BIOS) files. */
 export const filterGameFiles = (files: string[], namedFiles: string[]) =>
@@ -321,4 +336,19 @@ export const GameSystemPlatformSelectorFamily = atomFamily(
         return { ...platform, exists }
       }
     )
+)
+
+/** The categories of the game systems (e.g. Handheld), for the filter. */
+export const gameSystemCategoriesSelector = atom<Promise<string[]>>(
+  async (get) => {
+    const systems = await get(gameSystemsSelector)
+    const platforms = await Promise.all(
+      systems.map(({ platformId }) =>
+        get(GameSystemPlatformSelectorFamily(platformId))
+      )
+    )
+    return Array.from(
+      new Set(platforms.map(({ category }) => category).filter(Boolean))
+    ).sort((a, b) => (a as string).localeCompare(b as string)) as string[]
+  }
 )

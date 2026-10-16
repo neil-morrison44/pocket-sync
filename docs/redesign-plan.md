@@ -438,6 +438,33 @@ data-style="slanted"`, the defaults, so the first paint matches before
   left edge with the text centred in the rest, far apart on wide windows;
   the Pocket and the info are now one grid (Pocket column, info column)
   centred together.
+- ✅ **Thirty-second pass (2026-10-16).** The remaining old screens restyled
+  (see the pass notes), a `Slider` primitive, the legacy colour aliases
+  removed, branch-orphaned code and 57 unused strings deleted, Plugins
+  explained in one line.
+- ✅ **Thirty-third pass (2026-10-16).** Update All opens a selection
+  (updates and cores to install), an Author filter on Cores, Palette Town
+  fixes, seamless palette previews, focus rings and arrow keys for the
+  remaining custom controls, the Figma section out of the styling guide.
+- ✅ **Thirty-fourth pass (2026-10-16).** A feature check against `main`:
+  Games' folder size, Category filter, accepted file types and cores are
+  back; the selection modal offers the Cores page's filtered cores with
+  release and tags; native radios and checkboxes get our focus ring;
+  previews for Move MROM Dumps, Build Instance JSON and the error screen.
+- ✅ **Thirty-fifth pass (2026-10-16).** Review 33: slider focus ring,
+  wrapping filter separator, even update tile with a skeleton, long
+  palette names, core settings no longer vanish on change, Clean Up Files
+  without flashes, modal actions at the bottom, MROM source paths, image
+  editor position sliders, demo plugins and fetch sources.
+- ✅ **Thirty-sixth pass (2026-10-16).** Review 34: MROM wording and save
+  hints, image editor discard dialog and drag crash, screenshot dot,
+  core settings row padding.
+- ✅ **Thirty-seventh pass (2026-10-16).** Review 35: Fetch refresh re-reads
+  with a spinner, source folder link, no page jumps on core settings and
+  tabs, screenshot size with the image, Games core links, font tokens.
+- ✅ **Thirty-eighth pass (2026-10-16).** Review 36: Fetch status after
+  fetching, Fetch All, source tags, Edit Source; Palettes search and
+  folder groups.
 
 ### In progress
 
@@ -447,7 +474,11 @@ data-style="slanted"`, the defaults, so the first paint matches before
 
 ### Next
 
-**Before the PR** (as of 2026-10-16):
+**Before the PR** (as of 2026-10-16; answers from @olivierbrcknr the same
+day: the app is reviewed continuously, so 1 is done; Games' tools stay
+where they are; the modal radius is solved; both styles and the light
+theme ship; lint with what the repo has set up; the history question is
+resolved; the dead-code pass only for front-end code):
 
 1. Review in the running app: the sixteenth to thirty-first passes are
    only checked with `tsc`, stylelint, Prettier and a `vite build`. Tick
@@ -487,16 +518,11 @@ data-style="slanted"`, the defaults, so the first paint matches before
 ### Waiting on
 
 - Committing: only when @olivierbrcknr asks. Committed so far: `b14e23f`,
-  `b7963a3`, `2970e32`; the sixteenth to thirtieth passes are uncommitted. Never push, and
-  no AI attribution in commit messages.
+  `b7963a3`, `2970e32`, `878bcfb` (up to the thirty-first pass). Never
+  push, and no AI attribution in commit messages.
 - Plugins: whether the page should explain what a plugin is in one line
   (the info note only links to the specification).
-- Games: whether Clean Up Files and Build Instance JSON stay in the Games
-  header, move elsewhere, or go (see the sixteenth pass for what they do).
 - Figma MCP call limit (Starter plan) for the remaining Figma work (g).
-- Modals (2026-10-16): they already use `--radius-modal` (= `--radius`,
-  2px, like buttons in Modern); slanted buttons have no radius. Whether
-  modals should get a larger radius (e.g. `--radius-popover`).
 
 ## Page checklist
 
@@ -524,8 +550,8 @@ The tag after each item says how far it's restyled:
       restyled
 - [ ] Keyboard focus rings (Tab through each screen): restyled
 - [ ] Loading skeletons and the full-screen loader: partly
-- [ ] Error screen (error boundary, stack trace, repair buttons): tokens
-      only
+- [ ] Error screen (message, repair card, actions, folded details):
+      restyled
 - [ ] App self-update prompt: native
 - [ ] Drop overlay while dragging a .zip over the window: restyled
 - [ ] Search shortcut (⌘F / Ctrl+F) and its key caps: restyled
@@ -545,9 +571,9 @@ The tag after each item says how far it's restyled:
 - [ ] Games by system (full width, Show in Folder per game), search,
       category filter: restyled
 - [ ] Empty state (no games): restyled
-- [ ] Modal: Move MROM Dumps: tokens only
-- [ ] Modal: Clean Up Files: tokens only
-- [ ] Modal: Build Instance JSON: tokens only
+- [ ] Modal: Move MROM Dumps (cards, destination, save choice): restyled
+- [ ] Modal: Clean Up Files (explanation, list, empty state): restyled
+- [ ] Modal: Build Instance JSON (explanation, cores, log): restyled
 
 ### Cores
 
@@ -562,10 +588,9 @@ The tag after each item says how far it's restyled:
       Info.txt, AI report, facts), Inputs (button list + 3D Pocket),
       Settings (core settings, display modes, JT Analogizer), Releases
       (install another version, release notes): restyled
-- [ ] Modal: Load Required Files (incl. its loading state): tokens only
-- [ ] Modal: zip install (file groups and options as switches, Cancel /
-      Install), progress and replace prompt: partly (file tree and progress
-      still old)
+- [ ] Modal: Load Required Files (intro, summary, file list, skip toggle, progress): restyled
+- [ ] Modal: zip install (file groups, file tree, options, Cancel /
+      Install, download progress): restyled
 
 ### Update (page removed 2026-10-14)
 
@@ -583,9 +608,9 @@ The page is gone; updating happens on Cores (Updates section, Update All).
       Controls ones)
 - [ ] Platform detail (banner opens the image editor, editable fields,
       cores as cards): restyled
-- [ ] Modal: Manage Data Packs: tokens only
-- [ ] Modal: Manage Image Packs: tokens only
-- [ ] Modal: Image editor (stamps, import): tokens only
+- [ ] Modal: Manage Data Packs (lanes per platform, options, apply): restyled
+- [ ] Modal: Manage Image Packs (lanes per platform, image options, apply): restyled
+- [ ] Modal: Image editor (layers with sliders, hint, import): restyled
 - [ ] Delete confirmation: native
 
 ### Firmware
@@ -597,9 +622,8 @@ The page is gone; updating happens on Cores (Updates section, Update All).
 ### Screenshots
 
 - [ ] Screenshots in sections (game / core / date), search, Game and Core
-      filters, select mode, multi-export: partly (tiles are still the old
-      hover drawer)
-- [ ] Empty state: tokens only
+      filters, select mode, multi-export: restyled (tiles on `Tile`)
+- [ ] Empty state (how to take a screenshot): restyled
 - [ ] Screenshot detail (save, share, upscaled toggle, info): restyled
 
 ### Backups (Saves)
@@ -611,7 +635,7 @@ The page is gone; updating happens on Cores (Updates section, Update All).
       restyled
 - [ ] MiSTer Sync: connect modal, session (saves, comparison, copy),
       activity; preview in Settings → Developer: restyled
-- [ ] Modal: Save Mapping: tokens only
+- [ ] Modal: Save Mapping (intro, theme-aware links): restyled
 - [ ] Delete / restore confirmations: native
 
 ### Save States
@@ -631,7 +655,7 @@ The page is gone; updating happens on Cores (Updates section, Update All).
 - [ ] Palette detail (name edited in place, header actions, game preview,
       colour swatches, save, reset): restyled
 - [ ] Modal: Add Palette via Code (share code field, hint, error): restyled
-- [ ] Modal: Browse Palette Town: tokens only
+- [ ] Modal: Browse Palette Town (tiles, installed tags): restyled
 
 ### Fetch
 
@@ -645,7 +669,7 @@ The page is gone; updating happens on Cores (Updates section, Update All).
 
 - [ ] Plugins list (tiles, search, author filter, Run, Remove): restyled
 - [ ] Modal: Add plugin (GitHub URL with hint and check): restyled
-- [ ] Plugin window (separate window, own light frame): tokens only
+- [ ] Plugin window (separate window): restyled
 - [ ] Remove / exit confirmations: native
 
 ### Settings
@@ -752,7 +776,7 @@ here.
 | 27  | Themes                              | **REVISED 2026-10-15: Dark (default), Light and System**, via `data-theme` on `<html>` set from a stored preference. Light mirrors the white Pocket and uses the same Analogue green fills as dark, with a darker green only for text and icons. _Was: light used a darker green for everything._                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | 28  | macOS window                        | **Overlay title bar** with the traffic lights inside the sidebar; other platforms keep native decorations. Config and capability change only.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | 29  | Modals                              | **App modals are Radix Dialog** (close button, Escape, `onClose`; done in (f2)). OS dialogs from the Tauri dialog plugin stay native.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| 30  | Styles                              | **REVISED (2026-10-16):** the second style is shown as **"Straight"** (first "Rounded", but its 2px radius isn't round; "Clean" judged the other again) (internal value `modern`, `data-style="modern"`), so the two read as equals ("Slanted" / "Straight") instead of "Modern" diminishing "Slanted". _Was: Two styles: "Slanted" (default) and "Modern" (straight edges, more contrast), via `data-style` on `<html>`, independent of the dark/light theme. Whether both ship is decided later._                                                                                                                                                                                                                                                                                                                                                                                 |
+| 30  | Styles                              | **REVISED (2026-10-16):** the second style is shown as **"Straight"** (first "Rounded", but its 2px radius isn't round; "Clean" judged the other again) (internal value `modern`, `data-style="modern"`), so the two read as equals ("Slanted" / "Straight") instead of "Modern" diminishing "Slanted". _Was: Two styles: "Slanted" (default) and "Modern" (straight edges, more contrast), via `data-style` on `<html>`, independent of the dark/light theme. Whether both ship is decided later._ Both ship (2026-10-16).                                                                                                                                                                                                                                                                                                                                                         |
 
 ## Milestones
 
@@ -1105,6 +1129,226 @@ Sixteenth pass (2026-10-15, after review):
   is `#f0f0f0` against the white content, like dark's darker sidebar. Core
   and platform cards get a 1px separator frame in light, drawn above the
   image, so white platform images don't blend into the page.
+
+Thirty-eighth pass (2026-10-16, after review):
+
+- **Fetch Files did copy** (the files were on the mock card), but the
+  status didn't change: the destination wasn't read again after copying
+  (now marked as changed right after), and a file dated 1 Jan 1970 (mtime 0) never counted as up to date (`pF.mtime && …`). Same on `main`.
+- **Fetch All** next to Refresh Status: each source with something to
+  fetch registers its Fetch (`FetchAllContext`); Fetch All runs them one
+  after another, with a spinner, disabled when nothing's left. Refresh
+  Status only checks again.
+- **Source tags:** "Local Files" or "Internet Archive" before the status.
+- **Edit Source** (pencil): the add modal, filled in, saves in place.
+- **Palettes:** a search (name and folder) and Group by Folder / None,
+  shown only when palettes are in folders (Palette Town installs one per
+  author); groups use `GroupHeader` with a count, palettes not in a
+  folder first, and tiles in a group leave the folder out of their name.
+
+Thirty-seventh pass (2026-10-16, after review):
+
+- **Fetch, Refresh Status:** it didn't re-read local folders (their reads
+  are cached by path; the bump only re-ran the outer atom) and showed
+  nothing while working (Controls buttons run in a transition, which keeps
+  the old screen). It now marks each source and destination as changed,
+  waits for them, and shows a spinner on the button meanwhile
+  (`ControlsButton` `loading`). A local source's path is a link that
+  opens the folder, like the archive.org link (`fetch.open_source`).
+  Extensions only apply to archive.org sources (as on `main`).
+- **Core page jumping to the top:** writing `Cores/<core>/video.json` (a
+  display mode) marks `Cores` as changed, which re-read the installed
+  cores and suspended the whole page. `coresListSelector` now keeps its
+  previous value and returns the same array when nothing changed
+  (`keepPreviousOrSuspend` with `areEqual`). Switching tabs: the new tab
+  starts at least as tall as the one before (`Tabs`), so a shorter tab or
+  its loader doesn't shrink the page under the scroll position.
+- **Screenshot size:** read from the shown image's `onLoad`, so it appears
+  with the image (it loaded the image a second time before);
+  `ImageDimensionsSelectorFamily` removed (only used there).
+- **Games:** the "Read by" cores are links to each core's page (string now
+  `Read by <cores></cores>` in every locale).
+- **Fonts:** the remaining hard-coded families (`GamePocket`, Inter,
+  `monospace`) use `--font-display`, `--font-body` and `--font-code`; all
+  sizes already used the tokens.
+- **MROM:** the save bug is written out in the PR draft. Pocket Sync only
+  handles GB and GBC dumps (`.gb` / `.gbc`, DMG / CGB).
+
+Thirty-sixth pass (2026-10-16, after review):
+
+- **MROM:** the source line is gone again (it's always
+  `Assets/mrom/common/<platform>/`); the intro says that instead, and that
+  each game can take one save along. The save options are "From Cartridge"
+  (the `.SAV` dumped next to the ROM) and "From MROM Core" (the core's save
+  in `Saves/mrom`), with a soft line under the select saying what the
+  chosen save is. The cartridge cards use 14px like controls. Found while
+  explaining it: on Move, "From Cartridge" copies the save to
+  `Save/mrom/…` (not `Saves/<gb|gbc>/common/…`, where the moved game looks)
+  and "From MROM Core" copies nothing, so neither choice reaches the game.
+  Same on `main`; not changed yet, waiting for @olivierbrcknr.
+- **Image editor:** closing with changes (outside click, Escape, Cancel,
+  ×) asks first in a native dialog (Discard / Keep Editing). Fixed a crash
+  ("undefined is not an object (evaluating 'stamp.x')"): dragging when the
+  selected layer index pointed past the list, e.g. after removing a layer;
+  the drag now ignores a missing layer and removing keeps the selection on
+  an existing one.
+- **Screenshot detail:** the separator dot is `inline-block`, so it isn't
+  underlined with the core link on hover.
+- **Core settings:** rows get vertical padding (still at least 44px), so
+  the line below a slider doesn't touch it.
+
+Thirty-fifth pass (2026-10-16, after review):
+
+- **Slider focus:** the thumb's shape moved to `::before`, so the focus
+  ring (`::after`) sits outside it, 2px away, slanted like the controls;
+  colouring the thumb green wasn't noticeable.
+- **Settings → Developer:** button rows wrap (`flex-wrap`, a row gap, and
+  space between the two rows), so nothing is clipped.
+- **Filter separator:** when the filters wrap to their own row in the
+  header bar, the slanted line and its indent go (`ControlsGroup` measures
+  this; it only moves back up when it fits with the indent, so it can't
+  flip between rows).
+- **Screenshot detail:** the core link is subtle like the game link.
+- **Core page:** the update tile's border is even (the 3px left edge is
+  gone), and the actions show a skeleton while the update check and
+  required files load.
+- **Palette detail:** the folders sit small above the name (the name is
+  the only part that's edited), and a long name scrolls inside its field
+  instead of widening the page.
+- **Core settings:** changing a setting (e.g. the rumble slider) made the
+  section vanish, because each write re-read the file and suspended it.
+  The written value is now kept and returned right away
+  (`PersistInteractFileAtomFamily`). The same happens on `main`.
+- **Clean Up Files:** the loading state has the modal's form size, and
+  deleting no longer flashes: the cleanable files, the Games systems, their
+  files and folder sizes keep their previous value while re-read
+  (`keepPreviousOrSuspend`).
+- **Modal actions** always sit at the very bottom (`margin-top: auto`), so
+  they close the modal off, also when the content is short (MROM).
+- **MROM:** each cartridge shows where it is now ("From Assets/mrom/…")
+  above its destination field.
+- **Image editor:** Horizontal and Vertical sliders next to Scale and
+  Rotate, two by two: exact, and usable by keyboard (dragging is
+  mouse-only).
+- **Zip drop:** a dropped zip is unpacked onto the card in its own folder
+  layout (`install_zip`, back end), so a core zip installs everything in
+  it, but loose game files aren't routed into `Assets/<platform>`. An idea
+  for the PR notes.
+- **Demo data (Settings → Developer):** "Pretend plugins are installed"
+  lists three made-up plugins (two authors, so the Author filter shows;
+  Run only shows the running state, Remove does nothing). The section is
+  now called Demo Data. Fetch sources are real entries in the mock SD
+  card's `pocket-sync.json` (a local folder that exists and one that
+  doesn't), not code. The demo plugins and the MROM demo cartridges are
+  empty arrays outside dev builds: Rollup kept them in the bundle
+  otherwise.
+
+Thirty-fourth pass (2026-10-16, after review):
+
+- **Removed selectors, checked against `main`:** each was used only by
+  code this branch replaced (all front-end): `mainWindowSelector` by the
+  old modal, `ColourContextProviderRandomised` by the old start screen,
+  `previousFirmwareListSelector` by the old firmware select,
+  `inventoryAuthorListAtom`, `inventoryCategoryListAtom`,
+  `MainPlatformForCoreSelectorFamily` and `ControlsPopoverButton` by the
+  removed Update page, and `FolderSizeSelectorFamily` by the old Games
+  items. That last one showed a feature the redesign had dropped.
+- **Games, back from the old list:** each system shows its folder's size
+  (`FolderSizeSelectorFamily`, restored, now taking a card-relative path
+  and refreshing on changes), the file types it accepts and the cores that
+  read it; the **Category** filter is back next to Platform.
+- **Update selection vs. the old Update page:** the install list is the
+  Cores page's available cores after its search and filters (author,
+  category, platform, features, license, AI-ness: the old page's filters),
+  with a note when filtered; each row shows version, release date and the
+  license / AI tags. Not back: the saved filter defaults (decided in the
+  sixth pass).
+- **Focus:** native radio buttons and checkboxes get the accent and our
+  focus ring (`style.css`).
+- **Previews (Settings → Developer → Modal previews):** Move MROM Dumps
+  (three made-up cartridges, one per kind of save; Move only waits), Build
+  Instance JSON (two made-up cores; Build adds written and skipped files)
+  and the error screen (the real boundary over the page, with a made-up
+  error and a Close Preview button). English only, like the other
+  developer strings.
+
+Thirty-third pass (2026-10-16, after review):
+
+- **Update All → selection** (`update/selectionModal.tsx`): the cores with
+  an update (ticked) and the available cores to install in the same run
+  (searchable, unticked; ticked ones stay visible while searching), then
+  Start (n). Also opened by **Install Several…** on the Available heading,
+  so it works without updates. Brings back installing several cores at
+  once from the old Update page. The updater and its progress modal moved
+  from the Updates section up to the list.
+- **Author filter** on Cores (searchable; the part of a core's name before
+  the dot), in Clear Filters and the counts.
+- **Palette Town:** the shared `Details` header is a real button, sticks
+  above the tiles (`z-index`; tiles painted over it) and is restyled; the
+  grid fills from the left (`auto-fill`).
+- **Palette previews** are drawn at 100 × 80 (their 5:4 display shape)
+  with whole-pixel rectangles; the 4 × 5 canvas stretched to 5:4 left
+  seams that showed the white media background.
+- **Accessibility of custom controls:** focus rings added where missing
+  (platform banner, fetch extension remove, zip tree folders and
+  checkboxes, core page notices); arrow keys (`useRovingFocus`) for the
+  pack options, the photo grid, the update selection lists and the MiSTer
+  saves list.
+- **Docs:** the Figma section is out of `ui_styling.md` (and its title no
+  longer says "& redesign plan"). This plan stays on the branch for now and
+  is deleted before the PR.
+- **PR draft:** the MROM `replace("Assets", "Save")` note moved there
+  ("Noticed along the way").
+
+Thirty-second pass (2026-10-16, after review):
+
+- **Plugins:** the info note starts with what a plugin is (made by others,
+  runs in its own window, added by its GitHub link); a new dismiss id, so
+  the reworded note shows again.
+- **Load Required Files:** an intro, a summary ("2 of 5 found · 120 MB to
+  download"), a warning when no archive is set up, the skip option as a
+  checkbox `Toggle`; sized by content up to the modal limits.
+- **Data Packs / Image Packs:** one layout (`platforms/packs`): a lane per
+  platform with its options side by side (Current first) as radio
+  buttons, hidden when Current is the only option; Cancel / Apply n
+  Changes (primary, disabled at 0). Image Packs was a pack-by-platform
+  matrix that didn't fit the 800px modal. Fixed: Data Packs showed the
+  category only when there was none (`??` inverted).
+- **`Slider`** (Radix): label and value on top, track with a slanted thumb.
+  Used for the image editor's scale (%) and rotation (°), core settings and
+  the Developer spinner speed. The image editor got a hint (drag on the
+  preview) and labelled layer buttons.
+- **Games tools:** Clean Up Files explains what it finds (macOS `._` and
+  `.DS_Store` files), lists them in a box, has an empty state and "Delete n
+  Files" (destructive). Move MROM Dumps has an intro, one card per dump
+  (image, name, platform tag, destination as a code `TextInput`, the save
+  as one `Select` instead of two checkboxes), Move n ROMs. Build Instance
+  JSON explains instance files, lists the cores with a Build button each,
+  and shows the log with icons. Noticed, not changed: the MROM save copy
+  builds its target with `replace("Assets", "Save")`, which may be wrong.
+- **Screenshots** are `Tile`s (picture letterboxed in 10:9, game,
+  platform, date); the hover drawer is gone.
+- **Palette Town:** an intro with the source; palettes as `Tile`s with an
+  "On the SD card" tag; clicking adds one that isn't there yet.
+- **Save Mapping:** an intro; the canvas draws with the theme's colours
+  (it was white, invisible in light); chips like tags.
+- **Zip install:** the file tree uses chevrons and real buttons for
+  folders; the download modal uses `ProgressBar`.
+- **Error screen:** title "Something went wrong", the message set off in
+  red, a repair card (accent frame, what it fixes, Repair) when possible,
+  Open Logs / Retry, the report note with a GitHub link, the stack folded
+  under Technical details.
+- **Plugin window:** "safe to close" is an info box.
+- **Clean-up:** the legacy colour aliases (`--info-colour` …) are replaced
+  by theme tokens and removed. Removed what this branch left unused
+  (`ControlsPopoverButton`, `ColourContextProviderRandomised`,
+  `mainWindowSelector`, `FolderSizeSelectorFamily`,
+  `previousFirmwareListSelector`, two inventory list atoms,
+  `MainPlatformForCoreSelectorFamily`, the Image Packs `PlatformName`, the
+  dead Update All state in Cores) and 57 unused strings in every locale
+  (the Update page's, old modal Close buttons, …). The remaining raw
+  `<button>`s / `<input>`s are custom controls on purpose (nav items,
+  options, swatches, timeline bars, tree rows, colour and radio inputs).
 
 Thirtieth pass (2026-10-16, after review):
 
@@ -2132,6 +2376,60 @@ Newest at the bottom.
   confusing". Firmware's "Jump to" is odd as a select: "this should not be
   an element that can have a value". Modals should have no border and the
   radius used on buttons.
+- **Review 36 (2026-10-16):** Refresh seemed to fetch everything ("that was
+  not clear to me"), so it should be a Fetch All; Fetch flickers a loading
+  bar and does nothing; tag sources as local or internet; an Edit that
+  opens the modal again, or an idea for later if it's complicated; add
+  the search and grouping to Palettes.
+- **Review 35 (2026-10-16):** Fetch feels broken ("or maybe it's only due
+  to the demo environment?"); Refresh Status needs a loading indicator;
+  show the other folder for a local source? Use the defined font styles
+  everywhere. Write the MROM bug down; is it only GB and GBC? Clicking a
+  display mode, and switching tabs on a core page, re-render the page and
+  scroll to the top. The screenshot's pixel size appears after the image.
+  Make the Games cores clickable. Do Palettes need groupings and a search?
+- **Review 34 (2026-10-16):** no need to show the MROM path if it's always
+  the same; maybe extend the info instead; font sizes at the default 14px;
+  "From Dumped or from Pocket is both confusing… I am not clearly
+  understanding what it does". Closing the image editor (e.g. clicking
+  outside) should discard the changes or ask "are you sure?" (native is
+  fine); doing so crashed with "undefined is not an object (evaluating
+  'stamp.x')". The dot in the screenshot meta is underlined on hover. The
+  core settings' bottom border is too close to the slider.
+- **Review 33 (2026-10-16):** the slider's focus needs a ring ("just
+  coloring the thumb green is not recognisable"); the Modal previews
+  buttons touch and get clipped, so wrap them; when the filters wrap to a
+  second row, hide the separator or move it; no underline on the
+  screenshot's core link; the update tile's left border is wider, and it
+  loads late, so add a skeleton; long palette titles make the window
+  scroll; changing the rumble strength makes the core settings vanish;
+  Clean Up Files loads bigger than it ends up and the app flashes after
+  deleting; modal buttons belong at the very bottom "to enclose the modal
+  visually"; MROM only shows the destination, not the source; should the
+  image editor have X and Y sliders; does a dropped zip install
+  everything, if not note it for the PR; add plugins and fetch sources to
+  look at, in code if needed.
+- **Review 32 (2026-10-16):** the deleted selectors "scare me a bit", so
+  explain them; give the radio buttons our focus ring; help check the new
+  elements, maybe with mocks, with a checklist; are all update features
+  included again now?
+- **Review 31 (2026-10-16):** Palette Town's accordion was behind the tiles,
+  which hid the titles, and the tiles should start at the left; palette
+  previews sometimes showed a white line; show where the custom buttons
+  are and whether they have keyboard / accessibility controls; the MROM
+  note belongs in the PR. Update All could open a selection modal ("this
+  would solve both"); add the author filter. Keep the plan but delete it
+  before the PR; remove the Figma info; keep the Developer previews.
+- **Review 30 (2026-10-16):** yes to the one-line Plugins explanation; go
+  through the remaining old screens right away; fix the raw elements;
+  asked whether the old Update page had features that need to come back;
+  remove the aliases and the front-end dead code. Before the PR, consider
+  removing Claude or debug files and functions (the plan, the styling
+  guide or moving it, the Developer previews in Settings, or keeping them
+  for the future). The PR description should mention the sectioned
+  sidebar, the Updates section now in Cores, the reorganisation (news in a
+  feed on the right of Home, core details in tabs), and that some existing
+  features are just more prominent now.
 - **Review 29 (2026-10-16):** in light, screenshot tiles need a border,
   platform header images a bottom border "to make clear where the image
   ends", and the image editor's image a frame (both themes; "Images
@@ -2389,8 +2687,7 @@ Newest at the bottom.
 
 ## Open questions
 
-- Should a light theme be part of the first PR, or come after the
-  foundations land?
+- ~~Should a light theme be part of the first PR?~~ Yes (2026-10-16).
 - Translations were written by AI (see the disclosure): should the PR ask
   native speakers to review them?
 - Should `CLAUDE.md` be added to the repo with a pointer to this plan? It

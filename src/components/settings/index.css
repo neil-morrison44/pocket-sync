@@ -176,7 +176,13 @@
 
 .settings__actions {
   display: flex;
-  gap: var(--space-sm);
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-sm) var(--control-gap);
+}
+
+.settings__actions + .settings__actions {
+  margin-top: var(--space-md);
 }
 
 /* Credits, prominent at the top */
@@ -226,7 +232,7 @@ h2.settings__thanks-title {
 }
 
 .settings__items-input-list {
-  background-color: var(--light-colour);
+  background-color: var(--theme-surface);
   padding: 10px;
   border-radius: 5px;
   list-style: none;
@@ -237,7 +243,7 @@ h2.settings__thanks-title {
 }
 
 .settings__items-input-item {
-  background-color: var(--info-colour);
+  background-color: var(--theme-surface-sunken);
   padding: 5px 10px;
   border-radius: inherit;
   display: flex;
@@ -249,7 +255,7 @@ h2.settings__thanks-title {
 
   &::after {
     content: "x";
-    font-family: monospace;
+    font-family: var(--font-code);
     font-size: var(--font-size-md);
     margin-inline-start: 5px;
   }
@@ -271,4 +277,25 @@ h2.settings__thanks-title {
 
 .settings__progress-bar {
   width: 80%;
+}
+
+/* A slider in a settings row, at a comfortable width */
+.settings__slider {
+  max-width: 320px;
+}
+
+/* The error screen preview covers the page beside the sidebar */
+.settings__error-preview {
+  position: fixed;
+  inset: 0 0 0 var(--sidebar-width, 0);
+  z-index: 900;
+  overflow: auto;
+  background-color: var(--theme-background);
+}
+
+.settings__error-preview-close {
+  position: absolute;
+  top: var(--space-lg);
+  right: var(--page-padding-inline);
+  z-index: 1;
 }

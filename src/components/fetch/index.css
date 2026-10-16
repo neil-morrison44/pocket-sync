@@ -15,11 +15,20 @@
 /* Full paths are long: one line, cut at the start so the end shows */
 .fetch__path {
   min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   direction: rtl;
   text-align: left;
+}
+
+/* Where it's from, then the file status */
+.fetch__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs);
 }
 
 .fetch__item .tile__subtitle .link {
@@ -146,4 +155,9 @@
   & .icon {
     color: var(--theme-danger);
   }
+}
+
+:root.keyboard-focus .fetch__extension-remove:focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: 1px;
 }

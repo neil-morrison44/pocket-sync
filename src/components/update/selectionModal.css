@@ -1,0 +1,117 @@
+/* Updates on top, cores to install below (the part that grows) */
+.update-selection__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-height: 0;
+}
+
+.update-selection__section--grow {
+  flex: 1 1 0;
+}
+
+.update-selection__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+
+h3.update-selection__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--theme-text-headline);
+}
+
+.update-selection__list {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--theme-separator);
+  list-style: none;
+}
+
+.update-selection__list--scroll {
+  flex-grow: 1;
+  min-height: 120px;
+  overflow: auto;
+}
+
+/* A core to tick: the whole row is the checkbox */
+.update-selection__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  margin: 0;
+  padding: var(--space-xs) var(--space-sm);
+  border: none;
+  border-bottom: 1px solid var(--theme-separator);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--theme-text-body);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  text-align: start;
+  cursor: pointer;
+
+  .icon {
+    color: var(--theme-text-soft);
+  }
+
+  &:hover {
+    border-color: var(--theme-separator);
+    background-color: var(--theme-overlay);
+  }
+
+  &:active {
+    transform: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+:root.keyboard-focus .update-selection__row:focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: -2px;
+}
+
+.update-selection__row--checked {
+  color: var(--theme-text-headline);
+
+  .icon {
+    color: var(--theme-accent-foreground);
+  }
+}
+
+.update-selection__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.update-selection__note {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+}
+
+.update-selection__tags {
+  display: flex;
+  flex-shrink: 0;
+
+  .tag-list {
+    flex-wrap: nowrap;
+  }
+}
+
+.update-selection__detail {
+  margin-inline-start: auto;
+  font-variant-numeric: tabular-nums;
+  color: var(--theme-text-soft);
+}

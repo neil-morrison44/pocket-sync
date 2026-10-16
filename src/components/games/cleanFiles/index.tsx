@@ -3,7 +3,8 @@ import { useCallback, useMemo, useState } from "react"
 import { pocketPathAtom } from "../../../jotai/atoms"
 import { CleanableFilesSelectorFamily } from "../../../jotai/selectors"
 import { invokeDeleteFiles } from "../../../utils/invokes"
-import { Loader } from "../../loader"
+import Button from "../../ui/Button"
+import Callout from "../../ui/Callout"
 import { Modal, ModalSuspense } from "../../modal"
 
 import "./index.css"
@@ -36,28 +37,44 @@ const CleanFilesModalContent = ({
 
   return (
     <Modal
-      className="clean-files"
+      className="modal--form clean-files"
       title={t("title")}
       onClose={deleteInprogress ? undefined : onClose}
     >
-      <div>{t("files_found", { count: files.length })}</div>
+      <p className="clean-files__intro">{t("intro")}</p>
 
-      <div className="clean-files__list">
-        {files.map((f) => (
-          <div key={f}>{f}</div>
-        ))}
-      </div>
-
-      {deleteInprogress && (
-        <button>
-          <Loader className="clean-files_button-loader" size={20} />
-        </button>
-      )}
-      {!deleteInprogress && (
+      {files.length === 0 ? (
+        <Callout>{t("none_found")}</Callout>
+      ) : (
         <>
-          <button onClick={deleteFiles}>{t("delete_files_button")}</button>
+          <p className="clean-files__count">
+            {t("files_found", { count: files.length })}
+          </p>
+          <ul className="clean-files__list">
+            {files.map((f) => (
+              <li key={f}>{f}</li>
+            ))}
+          </ul>
         </>
       )}
+
+      <div className="modal__actions">
+        <Button theme="tertiary" disabled={deleteInprogress} onClick={onClose}>
+          {t("close_button")}
+        </Button>
+        {files.length > 0 && (
+          <Button
+            theme="destructive"
+            icon="trash"
+            disabled={deleteInprogress}
+            onClick={deleteFiles}
+          >
+            {deleteInprogress
+              ? t("deleting")
+              : t("delete_files_button", { count: files.length })}
+          </Button>
+        )}
+      </div>
     </Modal>
   )
 }
@@ -67,7 +84,7 @@ export const CleanFilesModal = (props: CleanFilesModalProp) => {
   const { t } = useTranslation("clean_files")
   return (
     <ModalSuspense
-      className="clean-files"
+      className="modal--form clean-files"
       title={t("title")}
       onClose={props.onClose}
     >

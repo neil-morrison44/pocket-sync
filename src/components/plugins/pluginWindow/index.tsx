@@ -1,3 +1,4 @@
+import Callout from "../../ui/Callout"
 import {
   useEffect,
   useEffectEvent,
@@ -166,7 +167,7 @@ const PluginMessageRenderer = ({
   if (!message) return null
 
   if (message === "Exit") {
-    return <div className="plugins-window__done">{t("safe_to_close")}</div>
+    return <Callout>{t("safe_to_close")}</Callout>
   }
 
   if ("Choice" in message) {

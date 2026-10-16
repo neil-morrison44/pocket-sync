@@ -21,14 +21,17 @@ export const Details = ({
 
   return (
     <div className="details">
-      <div
+      {/* A real button, so the section opens with the keyboard too */}
+      <button
+        type="button"
         className={`details__title ${sticky ? "details__title--sticky" : ""}`}
+        aria-expanded={isOpen}
         onClick={() => startTransition(() => setIsOpen((c) => !c))}
       >
         {renderIcon && renderIcon()}
         {title}
         {isOpen ? <Icon icon="chevron-up" /> : <Icon icon="chevron-down" />}
-      </div>
+      </button>
       {isOpen && (
         <div className="details__content">
           <Suspense>{children}</Suspense>

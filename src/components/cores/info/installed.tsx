@@ -172,7 +172,7 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             </div>
             <CoreTags coreName={coreName} installed showInstalled />
           </DetailHeading>
-          <Suspense>
+          <Suspense fallback={<ActionsSkeleton />}>
             <InstalledActions
               coreName={coreName}
               onLoadRequiredFiles={() => setRequiredFilesOpen(true)}
@@ -195,6 +195,21 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
     </DetailPage>
   )
 }
+
+/**
+ * Holds the actions' place while the update check and required files load,
+ * so the page doesn't jump when they arrive.
+ */
+const ActionsSkeleton = () => (
+  <div className="core-info__actions" aria-hidden>
+    <Skeleton width="45%" />
+    <Skeleton width="70%" />
+    <div className="core-info__action-buttons">
+      <Skeleton width={140} height={36} />
+      <Skeleton width={110} height={36} />
+    </div>
+  </div>
+)
 
 /** Next steps for an installed core, most important first. */
 const InstalledActions = ({

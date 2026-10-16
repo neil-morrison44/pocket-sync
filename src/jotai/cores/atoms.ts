@@ -16,6 +16,9 @@ export const sortingOptionAtom = atom<SortMode>("name")
 
 export const categoryFilterOptionAtom = atom<string>("All")
 
+/** The Cores list's Author filter: a core's author ("All" for any). */
+export const authorFilterOptionAtom = atom<string>("All")
+
 /** The Cores list's License filter (see `passesTagFilters`). */
 export const licenseFilterOptionAtom = atom<LicenseFilter>("all")
 

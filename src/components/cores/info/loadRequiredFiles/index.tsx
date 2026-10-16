@@ -4,7 +4,7 @@ import { useInstallRequiredFiles } from "../../../../hooks/useInstallRequiredFil
 import { skipAlternateAssetsSelector } from "../../../../jotai/config/selectors"
 import { Modal, ModalSuspense } from "../../../modal"
 import Button from "../../../ui/Button"
-import Switch from "../../../ui/Switch"
+import Toggle from "../../../ui/Toggle"
 import { Progress } from "../../../progress"
 import Callout from "../../../ui/Callout"
 import { useTranslation } from "react-i18next"
@@ -18,6 +18,7 @@ import { DataSlotFile } from "../../../../types"
 import { Loader } from "../../../loader"
 import { JobsStopButton } from "../../../jobs/stop"
 import { useAtomValue } from "jotai"
+import prettyBytes from "pretty-bytes"
 
 const STATUS_SORT_ORDER = [
   "RootNeedsUpdate",
@@ -72,29 +73,33 @@ const LoadRequiredFilesContent = ({
 
       {!inProgress && (
         <>
+          <p className="load-required-files__intro">{t("intro")}</p>
+          <Suspense fallback={null}>
+            <RequiredFilesSummary coreName={coreName} />
+          </Suspense>
           <Suspense
             fallback={
-              <div
-                className="load-required-files__files"
-                style={{ padding: "20px" }}
-              >
+              <div className="load-required-files__files load-required-files__files--loading">
                 <Loader className="loader--no-background" />
               </div>
             }
           >
             <RequiredFilesList coreName={coreName} />
           </Suspense>
-          {!hasArchiveLink && <Callout>{t("no_link_tip")}</Callout>}
+          {!hasArchiveLink && (
+            <Callout variant="warning">{t("no_link_tip")}</Callout>
+          )}
 
           <div className="load-required-files__buttons">
-            <Switch
-              className="load-required-files__skip"
-              label={t("skip_alternates_label")}
+            {/* A checkbox toggle, like the options in other modals */}
+            <Toggle
               value={skipAlternateAssets}
               onChange={(checked) =>
                 updateConfig("skipAlternateAssets", checked)
               }
-            />
+            >
+              {t("skip_alternates_label")}
+            </Toggle>
 
             {hasArchiveLink && (
               <Suspense>
@@ -137,6 +142,31 @@ const RequiredFilesButton = ({
     >
       {t("download_all")}
     </Button>
+  )
+}
+
+/** How many files are there, and how much is left to download. */
+const RequiredFilesSummary = ({ coreName }: { coreName: string }) => {
+  const requiredFiles = useAtomValue(RequiredFileInfoSelectorFamily(coreName))
+  const { t } = useTranslation("core_info_required_files")
+  const found = requiredFiles.filter(({ status }) =>
+    ["Exists", "FoundAtRoot"].includes(status.type)
+  ).length
+  const bytes = requiredFiles.reduce((total, { status }) => {
+    if (
+      (status.type === "MissingButOnArchive" ||
+        status.type === "NeedsUpdateFromArchive") &&
+      status.size
+    )
+      return total + parseInt(status.size)
+    return total
+  }, 0)
+
+  return (
+    <p className="load-required-files__summary">
+      {t("summary", { found, total: requiredFiles.length })}
+      {bytes > 0 && ` · ${t("to_download", { size: prettyBytes(bytes) })}`}
+    </p>
   )
 }
 

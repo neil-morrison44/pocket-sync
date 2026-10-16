@@ -5,7 +5,6 @@
     "update_available": "アップデートが利用可能です! {version}",
     "sponsor_link": "GitHubで {count, number} 人と一緒にスポンサーになろう",
     "whats_new": "新着情報？",
-    "close_changelog": "近い",
     "library_updates": "ライブラリの更新",
     "side_panel": "アップデート情報",
     "show_updates": "アップデート情報を表示",
@@ -35,35 +34,39 @@
   },
   "clean_files": {
     "close_button": "閉じる",
-    "delete_files_button": "ファイルを削除",
+    "delete_files_button": "{count, plural, other {# 件のファイルを削除}}",
     "files_found": "{count, plural, =0 {消去できるファイルはありません} one {# 個のファイルを消去できます} other {# 個のファイルを消去できます} }",
-    "title": "クリーンアップ"
+    "title": "クリーンアップ",
+    "intro": "macOS は SD カードに隠しファイル（._… や .DS_Store）を書き込みます。Pocket では壊れたゲームとして表示されることがあります。以下は Assets 内のものです。",
+    "none_found": "整理するものはありません。Assets に macOS の隠しファイルはありません。",
+    "deleting": "削除中…"
   },
   "mrom": {
     "close_button": "近い",
-    "move_dumps": "ROMを移動する",
     "headers": {
-      "platform": "プラットフォーム",
-      "library_image": "ライブラリ画像",
-      "name": "名前",
-      "destination": "行き先"
+      "destination": "行き先",
+      "dumped_save": "カートリッジから",
+      "pocket_save": "MROMコアから"
+    },
+    "intro": "MROMコアはゲームボーイのカートリッジとそのセーブをAssets/mromにコピーします。ほかのコアで遊べるように、ゲームボーイとゲームボーイカラーのフォルダーへ移動しましょう。各ゲームにはセーブを1つ持っていけます。",
+    "none_found": "Assets/mrom にカートリッジのダンプが見つかりません。",
+    "moving": "移動中…",
+    "move_count": "{count, plural, other {# 個の ROM を移動}}",
+    "save_label": "セーブ",
+    "save": {
+      "none": "なし"
+    },
+    "save_hint": {
+      "dump": "カートリッジにあったセーブ。ダンプ時にコピーされたものです。",
+      "pocket": "MROMコアがこのゲーム用にSaves/mromに保存しているセーブ。",
+      "none": "セーブなしでゲームを移動します。"
     }
   },
   "update_all": {
     "title": "すべてをアップデート",
-    "heading": {
-      "update": "アップデート",
-      "required_files": "必要なファイルをインストール",
-      "platform_files": "プラットフォームファイルを置き換え"
-    },
     "buttons": {
-      "update": "{count, plural, =0 {なし} one {# 選択されたコアをアップデート} other {# 個の選択されたコアをアップデート} }",
       "close": "閉じる"
-    },
-    "update": {
-      "title": "{coreName} をアップデート中: { step, select, core { コアをアップデート中... } files { 必要なファイルをダウンロード中... } filecheck { ファイルを確認中... } other { on no } }"
-    },
-    "no_updates_found": "インストール済みのコアに適用できるアップデートを見つかりませんでした"
+    }
   },
   "core_info": {
     "author": "作者",
@@ -78,7 +81,6 @@
     },
     "inputs": "Inputs",
     "modal": {
-      "close": "閉じる",
       "input_core": "コア",
       "no_settings_found": "設定ファイルが見つかりません!",
       "reset_all": "すべての設定をリセット"
@@ -169,7 +171,7 @@
   "core_info_required_files": {
     "close": "閉じる",
     "download_all": "すべてをダウンロード",
-    "no_link_tip": "必要なファイルのオプションについては、Settings 画面より確認してください",
+    "no_link_tip": "アーカイブが設定されていないため、必要なファイルをダウンロードできません。設定 → ダウンロードで追加してください。",
     "skip_alternates_label": "代替ファイルをスキップ",
     "title": "必要なファイル",
     "file_status": {
@@ -180,7 +182,10 @@
       "not_checked": "不明",
       "found_at_root": "ファイル確認。ルートに配置されています",
       "root_needs_update": "ファイル不一致。ルートを確認してください"
-    }
+    },
+    "intro": "一部のコアは BIOS や ROM などの追加ファイルが必要です。設定で指定したアーカイブからダウンロードされます。",
+    "summary": "{total} 件中 {found} 件あり",
+    "to_download": "ダウンロード {size}"
   },
   "cores": {
     "controls": {
@@ -189,8 +194,6 @@
       "refresh": "更新",
       "search": "検索",
       "updatable": "アップデート可能",
-      "update_all": "すべてをアップデート",
-      "filters_group": "フィルタ",
       "sort_options": {
         "name": "名前",
         "last_update": "最新アップデート"
@@ -205,44 +208,52 @@
       "license_required": "ライセンスが必要",
       "ai": "AI 度",
       "ai_none": "なし",
-      "ai_up_to": "{max, number, percent} まで"
+      "ai_up_to": "{max, number, percent} まで",
+      "author": "作者"
     },
     "install_tip": "コア（またはその他の ZIP ファイル）をこのウィンドウにドラッグしてインストールすることもできます",
     "installed": "インストール済み ({count})",
     "not_installed": "利用可能 ({count})",
     "updates": "利用可能なアップデート ({count})",
     "installed_filtered": "インストール済み ({count} / {total})",
-    "not_installed_filtered": "利用可能 ({count} / {total})"
+    "not_installed_filtered": "利用可能 ({count} / {total})",
+    "selection": {
+      "title": "アップデートとインストール",
+      "install_title": "あわせてインストール",
+      "cancel": "キャンセル",
+      "start": "開始 ({count})",
+      "install_several": "まとめてインストール…",
+      "filtered": "コアページの検索とフィルターに一致する利用可能なコアを表示しています。",
+      "release": "v{version} · {date, date, medium}"
+    }
   },
   "error": {
-    "report": "GitHubでエラーを報告できます。報告する際は以下のテキストと直前のアクションを含めてください",
+    "report": "繰り返し起こる場合は、下の詳細と操作内容を添えて報告してください。",
     "retry": "再試行",
-    "title": "エラー",
+    "title": "問題が発生しました",
     "repair": {
       "title": "修理",
       "in_progress": "修理...",
       "fixes": {
         "redownload_file": "再ダウンロード <pre>{path}</pre> から <bold>{coreName}</bold>"
-      }
-    }
+      },
+      "available": "修復できます"
+    },
+    "report_link": "GitHub で報告",
+    "details": "技術的な詳細"
   },
   "fetch": {
     "controls": {
       "add_fetch_item": "同期項目を追加",
-      "refresh": "状態を更新"
+      "refresh": "状態を更新",
+      "fetch_all": "すべて取得"
     },
     "fetch_button": "ファイルを同期",
-    "file_count": "{count} / {total, plural, one {# ファイル} other {# ファイル}}",
     "loading": "読み込み中...",
     "new": {
       "add_extension": "拡張子を追加",
       "add_fetch": "同期項目を追加",
-      "archive_name": "ソース: <i>https://archive.org/details/[this bit here]</i>",
       "archive_tip": "この設定はファイルがzip形式のアーカイブでは機能しません。メタデータファイルのダウンロードを避けるため、拡張子を確認してください。",
-      "close": "閉じる",
-      "destination": "保存先",
-      "extensions": "拡張子を限定:",
-      "origin": "ソースフォルダ",
       "title": "新規同期項目",
       "validating_archive_name": "archive {name} を確認中...",
       "invalid_archive_name": "https://archive.org/details/{name} に archive を見つかりませんでした",
@@ -265,7 +276,9 @@
       "destination_hint": "ファイルの保存先（例: Game Boy のゲームや BIOS なら <code>/Assets/gb/common</code>）。",
       "choose_folder": "フォルダーを選択",
       "no_folder": "フォルダーが選択されていません",
-      "cancel": "キャンセル"
+      "cancel": "キャンセル",
+      "edit_title": "取得元を編集",
+      "save_changes": "変更を保存"
     },
     "remove_button": "同期項目を削除",
     "remove_confirm": "この操作は同期設定を削除しますが、ファイルは削除されません。実行しますか？",
@@ -286,7 +299,9 @@
       "to_fetch": "{total, plural, other {# 個}}中 {missing} 個のファイルを同期"
     },
     "last_fetched": "最終同期 <time></time>",
-    "open_destination": "SD カードのフォルダーを開く"
+    "open_destination": "SD カードのフォルダーを開く",
+    "open_source": "フォルダーを開く",
+    "edit_button": "ソースを編集"
   },
   "firmware": {
     "current": "使用中のファームウェア: v{version}",
@@ -295,14 +310,8 @@
     "loaded_firmware": "ファームウェア {version} が SD Card に配置されています",
     "loaded_firmware_info": "Pocket に挿入し、電源を入れるとインストールされます",
     "no_firmware_loaded": "SD Card にインストール待ちのファームウェアファイルがありません",
-    "options": {
-      "latest": "v{version} (最新)",
-      "older": "v{version} ({date, date, short})",
-      "previous_versions": "以前のバージョン"
-    },
     "release_notes": {
-      "from": "提供元 ",
-      "title": "v{version} - { published, date, short } リリースノート:"
+      "from": "提供元 "
     },
     "remove_button": "ファームウェアを削除",
     "current_label": "インストール済みのファームウェア",
@@ -334,7 +343,9 @@
     "show_in_folder": "フォルダで表示",
     "empty_title": "ゲームがまだありません",
     "no_core": "コア未インストール",
-    "find_core": "コアを探す"
+    "find_core": "コアを探す",
+    "accepts": "対応: {extensions}",
+    "read_by": "使用コア: <cores></cores>"
   },
   "image_editor": {
     "cancel": "キャンセル",
@@ -346,14 +357,23 @@
     "scale": "スケール",
     "title": "画像を編集",
     "move_up": "上へ移動",
-    "move_down": "下へ移動"
+    "move_down": "下へ移動",
+    "hint": "プレビュー上をドラッグすると、選択したレイヤーを移動できます。",
+    "hint_empty": "画像を読み込み、プレビュー上でドラッグして配置してください。",
+    "position_x": "横位置",
+    "position_y": "縦位置",
+    "discard_confirm": "この画像への変更を破棄しますか？",
+    "discard": "破棄",
+    "keep_editing": "編集を続ける"
   },
   "instance_json": {
-    "available_for": "以下のコアは自動的にinstance.jsonファイルを作成できます:",
     "close_button": "閉じる",
     "skipped_file": "{file_name} をスキップしました",
     "title": "Instance JSON作成",
-    "wrote_file": "{file_name} を書き込みました"
+    "wrote_file": "{file_name} を書き込みました",
+    "intro": "一部のコア（主に CD 系システム）は、複数ファイルのゲームを Pocket で起動するために、ゲームごとに instance.json が必要です。コアのゲームフォルダーから作成します。",
+    "none_available": "インストール済みのコアには、インスタンスファイルを作成するものがありません。",
+    "build": "作成"
   },
   "layout": {
     "cores": "Cores",
@@ -385,7 +405,7 @@
     "confirm_exit": "プラグインはまだ実行中です。ウィンドウを閉じてもよろしいですか？",
     "safe_to_close": "プラグインの処理が完了しました。このウィンドウは閉じることができます。",
     "submit": "提出する",
-    "info": "プラグイン仕様、プラグインの例、およびプラグイン構築ツールは、<1>github.com/{repo} にあります。</1>",
+    "info": "プラグインは、他の人が作った小さなツールで、Pocket Sync の中でそれぞれ専用のウィンドウで動作します。GitHub のリンクで追加できます。プラグインの仕様、サンプル、作成ツールは <1>github.com/{repo}</1> にあります",
     "add_modal": {
       "title": "URL経由でプラグインを追加する",
       "add": "プラグインの検証とインストール",
@@ -416,7 +436,8 @@
     "town": {
       "title": "パレットギャラリー",
       "repo_link": "<1>github.com/{repo}</1> からのパレット",
-      "close": "閉じる"
+      "intro": "パレットをクリックすると SD カードに追加されます。",
+      "installed": "SD カードにあり"
     },
     "item": {
       "duplicate": "パレットを複製",
@@ -450,7 +471,19 @@
     "empty": {
       "title": "パレットがまだありません",
       "text": "パレットを作成するか、コードから追加するか、Palette Town を見てみましょう。"
-    }
+    },
+    "controls": {
+      "search": "パレットを検索",
+      "group_by": "グループ化",
+      "group": {
+        "folder": "フォルダー",
+        "none": "なし"
+      }
+    },
+    "groups": {
+      "root": "フォルダーなし"
+    },
+    "count": "{count, plural, other {# 個のパレット}}"
   },
   "mister_sync": {
     "controls": {
@@ -472,10 +505,10 @@
     "tip_3": "セーブを見つけるには、ゲームのファイル名が Pocket と MiSTer で完全に一致している必要があります",
     "unsupported": "{platform} がサポートされていません",
     "mapping": {
-      "close": "閉じる",
       "clear": "マッピングをクリア",
       "reset": "初期値にリセット",
-      "title": "セーブの対応付け"
+      "title": "セーブの対応付け",
+      "intro": "Pocket のプラットフォームから、そのセーブを入れる MiSTer のフォルダーへドラッグします（逆も可）。プラットフォームにカーソルを合わせると接続が表示されます。"
     },
     "connect": {
       "title": "MiSTer に接続",
@@ -539,10 +572,6 @@
       "search": "検索"
     },
     "archive": {
-      "apply_changes": "変更を保存",
-      "close": "保存せずに閉じる",
-      "search_placeholder": "アーカイブされたプラットフォーム",
-      "archive_all": "すべてアーカイブ",
       "filters": {
         "all": "全て",
         "category": "カテゴリ",
@@ -552,15 +581,15 @@
     },
     "data_packs": {
       "apply_changes": "{count, plural, =0 {変更なし} one {1 件の変更を適用} other {# 件の変更を適用}}",
-      "close": "閉じる",
-      "current": "既存"
+      "current": "既存",
+      "intro": "コミュニティのデータパックで、プラットフォームの名前・カテゴリ・メーカー・年を置き換えられます。プラットフォームごとに 1 つ選んでください。「現在」は SD カードの内容のままです。別のバージョンがあるプラットフォームだけを表示します。"
     },
     "delete_unused": "{count, plural, one {# 個の未使用プラットフォーム} other {# 個の未使用プラットフォーム}}を削除しますか？",
     "edit": "編集",
     "image_packs": {
       "apply_changes": "{count, plural, =0 {変更なし} one {1 件の変更を適用} other {# 件の変更を適用}}",
-      "close": "閉じる",
-      "current": "既存"
+      "current": "既存",
+      "intro": "コミュニティの画像パックで、Pocket が各プラットフォームに表示する画像を置き換えます。プラットフォームごとに 1 つ選んでください。「現在」は SD カードの画像のままです。"
     },
     "save": "変更を保存",
     "archived": "アーカイブ済み",
@@ -617,7 +646,6 @@
       "open_export": "画像をエクスポート",
       "palette": "パレット",
       "custom": "カスタム",
-      "close": "閉じる",
       "export_selected": "選択項目をエクスポート",
       "export_all": "すべてをエクスポート",
       "colours": {
@@ -646,7 +674,6 @@
       "add_backup_location": "バックアップの保存先を追加",
       "mister_sync": "MiSTer Sync を開く"
     },
-    "latest_backup": "最新バックアップ: {date, date, long}, {date, time, short}",
     "none": "上のバックアップ保存先を追加",
     "not_found": "見つかりませんでした",
     "oldest_backup": "最古のバックアップ: {date, date, long}, {date, time, short}",

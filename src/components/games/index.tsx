@@ -13,6 +13,7 @@ import { gamesSearchAtom } from "../../jotai/view/atoms"
 import { CoreConditional } from "../shared/coreConditional"
 import { MROMModal } from "./mrom"
 import {
+  gameSystemCategoriesSelector,
   gameSystemOptionsSelector,
   gameSystemsSelector,
 } from "../../jotai/games/selectors"
@@ -26,6 +27,7 @@ export const Games = () => {
   // An atom, so a screenshot or save state can open Games searched for it
   const [searchQuery, setSearchQuery] = useAtom(gamesSearchAtom)
   const [filterPlatform, setFilterPlatform] = useState<string>("All")
+  const [filterCategory, setFilterCategory] = useState<string>("All")
   const [cleanFilesOpen, setCleanFilesOpen] = useState(false)
   const [instanceJsonOpen, setInstanceJsonOpen] = useState(false)
   const [mromOpen, setMROMOpen] = useState(false)
@@ -48,11 +50,21 @@ export const Games = () => {
         />
         <ControlsGroup
           onClear={
-            filterPlatform !== "All"
-              ? () => setFilterPlatform("All")
+            filterPlatform !== "All" || filterCategory !== "All"
+              ? () => {
+                  setFilterPlatform("All")
+                  setFilterCategory("All")
+                }
               : undefined
           }
         >
+          {/* By category (e.g. Handheld), like the old Games list */}
+          <Suspense>
+            <CategoryFilter
+              value={filterCategory}
+              onChange={setFilterCategory}
+            />
+          </Suspense>
           <Suspense>
             <PlatformFilter
               value={filterPlatform}
@@ -76,7 +88,7 @@ export const Games = () => {
       </Controls>
       <SearchContextProvider
         query={searchQuery}
-        other={{ platform: filterPlatform }}
+        other={{ platform: filterPlatform, category: filterCategory }}
       >
         <div className="games__systems search-results">
           {systems.length === 0 && (
@@ -97,6 +109,30 @@ export const Games = () => {
 }
 
 /** Only shows one system's games. */
+const CategoryFilter = ({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (category: string) => void
+}) => {
+  const categories = useAtomValue(gameSystemCategoriesSelector)
+  const { t } = useTranslation("games")
+  if (categories.length < 2) return null
+  return (
+    <Select
+      active={value !== "All"}
+      label={t("controls.category")}
+      value={value}
+      onChange={onChange}
+      options={[
+        { value: "All", label: t("controls.all") },
+        ...categories.map((category) => ({ value: category })),
+      ]}
+    />
+  )
+}
+
 const PlatformFilter = ({
   value,
   onChange,

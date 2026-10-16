@@ -203,15 +203,14 @@ const PlatformName = ({
   if (!onOpen)
     return <strong className="cores__platform-info-name">{name}</strong>
   return (
-    <button
-      type="button"
+    <Link
+      subtle
       className="cores__platform-info-name cores__platform-link"
       title={t("platform.open")}
       onClick={onOpen}
     >
       {name}
-      <Icon icon="chevron-right" size="text" />
-    </button>
+    </Link>
   )
 }
 

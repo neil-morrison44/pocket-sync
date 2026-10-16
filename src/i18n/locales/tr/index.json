@@ -5,7 +5,6 @@
     "update_available": "Güncellemeler Hazır! {version}",
     "sponsor_link": "GitHub üzerinden sponsorlukta bulunan {count, number} kişiye katılın",
     "whats_new": "Yenilikler",
-    "close_changelog": "Kapat",
     "library_updates": "Kütüphane güncellemeleri",
     "side_panel": "Güncellemeler",
     "show_updates": "Güncellemeleri göster",
@@ -35,35 +34,39 @@
   },
   "clean_files": {
     "close_button": "Kapat",
-    "delete_files_button": "Dosyaları Sil",
+    "delete_files_button": "{count, plural, other {# dosyayı sil}}",
     "files_found": "{count, plural, =0 {Silinebilir dosya yok} one {# silinebilr dosya} other {# silinebilir dosyalar} } found",
-    "title": "Dsoyaları Temizle"
+    "title": "Dsoyaları Temizle",
+    "intro": "macOS, SD karta gizli dosyalar (._… ve .DS_Store) yazar. Pocket bunları bozuk oyun olarak gösterebilir. Bunlar Assets içindekiler.",
+    "none_found": "Temizlenecek bir şey yok: Assets içinde gizli macOS dosyası yok.",
+    "deleting": "Siliniyor…"
   },
   "mrom": {
     "close_button": "Kapalı",
-    "move_dumps": "ROM'ları taşı",
     "headers": {
-      "platform": "Platform",
-      "library_image": "Kütüphane Resmi",
-      "name": "İsim",
-      "destination": "Varış noktası"
+      "destination": "Varış noktası",
+      "dumped_save": "Kartuştan",
+      "pocket_save": "MROM çekirdeğinden"
+    },
+    "intro": "MROM çekirdeği Game Boy kartuşlarını ve üzerlerindeki kayıtları Assets/mrom klasörüne kopyalar. Diğer çekirdeklerin oynatabilmesi için onları Game Boy ve Game Boy Color klasörlerine taşı. Her oyun bir kaydı yanında götürebilir.",
+    "none_found": "Assets/mrom içinde kartuş dökümü bulunamadı.",
+    "moving": "Taşınıyor…",
+    "move_count": "{count, plural, other {# ROM'u taşı}}",
+    "save_label": "Kayıt",
+    "save": {
+      "none": "Yok"
+    },
+    "save_hint": {
+      "dump": "Kartuşta olan kayıt, kopyalanırken alındı.",
+      "pocket": "MROM çekirdeğinin bu oyun için Saves/mrom içinde tuttuğu kayıt.",
+      "none": "Oyun kayıt olmadan taşınır."
     }
   },
   "update_all": {
     "title": "Hepsini Güncelle",
-    "heading": {
-      "update": "Güncelle",
-      "required_files": "Gerekli Dosyaları Yükle",
-      "platform_files": "Platform Dosyalarını Değiştir"
-    },
     "buttons": {
-      "update": "Güncelle {count, plural, =0 {none} one {# seçilmiş çekirdek} other {# seçilmiş çekirdekler} }",
       "close": "Kapat"
-    },
-    "update": {
-      "title": "{coreName} Güncelleniyor: { step, select, core { çekirdek güncelleniyor... } files { gerekli dosyalar indiriliyor... } filecheck { dosyalar kontrol ediliyor... } other {on no} }"
-    },
-    "no_updates_found": "Yüklenmiş çekirdekler için güncelleme bulunamadı"
+    }
   },
   "core_info": {
     "author": "Geliştirici",
@@ -79,7 +82,6 @@
     },
     "inputs": "Kontroller",
     "modal": {
-      "close": "Kapat",
       "input_core": "Çekirdek",
       "no_settings_found": "Ayarlar bulnamadı!",
       "reset_all": "Tüm ayarları sıfırla"
@@ -201,7 +203,7 @@
   "core_info_required_files": {
     "close": "Kapat",
     "download_all": "Hepsini İndir",
-    "no_link_tip": "Gerekli dosyalarla daha fazla seçenek için lütfen Ayarlar bölümüne bakın",
+    "no_link_tip": "Arşiv ayarlanmadığı için gerekli dosyalar indirilemiyor. Ayarlar → İndirmeler bölümünden bir tane ekle.",
     "skip_alternates_label": "Alternatif dosyaları atla",
     "title": "Gerekli Dosyalar",
     "file_status": {
@@ -212,7 +214,10 @@
       "not_checked": "Bilinmeyen",
       "found_at_root": "Dosya doğrulandı. Kökte bulundu",
       "root_needs_update": "Dosya uyumsuzluğu. Lütfen kökü kontrol edin"
-    }
+    },
+    "intro": "Bazı çekirdekler BIOS veya ROM gibi ek dosyalara ihtiyaç duyar. Bunlar Ayarlar'da tanımlanan arşivden indirilir.",
+    "summary": "{total} dosyadan {found} tanesi bulundu",
+    "to_download": "İndirilecek {size}"
   },
   "cores": {
     "controls": {
@@ -221,8 +226,6 @@
       "refresh": "Yenile",
       "search": "Ara",
       "updatable": "Güncellenebilir",
-      "update_all": "Hepsini Güncelle",
-      "filters_group": "Filtreler",
       "sort_options": {
         "name": "İsim",
         "last_update": "Son güncelleme"
@@ -230,42 +233,50 @@
       "features": "Özellikler",
       "features_count": "Özellikler ({count})",
       "platform": "Platform",
-      "update_all_count": "Tümünü güncelle ({count})"
+      "update_all_count": "Tümünü güncelle ({count})",
+      "author": "Yazar"
     },
     "install_tip": ".zip dosyasını bu pencereye sürükleyerek çekirdekleri (veya zip dosyasındaki başka herhangi bir şeyi) de yükleyebilirsiniz",
     "installed": "Yüklenmiş ({count})",
     "not_installed": "Kullanılabilir ({count})",
-    "updates": "Mevcut güncellemeler ({count})"
+    "updates": "Mevcut güncellemeler ({count})",
+    "selection": {
+      "title": "Güncelle ve yükle",
+      "install_title": "Ayrıca yükle",
+      "cancel": "İptal",
+      "start": "Başlat ({count})",
+      "install_several": "Birden fazla yükle…",
+      "filtered": "Çekirdekler sayfasındaki arama ve filtrelere uyan mevcut çekirdekler gösteriliyor.",
+      "release": "v{version} · {date, date, medium}"
+    }
   },
   "error": {
-    "report": "Bunu GitHub üzerinden bildirebilir, aşağıdaki metni ve az önce yaptığınız her şeyi ekleyebilirsiniz",
+    "report": "Tekrar olursa lütfen aşağıdaki ayrıntılarla ve ne yaptığınla birlikte bildir.",
     "retry": "Yeniden dene",
-    "title": "Hata",
+    "title": "Bir şeyler ters gitti",
     "repair": {
       "title": "Onar",
       "in_progress": "Onarılıyor...",
       "fixes": {
         "redownload_file": "<pre>{path</pre> öğesini <bold>{coreName</bold> öğesinden yeniden indirin"
-      }
-    }
+      },
+      "available": "Bu onarılabilir"
+    },
+    "report_link": "GitHub'da bildir",
+    "details": "Teknik ayrıntılar"
   },
   "fetch": {
     "controls": {
       "add_fetch_item": "Getirme kaynağı ekle",
-      "refresh": "Durumu yenile"
+      "refresh": "Durumu yenile",
+      "fetch_all": "Tümünü getir"
     },
     "fetch_button": "Dosyaları getir",
-    "file_count": "{count} / {total, plural, one {# Dosya} other {# Dosyalar}}",
     "loading": "yükleniyor...",
     "new": {
       "add_extension": "Uzantı ekle",
       "add_fetch": "Getirme kaynağı ekle",
-      "archive_name": "Arşiv adı: <i>https://archive.org/details/[this bit here]</i>",
       "archive_tip": "Bu, dosyaların sıkıştırılmış olduğu arşivler için işe yaramayacaktır ve meta veri dosyalarının indirilmesini istemediğiniz uzantıları ayarlamalısınız.",
-      "close": "Kapat",
-      "destination": "Hedef Klasör",
-      "extensions": "Dosya Uzantılarının Sınırı:",
-      "origin": "Kaynak Klasör",
       "title": "Yeni getirme ekle",
       "validating_archive_name": "\"{name}\" arşivi kontrol ediliyor...",
       "invalid_archive_name": "https://archive.org/details/{name} adresinde arşiv bulunamadı",
@@ -288,7 +299,9 @@
       "destination_hint": "Dosyaların gideceği yer, ör. Game Boy oyunları veya BIOS dosyaları için <code>/Assets/gb/common</code>.",
       "choose_folder": "Klasör seç",
       "no_folder": "Klasör seçilmedi",
-      "cancel": "İptal"
+      "cancel": "İptal",
+      "edit_title": "Kaynağı düzenle",
+      "save_changes": "Değişiklikleri kaydet"
     },
     "remove_button": "Kaynağı kaldır",
     "remove_confirm": "Bu getirme yapılandırmasını kaldıracak, ancak dosyaları kaldırmayacak. Emin misiniz?",
@@ -309,7 +322,9 @@
       "to_fetch": "{total, plural, one {# dosyadan} other {# dosyadan}} {missing} tanesi getirilecek"
     },
     "last_fetched": "Son getirme <time></time>",
-    "open_destination": "SD karttaki klasörü aç"
+    "open_destination": "SD karttaki klasörü aç",
+    "open_source": "Klasörü aç",
+    "edit_button": "Kaynağı düzenle"
   },
   "firmware": {
     "current": "Mevcut Aygıt Yazılımı: v{version}",
@@ -318,14 +333,8 @@
     "loaded_firmware": "{Version} aygıt yazılımı SD karttadır",
     "loaded_firmware_info": "Pocket'ı takın ve kurmak için açın",
     "no_firmware_loaded": "SD kartta yüklenmeyi bekleyen bir aygıt yazılımı dosyası yok",
-    "options": {
-      "latest": "v{version} (latest)",
-      "older": "v{version} ({date, date, short})",
-      "previous_versions": "Önceki Versiyonlar"
-    },
     "release_notes": {
-      "from": "Kaynak",
-      "title": "v{version} - { published, date, short } Sürüm Notları:"
+      "from": "Kaynak"
     },
     "remove_button": "Aygıt yazılımını kaldır",
     "current_label": "Yüklü aygıt yazılımı",
@@ -355,7 +364,9 @@
     "open_folder": "Klasörü aç",
     "none": "Oyun bulunamadı. Bir çekirdek yükleyin, ardından oyunları SD karttaki klasörüne ekleyin.",
     "show_in_folder": "Klasörde göster",
-    "empty_title": "Henüz oyun yok"
+    "empty_title": "Henüz oyun yok",
+    "accepts": "Kabul eder: {extensions}",
+    "read_by": "Kullanan: <cores></cores>"
   },
   "image_editor": {
     "cancel": "İptal",
@@ -367,7 +378,14 @@
     "scale": "Ölçekle",
     "title": "Görseli düzenle",
     "move_up": "Yukarı taşı",
-    "move_down": "Aşağı taşı"
+    "move_down": "Aşağı taşı",
+    "hint": "Seçili katmanı taşımak için önizlemede sürükle.",
+    "hint_empty": "Başlamak için bir resim içe aktar, sonra yerleştirmek için önizlemede sürükle.",
+    "position_x": "Yatay",
+    "position_y": "Dikey",
+    "discard_confirm": "Bu görseldeki değişiklikler silinsin mi?",
+    "discard": "Sil",
+    "keep_editing": "Düzenlemeye devam et"
   },
   "layout": {
     "plugins": "Eklentiler",
@@ -418,10 +436,6 @@
       "image_packs": "Görsel paketlerini yönet"
     },
     "archive": {
-      "apply_changes": "Değişiklikleri Kaydet",
-      "close": "Kaydetmeden kapat",
-      "search_placeholder": "Arşivlenmiş Platformlar",
-      "archive_all": "Tümünü Arşivle",
       "filters": {
         "all": "Tüm",
         "category": "Kategori",
@@ -434,6 +448,12 @@
     "empty": {
       "title": "SD kartta platform yok",
       "text": "Çekirdek yüklediğinizde platformlar eklenir."
+    },
+    "data_packs": {
+      "intro": "Topluluğun veri paketleri bir platformun adını, kategorisini, üreticisini ve yılını değiştirebilir. Her platform için birini seç; Mevcut, SD karttakini korur. Yalnızca farklı sürümü olan platformlar listelenir."
+    },
+    "image_packs": {
+      "intro": "Topluluğun görsel paketleri Pocket'ın her platform için gösterdiği resimleri değiştirir. Her platform için birini seç; Mevcut, SD karttaki resmi korur."
     }
   },
   "platform_info": {
@@ -460,5 +480,19 @@
     "down": "Aşağı",
     "left": "Sol",
     "right": "Sağ"
+  },
+  "palettes": {
+    "controls": {
+      "search": "Paletlerde ara",
+      "group_by": "Grupla",
+      "group": {
+        "folder": "Klasör",
+        "none": "Yok"
+      }
+    },
+    "groups": {
+      "root": "Klasörde değil"
+    },
+    "count": "{count, plural, one {# palet} other {# palet}}"
   }
 }

@@ -13,14 +13,14 @@ import { AUTHOUR_IMAGE } from "../values"
 import { readJSONFile } from "../utils/readJSONFile"
 import { path } from "@tauri-apps/api"
 import { fsWatchAtomFamily } from "./fileSystem/atoms"
-import { getCurrentWindow, Window } from "@tauri-apps/api/window"
 import { Atom, atom } from "jotai"
 import { atomWithRefresh } from "jotai/utils"
 import { atomFamily } from "jotai-family"
-import { atomFamilyDeepEqual } from "../utils/jotai"
+import { atomFamilyDeepEqual, keepPreviousOrSuspend } from "../utils/jotai"
 import { appCacheDir } from "@tauri-apps/api/path"
 import prettyBytes from "pretty-bytes"
 import { pocketPathAtom } from "./atoms"
+import deepEqual from "fast-deep-equal/es6"
 
 export const DataJSONSelectorFamily = atomFamily<
   string,
@@ -33,10 +33,19 @@ export const DataJSONSelectorFamily = atomFamily<
   })
 )
 
-export const coresListSelector = atom<Promise<string[]>>(async (get) => {
-  get(fsWatchAtomFamily("Cores"))
-  return await invokeListFolders("Cores")
-})
+/**
+ * The installed cores' folder names. Writing any file in a core's folder
+ * (e.g. its display modes) marks `Cores` as changed; the list stays the same
+ * object unless cores were added or removed, so the pages built on it don't
+ * suspend and jump back to the top.
+ */
+export const coresListSelector = keepPreviousOrSuspend(
+  atom<Promise<string[]>>(async (get) => {
+    get(fsWatchAtomFamily("Cores"))
+    return await invokeListFolders("Cores")
+  }),
+  deepEqual
+)
 
 export const CoreInfoSelectorFamily = atomFamily<
   string,
@@ -159,21 +168,20 @@ export const ImageBinSrcSelectorFamily = atomFamilyDeepEqual<
   })
 )
 
-export const CleanableFilesSelectorFamily = atomFamily<
-  string,
-  Atom<Promise<string[]>>
->((path) =>
-  atom(async (get) => {
-    get(fsWatchAtomFamily(path))
-    return await invokeFindCleanableFiles(path)
-  })
+/**
+ * Files Clean Up Files would delete under `path`; after deleting, the
+ * previous list stays until the new one is read (no loader flash).
+ */
+export const CleanableFilesSelectorFamily = atomFamily((path: string) =>
+  keepPreviousOrSuspend(
+    atom(async (get) => {
+      get(fsWatchAtomFamily(path))
+      return await invokeFindCleanableFiles(path)
+    })
+  )
 )
 
 export const homeDirSelector = atom<Promise<string>>(async () => path.homeDir())
-
-export const mainWindowSelector = atom<Promise<Window>>(
-  async () => await getCurrentWindow()
-)
 
 export const cacheDirSizeSelector = atomWithRefresh<Promise<string>>(
   async () => {
@@ -183,13 +191,18 @@ export const cacheDirSizeSelector = atomWithRefresh<Promise<string>>(
   }
 )
 
-export const FolderSizeSelectorFamily = atomFamily<
-  string,
-  Atom<Promise<string>>
->((path) =>
-  atom(async (get) => {
-    get(fsWatchAtomFamily(path))
-    const size = await invokeFolderSize(path)
-    return prettyBytes(size)
-  })
+/**
+ * The size of a folder on the SD card (`path` relative to the card, e.g.
+ * `Assets/gb`), e.g. "1.2 GB"; for Games. Read again when its files change,
+ * keeping the previous size meanwhile.
+ */
+export const FolderSizeSelectorFamily = atomFamily((path: string) =>
+  keepPreviousOrSuspend(
+    atom(async (get) => {
+      get(fsWatchAtomFamily(path))
+      const pocketPath = get(pocketPathAtom)
+      const size = await invokeFolderSize(`${pocketPath}/${path}`)
+      return prettyBytes(size)
+    })
+  )
 )

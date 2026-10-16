@@ -5,7 +5,6 @@
     "update_available": "Có bản cập nhật! {version}",
     "sponsor_link": "Tham gia cùng {count, number} người tài trợ thông qua GitHub",
     "whats_new": "Có gì mới?",
-    "close_changelog": "Đóng",
     "library_updates": "Cập nhật thư viện",
     "side_panel": "Cập nhật",
     "show_updates": "Hiện cập nhật",
@@ -35,38 +34,40 @@
   },
   "clean_files": {
     "close_button": "Đóng",
-    "delete_files_button": "Xóa Tập tin",
+    "delete_files_button": "{count, plural, other {Xóa # tệp}}",
     "files_found": "{count, plural, =0 {Không có tệp nào có thể xóa} one {# tệp có thể xóa} other {# tệp có thể xóa} } được tìm thấy",
-    "title": "Xóa tập tin"
+    "title": "Xóa tập tin",
+    "intro": "macOS ghi các tệp ẩn (._… và .DS_Store) lên thẻ SD. Pocket có thể hiển thị chúng như trò chơi hỏng. Đây là các tệp trong Assets.",
+    "none_found": "Không có gì để dọn: không có tệp ẩn của macOS trong Assets.",
+    "deleting": "Đang xóa…"
   },
   "mrom": {
     "close_button": "Đóng",
-    "move_dumps": "Di chuyển ROM",
     "title": "MROM",
     "headers": {
-      "platform": "Nền tảng",
-      "library_image": "Hình ảnh thư viện",
-      "name": "Tên",
       "destination": "Điểm đến",
-      "dumped_save": "Save đã lưu",
-      "pocket_save": "Pocket Save"
+      "dumped_save": "Từ băng game",
+      "pocket_save": "Từ core MROM"
+    },
+    "intro": "Core MROM sao chép băng Game Boy của bạn, kèm bản lưu trên băng, vào Assets/mrom. Hãy chuyển chúng vào thư mục Game Boy và Game Boy Color để core khác chơi được. Mỗi game có thể mang theo một bản lưu.",
+    "none_found": "Không tìm thấy bản sao băng game trong Assets/mrom.",
+    "moving": "Đang chuyển…",
+    "move_count": "{count, plural, other {Chuyển # ROM}}",
+    "save_label": "Bản lưu",
+    "save": {
+      "none": "Không"
+    },
+    "save_hint": {
+      "dump": "Bản lưu có trên băng game, được chép khi sao băng.",
+      "pocket": "Bản lưu mà core MROM giữ cho game này trong Saves/mrom.",
+      "none": "Game được chuyển mà không có bản lưu."
     }
   },
   "update_all": {
     "title": "Cập nhật tất cả",
-    "heading": {
-      "update": "Cập nhật",
-      "required_files": "Cài đặt tập tin được yêu cầu",
-      "platform_files": "Thay thế các tập tin Platform"
-    },
     "buttons": {
-      "update": "Cập nhật {count, plural, =0 {none} one {# core đã chọn} other {# core đã chọn} }",
       "close": "Đóng"
-    },
-    "update": {
-      "title": "Đang cập nhật {coreName}: { step, select, core { đang cập nhật core... } files { đang tải xuống các tệp được yêu cầu... } filecheck { đang kiểm tra tệp... } other {on no} }"
-    },
-    "no_updates_found": "Không tìm thấy bản cập nhật nào cho các core đã cài đặt"
+    }
   },
   "core_info": {
     "author": "Tác giả",
@@ -82,7 +83,6 @@
     },
     "inputs": "Nhập đầu vào",
     "modal": {
-      "close": "Đóng",
       "input_core": "Core",
       "no_settings_found": "Không có cài đặt được tìm thấy",
       "reset_all": "Đặt lại tất cả cài đặt"
@@ -204,7 +204,7 @@
   "core_info_required_files": {
     "close": "Đóng",
     "download_all": "Tải xuống tất cả",
-    "no_link_tip": "Vui lòng xem phần Cài đặt để biết thêm tùy chọn với các tệp cần thiết",
+    "no_link_tip": "Chưa thiết lập kho lưu trữ nên không thể tải tệp cần thiết. Hãy thêm trong Cài đặt → Tải xuống.",
     "skip_alternates_label": "Bỏ qua các tập tin thay thế",
     "title": "Tập tin được yêu cầu",
     "file_status": {
@@ -215,7 +215,10 @@
       "not_checked": "Không rõ",
       "found_at_root": "Đã xác minh tệp. Tìm thấy trong thư mục gốc",
       "root_needs_update": "Tệp không khớp. Vui lòng kiểm tra thư mục gốc"
-    }
+    },
+    "intro": "Một số core cần thêm tệp như BIOS hoặc ROM. Chúng được tải từ kho lưu trữ đã thiết lập trong Cài đặt.",
+    "summary": "Đã tìm thấy {found}/{total}",
+    "to_download": "Cần tải {size}"
   },
   "cores": {
     "controls": {
@@ -224,8 +227,6 @@
       "refresh": "Làm mới",
       "search": "Tìm kiếm",
       "updatable": "Có thể cập nhật",
-      "update_all": "Cập nhật tất cả",
-      "filters_group": "Bộ lọc",
       "sort_options": {
         "name": "Tên",
         "last_update": "Cập nhật mới nhất"
@@ -240,44 +241,52 @@
       "license_required": "Cần giấy phép",
       "ai": "Mức AI",
       "ai_none": "Không",
-      "ai_up_to": "Đến {max, number, percent}"
+      "ai_up_to": "Đến {max, number, percent}",
+      "author": "Tác giả"
     },
     "install_tip": "Bạn cũng có thể cài đặt core (hoặc bất kỳ thứ gì khác trong tệp zip) bằng cách kéo tệp .zip vào cửa sổ này",
     "installed": "Đã cài đặt ({count})",
     "not_installed": "Khả dụng ({count})",
     "updates": "Có bản cập nhật ({count})",
     "installed_filtered": "Đã cài ({count} / {total})",
-    "not_installed_filtered": "Có sẵn ({count} / {total})"
+    "not_installed_filtered": "Có sẵn ({count} / {total})",
+    "selection": {
+      "title": "Cập nhật và cài đặt",
+      "install_title": "Cài thêm",
+      "cancel": "Hủy",
+      "start": "Bắt đầu ({count})",
+      "install_several": "Cài nhiều…",
+      "filtered": "Đang hiện các core có sẵn khớp với tìm kiếm và bộ lọc trên trang Core.",
+      "release": "v{version} · {date, date, medium}"
+    }
   },
   "error": {
-    "report": "Bạn có thể báo cáo điều này qua GitHub bao gồm văn bản bên dưới và bất cứ điều gì bạn vừa làm",
+    "report": "Nếu lỗi lặp lại, hãy báo cáo kèm thông tin bên dưới và việc bạn đang làm.",
     "retry": "Thử lại",
-    "title": "Lỗi",
+    "title": "Đã xảy ra lỗi",
     "repair": {
       "title": "Sửa",
       "in_progress": "Đang sửa chữa...",
       "fixes": {
         "redownload_file": "Tải lại <pre>{path}</pre> từ <bold>{coreName}</bold>"
-      }
-    }
+      },
+      "available": "Có thể sửa lỗi này"
+    },
+    "report_link": "Báo cáo trên GitHub",
+    "details": "Chi tiết kỹ thuật"
   },
   "fetch": {
     "controls": {
       "add_fetch_item": "Thêm nguồn fetch",
-      "refresh": "Làm mới trạng thái"
+      "refresh": "Làm mới trạng thái",
+      "fetch_all": "Lấy tất cả"
     },
     "fetch_button": "Fetch tập tin",
-    "file_count": "{count} / {total, plural, one {# Tập tin} other {# Tập tin}}",
     "loading": "đang tải...",
     "new": {
       "add_extension": "Thêm phần mở rộng",
       "add_fetch": "Thêm nguồn fetch",
-      "archive_name": "Tên lưu trữ <i>https://archive.org/details/[this bit here]</i>",
       "archive_tip": "Cách này không hiệu quả với những tệp được nén và bạn nên thiết lập phần mở rộng mà bạn muốn để tránh tải xuống các tệp metadata.",
-      "close": "Đóng",
-      "destination": "Thư mục đích",
-      "extensions": "Giới hạn cho phần mở rộng của tệp:",
-      "origin": "Thư mục gốc",
       "title": "Thêm mới fetch",
       "validating_archive_name": "Đang kiểm tra file lưu trữ \"{name}\"...",
       "invalid_archive_name": "Không có file lưu trữ nào ở https://archive.org/details/{name}",
@@ -300,7 +309,9 @@
       "destination_hint": "Nơi chứa tập tin, ví dụ <code>/Assets/gb/common</code> cho game hoặc BIOS Game Boy.",
       "choose_folder": "Chọn thư mục",
       "no_folder": "Chưa chọn thư mục",
-      "cancel": "Hủy"
+      "cancel": "Hủy",
+      "edit_title": "Sửa nguồn lấy tệp",
+      "save_changes": "Lưu thay đổi"
     },
     "remove_button": "Xóa nguồn",
     "remove_confirm": "Thao tác này sẽ xóa cấu hình fetch nhưng không xóa các tệp. Bạn có chắc không?",
@@ -321,7 +332,9 @@
       "to_fetch": "Cần fetch {missing} trên {total, plural, other {# tập tin}}"
     },
     "last_fetched": "Lần fetch gần nhất <time></time>",
-    "open_destination": "Mở thư mục trên thẻ SD"
+    "open_destination": "Mở thư mục trên thẻ SD",
+    "open_source": "Mở thư mục",
+    "edit_button": "Sửa nguồn"
   },
   "firmware": {
     "current": "Phiên bản phần mềm hiện tại: v{version}",
@@ -330,14 +343,8 @@
     "loaded_firmware": "Phiên bản phần mềm {version} đang trên thẻ SD",
     "loaded_firmware_info": "cắm và bật Pocket lên để cài đặt",
     "no_firmware_loaded": "Không có tập tin phần mềm nào trên thẻ SD đang chờ được cài đặt",
-    "options": {
-      "latest": "v{version} (mới nhất)",
-      "older": "v{version} ({date, date, short})",
-      "previous_versions": "Phiên bản cũ hơn"
-    },
     "release_notes": {
-      "from": "Từ",
-      "title": "v{version} - { published, date, short } Nội dung của bản phát hành:"
+      "from": "Từ"
     },
     "remove_button": "Xóa phần mềm",
     "current_label": "Phần mềm đã cài",
@@ -369,7 +376,9 @@
     "show_in_folder": "Hiện trong thư mục",
     "empty_title": "Chưa có trò chơi",
     "no_core": "Chưa cài core",
-    "find_core": "Tìm core"
+    "find_core": "Tìm core",
+    "accepts": "Nhận {extensions}",
+    "read_by": "Dùng bởi <cores></cores>"
   },
   "image_editor": {
     "cancel": "Hủy bỏ",
@@ -381,14 +390,23 @@
     "scale": "Tỉ lệ",
     "title": "Chỉnh sửa hình ảnh",
     "move_up": "Di chuyển lên",
-    "move_down": "Di chuyển xuống"
+    "move_down": "Di chuyển xuống",
+    "hint": "Kéo trên bản xem trước để di chuyển lớp đã chọn.",
+    "hint_empty": "Nhập một hình để bắt đầu, rồi kéo trên bản xem trước để đặt vị trí.",
+    "position_x": "Ngang",
+    "position_y": "Dọc",
+    "discard_confirm": "Bỏ các thay đổi trên hình này?",
+    "discard": "Bỏ",
+    "keep_editing": "Tiếp tục chỉnh"
   },
   "instance_json": {
-    "available_for": "Tự động tạo tệp instance.json có sẵn cho:",
     "close_button": "Đóng",
     "skipped_file": "Bỏ qua {file_name}",
     "title": "Xây dựng các tệp JSON của Instance",
-    "wrote_file": "Ghi {file_name}"
+    "wrote_file": "Ghi {file_name}",
+    "intro": "Một số core (chủ yếu cho hệ máy CD) cần một instance.json cho mỗi trò chơi để Pocket chạy được trò chơi gồm nhiều tệp. Hãy tạo chúng từ thư mục trò chơi của core.",
+    "none_available": "Không core nào đã cài tạo tệp instance.",
+    "build": "Tạo"
   },
   "layout": {
     "cores": "Cores",
@@ -420,7 +438,7 @@
     "confirm_exit": "Plugin vẫn đang chạy, bạn có chắc chắn muốn đóng cửa sổ này không?",
     "safe_to_close": "Plugin đã hoàn tất, cửa sổ này có thể đóng lại.",
     "submit": "Nộp",
-    "info": "Bạn có thể tìm thấy thông số kỹ thuật của plugin, một ví dụ về plugin và các công cụ để xây dựng plugin tại <1>github.com/{repo}</1>",
+    "info": "Plugin là các công cụ nhỏ do người khác làm, chạy bên trong Pocket Sync, mỗi cái trong một cửa sổ riêng. Thêm plugin bằng liên kết GitHub của nó. Đặc tả, plugin mẫu và công cụ để tạo plugin có tại <1>github.com/{repo}</1>",
     "add_modal": {
       "title": "Thêm plugin thông qua URL",
       "add": "Xác minh và cài đặt plugin",
@@ -451,7 +469,8 @@
     "town": {
       "title": "Palette Town",
       "repo_link": "Palettes từ <1>github.com/{repo}</1>",
-      "close": "Đóng"
+      "intro": "Nhấp vào bảng màu để thêm vào thẻ SD.",
+      "installed": "Đã có trên thẻ SD"
     },
     "item": {
       "duplicate": "Nhân bản palette",
@@ -485,7 +504,19 @@
     "empty": {
       "title": "Chưa có bảng màu",
       "text": "Tạo bảng màu, thêm từ mã chia sẻ hoặc xem Palette Town."
-    }
+    },
+    "controls": {
+      "search": "Tìm bảng màu",
+      "group_by": "Nhóm theo",
+      "group": {
+        "folder": "Thư mục",
+        "none": "Không"
+      }
+    },
+    "groups": {
+      "root": "Không trong thư mục"
+    },
+    "count": "{count, plural, other {# bảng màu}}"
   },
   "mister_sync": {
     "controls": {
@@ -507,10 +538,10 @@
     "tip_3": "Trò chơi phải được đặt tên giống hệt nhau trên Pocket & MiSTer để có thể tìm thấy bản lưu",
     "unsupported": "{platform} chưa tương thích",
     "mapping": {
-      "close": "Đóng",
       "clear": "Xóa ánh xạ",
       "reset": "Trả về mặc định",
-      "title": "Ánh xạ bản lưu"
+      "title": "Ánh xạ bản lưu",
+      "intro": "Kéo từ một nền tảng của Pocket tới thư mục MiSTer chứa bản lưu của nó (hoặc ngược lại). Di chuột lên nền tảng để xem các liên kết."
     },
     "connect": {
       "title": "Kết nối với MiSTer",
@@ -574,10 +605,6 @@
       "search": "Tìm kiếm"
     },
     "archive": {
-      "apply_changes": "Lưu thay đổi",
-      "close": "Đóng mà không lưu.",
-      "search_placeholder": "Các nền tảng đã được lưu trữ",
-      "archive_all": "Lưu trữ tất cả",
       "filters": {
         "all": "Tất cả",
         "category": "Loại",
@@ -587,15 +614,15 @@
     },
     "data_packs": {
       "apply_changes": "Áp dụng {count, plural, =0 {0 thay đổi} one {1 thay đổi} other {# thay đổi}}",
-      "close": "Đóng",
-      "current": "Hiện tại"
+      "current": "Hiện tại",
+      "intro": "Gói dữ liệu từ cộng đồng có thể thay tên, thể loại, nhà sản xuất và năm của nền tảng. Chọn một cho mỗi nền tảng; Hiện tại giữ nguyên dữ liệu trên thẻ SD. Chỉ liệt kê nền tảng có phiên bản khác."
     },
     "delete_unused": "Xóa {count, plural, one {# Platform không sử dụng} other {# Platforms không sử dụng}}?",
     "edit": "Chỉnh sửa",
     "image_packs": {
       "apply_changes": "Áp dụng {count, plural, =0 {0 thay đổi} one {1 thay đổi} other {# thay đổi}}",
-      "close": "Đóng",
-      "current": "Hiện tại"
+      "current": "Hiện tại",
+      "intro": "Gói hình ảnh từ cộng đồng thay hình mà Pocket hiển thị cho mỗi nền tảng. Chọn một cho mỗi nền tảng; Hiện tại giữ hình trên thẻ SD."
     },
     "save": "Lưu thay đổi",
     "archived": "Đã lưu trữ",
@@ -652,7 +679,6 @@
       "open_export": "Trích xuất hình ảnh",
       "palette": "Palette",
       "custom": "Tùy chọn",
-      "close": "Đóng",
       "export_selected": "Trích xuất đã chọn",
       "export_all": "Trích xuất tất cả",
       "colours": {
@@ -681,7 +707,6 @@
       "add_backup_location": "Thêm vị trí sao lưu",
       "mister_sync": "Mở MiSTer Sync"
     },
-    "latest_backup": "Sao lưu lần cuối: {ngày, ngày, dài}, {ngày, giờ, ngắn}",
     "none": "Thêm vị trí sao lưu ở trên",
     "not_found": "Không tìm thấy",
     "oldest_backup": "Sao lưu cũ nhất: {date, date, long}, {date, time, short}",

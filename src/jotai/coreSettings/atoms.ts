@@ -19,17 +19,22 @@ export const PersistInteractFileAtomFamily = atomFamilyDeepEqual(
       return readJSONFile<InteractPersistJSON>(fileName)
     })
 
+    // What was last written, returned as-is: re-reading the file after each
+    // change would suspend the settings, which then vanish for a moment
+    // (e.g. on every step of a slider)
+    const writtenAtom = atom<{ value: InteractPersistJSON } | null>(null)
+
     return atom(
-      (get) => get(baseAtom),
+      (get): InteractPersistJSON | Promise<InteractPersistJSON> =>
+        get(writtenAtom)?.value ?? get(baseAtom),
       async (get, set, newValue: InteractPersistJSON) => {
+        set(writtenAtom, { value: newValue })
         const pocketPath = get(pocketPathAtom)
         const encoder = new TextEncoder()
         await invokeSaveFile(
           `${pocketPath}/${fileName}`,
           encoder.encode(JSON.stringify(newValue, null, 2))
         )
-
-        set(baseAtom)
       }
     )
   }

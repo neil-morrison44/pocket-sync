@@ -1,3 +1,6 @@
+import Tile from "../../ui/Tile"
+import Tag, { TagList } from "../../ui/Tag"
+import { CardSkeleton } from "../../ui/Skeleton"
 import { Modal, ModalSuspense } from "../../modal"
 import {
   DownloadablePaletteColoursSelectorFamily,
@@ -12,7 +15,6 @@ import { Suspense, useMemo } from "react"
 import { Details } from "../../shared/details"
 import { paletteRepoAtom } from "../../../jotai/palettes/atoms"
 import { useSavePalette } from "../hooks/useSavePalette"
-import { Loader } from "../../loader"
 import { Link } from "../../link"
 import { Trans, useTranslation } from "react-i18next"
 import { useAtomValue } from "jotai"
@@ -66,12 +68,19 @@ const PaletteTownContent = ({ onClose }: PaletteTownProps) => {
 
   return (
     <Modal className="palette-town" title={t("town.title")} onClose={onClose}>
-      <div className="palette-town--list">
+      <p className="palette-town__intro">
+        <Trans t={t} i18nKey="town.repo_link" values={{ repo }}>
+          {"_"}
+          <Link href={repoUrl}>{"_"}</Link>
+        </Trans>{" "}
+        {t("town.intro")}
+      </p>
+      <div className="palette-town__list">
         {groupedPalettes &&
           Object.entries(groupedPalettes).map(([folder, palettes]) => (
             <Details title={folder} key={folder} sticky>
               <Grid>
-                <Suspense fallback={<Loader className="palette-town__item" />}>
+                <Suspense fallback={<CardSkeleton height={180} />}>
                   {palettes?.map(({ name, path, installed }) => (
                     <PaletteItem
                       key={path}
@@ -85,12 +94,6 @@ const PaletteTownContent = ({ onClose }: PaletteTownProps) => {
             </Details>
           ))}
       </div>
-      <div className="palette-town__repo-link">
-        <Trans t={t} i18nKey="town.repo_link" values={{ repo }}>
-          {"_"}
-          <Link href={repoUrl}>{"_"}</Link>
-        </Trans>
-      </div>
     </Modal>
   )
 }
@@ -101,27 +104,31 @@ type PaletteItemProps = {
   installed: boolean
 }
 
+/** A palette as a tile; clicking adds it, unless it's on the card already. */
 const PaletteItem = ({ name, path, installed }: PaletteItemProps) => {
   const paletteData = useAtomValue(
     DownloadablePaletteColoursSelectorFamily(path)
   )
   const savePalette = useSavePalette()
+  const { t } = useTranslation("palettes")
 
   return (
-    <div
-      className="palette-town__item"
-      role="button"
-      onClick={() => savePalette(paletteData, `/${path}`)}
-    >
-      <PreviewCanvasInner palette={paletteData} />
-      <div
-        className={`palette-town__item-name ${
-          installed ? "palette-town__item-name--installed" : ""
-        }`}
-      >
-        {name}
-      </div>
-    </div>
+    <Tile
+      onClick={
+        installed ? undefined : () => savePalette(paletteData, `/${path}`)
+      }
+      media={<PreviewCanvasInner palette={paletteData} />}
+      title={name}
+      tags={
+        installed ? (
+          <TagList>
+            <Tag theme="accent" icon="check">
+              {t("town.installed")}
+            </Tag>
+          </TagList>
+        ) : undefined
+      }
+    />
   )
 }
 

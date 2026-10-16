@@ -48,19 +48,15 @@
 .plugins-window__buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-sm);
+  gap: var(--control-gap);
 }
 
 .plugins-window__answer {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--control-gap);
 
   & .plugins-window__text-input {
     flex-grow: 1;
     width: auto;
   }
-}
-
-.plugins-window__done {
-  color: var(--theme-text-soft);
 }

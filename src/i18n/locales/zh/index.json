@@ -5,7 +5,6 @@
     "update_available": "软件有更新! {version}",
     "sponsor_link": "通过 GitHub 与 {count, number} 人一起赞助",
     "whats_new": "什么是新的？",
-    "close_changelog": "关闭",
     "library_updates": "资料库更新",
     "side_panel": "更新",
     "show_updates": "显示更新",
@@ -35,35 +34,39 @@
   },
   "clean_files": {
     "close_button": "关闭",
-    "delete_files_button": "删除文件",
+    "delete_files_button": "{count, plural, other {删除 # 个文件}}",
     "files_found": "共找到{count, plural, =0 {0个可清理文件} one {# 个可清理文件} other {# 个可清理文件} }",
-    "title": "清理文件"
+    "title": "清理文件",
+    "intro": "macOS 会在 SD 卡上写入隐藏文件（._… 和 .DS_Store）。Pocket 可能会把它们显示为损坏的游戏。以下是 Assets 中的这些文件。",
+    "none_found": "无需清理：Assets 中没有 macOS 隐藏文件。",
+    "deleting": "正在删除…"
   },
   "mrom": {
     "close_button": "关闭",
-    "move_dumps": "移动ROM",
     "headers": {
-      "platform": "平台",
-      "library_image": "图库图片",
-      "name": "姓名",
-      "destination": "目的地"
+      "destination": "目的地",
+      "dumped_save": "来自卡带",
+      "pocket_save": "来自 MROM 核心"
+    },
+    "intro": "MROM 核心会把你的 Game Boy 卡带及其存档复制到 Assets/mrom。把它们移到 Game Boy 和 Game Boy Color 文件夹，其他核心就能运行。每个游戏可以带走一个存档。",
+    "none_found": "在 Assets/mrom 中没有找到卡带转储。",
+    "moving": "正在移动…",
+    "move_count": "{count, plural, other {移动 # 个 ROM}}",
+    "save_label": "存档",
+    "save": {
+      "none": "无"
+    },
+    "save_hint": {
+      "dump": "卡带上的存档，在转储时一并复制。",
+      "pocket": "MROM 核心在 Saves/mrom 中为此游戏保存的存档。",
+      "none": "游戏移动时不带存档。"
     }
   },
   "update_all": {
     "title": "全部更新",
-    "heading": {
-      "update": "更新",
-      "required_files": "安装所需文件",
-      "platform_files": "替换平台文件"
-    },
     "buttons": {
-      "update": "更新 {count, plural, =0 {none} one {# 选择的核心} other {# 个选定核心} }",
       "close": "关闭"
-    },
-    "update": {
-      "title": "更新 {coreName}: { step, select, core { 正在更新核心... } files { 正在下载所需文件... } filecheck { 正在检查文件... } other {on no} }"
-    },
-    "no_updates_found": "未找到已安装核心的更新"
+    }
   },
   "core_info": {
     "author": "作者",
@@ -78,7 +81,6 @@
     },
     "inputs": "按键提示",
     "modal": {
-      "close": "关闭",
       "input_core": "核心",
       "no_settings_found": "未发现设置文件!",
       "reset_all": "重置所有设置"
@@ -169,7 +171,7 @@
   "core_info_required_files": {
     "close": "关闭",
     "download_all": "下载全部",
-    "no_link_tip": "请进入配置页面查询必要文件的更多选项",
+    "no_link_tip": "尚未设置存档，无法下载所需文件。请在 设置 → 下载 中添加。",
     "skip_alternates_label": "跳过次要文件",
     "title": "必要文件",
     "file_status": {
@@ -180,7 +182,10 @@
       "not_checked": "未知",
       "found_at_root": "文件已验证。在根中找到",
       "root_needs_update": "文件不匹配。请检查根目录"
-    }
+    },
+    "intro": "有些核心需要额外文件才能运行，例如 BIOS 或 ROM 文件。它们会从设置中配置的存档下载。",
+    "summary": "已找到 {found}/{total}",
+    "to_download": "需下载 {size}"
   },
   "cores": {
     "controls": {
@@ -189,8 +194,6 @@
       "refresh": "刷新",
       "search": "搜索",
       "updatable": "可更新",
-      "update_all": "全部更新",
-      "filters_group": "过滤器",
       "sort_options": {
         "name": "姓名",
         "last_update": "最后更新"
@@ -205,44 +208,52 @@
       "license_required": "需要许可证",
       "ai": "AI 程度",
       "ai_none": "无",
-      "ai_up_to": "最多 {max, number, percent}"
+      "ai_up_to": "最多 {max, number, percent}",
+      "author": "作者"
     },
     "install_tip": "您也可以通过拖拽ZIP压缩包到窗口内的方式安装核心或其他内容",
     "installed": "已安装({count})",
     "not_installed": "可安装({count})",
     "updates": "可用更新（{count}）",
     "installed_filtered": "已安装 ({count} / {total})",
-    "not_installed_filtered": "可用 ({count} / {total})"
+    "not_installed_filtered": "可用 ({count} / {total})",
+    "selection": {
+      "title": "更新并安装",
+      "install_title": "同时安装",
+      "cancel": "取消",
+      "start": "开始 ({count})",
+      "install_several": "安装多个…",
+      "filtered": "显示与核心页面的搜索和筛选相符的可用核心。",
+      "release": "v{version} · {date, date, medium}"
+    }
   },
   "error": {
-    "report": "您可以通过GitHub报告错误信息（含错误信息和错误发生的描述性文字）",
+    "report": "如果反复出现，请附上下方详情以及你当时的操作进行反馈。",
     "retry": "重试",
-    "title": "错误",
+    "title": "出了点问题",
     "repair": {
       "title": "维修",
       "in_progress": "正在修复...",
       "fixes": {
         "redownload_file": "重新下载 <pre>{path}</pre>从 <bold>{coreName}</bold>"
-      }
-    }
+      },
+      "available": "可以修复"
+    },
+    "report_link": "在 GitHub 上反馈",
+    "details": "技术详情"
   },
   "fetch": {
     "controls": {
       "add_fetch_item": "添加同步源",
-      "refresh": "刷新状态"
+      "refresh": "刷新状态",
+      "fetch_all": "全部获取"
     },
     "fetch_button": "同步文件",
-    "file_count": "{count} / {total, plural, one {# 文件} other {# 文件}}",
     "loading": "载入中……",
     "new": {
       "add_extension": "添加扩展名",
       "add_fetch": "添加同步源",
-      "archive_name": "来源名称: <i>https://archive.org/details/[详细地址]</i>",
       "archive_tip": "这一功能并不会对ZIP打包文件生效，并且您应该设置目标文件扩展名类型以避免下载元数据文件",
-      "close": "关闭",
-      "destination": "目标目录",
-      "extensions": "限制文件扩展名(类型):",
-      "origin": "源目录",
       "title": "添加新的同步",
       "validating_archive_name": "正在检查存档“{name}”...",
       "invalid_archive_name": "在 https://archive.org/details/{name} 上找不到存档",
@@ -265,7 +276,9 @@
       "destination_hint": "文件存放的位置，例如 Game Boy 游戏或 BIOS 文件放在 <code>/Assets/gb/common</code>。",
       "choose_folder": "选择文件夹",
       "no_folder": "未选择文件夹",
-      "cancel": "取消"
+      "cancel": "取消",
+      "edit_title": "编辑获取来源",
+      "save_changes": "保存更改"
     },
     "remove_button": "移除同步源",
     "remove_confirm": "这一操作将移除选定的同步设置但是并不会删除已经存在的文件，您确定吗?",
@@ -286,7 +299,9 @@
       "to_fetch": "{total, plural, other {# 个文件}}中有 {missing} 个待同步"
     },
     "last_fetched": "上次同步 <time></time>",
-    "open_destination": "打开 SD 卡上的文件夹"
+    "open_destination": "打开 SD 卡上的文件夹",
+    "open_source": "打开文件夹",
+    "edit_button": "编辑来源"
   },
   "firmware": {
     "current": "现有固件版本: v{version}",
@@ -295,14 +310,8 @@
     "loaded_firmware": "固件 {version} 已经上传至SD卡",
     "loaded_firmware_info": "插入SD卡并启动Pocket完成新固件安装",
     "no_firmware_loaded": "未发现SD卡上有待安装的固件",
-    "options": {
-      "latest": "v{version} (latest)",
-      "older": "v{version} ({date, date, short})",
-      "previous_versions": "上一版本"
-    },
     "release_notes": {
-      "from": "来自 ",
-      "title": "v{version} - { published, date, short } 更新记录:"
+      "from": "来自 "
     },
     "remove_button": "移除固件",
     "current_label": "已安装固件",
@@ -334,7 +343,9 @@
     "show_in_folder": "在文件夹中显示",
     "empty_title": "还没有游戏",
     "no_core": "未安装核心",
-    "find_core": "查找核心"
+    "find_core": "查找核心",
+    "accepts": "支持 {extensions}",
+    "read_by": "使用核心：<cores></cores>"
   },
   "image_editor": {
     "cancel": "取消",
@@ -346,14 +357,23 @@
     "scale": "缩放",
     "title": "编辑图像",
     "move_up": "上移",
-    "move_down": "下移"
+    "move_down": "下移",
+    "hint": "在预览上拖动以移动所选图层。",
+    "hint_empty": "先导入一张图片，然后在预览上拖动来放置。",
+    "position_x": "水平",
+    "position_y": "垂直",
+    "discard_confirm": "放弃对此图像的更改？",
+    "discard": "放弃",
+    "keep_editing": "继续编辑"
   },
   "instance_json": {
-    "available_for": "以下核心可以自动生成实例配置JSON文件:",
     "close_button": "关闭",
     "skipped_file": "跳过 {file_name}",
     "title": "生成实例配置JSON文件",
-    "wrote_file": "写入 {file_name}"
+    "wrote_file": "写入 {file_name}",
+    "intro": "有些核心（主要是 CD 类主机）需要为每个游戏准备 instance.json，Pocket 才能启动由多个文件组成的游戏。可从核心的游戏文件夹生成。",
+    "none_available": "已安装的核心都不会生成实例文件。",
+    "build": "生成"
   },
   "layout": {
     "cores": "核心",
@@ -385,7 +405,7 @@
     "confirm_exit": "插件仍在运行，您确定要关闭窗口吗？",
     "safe_to_close": "插件已完成，此窗口可以关闭。",
     "submit": "提交",
-    "info": "插件规范、示例插件和插件构建工具可在 <1>github.com/{repo} 找到。</1>",
+    "info": "插件是他人制作的小工具，在 Pocket Sync 中运行，每个插件有自己的窗口。通过 GitHub 链接添加插件。插件规范、示例插件和制作工具见 <1>github.com/{repo}</1>",
     "add_modal": {
       "title": "通过 URL 添加插件",
       "add": "验证并安装插件",
@@ -416,7 +436,8 @@
     "town": {
       "title": "调色板浏览器",
       "repo_link": "调色板来自<1>github.com/{repo}</1>",
-      "close": "关闭"
+      "intro": "点击调色板即可添加到 SD 卡。",
+      "installed": "已在 SD 卡上"
     },
     "item": {
       "duplicate": "复制调色板",
@@ -450,7 +471,19 @@
     "empty": {
       "title": "还没有调色板",
       "text": "创建调色板、通过代码添加，或浏览 Palette Town。"
-    }
+    },
+    "controls": {
+      "search": "搜索调色板",
+      "group_by": "分组方式",
+      "group": {
+        "folder": "文件夹",
+        "none": "无"
+      }
+    },
+    "groups": {
+      "root": "不在文件夹中"
+    },
+    "count": "{count, plural, other {# 个调色板}}"
   },
   "mister_sync": {
     "controls": {
@@ -472,10 +505,10 @@
     "tip_3": "存档匹配要求Pocket和MiSTer上的游戏文档名称完全一致",
     "unsupported": "尚未支持{platform}平台",
     "mapping": {
-      "close": "关闭",
       "clear": "清除映射",
       "reset": "重置为默认值",
-      "title": "存档映射"
+      "title": "存档映射",
+      "intro": "从 Pocket 平台拖到其存档所在的 MiSTer 文件夹（反之亦可）。将鼠标悬停在平台上可查看其连接。"
     },
     "connect": {
       "title": "连接到 MiSTer",
@@ -539,10 +572,6 @@
       "search": "搜索"
     },
     "archive": {
-      "apply_changes": "保存更改",
-      "close": "关闭而不保存",
-      "search_placeholder": "已存档平台",
-      "archive_all": "全部存档",
       "filters": {
         "all": "全部",
         "category": "类别",
@@ -552,15 +581,15 @@
     },
     "data_packs": {
       "apply_changes": "共执行了 {count, plural, =0 {0项修改} one {1项修改} other {# 项修改}}",
-      "close": "关闭",
-      "current": "现有"
+      "current": "现有",
+      "intro": "社区数据包可以替换平台的名称、类别、厂商和年份。每个平台选一个；“当前”保留 SD 卡上的内容。只列出有不同版本的平台。"
     },
     "delete_unused": "删除 {count, plural, one {# 个未被使用的平台} other {# 个未被使用的平台}}?",
     "edit": "编辑",
     "image_packs": {
       "apply_changes": "共执行了 {count, plural, =0 {0项修改} one {1项修改} other {# 项修改}}",
-      "close": "关闭",
-      "current": "现有"
+      "current": "现有",
+      "intro": "社区图片包会替换 Pocket 为每个平台显示的图片。每个平台选一个；“当前”保留 SD 卡上的图片。"
     },
     "save": "保存更改",
     "archived": "已归档",
@@ -617,7 +646,6 @@
       "open_export": "输出图片",
       "palette": "调色板",
       "custom": "自定义",
-      "close": "关闭",
       "export_selected": "输出选择项",
       "export_all": "输出所有",
       "colours": {
@@ -646,7 +674,6 @@
       "add_backup_location": "添加备份目录",
       "mister_sync": "打开 MiSTer Sync"
     },
-    "latest_backup": "最后的备份: {date, date, long}, {date, time, short}",
     "none": "添加以上备份目录",
     "not_found": "未找到",
     "oldest_backup": "最早的备份: {date, date, long}, {date, time, short}",

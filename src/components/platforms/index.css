@@ -47,7 +47,7 @@
 }
 
 .platforms__limit-warning {
-  background-color: var(--red-colour);
+  background-color: var(--theme-danger);
   margin: 10px;
   border-radius: 3px;
   display: flex;

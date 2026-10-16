@@ -3,6 +3,8 @@ import { ReactElement, useMemo } from "react"
 import { SingleScreenshotSelectorFamily } from "../../jotai/screenshots/selectors"
 import { useAtomValue } from "jotai"
 import { useTranslation } from "react-i18next"
+import Tile from "../ui/Tile"
+import { gameDisplayName } from "../../utils/gameName"
 
 type ScreenshotProps = {
   fileName: string
@@ -10,36 +12,33 @@ type ScreenshotProps = {
   onClick: () => void
 }
 
+/**
+ * A screenshot as a tile like every other grid: the picture in the
+ * Pocket's 10:9 screen (black bars like on the device), the game, its
+ * platform and when it was taken.
+ */
 export const Screenshot = ({
   fileName,
   selected,
   onClick,
 }: ScreenshotProps): ReactElement => {
   const screenshot = useAtomValue(SingleScreenshotSelectorFamily(fileName))
+  const { t } = useTranslation("screenshots")
+  const blob = useMemo(
+    () => (screenshot ? URL.createObjectURL(screenshot.file) : ""),
+    [screenshot]
+  )
   if (screenshot === null) throw new Error(`Null file ${fileName}`)
 
-  const { t } = useTranslation("screenshots")
-  const blob = useMemo(() => URL.createObjectURL(screenshot.file), [screenshot])
-
   return (
-    <div
-      className={`screenshots__item screenshots__item--${
-        selected ? "selected" : "not-selected"
-      }`}
-      role="button"
+    <Tile
+      className="screenshots__item"
       onClick={onClick}
-    >
-      <img className="screenshots__item-image" src={blob} />
-
-      <div className="screenshots__item-info">
-        <div className="screenshots__item-info-line">{screenshot.game}</div>
-        <div className="screenshots__item-info-line">{screenshot.platform}</div>
-        {screenshot.timestamp && (
-          <div className="screenshots__item-info-line screenshots__item-date">
-            {t("taken", { date: screenshot.timestamp })}
-          </div>
-        )}
-      </div>
-    </div>
+      selected={selected}
+      media={<img className="screenshots__image" src={blob} alt="" />}
+      title={screenshot.game ? gameDisplayName(screenshot.game) : fileName}
+      subtitle={screenshot.platform || undefined}
+      meta={screenshot.timestamp && t("taken", { date: screenshot.timestamp })}
+    />
   )
 }

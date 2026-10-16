@@ -5,6 +5,7 @@ import Button from "../ui/Button"
 import EmptyState from "../ui/EmptyState"
 import Callout from "../ui/Callout"
 import { pluginListSelector } from "../../jotai/plugins/selectors"
+import { DEMO_PLUGIN_PREFIX } from "../../jotai/plugins/atoms"
 import { Modal } from "../modal"
 import { useCallback, useMemo, useState } from "react"
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow"
@@ -88,7 +89,7 @@ export const Plugins = () => {
         </ControlsActions>
       </Controls>
 
-      <Callout className="callout--in-page" dismissId="plugins-info">
+      <Callout className="callout--in-page" dismissId="plugins-about">
         <Trans
           t={t}
           i18nKey="info"
@@ -149,8 +150,15 @@ const PluginItem = ({ plugin }: PluginItemProps) => {
     .replace(/^https?:\/\//, "")
     .replace(/^github\.com\//, "")
 
+  const isDemo = plugin.id.startsWith(DEMO_PLUGIN_PREFIX)
+
   const openPluginWindow = useCallback(async () => {
     setIsRunning(true)
+    // A made-up plugin has nothing to run: only shows the running state
+    if (isDemo) {
+      setTimeout(() => setIsRunning(false), 2000)
+      return
+    }
     const webview = new WebviewWindow(`plugin-${plugin.id}`, {
       url: `/plugin/${plugin.id}`,
       title: `${plugin.name}`,
@@ -164,9 +172,10 @@ const PluginItem = ({ plugin }: PluginItemProps) => {
     })
 
     webview.once("tauri://destroyed", () => setIsRunning(false))
-  }, [plugin.id, plugin.name])
+  }, [plugin.id, plugin.name, isDemo])
 
   const removePlugin = useCallback(async () => {
+    if (isDemo) return
     const confirmation = await ask(t("confirm_remove"), {
       title: "Warning",
       kind: "warning",
@@ -179,7 +188,7 @@ const PluginItem = ({ plugin }: PluginItemProps) => {
       "plugins",
       (p) => p?.filter((url) => url !== plugin.github_url) || []
     )
-  }, [plugin.github_url, plugin.id, t, updateConfig])
+  }, [plugin.github_url, plugin.id, t, updateConfig, isDemo])
 
   return (
     <SearchContextSelfHidingConsumer

@@ -77,3 +77,9 @@
   align-self: stretch;
   max-width: var(--content-max-width);
 }
+
+/* Our focus ring on the image that opens the editor */
+:root.keyboard-focus .platform-info__banner-button:focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: -2px;
+}

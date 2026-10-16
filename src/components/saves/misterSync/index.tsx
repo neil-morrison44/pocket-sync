@@ -1,4 +1,5 @@
-import { Suspense, useEffect, useMemo, useState } from "react"
+import { useRovingFocus } from "../../../hooks/useRovingFocus"
+import { Suspense, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { search } from "fast-fuzzy"
@@ -125,6 +126,10 @@ const SavesList = ({ query, selected, onSelect }: SavesListProps) => {
   const allSaves = source.useSaves()
   const { t } = useTranslation("mister_sync")
 
+  // All saves are one tab stop; arrow keys move between them
+  const listRef = useRef<HTMLElement>(null)
+  const rovingFocus = useRovingFocus(listRef, ".mister-sync__list-item")
+
   const savesByPlatform = useMemo(() => {
     const saves = query.trim() ? search(query, allSaves) : allSaves
     const groups = new Map<string, string[]>()
@@ -144,7 +149,12 @@ const SavesList = ({ query, selected, onSelect }: SavesListProps) => {
   }
 
   return (
-    <nav className="mister-sync__list" aria-label={t("list.title")}>
+    <nav
+      className="mister-sync__list"
+      aria-label={t("list.title")}
+      ref={listRef}
+      {...rovingFocus}
+    >
       {savesByPlatform.map(([platformId, saves]) => (
         <section key={platformId} className="mister-sync__list-group">
           <Suspense

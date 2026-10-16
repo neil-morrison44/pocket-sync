@@ -47,14 +47,23 @@
   width: min(560px, calc(100% - 100px));
   height: fit-content;
   gap: var(--space-xl);
+
+  /* While loading: about as tall as a short form, not a sliver */
+  & > .loader {
+    min-height: 160px;
+  }
 }
 
-/* Buttons at the end of a modal: dismiss first, the main action last */
+/* Buttons at the end of a modal: dismiss first, the main action last.
+   Always at the very bottom, also when the content is shorter, so they
+   close the modal off. */
 .modal__actions {
   display: flex;
+  flex-shrink: 0;
   justify-content: flex-end;
   gap: var(--control-gap);
-  margin-top: var(--space-sm);
+  margin-top: auto;
+  padding-top: var(--space-sm);
 }
 
 /* Title left, close button right */

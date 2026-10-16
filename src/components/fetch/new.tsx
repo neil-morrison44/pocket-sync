@@ -17,6 +17,8 @@ import TextInput from "../ui/TextInput"
 
 type NewFetchProps = {
   onClose: () => void
+  /** Edits this source (at its place in the list) instead of adding one. */
+  editing?: { fetch: FetchType; index: number }
 }
 
 type Draft = {
@@ -29,18 +31,38 @@ type Draft = {
   destination?: string
 }
 
+/** A source's fields as a draft, to edit it. */
+const draftFrom = (fetch: FetchType): Draft =>
+  fetch.type === "archive.org"
+    ? {
+        type: "archive.org",
+        name: fetch.name,
+        extensions: fetch.extensions ?? [],
+        destination: fetch.destination,
+      }
+    : {
+        type: "filesystem",
+        path: fetch.path,
+        extensions: [],
+        destination: fetch.destination,
+      }
+
 /**
  * Adds a fetch source: where the files come from (a folder on this computer
  * or an archive.org item) and where they go on the SD card. Every field says
- * what to enter, with an example.
+ * what to enter, with an example. With `editing`, it changes that source.
  */
-export const NewFetch = ({ onClose }: NewFetchProps) => {
+export const NewFetch = ({ onClose, editing }: NewFetchProps) => {
   const { t } = useTranslation("fetch")
   const updateConfig = useUpdateConfig()
-  const [draft, setDraft] = useState<Draft>({
-    type: "filesystem",
-    extensions: [],
-  })
+  const [draft, setDraft] = useState<Draft>(() =>
+    editing
+      ? draftFrom(editing.fetch)
+      : {
+          type: "filesystem",
+          extensions: [],
+        }
+  )
   const [archiveValid, setArchiveValid] = useState(false)
 
   const update = useCallback(
@@ -69,12 +91,21 @@ export const NewFetch = ({ onClose }: NewFetchProps) => {
 
   const addFetch = useCallback(async () => {
     if (!newFetch) return
-    await updateConfig("fetches", (fetches) => [...(fetches || []), newFetch])
+    await updateConfig("fetches", (fetches) => {
+      if (!editing) return [...(fetches || []), newFetch]
+      const changed = [...(fetches || [])]
+      changed.splice(editing.index, 1, newFetch)
+      return changed
+    })
     onClose()
-  }, [newFetch, updateConfig, onClose])
+  }, [newFetch, updateConfig, onClose, editing])
 
   return (
-    <Modal className="modal--form" title={t("new.title")} onClose={onClose}>
+    <Modal
+      className="modal--form"
+      title={t(editing ? "new.edit_title" : "new.title")}
+      onClose={onClose}
+    >
       <p className="fetch__intro">{t("new.intro")}</p>
 
       <Field
@@ -157,7 +188,7 @@ export const NewFetch = ({ onClose }: NewFetchProps) => {
           {t("new.cancel")}
         </Button>
         <Button theme="primary" disabled={!newFetch} onClick={addFetch}>
-          {t("new.add_fetch")}
+          {t(editing ? "new.save_changes" : "new.add_fetch")}
         </Button>
       </div>
     </Modal>

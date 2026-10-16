@@ -170,7 +170,8 @@ export const PaletteFull = ({ name, onClose, onRenamed }: PaletteFullProps) => {
 
 /**
  * The palette's name as the page title, editable in place: Enter or leaving
- * the field renames the file, Escape undoes the edit. Folders show before it.
+ * the field renames the file, Escape undoes the edit. Folders show above it;
+ * a long name scrolls inside the field instead of widening the page.
  */
 const PaletteNameInput = ({
   name,
@@ -192,28 +193,33 @@ const PaletteNameInput = ({
 
   return (
     <span className="palette-detail__name">
+      {/* The folders it's in, small above the name; only the name is edited */}
       {folders.length > 0 && (
-        <span className="palette-detail__folders">{`${folders.join(" / ")} / `}</span>
+        <span className="palette-detail__folders">{folders.join(" / ")}</span>
       )}
-      <input
-        className="palette-detail__name-input"
-        aria-label={t("item.rename")}
-        value={value}
-        size={Math.max(value.length, 1)}
-        spellCheck={false}
-        onChange={({ target }) => setValue(target.value.replace(/[\\/]/g, ""))}
-        onBlur={commit}
-        onKeyDown={(event) => {
-          if (event.key === "Enter") event.currentTarget.blur()
-          if (event.key === "Escape") {
-            // Undoes the edit instead of leaving the page
-            event.stopPropagation()
-            setValue(paletteBaseName(name))
-            requestAnimationFrame(() => event.currentTarget?.blur())
+      <span className="palette-detail__name-row">
+        <input
+          className="palette-detail__name-input"
+          aria-label={t("item.rename")}
+          value={value}
+          size={Math.max(value.length, 1)}
+          spellCheck={false}
+          onChange={({ target }) =>
+            setValue(target.value.replace(/[\\/]/g, ""))
           }
-        }}
-      />
-      <Icon icon="pencil" className="palette-detail__name-icon" />
+          onBlur={commit}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") event.currentTarget.blur()
+            if (event.key === "Escape") {
+              // Undoes the edit instead of leaving the page
+              event.stopPropagation()
+              setValue(paletteBaseName(name))
+              requestAnimationFrame(() => event.currentTarget?.blur())
+            }
+          }}
+        />
+        <Icon icon="pencil" className="palette-detail__name-icon" />
+      </span>
     </span>
   )
 }

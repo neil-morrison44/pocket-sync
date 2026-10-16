@@ -58,7 +58,7 @@
 
 .update__list-item {
   grid-column: 1/-1;
-  background-color: var(--info-colour);
+  background-color: var(--theme-surface-sunken);
   padding: 4px;
   display: flex;
   align-items: center;
@@ -72,8 +72,8 @@
   cursor: pointer;
   &:hover {
     background-color: color-mix(
-      var(--info-colour),
-      var(--selection-colour) 25%
+      var(--theme-surface-sunken),
+      var(--theme-selection) 25%
     );
   }
   &:active {
@@ -118,11 +118,11 @@
 }
 
 .update__list-item-version-old {
-  background-color: var(--red-colour);
+  background-color: var(--theme-danger);
 }
 
 .update__list-item-version-new {
-  background-color: var(--green-colour);
+  background-color: var(--theme-accent);
   color: var(--theme-accent-text);
 }
 

@@ -41,14 +41,19 @@ import {
   demoCoreUpdatesAtom,
   demoFirmwareUpdateAtom,
 } from "../../jotai/cores/atoms"
+import { demoPluginsAtom } from "../../jotai/plugins/atoms"
 import PathField from "../ui/PathField"
 import { openFolder } from "../../utils/openFolder"
 
 const DEFAULT_ARCHIVE_URL = "https://archive.org/download/openFPGA-Files"
 import Button from "../ui/Button"
 import Select from "../ui/Select"
+import Slider from "../ui/Slider"
 import { PhotoExportModal } from "../saveStates/photoExportModal"
 import { MisterSyncDemo } from "../saves/misterSync/flow"
+import { MROMModal } from "../games/mrom"
+import { InstanceJson } from "../games/instanceJson"
+import { ErrorBoundary } from "../errorBoundary"
 import { UpdateDemoStop, UpdateModalDemo } from "../update/modal/demo"
 import Spinner, { SPINNER_FRAME_MS } from "../ui/Spinner/Spinner"
 import ProgressBar from "../ui/ProgressBar"
@@ -391,6 +396,7 @@ const DeveloperSettings = () => {
   const { t } = useTranslation("settings")
   const [demoUpdates, setDemoUpdates] = useAtom(demoCoreUpdatesAtom)
   const [demoFirmware, setDemoFirmware] = useAtom(demoFirmwareUpdateAtom)
+  const [demoPlugins, setDemoPlugins] = useAtom(demoPluginsAtom)
 
   return (
     <StickySection
@@ -412,6 +418,12 @@ const DeveloperSettings = () => {
           value={demoFirmware}
           onChange={setDemoFirmware}
         />
+        <Switch
+          className="settings__checkbox"
+          label={t("demo_updates.plugins_checkbox")}
+          value={demoPlugins}
+          onChange={setDemoPlugins}
+        />
       </div>
       <LoadingPreview />
       <ModalPreviews />
@@ -430,6 +442,9 @@ const ModalPreviews = () => {
   const [updateStop, setUpdateStop] = useState<UpdateDemoStop>("downloads")
   const [updateOpen, setUpdateOpen] = useState(false)
   const [misterOpen, setMisterOpen] = useState(false)
+  const [mromOpen, setMromOpen] = useState(false)
+  const [instanceOpen, setInstanceOpen] = useState(false)
+  const [errorOpen, setErrorOpen] = useState(false)
 
   return (
     <div className="settings__row" id="settings-modal_previews">
@@ -441,6 +456,15 @@ const ModalPreviews = () => {
         </Button>
         <Button icon="save" onClick={() => setMisterOpen(true)}>
           {t("modal_previews.mister")}
+        </Button>
+        <Button icon="gamepad" onClick={() => setMromOpen(true)}>
+          {t("modal_previews.mrom")}
+        </Button>
+        <Button icon="tools" onClick={() => setInstanceOpen(true)}>
+          {t("modal_previews.instance_json")}
+        </Button>
+        <Button icon="warning-diamond" onClick={() => setErrorOpen(true)}>
+          {t("modal_previews.error")}
         </Button>
       </div>
       <div className="settings__actions">
@@ -469,6 +493,11 @@ const ModalPreviews = () => {
           onClose={() => setPhotosOpen(false)}
         />
       )}
+      {mromOpen && <MROMModal demo onClose={() => setMromOpen(false)} />}
+      {instanceOpen && (
+        <InstanceJson demo onClose={() => setInstanceOpen(false)} />
+      )}
+      {errorOpen && <ErrorPreview onClose={() => setErrorOpen(false)} />}
       {misterOpen && (
         <Suspense>
           <MisterSyncDemo onClose={() => setMisterOpen(false)} />
@@ -482,6 +511,33 @@ const ModalPreviews = () => {
           />
         </Suspense>
       )}
+    </div>
+  )
+}
+
+/** Throws on render, so the error screen around it shows. */
+const ThrowPreviewError = (): never => {
+  throw new Error(
+    "Preview: something went wrong while reading Cores/Example.Core/core.json"
+  )
+}
+
+/**
+ * The real error screen over the page, with a made-up error; the button
+ * on top closes it (Retry just shows it again).
+ */
+const ErrorPreview = ({ onClose }: { onClose: () => void }) => {
+  const { t } = useTranslation("settings")
+  return (
+    <div className="settings__error-preview">
+      <div className="settings__error-preview-close">
+        <Button icon="close" onClick={onClose}>
+          {t("modal_previews.close")}
+        </Button>
+      </div>
+      <ErrorBoundary>
+        <ThrowPreviewError />
+      </ErrorBoundary>
     </div>
   )
 }
@@ -502,17 +558,16 @@ const LoadingPreview = () => {
         <Spinner size={20} frameMs={frameMs} />
         <Spinner variant="keypad" size={20} frameMs={frameMs} />
       </div>
-      <label className="settings__checkbox">
-        <span>{t("loading_preview.speed", { ms: frameMs })}</span>
-        <input
-          type="range"
-          min={16}
-          max={400}
-          step={4}
-          value={frameMs}
-          onChange={({ target }) => setFrameMs(Number(target.value))}
-        />
-      </label>
+      <Slider
+        className="settings__slider"
+        label={t("loading_preview.speed", { ms: frameMs })}
+        formatValue={() => null}
+        min={16}
+        max={400}
+        step={4}
+        value={frameMs}
+        onChange={setFrameMs}
+      />
       <div className="settings__loading-preview settings__loading-preview--bars">
         <ProgressBar value={62} label="Assets/gb/common/Example.gb" />
         <ProgressBar ariaLabel={t("loading_preview.title")} />

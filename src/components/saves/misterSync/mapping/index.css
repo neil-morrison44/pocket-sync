@@ -1,76 +1,74 @@
+/* Pocket platforms on the left, MiSTer folders on the right, the links
+   drawn between them */
 .mister-sync__mapping {
-  display: flex;
-  flex-direction: column;
+  gap: var(--space-lg);
 }
 
-.mister-sync__mapping-platform-list-header{
+.mister-sync__mapping-intro {
+  margin: 0;
+  color: var(--theme-text-body);
+}
+
+.mister-sync__mapping-platform-list-header {
   display: flex;
   justify-content: space-between;
-  padding-inline-start: 130px;
-  padding-inline-end: 150px;
-  font-size: var(--font-size-title-sm);
-  font-family: GamePocket;
-  background-color: var(--hover-colour);
-  padding-block: 10px;
-  border-radius: 5px;
+  padding: var(--space-sm) var(--space-lg);
+  border-bottom: 1px solid var(--theme-separator);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--theme-text-soft);
 }
 
 .mister-sync__mapping-platform-list {
-  padding-inline: 120px;
-
-  /* padding-block: 12px; */
   display: grid;
+  flex-grow: 1;
   grid-template-columns: min-content 1fr min-content;
-  grid-template-rows: repeat(auto-fill, 30px);
-
-  /* grid-template-rows: minmax(100px, 1fr); */
+  grid-template-rows: repeat(auto-fill, 28px);
+  gap: var(--space-sm) 0;
+  min-height: 0;
+  padding: var(--space-sm) var(--space-lg);
   overflow: auto;
-  gap: 12px;
-  column-gap: 0;
-  justify-content: center;
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-sm);
   user-select: none;
-  /* stylelint-disable-next-line property-no-vendor-prefix */
-  -webkit-user-select: none;
-  background-color: var(--hover-colour);
-  border-radius: 15px;
 }
 
-.mister-sync__mapping-platform{
-  cursor: grab;
-  border: 1px solid var(--theme-separator);
-  border-radius: 5px;
-  padding-inline: 12px;
-  text-align: center;
-  transition: opacity 0.2s linear;
+/* A platform or folder to drag a link from: like a tag */
+.mister-sync__mapping-platform {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 30px;
+  height: 28px;
+  padding-inline: var(--space-md);
+  border: 1px solid var(--theme-separator);
+  border-radius: var(--radius-chip);
+  background-color: var(--theme-surface-sunken);
+  color: var(--theme-text-headline);
+  white-space: nowrap;
+  cursor: grab;
+  transition: opacity 0.2s linear;
 }
 
-.mister-sync__mapping-platform--pocket{
+.mister-sync__mapping-platform--pocket {
   grid-column: 1;
 }
 
-.mister-sync__mapping-platform--mister{
+.mister-sync__mapping-platform--mister {
   grid-column: 3;
 }
 
-.mister-sync__mapping-platform-list:has(.mister-sync__mapping-platform:hover) > .mister-sync__mapping-platform {
-  opacity: 0.2;
-}
-
-.mister-sync__mapping-platform--not-new-join{
-  opacity: 0.4;
-}
-
-.mister-sync__mapping-platform:hover{
+.mister-sync__mapping-platform:hover {
+  border-color: var(--theme-text-soft);
   opacity: 1 !important;
 }
 
-.mister-sync__mapping {
-  button:first-of-type {
-    margin-block-start: auto;
-  }
+/* Hovering one dims the others, so its links stand out */
+.mister-sync__mapping-platform-list:has(.mister-sync__mapping-platform:hover)
+  > .mister-sync__mapping-platform {
+  opacity: 0.3;
+}
+
+.mister-sync__mapping-platform--not-new-join {
+  opacity: 0.4;
 }

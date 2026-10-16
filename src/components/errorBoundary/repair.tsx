@@ -8,7 +8,7 @@ import { emit, once } from "@tauri-apps/api/event"
 import { Trans } from "react-i18next"
 import { githubTokenAtom } from "../../jotai/settings/atoms"
 import { useAtomValue } from "jotai"
-import Icon from "../ui/Icon"
+import Button from "../ui/Button"
 
 const CORE_FILE_REGEX = /Cores[\/\\]([^\/\\]+)[\/\\]/
 const PLATFORM_FILE_REGEX = /Platforms[\/\\]([^\/\\]+)\.json/
@@ -208,33 +208,36 @@ const RepairRedownloadFiles = ({
 
   if (!downloadUrl) return null
 
-  if (isRepairing) {
-    return (
-      <button className="error-boundary__repair-button">
-        <div className="error-boundary__repair-button-title error-boundary__repair-button-title--in-progress">
-          <Icon icon="tools" />
-          <Trans i18nKey="error:repair:in_progress"></Trans>
-        </div>
-      </button>
-    )
-  }
-
+  // What would be fixed, and the button that does it
   return (
-    <button onClick={callback} className="error-boundary__repair-button">
-      <div className="error-boundary__repair-button-title">
-        <Icon icon="tools" />
-        <Trans i18nKey="error:repair:title"></Trans>
+    <div className="error-boundary__repair">
+      <div className="error-boundary__repair-text">
+        <strong>
+          <Trans i18nKey="error:repair:available"></Trans>
+        </strong>
+        <span>
+          <Trans
+            i18nKey="error:repair:fixes:redownload_file"
+            values={{ path: paths.join(", "), coreName }}
+            components={{
+              pre: <code />,
+              bold: <strong />,
+            }}
+          ></Trans>
+        </span>
       </div>
-      <div>
+      <Button
+        theme="primary"
+        icon="tools"
+        disabled={isRepairing}
+        onClick={callback}
+      >
         <Trans
-          i18nKey="error:repair:fixes:redownload_file"
-          values={{ path: paths.join(", "), coreName }}
-          components={{
-            pre: <pre style={{ display: "inline" }} />,
-            bold: <strong />,
-          }}
+          i18nKey={
+            isRepairing ? "error:repair:in_progress" : "error:repair:title"
+          }
         ></Trans>
-      </div>
-    </button>
+      </Button>
+    </div>
   )
 }

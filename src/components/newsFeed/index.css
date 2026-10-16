@@ -1,6 +1,6 @@
 .news-feed {
   max-height: 20vh;
-  background-color: var(--info-colour);
+  background-color: var(--theme-surface-sunken);
 }
 
 .news-feed__title {
@@ -29,7 +29,7 @@
   gap: 10px;
   row-gap: 0;
   padding: 10px;
-  background-color: var(--hover-colour);
+  background-color: var(--theme-surface-hover);
   overflow: hidden;
   text-overflow: ellipsis;
 
@@ -65,7 +65,7 @@
 .news-feed__item-title {
   grid-area: t;
   text-align: left;
-  font-family: GamePocket;
+  font-family: var(--font-display);
   font-size: var(--font-size-lg);
   line-break: anywhere;
 }

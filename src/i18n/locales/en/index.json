@@ -5,7 +5,6 @@
     "update_available": "Update Available! {version}",
     "sponsor_link": "Join {count, number} people in sponsoring via GitHub",
     "whats_new": "What's new?",
-    "close_changelog": "Close",
     "library_updates": "Library Updates",
     "side_panel": "Updates",
     "show_updates": "Show Updates",
@@ -35,38 +34,40 @@
   },
   "clean_files": {
     "close_button": "Close",
-    "delete_files_button": "Delete Files",
+    "delete_files_button": "Delete {count, plural, one {# File} other {# Files}}",
     "files_found": "{count, plural, =0 {No cleanable files} one {# cleanable file} other {# cleanable files} } found",
-    "title": "Clean Files"
+    "title": "Clean Files",
+    "intro": "macOS writes hidden files (._… and .DS_Store) to the SD card. The Pocket can show them as broken games. These are the ones in Assets.",
+    "none_found": "Nothing to clean up: there are no hidden macOS files in Assets.",
+    "deleting": "Deleting…"
   },
   "mrom": {
     "close_button": "Close",
-    "move_dumps": "Move ROMs",
     "title": "MROM",
     "headers": {
-      "platform": "Platform",
-      "library_image": "Library Image",
-      "name": "Name",
       "destination": "Destination",
-      "dumped_save": "Dumped Save",
-      "pocket_save": "Pocket Save"
+      "dumped_save": "From Cartridge",
+      "pocket_save": "From MROM Core"
+    },
+    "intro": "The MROM core copies your Game Boy cartridges, and the saves on them, into Assets/mrom. Move them into the Game Boy and Game Boy Color folders so other cores can play them. Each game can take one save along.",
+    "none_found": "No cartridge dumps found in Assets/mrom.",
+    "moving": "Moving…",
+    "move_count": "Move {count, plural, one {# ROM} other {# ROMs}}",
+    "save_label": "Save",
+    "save": {
+      "none": "None"
+    },
+    "save_hint": {
+      "dump": "The save that was on the cartridge, copied when it was dumped.",
+      "pocket": "The save the MROM core keeps for this game in Saves/mrom.",
+      "none": "The game moves without a save."
     }
   },
   "update_all": {
     "title": "Update All",
-    "heading": {
-      "update": "Update",
-      "required_files": "Install Required Files",
-      "platform_files": "Replace Platform Files"
-    },
     "buttons": {
-      "update": "Update {count, plural, =0 {none} one {# selected core} other {# selected cores} }",
       "close": "Close"
-    },
-    "update": {
-      "title": "Updating {coreName}: { step, select, core { updating core... } files { downloading Required Files... } filecheck { checking files... } other {on no} }"
-    },
-    "no_updates_found": "No updates found for installed cores"
+    }
   },
   "core_info": {
     "author": "Author",
@@ -82,7 +83,6 @@
     },
     "inputs": "Inputs",
     "modal": {
-      "close": "Close",
       "input_core": "Core",
       "no_settings_found": "No settings found!",
       "reset_all": "Reset All Settings"
@@ -208,7 +208,7 @@
   "core_info_required_files": {
     "close": "Close",
     "download_all": "Download All",
-    "no_link_tip": "Please view the Settings section for more options with required files",
+    "no_link_tip": "No archive is set up, so required files can't be downloaded. Add one under Settings → Downloads.",
     "skip_alternates_label": "Skip alternative files",
     "title": "Required Files",
     "file_status": {
@@ -219,7 +219,10 @@
       "not_checked": "Unknown",
       "found_at_root": "File verified. Found in root",
       "root_needs_update": "File mismatch. Please check the root"
-    }
+    },
+    "intro": "Some cores need extra files to run, such as BIOS or ROM files. They're downloaded from the archive set up in Settings.",
+    "summary": "{found} of {total} found",
+    "to_download": "{size} to download"
   },
   "cores": {
     "controls": {
@@ -228,8 +231,6 @@
       "refresh": "Refresh",
       "search": "Search",
       "updatable": "Updatable",
-      "update_all": "Update All",
-      "filters_group": "Filters",
       "sort_options": {
         "name": "Name",
         "last_update": "Last update"
@@ -244,44 +245,52 @@
       "license_required": "Needs a license",
       "ai": "AI-ness",
       "ai_none": "None",
-      "ai_up_to": "Up to {max, number, percent}"
+      "ai_up_to": "Up to {max, number, percent}",
+      "author": "Author"
     },
     "install_tip": "You can also install cores (or anything else in a zip) by dragging the .zip into this window",
     "installed": "Installed ({count})",
     "not_installed": "Available ({count})",
     "updates": "Updates Available ({count})",
     "installed_filtered": "Installed ({count} / {total})",
-    "not_installed_filtered": "Available ({count} / {total})"
+    "not_installed_filtered": "Available ({count} / {total})",
+    "selection": {
+      "title": "Update and Install",
+      "install_title": "Also install",
+      "cancel": "Cancel",
+      "start": "Start ({count})",
+      "install_several": "Install Several…",
+      "filtered": "Showing the available cores that match the search and filters on the Cores page.",
+      "release": "v{version} · {date, date, medium}"
+    }
   },
   "error": {
-    "report": "You can report this via GitHub include the text below & whatever you just did",
+    "report": "If it keeps happening, please report it with the details below and what you were doing.",
     "retry": "Retry",
-    "title": "Error",
+    "title": "Something went wrong",
     "repair": {
       "title": "Repair",
       "in_progress": "Repairing...",
       "fixes": {
         "redownload_file": "Redownload <pre>{path}</pre> from <bold>{coreName}</bold>"
-      }
-    }
+      },
+      "available": "This can be repaired"
+    },
+    "report_link": "Report on GitHub",
+    "details": "Technical details"
   },
   "fetch": {
     "controls": {
       "add_fetch_item": "Add Fetch Source",
-      "refresh": "Refresh Status"
+      "refresh": "Refresh Status",
+      "fetch_all": "Fetch All"
     },
     "fetch_button": "Fetch Files",
-    "file_count": "{count} / {total, plural, one {# File} other {# Files}}",
     "loading": "loading...",
     "new": {
       "add_extension": "Add Extension",
       "add_fetch": "Add Fetch Source",
-      "archive_name": "Archive name: <i>https://archive.org/details/[this bit here]</i>",
       "archive_tip": "This won't work for achives where the files are zipped, and you should set which extensions you want to avoid downloading the metadata files.",
-      "close": "Close",
-      "destination": "Destination Folder",
-      "extensions": "Limit to File Extensions:",
-      "origin": "Origin Folder",
       "title": "Add new Fetch",
       "validating_archive_name": "Checking archive \"{name}\"...",
       "invalid_archive_name": "No archive found at https://archive.org/details/{name}",
@@ -304,7 +313,9 @@
       "destination_hint": "Where the files go, e.g. <code>/Assets/gb/common</code> for Game Boy games or BIOS files.",
       "choose_folder": "Choose Folder",
       "no_folder": "No folder chosen",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "edit_title": "Edit Fetch Source",
+      "save_changes": "Save Changes"
     },
     "remove_button": "Remove Source",
     "remove_confirm": "This'll remove the fetch configuration, but not the files. Are you sure?",
@@ -325,7 +336,9 @@
       "to_fetch": "{missing} of {total, plural, one {# file} other {# files}} to fetch"
     },
     "last_fetched": "Last fetched <time></time>",
-    "open_destination": "Open Folder on SD Card"
+    "open_destination": "Open Folder on SD Card",
+    "open_source": "Open Folder",
+    "edit_button": "Edit Source"
   },
   "firmware": {
     "current": "Current Firmware: v{version}",
@@ -334,14 +347,8 @@
     "loaded_firmware": "Firmware {version} is on the SD card",
     "loaded_firmware_info": "insert & turn the Pocket on to install",
     "no_firmware_loaded": "No firmware file on the SD card waiting to be installed",
-    "options": {
-      "latest": "v{version} (latest)",
-      "older": "v{version} ({date, date, short})",
-      "previous_versions": "Previous Versions"
-    },
     "release_notes": {
-      "from": "From ",
-      "title": "v{version} - { published, date, short } Release Notes:"
+      "from": "From "
     },
     "remove_button": "Remove Firmware",
     "current_label": "Installed Firmware",
@@ -373,7 +380,9 @@
     "show_in_folder": "Show in Folder",
     "empty_title": "No games yet",
     "no_core": "No core installed",
-    "find_core": "Find a Core"
+    "find_core": "Find a Core",
+    "accepts": "Accepts {extensions}",
+    "read_by": "Read by <cores></cores>"
   },
   "image_editor": {
     "cancel": "Cancel",
@@ -385,14 +394,23 @@
     "scale": "Scale",
     "title": "Edit Image",
     "move_up": "Move Up",
-    "move_down": "Move Down"
+    "move_down": "Move Down",
+    "hint": "Drag on the preview to move the selected layer.",
+    "hint_empty": "Import an image to start, then drag it on the preview to place it.",
+    "position_x": "Horizontal",
+    "position_y": "Vertical",
+    "discard_confirm": "Discard your changes to this image?",
+    "discard": "Discard",
+    "keep_editing": "Keep Editing"
   },
   "instance_json": {
-    "available_for": "Automatic instance.json file creation available for:",
     "close_button": "Close",
     "skipped_file": "Skipped {file_name}",
     "title": "Build Instance JSON files",
-    "wrote_file": "Wrote {file_name}"
+    "wrote_file": "Wrote {file_name}",
+    "intro": "Some cores (mostly for CD-based systems) need an instance.json per game, so the Pocket can launch games made of several files. Build them from a core's games folder.",
+    "none_available": "None of the installed cores builds instance files.",
+    "build": "Build"
   },
   "layout": {
     "cores": "Cores",
@@ -416,10 +434,6 @@
   },
   "update": {
     "overview": "{install_count, plural, =0 {No installed cores} one {# installed core} other {# installed cores}}, {update_count, plural, =0 {no updatable cores} one {# updatable core} other {# updatable cores}}, and {not_installed_count, plural, =0 {no installable cores} one {# installable core} other {# installable cores}}",
-    "last_update_date": "Last Update: {date, date, long}",
-    "requires_license": "Requires license file",
-    "ai_score": "AI-ness: {score, number, percent}",
-    "start_button": "Update {update_count, plural, one {# core} other {# cores}} & install {install_count, plural, one {# core} other {# cores}}",
     "no_archive_url_warning": {
       "title": "no_archive_url_warning",
       "text": "An archive URL hasn't been set up in the Settings tab, cores will be installed without required files. Continue?"
@@ -452,24 +466,8 @@
     },
     "donate_archive_org": "Some of these files are massive so please donate to the internet archive",
     "controls": {
-      "search_filter": "Search",
       "select_all": "Select All",
-      "clear_all": "Clear All",
-      "filter_by_author": "Filter by Author {count, plural, =0 {} other {(#)}}",
-      "filter_by_category": "Filter by Category {count, plural, =0 {} other {(#)}}",
-      "filter_by_ai_ness": "Filter by AI-ness {value, plural, =1 {} other {({value, number, percent})}} ",
-      "other_filters": {
-        "title": "Other Filters {count, plural, =0 {} other {(#)}}",
-        "analogizer": "Analogizer",
-        "requires_jotego_license": "JOTEGO\nPatreon key",
-        "requires_coc_license": "Coin Op Collection\nKey",
-        "update": "Updatable Cores",
-        "install": "Installable Cores"
-      },
-      "ai_ness": {
-        "title": "Acceptable AI-ness level",
-        "value": "{score, number, percent}"
-      }
+      "clear_all": "Clear All"
     },
     "phase_status": {
       "zero": {
@@ -493,13 +491,6 @@
         "finished": "Downloaded required files ({index}/{total})"
       }
     },
-    "update_button": "Update {count, plural, =0 {Installed Cores} one {# Installed Core} other {# Installed Cores}}",
-    "install_button": "Install {count, plural, =0 {New Cores} one {# New Core} other {# New Cores}}",
-    "stats": {
-      "installed": "Installed cores",
-      "updatable": "Updates available",
-      "installable": "Available to install"
-    },
     "modal_title": "Updating Cores",
     "errors": "{count, plural, one {# error} other {# errors}}"
   },
@@ -514,7 +505,7 @@
     "confirm_exit": "The plugin is still running, are you sure you want to close the window?",
     "safe_to_close": "Plugin has finished, this window can be closed",
     "submit": "Submit",
-    "info": "The plugin specification, an example plugin, and tools for building plugins can be found at <1>github.com/{repo}</1>",
+    "info": "Plugins are small tools made by other people that run inside Pocket Sync, each in its own window. Add one with its GitHub link. The plugin specification, an example plugin and tools for building plugins are at <1>github.com/{repo}</1>",
     "add_modal": {
       "title": "Add plugin via URL",
       "add": "Verify & install plugin",
@@ -545,7 +536,8 @@
     "town": {
       "title": "Palette Town",
       "repo_link": "Palettes from <1>github.com/{repo}</1>",
-      "close": "Close"
+      "intro": "Click a palette to add it to the SD card.",
+      "installed": "On the SD card"
     },
     "item": {
       "duplicate": "Duplicate Palette",
@@ -579,7 +571,19 @@
     "empty": {
       "title": "No palettes yet",
       "text": "Create a palette, add one from a share code, or browse Palette Town."
-    }
+    },
+    "controls": {
+      "search": "Search palettes",
+      "group_by": "Group by",
+      "group": {
+        "folder": "Folder",
+        "none": "None"
+      }
+    },
+    "groups": {
+      "root": "Not in a Folder"
+    },
+    "count": "{count, plural, one {# palette} other {# palettes}}"
   },
   "mister_sync": {
     "controls": {
@@ -601,10 +605,10 @@
     "tip_3": "The Game must be named exactly the same on the Pocket and the MiSTer for the save to be found",
     "unsupported": "{platform} is not mapped",
     "mapping": {
-      "close": "Close",
       "clear": "Clear Mapping",
       "reset": "Reset to default",
-      "title": "Save Mapping"
+      "title": "Save Mapping",
+      "intro": "Drag from a Pocket platform to the MiSTer folder its saves go to (or the other way round). Hover a platform to see its links."
     },
     "connect": {
       "title": "Connect to MiSTer",
@@ -671,10 +675,6 @@
       "search": "Search"
     },
     "archive": {
-      "apply_changes": "Save Changes",
-      "close": "Close without saving",
-      "search_placeholder": "Archived Platforms",
-      "archive_all": "Archive All",
       "filters": {
         "all": "All",
         "category": "Category",
@@ -684,16 +684,15 @@
     },
     "data_packs": {
       "apply_changes": "Apply {count, plural, =0 {0 Changes} one {1 Change} other {# Changes}}",
-      "close": "Close",
-      "current": "Current"
+      "current": "Current",
+      "intro": "Data packs from the community can replace a platform's name, category, maker and year. Pick one per platform; Current keeps what's on the SD card. Only platforms with a different version are listed."
     },
     "delete_unused": "Delete {count, plural, one {# unused Platform} other {# unused Platforms}}?",
-    "limit_reached_warning": "WARNING: the Pocket's limit on platforms has been reached, archive some or OpenFPGA will not function correctly",
     "edit": "Edit",
     "image_packs": {
       "apply_changes": "Apply {count, plural, =0 {0 Changes} one {1 Change} other {# Changes}}",
-      "close": "Close",
-      "current": "Current"
+      "current": "Current",
+      "intro": "Image packs from the community replace the pictures the Pocket shows for each platform. Pick one per platform; Current keeps the image on the SD card."
     },
     "save": "Save Changes",
     "archived": "Archived",
@@ -750,7 +749,6 @@
       "open_export": "Export Photos",
       "palette": "Palette",
       "custom": "Custom",
-      "close": "Close",
       "export_selected": "Export Selected",
       "export_all": "Export All",
       "colours": {
@@ -779,7 +777,6 @@
       "add_backup_location": "Add Backup Location",
       "mister_sync": "Open MiSTer Sync"
     },
-    "latest_backup": "Last Backup: {date, date, long}, {date, time, short}",
     "none": "Add a backup location above",
     "not_found": "Not found",
     "oldest_backup": "Oldest Backup: {date, date, long}, {date, time, short}",
@@ -962,10 +959,11 @@
       "style_modern": "Straight"
     },
     "demo_updates": {
-      "title": "Demo Updates",
-      "ramble": "Previews the update UI. Cores: the first three installed cores show an update (updating one reinstalls its current version). Firmware: a newer firmware shows as available. Nothing on the SD card changes.",
+      "title": "Demo Data",
+      "ramble": "Previews UI states with made-up data. Cores: the first three installed cores show an update (updating one reinstalls its current version). Firmware: a newer firmware shows as available. Plugins: three made-up plugins are listed; Run only shows the running state. Nothing on the SD card changes.",
       "checkbox": "Pretend cores have updates",
-      "firmware_checkbox": "Pretend a firmware update is out"
+      "firmware_checkbox": "Pretend a firmware update is out",
+      "plugins_checkbox": "Pretend plugins are installed"
     },
     "dismissed_notes": {
       "title": "Dismissed Notes",
@@ -979,7 +977,7 @@
     },
     "modal_previews": {
       "title": "Modal previews",
-      "ramble": "Opens modals with made-up data to check how they look. The photo export shows generated photos (they can be exported, to a folder you pick); the update plays a scripted update and holds at the chosen phase. Nothing is downloaded or changed on the SD card.",
+      "ramble": "Opens screens with made-up data to check how they look: the photo export with generated photos, the update progress playing a scripted update (it holds at the chosen phase), MiSTer Sync with made-up saves, Move MROM Dumps and Build Instance JSON with made-up cartridges and cores, and the error screen with a made-up error. Nothing is downloaded or changed on the SD card, except photos you export.",
       "photo_export": "Photo Export",
       "update": "Update Progress",
       "stop_at": "Stop at",
@@ -989,7 +987,11 @@
         "downloads": "Downloading files",
         "finished": "Finished"
       },
-      "mister": "MiSTer Sync"
+      "mister": "MiSTer Sync",
+      "mrom": "Move MROM Dumps",
+      "instance_json": "Build Instance JSON",
+      "error": "Error Screen",
+      "close": "Close Preview"
     }
   },
   "time_ago": {

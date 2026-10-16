@@ -18,14 +18,6 @@ export const latestFirmwareSelector = atom<Promise<FirmwareListItem>>(
   }
 )
 
-export const previousFirmwareListSelector = atom<Promise<FirmwareListItem[]>>(
-  async (get) => {
-    const firmwares = await get(allFirmwaresAtom)
-    const [_, ...previousFirmwares] = firmwares
-    return previousFirmwares
-  }
-)
-
 export const currentFirmwareVersionSelector = atom<
   Promise<{
     version: string

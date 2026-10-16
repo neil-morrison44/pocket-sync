@@ -5,7 +5,6 @@
     "update_available": "Atualização Disponível! {version}",
     "sponsor_link": "Junte-se a {count, number} pessoas a patrocinar via GitHub",
     "whats_new": "O que há de novo?",
-    "close_changelog": "Fechar",
     "library_updates": "Atualizações da biblioteca",
     "side_panel": "Novidades",
     "show_updates": "Mostrar novidades",
@@ -35,35 +34,39 @@
   },
   "clean_files": {
     "close_button": "Fechar",
-    "delete_files_button": "Eliminar Arquivos",
+    "delete_files_button": "Excluir {count, plural, one {# arquivo} other {# arquivos}}",
     "files_found": "{count, plural, =0 {Nenhum arquivo limpável} one {# arquivo limpável} other {# arquivos limpáveis}} encontrado",
-    "title": "Limpar Arquivos"
+    "title": "Limpar Arquivos",
+    "intro": "O macOS grava arquivos ocultos (._… e .DS_Store) no cartão SD. O Pocket pode mostrá-los como jogos quebrados. Estes são os que estão em Assets.",
+    "none_found": "Nada para limpar: não há arquivos ocultos do macOS em Assets.",
+    "deleting": "Excluindo…"
   },
   "mrom": {
     "close_button": "Fechar",
-    "move_dumps": "Mover ROMs",
     "headers": {
-      "platform": "Plataforma",
-      "library_image": "Imagem da biblioteca",
-      "name": "Nome",
-      "destination": "Destino"
+      "destination": "Destino",
+      "dumped_save": "Do cartucho",
+      "pocket_save": "Do núcleo MROM"
+    },
+    "intro": "O núcleo MROM copia os teus cartuchos de Game Boy, com os seus saves, para Assets/mrom. Move-os para as pastas de Game Boy e Game Boy Color para que outros núcleos os possam jogar. Cada jogo pode levar um save.",
+    "none_found": "Nenhuma cópia de cartucho encontrada em Assets/mrom.",
+    "moving": "Movendo…",
+    "move_count": "Mover {count, plural, one {# ROM} other {# ROMs}}",
+    "save_label": "Save",
+    "save": {
+      "none": "Nenhum"
+    },
+    "save_hint": {
+      "dump": "O save que estava no cartucho, copiado ao fazer o dump.",
+      "pocket": "O save que o núcleo MROM guarda para este jogo em Saves/mrom.",
+      "none": "O jogo é movido sem save."
     }
   },
   "update_all": {
     "title": "Atualizar Tudo",
-    "heading": {
-      "update": "Atualizar",
-      "required_files": "Instalar Arquivos Necessários",
-      "platform_files": "Substituir Arquivos da Plataforma"
-    },
     "buttons": {
-      "update": "Atualizar {count, plural, =0 {nenhum} one {# núcleo selecionado} other {# núcleos selecionados}}",
       "close": "Fechar"
-    },
-    "update": {
-      "title": "Atualizando {coreName}: {step, select, core { atualizando núcleo... } files { baixando Arquivos Necessários... } filecheck { verificando arquivos... } other {on no} }"
-    },
-    "no_updates_found": "Nenhuma atualização encontrada para núcleos instalados"
+    }
   },
   "core_info": {
     "author": "Autor",
@@ -78,7 +81,6 @@
     },
     "inputs": "Entradas",
     "modal": {
-      "close": "Fechar",
       "input_core": "Núcleo",
       "no_settings_found": "Nenhuma configuração encontrada!",
       "reset_all": "Redefinir todas as configurações"
@@ -194,7 +196,7 @@
   "core_info_required_files": {
     "close": "Fechar",
     "download_all": "Baixar Tudo",
-    "no_link_tip": "Por favor, consulte a seção Configurações para mais opções com arquivos necessários",
+    "no_link_tip": "Nenhum arquivo está configurado, então os arquivos necessários não podem ser baixados. Adicione um em Configurações → Downloads.",
     "skip_alternates_label": "Ignorar arquivos alternativos",
     "title": "Arquivos Necessários",
     "file_status": {
@@ -205,7 +207,10 @@
       "not_checked": "Desconhecido",
       "found_at_root": "Arquivo verificado. Encontrado na raiz",
       "root_needs_update": "Incompatibilidade de arquivo. Por favor, verifique a raiz"
-    }
+    },
+    "intro": "Alguns núcleos precisam de arquivos extras, como BIOS ou ROM. Eles são baixados do arquivo configurado nas configurações.",
+    "summary": "{found} de {total} encontrados",
+    "to_download": "{size} para baixar"
   },
   "cores": {
     "controls": {
@@ -214,8 +219,6 @@
       "refresh": "Atualizar",
       "search": "Pesquisar",
       "updatable": "Atualizável",
-      "update_all": "Atualizar Tudo",
-      "filters_group": "Filtros",
       "sort_options": {
         "name": "Nome",
         "last_update": "Última atualização"
@@ -230,44 +233,52 @@
       "license_required": "Precisa de licença",
       "ai": "Nível de IA",
       "ai_none": "Nenhum",
-      "ai_up_to": "Até {max, number, percent}"
+      "ai_up_to": "Até {max, number, percent}",
+      "author": "Autor"
     },
     "install_tip": "Você também pode instalar núcleos (ou qualquer outra coisa em um zip) arrastando o .zip para esta janela",
     "installed": "Instalado ({count})",
     "not_installed": "Disponível ({count})",
     "updates": "Atualizações disponíveis ({count})",
     "installed_filtered": "Instalados ({count} / {total})",
-    "not_installed_filtered": "Disponíveis ({count} / {total})"
+    "not_installed_filtered": "Disponíveis ({count} / {total})",
+    "selection": {
+      "title": "Atualizar e instalar",
+      "install_title": "Instalar também",
+      "cancel": "Cancelar",
+      "start": "Iniciar ({count})",
+      "install_several": "Instalar vários…",
+      "filtered": "Mostrando os núcleos disponíveis que correspondem à pesquisa e aos filtros da página Núcleos.",
+      "release": "v{version} · {date, date, medium}"
+    }
   },
   "error": {
-    "report": "Você pode reportar isso via GitHub inclua o texto abaixo e qualquer coisa que você acabou de fazer",
+    "report": "Se continuar acontecendo, relate com os detalhes abaixo e o que você estava fazendo.",
     "retry": "Tentar Novamente",
-    "title": "Erro",
+    "title": "Algo deu errado",
     "repair": {
       "title": "Reparar",
       "in_progress": "Reparando...",
       "fixes": {
         "redownload_file": "Baixar novamente <pre>{path}</pre> de <bold>{coreName}</bold>"
-      }
-    }
+      },
+      "available": "Isso pode ser reparado"
+    },
+    "report_link": "Relatar no GitHub",
+    "details": "Detalhes técnicos"
   },
   "fetch": {
     "controls": {
       "add_fetch_item": "Adicionar fonte de fetch",
-      "refresh": "Atualizar status"
+      "refresh": "Atualizar status",
+      "fetch_all": "Obter tudo"
     },
     "fetch_button": "Buscar arquivos",
-    "file_count": "{count} / {total, plural, one {# Arquivo} other {# Arquivos}}",
     "loading": "carregando...",
     "new": {
       "add_extension": "Adicionar extensão",
       "add_fetch": "Adicionar fonte de fetch",
-      "archive_name": "Nome do arquivo: <i>https://archive.org/details/[esta parte aqui]</i>",
       "archive_tip": "Isso não funcionará para arquivos onde os arquivos estão zipados, e você deve definir quais extensões você quer evitar baixar os arquivos de metadados.",
-      "close": "Fechar",
-      "destination": "Pasta de Destino",
-      "extensions": "Limitar a Extensões de Arquivo:",
-      "origin": "Pasta de Origem",
       "title": "Adicionar novo Fetch",
       "validating_archive_name": "Verificando o arquivo \"{name}\"...",
       "invalid_archive_name": "Nenhum arquivo encontrado em https://archive.org/details/{name}",
@@ -290,7 +301,9 @@
       "destination_hint": "Para onde vão os arquivos, por exemplo, <code>/Assets/gb/common</code> para jogos ou BIOS de Game Boy.",
       "choose_folder": "Escolher pasta",
       "no_folder": "Nenhuma pasta escolhida",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "edit_title": "Editar origem",
+      "save_changes": "Guardar alterações"
     },
     "remove_button": "Remover fonte",
     "remove_confirm": "Isso removerá a configuração do fetch, mas não os arquivos. Tem certeza?",
@@ -311,7 +324,9 @@
       "to_fetch": "{missing} de {total, plural, one {# arquivo} other {# arquivos}} para buscar"
     },
     "last_fetched": "Última busca <time></time>",
-    "open_destination": "Abrir pasta no cartão SD"
+    "open_destination": "Abrir pasta no cartão SD",
+    "open_source": "Abrir pasta",
+    "edit_button": "Editar origem"
   },
   "firmware": {
     "current": "Firmware Atual: v{version}",
@@ -320,14 +335,8 @@
     "loaded_firmware": "Firmware {version} está no cartão SD",
     "loaded_firmware_info": "Insira e ligue o Pocket para instalar",
     "no_firmware_loaded": "Nenhum arquivo de firmware no cartão SD à espera de ser instalado",
-    "options": {
-      "latest": "v{version} (mais recente)",
-      "older": "v{version} ({date, date, short})",
-      "previous_versions": "Versões Anteriores"
-    },
     "release_notes": {
-      "from": "De ",
-      "title": "Notas de Lançamento v{version} - {published, date, short}:"
+      "from": "De "
     },
     "remove_button": "Remover firmware",
     "current_label": "Firmware instalado",
@@ -359,7 +368,9 @@
     "show_in_folder": "Mostrar na pasta",
     "empty_title": "Ainda não há jogos",
     "no_core": "Nenhum núcleo instalado",
-    "find_core": "Encontrar núcleo"
+    "find_core": "Encontrar núcleo",
+    "accepts": "Aceita {extensions}",
+    "read_by": "Lido por <cores></cores>"
   },
   "image_editor": {
     "cancel": "Cancelar",
@@ -371,14 +382,23 @@
     "scale": "Redimensionar",
     "title": "Editar imagem",
     "move_up": "Mover para cima",
-    "move_down": "Mover para baixo"
+    "move_down": "Mover para baixo",
+    "hint": "Arraste na pré-visualização para mover a camada selecionada.",
+    "hint_empty": "Importe uma imagem para começar e arraste-a na pré-visualização para posicioná-la.",
+    "position_x": "Horizontal",
+    "position_y": "Vertical",
+    "discard_confirm": "Descartar as alterações a esta imagem?",
+    "discard": "Descartar",
+    "keep_editing": "Continuar a editar"
   },
   "instance_json": {
-    "available_for": "Criação automática do arquivo instance.json disponível para:",
     "close_button": "Fechar",
     "skipped_file": "Arquivo {file_name} ignorado",
     "title": "Construir arquivos instance.json",
-    "wrote_file": "Escreveu {file_name}"
+    "wrote_file": "Escreveu {file_name}",
+    "intro": "Alguns núcleos (principalmente de sistemas com CD) precisam de um instance.json por jogo para que o Pocket inicie jogos com vários arquivos. Crie-os a partir da pasta de jogos de um núcleo.",
+    "none_available": "Nenhum dos núcleos instalados cria arquivos de instância.",
+    "build": "Criar"
   },
   "layout": {
     "cores": "Núcleos",
@@ -410,7 +430,7 @@
     "confirm_exit": "O plugin ainda está em execução. Tem certeza de que deseja fechar a janela?",
     "safe_to_close": "O plugin terminou, esta janela pode ser fechada.",
     "submit": "Enviar",
-    "info": "A especificação do plugin, um plugin de exemplo e ferramentas para criar plugins podem ser encontrados em <1>github.com/{repo}</1>",
+    "info": "Plugins são pequenas ferramentas feitas por outras pessoas que funcionam dentro do Pocket Sync, cada uma na sua própria janela. Adicione um pelo link do GitHub. A especificação, um plugin de exemplo e ferramentas para criar plugins estão em <1>github.com/{repo}</1>",
     "add_modal": {
       "title": "Adicionar plugin via URL",
       "add": "Verifique e instale o plugin.",
@@ -441,7 +461,8 @@
     "town": {
       "title": "Cidade das Paletas",
       "repo_link": "Paletas de <1>github.com/{repo}</1>",
-      "close": "Fechar"
+      "intro": "Clique numa paleta para adicioná-la ao cartão SD.",
+      "installed": "No cartão SD"
     },
     "item": {
       "duplicate": "Duplicar paleta",
@@ -475,7 +496,19 @@
     "empty": {
       "title": "Ainda não há paletas",
       "text": "Crie uma paleta, adicione uma por código ou explore o Palette Town."
-    }
+    },
+    "controls": {
+      "search": "Procurar paletas",
+      "group_by": "Agrupar por",
+      "group": {
+        "folder": "Pasta",
+        "none": "Nenhum"
+      }
+    },
+    "groups": {
+      "root": "Fora de pastas"
+    },
+    "count": "{count, plural, one {# paleta} other {# paletas}}"
   },
   "mister_sync": {
     "controls": {
@@ -497,10 +530,10 @@
     "tip_3": "O jogo deve ter exatamente o mesmo nome no Pocket e no MiSTer para que a gravação seja encontrada",
     "unsupported": "{platform} não está mapeado",
     "mapping": {
-      "close": "Fechar",
       "clear": "Limpar mapeamento",
       "reset": "Restaurar padrão",
-      "title": "Mapeamento de saves"
+      "title": "Mapeamento de saves",
+      "intro": "Arraste de uma plataforma do Pocket para a pasta do MiSTer onde vão os saves (ou ao contrário). Passe o mouse sobre uma plataforma para ver suas ligações."
     },
     "connect": {
       "title": "Conectar ao MiSTer",
@@ -564,10 +597,6 @@
       "search": "Pesquisar"
     },
     "archive": {
-      "apply_changes": "Salvar alterações",
-      "close": "Fechar sem salvar",
-      "search_placeholder": "Plataformas arquivadas",
-      "archive_all": "Arquivar tudo",
       "filters": {
         "all": "Todos",
         "category": "Categoria",
@@ -577,15 +606,15 @@
     },
     "data_packs": {
       "apply_changes": "Aplicar {count, plural, =0 {0 Alterações} one {1 Alteração} other {# Alterações}}",
-      "close": "Fechar",
-      "current": "Atual"
+      "current": "Atual",
+      "intro": "Pacotes de dados da comunidade podem substituir o nome, a categoria, o fabricante e o ano de uma plataforma. Escolha um por plataforma; Atual mantém o que está no cartão SD. Só aparecem plataformas com outra versão."
     },
     "delete_unused": "Excluir {count, plural, one {# plataforma não utilizada} other {# plataformas não utilizadas}}?",
     "edit": "Editar",
     "image_packs": {
       "apply_changes": "Aplicar {count, plural, =0 {0 Alterações} one {1 Alteração} other {# Alterações}}",
-      "close": "Fechar",
-      "current": "Atual"
+      "current": "Atual",
+      "intro": "Pacotes de imagens da comunidade substituem as imagens que o Pocket mostra para cada plataforma. Escolha um por plataforma; Atual mantém a imagem do cartão SD."
     },
     "save": "Guardar alterações",
     "archived": "Arquivada",
@@ -642,7 +671,6 @@
       "open_export": "Exportar Fotos",
       "palette": "Paleta",
       "custom": "Personalizado",
-      "close": "Fechar",
       "export_selected": "Exportar Selecionados",
       "export_all": "Exportar Tudo",
       "colours": {
@@ -671,7 +699,6 @@
       "add_backup_location": "Adicionar local de backup",
       "mister_sync": "Abrir Sincronização MiSTer"
     },
-    "latest_backup": "Último Backup: {date, date, long}, {date, time, short}",
     "none": "Adicione um local de backup acima",
     "not_found": "Não encontrado",
     "oldest_backup": "Backup Mais Antigo: {date, date, long}, {date, time, short}",

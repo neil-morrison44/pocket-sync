@@ -21,7 +21,11 @@ import { invokeSaveFile } from "../../utils/invokes"
 import { pocketPathAtom } from "../../jotai/atoms"
 import { PaletteName } from "./name"
 import { useSavePalette } from "./hooks/useSavePalette"
-import { paletteBaseName, usePaletteActions } from "./hooks/usePaletteActions"
+import {
+  paletteBaseName,
+  paletteFolders,
+  usePaletteActions,
+} from "./hooks/usePaletteActions"
 import { Palette, rgb } from "../../types"
 import { useTranslation } from "react-i18next"
 import { PreviewCanvas } from "./previewCanvas"
@@ -35,6 +39,10 @@ import { Grid } from "../grid"
 import { CardSkeleton } from "../ui/Skeleton"
 import TextInput from "../ui/TextInput"
 import Field from "../ui/Field"
+import NoResults from "../ui/NoResults"
+import Select from "../ui/Select"
+import { ControlsSearch } from "../controls/inputs/search"
+import { GroupHeader } from "../shared/groupHeader"
 
 type PaletteUIModes =
   | { name: "list" }
@@ -46,6 +54,8 @@ export const Palettes = () => {
   const [mode, setMode] = useState<PaletteUIModes>({ name: "list" })
   const [codeModalOpen, setCodeModalOpen] = useState(false)
   const [townOpen, setTownOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [groupBy, setGroupBy] = useState<PaletteGrouping>("folder")
   const savePalette = useSavePalette()
 
   const createNewPalette = useCallback(async () => {
@@ -82,6 +92,14 @@ export const Palettes = () => {
   return (
     <div className="palettes">
       <Controls>
+        <Suspense>
+          <PaletteListControls
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            groupBy={groupBy}
+            onGroupByChange={setGroupBy}
+          />
+        </Suspense>
         <ControlsActions>
           {mode.name === "list" && (
             <>
@@ -109,7 +127,13 @@ export const Palettes = () => {
         <AddViaCodeModal onClose={() => setCodeModalOpen(false)} />
       )}
 
-      {mode.name === "list" && <PaletteList setMode={setMode} />}
+      {mode.name === "list" && (
+        <PaletteList
+          setMode={setMode}
+          searchQuery={searchQuery}
+          groupBy={groupBy}
+        />
+      )}
     </div>
   )
 }
@@ -122,11 +146,60 @@ const PaletteListSkeleton = () => (
   </div>
 )
 
-type PaletteListProps = {
-  setMode: Dispatch<SetStateAction<PaletteUIModes>>
+/** By the folder palettes sit in (Palette Town's are by author), or not. */
+type PaletteGrouping = "folder" | "none"
+
+/** A palette's folders as one label, e.g. "Author / Set"; "" at the top. */
+const folderLabel = (name: string) => paletteFolders(name).join(" / ")
+
+/**
+ * Search, and the grouping when some palettes are in folders (otherwise
+ * there's only one group, so it's left out).
+ */
+const PaletteListControls = ({
+  searchQuery,
+  onSearchChange,
+  groupBy,
+  onGroupByChange,
+}: {
+  searchQuery: string
+  onSearchChange: (query: string) => void
+  groupBy: PaletteGrouping
+  onGroupByChange: (groupBy: PaletteGrouping) => void
+}) => {
+  const { t } = useTranslation("palettes")
+  const palettesList = useAtomValue(palettesListKeptSelector)
+  const hasFolders = (palettesList ?? []).some((name) => folderLabel(name))
+  if (!palettesList || palettesList.length === 0) return null
+  return (
+    <>
+      <ControlsSearch
+        placeholder={t("controls.search")}
+        value={searchQuery}
+        onChange={onSearchChange}
+      />
+      {hasFolders && (
+        <Select<PaletteGrouping>
+          label={t("controls.group_by")}
+          value={groupBy}
+          onChange={onGroupByChange}
+          options={[
+            { value: "folder", label: t("controls.group.folder") },
+            { value: "none", label: t("controls.group.none") },
+          ]}
+        />
+      )}
+    </>
+  )
 }
 
-const PaletteList = ({ setMode }: PaletteListProps) => {
+type PaletteListProps = {
+  setMode: Dispatch<SetStateAction<PaletteUIModes>>
+  searchQuery: string
+  groupBy: PaletteGrouping
+}
+
+const PaletteList = ({ setMode, searchQuery, groupBy }: PaletteListProps) => {
   // Keeps the shown list while it reloads; skeletons only on the first load
   const palettesList = useAtomValue(palettesListKeptSelector)
   const { t } = useTranslation("palettes")
@@ -135,6 +208,31 @@ const PaletteList = ({ setMode }: PaletteListProps) => {
     () => [...(palettesList ?? [])].sort((a, b) => a.localeCompare(b)),
     [palettesList]
   )
+
+  // Search by name and folder
+  const filteredPalettes = useMemo(() => {
+    const search = searchQuery.toLowerCase().trim()
+    if (!search) return sortedPalettesList
+    return sortedPalettesList.filter((name) =>
+      name
+        .replace(/\.pal$/, "")
+        .toLowerCase()
+        .includes(search)
+    )
+  }, [sortedPalettesList, searchQuery])
+
+  // Folders A–Z, palettes not in a folder first
+  const groups = useMemo(() => {
+    const byFolder = new Map<string, string[]>()
+    for (const name of filteredPalettes) {
+      const folder = groupBy === "folder" ? folderLabel(name) : ""
+      byFolder.set(folder, [...(byFolder.get(folder) ?? []), name])
+    }
+    return [...byFolder].sort(([a], [b]) => a.localeCompare(b))
+  }, [filteredPalettes, groupBy])
+
+  const showHeaders =
+    groupBy === "folder" && sortedPalettesList.some((name) => folderLabel(name))
 
   if (palettesList === undefined) return <PaletteListSkeleton />
 
@@ -146,27 +244,48 @@ const PaletteList = ({ setMode }: PaletteListProps) => {
     )
   }
 
-  return (
+  const renderGrid = (palettes: string[]) => (
     <Grid placeholderItemHeight={260}>
       {/* Each tile loads on its own, so a new palette doesn't put the whole
           list back into skeletons */}
-      {sortedPalettesList.map((palette) => (
+      {palettes.map((palette) => (
         <Suspense key={palette} fallback={<CardSkeleton height={260} />}>
           <PaletteListItem
             name={palette}
+            hideFolders={showHeaders}
             onClick={() => setMode({ name: "selected", palette })}
           />
         </Suspense>
       ))}
     </Grid>
   )
+
+  return (
+    <div className="search-results">
+      {showHeaders
+        ? groups.map(([folder, palettes]) => (
+            <section className="palettes__group" key={folder}>
+              <GroupHeader
+                title={folder || t("groups.root")}
+                count={t("count", { count: palettes.length })}
+              />
+              {renderGrid(palettes)}
+            </section>
+          ))
+        : renderGrid(filteredPalettes)}
+      <NoResults />
+    </div>
+  )
 }
 
 export const PaletteListItem = ({
   name,
+  hideFolders = false,
   onClick,
 }: {
   name: string
+  /** In a folder's group, the folder is in its header already. */
+  hideFolders?: boolean
   onClick: () => void
 }) => {
   const paletteCode = useAtomValue(PaletteCodeKeptSelectorFamily(name))
@@ -209,7 +328,7 @@ export const PaletteListItem = ({
             />
           </div>
         ) : (
-          <PaletteName name={name} />
+          <PaletteName name={name} hideFolders={hideFolders} />
         )
       }
       actions={
