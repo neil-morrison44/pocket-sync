@@ -43,7 +43,10 @@ const NAV_SECTIONS: readonly {
 }[] = import.meta.env.DEV
   ? [
       ...SETTINGS_SECTIONS,
-      { key: "developer", items: ["demo_updates", "loading_preview"] },
+      {
+        key: "developer",
+        items: ["demo_updates", "loading_preview", "modal_previews"],
+      },
     ]
   : SETTINGS_SECTIONS
 

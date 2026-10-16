@@ -28,7 +28,10 @@
     "close": "Затвори",
     "loading": "Зареждане",
     "dismiss": "Скрий",
-    "no_results": "Нищо не отговаря на търсенето или филтрите."
+    "no_results": "Нищо не отговаря на търсенето или филтрите.",
+    "clear_search": "Изчисти търсенето",
+    "filters": "Филтри",
+    "clear_filters": "Изчисти филтрите"
   },
   "clean_files": {
     "close_button": "Затвори",
@@ -227,12 +230,21 @@
       "features": "Функции",
       "features_count": "Функции ({count})",
       "platform": "Платформа",
-      "update_all_count": "Обнови всички ({count})"
+      "update_all_count": "Обнови всички ({count})",
+      "all": "Всички",
+      "license": "Лиценз",
+      "license_free": "Само безплатни",
+      "license_required": "Изисква лиценз",
+      "ai": "AI дял",
+      "ai_none": "Без",
+      "ai_up_to": "До {max, number, percent}"
     },
     "install_tip": "Можете също да инсталирате ядра (или друг zip) чрез провлачване на .zip файла към този прозорец",
     "installed": "Инсталирани ({count})",
     "not_installed": "Налични ({count})",
-    "updates": "Налични обновления ({count})"
+    "updates": "Налични обновления ({count})",
+    "installed_filtered": "Инсталирани ({count} / {total})",
+    "not_installed_filtered": "Налични ({count} / {total})"
   },
   "error": {
     "report": "Можете да докладвате това в GitHub, включете текста по-долу и какво точно направихте",
@@ -352,13 +364,15 @@
     "open_folder": "Отвори папката",
     "none": "Няма намерени игри. Инсталирайте ядро, след това добавете игри в неговата папка на SD картата.",
     "show_in_folder": "Покажи в папката",
-    "empty_title": "Все още няма игри"
+    "empty_title": "Все още няма игри",
+    "no_core": "Няма инсталирано ядро",
+    "find_core": "Намери ядро"
   },
   "image_editor": {
     "cancel": "Откажи",
     "import_image": "Импортирай изображение",
-    "remove": "Премахни",
-    "reset": "Инициализирай",
+    "remove": "Премахни слоя",
+    "reset": "Нулирай слоя",
     "rotate": "Завърти",
     "save": "Съхрани изображение",
     "scale": "Скалирай",
@@ -445,19 +459,25 @@
     "add_via_code": {
       "title": "Добави чрез код за споделяне",
       "cancel": "Откажи",
-      "add": "Добави палитра"
+      "add": "Добави палитра",
+      "label": "Код за споделяне",
+      "hint": "Постави код, копиран с „{button}“ от палитра.",
+      "found": "Добавя палитрата „{name}“.",
+      "invalid": "Това не е код за споделяне на палитра. Провери дали е копиран целият код."
     },
     "full": {
       "inputs": {
         "background": "Фон",
-        "obj0": "Obj0",
-        "obj1": "Obj1",
-        "window": "прозорец",
+        "obj0": "Спрайтове 0",
+        "obj1": "Спрайтове 1",
+        "window": "Прозорец",
         "off": "LCD изключен"
       },
       "save": "Съхрани палитра",
       "reset": "Нулирай цветовете",
-      "emu_credit": "GB емулатор адаптиран от <1>roblouie/gameboy-emulator</1>"
+      "emu_credit": "GB емулатор адаптиран от <1>roblouie/gameboy-emulator</1>",
+      "preview_game": "Игра",
+      "no_games": "Постави игра за Game Boy (.gb) в Assets/gb на SD картата, за да изпробваш палитрата в нея."
     },
     "empty": {
       "title": "Все още няма палитри",
@@ -471,10 +491,10 @@
       "save_mapping": "Мапинг на запазвания"
     },
     "login": {
-      "connect": "Свържи се с MiSTer",
-      "host": "Хост / IP Адрес:",
-      "password": "Парола:",
-      "username": "Потребител:"
+      "connect": "Свържи се",
+      "host": "Хост или IP адрес",
+      "password": "Парола",
+      "username": "Потребител"
     },
     "mister": "MiSTer",
     "not_found": "Не е намерен",
@@ -488,7 +508,41 @@
       "clear": "Изчисти съпоставянето",
       "reset": "Върни първоначалното състояние",
       "title": "Съответствие на записите"
-    }
+    },
+    "connect": {
+      "title": "Свържи се с MiSTer",
+      "host_hint": "Адресът на MiSTer в мрежата ти, напр. 192.168.0.10.",
+      "demo_hint": "Преглед: всеки хост се свързва, освен „fail“.",
+      "failed": "Неуспешна връзка с MiSTer. Провери адреса, данните за вход и дали FTP е включен.",
+      "connecting": "Свързване…",
+      "cancel": "Отказ"
+    },
+    "list": {
+      "title": "Записи на Pocket",
+      "empty": "Няма съвпадащи записи."
+    },
+    "compare": {
+      "pick_title": "Избери запис",
+      "pick": "Избери запис вляво, за да го сравниш с този на MiSTer и да го копираш в двете посоки.",
+      "same": "Еднакви и на двете",
+      "pocket_newer": "По-нов на Pocket",
+      "mister_newer": "По-нов на MiSTer",
+      "missing": "Още го няма на MiSTer"
+    },
+    "newer": "По-нов",
+    "modified": "Променен",
+    "checksum": "Контролна сума",
+    "folder": "Папка на MiSTer",
+    "copy_to_pocket": "Копирай на Pocket",
+    "copy_to_mister": "Копирай на MiSTer",
+    "confirm": {
+      "to_mister": "Да се замени ли записът на MiSTer с този от Pocket?",
+      "to_pocket": "Да се замени ли записът на Pocket с този от MiSTer?"
+    },
+    "activity": "Активност ({count})",
+    "activity_empty": "Още нищо не се е случило.",
+    "demo_note": "Преглед с измислени записи: нищо не се изпраща към MiSTer и нищо не се променя на SD картата.",
+    "date": "{date, date, medium} {date, time, short}"
   },
   "news_feed": {
     "last_updated": "Последно обновление <1></1>",
@@ -503,7 +557,9 @@
     "cores": "Инсталирани ядра",
     "edit": "Редактирай",
     "details": "Подробности",
-    "no_cores": "Няма инсталирани ядра за тази платформа."
+    "no_cores": "Няма инсталирани ядра за тази платформа.",
+    "games": "Игри",
+    "no_games": "Няма игри в папката на тази платформа на SD картата."
   },
   "platforms": {
     "cancel": "Откажи",
@@ -560,7 +616,11 @@
     "date": "{date, date, short}",
     "newer": "Нови",
     "older": "По-стари",
-    "time": "{date, time, short}"
+    "time": "{date, time, short}",
+    "explainer": "Всяка колона е резервно копие, най-старото е вляво. Лентата показва колко дълго запазената игра е останала същата; зелената е в Pocket в момента. Щракни върху друга, за да възстановиш тази версия.",
+    "restore": "Възстанови",
+    "restore_version": "Възстанови версията от {date, date, short}, {date, time, short}",
+    "show_on_sd_card": "Покажи на SD картата"
   },
   "save_states": {
     "cartridge": "Дискета",
@@ -571,7 +631,13 @@
       "search": "Търси",
       "core": "Ядро",
       "platform": "Платформа",
-      "all": "Всички"
+      "all": "Всички",
+      "group_by": "Групирай по",
+      "group": {
+        "core": "Ядро",
+        "game": "Игра"
+      },
+      "game": "Игра"
     },
     "count": "( {count} / 128 )",
     "item": {
@@ -590,12 +656,20 @@
         "gb": "GB",
         "gb_player": "GB Player",
         "black_and_white": "Черно-бяло"
-      }
+      },
+      "photo_number": "Снимка {number} от {total}",
+      "shade": "Нюанс {number}"
     },
     "empty": {
       "title": "Все още няма запазени състояния",
-      "text": "Натисни бутона Analogue и Нагоре по време на игра, за да запазиш спомен. Той ще се появи тук."
-    }
+      "text": "Спомените са запазени състояния: моментна снимка на играта, към която можеш да се върнеш по всяко време."
+    },
+    "how_to": {
+      "save": "Натисни <key>бутона Analogue</key> и <key>Нагоре</key> по време на игра, за да запазиш спомен.",
+      "load": "Натисни <key>бутона Analogue</key> и <key>Надолу</key>, за да заредиш последния. Първо включи <key>Enable Quick Load</key> в настройките на Pocket → Memories."
+    },
+    "count_game": "{count, plural, one {# запазено състояние} other {# запазени състояния}}",
+    "unknown_game": "Неизвестна игра"
   },
   "saves": {
     "backups": "Бекъпи: {count}",
@@ -625,19 +699,37 @@
       "back": "Назад към скрийншотите",
       "save": "Съхрани скрийншот",
       "share": "Сподели скрийншот",
-      "upscaled": "Прескалирано"
-    }
+      "upscaled": "Прескалирано",
+      "previous": "Предишна екранна снимка",
+      "next": "Следваща екранна снимка"
+    },
+    "dimensions": "{width} × {height} px"
   },
   "screenshots": {
     "controls": {
       "delete_selected": "Изтрий избраните ({count})",
       "export_selected": "Експортирай избраните ({count})",
       "search": "Търси",
-      "select": "Избери"
+      "select": "Избери",
+      "group_by": "Групирай по",
+      "group": {
+        "game": "Игра",
+        "core": "Ядро",
+        "date": "Дата"
+      },
+      "game": "Игра",
+      "core": "Ядро",
+      "all": "Всички"
     },
     "no_screenshots": "След като направиш няколко скрийншота ще се появят тук",
     "how_to": "Натисни <key>бутона Analogue</key> и <key>Start</key> едновременно по време на игра. Скрийншотът се запазва на SD картата и се появява тук.",
-    "empty_title": "Все още няма скрийншоти"
+    "empty_title": "Все още няма скрийншоти",
+    "taken": "{date, date, medium}, {date, time, short}",
+    "count": "{count, plural, one {# екранна снимка} other {# екранни снимки}}",
+    "unknown_game": "Неизвестна игра",
+    "unknown_core": "Неизвестно ядро",
+    "unknown_date": "Без дата",
+    "group_date": "{date, date, full}"
   },
   "settings": {
     "3d_pocket": {
@@ -757,7 +849,7 @@
       "light": "Светла",
       "style_label": "Стил",
       "style_slanted": "Скосен",
-      "style_modern": "Модерен"
+      "style_modern": "Прав"
     },
     "dismissed_notes": {
       "title": "Скрити съобщения",

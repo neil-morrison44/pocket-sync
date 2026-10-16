@@ -1,3 +1,4 @@
+import Callout from "../ui/Callout"
 import React, {
   ReactNode,
   startTransition,
@@ -39,7 +40,6 @@ import { installedGamesCountSelector } from "../../jotai/games/selectors"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { useColourOptions } from "../settings/colourOptions"
 import { PocketColour } from "../../types"
-import { Tip } from "../tip"
 import type { Connection } from "../layout"
 import IconButton from "../ui/IconButton"
 import { pocketPathAtom } from "../../jotai/atoms"
@@ -81,7 +81,7 @@ export const About = ({ connection }: { connection: Connection }) => {
   const version = `v${AppVersion}`
 
   return (
-    <div className="about">
+    <div className={`about ${newsPanelOpen ? "about--news-open" : ""}`}>
       {connected && (
         <Suspense>
           <PlatformImagePreload />
@@ -157,25 +157,28 @@ export const About = ({ connection }: { connection: Connection }) => {
         )}
         <span className="about__version">{version}</span>
         <div className="about__actions">
-          {connected ? (
-            <>
-              {/* Beside Eject, so it reads as a setting of the Pocket, not
-                  of the app */}
-              <Suspense>
-                <PocketColoursPopover />
-              </Suspense>
-              <OpenSDCardButton />
-              <Button theme="tertiary" icon="logout" onClick={onDisconnect}>
-                {tSettings("disconnect.button")}
-              </Button>
-            </>
-          ) : (
-            <>
-              {connection.attempts > 0 && <Tip>{tApp("not_pocket_tip")}</Tip>}
+          <div className="about__buttons">
+            {connected ? (
+              <>
+                {/* Beside Eject, so it reads as a setting of the Pocket, not
+                    of the app */}
+                <Suspense>
+                  <PocketColoursPopover />
+                </Suspense>
+                <OpenSDCardButton />
+                <Button theme="tertiary" icon="logout" onClick={onDisconnect}>
+                  {tSettings("disconnect.button")}
+                </Button>
+              </>
+            ) : (
               <Button theme="primary" onClick={connection.onConnect}>
                 {tApp("connect_button")}
               </Button>
-            </>
+            )}
+          </div>
+          {/* Below the button: why the chosen folder wasn't accepted */}
+          {!connected && connection.attempts > 0 && (
+            <Callout variant="warning">{tApp("not_pocket_tip")}</Callout>
           )}
         </div>
       </div>

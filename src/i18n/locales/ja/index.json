@@ -28,7 +28,10 @@
     "close": "閉じる",
     "loading": "読み込み中",
     "dismiss": "閉じる",
-    "no_results": "検索またはフィルターに一致する項目はありません。"
+    "no_results": "検索またはフィルターに一致する項目はありません。",
+    "clear_search": "検索をクリア",
+    "filters": "フィルター",
+    "clear_filters": "フィルターをクリア"
   },
   "clean_files": {
     "close_button": "閉じる",
@@ -195,12 +198,21 @@
       "features": "機能",
       "features_count": "機能 ({count})",
       "platform": "プラットフォーム",
-      "update_all_count": "すべてアップデート ({count})"
+      "update_all_count": "すべてアップデート ({count})",
+      "all": "すべて",
+      "license": "ライセンス",
+      "license_free": "無料のみ",
+      "license_required": "ライセンスが必要",
+      "ai": "AI 度",
+      "ai_none": "なし",
+      "ai_up_to": "{max, number, percent} まで"
     },
     "install_tip": "コア（またはその他の ZIP ファイル）をこのウィンドウにドラッグしてインストールすることもできます",
     "installed": "インストール済み ({count})",
     "not_installed": "利用可能 ({count})",
-    "updates": "利用可能なアップデート ({count})"
+    "updates": "利用可能なアップデート ({count})",
+    "installed_filtered": "インストール済み ({count} / {total})",
+    "not_installed_filtered": "利用可能 ({count} / {total})"
   },
   "error": {
     "report": "GitHubでエラーを報告できます。報告する際は以下のテキストと直前のアクションを含めてください",
@@ -320,13 +332,15 @@
     "open_folder": "フォルダを開く",
     "none": "ゲームが見つかりません。コアをインストールしてから、SD Card のコアのフォルダにゲームを追加してください。",
     "show_in_folder": "フォルダで表示",
-    "empty_title": "ゲームがまだありません"
+    "empty_title": "ゲームがまだありません",
+    "no_core": "コア未インストール",
+    "find_core": "コアを探す"
   },
   "image_editor": {
     "cancel": "キャンセル",
     "import_image": "画像をインポート",
-    "remove": "削除",
-    "reset": "リセット",
+    "remove": "レイヤーを削除",
+    "reset": "レイヤーをリセット",
     "rotate": "回転",
     "save": "画像を保存",
     "scale": "スケール",
@@ -413,19 +427,25 @@
     "add_via_code": {
       "title": "共有コードで追加",
       "cancel": "キャンセル",
-      "add": "パレットを追加"
+      "add": "パレットを追加",
+      "label": "共有コード",
+      "hint": "パレットの「{button}」でコピーしたコードを貼り付けてください。",
+      "found": "パレット「{name}」を追加します。",
+      "invalid": "パレットの共有コードではありません。コード全体がコピーされているか確認してください。"
     },
     "full": {
       "inputs": {
         "background": "背景",
-        "obj0": "Obj0",
-        "obj1": "Obj1",
-        "window": "window",
+        "obj0": "スプライト 0",
+        "obj1": "スプライト 1",
+        "window": "ウィンドウ",
         "off": "LCD オフ"
       },
       "save": "パレットを保存",
       "reset": "色をリセット",
-      "emu_credit": "GB エミュレータは <1>roblouie/gameboy-emulator</1> をもとに作成されています"
+      "emu_credit": "GB エミュレータは <1>roblouie/gameboy-emulator</1> をもとに作成されています",
+      "preview_game": "ゲーム",
+      "no_games": "SD カードの Assets/gb に Game Boy のゲーム (.gb) を入れると、パレットを試せます。"
     },
     "empty": {
       "title": "パレットがまだありません",
@@ -439,10 +459,10 @@
       "save_mapping": "マッピングを保存"
     },
     "login": {
-      "connect": "MiSTer に接続",
-      "host": "Host / IP Address:",
-      "password": "Password:",
-      "username": "Username:"
+      "connect": "接続",
+      "host": "ホストまたは IP アドレス",
+      "password": "パスワード",
+      "username": "ユーザー名"
     },
     "mister": "MiSTer",
     "not_found": "見つかりませんでした",
@@ -456,7 +476,41 @@
       "clear": "マッピングをクリア",
       "reset": "初期値にリセット",
       "title": "セーブの対応付け"
-    }
+    },
+    "connect": {
+      "title": "MiSTer に接続",
+      "host_hint": "ネットワーク上の MiSTer のアドレス（例: 192.168.0.10）。",
+      "demo_hint": "プレビュー: 「fail」以外のホストは接続できます。",
+      "failed": "MiSTer に接続できませんでした。アドレス、ログイン情報、FTP がオンになっているかを確認してください。",
+      "connecting": "接続中…",
+      "cancel": "キャンセル"
+    },
+    "list": {
+      "title": "Pocket のセーブ",
+      "empty": "一致するセーブがありません。"
+    },
+    "compare": {
+      "pick_title": "セーブを選択",
+      "pick": "左のセーブを選ぶと、MiSTer のセーブと比較してどちら向きにもコピーできます。",
+      "same": "両方とも同じ",
+      "pocket_newer": "Pocket の方が新しい",
+      "mister_newer": "MiSTer の方が新しい",
+      "missing": "MiSTer にはまだありません"
+    },
+    "newer": "新しい",
+    "modified": "変更日時",
+    "checksum": "チェックサム",
+    "folder": "MiSTer のフォルダー",
+    "copy_to_pocket": "Pocket にコピー",
+    "copy_to_mister": "MiSTer にコピー",
+    "confirm": {
+      "to_mister": "MiSTer のセーブを Pocket のセーブで置き換えますか？",
+      "to_pocket": "Pocket のセーブを MiSTer のセーブで置き換えますか？"
+    },
+    "activity": "アクティビティ ({count})",
+    "activity_empty": "まだ何もありません。",
+    "demo_note": "架空のセーブによるプレビューです。MiSTer には何も送信されず、SD カードも変更されません。",
+    "date": "{date, date, medium} {date, time, short}"
   },
   "news_feed": {
     "last_updated": "最新アップデート",
@@ -471,7 +525,9 @@
     "cores": "インストール済みのコア",
     "edit": "編集",
     "details": "詳細",
-    "no_cores": "このプラットフォームを使うインストール済みのコアはありません。"
+    "no_cores": "このプラットフォームを使うインストール済みのコアはありません。",
+    "games": "ゲーム",
+    "no_games": "SD カードのこのプラットフォームのフォルダーにゲームがありません。"
   },
   "platforms": {
     "cancel": "キャンセル",
@@ -528,7 +584,11 @@
     "date": "{date, date, short}",
     "newer": "新しい",
     "older": "古い",
-    "time": "{date, time, short}"
+    "time": "{date, time, short}",
+    "explainer": "各列はバックアップで、左が最も古いものです。バーはセーブが同じ内容だった期間を示し、緑のバーが現在 Pocket にあるものです。別のバーをクリックするとそのバージョンを復元します。",
+    "restore": "復元",
+    "restore_version": "{date, date, short} {date, time, short} のバージョンを復元",
+    "show_on_sd_card": "SD カードで表示"
   },
   "save_states": {
     "cartridge": "カートリッジ",
@@ -539,7 +599,13 @@
       "search": "検索",
       "core": "コア",
       "platform": "プラットフォーム",
-      "all": "すべて"
+      "all": "すべて",
+      "group_by": "グループ",
+      "group": {
+        "core": "コア",
+        "game": "ゲーム"
+      },
+      "game": "ゲーム"
     },
     "count": "( {count} / 128 )",
     "item": {
@@ -558,12 +624,20 @@
         "gb": "GB",
         "gb_player": "GB Player",
         "black_and_white": "Black & White"
-      }
+      },
+      "photo_number": "写真 {number} / {total}",
+      "shade": "色 {number}"
     },
     "empty": {
       "title": "セーブステートがまだありません",
-      "text": "プレイ中に Analogue ボタンと上を押すとメモリーを保存できます。ここに表示されます。"
-    }
+      "text": "メモリーはセーブステートです。いつでも戻れるゲームのスナップショットです。"
+    },
+    "how_to": {
+      "save": "プレイ中に<key>Analogue ボタン</key>と<key>上</key>を押すとメモリーを保存できます。",
+      "load": "<key>Analogue ボタン</key>と<key>下</key>を押すと最新のメモリーを読み込めます。先に Pocket の設定 → Memories で<key>Enable Quick Load</key>をオンにしてください。"
+    },
+    "count_game": "{count, plural, other {# 個のセーブステート}}",
+    "unknown_game": "不明なゲーム"
   },
   "saves": {
     "backups": "バックアップ: {count}",
@@ -593,19 +667,37 @@
       "back": "スクリーンショット一覧に戻る",
       "save": "スクリーンショットを保存",
       "share": "スクリーンショットを共有",
-      "upscaled": "超解像"
-    }
+      "upscaled": "超解像",
+      "previous": "前のスクリーンショット",
+      "next": "次のスクリーンショット"
+    },
+    "dimensions": "{width} × {height} px"
   },
   "screenshots": {
     "controls": {
       "delete_selected": "選択項目を削除 ({count})",
       "export_selected": "選択項目をエクスポート ({count})",
       "search": "検索",
-      "select": "選択"
+      "select": "選択",
+      "group_by": "グループ",
+      "group": {
+        "game": "ゲーム",
+        "core": "コア",
+        "date": "日付"
+      },
+      "game": "ゲーム",
+      "core": "コア",
+      "all": "すべて"
     },
     "no_screenshots": "スクリーンショットを保存すると、ここに表示されます",
     "how_to": "プレイ中に <key>Analogue ボタン</key>と <key>Start</key> を同時に押してください。スクリーンショットは SD カードに保存され、ここに表示されます。",
-    "empty_title": "スクリーンショットがまだありません"
+    "empty_title": "スクリーンショットがまだありません",
+    "taken": "{date, date, medium}, {date, time, short}",
+    "count": "{count, plural, other {# 枚のスクリーンショット}}",
+    "unknown_game": "不明なゲーム",
+    "unknown_core": "不明なコア",
+    "unknown_date": "日付なし",
+    "group_date": "{date, date, full}"
   },
   "settings": {
     "3d_pocket": {
@@ -720,7 +812,7 @@
       "light": "ライト",
       "style_label": "スタイル",
       "style_slanted": "斜め",
-      "style_modern": "モダン"
+      "style_modern": "ストレート"
     },
     "dismissed_notes": {
       "title": "非表示にしたメモ",

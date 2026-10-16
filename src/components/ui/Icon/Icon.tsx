@@ -41,6 +41,7 @@ import {
   Save,
   Search,
   SettingsCog,
+  Share,
   Tools,
   Trash,
   Upload,
@@ -95,15 +96,17 @@ const PIXEL_ICONS = {
   save: Save,
   search: Search,
   "settings-cog": SettingsCog,
+  share: Share,
   tools: Tools,
   trash: Trash,
   upload: Upload,
   "warning-diamond": WarningDiamond,
 } satisfies Record<string, IconComponent>
 
-// Pixelarticons leave about a pixel of space around their drawing, so brand
-// marks are drawn this much shorter than the icon size to look as large
-const BRAND_HEIGHT = 0.75
+// Pixelarticons leave about a pixel of space around their drawing, and
+// brand marks are solid, so they're drawn this much shorter than the icon
+// size to look as heavy (0.75 read too big, e.g. in tags)
+const BRAND_HEIGHT = 0.625
 
 const BRAND_ICONS = {
   analogizer: AnalogizerMark,

@@ -16,54 +16,21 @@
   color: var(--theme-text-headline);
 }
 
+/* Previous / next, on the left and right edge of the detail view */
 .screenshots__button {
-  position: absolute;
-  background-color: var(--light-colour);
+  position: fixed;
+
+  /* Not a transform, so the button keeps its own press effect */
+  top: calc(50% - var(--control-height, 28px) / 2);
   z-index: 1000;
-  top: 50%;
-  width: 30px;
-  height: 100px;
-  transform: translateY(-50%);
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0.2;
-  user-select: none;
-
-  &:hover {
-    opacity: 0.75;
-  }
-
-  &:active {
-    opacity: 1;
-  }
-
-  &::before {
-    content: "";
-    display: block;
-    width: 10px;
-    height: 10px;
-    aspect-ratio: 1 / 1;
-    border: 2px solid var(--theme-text-headline);
-    border-right-color: transparent;
-    border-bottom-color: transparent;
-    transform: rotate(-45deg);
-  }
 }
 
 .screenshots__button--previous {
-  left: 0;
-  padding-left: 5px;
+  left: calc(var(--sidebar-width, 0px) + var(--space-sm));
 }
 
 .screenshots__button--next {
-  right: 0;
-  padding-right: 5px;
-
-  &::before {
-    transform: rotate(135deg);
-  }
+  right: var(--space-sm);
 }
 
 .screenshots__item {
@@ -75,8 +42,14 @@
   box-sizing: border-box;
 }
 
-.screenshots__item--selected {
-  border-color: var(--selection-colour);
+/* A frame in the light theme, like tiles: white screenshots would blend
+   into the page */
+:root[data-theme="light"] .screenshots__item {
+  border: 1px solid var(--theme-separator);
+}
+
+:root .screenshots__item.screenshots__item--selected {
+  border: 2px solid var(--theme-selection);
 }
 
 .screenshots__item-image {
@@ -87,8 +60,14 @@
   image-rendering: pixelated;
 }
 
-.screenshots__loading-item {
-  height: 190px !important;
+/* One section per game, core or day; room before the next header */
+.screenshots__group .grid {
+  padding-block: var(--space-lg) var(--space-2xl);
+}
+
+/* Holds a screenshot's place while it loads, in the Game Boy's shape */
+.screenshots__skeleton {
+  height: auto;
   aspect-ratio: 160 / 144;
 }
 
@@ -101,12 +80,18 @@
   width: 100%;
   opacity: 0;
   transform: translateY(80%);
-  transition: opacity 0.25s linear, transform 0.2s ease-out;
+  transition:
+    opacity 0.25s linear,
+    transform 0.2s ease-out;
 }
 
 .screenshots__item:hover .screenshots__item-info {
   opacity: 0.8;
   transform: translateY(0);
+}
+
+.screenshots__item-date {
+  color: var(--theme-text-soft);
 }
 
 .screenshots__item-info-line {

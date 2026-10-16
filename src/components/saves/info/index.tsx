@@ -1,3 +1,4 @@
+import Callout from "../../ui/Callout"
 import {
   CSSProperties,
   Fragment,
@@ -23,6 +24,10 @@ import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsCheckbox } from "../../controls/inputs/checkbox"
 import { ControlsSearch } from "../../controls/inputs/search"
 import { useAtomValue } from "jotai"
+import IconButton from "../../ui/IconButton"
+import { pocketPathAtom } from "../../../jotai/atoms"
+import { revealFile } from "../../../utils/openFolder"
+import { gameDisplayName } from "../../../utils/gameName"
 
 export const SaveInfo = ({
   backupPath,
@@ -44,12 +49,21 @@ export const SaveInfo = ({
     popScroll()
   }, [pocketSaves, popScroll])
 
+  // Oldest first: a bar spans backups that follow each other in time
+  const sortedZips = useMemo(
+    () =>
+      [...zipFilesInfo].sort(
+        (a, b) => a.zip.last_modified - b.zip.last_modified
+      ),
+    [zipFilesInfo]
+  )
+
   const perSaveFormat = useMemo(() => {
     const perSave: {
       [filename: string]: SaveVersion[]
     } = {}
 
-    zipFilesInfo.forEach(({ zip, files }) => {
+    sortedZips.forEach(({ zip, files }) => {
       files
         .filter((f) => f.filename.endsWith(".sav"))
         .forEach(({ filename, last_modified, crc32 }) => {
@@ -68,7 +82,7 @@ export const SaveInfo = ({
         return !hideOnlyCurrent || uniqueFiles.length > 1
       })
     )
-  }, [zipFilesInfo, hideOnlyCurrent])
+  }, [sortedZips, hideOnlyCurrent])
 
   const filteredSaves = useMemo(
     () =>
@@ -110,7 +124,7 @@ export const SaveInfo = ({
   )
 
   const gridStyling = useMemo<CSSProperties>(() => {
-    const timestamps = zipFilesInfo.map(({ zip: { last_modified } }) =>
+    const timestamps = sortedZips.map(({ zip: { last_modified } }) =>
       getAreaName(last_modified)
     )
 
@@ -120,10 +134,10 @@ export const SaveInfo = ({
       gridTemplateAreas: `'${timestamps.join(" ")}'`,
       gridTemplateColumns: `${timestamps.map(() => "1fr").join(" ")}`,
     } as CSSProperties
-  }, [zipFilesInfo])
+  }, [sortedZips])
 
   return (
-    <div className="saves">
+    <div className="saves saves--info">
       <Controls>
         <ControlsBackButton onClick={onBack}>
           {t("controls.back")}
@@ -141,57 +155,62 @@ export const SaveInfo = ({
         />
       </Controls>
 
-      <div className="saves__info-save-files-timestamps" style={gridStyling}>
-        {zipFilesInfo.map(({ zip }) => {
-          const date = new Date(zip.last_modified * 1000)
-          return (
+      <Callout className="callout--in-page">{t("explainer")}</Callout>
+
+      {/* The column lines fill this, not the header bar and hint above */}
+      <div className="saves__info-table">
+        <div className="saves__info-save-files-timestamps" style={gridStyling}>
+          {sortedZips.map(({ zip }) => {
+            const date = new Date(zip.last_modified * 1000)
+            return (
+              <div
+                className="saves__info-timestamp"
+                key={zip.last_modified}
+                style={{
+                  gridArea: getAreaName(zip.last_modified),
+                }}
+              >
+                <span>{t("date", { date })}</span>
+                <span className="saves__info-time">{t("time", { date })}</span>
+              </div>
+            )
+          })}
+        </div>
+
+        <div className="saves__info-save-files-background" style={gridStyling}>
+          {sortedZips.map(({ zip }) => (
             <div
-              className="saves__info-timestamp"
+              className="saves__info-save-files-background-column"
               key={zip.last_modified}
               style={{
                 gridArea: getAreaName(zip.last_modified),
               }}
-            >
-              <div>{t("date", { date })}</div>
-              <div>{t("time", { date })}</div>
-            </div>
-          )
-        })}
-      </div>
+            ></div>
+          ))}
+        </div>
 
-      <div className="saves__info-save-files-background" style={gridStyling}>
-        {zipFilesInfo.map(({ zip }) => (
-          <div
-            className="saves__info-save-files-background-column"
-            key={zip.last_modified}
-            style={{
-              gridArea: getAreaName(zip.last_modified),
-            }}
-          ></div>
+        {groupedFilteredSaves.map(({ platform, saves }) => (
+          <Fragment key={platform}>
+            <PlatformLabel id={platform} />
+            <div className="saves__info-save-files">
+              {Object.entries(saves).map(([savefile, versions]) => (
+                <SaveVersions
+                  key={savefile}
+                  backupPath={backupPath}
+                  savefile={savefile}
+                  versions={versions}
+                  gridStyling={gridStyling}
+                  onSelect={restore}
+                  currentHash={
+                    pocketSaves.find(({ filename }) => filename === savefile)
+                      ?.crc32
+                  }
+                />
+              ))}
+            </div>
+          </Fragment>
         ))}
       </div>
-
-      {groupedFilteredSaves.map(({ platform, saves }) => (
-        <Fragment key={platform}>
-          <PlatformLabel id={platform} />
-          <div className="saves__info-save-files">
-            {Object.entries(saves).map(([savefile, versions]) => (
-              <SaveVersions
-                key={savefile}
-                backupPath={backupPath}
-                savefile={savefile}
-                versions={versions}
-                gridStyling={gridStyling}
-                onSelect={restore}
-                currentHash={
-                  pocketSaves.find(({ filename }) => filename === savefile)
-                    ?.crc32
-                }
-              />
-            ))}
-          </div>
-        </Fragment>
-      ))}
     </div>
   )
 }
@@ -211,13 +230,33 @@ const SaveVersions = ({
   versions: SaveVersion[]
 }) => {
   const { t } = useTranslation("save_info")
+  const pocketPath = useAtomValue(pocketPathAtom)
   const currentTimestamp =
     versions.find(({ crc32 }) => crc32 === currentHash)?.zip.last_modified ||
     Infinity
+  const fileName = splitAsPath(savefile).at(-1) ?? savefile
 
   return (
     <div className="saves__info-save-file">
-      <div className="saves__info-save-file-path">{savefile}</div>
+      {/* The game's name, then where its save is, small, with a button to
+          show it on the SD card */}
+      <div className="saves__info-save-file-header">
+        <span className="saves__info-save-file-name">
+          {gameDisplayName(fileName)}
+        </span>
+        <span className="saves__info-save-file-path">{`Saves/${savefile.replace(/^\//, "")}`}</span>
+        {pocketPath && (
+          <IconButton
+            theme="tertiary"
+            icon="folder"
+            label={t("show_on_sd_card")}
+            className="saves__info-save-file-reveal"
+            onClick={() =>
+              revealFile(`${pocketPath}/Saves/${savefile.replace(/^\//, "")}`)
+            }
+          />
+        )}
+      </div>
       <div className="saves__info-save-file-versions" style={gridStyling}>
         {versions.map(({ zip, crc32 }, index) => {
           // skip ones we've already drawn the box for
@@ -231,27 +270,40 @@ const SaveVersions = ({
           const text = isCurrent
             ? t("current")
             : zip.last_modified < currentTimestamp
-            ? t("older")
-            : t("newer")
+              ? t("older")
+              : t("newer")
+
+          const style = {
+            gridColumnStart: getAreaName(zip.last_modified),
+            gridColumnEnd: getAreaName(lastVersionWithHash.zip.last_modified),
+          }
+
+          if (isCurrent) {
+            return (
+              <div
+                key={zip.filename}
+                className="saves__info-save-file-version saves__info-save-file-version--current"
+                style={style}
+              >
+                {text}
+              </div>
+            )
+          }
 
           return (
-            <div
+            <button
+              type="button"
               key={zip.filename}
-              className={`saves__info-save-file-version saves__info-save-file-version--${
-                isCurrent ? "current" : "other"
-              }`}
-              onClick={
-                isCurrent ? undefined : () => onSelect(zip.filename, savefile)
-              }
-              style={{
-                gridColumnStart: getAreaName(zip.last_modified),
-                gridColumnEnd: getAreaName(
-                  lastVersionWithHash.zip.last_modified
-                ),
-              }}
+              className="saves__info-save-file-version saves__info-save-file-version--other"
+              style={style}
+              aria-label={t("restore_version", {
+                date: new Date(zip.last_modified * 1000),
+              })}
+              onClick={() => onSelect(zip.filename, savefile)}
             >
-              <div>{text}</div>
-            </div>
+              <span className="saves__info-label">{text}</span>
+              <span className="saves__info-restore">{t("restore")}</span>
+            </button>
           )
         })}
       </div>

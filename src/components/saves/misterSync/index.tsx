@@ -1,91 +1,55 @@
-import { emit, listen } from "@tauri-apps/api/event"
-import {
-  Fragment,
-  startTransition,
-  Suspense,
-  useCallback,
-  useDeferredValue,
-  useEffect,
-  useMemo,
-  useState,
-} from "react"
-import { useBEM } from "../../../hooks/useBEM"
-import { AllSavesSelector } from "../../../jotai/saves/selectors"
-import { invokeBeginMisterSaveSyncSession } from "../../../utils/invokes"
-import { splitAsPath } from "../../../utils/splitAsPath"
-import { Controls, ControlsActions } from "../../controls"
-import { Loader } from "../../loader"
-import { PlatformLabel } from "../info/platformLabel"
-import { search } from "fast-fuzzy"
-
-import "./index.css"
-import {
-  FileMetadataSelectorFamily,
-  MiSTerPlatformsForPocketPlatformSelectorFamily,
-  MiSTerSaveInfoSelectorFamily,
-} from "./recoil/selectors"
-import { Tip } from "../../tip"
-import { pocketPathAtom } from "../../../jotai/atoms"
-import { MiSTerCredsAtom } from "./recoil/atoms"
+import { Suspense, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { SaveMapping } from "./mapping"
+import { confirm } from "@tauri-apps/plugin-dialog"
+import { search } from "fast-fuzzy"
+import clsx from "clsx"
+
+import { splitAsPath } from "../../../utils/splitAsPath"
+import { gameDisplayName } from "../../../utils/gameName"
+import { Controls, ControlsActions } from "../../controls"
 import { ControlsBackButton } from "../../controls/inputs/backButton"
 import { ControlsButton } from "../../controls/inputs/button"
 import { ControlsSearch } from "../../controls/inputs/search"
-import { useAtom, useAtomValue } from "jotai"
-import {
-  useAtomFnSet,
-  useSetAtomFnSet,
-  useSmoothedAtom,
-  useSmoothedAtomValue,
-} from "../../../utils/jotai"
+import { Loader } from "../../loader"
+import Button from "../../ui/Button"
+import Callout from "../../ui/Callout"
+import EmptyState from "../../ui/EmptyState"
+import Select from "../../ui/Select"
+import Tag from "../../ui/Tag"
+import { PlatformLabel } from "../info/platformLabel"
+import { SaveMapping } from "./mapping"
+import { MISTER_SAVES_ROOT, useMisterSource } from "./source"
+
+// The platform labels' styles live with Backups
+import "../index.css"
+import "./index.css"
 
 type MisterSyncProps = {
+  /** Leaves the session (and ends it). */
   onClose: () => void
 }
 
+/**
+ * Step two of MiSTer Sync, once connected: the Pocket's saves on the left,
+ * the chosen one compared with the MiSTer's on the right (with copying
+ * either way), and the session's activity below.
+ */
 export const MisterSync = ({ onClose }: MisterSyncProps) => {
-  const [connected, setConnected] = useState(false)
-  const [connecting, setConnecting] = useState(false)
-  const [selectedSave, setSelectedSave] = useState<string | null>(null)
-
-  const [query, setQuery] = useState("")
-
-  const creds = useSmoothedAtomValue(MiSTerCredsAtom)
-  const setCreds = useSetAtomFnSet(MiSTerCredsAtom)
-
   const { t } = useTranslation("mister_sync")
+  const source = useMisterSource()
+  const [selectedSave, setSelectedSave] = useState<string | null>(null)
+  const [query, setQuery] = useState("")
   const [saveMappingOpen, setSaveMappingOpen] = useState(false)
-  const connect = useCallback(async () => {
-    setConnecting(true)
-    const c = await invokeBeginMisterSaveSyncSession(
-      creds.host,
-      creds.user,
-      creds.password
-    )
-    setConnecting(false)
-    setConnected(c)
-  }, [creds])
 
+  // Keeps the session open; ends it on leaving
   useEffect(() => {
-    if (connected) {
-      const i = window.setInterval(() => {
-        emit("mister-save-sync-heartbeat")
-      }, 10 * 1000)
-
-      return () => {
-        clearInterval(i)
-      }
-    }
-  }, [connected])
-
-  useEffect(() => {
+    const interval = window.setInterval(source.heartbeat, 10 * 1000)
     return () => {
-      if (connected) {
-        emit("mister-save-sync-end")
-      }
+      clearInterval(interval)
+      source.end()
     }
-  }, [connected])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div className="mister-sync">
@@ -93,308 +57,324 @@ export const MisterSync = ({ onClose }: MisterSyncProps) => {
         <ControlsBackButton onClick={onClose}>
           {t("controls.back")}
         </ControlsBackButton>
-
-        {connected && (
-          <>
-            <ControlsSearch
-              placeholder={t("controls.search")}
-              value={query}
-              onChange={setQuery}
-            />
-            <ControlsActions>
-              <ControlsButton onClick={() => setSaveMappingOpen(true)}>
-                {t("controls.save_mapping")}
-              </ControlsButton>
-            </ControlsActions>
-          </>
-        )}
+        <ControlsSearch
+          placeholder={t("controls.search")}
+          value={query}
+          onChange={setQuery}
+        />
+        <ControlsActions>
+          {/* The mapping reads the MiSTer's folders, which the demo hasn't */}
+          {!source.demo && (
+            <ControlsButton onClick={() => setSaveMappingOpen(true)}>
+              {t("controls.save_mapping")}
+            </ControlsButton>
+          )}
+        </ControlsActions>
       </Controls>
-      <Suspense>
-        {saveMappingOpen && (
+
+      {saveMappingOpen && (
+        <Suspense>
           <SaveMapping onClose={() => setSaveMappingOpen(false)} />
-        )}
-      </Suspense>
-      <Suspense fallback={<div className="mister-sync__status" />}>
-        {selectedSave && <SaveStatus key={selectedSave} path={selectedSave} />}
-      </Suspense>
-      <div className="mister-sync__content">
-        {connected && (
-          <Suspense>
-            <SavesList onSelect={setSelectedSave} query={query} />
-          </Suspense>
-        )}
-        {connecting && <Loader />}
-        {!connected && !connecting && (
-          <>
-            <div className="mister-sync__login">
-              <label>
-                {t("login.host")}
-                <input
-                  type="text"
-                  value={creds.host}
-                  onChange={({ target }) => {
-                    const host = target.value
-                    setCreds((c) => ({ ...c, host }))
-                  }}
-                />
-              </label>
-              <label>
-                {t("login.username")}
-                <input
-                  type="text"
-                  value={creds.user}
-                  onChange={({ target }) => {
-                    const user = target.value
-                    setCreds((c) => ({ ...c, user }))
-                  }}
-                />
-              </label>
-              <label>
-                {t("login.password")}
-                <input
-                  type="text"
-                  value={creds.password}
-                  onChange={({ target }) => {
-                    const password = target.value
-                    setCreds((c) => ({ ...c, password }))
-                  }}
-                />
-              </label>
-              <button onClick={connect}>{t("login.connect")}</button>
-            </div>
-            <Tip>{t("tip_1")}</Tip>
-            <Tip>{t("tip_2")}</Tip>
-            <Tip>{t("tip_3")}</Tip>
-          </>
-        )}
-      </div>
-      <ChannelLog />
-    </div>
-  )
-}
+        </Suspense>
+      )}
 
-type SaveStatusProps = {
-  path: string
-}
+      {source.demo && (
+        <Callout className="callout--in-page">{t("demo_note")}</Callout>
+      )}
 
-const SaveStatus = ({ path }: SaveStatusProps) => {
-  const [equalityStatus, setEqualityStatus] = useState<"equals" | "unequal">(
-    "equals"
-  )
-  const { t } = useTranslation("mister_sync")
+      <div className="mister-sync__panes">
+        <Suspense fallback={<Loader />}>
+          <SavesList
+            query={query}
+            selected={selectedSave}
+            onSelect={setSelectedSave}
+          />
+        </Suspense>
 
-  const [platform, file] = useMemo(() => {
-    const split = splitAsPath(path)
-    const platform = split.at(0)
-    const file = split.at(-1)
-    return [platform, file]
-  }, [path])
-
-  const misterPlatforms = useAtomValue(
-    MiSTerPlatformsForPocketPlatformSelectorFamily(platform)
-  )
-
-  const misterSaveInfo = useAtomValue(
-    MiSTerSaveInfoSelectorFamily({ platforms: misterPlatforms, file })
-  )
-  const pocketSaveInfo = useAtomValue(
-    FileMetadataSelectorFamily({ filePath: path })
-  )
-
-  const pocketPath = useAtomValue(pocketPathAtom)
-
-  useEffect(() => {
-    if (misterSaveInfo?.crc32 === pocketSaveInfo.crc32) {
-      setEqualityStatus("equals")
-    } else {
-      setEqualityStatus("unequal")
-    }
-  }, [misterSaveInfo, pocketSaveInfo])
-
-  const [selectedMisterPlatform, setSelectedMisterPlatform] = useState(
-    misterPlatforms[0] ?? ""
-  )
-
-  const misterPath = useMemo<string | null>(() => {
-    if (misterSaveInfo?.path) return misterSaveInfo.path
-    if (misterPlatforms.length === 0) return null
-    return `/media/fat/saves/${selectedMisterPlatform}/${file}`
-  }, [
-    file,
-    misterPlatforms.length,
-    misterSaveInfo?.path,
-    selectedMisterPlatform,
-  ])
-
-  const moveSave = useCallback(
-    (to: "pocket" | "mister") => {
-      switch (to) {
-        case "mister": {
-          if (!misterPath) return
-          emit("mister-save-sync-move-save-to-mister", {
-            from: `${pocketPath}/Saves/${path}`,
-            to: misterPath,
-          })
-          break
-        }
-        case "pocket": {
-          emit("mister-save-sync-move-save-to-pocket", {
-            to: `${pocketPath}/Saves/${path}`,
-            from: misterSaveInfo?.path || "",
-          })
-          break
-        }
-      }
-    },
-    [misterPath, pocketPath, path, misterSaveInfo?.path]
-  )
-
-  const toPocketClassName = useBEM({
-    block: "mister-sync",
-    element: "status-to-pocket",
-    modifiers: {
-      equals: equalityStatus === "equals",
-    },
-  })
-
-  const toMisterClassName = useBEM({
-    block: "mister-sync",
-    element: "status-to-mister",
-    modifiers: {
-      equals: equalityStatus === "equals",
-    },
-  })
-
-  return (
-    <div className="mister-sync__status">
-      <div className="mister-sync__pocket">
-        <strong>{t("pocket")}</strong>
-        <div>{path}</div>
-        <div>{new Date(pocketSaveInfo.timestamp).toLocaleString()}</div>
-        <div className="mister-sync__crc">
-          {pocketSaveInfo.crc32.toString(16)}
-        </div>
-      </div>
-      <div className="mister-sync__status-equals">
-        {misterPath && (
-          <>
-            {misterSaveInfo?.crc32 && (
-              <div
-                className={toPocketClassName}
-                onClick={() => moveSave("pocket")}
-              ></div>
-            )}
-            <div
-              className={toMisterClassName}
-              onClick={() => moveSave("mister")}
-            ></div>
-          </>
-        )}
+        <section className="mister-sync__detail" aria-live="polite">
+          {selectedSave ? (
+            <Suspense fallback={<Loader />}>
+              <SaveCompare
+                key={selectedSave}
+                path={selectedSave}
+                onOpenMapping={() => setSaveMappingOpen(true)}
+              />
+            </Suspense>
+          ) : (
+            <EmptyState icon="save" title={t("compare.pick_title")}>
+              {t("compare.pick")}
+            </EmptyState>
+          )}
+        </section>
       </div>
 
-      <div className="mister-sync__mister">
-        {misterPath && (
-          <>
-            <strong>{t("mister")}</strong>
-            <div>{misterPath.replace("/media/fat/saves/", "")}</div>
-            <div>
-              {misterSaveInfo?.timestamp &&
-                new Date(misterSaveInfo.timestamp).toLocaleString()}
-            </div>
-            <div className="mister-sync__crc">
-              {misterSaveInfo?.crc32?.toString(16) || t("not_found")}
-            </div>
-
-            {misterPlatforms.length > 1 && !misterSaveInfo?.path && (
-              <select
-                value={selectedMisterPlatform}
-                onChange={({ target }) =>
-                  setSelectedMisterPlatform(target.value)
-                }
-              >
-                {misterPlatforms.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </select>
-            )}
-          </>
-        )}
-        {!misterPath && (
-          <>
-            <div style={{ whiteSpace: "pre-wrap" }}>
-              {t("unsupported", { platform })}
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  )
-}
-
-const ChannelLog = () => {
-  const [logMessages, setLogMessages] = useState<string[]>([])
-
-  useEffect(() => {
-    const unlisten = listen<string>("mister-save-sync-log", ({ payload }) => {
-      setLogMessages((log) => [payload, ...log])
-    })
-    return () => {
-      unlisten.then((l) => l())
-    }
-  }, [])
-
-  return (
-    <div className="mister-sync__log">
-      {logMessages.map((s, index) => (
-        <div key={index}>{s}</div>
-      ))}
+      <Activity />
     </div>
   )
 }
 
 type SavesListProps = {
-  onSelect: (save: string) => void
   query: string
+  selected: string | null
+  onSelect: (save: string) => void
 }
 
-const SavesList = ({ onSelect, query }: SavesListProps) => {
-  const allSaves = useAtomValue(AllSavesSelector)
-
-  const filteredSaves = useMemo(() => {
-    if (query.length === 0) return allSaves
-    return search(query, allSaves)
-  }, [allSaves, query])
+/** The Pocket's saves by platform; each one is a button to compare it. */
+const SavesList = ({ query, selected, onSelect }: SavesListProps) => {
+  const source = useMisterSource()
+  const allSaves = source.useSaves()
+  const { t } = useTranslation("mister_sync")
 
   const savesByPlatform = useMemo(() => {
-    return filteredSaves.reduce((acc, curr) => {
-      const split = splitAsPath(curr)
-      const platform = split.at(0) || "unknown"
-      if (!acc[platform]) acc[platform] = []
-      acc[platform].push(curr)
-      return acc
-    }, {} as Record<string, string[]>)
-  }, [filteredSaves])
+    const saves = query.trim() ? search(query, allSaves) : allSaves
+    const groups = new Map<string, string[]>()
+    for (const save of saves) {
+      const platform = splitAsPath(save).at(0) || "unknown"
+      groups.set(platform, [...(groups.get(platform) ?? []), save])
+    }
+    return [...groups.entries()].sort(([a], [b]) => a.localeCompare(b))
+  }, [allSaves, query])
+
+  if (savesByPlatform.length === 0) {
+    return (
+      <nav className="mister-sync__list">
+        <p className="mister-sync__list-empty">{t("list.empty")}</p>
+      </nav>
+    )
+  }
 
   return (
-    <div className="mister-sync__saves-list">
-      {Object.entries(savesByPlatform).map(([platformId, saves]) => (
-        <Fragment key={platformId}>
-          <PlatformLabel id={platformId} />
-          <div className="mister-sync__saves-list-group">
-            {saves.map((s) => (
-              <div
-                className="mister-sync__saves-list-item"
-                key={s}
-                onClick={() => onSelect(s)}
-              >
-                {s}
+    <nav className="mister-sync__list" aria-label={t("list.title")}>
+      {savesByPlatform.map(([platformId, saves]) => (
+        <section key={platformId} className="mister-sync__list-group">
+          <Suspense
+            fallback={
+              <div className="saves__info-save-files-platform">
+                {platformId}
               </div>
-            ))}
-          </div>
-        </Fragment>
+            }
+          >
+            <PlatformLabel id={platformId} />
+          </Suspense>
+          {saves.map((save) => (
+            <button
+              type="button"
+              key={save}
+              aria-pressed={save === selected}
+              className={clsx(
+                "mister-sync__list-item",
+                save === selected && "mister-sync__list-item--selected"
+              )}
+              onClick={() => onSelect(save)}
+            >
+              {gameDisplayName(splitAsPath(save).at(-1) ?? save)}
+            </button>
+          ))}
+        </section>
       ))}
+    </nav>
+  )
+}
+
+type SaveCompareProps = {
+  path: string
+  onOpenMapping: () => void
+}
+
+/**
+ * One save on the Pocket next to the MiSTer's: when each was changed and
+ * their checksums, which one is newer, and copying either way (asking
+ * before one replaces the other).
+ */
+const SaveCompare = ({ path, onOpenMapping }: SaveCompareProps) => {
+  const { t } = useTranslation("mister_sync")
+  const source = useMisterSource()
+  const [platform, file] = useMemo(() => {
+    const split = splitAsPath(path)
+    return [split.at(0), split.at(-1)]
+  }, [path])
+
+  const folders = source.useMisterFolders(platform)
+  const misterSave = source.useMisterSave(folders, file)
+  const pocketSave = source.usePocketSave(path)
+  const [folder, setFolder] = useState(folders[0] ?? "")
+
+  const found = Boolean(misterSave?.crc32)
+  const misterPath =
+    misterSave?.path ??
+    (folders.length > 0 ? `${MISTER_SAVES_ROOT}${folder}/${file}` : null)
+
+  const status: "same" | "pocket_newer" | "mister_newer" | "missing" = !found
+    ? "missing"
+    : misterSave?.crc32 === pocketSave.crc32
+      ? "same"
+      : (misterSave?.timestamp ?? 0) > pocketSave.timestamp
+        ? "mister_newer"
+        : "pocket_newer"
+
+  const copyToMister = async () => {
+    if (!misterPath) return
+    if (found && !(await confirm(t("confirm.to_mister"), { kind: "warning" })))
+      return
+    source.copyToMister(path, misterPath)
+  }
+
+  const copyToPocket = async () => {
+    if (!misterSave?.path) return
+    if (!(await confirm(t("confirm.to_pocket"), { kind: "warning" }))) return
+    source.copyToPocket(path, misterSave.path)
+  }
+
+  return (
+    <div className="mister-sync__compare">
+      <header className="mister-sync__compare-header">
+        <h2 className="mister-sync__compare-title">
+          {gameDisplayName(file ?? path)}
+        </h2>
+        {folders.length > 0 && (
+          <Tag
+            theme={
+              status === "same"
+                ? "accent"
+                : status === "missing"
+                  ? "neutral"
+                  : "warning"
+            }
+            icon={status === "same" ? "check" : undefined}
+          >
+            {t(`compare.${status}`)}
+          </Tag>
+        )}
+      </header>
+
+      {folders.length === 0 ? (
+        // The Pocket platform has no MiSTer folder in the mapping
+        <Callout variant="warning">
+          {t("unsupported", { platform })}
+          {!source.demo && (
+            <div className="mister-sync__callout-action">
+              <Button onClick={onOpenMapping}>
+                {t("controls.save_mapping")}
+              </Button>
+            </div>
+          )}
+        </Callout>
+      ) : (
+        <>
+          <div className="mister-sync__sides">
+            <SaveSide
+              title={t("pocket")}
+              path={`Saves/${path}`}
+              timestamp={pocketSave.timestamp}
+              crc32={pocketSave.crc32}
+              newer={status === "pocket_newer"}
+            />
+            <SaveSide
+              title={t("mister")}
+              path={misterPath?.replace(MISTER_SAVES_ROOT, "") ?? ""}
+              timestamp={misterSave?.timestamp}
+              crc32={misterSave?.crc32}
+              newer={status === "mister_newer"}
+            >
+              {/* Where to copy it to, when it could go into several */}
+              {!found && folders.length > 1 && (
+                <Select
+                  label={t("folder")}
+                  value={folder}
+                  onChange={setFolder}
+                  options={folders.map((f) => ({ value: f }))}
+                />
+              )}
+            </SaveSide>
+          </div>
+
+          <div className="mister-sync__copy">
+            <Button
+              theme={status === "mister_newer" ? "primary" : "secondary"}
+              icon="download"
+              disabled={!found || status === "same"}
+              onClick={copyToPocket}
+            >
+              {t("copy_to_pocket")}
+            </Button>
+            <Button
+              theme={
+                status === "pocket_newer" || status === "missing"
+                  ? "primary"
+                  : "secondary"
+              }
+              icon="upload"
+              disabled={!misterPath || status === "same"}
+              onClick={copyToMister}
+            >
+              {t("copy_to_mister")}
+            </Button>
+          </div>
+        </>
+      )}
     </div>
+  )
+}
+
+type SaveSideProps = {
+  title: string
+  path: string
+  timestamp?: number
+  crc32?: number
+  newer: boolean
+  children?: React.ReactNode
+}
+
+/** One side of the comparison: changed when, checksum, where. */
+const SaveSide = ({
+  title,
+  path,
+  timestamp,
+  crc32,
+  newer,
+  children,
+}: SaveSideProps) => {
+  const { t } = useTranslation("mister_sync")
+  return (
+    <div
+      className={clsx("mister-sync__side", newer && "mister-sync__side--newer")}
+    >
+      <div className="mister-sync__side-title">
+        {title}
+        {newer && <Tag theme="accent">{t("newer")}</Tag>}
+      </div>
+      {crc32 ? (
+        <dl className="mister-sync__facts">
+          <dt>{t("modified")}</dt>
+          <dd>{timestamp ? t("date", { date: new Date(timestamp) }) : "–"}</dd>
+          <dt>{t("checksum")}</dt>
+          <dd className="mister-sync__code">{crc32.toString(16)}</dd>
+        </dl>
+      ) : (
+        <p className="mister-sync__not-found">{t("not_found")}</p>
+      )}
+      <div className="mister-sync__code mister-sync__path">{path}</div>
+      {children}
+    </div>
+  )
+}
+
+/** The session's messages (connecting, copying, errors), folded. */
+const Activity = () => {
+  const { t } = useTranslation("mister_sync")
+  const log = useMisterSource().useLog()
+  return (
+    <details className="mister-sync__activity">
+      <summary>{t("activity", { count: log.length })}</summary>
+      {log.length === 0 ? (
+        <p className="mister-sync__list-empty">{t("activity_empty")}</p>
+      ) : (
+        <ol>
+          {log.map((message, index) => (
+            <li key={log.length - index}>{message}</li>
+          ))}
+        </ol>
+      )}
+    </details>
   )
 }

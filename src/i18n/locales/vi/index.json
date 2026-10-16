@@ -28,7 +28,10 @@
     "close": "Đóng",
     "loading": "Đang tải",
     "dismiss": "Ẩn",
-    "no_results": "Không có mục nào khớp với tìm kiếm hoặc bộ lọc."
+    "no_results": "Không có mục nào khớp với tìm kiếm hoặc bộ lọc.",
+    "clear_search": "Xóa tìm kiếm",
+    "filters": "Bộ lọc",
+    "clear_filters": "Xóa bộ lọc"
   },
   "clean_files": {
     "close_button": "Đóng",
@@ -230,12 +233,21 @@
       "features": "Tính năng",
       "features_count": "Tính năng ({count})",
       "platform": "Nền tảng",
-      "update_all_count": "Cập nhật tất cả ({count})"
+      "update_all_count": "Cập nhật tất cả ({count})",
+      "all": "Tất cả",
+      "license": "Giấy phép",
+      "license_free": "Chỉ miễn phí",
+      "license_required": "Cần giấy phép",
+      "ai": "Mức AI",
+      "ai_none": "Không",
+      "ai_up_to": "Đến {max, number, percent}"
     },
     "install_tip": "Bạn cũng có thể cài đặt core (hoặc bất kỳ thứ gì khác trong tệp zip) bằng cách kéo tệp .zip vào cửa sổ này",
     "installed": "Đã cài đặt ({count})",
     "not_installed": "Khả dụng ({count})",
-    "updates": "Có bản cập nhật ({count})"
+    "updates": "Có bản cập nhật ({count})",
+    "installed_filtered": "Đã cài ({count} / {total})",
+    "not_installed_filtered": "Có sẵn ({count} / {total})"
   },
   "error": {
     "report": "Bạn có thể báo cáo điều này qua GitHub bao gồm văn bản bên dưới và bất cứ điều gì bạn vừa làm",
@@ -355,13 +367,15 @@
     "open_folder": "Mở thư mục",
     "none": "Không tìm thấy trò chơi. Hãy cài một core, sau đó thêm trò chơi vào thư mục của nó trên thẻ SD.",
     "show_in_folder": "Hiện trong thư mục",
-    "empty_title": "Chưa có trò chơi"
+    "empty_title": "Chưa có trò chơi",
+    "no_core": "Chưa cài core",
+    "find_core": "Tìm core"
   },
   "image_editor": {
     "cancel": "Hủy bỏ",
     "import_image": "Nhập hình ảnh",
-    "remove": "Xóa",
-    "reset": "Làm lại",
+    "remove": "Xóa lớp",
+    "reset": "Đặt lại lớp",
     "rotate": "Xoay",
     "save": "Lưu hình ảnh",
     "scale": "Tỉ lệ",
@@ -448,19 +462,25 @@
     "add_via_code": {
       "title": "Thêm bằng mã chia sẻ",
       "cancel": "Hủy bỏ",
-      "add": "Thêm palette"
+      "add": "Thêm palette",
+      "label": "Mã chia sẻ",
+      "hint": "Dán mã đã sao chép bằng “{button}” ở một bảng màu.",
+      "found": "Thêm bảng màu “{name}”.",
+      "invalid": "Đây không phải mã chia sẻ bảng màu. Hãy kiểm tra đã sao chép toàn bộ mã chưa."
     },
     "full": {
       "inputs": {
         "background": "Nền",
-        "obj0": "Obj0",
-        "obj1": "Obj1",
-        "window": "cửa sổ",
+        "obj0": "Sprite 0",
+        "obj1": "Sprite 1",
+        "window": "Cửa sổ",
         "off": "LCD tắt"
       },
       "save": "Lưu palette",
       "reset": "Đặt lại màu",
-      "emu_credit": "Trình giả lập GB được chuyển thể từ <1>roblouie/gameboy-emulator</1>"
+      "emu_credit": "Trình giả lập GB được chuyển thể từ <1>roblouie/gameboy-emulator</1>",
+      "preview_game": "Trò chơi",
+      "no_games": "Đặt một trò chơi Game Boy (.gb) vào Assets/gb trên thẻ SD để thử bảng màu."
     },
     "empty": {
       "title": "Chưa có bảng màu",
@@ -474,9 +494,9 @@
       "save_mapping": "Lưu Mapping"
     },
     "login": {
-      "connect": "Kết nối với MiSTer",
-      "host": "Máy chủ / Địa chỉ IP:",
-      "password": "Mật khẩu:",
+      "connect": "Kết nối",
+      "host": "Máy chủ hoặc địa chỉ IP",
+      "password": "Mật khẩu",
       "username": "Tên đăng nhập"
     },
     "mister": "MiSTer",
@@ -491,7 +511,41 @@
       "clear": "Xóa ánh xạ",
       "reset": "Trả về mặc định",
       "title": "Ánh xạ bản lưu"
-    }
+    },
+    "connect": {
+      "title": "Kết nối với MiSTer",
+      "host_hint": "Địa chỉ của MiSTer trong mạng của bạn, ví dụ 192.168.0.10.",
+      "demo_hint": "Xem trước: mọi máy chủ đều kết nối, trừ “fail”.",
+      "failed": "Không kết nối được với MiSTer. Hãy kiểm tra địa chỉ, thông tin đăng nhập và FTP đã bật chưa.",
+      "connecting": "Đang kết nối…",
+      "cancel": "Hủy"
+    },
+    "list": {
+      "title": "Bản lưu trên Pocket",
+      "empty": "Không có bản lưu phù hợp."
+    },
+    "compare": {
+      "pick_title": "Chọn một bản lưu",
+      "pick": "Chọn một bản lưu bên trái để so sánh với bản trên MiSTer và sao chép theo chiều bất kỳ.",
+      "same": "Giống nhau ở cả hai",
+      "pocket_newer": "Mới hơn trên Pocket",
+      "mister_newer": "Mới hơn trên MiSTer",
+      "missing": "Chưa có trên MiSTer"
+    },
+    "newer": "Mới hơn",
+    "modified": "Đã đổi",
+    "checksum": "Mã kiểm tra",
+    "folder": "Thư mục MiSTer",
+    "copy_to_pocket": "Sao chép sang Pocket",
+    "copy_to_mister": "Sao chép sang MiSTer",
+    "confirm": {
+      "to_mister": "Thay bản lưu trên MiSTer bằng bản từ Pocket?",
+      "to_pocket": "Thay bản lưu trên Pocket bằng bản từ MiSTer?"
+    },
+    "activity": "Hoạt động ({count})",
+    "activity_empty": "Chưa có gì.",
+    "demo_note": "Xem trước với bản lưu giả: không gửi gì tới MiSTer và không thay đổi gì trên thẻ SD.",
+    "date": "{date, date, medium} {date, time, short}"
   },
   "news_feed": {
     "last_updated": "Cập nhật lần cuối <1></1>",
@@ -506,7 +560,9 @@
     "cores": "Core đã cài",
     "edit": "Chỉnh sửa",
     "details": "Chi tiết",
-    "no_cores": "Không có core đã cài nào dùng nền tảng này."
+    "no_cores": "Không có core đã cài nào dùng nền tảng này.",
+    "games": "Trò chơi",
+    "no_games": "Không có trò chơi trong thư mục của nền tảng này trên thẻ SD."
   },
   "platforms": {
     "cancel": "Hủy bỏ",
@@ -563,7 +619,11 @@
     "date": "{date, date, short}",
     "newer": "Mới hơn",
     "older": "Cũ hơn",
-    "time": "{date, time, short}"
+    "time": "{date, time, short}",
+    "explainer": "Mỗi cột là một bản sao lưu, cũ nhất ở bên trái. Mỗi thanh cho biết bản lưu giữ nguyên trong bao lâu; thanh màu xanh là bản đang có trên Pocket. Nhấp vào thanh khác để khôi phục phiên bản đó.",
+    "restore": "Khôi phục",
+    "restore_version": "Khôi phục phiên bản từ {date, date, short}, {date, time, short}",
+    "show_on_sd_card": "Hiện trên thẻ SD"
   },
   "save_states": {
     "cartridge": "Băng",
@@ -574,7 +634,13 @@
       "search": "Tìm kiếm",
       "core": "Core",
       "platform": "Nền tảng",
-      "all": "Tất cả"
+      "all": "Tất cả",
+      "group_by": "Nhóm theo",
+      "group": {
+        "core": "Core",
+        "game": "Trò chơi"
+      },
+      "game": "Trò chơi"
     },
     "count": "( {count} / 128 )",
     "item": {
@@ -593,12 +659,20 @@
         "gb": "GB",
         "gb_player": "GB Player",
         "black_and_white": "Trắng & Đen"
-      }
+      },
+      "photo_number": "Ảnh {number} / {total}",
+      "shade": "Sắc độ {number}"
     },
     "empty": {
       "title": "Chưa có trạng thái lưu",
-      "text": "Nhấn nút Analogue và Lên khi đang chơi để lưu một kỷ niệm. Nó sẽ hiện ở đây."
-    }
+      "text": "Memories là các trạng thái lưu: ảnh chụp nhanh của trò chơi mà bạn có thể quay lại bất cứ lúc nào."
+    },
+    "how_to": {
+      "save": "Nhấn <key>nút Analogue</key> và <key>Lên</key> khi đang chơi để lưu một kỷ niệm.",
+      "load": "Nhấn <key>nút Analogue</key> và <key>Xuống</key> để tải bản mới nhất. Trước đó hãy bật <key>Enable Quick Load</key> trong Settings → Memories của Pocket."
+    },
+    "count_game": "{count, plural, other {# trạng thái lưu}}",
+    "unknown_game": "Trò chơi không rõ"
   },
   "saves": {
     "backups": "Sao lưu: {count}",
@@ -628,19 +702,37 @@
       "back": "Quay lại Chụp màn hình",
       "save": "Lưu ảnh chụp màn hình",
       "share": "Chia sẻ ảnh chụp màn hình",
-      "upscaled": "Đã tăng kích cỡ"
-    }
+      "upscaled": "Đã tăng kích cỡ",
+      "previous": "Ảnh chụp trước",
+      "next": "Ảnh chụp tiếp"
+    },
+    "dimensions": "{width} × {height} px"
   },
   "screenshots": {
     "controls": {
       "delete_selected": "Xóa đã chọn ({count})",
       "export_selected": "Trích xuất đã chọn ({count})",
       "search": "Tìm kiếm",
-      "select": "Chọn"
+      "select": "Chọn",
+      "group_by": "Nhóm theo",
+      "group": {
+        "game": "Trò chơi",
+        "core": "Core",
+        "date": "Ngày"
+      },
+      "game": "Trò chơi",
+      "core": "Core",
+      "all": "Tất cả"
     },
     "no_screenshots": "Khi bạn chụp một số ảnh chụp màn hình, chúng sẽ xuất hiện ở đây",
     "how_to": "Nhấn đồng thời <key>nút Analogue</key> và <key>Start</key> khi đang chơi. Ảnh chụp màn hình được lưu vào thẻ SD và hiện ở đây.",
-    "empty_title": "Chưa có ảnh chụp màn hình"
+    "empty_title": "Chưa có ảnh chụp màn hình",
+    "taken": "{date, date, medium}, {date, time, short}",
+    "count": "{count, plural, other {# ảnh chụp màn hình}}",
+    "unknown_game": "Trò chơi không rõ",
+    "unknown_core": "Core không rõ",
+    "unknown_date": "Không có ngày",
+    "group_date": "{date, date, full}"
   },
   "settings": {
     "3d_pocket": {
@@ -760,7 +852,7 @@
       "light": "Sáng",
       "style_label": "Phong cách",
       "style_slanted": "Vát chéo",
-      "style_modern": "Hiện đại"
+      "style_modern": "Thẳng"
     },
     "dismissed_notes": {
       "title": "Ghi chú đã ẩn",

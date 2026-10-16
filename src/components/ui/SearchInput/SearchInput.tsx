@@ -1,5 +1,8 @@
 import React, { useEffect, useRef } from "react"
 
+import { useTranslation } from "react-i18next"
+
+import Icon from "../Icon"
 import Kbd from "../Kbd"
 import TextInput from "../TextInput"
 
@@ -21,6 +24,7 @@ export interface SearchInputProps {
 
 const SearchInput = ({ shortcut = false, ...props }: SearchInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
+  const { t } = useTranslation("app")
 
   useEffect(() => {
     if (!shortcut) return
@@ -44,7 +48,21 @@ const SearchInput = ({ shortcut = false, ...props }: SearchInputProps) => {
       autoComplete="off"
       spellCheck={false}
       suffix={
-        shortcut && !props.value ? (
+        props.value ? (
+          // Our pixel icon instead of the browser's clear button
+          <button
+            type="button"
+            className="search-input__clear"
+            aria-label={t("clear_search")}
+            title={t("clear_search")}
+            onClick={() => {
+              props.onChange("")
+              inputRef.current?.focus()
+            }}
+          >
+            <Icon icon="close" />
+          </button>
+        ) : shortcut ? (
           <Kbd className="search-input__shortcut" keys={["mod", "f"]} />
         ) : undefined
       }

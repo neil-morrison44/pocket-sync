@@ -8,12 +8,18 @@ type GridProps = {
   children: ReactNode
   className?: string
   placeholderItemHeight?: number
+  /**
+   * Renders every item right away instead of when it scrolls into view,
+   * e.g. while a search hides most of them, so they can be counted.
+   */
+  eager?: boolean
 }
 
 export const Grid = ({
   children,
   className,
   placeholderItemHeight = 200,
+  eager = false,
 }: GridProps) => {
   const items = Children.toArray(children)
   const gridRef = useRef<HTMLDivElement>(null)
@@ -26,15 +32,17 @@ export const Grid = ({
 
   return (
     <div className={`grid ${className ?? ""}`} ref={gridRef} {...rovingFocus}>
-      {items.map((i) => (
-        <OnlyLoadsWhenShown
-          className="skeleton"
-          height={placeholderItemHeight}
-          key={((i as any).key as string | undefined) || undefined}
-        >
-          {i}
-        </OnlyLoadsWhenShown>
-      ))}
+      {eager
+        ? items
+        : items.map((i) => (
+            <OnlyLoadsWhenShown
+              className="skeleton"
+              height={placeholderItemHeight}
+              key={((i as any).key as string | undefined) || undefined}
+            >
+              {i}
+            </OnlyLoadsWhenShown>
+          ))}
     </div>
   )
 }

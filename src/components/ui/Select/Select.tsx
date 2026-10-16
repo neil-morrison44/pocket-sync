@@ -50,6 +50,11 @@ export interface SelectProps<T extends string> {
   /** Placeholder of the search field when `searchable`. */
   searchPlaceholder?: string
   theme?: SelectTheme
+  /**
+   * Marks a filter that's set (not on its default), like a pressed toggle,
+   * so it's clear which filters are on.
+   */
+  active?: boolean
   className?: string
 }
 
@@ -115,6 +120,7 @@ function Select<T extends string>({
   searchable = false,
   searchPlaceholder,
   theme = "control",
+  active = false,
   className,
 }: SelectProps<T>) {
   const portalContainer = usePortalContainer()
@@ -156,6 +162,7 @@ function Select<T extends string>({
         "select",
         `select--theme-${theme}`,
         disabled && "select--is-disabled",
+        active && "select--is-active",
         className
       )}
     >

@@ -3,7 +3,10 @@
   align-items: center;
   gap: var(--space-xs);
   height: 20px;
-  padding-inline: var(--space-sm);
+
+  /* Like Button: ~1.35× the space above and below the text (12px in a
+     20px tag), plus half the slant */
+  padding-inline: calc((20px - 12px) / 2 * 1.35 + var(--slant) / 2);
   font-size: var(--font-size-xs);
   font-weight: 500;
   line-height: 1;

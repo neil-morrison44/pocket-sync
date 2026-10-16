@@ -1,6 +1,8 @@
 import {
   GameBoyGameSelectorFamily,
-  PaletteColoursSelectorFamily,
+  PaletteCodeKeptSelectorFamily,
+  PaletteColoursKeptSelectorFamily,
+  paletteGamesSelector,
 } from "../../jotai/palettes/selectors"
 import { Palette, rgb } from "../../types"
 
@@ -14,108 +16,248 @@ import {
   useRef,
   useState,
 } from "react"
-import { WalkDirSelectorFamily } from "../../jotai/selectors"
 import { Loader } from "../loader"
 import { useSavePalette } from "./hooks/useSavePalette"
 import { Link } from "../link"
-import { PaletteName } from "./name"
 import { Trans, useTranslation } from "react-i18next"
 import { useAtomValue } from "jotai"
+import { writeText } from "@tauri-apps/plugin-clipboard-manager"
+import { DetailHeading } from "../shared/detailPage"
+import { Controls, ControlsActions } from "../controls"
+import { ControlsBackButton } from "../controls/inputs/backButton"
+import { ControlsButton } from "../controls/inputs/button"
+import Button from "../ui/Button"
+import Icon from "../ui/Icon"
+import Select from "../ui/Select"
+import Callout from "../ui/Callout"
+import { gameDisplayName } from "../../utils/gameName"
+import { splitAsPath } from "../../utils/splitAsPath"
+import { PreviewCanvasInner } from "./previewCanvas"
+import {
+  paletteBaseName,
+  paletteFolders,
+  usePaletteActions,
+} from "./hooks/usePaletteActions"
 
 type PaletteFullProps = {
   name: string
   onClose: () => void
+  /** Called with the new name after the palette is renamed. */
+  onRenamed: (newName: string) => void
 }
 
-export const PaletteFull = ({ name }: PaletteFullProps) => {
-  const paletteColours = useAtomValue(PaletteColoursSelectorFamily(name))
+/**
+ * One palette: its name (edited in place), the actions in the header, a
+ * game running with the palette on the left, the colours on the right.
+ */
+export const PaletteFull = ({ name, onClose, onRenamed }: PaletteFullProps) => {
+  const paletteColours = useAtomValue(PaletteColoursKeptSelectorFamily(name))
+  const paletteCode = useAtomValue(PaletteCodeKeptSelectorFamily(name))
   const { t } = useTranslation("palettes")
   const [tempPalette, setTempPalette] = useState(() => paletteColours)
   const hasBeenChanged = useMemo(
     () => !comparePalettes(tempPalette, paletteColours),
     [tempPalette, paletteColours]
   )
-  const games = useAtomValue(
-    WalkDirSelectorFamily({ path: `Assets/gb`, extensions: ["gb"] })
-  )
   const savePalette = useSavePalette()
+  const { duplicate, rename, remove } = usePaletteActions(name)
+
+  return (
+    <div className="detail-page palette-detail">
+      {/* Always shown (the page is short, so a bar that appears on scroll
+          wouldn't), with the palette's actions as full buttons */}
+      <Controls>
+        <ControlsBackButton onClick={onClose}>
+          {t("buttons.back")}
+        </ControlsBackButton>
+        <ControlsActions>
+          <ControlsButton icon="code" onClick={() => writeText(paletteCode)}>
+            {t("item.copy_code")}
+          </ControlsButton>
+          <ControlsButton icon="copy" onClick={duplicate}>
+            {t("item.duplicate")}
+          </ControlsButton>
+          <ControlsButton
+            theme="destructive"
+            icon="trash"
+            onClick={async () => {
+              await remove()
+              onClose()
+            }}
+          >
+            {t("item.delete")}
+          </ControlsButton>
+        </ControlsActions>
+      </Controls>
+      <div className="detail-page__content">
+        <DetailHeading
+          title={
+            <PaletteNameInput
+              name={name}
+              onRename={async (baseName) => {
+                const newName = await rename(baseName)
+                if (newName) onRenamed(newName)
+              }}
+            />
+          }
+        />
+
+        <div className="palette-detail__layout">
+          <section className="palette-detail__preview">
+            <Suspense fallback={<Loader />}>
+              <GamePreview palette={tempPalette} />
+            </Suspense>
+            <p className="palette-detail__credit">
+              <Trans t={t} i18nKey={"full.emu_credit"}>
+                {"_"}
+                <Link href="https://github.com/roblouie/gameboy-emulator">
+                  {"_"}
+                </Link>
+              </Trans>
+            </p>
+          </section>
+
+          <section className="palette-detail__colours">
+            <PaletteInput
+              title={t("full.inputs.background")}
+              colours={tempPalette.background}
+              onChange={(background) =>
+                setTempPalette((t) => ({ ...t, background }))
+              }
+            />
+            <PaletteInput
+              title={t("full.inputs.obj0")}
+              colours={tempPalette.obj0}
+              onChange={(obj0) => setTempPalette((t) => ({ ...t, obj0 }))}
+            />
+            <PaletteInput
+              title={t("full.inputs.obj1")}
+              colours={tempPalette.obj1}
+              onChange={(obj1) => setTempPalette((t) => ({ ...t, obj1 }))}
+            />
+            <PaletteInput
+              title={t("full.inputs.window")}
+              colours={tempPalette.window}
+              onChange={(window) => setTempPalette((t) => ({ ...t, window }))}
+            />
+            <PaletteInput
+              title={t("full.inputs.off")}
+              colours={[tempPalette.off]}
+              onChange={([off]) => setTempPalette((t) => ({ ...t, off }))}
+            />
+            <div className="palette-detail__buttons">
+              <Button
+                theme="tertiary"
+                disabled={!hasBeenChanged}
+                onClick={() => setTempPalette(paletteColours)}
+              >
+                {t("full.reset")}
+              </Button>
+              <Button
+                theme="primary"
+                disabled={!hasBeenChanged}
+                onClick={() => savePalette(tempPalette, name)}
+              >
+                {t("full.save")}
+              </Button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * The palette's name as the page title, editable in place: Enter or leaving
+ * the field renames the file, Escape undoes the edit. Folders show before it.
+ */
+const PaletteNameInput = ({
+  name,
+  onRename,
+}: {
+  name: string
+  onRename: (baseName: string) => Promise<void>
+}) => {
+  const { t } = useTranslation("palettes")
+  const [value, setValue] = useState(() => paletteBaseName(name))
+  const folders = paletteFolders(name)
+
+  useEffect(() => setValue(paletteBaseName(name)), [name])
+
+  const commit = () => {
+    if (value.trim() && value.trim() !== paletteBaseName(name)) onRename(value)
+    else setValue(paletteBaseName(name))
+  }
+
+  return (
+    <span className="palette-detail__name">
+      {folders.length > 0 && (
+        <span className="palette-detail__folders">{`${folders.join(" / ")} / `}</span>
+      )}
+      <input
+        className="palette-detail__name-input"
+        aria-label={t("item.rename")}
+        value={value}
+        size={Math.max(value.length, 1)}
+        spellCheck={false}
+        onChange={({ target }) => setValue(target.value.replace(/[\\/]/g, ""))}
+        onBlur={commit}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") event.currentTarget.blur()
+          if (event.key === "Escape") {
+            // Undoes the edit instead of leaving the page
+            event.stopPropagation()
+            setValue(paletteBaseName(name))
+            requestAnimationFrame(() => event.currentTarget?.blur())
+          }
+        }}
+      />
+      <Icon icon="pencil" className="palette-detail__name-icon" />
+    </span>
+  )
+}
+
+/**
+ * A game from `Assets/gb` running with the palette, chosen in a select;
+ * without games, a hint where to put one.
+ */
+const GamePreview = ({ palette }: { palette: Palette }) => {
+  const { t } = useTranslation("palettes")
+  const games = useAtomValue(paletteGamesSelector)
   const [selectedGame, setSelectedGame] = useState<string | null>(
     games[0] || null
   )
 
-  return (
-    <div className="palette__grid">
-      <div className="palette__name">
-        <PaletteName name={name} />
-      </div>
-      <div className="palette__preview">
-        <select
-          value={selectedGame || undefined}
-          onChange={({ target }) => setSelectedGame(target.value)}
-        >
-          {games.map((g) => (
-            <option value={g} key={g}>
-              {g.replace("/common/", "").replace("\\common\\", "")}
-            </option>
-          ))}
-        </select>
-        {selectedGame && (
-          <Suspense fallback={<Loader />}>
-            <GameboyEmu
-              game={selectedGame}
-              key={selectedGame}
-              palette={tempPalette}
-            />
-          </Suspense>
-        )}
-      </div>
-      <div className="palette__credits">
-        <Trans t={t} i18nKey={"full.emu_credit"}>
-          {"_"}
-          <Link href="https://github.com/roblouie/gameboy-emulator">{"_"}</Link>
-        </Trans>
-      </div>
-      <div className="palette__inputs">
-        <PaletteInput
-          title={t("full.inputs.background")}
-          colours={tempPalette.background}
-          onChange={(background) =>
-            setTempPalette((t) => ({ ...t, background }))
-          }
-        />
-        <PaletteInput
-          title={t("full.inputs.obj0")}
-          colours={tempPalette.obj0}
-          onChange={(obj0) => setTempPalette((t) => ({ ...t, obj0 }))}
-        />
-        <PaletteInput
-          title={t("full.inputs.obj1")}
-          colours={tempPalette.obj1}
-          onChange={(obj1) => setTempPalette((t) => ({ ...t, obj1 }))}
-        />
-        <PaletteInput
-          title={t("full.inputs.window")}
-          colours={tempPalette.window}
-          onChange={(window) => setTempPalette((t) => ({ ...t, window }))}
-        />
+  if (games.length === 0 || !selectedGame) {
+    return (
+      <>
+        <PreviewCanvasInner palette={palette} />
+        <Callout className="palette-detail__no-games">
+          {t("full.no_games")}
+        </Callout>
+      </>
+    )
+  }
 
-        <PaletteInput
-          title={t("full.inputs.off")}
-          colours={[tempPalette.off]}
-          onChange={([off]) => setTempPalette((t) => ({ ...t, off }))}
-        />
-        {hasBeenChanged && (
-          <div className="palette__inputs-buttons">
-            <button onClick={() => savePalette(tempPalette, name)}>
-              {t("full.save")}
-            </button>
-            <button onClick={() => setTempPalette(paletteColours)}>
-              {t("full.reset")}
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+  return (
+    <>
+      <Suspense fallback={<div className="palette__emu-canvas" />}>
+        <GameboyEmu game={selectedGame} key={selectedGame} palette={palette} />
+      </Suspense>
+      {/* Below the game, no wider than it */}
+      <Select
+        className="palette-detail__game-select"
+        label={t("full.preview_game")}
+        value={selectedGame}
+        onChange={setSelectedGame}
+        searchable={games.length > 8}
+        options={games.map((g) => ({
+          value: g,
+          label: gameDisplayName(splitAsPath(g).at(-1) ?? g),
+        }))}
+      />
+    </>
   )
 }
 
@@ -125,18 +267,21 @@ type PaletteInputProps<T> = {
   onChange: (newColours: T) => void
 }
 
+/** One colour set: its name, then a swatch per colour (a colour picker). */
 const PaletteInput = <T extends [rgb, rgb, rgb, rgb] | [rgb]>({
   title,
   colours,
   onChange,
 }: PaletteInputProps<T>) => {
   return (
-    <div className="palette__inputs-set">
-      <div className="palette__inputs-set-title">{title}</div>
-      <div>
+    <div className="palette-detail__set">
+      <div className="palette-detail__set-title">{title}</div>
+      <div className="palette-detail__swatches">
         {colours.map((colour, index) => (
           <input
+            className="palette-detail__swatch"
             type="color"
+            aria-label={colours.length > 1 ? `${title} ${index + 1}` : title}
             value={`#${colour
               .map((c) => c.toString(16).padStart(2, "0"))
               .join("")}`}

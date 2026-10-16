@@ -45,8 +45,9 @@ export const SaveStateItem = ({
   return (
     <SearchContextSelfHidingConsumer
       fields={[metadata.game, metadata.platform]}
-      otherFn={({ platform }) =>
-        !platform || platform === "All" || metadata.platform === platform
+      otherFn={({ platform, game }) =>
+        (!platform || platform === "All" || metadata.platform === platform) &&
+        (!game || game === "All" || metadata.game === game)
       }
     >
       <Tile

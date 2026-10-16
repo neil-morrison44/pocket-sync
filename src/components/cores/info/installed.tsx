@@ -50,6 +50,7 @@ import { AIReport } from "./aiReport"
 import { PocketSyncConfigSelector } from "../../../jotai/config/selectors"
 import Accordion, { AccordionItem } from "../../ui/Accordion"
 import Button from "../../ui/Button"
+import Callout from "../../ui/Callout"
 import Icon from "../../ui/Icon"
 import clsx from "clsx"
 import Skeleton from "../../ui/Skeleton"
@@ -245,19 +246,23 @@ const InstalledActions = ({
         </p>
       )}
 
-      {requiredFiles.length > 0 && (
-        <p className="detail-page__hint">
-          <Icon icon={filesMissing ? "warning-diamond" : "check"} />
-          {filesMissing
-            ? t("guide.required_files_missing", {
-                count: foundCount,
-                total: requiredFiles.length,
-              })
-            : t("guide.required_files_found", {
-                total: requiredFiles.length,
-              })}
-        </p>
-      )}
+      {/* Missing files keep the core from running: a warning box */}
+      {requiredFiles.length > 0 &&
+        (filesMissing ? (
+          <Callout variant="warning">
+            {t("guide.required_files_missing", {
+              count: foundCount,
+              total: requiredFiles.length,
+            })}
+          </Callout>
+        ) : (
+          <p className="detail-page__hint">
+            <Icon icon="check" />
+            {t("guide.required_files_found", {
+              total: requiredFiles.length,
+            })}
+          </p>
+        ))}
 
       <div className="core-info__action-buttons">
         {canUpdate && downloadUrl && (

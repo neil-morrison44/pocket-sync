@@ -24,11 +24,26 @@ const Skeleton = ({ width, height, className }: SkeletonProps) => (
 export interface CardSkeletonProps {
   /** Total card height, so the grid doesn't jump when the card loads. */
   height?: number
+  /**
+   * `horizontal` matches a horizontal `Tile` (small image beside the text,
+   * e.g. save states) instead of a card with the image on top.
+   */
+  orientation?: "vertical" | "horizontal"
 }
 
 /** Placeholder shaped like a core or game card: image area and text lines. */
-export const CardSkeleton = ({ height }: CardSkeletonProps) => (
-  <div className="skeleton-card" style={{ height }} aria-hidden>
+export const CardSkeleton = ({
+  height,
+  orientation = "vertical",
+}: CardSkeletonProps) => (
+  <div
+    className={clsx(
+      "skeleton-card",
+      orientation === "horizontal" && "skeleton-card--horizontal"
+    )}
+    style={{ height }}
+    aria-hidden
+  >
     <Skeleton className="skeleton-card__media" />
     <div className="skeleton-card__body">
       <Skeleton width="60%" />

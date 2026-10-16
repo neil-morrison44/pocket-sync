@@ -1,3 +1,4 @@
+import Callout from "../../../ui/Callout"
 import { Suspense, useCallback, useState } from "react"
 import { PersistInteractFileAtomFamily } from "../../../../jotai/coreSettings/atoms"
 import {
@@ -13,7 +14,6 @@ import Button from "../../../ui/Button"
 import Select from "../../../ui/Select"
 import Skeleton from "../../../ui/Skeleton"
 import Switch from "../../../ui/Switch"
-import { Tip } from "../../../tip"
 import { useTranslation } from "react-i18next"
 
 import "./index.css"
@@ -130,7 +130,7 @@ const InteractSettings = ({
   return (
     <>
       {interactJSON.interact.variables.length === 0 && (
-        <Tip>{t("modal.no_settings_found")}</Tip>
+        <Callout>{t("modal.no_settings_found")}</Callout>
       )}
 
       <div className="core-settings__settings">

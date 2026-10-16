@@ -1,12 +1,15 @@
 import { useTranslation } from "react-i18next"
 import { formatDownloadTime, InstalledCoreImage } from "../shared"
-import { Suspense } from "react"
-import { AuthorTag } from "../../shared/authorTag"
+import { ReactNode, startTransition, Suspense } from "react"
 import { useAtomValue, useSetAtom } from "jotai"
 import { CoreInfoSelectorFamily } from "../../../jotai/selectors"
-import { OnlyLoadsWhenShown } from "../../../utils/onlyLoadsWhenShown"
 import { currentViewAtom } from "../../../jotai/view/atoms"
+import Icon from "../../ui/Icon"
 
+/**
+ * What the update did: the updated and installed cores (each opens its
+ * core page) and the downloaded files per core, in three columns.
+ */
 export const UpdateFinishedReport = ({
   updated_cores,
   installed_cores,
@@ -25,76 +28,102 @@ export const UpdateFinishedReport = ({
   ).length
 
   return (
-    <>
-      <h3>
+    <div className="update-modal__report">
+      <h3 className="update-modal__report-title">
+        <Icon icon="check" className="update-modal__report-check" />
         {t("finish_report.title", {
           time: formatDownloadTime(total_time / 1000 || 0),
         })}
       </h3>
 
-      <div className="update__core-finish-report-items">
-        <div className="update__core-finish-report-item">
-          <h3>{t("finish_report.updated", { count: updated_cores.length })}</h3>
-          <div className="update__core-finish-report-cores">
-            {updated_cores.map((c) => (
-              <OnlyLoadsWhenShown height={52} className="">
-                <Suspense key={c} fallback={<div>{c}</div>}>
-                  <InstalledCoreItem coreName={c} />
-                </Suspense>
-              </OnlyLoadsWhenShown>
-            ))}
-          </div>
-        </div>
-        <div className="update__core-finish-report-item">
-          <h3>
-            {t("finish_report.installed", { count: installed_cores.length })}
-          </h3>
-          <div className="update__core-finish-report-cores">
-            {installed_cores.map((c) => (
-              <Suspense key={c} fallback={<div>{c}</div>}>
-                <InstalledCoreItem coreName={c} />
-              </Suspense>
-            ))}
-          </div>
-        </div>
+      <div className="update-modal__report-columns">
+        <ReportColumn
+          title={t("finish_report.updated", { count: updated_cores.length })}
+        >
+          {updated_cores.map((c) => (
+            <Suspense
+              key={c}
+              fallback={<div className="update-modal__report-core">{c}</div>}
+            >
+              <ReportCore coreName={c} />
+            </Suspense>
+          ))}
+        </ReportColumn>
 
-        <div className="update__core-finish-report-item">
-          <h3>{t("finish_report.downloaded_files", { count: fileCount })}</h3>
-          <div className="update__core-finish-report-cores">
-            {Object.entries(downloaded_files_per_core).map(
-              ([coreName, files]) => (
-                <details>
-                  <summary>{`${coreName} (${files.length})`}</summary>
-                  <ul style={{ overflow: "auto", maxHeight: "200px" }}>
-                    {files.map((f) => (
-                      <li key={f}>{f}</li>
-                    ))}
-                  </ul>
-                </details>
-              )
-            )}
-          </div>
-        </div>
+        <ReportColumn
+          title={t("finish_report.installed", {
+            count: installed_cores.length,
+          })}
+        >
+          {installed_cores.map((c) => (
+            <Suspense
+              key={c}
+              fallback={<div className="update-modal__report-core">{c}</div>}
+            >
+              <ReportCore coreName={c} />
+            </Suspense>
+          ))}
+        </ReportColumn>
+
+        <ReportColumn
+          title={t("finish_report.downloaded_files", { count: fileCount })}
+        >
+          {Object.entries(downloaded_files_per_core).map(
+            ([coreName, files]) => (
+              <details key={coreName} className="update-modal__report-files">
+                <summary>
+                  {coreName}
+                  <span className="update-modal__report-count">
+                    {files.length}
+                  </span>
+                </summary>
+                <ul>
+                  {files.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+              </details>
+            )
+          )}
+        </ReportColumn>
       </div>
-    </>
+    </div>
   )
 }
 
-const InstalledCoreItem = ({ coreName }: { coreName: string }) => {
+const ReportColumn = ({
+  title,
+  children,
+}: {
+  title: string
+  children: ReactNode
+}) => (
+  <section className="update-modal__report-column">
+    <h4 className="update-modal__report-column-title">{title}</h4>
+    <div className="update-modal__report-list">{children}</div>
+  </section>
+)
+
+/** One core: its platform image, name and version; opens the core. */
+const ReportCore = ({ coreName }: { coreName: string }) => {
   const coreInfo = useAtomValue(CoreInfoSelectorFamily(coreName))
   const setViewAndSubview = useSetAtom(currentViewAtom)
-  const [_, core] = coreName.split(".")
 
   return (
-    <div
-      className="update__core-finish-report-core"
-      onClick={() => setViewAndSubview({ view: "Cores", selected: coreName })}
+    <button
+      type="button"
+      className="update-modal__report-core"
+      onClick={() =>
+        startTransition(() =>
+          setViewAndSubview({ view: "Cores", selected: coreName })
+        )
+      }
     >
       <InstalledCoreImage coreName={coreName} />
-      <div>
-        <div>{`${core} ${coreInfo.core.metadata.version}`}</div>
-        <AuthorTag coreName={coreName} />
-      </div>
-    </div>
+      <span className="update-modal__report-core-name">{coreName}</span>
+      <span className="update-modal__report-core-version">
+        {coreInfo.core.metadata.version}
+      </span>
+    </button>
   )
 }

@@ -28,7 +28,10 @@
     "close": "Kapat",
     "loading": "Yükleniyor",
     "dismiss": "Kapat",
-    "no_results": "Aramanız veya filtrelerinizle eşleşen bir şey yok."
+    "no_results": "Aramanız veya filtrelerinizle eşleşen bir şey yok.",
+    "clear_search": "Aramayı temizle",
+    "filters": "Filtreler",
+    "clear_filters": "Filtreleri temizle"
   },
   "clean_files": {
     "close_button": "Kapat",
@@ -357,8 +360,8 @@
   "image_editor": {
     "cancel": "İptal",
     "import_image": "Resim İçe Aktar",
-    "remove": "Kaldır",
-    "reset": "Sıfırla",
+    "remove": "Katmanı kaldır",
+    "reset": "Katmanı sıfırla",
     "rotate": "Döndür",
     "save": "Görseli kaydet",
     "scale": "Ölçekle",

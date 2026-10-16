@@ -1,3 +1,5 @@
+import { gameSystemsSelector } from "../../../jotai/games/selectors"
+import { GameSystemSection } from "../../games/system"
 import { startTransition, Suspense, useCallback, useState } from "react"
 import {
   PlatformInfoSelectorFamily,
@@ -174,7 +176,24 @@ export const PlatformInfo = ({ id, onBack }: PlatformInfoProps) => {
             <CoresForPlatform platformId={id} />
           </Suspense>
         </DetailSection>
+
+        <DetailSection title={t("games")}>
+          <Suspense fallback={<Skeleton height={80} />}>
+            <GamesForPlatform platformId={id} />
+          </Suspense>
+        </DetailSection>
       </div>
     </DetailPage>
   )
+}
+
+/** The games in the platform's folder (`Assets/<id>`), like on Games. */
+const GamesForPlatform = ({ platformId }: { platformId: string }) => {
+  const systems = useAtomValue(gameSystemsSelector)
+  const { t } = useTranslation("platform_info")
+  const system = systems.find((s) => s.platformId === platformId)
+  const empty = <p className="detail-page__hint">{t("no_games")}</p>
+
+  if (!system) return empty
+  return <GameSystemSection system={system} embedded emptyFallback={empty} />
 }

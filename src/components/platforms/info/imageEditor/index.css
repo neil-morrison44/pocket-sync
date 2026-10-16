@@ -12,6 +12,10 @@
   image-rendering: pixelated;
   background-color: var(--theme-media-background);
   border-radius: var(--radius-card);
+
+  /* Images usually have a white background: a frame shows where it ends */
+  outline: 1px solid var(--theme-separator);
+  outline-offset: -1px;
 }
 
 .image-editor__stamps {

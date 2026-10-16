@@ -162,16 +162,18 @@ const ImageEditorContent = ({
                 >
                   {t("reset")}
                 </Button>
-                <IconButton
+                {/* Labelled: an icon alone didn't say what it removes */}
+                <Button
                   icon="trash"
                   theme="destructive"
-                  label={t("remove")}
                   onClick={() =>
                     setImageStamps((stamps) =>
                       stamps.filter((s) => s !== stamp)
                     )
                   }
-                />
+                >
+                  {t("remove")}
+                </Button>
               </div>
             </div>
           )

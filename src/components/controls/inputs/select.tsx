@@ -10,6 +10,8 @@ type ControlsSelectProps<T extends string> = {
   i18nPrefix?: string
   /** Placeholder of a search field; adds one, for long lists. */
   searchPlaceholder?: string
+  /** Marks a filter that's set (see `Select`'s `active`). */
+  active?: boolean
 }
 
 export const ControlsSelect = <T extends string>({
@@ -19,6 +21,7 @@ export const ControlsSelect = <T extends string>({
   onChange,
   i18nPrefix,
   searchPlaceholder,
+  active,
 }: ControlsSelectProps<T>) => {
   const { t } = useTranslation()
 
@@ -27,6 +30,7 @@ export const ControlsSelect = <T extends string>({
       label={children}
       searchable={Boolean(searchPlaceholder)}
       searchPlaceholder={searchPlaceholder}
+      active={active}
       value={selected}
       onChange={(value) => startTransition(() => onChange(value))}
       options={options.map((value) => ({

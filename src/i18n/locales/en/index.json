@@ -28,7 +28,10 @@
     "close": "Close",
     "loading": "Loading",
     "dismiss": "Dismiss",
-    "no_results": "Nothing matches your search or filters."
+    "no_results": "Nothing matches your search or filters.",
+    "clear_search": "Clear search",
+    "filters": "Filters",
+    "clear_filters": "Clear Filters"
   },
   "clean_files": {
     "close_button": "Close",
@@ -234,12 +237,21 @@
       "features": "Features",
       "features_count": "Features ({count})",
       "platform": "Platform",
-      "update_all_count": "Update All ({count})"
+      "update_all_count": "Update All ({count})",
+      "all": "All",
+      "license": "License",
+      "license_free": "Free only",
+      "license_required": "Needs a license",
+      "ai": "AI-ness",
+      "ai_none": "None",
+      "ai_up_to": "Up to {max, number, percent}"
     },
     "install_tip": "You can also install cores (or anything else in a zip) by dragging the .zip into this window",
     "installed": "Installed ({count})",
     "not_installed": "Available ({count})",
-    "updates": "Updates Available ({count})"
+    "updates": "Updates Available ({count})",
+    "installed_filtered": "Installed ({count} / {total})",
+    "not_installed_filtered": "Available ({count} / {total})"
   },
   "error": {
     "report": "You can report this via GitHub include the text below & whatever you just did",
@@ -359,13 +371,15 @@
     "open_folder": "Open Folder",
     "none": "No games found. Install a core, then add games to its folder on the SD card.",
     "show_in_folder": "Show in Folder",
-    "empty_title": "No games yet"
+    "empty_title": "No games yet",
+    "no_core": "No core installed",
+    "find_core": "Find a Core"
   },
   "image_editor": {
     "cancel": "Cancel",
     "import_image": "Import Image",
-    "remove": "Remove",
-    "reset": "Reset",
+    "remove": "Remove Layer",
+    "reset": "Reset Layer",
     "rotate": "Rotate",
     "save": "Save Image",
     "scale": "Scale",
@@ -486,7 +500,8 @@
       "updatable": "Updates available",
       "installable": "Available to install"
     },
-    "modal_title": "Updating Cores"
+    "modal_title": "Updating Cores",
+    "errors": "{count, plural, one {# error} other {# errors}}"
   },
   "plugins": {
     "buttons": {
@@ -541,19 +556,25 @@
     "add_via_code": {
       "title": "Add via share code",
       "cancel": "Cancel",
-      "add": "Add Palette"
+      "add": "Add Palette",
+      "label": "Share code",
+      "hint": "Paste a code copied with “{button}” on a palette.",
+      "found": "Adds the palette “{name}”.",
+      "invalid": "That isn't a palette share code. Check that the whole code was copied."
     },
     "full": {
       "inputs": {
         "background": "Background",
-        "obj0": "Obj0",
-        "obj1": "Obj1",
-        "window": "window",
+        "obj0": "Sprites 0",
+        "obj1": "Sprites 1",
+        "window": "Window",
         "off": "LCD off"
       },
       "save": "Save Palette",
       "reset": "Reset Colours",
-      "emu_credit": "GB emulator adapted from <1>roblouie/gameboy-emulator</1>"
+      "emu_credit": "GB emulator adapted from <1>roblouie/gameboy-emulator</1>",
+      "preview_game": "Game",
+      "no_games": "Put a Game Boy game (.gb) in Assets/gb on the SD card to try the palette in it."
     },
     "empty": {
       "title": "No palettes yet",
@@ -567,10 +588,10 @@
       "save_mapping": "Save Mapping"
     },
     "login": {
-      "connect": "Connect to MiSTer",
-      "host": "Host / IP Address:",
-      "password": "Password:",
-      "username": "Username:"
+      "connect": "Connect",
+      "host": "Host or IP address",
+      "password": "Password",
+      "username": "Username"
     },
     "mister": "MiSTer",
     "not_found": "Not found",
@@ -584,7 +605,41 @@
       "clear": "Clear Mapping",
       "reset": "Reset to default",
       "title": "Save Mapping"
-    }
+    },
+    "connect": {
+      "title": "Connect to MiSTer",
+      "host_hint": "The MiSTer's address on your network, e.g. 192.168.0.10.",
+      "demo_hint": "Preview: any host connects, except \"fail\".",
+      "failed": "Couldn't connect to the MiSTer. Check the address, the login and that its FTP is turned on.",
+      "connecting": "Connecting…",
+      "cancel": "Cancel"
+    },
+    "list": {
+      "title": "Saves on the Pocket",
+      "empty": "No saves match."
+    },
+    "compare": {
+      "pick_title": "Pick a save",
+      "pick": "Choose a save on the left to compare it with the MiSTer's and copy it either way.",
+      "same": "Same on both",
+      "pocket_newer": "Newer on the Pocket",
+      "mister_newer": "Newer on the MiSTer",
+      "missing": "Not on the MiSTer yet"
+    },
+    "newer": "Newer",
+    "modified": "Changed",
+    "checksum": "Checksum",
+    "date": "{date, date, medium} {date, time, short}",
+    "folder": "MiSTer folder",
+    "copy_to_pocket": "Copy to Pocket",
+    "copy_to_mister": "Copy to MiSTer",
+    "confirm": {
+      "to_mister": "Replace the save on the MiSTer with the one from the Pocket?",
+      "to_pocket": "Replace the save on the Pocket with the one from the MiSTer?"
+    },
+    "activity": "Activity ({count})",
+    "activity_empty": "Nothing happened yet.",
+    "demo_note": "Preview with made-up saves: nothing is sent to a MiSTer or changed on the SD card."
   },
   "news_feed": {
     "last_updated": "Last updated <1></1>",
@@ -601,7 +656,9 @@
     "cores": "Installed Cores",
     "edit": "Edit",
     "details": "Details",
-    "no_cores": "No installed cores use this platform."
+    "no_cores": "No installed cores use this platform.",
+    "games": "Games",
+    "no_games": "No games in this platform's folder on the SD card."
   },
   "platforms": {
     "cancel": "Cancel",
@@ -660,7 +717,11 @@
     "date": "{date, date, short}",
     "newer": "Newer",
     "older": "Older",
-    "time": "{date, time, short}"
+    "time": "{date, time, short}",
+    "explainer": "Each column is a backup, oldest on the left. A bar shows how long a save stayed the same; the green one is on the Pocket now. Click another to restore that version.",
+    "restore": "Restore",
+    "restore_version": "Restore the version from {date, date, short}, {date, time, short}",
+    "show_on_sd_card": "Show on SD card"
   },
   "save_states": {
     "cartridge": "Cartridge",
@@ -671,7 +732,13 @@
       "search": "Search",
       "core": "Core",
       "platform": "Platform",
-      "all": "All"
+      "all": "All",
+      "group_by": "Group by",
+      "group": {
+        "core": "Core",
+        "game": "Game"
+      },
+      "game": "Game"
     },
     "count": "( {count} / 128 )",
     "item": {
@@ -690,12 +757,20 @@
         "gb": "GB",
         "gb_player": "GB Player",
         "black_and_white": "Black & White"
-      }
+      },
+      "photo_number": "Photo {number} of {total}",
+      "shade": "Shade {number}"
     },
     "empty": {
       "title": "No save states yet",
-      "text": "Press the Analogue button and Up while playing to save a memory. It shows up here."
-    }
+      "text": "Memories are save states: a snapshot of the game you can go back to at any time."
+    },
+    "how_to": {
+      "save": "Press the <key>Analogue button</key> and <key>Up</key> while playing to save a memory.",
+      "load": "Press the <key>Analogue button</key> and <key>Down</key> to load the latest one. Turn on <key>Enable Quick Load</key> in the Pocket's Settings → Memories first."
+    },
+    "count_game": "{count, plural, one {# save state} other {# save states}}",
+    "unknown_game": "Unknown game"
   },
   "saves": {
     "backups": "Backups: {count}",
@@ -725,19 +800,37 @@
       "back": "Back to Screenshots",
       "save": "Save Screenshot",
       "share": "Share Screenshot",
-      "upscaled": "Upscaled"
-    }
+      "upscaled": "Upscaled",
+      "previous": "Previous screenshot",
+      "next": "Next screenshot"
+    },
+    "dimensions": "{width} × {height} px"
   },
   "screenshots": {
     "controls": {
       "delete_selected": "Delete Selected ({count})",
       "export_selected": "Export Selected ({count})",
       "search": "Search",
-      "select": "Select"
+      "select": "Select",
+      "group_by": "Group by",
+      "group": {
+        "game": "Game",
+        "core": "Core",
+        "date": "Date"
+      },
+      "game": "Game",
+      "core": "Core",
+      "all": "All"
     },
     "no_screenshots": "Once you take some screenshots they'll appear here",
     "how_to": "Press the <key>Analogue button</key> and <key>Start</key> together while playing. The screenshot is saved to the SD card and shows up here.",
-    "empty_title": "No screenshots yet"
+    "empty_title": "No screenshots yet",
+    "taken": "{date, date, medium}, {date, time, short}",
+    "count": "{count, plural, one {# screenshot} other {# screenshots}}",
+    "unknown_game": "Unknown game",
+    "unknown_core": "Unknown core",
+    "unknown_date": "No date",
+    "group_date": "{date, date, full}"
   },
   "settings": {
     "3d_pocket": {
@@ -866,7 +959,7 @@
       "light": "Light",
       "style_label": "Style",
       "style_slanted": "Slanted",
-      "style_modern": "Modern"
+      "style_modern": "Straight"
     },
     "demo_updates": {
       "title": "Demo Updates",
@@ -883,6 +976,20 @@
       "title": "Loading Preview",
       "ramble": "The spinners and progress bars used while something loads. The slider changes the spinner's speed here only; the app uses {default} ms per frame.",
       "speed": "{ms} ms per frame"
+    },
+    "modal_previews": {
+      "title": "Modal previews",
+      "ramble": "Opens modals with made-up data to check how they look. The photo export shows generated photos (they can be exported, to a folder you pick); the update plays a scripted update and holds at the chosen phase. Nothing is downloaded or changed on the SD card.",
+      "photo_export": "Photo Export",
+      "update": "Update Progress",
+      "stop_at": "Stop at",
+      "stops": {
+        "cores": "Downloading cores",
+        "required_files": "Finding required files",
+        "downloads": "Downloading files",
+        "finished": "Finished"
+      },
+      "mister": "MiSTer Sync"
     }
   },
   "time_ago": {

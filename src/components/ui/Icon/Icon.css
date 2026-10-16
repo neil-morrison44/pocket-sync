@@ -35,9 +35,9 @@
     font-size: 1em;
   }
 
-  /* 0.75 of a pixel icon, like brand marks at fixed sizes */
+  /* A little shorter than the letters, like brand marks at fixed sizes */
   &.icon--is-brand {
     width: auto;
-    height: 1em;
+    height: 0.8em;
   }
 }

@@ -1,10 +1,10 @@
-import { PaletteColoursSelectorFamily } from "../../jotai/palettes/selectors"
+import { PaletteColoursKeptSelectorFamily } from "../../jotai/palettes/selectors"
 import { useEffect, useRef } from "react"
 import { Palette } from "../../types"
 import { useAtomValue } from "jotai"
 
 export const PreviewCanvas = ({ name }: { name: string }) => {
-  const paletteColours = useAtomValue(PaletteColoursSelectorFamily(name))
+  const paletteColours = useAtomValue(PaletteColoursKeptSelectorFamily(name))
 
   return <PreviewCanvasInner palette={paletteColours} />
 }

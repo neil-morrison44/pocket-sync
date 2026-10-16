@@ -56,6 +56,11 @@
   aspect-ratio: 521 / 165;
   image-rendering: pixelated;
   background-color: var(--theme-media-background);
+
+  /* Shows where the image ends; platform images often have a white
+     background */
+  border-bottom: 1px solid var(--theme-separator);
+  box-sizing: border-box;
 }
 
 @media (prefers-reduced-motion: reduce) {

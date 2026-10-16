@@ -75,6 +75,16 @@
   }
 }
 
+/* A filter that's set: like a pressed toggle */
+.select--theme-control.select--is-active {
+  background-color: var(--theme-selection);
+  color: var(--theme-selection-text);
+
+  &::after {
+    background-color: var(--theme-selection-text);
+  }
+}
+
 /* The open list; its radius is concentric with the rows */
 .select__content {
   z-index: 2000;

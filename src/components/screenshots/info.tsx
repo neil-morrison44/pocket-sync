@@ -8,15 +8,17 @@ import "./info.css"
 
 import { useSaveFile } from "../../hooks/saveFile"
 import { Controls, ControlsActions } from "../controls"
-import { CoreTag } from "../shared/coreTag"
-import { Loader } from "../loader"
+import { Link } from "../link"
+import { useOpenGame } from "../../hooks/useOpenGame"
+import { gameDisplayName } from "../../utils/gameName"
+import { currentViewAtom } from "../../jotai/view/atoms"
 import { useUpscaler } from "./hooks/useUpscaler"
 import { useTranslation } from "react-i18next"
 import { ControlsBackButton } from "../controls/inputs/backButton"
 import { ControlsButton } from "../controls/inputs/button"
 import { ControlsCheckbox } from "../controls/inputs/checkbox"
 import { imageModeAtom } from "../../jotai/screenshots/atom"
-import { useAtom, useAtomValue } from "jotai"
+import { useAtom, useAtomValue, useSetAtom } from "jotai"
 
 type ScreenshotInfoProps = {
   fileName: string
@@ -33,6 +35,9 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
   const upscaler = useUpscaler()
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const { t } = useTranslation("screenshot_info")
+  const { t: tScreenshots } = useTranslation("screenshots")
+  const viewCore = useSetAtom(currentViewAtom)
+  const openGame = useOpenGame()
 
   useEffect(() => {
     let cancelled = false
@@ -86,6 +91,7 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
         </ControlsCheckbox>
         <ControlsActions>
           <ControlsButton
+            icon="save"
             onClick={() => {
               if (!imageSrc) return
               saveFile(screenshot.file_name, imageSrc)
@@ -93,41 +99,68 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
           >
             {t("controls.save")}
           </ControlsButton>
-          <ControlsButton onClick={openShareSheet}>
+          <ControlsButton icon="share" onClick={openShareSheet}>
             {t("controls.share")}
           </ControlsButton>
         </ControlsActions>
       </Controls>
-      <img
-        className="screenshot-info__raw-image"
-        src={imageSrc || undefined}
-      ></img>
+      <div className="screenshot-info__image-area">
+        <img
+          className="screenshot-info__image"
+          src={imageSrc || undefined}
+          alt={screenshot.game}
+        />
+      </div>
 
-      <div className="screenshot-info__info">
-        <div className="screenshot-info__name">
-          {screenshot.game}
+      {/* Game and date first; where it's from and the file below, soft */}
+      <footer className="screenshot-info__info">
+        <div className="screenshot-info__title-row">
+          <h2 className="screenshot-info__title">
+            {/* Opens Games searched for it, until games have own pages */}
+            {screenshot.game ? (
+              <Link subtle onClick={() => openGame(screenshot.game)}>
+                {gameDisplayName(screenshot.game)}
+              </Link>
+            ) : (
+              screenshot.file_name
+            )}
+          </h2>
+          {screenshot.timestamp && (
+            <span className="screenshot-info__date">
+              {tScreenshots("taken", { date: screenshot.timestamp })}
+            </span>
+          )}
+        </div>
+        <div className="screenshot-info__meta">
+          {screenshot.platform && <span>{screenshot.platform}</span>}
+          {screenshot.core && screenshot.author && (
+            <Link
+              onClick={() =>
+                viewCore({
+                  view: "Cores",
+                  selected: `${screenshot.author}.${screenshot.core}`,
+                })
+              }
+            >
+              {`${screenshot.author}.${screenshot.core}`}
+            </Link>
+          )}
           {imageSrc && (
             <Suspense>
               <ImageDimensions imageSrc={imageSrc} />
             </Suspense>
           )}
+          <span className="screenshot-info__file-name">
+            {screenshot.file_name}
+          </span>
         </div>
-        {screenshot.platform && <div>{screenshot.platform}</div>}
-        {screenshot.core && screenshot.author && (
-          <Suspense fallback={<Loader />}>
-            <CoreTag coreName={`${screenshot.author}.${screenshot.core}`} />
-          </Suspense>
-        )}
-        <div>{screenshot.file_name}</div>
-      </div>
+      </footer>
     </div>
   )
 }
 
 const ImageDimensions = ({ imageSrc }: { imageSrc: string }) => {
   const size = useAtomValue(ImageDimensionsSelectorFamily(imageSrc))
-  return (
-    // eslint-disable-next-line react/jsx-no-literals
-    <span className="screenshot-info__dimensions">{`(${size.width}px x ${size.height}px)`}</span>
-  )
+  const { t } = useTranslation("screenshot_info")
+  return <span>{t("dimensions", size)}</span>
 }

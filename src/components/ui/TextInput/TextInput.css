@@ -4,7 +4,12 @@
   align-items: center;
   gap: var(--space-xs);
   height: var(--control-height, 28px);
-  padding-inline: 12px;
+
+  /* Like a button's, but tighter: half the space above and below the text,
+     plus half the slant */
+  padding-inline: calc(
+    (var(--control-height, 28px) - 16px) / 2 + var(--slant) / 2
+  );
   background-color: var(--theme-input-background);
   color: var(--theme-input-text);
   position: relative;
@@ -66,4 +71,15 @@
     font-size: var(--font-size-code);
     font-weight: 400;
   }
+}
+
+/* In the light theme the white field sits on a white bar: a 1px frame
+   (drawn inside the slanted shape, like the code variant's) */
+:root[data-theme="light"] .text-input::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--theme-separator);
+  clip-path: var(--shape-slant-outline);
+  pointer-events: none;
 }

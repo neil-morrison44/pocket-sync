@@ -47,6 +47,9 @@ import { openFolder } from "../../utils/openFolder"
 const DEFAULT_ARCHIVE_URL = "https://archive.org/download/openFPGA-Files"
 import Button from "../ui/Button"
 import Select from "../ui/Select"
+import { PhotoExportModal } from "../saveStates/photoExportModal"
+import { MisterSyncDemo } from "../saves/misterSync/flow"
+import { UpdateDemoStop, UpdateModalDemo } from "../update/modal/demo"
 import Spinner, { SPINNER_FRAME_MS } from "../ui/Spinner/Spinner"
 import ProgressBar from "../ui/ProgressBar"
 import TextInput from "../ui/TextInput"
@@ -411,7 +414,75 @@ const DeveloperSettings = () => {
         />
       </div>
       <LoadingPreview />
+      <ModalPreviews />
     </StickySection>
+  )
+}
+
+/**
+ * Opens modals with made-up data, to look at them without the real thing:
+ * the photo export with generated photos, and the update progress with a
+ * scripted update that holds at a chosen phase. Nothing is changed.
+ */
+const ModalPreviews = () => {
+  const { t } = useTranslation("settings")
+  const [photosOpen, setPhotosOpen] = useState(false)
+  const [updateStop, setUpdateStop] = useState<UpdateDemoStop>("downloads")
+  const [updateOpen, setUpdateOpen] = useState(false)
+  const [misterOpen, setMisterOpen] = useState(false)
+
+  return (
+    <div className="settings__row" id="settings-modal_previews">
+      <h3 className="settings__row-title">{t("modal_previews.title")}</h3>
+      <div className="settings__ramble">{t("modal_previews.ramble")}</div>
+      <div className="settings__actions">
+        <Button icon="camera" onClick={() => setPhotosOpen(true)}>
+          {t("modal_previews.photo_export")}
+        </Button>
+        <Button icon="save" onClick={() => setMisterOpen(true)}>
+          {t("modal_previews.mister")}
+        </Button>
+      </div>
+      <div className="settings__actions">
+        <Select
+          label={t("modal_previews.stop_at")}
+          value={updateStop}
+          onChange={setUpdateStop}
+          options={[
+            { value: "cores", label: t("modal_previews.stops.cores") },
+            {
+              value: "required_files",
+              label: t("modal_previews.stops.required_files"),
+            },
+            { value: "downloads", label: t("modal_previews.stops.downloads") },
+            { value: "finished", label: t("modal_previews.stops.finished") },
+          ]}
+        />
+        <Button icon="upload" onClick={() => setUpdateOpen(true)}>
+          {t("modal_previews.update")}
+        </Button>
+      </div>
+      {photosOpen && (
+        <PhotoExportModal
+          path="demo"
+          demo
+          onClose={() => setPhotosOpen(false)}
+        />
+      )}
+      {misterOpen && (
+        <Suspense>
+          <MisterSyncDemo onClose={() => setMisterOpen(false)} />
+        </Suspense>
+      )}
+      {updateOpen && (
+        <Suspense>
+          <UpdateModalDemo
+            stopAt={updateStop}
+            onClose={() => setUpdateOpen(false)}
+          />
+        </Suspense>
+      )}
+    </div>
   )
 }
 

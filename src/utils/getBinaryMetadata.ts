@@ -5,11 +5,16 @@ type Metadata = {
   platform: string
 }
 
+/** Code page 437 (the original IBM PC set) for bytes 0x80–0xFF. */
+const CP437_HIGH =
+  "ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■\u00a0"
+
 /**
- * Decodes a fixed-size text field from a save state, ignoring null padding.
- * Text that isn't valid UTF-8 (e.g. Latin-1 accents) falls back to
- * Windows-1252, and the result is normalised so accents like "é" render as
- * one character.
+ * Decodes a fixed-size text field from a save state or screenshot,
+ * ignoring null padding. Text that isn't valid UTF-8 is read as code page
+ * 437, which matches what the Pocket stores: "Pokémon" has its "é" as 0x82
+ * (Windows-1252 read that as "‚", so it showed "Pok‚mon"). The result is normalised so
+ * accents render as one character.
  */
 const decodeField = (bytes: Uint8Array) => {
   const field = bytes.filter((byte) => byte !== 0)
@@ -17,7 +22,9 @@ const decodeField = (bytes: Uint8Array) => {
   try {
     text = new TextDecoder("utf-8", { fatal: true }).decode(field)
   } catch {
-    text = new TextDecoder("windows-1252").decode(field)
+    text = Array.from(field, (byte) =>
+      byte < 0x80 ? String.fromCharCode(byte) : CP437_HIGH[byte - 0x80]
+    ).join("")
   }
   return text.normalize("NFC").trim()
 }

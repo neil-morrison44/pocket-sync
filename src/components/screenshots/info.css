@@ -1,71 +1,82 @@
-.screenshot-info{
+/* Header bar, the screenshot as large as fits, the info below */
+.screenshot-info {
   height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
   overflow: hidden;
 }
 
-.screenshot-info__controls{
-  display: flex;
-  justify-content: space-between;
-  font-size: var(--font-size-lg);
-  background-color: var(--info-colour);
-}
-
-.screenshot-info__controls-item {
-  cursor: pointer;
+/* Black like the Pocket's screen, so letterboxed images get their bars */
+.screenshot-info__image-area {
+  flex: 1 1 0;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 20px;
-  accent-color: var(--theme-accent);
+  padding: var(--space-lg) var(--page-padding-inline);
+}
 
-  &:hover{
-    background-color: var(--hover-colour);
+.screenshot-info__image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  background-color: black;
+}
+
+/* Lines up with the header bar's padding; a separator like its bottom */
+.screenshot-info__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-lg) var(--page-padding-inline) var(--space-xl);
+  border-top: 1px solid var(--theme-separator);
+}
+
+.screenshot-info__title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+
+h2.screenshot-info__title {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--theme-text-headline);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.screenshot-info__date {
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-body);
+}
+
+/* Platform, core, size, file name: one soft line, separated by dots */
+.screenshot-info__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+
+  & > * + *::before {
+    content: "·";
+    margin-inline-end: var(--space-sm);
+    color: var(--theme-text-soft);
   }
 }
 
-.screenshot-info__controls-item--back-button::before{
-  content: "";
-  display: block;
-  width: 10px;
-  height: 10px;
-  aspect-ratio: 1 / 1;
-  border: 1px solid var(--theme-text-headline);
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  transform: rotate(-45deg);
-  margin-right: 5px;
-}
-
-.screenshot-info__controls-checkbox{
-  display: flex;
-  gap: 0.2em;
-  align-items: center;
-}
-
-.screenshot-info__raw-image{
-  flex-grow: 1;
-  flex-shrink: 1;
-  object-fit: contain;
-  image-rendering: pixelated;
-  height: 0;
-}
-
-.screenshot-info__info{
-  background-color: var(--info-colour);
-  padding: 10px;
-}
-
-.screenshot-info__name{
-  display: flex;
-  justify-content: space-between;
-  gap:20px;
-}
-
-.screenshot-info__dimensions{
-  opacity: 0.8;
-  white-space: nowrap;
+.screenshot-info__file-name {
+  font-family: var(--font-code);
+  font-size: var(--font-size-xs);
 }

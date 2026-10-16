@@ -7,21 +7,35 @@
   padding: 10px;
 }
 
-.zip-install__title{
+.zip-install__title {
   line-height: 3.2rem;
 }
 
 .zip-install__controls {
   display: flex;
-  justify-content: space-around;
+  flex-wrap: wrap;
   align-items: center;
+  gap: var(--space-sm) var(--space-lg);
 }
 
-.zip-install__control-checkbox{
+.zip-install__control-info {
   display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: var(--font-size-md);
+  border-radius: var(--radius);
+  color: var(--theme-text-soft);
+  cursor: help;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+:root.keyboard-focus .zip-install__control-info:focus-visible {
+  outline: 2px solid var(--theme-focus);
+}
+
+/* Cancel and Install at the right */
+.zip-install__actions {
+  margin: 0 0 0 auto;
 }
 
 .zip-install__tree-node {
@@ -60,7 +74,6 @@
   transform: rotate(-90deg);
 }
 
-
 .zip-install__progress-modal {
   display: flex;
   flex-direction: column;
@@ -71,7 +84,7 @@
   padding-block: 40px;
 
   /* background-color: var(--light-colour); */
-  border: 5px solid var(--info-colour)
+  border: 5px solid var(--info-colour);
 }
 
 .zip-install__progress-bar-label {
@@ -79,44 +92,23 @@
   font-weight: bold;
 }
 
-
-.zip-install__progress-bar{
+.zip-install__progress-bar {
   width: 100%;
   accent-color: var(--selection-colour);
 }
 
+/* Groups of files (cores, platform files) as checkbox toggles, like the
+   filters in header bars */
 .zip-install__cores-list {
   display: flex;
-  gap: 5px;
   flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-block-end: var(--space-md);
 }
 
-.zip-install__cores-label{
-  background-color: var(--theme-overlay);
-  padding: 5px 10px;
-  border-radius: 5px;
-  border: 1px solid var(--theme-separator);
-  cursor: pointer;
-  opacity: 0.8;
-}
-
-.zip-install__cores-list{
-  margin-block-end: 10px;
-}
-
-.zip-install__cores-label:hover{
-  opacity: 1;
-}
-
-.zip-install__cores-checkbox{
-  display: none;
-}
-
-.zip-install__cores-label:has(.zip-install__cores-checkbox:checked) {
-  opacity: 1;
-  border: 1px solid var(--selection-colour);
-}
-
-.zip-install__cores-title{
-  margin-block-end: 5px;
+.zip-install__cores-title {
+  margin-block-end: var(--space-xs);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--theme-text-headline);
 }

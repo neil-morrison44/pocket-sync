@@ -1,4 +1,5 @@
-/* One group per core (Cartridge first), each with a sticky header */
+/* One group per core (Cartridge first) or per game, each with a sticky
+   header */
 .save-states__group {
   display: flex;
   flex-direction: column;
@@ -9,35 +10,11 @@
   }
 }
 
-/* Sticks just below the header bar, on the page background */
-.save-states__header {
-  position: sticky;
-  top: var(--header-bar-height);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: var(--space-lg);
-  min-height: 48px;
-  padding: var(--space-sm) var(--page-padding-inline);
-  background-color: var(--theme-background);
-  color: var(--theme-text-headline);
-
-  /* Separator inside the side padding, like the header bar's */
-  &::after {
-    content: "";
-    position: absolute;
-    right: var(--page-padding-inline);
-    bottom: 0;
-    left: var(--page-padding-inline);
-    height: 1px;
-    background-color: var(--theme-separator);
-  }
-}
-
-.save-states__header-count {
-  margin-left: auto;
-  font-size: var(--font-size-sm);
-  color: var(--theme-text-soft);
+.save-states__core-avatar {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  image-rendering: pixelated;
 }
 
 /* A grid of horizontal tiles (wider than the cores' columns), with room
@@ -52,4 +29,27 @@
    take its shape here too, like on the device */
 .save-states__image {
   aspect-ratio: 10 / 9;
+}
+
+/* Empty state: saving and loading side by side, each under its buttons */
+.save-states__how-to {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2xl);
+  margin-top: var(--space-lg);
+  font-size: var(--font-size-sm);
+}
+
+.save-states__how-to-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  max-width: 30ch;
+}
+
+.save-states__key {
+  font-weight: 600;
+  color: var(--theme-text-headline);
 }

@@ -28,11 +28,14 @@ const VIEW_ICONS: Record<View, IconOptions> = {
   Settings: "settings-cog",
 }
 
+// Home; what's installed on the card; what's made on the Pocket while
+// playing; tools that work between the card and the computer (Backups are
+// kept on the computer, not on the card)
 const NAV_GROUPS: View[][] = [
   ["Pocket Sync"],
-  ["Games", "Cores", "Platforms", "Firmware"],
-  ["Screenshots", "Saves", "Save States", "Palettes"],
-  ["Fetch", "Plugins"],
+  ["Games", "Cores", "Platforms", "Palettes", "Firmware"],
+  ["Screenshots", "Save States"],
+  ["Saves", "Fetch", "Plugins"],
 ]
 
 const FOOTER_VIEWS: View[] = ["Settings"]

@@ -9,7 +9,7 @@ import { FirmwareListItem } from "../../types"
 import Accordion, { AccordionItem } from "../ui/Accordion"
 import Button from "../ui/Button"
 import Icon from "../ui/Icon"
-import Select from "../ui/Select"
+import Menu from "../ui/Menu"
 import Skeleton from "../ui/Skeleton"
 import Tag from "../ui/Tag"
 import "./index.css"
@@ -24,7 +24,7 @@ import { useAtomValue } from "jotai"
 /**
  * Current firmware and SD card status on top; below, every version as its own
  * card that previews its release notes and can be loaded directly. Only the
- * installed version starts unfolded; a select jumps straight to any version.
+ * installed version starts unfolded; a menu jumps straight to any version.
  */
 export const Firmware = () => {
   const currentFirmware = useAtomValue(currentFirmwareVersionSelector)
@@ -59,16 +59,13 @@ export const Firmware = () => {
       <section className="firmware__versions">
         <div className="firmware__versions-header">
           <h2 className="firmware__heading">{t("versions_title")}</h2>
-          <Select
+          <Menu
             label={t("jump_to")}
-            value={expanded || latestFirmware.version}
-            onChange={jumpTo}
-            options={allFirmwares.map((firmware) => ({
+            onSelect={jumpTo}
+            items={allFirmwares.map((firmware) => ({
               value: firmware.version,
-              label: t("options.older", {
-                version: firmware.version,
-                date: firmware.publishedAt,
-              }),
+              label: `v${firmware.version}`,
+              detail: t("published", { date: firmware.publishedAt }),
             }))}
           />
         </div>

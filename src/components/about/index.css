@@ -1,4 +1,7 @@
+/* A container, so the short-window layout can size the Pocket from the
+   width left beside the updates panel */
 .about {
+  container: about / inline-size;
   display: flex;
   align-items: stretch;
   height: 100vh;
@@ -142,11 +145,25 @@
   color: var(--theme-text-soft);
 }
 
+/* The buttons, with a hint below them */
 .about__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  max-width: 100%;
+  padding-block: var(--space-lg);
+
+  .callout {
+    max-width: 52ch;
+    text-align: start;
+  }
+}
+
+.about__buttons {
   display: flex;
   justify-content: center;
   gap: var(--space-sm);
-  padding-block: var(--space-lg);
 }
 
 /* Holds the unread dot on the panel toggle */
@@ -291,34 +308,63 @@
   height: 1px;
 }
 
-/* Short windows: the Pocket on the left, title, stats and buttons in a
-   column on the right, both centred vertically, so nothing is cut off */
+/* Short windows: the Pocket and the info (title, banners, stats, buttons)
+   side by side, as one group centred in the window, so nothing is cut off
+   and the Pocket stays next to the text */
 @media (height <= 700px) {
   .about__main {
-    --compact-pocket-width: min(80vh, 40vw);
+    /* 100cqi is the whole home view (sidebar excluded) */
+    --compact-pocket-width: min(80vh, 40cqi);
 
-    justify-content: center;
-    padding-inline-start: calc(
-      var(--compact-pocket-width) + 2 * var(--space-2xl)
-    );
+    display: grid;
+    grid-template-columns: var(--compact-pocket-width) minmax(0, max-content);
+    grid-auto-flow: row dense;
+    place-content: center;
+    column-gap: var(--space-2xl);
   }
 
-  /* The Pocket sits beside the column, placed against .about__main */
-  .about__pocket-area {
+  /* With the updates panel open, the Pocket gets a share of what's left
+     beside it, so the title, stats and buttons keep their room */
+  .about--news-open .about__main {
+    --compact-pocket-width: min(80vh, calc((100cqi - 340px) * 0.35));
+  }
+
+  /* Only when the window is short and narrow at once: the space left
+     beside the panel can't hold the Pocket next to the info */
+  @container about (width < 700px) {
+    .about--news-open .about__main {
+      --compact-pocket-width: 0px;
+
+      column-gap: 0;
+    }
+
+    .about--news-open .about__pocket-area {
+      display: none;
+    }
+  }
+
+  /* The title, banners and the Pocket join the grid themselves */
+  .about__top {
     display: contents;
   }
 
-  .about__top {
-    flex: 0 0 auto;
-    justify-content: center;
+  /* The Pocket fills the first column, beside every row of info */
+  .about__pocket-area {
+    grid-column: 1;
+    grid-row: 1 / span 6;
+    align-self: center;
+    container-type: normal;
   }
 
   .about__pocket {
-    position: absolute;
-    top: 50%;
-    left: var(--space-2xl);
     width: var(--compact-pocket-width);
-    transform: translateY(-50%);
+  }
+
+  /* Everything else stacks in the second column */
+  .about__top > :not(.about__pocket-area),
+  .about__main > :not(.about__top, .about__toolbar, .about__version) {
+    grid-column: 2;
+    justify-self: center;
   }
 
   /* Out of the flow, in the top-right corner */

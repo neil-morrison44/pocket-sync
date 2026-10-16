@@ -152,7 +152,14 @@ function MultiSelect<T extends string>({
   return (
     <RadixPopover.Root onOpenChange={() => setSearch("")}>
       <RadixPopover.Trigger asChild>
-        <Button icon="chevron-down" className={className}>
+        {/* Marked like a pressed toggle while anything is chosen */}
+        <Button
+          icon="chevron-down"
+          className={clsx(
+            value.length > 0 && "multi-select--is-active",
+            className
+          )}
+        >
           {children}
         </Button>
       </RadixPopover.Trigger>

@@ -6,6 +6,11 @@ import "./index.css"
 type LinkProps = {
   href?: string
   className?: string
+  /**
+   * No underline until hovered, for links that are titles (e.g. a game's
+   * name as a section heading), where an underline is too much.
+   */
+  subtle?: boolean
   children: ReactNode
 } & ComponentPropsWithoutRef<"a">
 
@@ -19,13 +24,14 @@ export const Link = ({
   className,
   href,
   onClick,
+  subtle = false,
   ...otherProps
 }: LinkProps) => {
   return (
     <a
       {...otherProps}
       href={href ?? "#"}
-      className={`link ${className ?? ""}`}
+      className={`link ${subtle ? "link--subtle" : ""} ${className ?? ""}`}
       onClick={(event) => {
         event.preventDefault()
         if (onClick) onClick(event)

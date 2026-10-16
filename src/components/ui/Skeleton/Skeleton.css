@@ -47,3 +47,24 @@
   gap: var(--space-sm);
   padding: var(--space-md);
 }
+
+/* Like a horizontal Tile: a 120px image at the Pocket's 10:9 beside the
+   text, so swapping it for the tile doesn't move anything */
+.skeleton-card--horizontal {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-lg);
+  box-sizing: border-box;
+  padding: var(--space-md);
+
+  .skeleton-card__media {
+    flex-shrink: 0;
+    width: 120px;
+    aspect-ratio: 10 / 9;
+  }
+
+  .skeleton-card__body {
+    flex-grow: 1;
+    padding: 0;
+  }
+}

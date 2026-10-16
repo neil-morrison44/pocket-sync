@@ -28,7 +28,10 @@
     "close": "Fechar",
     "loading": "Carregando",
     "dismiss": "Dispensar",
-    "no_results": "Nada corresponde à sua pesquisa ou aos seus filtros."
+    "no_results": "Nada corresponde à sua pesquisa ou aos seus filtros.",
+    "clear_search": "Limpar pesquisa",
+    "filters": "Filtros",
+    "clear_filters": "Limpar filtros"
   },
   "clean_files": {
     "close_button": "Fechar",
@@ -220,12 +223,21 @@
       "features": "Recursos",
       "features_count": "Recursos ({count})",
       "platform": "Plataforma",
-      "update_all_count": "Atualizar tudo ({count})"
+      "update_all_count": "Atualizar tudo ({count})",
+      "all": "Todos",
+      "license": "Licença",
+      "license_free": "Só gratuitos",
+      "license_required": "Precisa de licença",
+      "ai": "Nível de IA",
+      "ai_none": "Nenhum",
+      "ai_up_to": "Até {max, number, percent}"
     },
     "install_tip": "Você também pode instalar núcleos (ou qualquer outra coisa em um zip) arrastando o .zip para esta janela",
     "installed": "Instalado ({count})",
     "not_installed": "Disponível ({count})",
-    "updates": "Atualizações disponíveis ({count})"
+    "updates": "Atualizações disponíveis ({count})",
+    "installed_filtered": "Instalados ({count} / {total})",
+    "not_installed_filtered": "Disponíveis ({count} / {total})"
   },
   "error": {
     "report": "Você pode reportar isso via GitHub inclua o texto abaixo e qualquer coisa que você acabou de fazer",
@@ -345,13 +357,15 @@
     "open_folder": "Abrir pasta",
     "none": "Nenhum jogo encontrado. Instale um núcleo e depois adicione jogos à pasta dele no cartão SD.",
     "show_in_folder": "Mostrar na pasta",
-    "empty_title": "Ainda não há jogos"
+    "empty_title": "Ainda não há jogos",
+    "no_core": "Nenhum núcleo instalado",
+    "find_core": "Encontrar núcleo"
   },
   "image_editor": {
     "cancel": "Cancelar",
     "import_image": "Importar Imagem",
-    "remove": "Remover",
-    "reset": "Reiniciar",
+    "remove": "Remover camada",
+    "reset": "Repor camada",
     "rotate": "Rodar",
     "save": "Guardar imagem",
     "scale": "Redimensionar",
@@ -438,19 +452,25 @@
     "add_via_code": {
       "title": "Adicionar via código de compartilhamento",
       "cancel": "Cancelar",
-      "add": "Adicionar paleta"
+      "add": "Adicionar paleta",
+      "label": "Código de compartilhamento",
+      "hint": "Cole um código copiado com “{button}” em uma paleta.",
+      "found": "Adiciona a paleta “{name}”.",
+      "invalid": "Isso não é um código de paleta. Verifique se o código inteiro foi copiado."
     },
     "full": {
       "inputs": {
         "background": "Fundo",
-        "obj0": "Obj0",
-        "obj1": "Obj1",
-        "window": "janela",
+        "obj0": "Sprites 0",
+        "obj1": "Sprites 1",
+        "window": "Janela",
         "off": "LCD desligado"
       },
       "save": "Guardar paleta",
       "reset": "Redefinir cores",
-      "emu_credit": "Emulador GB adaptado de <1>roblouie/gameboy-emulator</1>"
+      "emu_credit": "Emulador GB adaptado de <1>roblouie/gameboy-emulator</1>",
+      "preview_game": "Jogo",
+      "no_games": "Coloque um jogo de Game Boy (.gb) em Assets/gb no cartão SD para testar a paleta nele."
     },
     "empty": {
       "title": "Ainda não há paletas",
@@ -464,10 +484,10 @@
       "save_mapping": "Mapeamento de Gravação"
     },
     "login": {
-      "connect": "Conectar ao MiSTer",
-      "host": "Host / Endereço IP:",
-      "password": "Senha:",
-      "username": "Nome de utilizador:"
+      "connect": "Conectar",
+      "host": "Host ou endereço IP",
+      "password": "Senha",
+      "username": "Nome de utilizador"
     },
     "mister": "MiSTer",
     "not_found": "Não encontrado",
@@ -481,7 +501,41 @@
       "clear": "Limpar mapeamento",
       "reset": "Restaurar padrão",
       "title": "Mapeamento de saves"
-    }
+    },
+    "connect": {
+      "title": "Conectar ao MiSTer",
+      "host_hint": "O endereço do MiSTer na sua rede, p. ex. 192.168.0.10.",
+      "demo_hint": "Pré-visualização: qualquer host conecta, exceto “fail”.",
+      "failed": "Não foi possível conectar ao MiSTer. Verifique o endereço, o login e se o FTP está ligado.",
+      "connecting": "Conectando…",
+      "cancel": "Cancelar"
+    },
+    "list": {
+      "title": "Saves no Pocket",
+      "empty": "Nenhum save corresponde."
+    },
+    "compare": {
+      "pick_title": "Escolha um save",
+      "pick": "Escolha um save à esquerda para compará-lo com o do MiSTer e copiá-lo em qualquer direção.",
+      "same": "Igual nos dois",
+      "pocket_newer": "Mais recente no Pocket",
+      "mister_newer": "Mais recente no MiSTer",
+      "missing": "Ainda não está no MiSTer"
+    },
+    "newer": "Mais recente",
+    "modified": "Alterado",
+    "checksum": "Soma de verificação",
+    "folder": "Pasta do MiSTer",
+    "copy_to_pocket": "Copiar para o Pocket",
+    "copy_to_mister": "Copiar para o MiSTer",
+    "confirm": {
+      "to_mister": "Substituir o save do MiSTer pelo do Pocket?",
+      "to_pocket": "Substituir o save do Pocket pelo do MiSTer?"
+    },
+    "activity": "Atividade ({count})",
+    "activity_empty": "Nada aconteceu ainda.",
+    "demo_note": "Pré-visualização com saves inventados: nada é enviado a um MiSTer nem alterado no cartão SD.",
+    "date": "{date, date, medium} {date, time, short}"
   },
   "news_feed": {
     "last_updated": "Última atualização <1></1>",
@@ -496,7 +550,9 @@
     "cores": "Núcleos instalados",
     "edit": "Editar",
     "details": "Detalhes",
-    "no_cores": "Nenhum núcleo instalado usa esta plataforma."
+    "no_cores": "Nenhum núcleo instalado usa esta plataforma.",
+    "games": "Jogos",
+    "no_games": "Nenhum jogo na pasta desta plataforma no cartão SD."
   },
   "platforms": {
     "cancel": "Cancelar",
@@ -553,7 +609,11 @@
     "date": "{date, date, short}",
     "newer": "Mais recente",
     "older": "Mais antigo",
-    "time": "{date, time, short}"
+    "time": "{date, time, short}",
+    "explainer": "Cada coluna é um backup, o mais antigo à esquerda. Uma barra mostra por quanto tempo um save ficou igual; a verde é a que está no Pocket agora. Clique em outra para restaurar essa versão.",
+    "restore": "Restaurar",
+    "restore_version": "Restaurar a versão de {date, date, short}, {date, time, short}",
+    "show_on_sd_card": "Mostrar no cartão SD"
   },
   "save_states": {
     "cartridge": "Cartucho",
@@ -564,7 +624,13 @@
       "search": "Pesquisar",
       "core": "Núcleo",
       "platform": "Plataforma",
-      "all": "Todos"
+      "all": "Todos",
+      "group_by": "Agrupar por",
+      "group": {
+        "core": "Núcleo",
+        "game": "Jogo"
+      },
+      "game": "Jogo"
     },
     "count": "({count} / 128)",
     "item": {
@@ -583,12 +649,20 @@
         "gb": "GB",
         "gb_player": "GB Player",
         "black_and_white": "Preto e Branco"
-      }
+      },
+      "photo_number": "Foto {number} de {total}",
+      "shade": "Tom {number}"
     },
     "empty": {
       "title": "Ainda não há estados salvos",
-      "text": "Pressione o botão Analogue e Cima durante o jogo para salvar uma memória. Ela aparece aqui."
-    }
+      "text": "Memórias são estados salvos: um instantâneo do jogo ao qual você pode voltar a qualquer momento."
+    },
+    "how_to": {
+      "save": "Pressione o <key>botão Analogue</key> e <key>Cima</key> durante o jogo para salvar uma memória.",
+      "load": "Pressione o <key>botão Analogue</key> e <key>Baixo</key> para carregar a mais recente. Antes, ative <key>Enable Quick Load</key> em Configurações → Memories no Pocket."
+    },
+    "count_game": "{count, plural, one {# estado salvo} other {# estados salvos}}",
+    "unknown_game": "Jogo desconhecido"
   },
   "saves": {
     "backups": "Backups: {count}",
@@ -618,19 +692,37 @@
       "back": "Voltar às capturas de tela",
       "save": "Guardar captura de tela",
       "share": "Compartilhar captura de tela",
-      "upscaled": "Ampliado"
-    }
+      "upscaled": "Ampliado",
+      "previous": "Captura anterior",
+      "next": "Próxima captura"
+    },
+    "dimensions": "{width} × {height} px"
   },
   "screenshots": {
     "controls": {
       "delete_selected": "Eliminar Selecionados ({count})",
       "export_selected": "Exportar Selecionados ({count})",
       "search": "Pesquisar",
-      "select": "Selecionar"
+      "select": "Selecionar",
+      "group_by": "Agrupar por",
+      "group": {
+        "game": "Jogo",
+        "core": "Núcleo",
+        "date": "Data"
+      },
+      "game": "Jogo",
+      "core": "Núcleo",
+      "all": "Todos"
     },
     "no_screenshots": "Uma vez que você tirar algumas capturas de tela, elas aparecerão aqui",
     "how_to": "Pressione o <key>botão Analogue</key> e <key>Start</key> ao mesmo tempo durante o jogo. A captura é salva no cartão SD e aparece aqui.",
-    "empty_title": "Ainda não há capturas"
+    "empty_title": "Ainda não há capturas",
+    "taken": "{date, date, medium}, {date, time, short}",
+    "count": "{count, plural, one {# captura} other {# capturas}}",
+    "unknown_game": "Jogo desconhecido",
+    "unknown_core": "Núcleo desconhecido",
+    "unknown_date": "Sem data",
+    "group_date": "{date, date, full}"
   },
   "settings": {
     "3d_pocket": {
@@ -745,7 +837,7 @@
       "light": "Claro",
       "style_label": "Estilo",
       "style_slanted": "Inclinado",
-      "style_modern": "Moderno"
+      "style_modern": "Reto"
     },
     "dismissed_notes": {
       "title": "Notas dispensadas",

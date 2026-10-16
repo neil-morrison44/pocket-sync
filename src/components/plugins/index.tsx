@@ -18,6 +18,7 @@ import { Trans, useTranslation } from "react-i18next"
 import { invokeUninstallPlugin } from "../../utils/invokes"
 import { ask } from "@tauri-apps/plugin-dialog"
 import { ControlsSearch } from "../controls/inputs/search"
+import { ControlsGroup } from "../controls/inputs/group"
 import {
   SearchContextProvider,
   SearchContextSelfHidingConsumer,
@@ -62,15 +63,20 @@ export const Plugins = () => {
           />
         )}
         {authors.length > 1 && (
-          <Select
-            label={t("controls.author")}
-            value={author}
-            onChange={setAuthor}
-            options={[
-              { value: "All", label: t("controls.all") },
-              ...authors.map((owner) => ({ value: owner })),
-            ]}
-          />
+          <ControlsGroup
+            onClear={author !== "All" ? () => setAuthor("All") : undefined}
+          >
+            <Select
+              label={t("controls.author")}
+              active={author !== "All"}
+              value={author}
+              onChange={setAuthor}
+              options={[
+                { value: "All", label: t("controls.all") },
+                ...authors.map((owner) => ({ value: owner })),
+              ]}
+            />
+          </ControlsGroup>
         )}
         <ControlsActions>
           <ControlsButton onClick={() => refreshPlugins()}>

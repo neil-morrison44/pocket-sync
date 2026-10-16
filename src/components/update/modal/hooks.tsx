@@ -1,6 +1,6 @@
 // useUpdateManager.ts
 import { useEffect, useReducer } from "react"
-import { listen } from "@tauri-apps/api/event"
+import { UPDATE_EVENT, useUpdateListen } from "./events"
 import prettyBytes from "pretty-bytes"
 import { PhaseThreeArgs, UpdateEvent } from "../shared"
 
@@ -165,16 +165,12 @@ function updateReducer(state: UpdateState, payload: UpdateEvent): UpdateState {
 
 export const useUpdateEventManager = () => {
   const [state, dispatch] = useReducer(updateReducer, initialState)
+  const listen = useUpdateListen()
 
-  useEffect(() => {
-    const unlisten = listen<UpdateEvent>(
-      "install_and_update_cores::update_event",
-      ({ payload }) => dispatch(payload)
-    )
-    return () => {
-      unlisten.then((l) => l())
-    }
-  }, [])
+  useEffect(
+    () => listen<UpdateEvent>(UPDATE_EVENT, (payload) => dispatch(payload)),
+    [listen]
+  )
 
   return state
 }

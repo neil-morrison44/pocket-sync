@@ -109,3 +109,9 @@
   padding: var(--space-xs);
   border-top: 1px solid var(--theme-separator);
 }
+
+/* Something is chosen: like a pressed toggle */
+.button.multi-select--is-active {
+  --button-background: var(--theme-selection);
+  --button-text: var(--theme-selection-text);
+}

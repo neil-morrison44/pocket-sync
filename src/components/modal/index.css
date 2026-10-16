@@ -14,7 +14,9 @@
   margin: auto;
   width: calc(100% - 100px);
   height: calc(100% - 100px);
-  max-width: calc(100% - 100px);
+
+  /* At most 800px wide, so long lines and wide layouts stay readable */
+  max-width: min(800px, calc(100% - 100px));
   max-height: calc(100% - 100px);
   z-index: 1001;
   display: flex;
@@ -24,7 +26,6 @@
   box-sizing: border-box;
   padding: var(--space-2xl);
   overflow: auto;
-  border: 1px solid var(--theme-separator);
   border-radius: var(--radius-modal);
   background-color: var(--theme-background);
   color: var(--theme-text-body);
@@ -52,7 +53,7 @@
 .modal__actions {
   display: flex;
   justify-content: flex-end;
-  gap: var(--space-sm);
+  gap: var(--control-gap);
   margin-top: var(--space-sm);
 }
 

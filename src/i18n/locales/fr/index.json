@@ -26,7 +26,10 @@
     "close": "Fermer",
     "loading": "Chargement",
     "dismiss": "Masquer",
-    "no_results": "Aucun résultat pour votre recherche ou vos filtres."
+    "no_results": "Aucun résultat pour votre recherche ou vos filtres.",
+    "clear_search": "Effacer la recherche",
+    "filters": "Filtres",
+    "clear_filters": "Effacer les filtres"
   },
   "clean_files": {
     "close_button": "Fermer",
@@ -189,12 +192,21 @@
       "features": "Fonctionnalités",
       "features_count": "Fonctionnalités ({count})",
       "platform": "Plateforme",
-      "update_all_count": "Tout mettre à jour ({count})"
+      "update_all_count": "Tout mettre à jour ({count})",
+      "all": "Tous",
+      "license": "Licence",
+      "license_free": "Gratuits uniquement",
+      "license_required": "Licence requise",
+      "ai": "Part d'IA",
+      "ai_none": "Aucune",
+      "ai_up_to": "Jusqu'à {max, number, percent}"
     },
     "install_tip": "Vous pouvez également installer des cœurs (ou tout autre élément dans un zip) en faisant glisser le .zip dans cette fenêtre",
     "installed": "Installés ({count})",
     "not_installed": "Disponibles ({count})",
-    "updates": "Mises à jour disponibles ({count})"
+    "updates": "Mises à jour disponibles ({count})",
+    "installed_filtered": "Installés ({count} / {total})",
+    "not_installed_filtered": "Disponibles ({count} / {total})"
   },
   "error": {
     "report": "Vous pouvez signaler cela via GitHub, inclure le texte ci-dessous et tout ce que vous venez de faire",
@@ -310,13 +322,15 @@
     "open_folder": "Ouvrir le dossier",
     "none": "Aucun jeu trouvé. Installez un cœur, puis ajoutez des jeux dans son dossier sur la carte SD.",
     "show_in_folder": "Afficher dans le dossier",
-    "empty_title": "Aucun jeu pour l'instant"
+    "empty_title": "Aucun jeu pour l'instant",
+    "no_core": "Aucun cœur installé",
+    "find_core": "Trouver un cœur"
   },
   "image_editor": {
     "cancel": "Annuler",
     "import_image": "Importer une image",
-    "remove": "Supprimer",
-    "reset": "Réinitialiser",
+    "remove": "Supprimer le calque",
+    "reset": "Réinitialiser le calque",
     "rotate": "Faire pivoter",
     "save": "Enregistrer l'image",
     "scale": "Mettre à l'échelle",
@@ -398,16 +412,24 @@
     "add_via_code": {
       "title": "Ajouter via le code de partage",
       "cancel": "Annuler",
-      "add": "Ajouter la palette"
+      "add": "Ajouter la palette",
+      "label": "Code de partage",
+      "hint": "Collez un code copié avec « {button} » sur une palette.",
+      "found": "Ajoute la palette « {name} ».",
+      "invalid": "Ce n'est pas un code de partage de palette. Vérifiez que le code a été copié en entier."
     },
     "full": {
       "inputs": {
         "background": "Arrière-plan",
-        "window": "fenêtre"
+        "window": "Fenêtre",
+        "obj0": "Sprites 0",
+        "obj1": "Sprites 1"
       },
       "save": "Enregistrer la palette",
       "reset": "Réinitialiser les couleurs",
-      "emu_credit": "Émulateur GB adapté de <1>roblouie/gameboy-emulator</1>"
+      "emu_credit": "Émulateur GB adapté de <1>roblouie/gameboy-emulator</1>",
+      "preview_game": "Jeu",
+      "no_games": "Placez un jeu Game Boy (.gb) dans Assets/gb sur la carte SD pour y essayer la palette."
     },
     "empty": {
       "title": "Aucune palette pour l'instant",
@@ -421,10 +443,10 @@
       "save_mapping": "Association des sauvegardes"
     },
     "login": {
-      "connect": "Se connecter au MiSTer",
-      "host": "Hôte / Adresse IP :",
-      "password": "Mot de passe :",
-      "username": "Nom d'utilisateur :"
+      "connect": "Se connecter",
+      "host": "Hôte ou adresse IP",
+      "password": "Mot de passe",
+      "username": "Nom d'utilisateur"
     },
     "not_found": "Pas trouvé",
     "tip_1": "Le FTP du MiSTer doit être activé",
@@ -436,7 +458,41 @@
       "clear": "Effacer l'association",
       "reset": "Réinitialiser aux valeurs par défaut",
       "title": "Correspondance des sauvegardes"
-    }
+    },
+    "connect": {
+      "title": "Se connecter au MiSTer",
+      "host_hint": "L'adresse du MiSTer sur votre réseau, p. ex. 192.168.0.10.",
+      "demo_hint": "Aperçu : tout hôte se connecte, sauf « fail ».",
+      "failed": "Connexion au MiSTer impossible. Vérifiez l'adresse, l'identifiant et que son FTP est activé.",
+      "connecting": "Connexion…",
+      "cancel": "Annuler"
+    },
+    "list": {
+      "title": "Sauvegardes sur le Pocket",
+      "empty": "Aucune sauvegarde ne correspond."
+    },
+    "compare": {
+      "pick_title": "Choisissez une sauvegarde",
+      "pick": "Choisissez une sauvegarde à gauche pour la comparer avec celle du MiSTer et la copier dans un sens ou dans l'autre.",
+      "same": "Identique des deux côtés",
+      "pocket_newer": "Plus récente sur le Pocket",
+      "mister_newer": "Plus récente sur le MiSTer",
+      "missing": "Pas encore sur le MiSTer"
+    },
+    "newer": "Plus récente",
+    "modified": "Modifiée",
+    "checksum": "Somme de contrôle",
+    "folder": "Dossier du MiSTer",
+    "copy_to_pocket": "Copier sur le Pocket",
+    "copy_to_mister": "Copier sur le MiSTer",
+    "confirm": {
+      "to_mister": "Remplacer la sauvegarde du MiSTer par celle du Pocket ?",
+      "to_pocket": "Remplacer la sauvegarde du Pocket par celle du MiSTer ?"
+    },
+    "activity": "Activité ({count})",
+    "activity_empty": "Rien pour l'instant.",
+    "demo_note": "Aperçu avec des sauvegardes inventées : rien n'est envoyé à un MiSTer ni modifié sur la carte SD.",
+    "date": "{date, date, medium} {date, time, short}"
   },
   "news_feed": {
     "last_updated": "Dernière mise à jour <1></1>",
@@ -451,7 +507,9 @@
     "cores": "Cœurs installés",
     "edit": "Modifier",
     "details": "Détails",
-    "no_cores": "Aucun cœur installé n'utilise cette plateforme."
+    "no_cores": "Aucun cœur installé n'utilise cette plateforme.",
+    "games": "Jeux",
+    "no_games": "Aucun jeu dans le dossier de cette plateforme sur la carte SD."
   },
   "platforms": {
     "cancel": "Annuler",
@@ -506,7 +564,11 @@
     },
     "current": "Actuel",
     "newer": "Plus récent",
-    "older": "Plus ancien"
+    "older": "Plus ancien",
+    "explainer": "Chaque colonne est une sauvegarde, la plus ancienne à gauche. Une barre montre combien de temps une partie est restée identique ; la verte est celle du Pocket actuellement. Cliquez sur une autre pour restaurer cette version.",
+    "restore": "Restaurer",
+    "restore_version": "Restaurer la version du {date, date, short}, {date, time, short}",
+    "show_on_sd_card": "Afficher sur la carte SD"
   },
   "save_states": {
     "cartridge": "Cartouche",
@@ -517,7 +579,13 @@
       "search": "Rechercher",
       "core": "Cœur",
       "platform": "Plateforme",
-      "all": "Tous"
+      "all": "Tous",
+      "group_by": "Grouper par",
+      "group": {
+        "core": "Cœur",
+        "game": "Jeu"
+      },
+      "game": "Jeu"
     },
     "photos": {
       "title": "Exportation de photos",
@@ -527,12 +595,20 @@
       "export_all": "Tout exporter",
       "colours": {
         "black_and_white": "Noir & blanc"
-      }
+      },
+      "photo_number": "Photo {number} sur {total}",
+      "shade": "Teinte {number}"
     },
     "empty": {
       "title": "Aucun état sauvegardé pour l'instant",
-      "text": "Appuyez sur le bouton Analogue et Haut pendant le jeu pour enregistrer un souvenir. Il apparaîtra ici."
-    }
+      "text": "Les souvenirs sont des états sauvegardés : un instantané du jeu auquel vous pouvez revenir à tout moment."
+    },
+    "how_to": {
+      "save": "Appuyez sur le <key>bouton Analogue</key> et <key>Haut</key> pendant le jeu pour enregistrer un souvenir.",
+      "load": "Appuyez sur le <key>bouton Analogue</key> et <key>Bas</key> pour charger le plus récent. Activez d'abord <key>Enable Quick Load</key> dans Réglages → Memories du Pocket."
+    },
+    "count_game": "{count, plural, one {# état sauvegardé} other {# états sauvegardés}}",
+    "unknown_game": "Jeu inconnu"
   },
   "saves": {
     "backups": "Sauvegardes : {count}",
@@ -562,19 +638,37 @@
       "back": "Retour aux captures d'écran",
       "save": "Enregistrer la capture",
       "share": "Partager la capture",
-      "upscaled": "Mis à l'échelle"
-    }
+      "upscaled": "Mis à l'échelle",
+      "previous": "Capture précédente",
+      "next": "Capture suivante"
+    },
+    "dimensions": "{width} × {height} px"
   },
   "screenshots": {
     "controls": {
       "delete_selected": "Supprimer la sélection ({count})",
       "export_selected": "Exporter la sélection ({count})",
       "search": "Rechercher",
-      "select": "Sélectionner"
+      "select": "Sélectionner",
+      "group_by": "Grouper par",
+      "group": {
+        "game": "Jeu",
+        "core": "Cœur",
+        "date": "Date"
+      },
+      "game": "Jeu",
+      "core": "Cœur",
+      "all": "Tous"
     },
     "no_screenshots": "Une fois que vous aurez pris quelques captures d'écran, elles apparaîtront ici",
     "how_to": "Appuyez en même temps sur le <key>bouton Analogue</key> et <key>Start</key> pendant le jeu. La capture est enregistrée sur la carte SD et apparaît ici.",
-    "empty_title": "Aucune capture pour l'instant"
+    "empty_title": "Aucune capture pour l'instant",
+    "taken": "{date, date, medium}, {date, time, short}",
+    "count": "{count, plural, one {# capture} other {# captures}}",
+    "unknown_game": "Jeu inconnu",
+    "unknown_core": "Cœur inconnu",
+    "unknown_date": "Sans date",
+    "group_date": "{date, date, full}"
   },
   "settings": {
     "3d_pocket": {
@@ -679,7 +773,7 @@
       "light": "Clair",
       "style_label": "Style",
       "style_slanted": "Biseauté",
-      "style_modern": "Moderne"
+      "style_modern": "Droit"
     },
     "dismissed_notes": {
       "title": "Notes masquées",

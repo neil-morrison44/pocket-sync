@@ -52,7 +52,8 @@ describes:
   match each locale's existing terms (e.g. Japanese and Vietnamese keep some
   view names in English), and skip a namespace a locale doesn't translate
   at all (it falls back to English as a whole). Check ICU plurals still
-  parse.
+  parse. German always addresses the user informally ("du", never "Sie";
+  decided 2026-10-16).
 
 Also keep [`ui_styling.md`](ui_styling.md) in sync when a change affects
 tokens, conventions or the Figma file. Record only things that outlive this
@@ -397,19 +398,87 @@ about what's built and what's next belongs here.
 - ✅ **Twenty-third pass (2026-10-15).** Long fetch names, Palettes
   flicker, 160ms spinner, Select press, the Updatable filter, search field
   focus, What's New dates and bullets, Library Updates' time.
+- ✅ **Twenty-fourth pass (2026-10-16).** A newly connected card no longer
+  shows the previous folder's files, the connected path on Home, how to
+  save and load a memory, full core names on Save States, a "Jump to" menu
+  on Firmware, Add via Code with a real form, modals without a border.
+- ✅ **Twenty-fifth pass (2026-10-16).** The path on Home is gone again;
+  letterboxed screenshots on the 3D Pocket; screenshot dates; save state
+  images without the empty strip; a cleaner screenshot detail; the Backups
+  timeline rebuilt; the sidebar regrouped.
+- ✅ **Twenty-sixth pass (2026-10-16).** Screenshots in sections (game,
+  core or date) with Game and Core filters; Save States by core or game
+  with a Game filter; links from games to Games; the original Backups
+  view back, made visible; Palettes without the skeleton flashes; the
+  palette detail page (r).
+- ✅ **Twenty-seventh pass (2026-10-16).** Photo export and update progress
+  modals restyled, with previews in Settings → Developer; games without a
+  core; Cores filtering (counts, speed, License and AI-ness filters);
+  palette fixes; zip install modal; modals at most 800px; links, tags,
+  search clear, Home on narrow windows.
+- ✅ **Twenty-eighth pass (2026-10-16).** Filter groups with Clear Filters
+  and marked selects on every header bar; info boxes instead of tips;
+  Games ↔ Platforms links; backup rows with game names; zip install
+  toggles; update demo fixes; photo demo exports.
+- ✅ **Twenty-ninth pass (2026-10-16).** "Modern" is shown as "Straight"
+  (REVISED decision 30); slanted focus rings on the edge, slant-aware gaps
+  and a slanted filter divider; Home hides the Pocket only when short and
+  narrow; the update scene's Pocket lit; the platform's games list full
+  width.
+- ✅ **Thirtieth pass (2026-10-16).** Light theme fixes (frames, selected
+  borders, search field), no button shadows, labelled layer buttons,
+  MiSTer Sync rebuilt (connect modal and two-pane session, with a preview
+  in Settings → Developer), the style named "Straight", German in "du".
+- ✅ **Thirty-first pass (2026-10-16).** Cores' "Nothing matches" sits
+  right below its section heading (the emptied grid is hidden; it pushed
+  the message down). `<html>` starts with `data-theme="dark"
+data-style="slanted"`, the defaults, so the first paint matches before
+  the stored setting loads (the code defaults were already dark and
+  slanted; a stored choice still wins). Short windows: the Pocket was pinned to the
+  left edge with the text centred in the rest, far apart on wide windows;
+  the Pocket and the info are now one grid (Pocket column, info column)
+  centred together.
 
 ### In progress
 
-- The sixteenth to twenty-third passes wait for @olivierbrcknr's review in
+- The sixteenth to thirtieth passes wait for @olivierbrcknr's review in
   the running app (checked with `tsc`, ESLint, stylelint and Prettier
   only).
 
 ### Next
 
+**Before the PR** (as of 2026-10-16):
+
+1. Review in the running app: the sixteenth to thirty-first passes are
+   only checked with `tsc`, stylelint, Prettier and a `vite build`. Tick
+   the **Page checklist** in both styles and both themes.
+2. Decide what's still waiting (see **Waiting on**): Plugins' one-line
+   explanation, Games' Clean Up Files / Build Instance JSON, modal radius,
+   whether both styles ship (decision 30), light theme in this PR (open
+   question).
+3. Finish or consciously leave the "tokens only" screens: Load Required
+   Files, Manage Data Packs / Image Packs, the image editor, Move MROM
+   Dumps, Clean Up Files, Build Instance JSON, Palette Town, Save Mapping,
+   the zip file tree, the plugin window, the error screen, screenshot
+   tiles. Either restyle them or list them as follow-ups in the PR.
+4. (h) clean-up: 19 raw `<button>`s and 12 `<input>`s in 20 files outside
+   `ui/` (some on purpose: list rows, swatches, timeline bars), unused
+   strings (the Update page's, `cores.controls.filters_group`), legacy
+   colour aliases, `ts-prune` for dead code, the `debug` `console.log`s.
+5. Linting: ESLint has no config in the repo, so it wasn't run; agree with
+   upstream on how to lint (or add a config).
+6. Commit the passes since `2970e32` (only when @olivierbrcknr asks), on a
+   clean history for upstream (decide the split, milestone (i)).
+7. Write the PR description from the principles, decisions and Design
+   rationale, with the scope and AI disclosure in (i); attach before /
+   after screenshots; maybe update the README's screenshots (they're out
+   of date, e.g. the old Update All picker).
+8. Leave out of this PR: (s) game names and images, (n) split panes, (k)
+   Eject, (g) Figma screens.
+
 - (n) Resizable sidebar and side panel (split panes).
 - Modals: Manage Data Packs and Manage Image Packs need a pass (layout,
   primitives, explanations), requested 2026-10-15.
-- (r) Palette detail screen.
 - (s) Game names and images: a separate PR (decided 2026-10-15), see the
   milestone.
 - (h) Migration and clean-up.
@@ -418,13 +487,16 @@ about what's built and what's next belongs here.
 ### Waiting on
 
 - Committing: only when @olivierbrcknr asks. Committed so far: `b14e23f`,
-  `b7963a3`, `2970e32`; the sixteenth to twenty-third passes are uncommitted. Never push, and
+  `b7963a3`, `2970e32`; the sixteenth to thirtieth passes are uncommitted. Never push, and
   no AI attribution in commit messages.
 - Plugins: whether the page should explain what a plugin is in one line
   (the info note only links to the specification).
 - Games: whether Clean Up Files and Build Instance JSON stay in the Games
   header, move elsewhere, or go (see the sixteenth pass for what they do).
 - Figma MCP call limit (Starter plan) for the remaining Figma work (g).
+- Modals (2026-10-16): they already use `--radius-modal` (= `--radius`,
+  2px, like buttons in Modern); slanted buttons have no radius. Whether
+  modals should get a larger radius (e.g. `--radius-popover`).
 
 ## Page checklist
 
@@ -491,15 +563,17 @@ The tag after each item says how far it's restyled:
       Settings (core settings, display modes, JT Analogizer), Releases
       (install another version, release notes): restyled
 - [ ] Modal: Load Required Files (incl. its loading state): tokens only
-- [ ] Modal: zip install progress and replace prompt (installing a single
-      core): tokens only
+- [ ] Modal: zip install (file groups and options as switches, Cancel /
+      Install), progress and replace prompt: partly (file tree and progress
+      still old)
 
 ### Update (page removed 2026-10-14)
 
 The page is gone; updating happens on Cores (Updates section, Update All).
 
-- [ ] Modal: update progress (download phases, 3D scene, per-core
-      prompts, finished report), opened from Cores: tokens only
+- [ ] Modal: update progress (phases as steps, 3D scene, progress bars,
+      skip, finished report; opened from Cores; preview in Settings →
+      Developer): restyled
 - [ ] Skip warnings and missing-archive confirmation: native
 
 ### Platforms
@@ -522,35 +596,41 @@ The page is gone; updating happens on Cores (Updates section, Update All).
 
 ### Screenshots
 
-- [ ] Screenshots grid, search, select mode, multi-export: tokens only
+- [ ] Screenshots in sections (game / core / date), search, Game and Core
+      filters, select mode, multi-export: partly (tiles are still the old
+      hover drawer)
 - [ ] Empty state: tokens only
-- [ ] Screenshot detail (save, share, upscaled toggle): tokens only
+- [ ] Screenshot detail (save, share, upscaled toggle, info): restyled
 
 ### Backups (Saves)
 
 - [ ] Backup locations list, Back Up Now, Add Backup Location, path field:
       restyled
 - [ ] Empty state: restyled
-- [ ] Backup detail (save files, versions per file, restore): tokens only
-- [ ] MiSTer Sync: login, sync view, log: tokens only
+- [ ] Backup detail (timeline: dates, guides, version bars, restore):
+      restyled
+- [ ] MiSTer Sync: connect modal, session (saves, comparison, copy),
+      activity; preview in Settings → Developer: restyled
 - [ ] Modal: Save Mapping: tokens only
 - [ ] Delete / restore confirmations: native
 
 ### Save States
 
-- [ ] Save states (tiles in a grid per core, sticky core headers, search,
+- [ ] Save states (tiles in a grid per core or game, sticky headers,
+      Group by, Game filter, search,
       core / platform filters, selection, delete): restyled
-- [ ] Modal: Game Boy Camera photo export (colours, single / all):
-      tokens only
+- [ ] Empty state (how to save and load a memory): restyled
+- [ ] Modal: Game Boy Camera photo export (presets, custom shades, photo
+      list, export; preview in Settings → Developer): restyled
 - [ ] Delete confirmation: native
 
 ### Palettes
 
 - [ ] Palettes list (tiles in a grid, share code, rename, duplicate,
       delete): restyled
-- [ ] New palette / palette editor (colour inputs, save, reset): tokens
-      only, see (r)
-- [ ] Modal: Add Palette via Code: tokens only
+- [ ] Palette detail (name edited in place, header actions, game preview,
+      colour swatches, save, reset): restyled
+- [ ] Modal: Add Palette via Code (share code field, hint, error): restyled
 - [ ] Modal: Browse Palette Town: tokens only
 
 ### Fetch
@@ -672,7 +752,7 @@ here.
 | 27  | Themes                              | **REVISED 2026-10-15: Dark (default), Light and System**, via `data-theme` on `<html>` set from a stored preference. Light mirrors the white Pocket and uses the same Analogue green fills as dark, with a darker green only for text and icons. _Was: light used a darker green for everything._                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | 28  | macOS window                        | **Overlay title bar** with the traffic lights inside the sidebar; other platforms keep native decorations. Config and capability change only.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | 29  | Modals                              | **App modals are Radix Dialog** (close button, Escape, `onClose`; done in (f2)). OS dialogs from the Tauri dialog plugin stay native.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| 30  | Styles                              | **Two styles: "Slanted" (default) and "Modern" (straight edges, more contrast)**, via `data-style` on `<html>`, independent of the dark/light theme. Whether both ship is decided later.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| 30  | Styles                              | **REVISED (2026-10-16):** the second style is shown as **"Straight"** (first "Rounded", but its 2px radius isn't round; "Clean" judged the other again) (internal value `modern`, `data-style="modern"`), so the two read as equals ("Slanted" / "Straight") instead of "Modern" diminishing "Slanted". _Was: Two styles: "Slanted" (default) and "Modern" (straight edges, more contrast), via `data-style` on `<html>`, independent of the dark/light theme. Whether both ship is decided later._                                                                                                                                                                                                                                                                                                                                                                                 |
 
 ## Milestones
 
@@ -832,14 +912,10 @@ The home screen should reflect the user's own Pocket:
   disk-space source; check what the frontend can read first);
 - total play time, if the Pocket stores it on the SD card (to investigate).
 
-### (r) Palette detail screen
+### (r) Palette detail screen ✅ (2026-10-16)
 
-The palette editor (`palettes/paletteFull.tsx`) is still the old layout:
-hard-coded radii (15px), GamePocket name with a thick underline, raw colour
-inputs and selects. Redo it like the other detail pages (`DetailPage`
-pattern where it fits): preview and emulator canvas, colour sets as labelled
-rows with our inputs, Save / Reset as `Button`s, credits as a `Callout` or
-facts. Requested 2026-10-15 ("eventually").
+Done in the twenty-sixth pass, on `DetailPage`: see the (q) milestone's
+pass notes.
 
 ### (s) Game names and images (proposal, separate PR)
 
@@ -1029,6 +1105,294 @@ Sixteenth pass (2026-10-15, after review):
   is `#f0f0f0` against the white content, like dark's darker sidebar. Core
   and platform cards get a 1px separator frame in light, drawn above the
   image, so white platform images don't blend into the page.
+
+Thirtieth pass (2026-10-16, after review):
+
+- **Light theme:** screenshot tiles get the light frame like `Tile`s;
+  selected tiles were grey because the light frame rule out-specified the
+  selection (now `:root .tile.tile--is-selected::after`), same for
+  screenshots. Text inputs get a 1px frame (white on the white bar).
+- **Frames for images:** the detail banner has a bottom separator and the
+  image editor's preview a 1px frame, in both themes (images often have a
+  white background).
+- **No drop shadows:** the legacy `button[class]` style had one (e.g. the
+  backup view's Older / Newer bars); it's gone. Dropdowns, popovers and
+  menus keep their elevation shadow.
+- **Image editor:** the layer's Remove is a labelled destructive button,
+  "Remove Layer"; Reset reads "Reset Layer".
+- **MiSTer Sync**, rebuilt on our components. **Connect** is a modal
+  (`misterSync/connect.tsx`) over Backups: `Field`s with `TextInput`s (the
+  password is a password field now), the three requirements in one info
+  `Callout`, a warning when connecting fails (nothing was shown before),
+  Cancel / Connect. The **session** (`misterSync/index.tsx`) is a page:
+  saves by platform on the left (rows as buttons, the chosen one marked),
+  the comparison on the right: game name, a status tag (same, newer on the
+  Pocket / MiSTer, not on the MiSTer yet), Pocket and MiSTer side by side
+  (changed, checksum, path; the newer one framed in the accent), a folder
+  `Select` when a save could go into several, and Copy to Pocket / Copy to
+  MiSTer (the suggested direction primary; asks before replacing). An
+  unmapped platform is a warning with Save Mapping. The log is a folded
+  "Activity" strip. Data and actions come from a `MisterSource`
+  (`misterSync/source.tsx`): the backend, or a demo. Save Mapping's
+  buttons are ours.
+- **Preview (Settings → Developer → Modal previews → MiSTer Sync):** made-up
+  saves covering each case (same, older, newer, missing, two folders, not
+  mapped); the host "fail" fails to connect; copying changes the demo's
+  data and writes to the activity. Save Mapping is left out (it reads the
+  MiSTer's folders). The stored login isn't touched.
+- **Style name:** "Straight" (after "Rounded", which didn't fit a 2px
+  radius, and "Clean", which judged the other again).
+- **German:** every string uses "du" (42 were "Sie"), including older
+  ones.
+
+Twenty-ninth pass (2026-10-16, after review):
+
+- **Style name:** "Modern" reads as "Straight" in every locale (the setting's
+  value stays `modern`, so stored choices keep working). The rest of this
+  plan still says "Modern" for it.
+- **Slanted focus rings** sit on the edge (2px inward from it, no gap),
+  not inset with a gap of the control's colour; outside isn't possible,
+  since clip-path clips it. Modern / Straight keeps its outside ring.
+- **Gaps between slanted controls:** two slanted edges side by side look
+  the gap plus the slant apart, so rows of controls use `--control-gap`
+  (`--space-sm` minus `--slant`; 8px in Straight): the header bar, its
+  actions and filter group, and modal actions.
+- **Filter divider** leans like the slanted edges
+  (`rotate(atan2(--slant, control height))`), upright in Straight.
+- **Home:** the twenty-seventh pass hid the Pocket too eagerly (in any
+  narrow column, and below 860px beside the panel). It's only hidden when
+  the window is short (≤ 700px) and the space beside the open panel is
+  narrow (home view under 700px); otherwise it shrinks.
+- **Update scene:** the Pocket was nearly black: its canvas used the
+  default tone mapping (the home screen's sets `NoToneMapping`), and the
+  layout puts it closer to the camera than its fixed point lights. It gets
+  `NoToneMapping` and a stronger front light.
+- **Platform page:** the games list takes the full reading width.
+
+Twenty-eighth pass (2026-10-16, after review):
+
+- **Filters in header bars:** every header bar with filters (Cores, Games,
+  Save States, Screenshots, Plugins) sets them off with `ControlsGroup`'s
+  dimmed line. It names itself ("Filters") and shows a tertiary **Clear
+  Filters** while any filter is set. A set filter is marked like a pressed
+  toggle: `Select active` and the `MultiSelect` trigger while something is
+  chosen. Screenshots' Select (an action) moved to the right.
+- **Info boxes:** `Tip` is gone; every hint and warning is a `Callout`
+  (Home's "not a Pocket", the backup view, MiSTer Sync, core settings, the
+  error screen). The core page's "0 of 1 required files found" is a
+  warning `Callout`.
+- **Zip install:** the file groups and "Remove duplicate existing files"
+  are checkbox `Toggle`s, like Updatable; the info icon uses our `Tooltip`
+  (focusable).
+- **Cancel buttons of running jobs** (`jobs/button.tsx`, e.g. downloading
+  required files with the remaining time) are our `Button`, at the end;
+  the remaining time and speed are small soft text.
+- **Palette swatches** (and the photo export's custom shades): a stronger
+  border on hover, no lift.
+- **Search fields:** the clear button is a small grey square (it inherited
+  the global button shadow and press scale); side padding is half the
+  space above and below the text plus half the slant (was 12px).
+- **Games ↔ Platforms:** a system's name in Games opens its platform
+  (when the card has its file); the platform page lists its games below
+  its cores (`GameSystemSection embedded`).
+- **Screenshot detail:** previous / next are tertiary.
+- **Backups detail:** each save's heading is the game's name; the path
+  (`Saves/…`) follows small, with a tertiary button that shows it on the
+  SD card. Platform labels open the platform.
+- **Photo export preview:** exporting works (the generated photos are
+  saved to the chosen folder).
+- **Update progress:** the phase spinner is 16px (the glyph is only
+  pixel-perfect at 20 and 40, so it may look a little soft); the 3D scene
+  gets an ambient and a key light under the Pocket's own; the footer keeps
+  one height in every phase, since its changes resized the canvas and
+  moved the Pocket. The demo only plays events; nothing is downloaded.
+
+Twenty-seventh pass (2026-10-16, after review):
+
+- **Photo export modal:** presets (GB, GB Player, Black & White) are
+  buttons with their four shades, the active one primary; four custom
+  shades as swatches; the chosen photo large with "Photo n of 30", the 30
+  photos as a listbox of buttons (hover ring, accent when chosen, focus
+  ring); Export Selected and Export All (primary) as modal actions.
+- **Update progress modal:** the phases as steps (circle, spinner, green
+  check) left of the animation; errors folded per phase ("n errors");
+  `ProgressBar`s for the file and the total, speed and size, Skip as
+  tertiary buttons; a Close button when done. The report has three columns
+  (updated, installed, downloaded files) with cores as buttons to their
+  page. The 3D scene and fly-through stay. Its events go through
+  `update/modal/events.tsx` (Tauri by default). Also fixed: the skip
+  warnings weren't awaited, so a skip always went ahead.
+- **Previews (Settings → Developer → Modal previews):** the photo export
+  with generated photos in the chosen colours (export off), and the update
+  progress playing a scripted update (`update/modal/demo.tsx`: the card's
+  cores, two "installed" ones from the inventory, an error in phases one
+  and three) that holds at a chosen phase. Nothing is downloaded or
+  changed; skipping does nothing.
+- **Games without a core:** Games listed only systems an installed core
+  declares, so a `.gb` in `Assets/gb/common` didn't show without a Game
+  Boy core. Folders of known console platforms (gb, gbc, gba, gg, sms, nes,
+  snes, genesis, pce, ngp, lynx, wonderswan) are listed too, with their ROM
+  extensions and a built-in name when the card has no platform file; they
+  get a "No core installed" warning tag and **Find a Core**, which opens
+  Cores filtered to the platform.
+- **Cores:** searching "gameboy" found no available cores (they were only
+  searched by platform ID, identifier and owner); they're now searched by
+  platform name, maker and category too. While searching or filtering,
+  each section reads "Available (3 / 335)" and has its own "Nothing
+  matches". Filtering was slow: every tile filtered itself (all re-render
+  per key) and lazy tiles loaded in waves as others collapsed. Available
+  cores are now filtered in the list from the inventory's data (only
+  matches render), installed tiles render at once while filtering so the
+  count is right, and the search and filters are deferred
+  (`useDeferredValue`). New **License** (All / Free only / Needs a license)
+  and **AI-ness** (All / None / up to 25 / 50 / 75%) filters, matching the
+  tags (`passesTagFilters`). The filters are set off by a dimmed vertical
+  line instead of the "/ Filters" label.
+- **Palettes:** the no-games hint is an info `Callout`; saving no longer
+  blanks the page twice (colours, share code and the games list keep their
+  value while re-read: `keepPreviousOrSuspend`); the game select sits below
+  the game, as wide as it, names cut off; swatches lift on hover and get a
+  focus ring. The detail has a fixed header bar with Copy Share Code,
+  Duplicate and Delete as full buttons (the bar that slides in on scroll
+  never showed on such a short page).
+- **Zip install modal:** the file groups (cores, platform files) and
+  "Remove duplicate existing files" are `Switch`es; that option on the left
+  (with an info icon for its explanation), Cancel (tertiary) and Install
+  Files (primary) on the right.
+- **Modals:** at most 800px wide. The update modal lays out by its own
+  width (a container).
+- **Tags and brand marks:** brand marks are 0.625 of the icon size (was
+  0.75) and 0.8em next to text (was 1em), so the Analogizer mark is
+  smaller everywhere. Tags use the buttons' padding ratio.
+- **Save States** group by game by default. Names like "Pokémon" read
+  "Pok‚mon": the Pocket stores them in code page 437 ("é" is 0x82), not
+  Windows-1252; text that isn't UTF-8 is decoded as CP437 now.
+- **Links:** `Link subtle` for titles (game and core section headers, the
+  screenshot detail's game): no underline until hovered. Every link gets
+  our focus ring instead of the browser's blue one.
+- **Screenshot detail:** previous / next are icon buttons (focusable, with
+  tooltips) fixed at the window's edges.
+- **Search fields:** the browser's clear button is replaced by the pixel
+  `close` icon.
+- **Home:** the connected path is gone again (twenty-fifth pass). In short
+  windows the Pocket's width is a share of the space beside the updates
+  panel, and goes below 860px; in a very narrow column (under 420px) the
+  Pocket is left out, so the title, stats and buttons keep their room.
+
+Twenty-sixth pass (2026-10-16, after review):
+
+- **Backups detail:** the rebuilt timeline from the twenty-fifth pass is
+  reverted ("broken"); the original layout is back and cleaned up. Its
+  column lines were drawn at `z-index: -1`, behind the page's background;
+  the view is now its own stacking context (`isolation: isolate`) and the
+  lines sit in a wrapper below the header bar and the hint, as 1px
+  separators. Kept: backups sorted oldest first, the hint, dates (date over
+  a soft time) sticking below the header bar, platform labels below them,
+  version bars on the button radius (green Current; Older / Newer are
+  buttons that read "Restore" on hover and focus).
+- **Screenshots:** sections by game (default), core or date (by day,
+  newest first), remembered (`ui_screenshots_group_by`). Game and Core
+  filters (searchable) next to the search, which now also matches the core
+  and file name. Section headers use the new `shared/groupHeader`
+  (extracted from Save States): the game links to Games, the core to the
+  core page, plus a count. `screenshotsInfoSelector` reads every
+  screenshot's game, core and date once (kept while it reloads);
+  previous / next in the detail follow the order on screen. The detail's
+  game is a link too.
+- **Games links:** until games have their own pages, a game opens Games
+  searched for it (`useOpenGame`; Games' search is `gamesSearchAtom`).
+- **Save States:** Group by Core (default) or Game, remembered
+  (`ui_save_states_group_by`), and a Game filter. By game, the header links
+  to Games and counts save states; by core it keeps the "( n / 128 )" (the
+  Pocket's limit per core). Headers use `GroupHeader`.
+- **Palettes list:** creating a palette showed the skeletons about three
+  times: each file event re-ran the list (fallback: all skeletons), and the
+  new tile's share code suspended the whole list. The list keeps the shown
+  palettes while it reloads (`keepPrevious` in `utils/jotai.ts`, built on
+  jotai's `unwrap`) and each tile has its own Suspense.
+- **(r) Palette detail:** on `DetailPage`. The name is the title and edits
+  in place (Enter or leaving the field renames; Escape undoes; folders show
+  before it). Copy Share Code, Duplicate and Delete are icon buttons by the
+  title and in the header bar. The game preview has our `Select` ("Game";
+  the native select was empty without games) and a hint where to put a
+  `.gb` game when there's none, with the palette's swatch preview instead.
+  The emulator credit is small soft text below the game, not a banner.
+  Colour sets are labelled rows of swatches (Obj0 / Obj1 read "Sprites 0 /
+  1", "window" "Window"); Reset and Save are buttons, disabled until
+  something changed. Rename, duplicate and delete live in
+  `palettes/hooks/usePaletteActions.ts` for tiles and detail; renaming now
+  keeps a palette in its folder (the tile moved it to the top).
+
+Twenty-fifth pass (2026-10-16, after review):
+
+- **Home:** the connected path from the twenty-fourth pass is removed
+  again (too long); its strings are gone.
+- **3D Pocket screen:** screenshots are drawn into a black 10:9 frame (the
+  Pocket's 1600 × 1440 at half size) at the core's display aspect ratio
+  (its video.json scaler mode, else the image's), as large as fits, so
+  wider or narrower images get bars like on the device instead of being
+  stretched (`frameScreenshot` in `three/randomScreenshotScreen.tsx`).
+- **Screenshot dates:** `timestamp` was always "now" (the file's date of a
+  `File` built in memory). It's parsed from the name the Pocket gives
+  (`YYYYMMDD_HHMMSS.png`, local time), or null. The grid's hover drawer
+  and the detail view show it.
+- **Screenshot detail:** Save and Share have icons (`save`, new `share`).
+  The image sits in its own area with the page padding; the info below
+  has a separator, the game as title with the date beside it, then one
+  soft line: platform · core (a link) · size · file name. The core used
+  the old `CoreTag`.
+- **Save state images:** the thumbnail canvas was 122px wide but the
+  columns were drawn from x = 2, so a transparent 2px strip (the light
+  media background) showed on the left. It's as wide as the 120 drawn
+  columns now; the first stored column still isn't shown, as before.
+- **Backups timeline (View Saves):** rebuilt. Backups are sorted oldest
+  first (bars assumed that order, the list didn't guarantee it). One grid
+  template for the dates, guides and rows: a name column, then a column per
+  backup. Dates stick below the header bar, platform labels below the
+  dates; a 1px guide runs down each backup's column (they were drawn at
+  `z-index: -1`, behind the page's background). Bars: green "Current" for
+  the version on the Pocket; the others are buttons that read "Older" /
+  "Newer" and turn into "Restore" on hover or focus. File names drop the
+  platform folder (they're grouped by it). A Tip explains how to read it;
+  "Nothing matches" when the search or Hide Unchanged leaves nothing.
+- **Sidebar groups:** Home; installed on the card (Games, Cores,
+  Platforms, Palettes, Firmware); made on the Pocket (Screenshots, Save
+  States); tools between card and computer (Backups, Fetch, Plugins).
+
+Twenty-fourth pass (2026-10-16, after review):
+
+- **Switching cards:** reads from the SD card are cached by their path on
+  the card, so after connecting `/Volumes/…` instead of a folder the app
+  kept showing the old folder's files (e.g. screenshots, which Home had
+  already loaded). Connecting now marks every watched path as changed
+  (`refreshAllFSWatchers` in `jotai/fileSystem/atoms.ts`), so everything
+  is read again. The save state image read wasn't watched at all; it is
+  now.
+- **Home:** the connected folder or volume shows below the buttons
+  ("Connected to …", monospace, cut off with the full path on hover). The
+  "That folder doesn't look like …" hint is a warning below the Connect
+  button, not beside it.
+- **Save States:** the empty state explains saving (Analogue + Up) and
+  loading (Analogue + Down, after turning on Settings → Memories → Enable
+  Quick Load on the Pocket), each under its button combination, per
+  Analogue's manual. Group headers show the core's full name
+  (`Spiritualized.GBC`, a link to the core) and its platform's name, since
+  the short name alone ("GBC") read like the platform; the Core filter
+  lists full names too. The loading placeholders were 240px vertical card
+  skeletons, so a dark wall flashed and collapsed into the short
+  horizontal tiles; they now match the tile (a horizontal `CardSkeleton`,
+  128px).
+- **Backups detail:** "Hide Unchanged" off crashed on a save folder whose
+  platform has no file on the card (`gbc`). The platform label falls back
+  to the folder name.
+- **Firmware:** "Jump to" is a menu button (new `ui/Menu` on Radix
+  Dropdown Menu) instead of a select, since it holds no value. Items show
+  the version and its date.
+- **Palettes:** Add via Code uses `Field`, a code `TextInput` and the modal
+  actions: Cancel, and a primary Add Palette that's disabled until the code
+  is valid. The hint names the palette once the code parses; a wrong code
+  shows an error. Enter adds. A malformed name no longer throws.
+- **Modals:** no border; the radius stays `--radius-modal`.
 
 Twenty-third pass (2026-10-15, after review):
 
@@ -1753,7 +2117,111 @@ Newest at the bottom.
   analogue green"), and core tiles need a border because the mostly white
   images blend into the background. Maybe tertiary buttons don't need a
   border in modern.
-- **Review 22 (2026-10-15):** the fetch source
+- **Review 23 (2026-10-16):** after connecting the real SD card instead of
+  the mock folder, the app still showed the old files and no screenshots;
+  the home screen could show the folder's or volume's path. The "That
+  folder…" hint belongs beneath the Connect button. Save States' empty state
+  should explain how to make and load a save state, like Screenshots'
+  does. Asked what "View Saves" on a backup does ("I am not understanding
+  the view"), so it can be shown better; Hide Unchanged crashed. Opening
+  Save States flashed black. Wondered whether Backups ("a backup of the
+  whole pocket, not on device like screenshots and savestates") and
+  Palettes ("closer to games and platforms and cores as this is
+  installable") belong elsewhere. Add Palette via Code had no submit
+  button. In Save States, the cores showed only the platform, "this is
+  confusing". Firmware's "Jump to" is odd as a select: "this should not be
+  an element that can have a value". Modals should have no border and the
+  radius used on buttons.
+- **Review 29 (2026-10-16):** in light, screenshot tiles need a border,
+  platform header images a bottom border "to make clear where the image
+  ends", and the image editor's image a frame (both themes; "Images
+  usually have a white BG"); the search input had no border; selected
+  save states weren't green; the backup view's "older" button had a
+  shadow: "we do not want drop shadows". The image editor's buttons should
+  say "remove layer", "it is unclear atm". Sketch MiSTer Sync, add a mock
+  to Settings, and "use our components (e.g. inputs) as much as
+  possible". "Rounded seems like the wrong theme name with the simple 2px
+  radius ... maybe clean?", "but clean might be too valued again". German
+  "sometimes 'du' and sometimes 'sie'. Let's use informal only".
+- **Review 28 (2026-10-16):** Home was "visually more broken": the Pocket
+  was hidden "even when there would be space"; the issue was only when
+  height and width are both small. In the slanted style the filter
+  dividers should be slanted too; "Two slanted elements after each other
+  should have a reduced gap, the slanted edge automatically adds some gap
+  visually"; focus rings on slanted elements should be "either outside or
+  on the edge itself", not inset. The platform page's games list can be
+  the full reading width. MiSTer Sync "looks weird. this might be better a
+  modal? What other states do we need to consider here?". The update
+  modal's Pocket was still pitch black. Find another name for "Modern": "It
+  currently seems like it is diminishing 'slanted'. They should be
+  perceived as equal".
+- **Review 27 (2026-10-16):** in the install modal the info should use our
+  tooltip ("faster") and the toggles should be checkbox toggles like
+  Updatable ("I think this makes it more clear"). The required files line
+  could be a yellow warning box. The modal with the remaining time still
+  had an old cancel button. The palette hover's "vertical move is too
+  much", only add the border. The filter separator belongs on all header
+  bars with filters; in Screenshots, Select is an action and goes to the
+  right. The search's clear button should be grey without a shadow, and
+  the search has too much side padding. Cores needs a tertiary "clear
+  filters" once filters are set: "it is not clear if a dropdown has a
+  filter selected as they all look the same". Games should link to the
+  platform, and platforms list their games below the cores. Prev / next
+  screenshot should be tertiary ("too prominent"). "We should always use
+  the info box for warnings and infos. this makes it easier to style them
+  consistently." Backup saves need better headers with the game name, the
+  path small with an open button, and platform links. In the demos, the
+  photo export didn't export; the update spinner could be smaller, the 3D
+  scene looked unlit, and the Pocket "positions itself differently all
+  the time"; asked whether it actually downloads.
+- **Review 26 (2026-10-16):** palettes: the no-games line should be an info
+  box, saving reloaded the screen twice, the game select was very big and
+  belongs below the preview, no wider than it, and the colours need hover
+  and keyboard focus states; later, the detail's buttons belong in the top
+  header bar as full buttons. A `.gb` in `Assets/gb/common` didn't show in
+  Games without a core; a missing core should get a warning tag and a
+  quick "find core" action, ideally with the platform filter. Searching
+  Cores for "gameboy" showed "Available (335)" without any core: show "no
+  matching results" and e.g. "(0/335)"; filtering cores "takes a while ...
+  Isn't that only a client side filtering?". The "/ Filters" label should
+  go ("a dimmed vertical line and some gap"); the AI filter is missing; it
+  should be possible to filter for each visible tag, e.g. "only free"
+  (license). Next: the photo export and update progress modals, "with
+  additional testing views for them so that I can see and visually debug
+  it". Save states should group by game by default; "pokémon" rendered as
+  "pok,mon". Title links shouldn't be underlined ("This is too much");
+  screenshot prev / next need focus; focused links were still blue. On a
+  narrow Home with the updates open, "the info is more important ... than
+  the 3d scene". The install core modal's buttons: the checkbox to the
+  left, Cancel and Install on the right, Install primary; the "platform
+  files" toggle should behave like the other toggles; modals at most
+  800px; the Analogizer icon in tags is too big, and tags could use the
+  buttons' padding ratio; the search's clear button should be a pixel
+  icon.
+- **Review 25 (2026-10-16):** screenshots should link to their game
+  ("later it might make sense to have game detail pages with screenshots
+  and saves etc"), and the overview could have sections "by game, or core,
+  or date so that it can be sorted", by game by default, with filters "as
+  in the other overview pages". Save states should be sortable by game and
+  have a game filter. The rebuilt backup view was broken: "let's use the
+  existing one and clean it up a bit so that it is visible". Creating a
+  palette refreshed the skeletons about three times. Palette detail: the
+  game dropdown had no value, the emulator credit "could be a smaller info
+  without the black banner", the name should be editable directly, and
+  Copy Share Code and Duplicate belong in the header. Asked which screens
+  from the README are still to check (e.g. Update All, photo export).
+- **Review 24 (2026-10-16):** the connected path on Home "is too
+  lengthy"; remove it. On the 3D Pocket, screenshots "can be smaller than
+  the actual frame due to the different aspect ratio. They should not be
+  stretched but put into a black frame so that it would get bars, like the
+  real analogue pocket". Screenshots should show when they were taken
+  (from the file name or metadata). Save state images had a white border
+  on the left. The screenshot detail's Save and Share need icons, and the
+  bottom drawer a clean-up. In View Saves "the lines and backgrounds are
+  missing, that was visible in the previous non-designed version". The
+  sidebar can be regrouped "in groups that make more sense" (after the
+  earlier question about Backups and Palettes).
+
   `ping-pong-diplomacy-gb-rom-v-1` didn't display correctly; the Palettes
   page flickered while loading; the spinner should be 160ms; the fetch
   source dropdown scaled on press, which looked off for such a big control;
@@ -1763,6 +2231,7 @@ Newest at the bottom.
   input field"); in What's New the date belongs on its own dimmed row in the
   app's date format, and the bullets still weren't inset; the library
   updates' "… ago" should be left aligned and smaller.
+
 - **Review 21 (2026-10-15):** add empty states when a search or filters
   leave nothing, e.g. a simple line like "there is no entry matching your
   search / filters". Fetch said 0/1 files after fetching; maybe show the

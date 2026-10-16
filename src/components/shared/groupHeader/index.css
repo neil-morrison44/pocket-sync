@@ -1,0 +1,49 @@
+/* Sticks just below the header bar, on the page background */
+.group-header {
+  position: sticky;
+  top: var(--header-bar-height);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  min-height: 48px;
+  padding: var(--space-sm) var(--page-padding-inline);
+  background-color: var(--theme-background);
+  color: var(--theme-text-headline);
+
+  /* Separator inside the side padding, like the header bar's */
+  &::after {
+    content: "";
+    position: absolute;
+    right: var(--page-padding-inline);
+    bottom: 0;
+    left: var(--page-padding-inline);
+    height: 1px;
+    background-color: var(--theme-separator);
+  }
+}
+
+.group-header__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+  font-weight: 600;
+
+  .link {
+    color: var(--theme-text-headline);
+  }
+}
+
+.group-header__detail {
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  color: var(--theme-text-soft);
+}
+
+.group-header__count {
+  margin-left: auto;
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+  white-space: nowrap;
+}

@@ -170,3 +170,28 @@ export const loadable = <Value>(
     }
   })
 }
+
+/**
+ * The atom's value without suspending on a refresh: while a new value loads
+ * (e.g. after a file event), it keeps the previous one, so lists don't fall
+ * back to their loading state each time. `undefined` until the first value.
+ */
+export const keepPrevious = <Value>(
+  anAtom: Atom<Value>
+): Atom<Awaited<Value> | undefined> => unwrap(anAtom, (previous) => previous)
+
+/**
+ * Like `keepPrevious`, but suspends on the first load instead of returning
+ * `undefined`, so it drops in for the atom itself: a refresh keeps showing
+ * the previous value instead of the Suspense fallback.
+ */
+export const keepPreviousOrSuspend = <Value>(
+  anAtom: Atom<Value>
+): Atom<Value | Awaited<Value>> => {
+  const PENDING = Symbol("pending")
+  const unwrapped = unwrap(anAtom, (previous) => previous ?? PENDING)
+  return atom((get) => {
+    const value = get(unwrapped)
+    return value === PENDING ? get(anAtom) : (value as Awaited<Value>)
+  })
+}

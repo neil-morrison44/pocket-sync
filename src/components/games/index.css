@@ -23,6 +23,11 @@
   border-bottom: 1px solid var(--theme-border);
 }
 
+/* Next to Open Folder, at the end of the header */
+.games__find-core {
+  margin-inline-start: auto;
+}
+
 .games__system-heading {
   display: flex;
   flex-direction: column;
@@ -82,4 +87,3 @@
   gap: var(--space-sm);
   padding: var(--space-lg);
 }
-

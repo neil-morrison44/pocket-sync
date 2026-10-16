@@ -5,7 +5,8 @@ export type Screenshot = {
   game: string
   author: string
   core: string
-  timestamp: Date
+  /** When it was taken, from the file name; null if the name has no date. */
+  timestamp: Date | null
 }
 
 export type VideoJSON = {

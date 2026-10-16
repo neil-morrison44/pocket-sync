@@ -71,3 +71,9 @@
     transition: none;
   }
 }
+
+/* The games list takes the full reading width, like the fields above */
+.platform-info .detail-page__section > .games__system {
+  align-self: stretch;
+  max-width: var(--content-max-width);
+}

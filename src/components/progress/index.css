@@ -1,0 +1,9 @@
+/* Remaining time and speed below the Pocket, small and soft */
+.progress__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  width: 100%;
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+}

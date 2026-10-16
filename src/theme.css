@@ -290,23 +290,28 @@
     calc(var(--slant) + 0.9px) 1px
   );
 
-  /* Focus ring: 2px wide, 2px inside the edge (--focus-offset), so a gap
-     of the control's own colour sets it apart. It can't sit outside the
-     edge: clip-path clips everything outside the shape. */
+  /* Focus ring: 2px wide, on the edge itself (it can't sit outside the
+     edge: clip-path clips everything outside the shape; an inset ring with
+     a gap looked like a second frame). --focus-offset is the gap used where
+     rings can sit outside, e.g. in the modern style. */
   --focus-offset: 2px;
   --shape-slant-ring: polygon(
     evenodd,
+    var(--slant) 0,
+    100% 0,
+    calc(100% - var(--slant)) 100%,
+    0 100%,
+    var(--slant) 0,
     calc(var(--slant) + 1.7px) 2px,
     calc(100% - 2.3px) 2px,
     calc(100% - var(--slant) - 1.7px) calc(100% - 2px),
     2.3px calc(100% - 2px),
-    calc(var(--slant) + 1.7px) 2px,
-    calc(var(--slant) + 3.4px) 4px,
-    calc(100% - 4.6px) 4px,
-    calc(100% - var(--slant) - 3.4px) calc(100% - 4px),
-    4.6px calc(100% - 4px),
-    calc(var(--slant) + 3.4px) 4px
+    calc(var(--slant) + 1.7px) 2px
   );
+
+  /* The gap between controls in a row. Two slanted edges side by side look
+     the gap plus the slant apart, so the slant comes off (8px in modern) */
+  --control-gap: calc(var(--space-sm) - var(--slant));
 
   /* ---------- Aliases (keep existing component CSS working) ---------- */
   --background-colour: var(--theme-background);

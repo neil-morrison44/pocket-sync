@@ -17,7 +17,8 @@ import { PocketSyncConfigSelector } from "../../jotai/config/selectors"
 import { useAtomValue } from "jotai"
 import { useMemo } from "react"
 import { CoreTags } from "./tags"
-import { getCoreFeatures, hasFeatures } from "./features"
+import { getCoreFeatures, hasFeatures, passesTagFilters } from "./features"
+import { aiCheckAtom } from "../../jotai/cores/atoms"
 import Tile from "../ui/Tile"
 
 type CoreItemProps = {
@@ -34,6 +35,11 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
   const { platform } = useAtomValue(PlatformInfoSelectorFamily(mainPlatformId))
   const canUpdate = useUpdateAvailable(coreName)
   const inventoryItem = useInventoryItem(coreName)
+  const aiCheck = useAtomValue(aiCheckAtom)
+  const tagInfo = {
+    requiresLicense: Boolean(inventoryItem?.releases[0].updaters?.license),
+    aiScore: aiCheck[coreName]?.overall_score ?? 0,
+  }
 
   // the inventory knows features of older core.json files that lack them
   const coreFeatures = useMemo(
@@ -55,7 +61,15 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
         platform.category || "",
         `${platform.year}`,
       ]}
-      otherFn={({ onlyUpdates, category, features, platform: platformId }) => {
+      otherFn={({
+        onlyUpdates,
+        category,
+        features,
+        platform: platformId,
+        license,
+        maxAi,
+      }) => {
+        if (!passesTagFilters(tagInfo, { license, maxAi })) return false
         if (category !== "All") {
           if (platform.category !== category) return false
         }
@@ -106,57 +120,30 @@ export const NotInstalledCoreItem = ({
   const version = inventoryItem.releases[0].core.metadata.version
   const platform_id = inventoryItem.releases[0].core.metadata.platform_ids[0]
 
-  const platform = useAtomValue(CorePlatformSelectorFamily(platform_id))
-
   const config = useAtomValue(PocketSyncConfigSelector)
   const authorImageUrl = `https://openfpga-library.github.io/analogue-pocket/assets/images/authors/${identifier}.png`
   const [author] = identifier.split(".")
-
-  const coreFeatures = useMemo(
-    () => getCoreFeatures(identifier, inventoryItem.releases[0].core.framework),
-    [identifier, inventoryItem]
-  )
 
   if (config.hidden_cores && config.hidden_cores.includes(identifier))
     return null
 
   return (
-    <SearchContextSelfHidingConsumer
-      fields={[platform_id, identifier, inventoryItem.repository?.owner || ""]}
-      otherFn={({ onlyUpdates, category, features, platform: platformId }) => {
-        // Not installed, so there's nothing to update
-        if (onlyUpdates) return false
-        if (!hasFeatures(coreFeatures, features)) return false
-        if (
-          platformId &&
-          platformId !== "All" &&
-          !inventoryItem.releases[0].core.metadata.platform_ids.includes(
-            platformId
-          )
-        )
-          return false
-        if (category === "All") return true
-        return category === platform?.category
-      }}
-    >
-      <Tile
-        onClick={onClick}
-        media={
-          <InventoryPlatformImage
-            platformId={platform_id}
-            label={platform_id}
-          />
-        }
-        title={platform_id}
-        subtitle={
-          <>
-            <img className="tile__avatar" src={authorImageUrl} alt="" />
-            {author}
-          </>
-        }
-        meta={version}
-        tags={<CoreTags coreName={identifier} installed={false} />}
-      />
-    </SearchContextSelfHidingConsumer>
+    // Filtered by the list already (`filterNotInstalledCores`), so only
+    // matches are rendered
+    <Tile
+      onClick={onClick}
+      media={
+        <InventoryPlatformImage platformId={platform_id} label={platform_id} />
+      }
+      title={platform_id}
+      subtitle={
+        <>
+          <img className="tile__avatar" src={authorImageUrl} alt="" />
+          {author}
+        </>
+      }
+      meta={version}
+      tags={<CoreTags coreName={identifier} installed={false} />}
+    />
   )
 }

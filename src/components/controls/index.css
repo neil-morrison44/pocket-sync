@@ -5,7 +5,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--control-gap);
   font-size: var(--font-size-sm);
   background-color: var(--theme-background);
   position: sticky;
@@ -73,42 +73,34 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--control-gap);
   margin-inline-start: auto;
 }
 
-/* Inline group: a small label, then its controls, set off by a slanted rule */
+/* Inline group (e.g. the filters): set off from the controls before it by
+   a dimmed vertical line and some space; no label */
 .controls__group {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding-inline-start: var(--space-lg);
   position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--control-gap);
+  margin-inline-start: var(--space-xs);
+  padding-inline-start: calc(var(--space-lg) - var(--slant) / 2);
 
   &::before {
     content: "";
     position: absolute;
-    left: 0;
     top: 50%;
-    height: var(--control-height);
+    left: 0;
     width: 1px;
-    background-color: var(--theme-text-soft);
-    transform: translateY(-50%) rotate(10deg);
+    height: var(--control-height, 28px);
+    background-color: var(--theme-separator);
+
+    /* Leans like the controls' slanted edges (upright in modern) */
+    transform: translateY(-50%)
+      rotate(atan2(var(--slant), var(--control-height, 28px)));
   }
-}
-
-.controls__group-title {
-  font-size: var(--font-size-xs);
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--theme-text-soft);
-}
-
-.controls__group-items {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
 }
 
 .controls__back-button {

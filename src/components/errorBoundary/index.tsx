@@ -1,6 +1,6 @@
+import Callout from "../ui/Callout"
 import { Component, ErrorInfo, ReactNode, Suspense } from "react"
 import { Link } from "../link"
-import { Tip } from "../tip"
 
 import "./index.css"
 import { ViewDebug } from "./viewDebug"
@@ -52,13 +52,13 @@ export class ErrorBoundary extends Component<
             <Trans i18nKey="error:title"></Trans>
           </h1>
           {shouldShowReportTip && (
-            <Tip>
+            <Callout>
               <Link
                 href={"https://github.com/neil-morrison44/pocket-sync/issues"}
               >
                 <Trans i18nKey="error:report"></Trans>
               </Link>
-            </Tip>
+            </Callout>
           )}
           <ViewDebug />
 

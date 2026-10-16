@@ -1,10 +1,17 @@
-import { useMemo } from "react"
-import { useAtomValue } from "jotai"
+import { ReactNode, startTransition, useMemo } from "react"
+import { Link } from "../link"
+import { useAtomValue, useSetAtom } from "jotai"
+import { currentViewAtom } from "../../jotai/view/atoms"
+import { platformFilterOptionAtom } from "../../jotai/cores/atoms"
+import Button from "../ui/Button"
 import { useTranslation } from "react-i18next"
 import { fuzzy } from "fast-fuzzy"
 import { sep } from "@tauri-apps/api/path"
-import { GameSystem, filterGameFiles } from "../../jotai/games/selectors"
-import { PlatformInfoSelectorFamily } from "../../jotai/platforms/selectors"
+import {
+  GameSystem,
+  GameSystemPlatformSelectorFamily,
+  filterGameFiles,
+} from "../../jotai/games/selectors"
 import { WalkDirSelectorFamily } from "../../jotai/selectors"
 import { pocketPathAtom } from "../../jotai/atoms"
 import { invokeCreateFolderIfMissing } from "../../utils/invokes"
@@ -16,10 +23,25 @@ import Tag from "../ui/Tag"
 
 const SEARCH_THRESHOLD = 0.8
 
+type GameSystemSectionProps = {
+  system: GameSystem
+  /**
+   * Leaves out the header (name, tags, actions), e.g. on the platform's own
+   * page, where it would repeat the title.
+   */
+  embedded?: boolean
+  /** Shown instead of nothing when there are no games. */
+  emptyFallback?: ReactNode
+}
+
 /** One system (SD card folder `Assets/<platform>`) and the games in it. */
-export const GameSystemSection = ({ system }: { system: GameSystem }) => {
-  const { platform } = useAtomValue(
-    PlatformInfoSelectorFamily(system.platformId)
+export const GameSystemSection = ({
+  system,
+  embedded = false,
+  emptyFallback = null,
+}: GameSystemSectionProps) => {
+  const platform = useAtomValue(
+    GameSystemPlatformSelectorFamily(system.platformId)
   )
   const files = useAtomValue(
     WalkDirSelectorFamily({
@@ -29,6 +51,15 @@ export const GameSystemSection = ({ system }: { system: GameSystem }) => {
   )
   const pocketPath = useAtomValue(pocketPathAtom)
   const { query, other } = useSearchContext()
+  const setView = useSetAtom(currentViewAtom)
+  const setCorePlatformFilter = useSetAtom(platformFilterOptionAtom)
+
+  // Cores for this platform, via the Cores list's platform filter
+  const findCore = () =>
+    startTransition(() => {
+      setCorePlatformFilter(system.platformId)
+      setView({ view: "Cores", selected: null })
+    })
   const { t } = useTranslation("games")
 
   const games = useMemo(() => {
@@ -64,38 +95,71 @@ export const GameSystemSection = ({ system }: { system: GameSystem }) => {
     platformFilter !== system.platformId
   )
     return null
-  if (visibleGames.length === 0) return null
+  if (visibleGames.length === 0) return emptyFallback
 
   const folder = `${pocketPath}/Assets/${system.platformId}`
   const titleId = `games-system-${system.platformId}`
 
   return (
     <section className="games__system" aria-labelledby={titleId}>
-      <header className="games__system-header">
-        <div className="games__system-heading">
-          <h3 className="games__system-title" id={titleId}>
-            {platform.name}
-            {platform.category && <Tag>{platform.category}</Tag>}
-          </h3>
-          <span className="games__system-meta">
-            {[
-              platform.manufacturer,
-              t("item.game_count", { count: games.length }),
-            ]
-              .filter(Boolean)
-              .join(" · ")}
-          </span>
-        </div>
-        <IconButton
-          theme="tertiary"
-          icon="folder"
-          label={t("open_folder")}
-          onClick={async () => {
-            await invokeCreateFolderIfMissing(folder)
-            openFolder(folder)
-          }}
-        />
-      </header>
+      {!embedded && (
+        <header className="games__system-header">
+          <div className="games__system-heading">
+            <h3 className="games__system-title" id={titleId}>
+              {/* Opens the platform when the card has its file */}
+              {platform.exists ? (
+                <Link
+                  subtle
+                  onClick={() =>
+                    startTransition(() =>
+                      setView({
+                        view: "Platforms",
+                        selected: system.platformId,
+                      })
+                    )
+                  }
+                >
+                  {platform.name}
+                </Link>
+              ) : (
+                platform.name
+              )}
+              {platform.category && <Tag>{platform.category}</Tag>}
+              {system.cores.length === 0 && (
+                <Tag theme="warning" icon="warning-diamond">
+                  {t("no_core")}
+                </Tag>
+              )}
+            </h3>
+            <span className="games__system-meta">
+              {[
+                platform.manufacturer,
+                t("item.game_count", { count: games.length }),
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </span>
+          </div>
+          {system.cores.length === 0 && (
+            <Button
+              className="games__find-core"
+              icon="search"
+              onClick={findCore}
+            >
+              {t("find_core")}
+            </Button>
+          )}
+          <IconButton
+            theme="tertiary"
+            icon="folder"
+            label={t("open_folder")}
+            onClick={async () => {
+              await invokeCreateFolderIfMissing(folder)
+              openFolder(folder)
+            }}
+          />
+        </header>
+      )}
       <ul className="games__list">
         {visibleGames.map(({ path, parts, name, folder: subfolder }) => (
           <li key={path} className="games__game">

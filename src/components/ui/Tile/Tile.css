@@ -27,7 +27,8 @@
   border-color: var(--theme-separator);
 }
 
-.tile.tile--is-selected::after {
+/* As specific as the light frame above, so selection wins in every theme */
+:root .tile.tile--is-selected::after {
   border: 2px solid var(--theme-selection);
 }
 

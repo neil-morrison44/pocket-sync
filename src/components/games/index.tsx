@@ -6,8 +6,10 @@ import { InstanceJson } from "./instanceJson"
 import { CleanFilesModal } from "./cleanFiles"
 import { useTranslation } from "react-i18next"
 import { ControlsSearch } from "../controls/inputs/search"
+import { ControlsGroup } from "../controls/inputs/group"
 import { ControlsButton } from "../controls/inputs/button"
-import { useAtomValue } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
+import { gamesSearchAtom } from "../../jotai/view/atoms"
 import { CoreConditional } from "../shared/coreConditional"
 import { MROMModal } from "./mrom"
 import {
@@ -21,7 +23,8 @@ import "./index.css"
 
 export const Games = () => {
   const systems = useAtomValue(gameSystemsSelector)
-  const [searchQuery, setSearchQuery] = useState<string>("")
+  // An atom, so a screenshot or save state can open Games searched for it
+  const [searchQuery, setSearchQuery] = useAtom(gamesSearchAtom)
   const [filterPlatform, setFilterPlatform] = useState<string>("All")
   const [cleanFilesOpen, setCleanFilesOpen] = useState(false)
   const [instanceJsonOpen, setInstanceJsonOpen] = useState(false)
@@ -43,9 +46,20 @@ export const Games = () => {
           onChange={setSearchQuery}
           placeholder={t("controls.search")}
         />
-        <Suspense>
-          <PlatformFilter value={filterPlatform} onChange={setFilterPlatform} />
-        </Suspense>
+        <ControlsGroup
+          onClear={
+            filterPlatform !== "All"
+              ? () => setFilterPlatform("All")
+              : undefined
+          }
+        >
+          <Suspense>
+            <PlatformFilter
+              value={filterPlatform}
+              onChange={setFilterPlatform}
+            />
+          </Suspense>
+        </ControlsGroup>
         <ControlsActions>
           <CoreConditional core="NRL.MROM">
             <ControlsButton onClick={() => setMROMOpen(true)}>
@@ -94,6 +108,7 @@ const PlatformFilter = ({
   const { t } = useTranslation("games")
   return (
     <Select
+      active={value !== "All"}
       label={t("controls.platform")}
       value={value}
       onChange={onChange}

@@ -3,8 +3,11 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import {
   screenshotsListSelector,
   SingleScreenshotImageSelectorFamily,
+  SingleScreenshotSelectorFamily,
+  VideoJSONSelectorFamily,
 } from "../../jotai/screenshots/selectors"
-import { MeshPhysicalMaterial, SRGBColorSpace, Texture } from "three"
+import { CanvasTexture, MeshPhysicalMaterial, SRGBColorSpace } from "three"
+import { VideoJSON } from "../../types"
 import { StaticScreen } from "./staticScreen"
 import { useAtomValue } from "jotai"
 
@@ -38,24 +41,65 @@ export const RandomScreenshotScreen = ({
   return <ScreenshotScreen key={screenshotName} name={screenshotName} />
 }
 
+/** The Pocket's screen: 1600 × 1440, at half size for the texture. */
+const SCREEN_WIDTH = 800
+const SCREEN_HEIGHT = 720
+
+/**
+ * Draws the screenshot like the Pocket shows it: at the core's display
+ * aspect ratio (from its video.json scaler mode, else the image's own),
+ * as large as fits, with black bars around it, never stretched.
+ */
+const frameScreenshot = (image: HTMLImageElement, videoJson: VideoJSON) => {
+  const canvas = document.createElement("canvas")
+  canvas.width = SCREEN_WIDTH
+  canvas.height = SCREEN_HEIGHT
+  const context = canvas.getContext("2d")
+  if (!context) return canvas
+
+  const scalerMode = videoJson.video.scaler_modes.find(
+    ({ width, height }) => width === image.width && height === image.height
+  )
+  const aspect = scalerMode
+    ? scalerMode.aspect_w / scalerMode.aspect_h
+    : image.width / image.height
+
+  const width = Math.min(SCREEN_WIDTH, SCREEN_HEIGHT * aspect)
+  const height = width / aspect
+
+  context.fillStyle = "black"
+  context.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+  context.imageSmoothingEnabled = false
+  context.drawImage(
+    image,
+    (SCREEN_WIDTH - width) / 2,
+    (SCREEN_HEIGHT - height) / 2,
+    width,
+    height
+  )
+  return canvas
+}
+
 const ScreenshotScreen = ({ name }: { name: string }) => {
   const materialRef = useRef<MeshPhysicalMaterial | null>(null)
   const image = useAtomValue(SingleScreenshotImageSelectorFamily(name))
+  const screenshot = useAtomValue(SingleScreenshotSelectorFamily(name))
+  const videoJson = useAtomValue(
+    VideoJSONSelectorFamily(`${screenshot?.author}.${screenshot?.core}`)
+  )
 
   useEffect(() => {
     if (!image || !materialRef.current) return
 
-    const newTexture = new Texture(image)
+    const newTexture = new CanvasTexture(frameScreenshot(image, videoJson))
     newTexture.needsUpdate = true
-    // newTexture.minFilter = LinearFilter
-    // newTexture.magFilter = NearestFilter
     newTexture.colorSpace = SRGBColorSpace
 
     materialRef.current.map?.dispose()
     materialRef.current.map = newTexture
     materialRef.current.emissiveMap = newTexture
     materialRef.current.needsUpdate = true
-  }, [image])
+  }, [image, videoJson])
 
   return (
     <meshPhysicalMaterial

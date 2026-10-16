@@ -36,3 +36,23 @@ export const hasFeatures = (
   features: Record<CoreFeature, boolean>,
   required: CoreFeature[] | undefined
 ) => (required ?? []).every((feature) => features[feature])
+
+/** The License filter: any core, only free ones, or only licensed ones. */
+export type LicenseFilter = "all" | "free" | "license"
+
+/**
+ * The License and AI-ness filters, which match the tags on a core's tile.
+ * `maxAi` is the highest acceptable AI-ness (0–1); null allows any.
+ */
+export const passesTagFilters = (
+  { requiresLicense, aiScore }: { requiresLicense: boolean; aiScore: number },
+  {
+    license = "all",
+    maxAi = null,
+  }: { license?: LicenseFilter; maxAi?: number | null }
+) => {
+  if (license === "free" && requiresLicense) return false
+  if (license === "license" && !requiresLicense) return false
+  if (maxAi !== null && aiScore > maxAi) return false
+  return true
+}

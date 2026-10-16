@@ -33,9 +33,14 @@
   }
 }
 
-/* A section the search or filters emptied hides its heading too */
-.cores__section-header:has(
-    + .grid:not(:has(.tile, .skeleton, .skeleton-card))
-  ) {
+/* A section the search or filters emptied: no empty grid (its padding
+   pushed the message down), and "Nothing matches" right below the heading,
+   aligned with it, with the usual room before the next section */
+.cores__section .grid:not(:has(.tile, .skeleton, .skeleton-card)) {
   display: none;
+}
+
+.cores__section > .no-results {
+  justify-content: flex-start;
+  padding-block: var(--space-md) 0;
 }

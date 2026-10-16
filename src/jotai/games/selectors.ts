@@ -2,6 +2,7 @@ import { sep } from "@tauri-apps/api/path"
 import {
   invokeFileExists,
   invokeFileMetadata,
+  invokeListFolders,
   invokeListInstancePackageableCores,
   invokeReadBinaryFile,
   invokeWalkDirListFiles,
@@ -18,7 +19,11 @@ import {
   coresListSelector,
 } from "../selectors"
 import { decodeDataParams } from "../../utils/decodeDataParams"
-import { PlatformInfoSelectorFamily } from "../platforms/selectors"
+import {
+  PlatformExistsSelectorFamily,
+  PlatformInfoSelectorFamily,
+} from "../platforms/selectors"
+import { atomFamily } from "jotai-family"
 
 export const instancePackagerCoresListSelector = atom<Promise<string[]>>(
   async (get) => {
@@ -156,7 +161,36 @@ export type GameSystem = {
  * Systems with a games folder (`Assets/<platform>`), derived from the
  * installed cores' data slots, the same way the per-core game counts are.
  */
+/**
+ * Console platforms whose games can be listed without a core installed
+ * (their folders on the card, the ROM extensions and a name for when the
+ * card has no platform file yet). Other folders under Assets often hold
+ * files that aren't games, so they're only listed through a core.
+ */
+const KNOWN_GAME_SYSTEMS: Record<
+  string,
+  { extensions: string[]; name: string }
+> = {
+  gb: { extensions: ["gb", "GB"], name: "Game Boy" },
+  gbc: { extensions: ["gbc", "GBC", "gb", "GB"], name: "Game Boy Color" },
+  gba: { extensions: ["gba", "GBA"], name: "Game Boy Advance" },
+  gg: { extensions: ["gg", "GG"], name: "Game Gear" },
+  sms: { extensions: ["sms", "SMS"], name: "Master System" },
+  nes: { extensions: ["nes", "NES"], name: "NES" },
+  snes: { extensions: ["sfc", "smc", "SFC", "SMC"], name: "Super NES" },
+  genesis: { extensions: ["md", "gen", "smd", "MD"], name: "Genesis" },
+  pce: { extensions: ["pce", "PCE"], name: "PC Engine" },
+  ngp: { extensions: ["ngp", "ngc", "NGP", "NGC"], name: "Neo Geo Pocket" },
+  lynx: { extensions: ["lnx", "LNX"], name: "Lynx" },
+  wonderswan: { extensions: ["ws", "wsc", "WS", "WSC"], name: "WonderSwan" },
+}
+
+/** A built-in name for a known platform, e.g. "Game Boy" for `gb`. */
+export const knownGameSystemName = (platformId: string) =>
+  KNOWN_GAME_SYSTEMS[platformId]?.name
+
 export const gameSystemsSelector = atom<Promise<GameSystem[]>>(async (get) => {
+  get(fsWatchAtomFamily("Assets"))
   const coreNames = await get(coresListSelector)
   const systems = new Map<
     PlatformId,
@@ -194,6 +228,19 @@ export const gameSystemsSelector = atom<Promise<GameSystem[]>>(async (get) => {
       // a core with broken JSON shouldn't hide every other system
       console.warn(`Skipping ${coreName} in games list`, error)
     }
+  }
+
+  // Known systems with a folder on the card but no core for them, e.g.
+  // games copied over before the core is installed
+  const assetFolders = await invokeListFolders("Assets")
+  for (const folder of assetFolders) {
+    const known = KNOWN_GAME_SYSTEMS[folder]
+    if (!known || systems.has(folder)) continue
+    systems.set(folder, {
+      extensions: new Set(known.extensions),
+      namedFiles: new Set(),
+      cores: [],
+    })
   }
 
   return [...systems]
@@ -237,9 +284,41 @@ export const gameSystemOptionsSelector = atom<
         const { platform } = await get(PlatformInfoSelectorFamily(platformId))
         return { platformId, name: platform.name }
       } catch {
-        return { platformId, name: platformId }
+        return {
+          platformId,
+          name: knownGameSystemName(platformId) ?? platformId,
+        }
       }
     })
   )
   return options.sort((a, b) => a.name.localeCompare(b.name))
 })
+
+/**
+ * A game system's platform info from the card, or a built-in name for a
+ * known platform whose file isn't on the card yet (no core installed).
+ */
+export const GameSystemPlatformSelectorFamily = atomFamily(
+  (platformId: PlatformId) =>
+    atom(
+      async (
+        get
+      ): Promise<{
+        name: string
+        category?: string
+        manufacturer?: string
+        /** Whether the card has the platform's file (so it can be linked). */
+        exists: boolean
+      }> => {
+        const exists = await get(PlatformExistsSelectorFamily(platformId))
+        if (!exists) {
+          return {
+            name: knownGameSystemName(platformId) ?? platformId,
+            exists,
+          }
+        }
+        const { platform } = await get(PlatformInfoSelectorFamily(platformId))
+        return { ...platform, exists }
+      }
+    )
+)

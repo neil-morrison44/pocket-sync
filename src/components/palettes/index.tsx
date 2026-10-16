@@ -1,6 +1,6 @@
 import {
-  PaletteCodeSelectorFamily,
-  palettesListSelector,
+  PaletteCodeKeptSelectorFamily,
+  palettesListKeptSelector,
 } from "../../jotai/palettes/selectors"
 import {
   Dispatch,
@@ -15,29 +15,26 @@ import "./index.css"
 import { Controls, ControlsActions } from "../controls"
 import { ControlsButton } from "../controls/inputs/button"
 import { PaletteFull } from "./paletteFull"
-import { ControlsBackButton } from "../controls/inputs/backButton"
 import { writeText } from "@tauri-apps/plugin-clipboard-manager"
 import { Modal } from "../modal"
-import {
-  invokeCopyFiles,
-  invokeDeleteFiles,
-  invokeSaveFile,
-} from "../../utils/invokes"
+import { invokeSaveFile } from "../../utils/invokes"
 import { pocketPathAtom } from "../../jotai/atoms"
 import { PaletteName } from "./name"
 import { useSavePalette } from "./hooks/useSavePalette"
+import { paletteBaseName, usePaletteActions } from "./hooks/usePaletteActions"
 import { Palette, rgb } from "../../types"
-import { splitAsPath } from "../../utils/splitAsPath"
 import { useTranslation } from "react-i18next"
 import { PreviewCanvas } from "./previewCanvas"
 import { PaletteTown } from "./town"
 import { useAtomValue } from "jotai"
 import EmptyState from "../ui/EmptyState"
 import IconButton from "../ui/IconButton"
+import Button from "../ui/Button"
 import Tile from "../ui/Tile"
 import { Grid } from "../grid"
 import { CardSkeleton } from "../ui/Skeleton"
 import TextInput from "../ui/TextInput"
+import Field from "../ui/Field"
 
 type PaletteUIModes =
   | { name: "list" }
@@ -69,15 +66,22 @@ export const Palettes = () => {
     await savePalette(palette, "/a_new_palette.pal")
   }, [savePalette])
 
+  // A palette's own page, with its header and actions
+  if (mode.name === "selected") {
+    return (
+      <Suspense>
+        <PaletteFull
+          name={mode.palette}
+          onClose={() => setMode({ name: "list" })}
+          onRenamed={(palette) => setMode({ name: "selected", palette })}
+        />
+      </Suspense>
+    )
+  }
+
   return (
     <div className="palettes">
       <Controls>
-        {mode.name === "selected" && (
-          <ControlsBackButton onClick={() => setMode({ name: "list" })}>
-            {t("buttons.back")}
-          </ControlsBackButton>
-        )}
-
         <ControlsActions>
           {mode.name === "list" && (
             <>
@@ -105,21 +109,7 @@ export const Palettes = () => {
         <AddViaCodeModal onClose={() => setCodeModalOpen(false)} />
       )}
 
-      {mode.name === "selected" && (
-        <Suspense>
-          <PaletteFull
-            key={mode.palette}
-            name={mode.palette}
-            onClose={() => setMode({ name: "list" })}
-          />
-        </Suspense>
-      )}
-      {mode.name === "list" && (
-        // Skeleton tiles while the list loads, instead of a blank page
-        <Suspense fallback={<PaletteListSkeleton />}>
-          <PaletteList setMode={setMode} />
-        </Suspense>
-      )}
+      {mode.name === "list" && <PaletteList setMode={setMode} />}
     </div>
   )
 }
@@ -137,13 +127,16 @@ type PaletteListProps = {
 }
 
 const PaletteList = ({ setMode }: PaletteListProps) => {
-  const palettesList = useAtomValue(palettesListSelector)
+  // Keeps the shown list while it reloads; skeletons only on the first load
+  const palettesList = useAtomValue(palettesListKeptSelector)
   const { t } = useTranslation("palettes")
 
   const sortedPalettesList = useMemo(
-    () => [...palettesList].sort((a, b) => a.localeCompare(b)),
+    () => [...(palettesList ?? [])].sort((a, b) => a.localeCompare(b)),
     [palettesList]
   )
+
+  if (palettesList === undefined) return <PaletteListSkeleton />
 
   if (sortedPalettesList.length === 0) {
     return (
@@ -155,12 +148,15 @@ const PaletteList = ({ setMode }: PaletteListProps) => {
 
   return (
     <Grid placeholderItemHeight={260}>
+      {/* Each tile loads on its own, so a new palette doesn't put the whole
+          list back into skeletons */}
       {sortedPalettesList.map((palette) => (
-        <PaletteListItem
-          key={palette}
-          name={palette}
-          onClick={() => setMode({ name: "selected", palette })}
-        />
+        <Suspense key={palette} fallback={<CardSkeleton height={260} />}>
+          <PaletteListItem
+            name={palette}
+            onClick={() => setMode({ name: "selected", palette })}
+          />
+        </Suspense>
       ))}
     </Grid>
   )
@@ -173,45 +169,17 @@ export const PaletteListItem = ({
   name: string
   onClick: () => void
 }) => {
-  const paletteCode = useAtomValue(PaletteCodeSelectorFamily(name))
-  const pocketPath = useAtomValue(pocketPathAtom)
-  const [interimName, setInterimName] = useState(() => name.replace(".pal", ""))
+  const paletteCode = useAtomValue(PaletteCodeKeptSelectorFamily(name))
+  const [interimName, setInterimName] = useState(() => paletteBaseName(name))
   const { t } = useTranslation("palettes")
   const [renameMode, setRenameMode] = useState(false)
 
-  const deletePalette = useCallback(async () => {
-    await invokeDeleteFiles([`Assets/gb/common/Palettes${name}`])
-  }, [name])
-
-  const duplicatePalette = useCallback(async () => {
-    await invokeCopyFiles([
-      {
-        origin: `${pocketPath}/Assets/gb/common/Palettes${name}`,
-        destination: `${pocketPath}/Assets/gb/common/Palettes${name.replace(
-          ".pal",
-          "_copy.pal"
-        )}`,
-        exists: true,
-      },
-    ])
-  }, [name, pocketPath])
+  const { duplicate, rename, remove } = usePaletteActions(name)
 
   const renamePalette = useCallback(async () => {
     setRenameMode(false)
-    const origin = `${pocketPath}/Assets/gb/common/Palettes/${name}`
-    const destination = `${pocketPath}/Assets/gb/common/Palettes/${interimName}.pal`
-    if (splitAsPath(origin).join("/") === splitAsPath(destination).join("/"))
-      return
-
-    await invokeCopyFiles([
-      {
-        origin,
-        destination,
-        exists: true,
-      },
-    ])
-    await invokeDeleteFiles([`Assets/gb/common/Palettes/${name}`])
-  }, [interimName, name, pocketPath])
+    await rename(interimName)
+  }, [interimName, rename])
 
   return (
     <Tile
@@ -250,7 +218,7 @@ export const PaletteListItem = ({
             theme="tertiary"
             icon="copy"
             label={t("item.duplicate")}
-            onClick={duplicatePalette}
+            onClick={duplicate}
           />
           <IconButton
             theme="tertiary"
@@ -263,7 +231,7 @@ export const PaletteListItem = ({
             icon="pencil"
             label={t("item.rename")}
             onClick={() => {
-              setInterimName(name.replace(".pal", ""))
+              setInterimName(paletteBaseName(name))
               setRenameMode(true)
             }}
           />
@@ -271,7 +239,7 @@ export const PaletteListItem = ({
             icon="trash"
             theme="destructive"
             label={t("item.delete")}
-            onClick={deletePalette}
+            onClick={remove}
             className="palettes__card-delete"
           />
         </>
@@ -280,6 +248,10 @@ export const PaletteListItem = ({
   )
 }
 
+/**
+ * Adds a palette from a share code (its colours as hex, then its name in
+ * base64), like the ones "Copy Share Code" puts on the clipboard.
+ */
 const AddViaCodeModal = ({ onClose }: { onClose: () => void }) => {
   const [inputedCode, setInputedCode] = useState("")
   const pocketPath = useAtomValue(pocketPathAtom)
@@ -289,13 +261,11 @@ const AddViaCodeModal = ({ onClose }: { onClose: () => void }) => {
     name: string
     data: Uint8Array
   } | null>(() => {
-    if (inputedCode.length < 56 * 2) return null
+    const code = inputedCode.trim()
+    if (code.length < 56 * 2) return null
     const data = new Uint8Array(56)
     for (let index = 0; index < 56 * 2; index += 2) {
-      data[index / 2] = parseInt(
-        `${inputedCode[index]}${inputedCode[index + 1]}`,
-        16
-      )
+      data[index / 2] = parseInt(`${code[index]}${code[index + 1]}`, 16)
     }
 
     if (
@@ -307,8 +277,12 @@ const AddViaCodeModal = ({ onClose }: { onClose: () => void }) => {
     )
       return null
 
-    const name = atob(inputedCode.substring(56 * 2))
-    return { name, data }
+    try {
+      const name = atob(code.substring(56 * 2))
+      return name ? { name, data } : null
+    } catch {
+      return null
+    }
   }, [inputedCode])
 
   const onAdd = useCallback(async () => {
@@ -320,25 +294,49 @@ const AddViaCodeModal = ({ onClose }: { onClose: () => void }) => {
     onClose()
   }, [onClose, parsedPalette, pocketPath])
 
+  const isInvalid = inputedCode.trim().length > 0 && parsedPalette === null
+
   return (
     <Modal
-      className="palettes_code-modal"
+      className="modal--form"
       title={t("add_via_code.title")}
       onClose={onClose}
     >
-      <textarea
-        className="palettes_code-modal-input"
-        value={inputedCode}
-        onChange={({ target }) => setInputedCode(target.value)}
-      ></textarea>
-      <div className="palettes_code-modal-buttons">
-        <button onClick={onClose}>{t("add_via_code.cancel")}</button>
-        {parsedPalette !== null && (
-          <>
-            <div>{parsedPalette.name}</div>
-            <button onClick={onAdd}>{t("add_via_code.add")}</button>
-          </>
-        )}
+      <Field
+        label={t("add_via_code.label")}
+        htmlFor="palette-code"
+        hint={
+          parsedPalette
+            ? t("add_via_code.found", { name: parsedPalette.name })
+            : t("add_via_code.hint", { button: t("item.copy_code") })
+        }
+        error={isInvalid && t("add_via_code.invalid")}
+      >
+        <TextInput
+          id="palette-code"
+          variant="code"
+          value={inputedCode}
+          onChange={setInputedCode}
+          onKeyDown={({ key }) => {
+            if (key === "Enter") onAdd()
+          }}
+          autoFocus
+          autoCapitalize="off"
+          autoComplete="off"
+          spellCheck={false}
+        />
+      </Field>
+      <div className="modal__actions">
+        <Button theme="tertiary" onClick={onClose}>
+          {t("add_via_code.cancel")}
+        </Button>
+        <Button
+          theme="primary"
+          disabled={parsedPalette === null}
+          onClick={onAdd}
+        >
+          {t("add_via_code.add")}
+        </Button>
       </div>
     </Modal>
   )

@@ -1,3 +1,4 @@
+import { LicenseFilter } from "../../components/cores/features"
 import { atom } from "jotai"
 import { atomWithAppLocalSetting } from "../../utils/jotai"
 import { AICheckJSON, SortMode } from "../../types"
@@ -14,6 +15,12 @@ const INTERVAL_MINS = 30
 export const sortingOptionAtom = atom<SortMode>("name")
 
 export const categoryFilterOptionAtom = atom<string>("All")
+
+/** The Cores list's License filter (see `passesTagFilters`). */
+export const licenseFilterOptionAtom = atom<LicenseFilter>("all")
+
+/** The Cores list's AI-ness filter: the highest acceptable score, or null. */
+export const aiFilterOptionAtom = atom<number | null>(null)
 
 export const featureFilterOptionAtom = atom<CoreFeature[]>([])
 

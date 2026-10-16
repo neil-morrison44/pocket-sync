@@ -1,3 +1,4 @@
+import Button from "../../../ui/Button"
 import { Modal, ModalSuspense } from "../../../modal"
 import {
   platformListPocketSelector,
@@ -47,10 +48,17 @@ const SaveMappingContent = ({ onClose }: SaveMappingProps) => {
         </div>
         <PlatformsList joins={joins} />
       </Suspense>
-      <button onClick={() => setJoins(DEFAULT_MISTER_SAVE_MAPPING)}>
-        {t("mapping.reset")}
-      </button>
-      <button onClick={() => setJoins([])}>{t("mapping.clear")}</button>
+      <div className="modal__actions">
+        <Button theme="destructive" icon="trash" onClick={() => setJoins([])}>
+          {t("mapping.clear")}
+        </Button>
+        <Button
+          icon="reload"
+          onClick={() => setJoins(DEFAULT_MISTER_SAVE_MAPPING)}
+        >
+          {t("mapping.reset")}
+        </Button>
+      </div>
     </Modal>
   )
 }

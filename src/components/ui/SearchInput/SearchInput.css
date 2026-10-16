@@ -11,3 +11,53 @@
     display: none;
   }
 }
+
+/* The browser's own clear button; ours is a pixel icon */
+.text-input__field::-webkit-search-cancel-button {
+  display: none;
+  appearance: none;
+}
+
+/* Clears the search: a small grey square with the pixel close icon. It
+   resets the global button look (shadow, press scale) */
+.search-input__clear {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius);
+  background-color: color-mix(
+    in srgb,
+    var(--theme-input-text) 12%,
+    transparent
+  );
+  box-shadow: none;
+  color: var(--theme-input-text);
+  cursor: pointer;
+
+  &:hover {
+    border: none;
+    background-color: color-mix(
+      in srgb,
+      var(--theme-input-text) 22%,
+      transparent
+    );
+  }
+
+  &:active {
+    transform: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+:root.keyboard-focus .search-input__clear:focus-visible {
+  outline: 2px solid var(--theme-focus);
+}

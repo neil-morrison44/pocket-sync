@@ -25,9 +25,10 @@ const SaveStateBinarySelectorFamily = atomFamily<
   string,
   Atom<Promise<Uint8Array>>
 >((path) =>
-  atom(async () => {
-    const file = await invokeReadBinaryFile(`Memories/Save States/${path}`)
-    return file
+  atom(async (get) => {
+    const fullPath = `Memories/Save States/${path}`
+    get(fsWatchAtomFamily(fullPath))
+    return await invokeReadBinaryFile(fullPath)
   })
 )
 
@@ -150,3 +151,28 @@ export const saveStatePlatformsSelector = atom<Promise<string[]>>(
     ).sort((a, b) => a.localeCompare(b))
   }
 )
+
+export type SaveStateInfo = { path: string; game: string; platform: string }
+
+/** Every save state's game and platform, for grouping by game. */
+export const saveStatesInfoSelector = atom<Promise<SaveStateInfo[]>>(
+  async (get) => {
+    const paths = await get(AllSaveStatesSelector)
+    const metadata = await Promise.all(
+      paths.map((path) => get(SaveStateMetadataSelectorFamily(path)))
+    )
+    return metadata.map(({ game, platform }, index) => ({
+      path: paths[index],
+      game,
+      platform,
+    }))
+  }
+)
+
+/** The games that have save states, by name, for the Game filter. */
+export const saveStateGamesSelector = atom<Promise<string[]>>(async (get) => {
+  const infos = await get(saveStatesInfoSelector)
+  return Array.from(
+    new Set(infos.map(({ game }) => game).filter(Boolean))
+  ).sort((a, b) => a.localeCompare(b))
+})
