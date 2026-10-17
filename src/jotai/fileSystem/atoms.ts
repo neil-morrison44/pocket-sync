@@ -6,7 +6,12 @@ import { splitAsPath } from "../../utils/splitAsPath"
 import { FSEvent } from "../../types"
 import { sep } from "@tauri-apps/api/path"
 
-export const fsWatchAtomFamily = atomFamily((path: string) => atom(Date.now()))
+const fsWatchAtoms = atomFamily((path: string) => atom(Date.now()))
+
+export const fsWatchAtomFamily = (path: string) => {
+  const trimmed = path.replace(/^[\\/]+|[\\/]+$/g, "")
+  return fsWatchAtoms(trimmed === "" ? "/" : trimmed)
+}
 
 export const initGlobalFSEvents = async () => {
   const store = getDefaultStore()
@@ -48,7 +53,7 @@ export const initGlobalFSEvents = async () => {
         .filter((p) => !p.startsWith(".tmp"))
 
       changedPaths.forEach((p) => queuedChanges.add(p))
-      if (!isPaused) window.setTimeout(() => processChangedPaths(), 0)
+      if (!isPaused) window.setTimeout(() => processChangedPaths(), 10)
     }
   )
 }
