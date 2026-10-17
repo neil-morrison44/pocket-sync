@@ -1,4 +1,16 @@
 # Changelog
+<a id="v7.0.3"></a>
+# [v7.0.3 - Fix some issues with the UI not refreshing when files changed](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.0.3) - 2026-10-17
+
+## What's Changed
+* Fixes some issues with files not refreshing when they should by [@neil-morrison44](https://github.com/neil-morrison44) in [#495](https://github.com/neil-morrison44/pocket-sync/pull/495)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.2...v7.0.3
+
+[Changes][v7.0.3]
+
+
 <a id="v7.0.2"></a>
 # [v7.0.2 - Fix MacOS exFat error](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.0.2) - 2026-10-11
 
@@ -2019,6 +2031,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v7.0.3]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.2...v7.0.3
 [v7.0.2]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.1...v7.0.2
 [v7.0.1]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.0...v7.0.1
 [v7.0.0]: https://github.com/neil-morrison44/pocket-sync/compare/v6.4.0...v7.0.0
