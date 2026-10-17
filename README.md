@@ -48,7 +48,7 @@ If there are issues though see [this guide](/docs/mac_gatekeeper.md).
 LLM driven contributions are welcomed if, and only if, they:
 
 - are bug fixes targeting a single or small number of bugs, with reproduction steps given in the PR
-- they target a single feature, in a way which doesn’t make more sense (as a plugin)[https://github.com/openfpga-library/pocket-plugin]
+- they target a single feature, in a way which doesn’t make more sense [as a plugin](https://github.com/openfpga-library/pocket-plugin)
 
 Large AI driven PRs which touch hundreds of files and / or lines of code will not be reviewed, though discussion on large scale changes is welcomed via the issues.
 
