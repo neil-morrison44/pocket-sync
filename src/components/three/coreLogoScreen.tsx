@@ -9,7 +9,6 @@ export const CoreLogoScreen = ({ coreName }: { coreName: string }) => {
   const platformImage = useAtomValue(PlatformImageSelectorFamily(platformId))
   const [screenTexture, setScreenTexture] = useState<CanvasTexture | null>(null)
   const materialRef = useRef<Material>(null)
-  console.log({ coreName })
 
   useEffect(() => {
     if (!platformImage) return
@@ -77,6 +76,7 @@ export const CoreLogoScreen = ({ coreName }: { coreName: string }) => {
       attach="material"
       map={screenTexture || undefined}
       emissive={"white"}
+      color={"rgba(128,128,128)"}
       emissiveMap={screenTexture || undefined}
       clearcoat={1}
       envMapIntensity={0.01}

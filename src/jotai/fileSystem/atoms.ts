@@ -19,6 +19,8 @@ export const initGlobalFSEvents = async () => {
       const parts = splitAsPath(relativePath)
       let currentPath = ""
 
+      if (parts.length === 1) store.set(fsWatchAtomFamily("/"), Date.now())
+
       for (const part of parts) {
         currentPath = currentPath ? `${currentPath}/${part}` : part
         store.set(fsWatchAtomFamily(currentPath), Date.now())
@@ -28,10 +30,10 @@ export const initGlobalFSEvents = async () => {
     queuedChanges.clear()
   }
 
-  await listen<boolean>(
-    "pocket-fs-pause",
-    ({ payload }) => (isPaused = payload)
-  )
+  await listen<boolean>("pocket-fs-pause", ({ payload }) => {
+    isPaused = payload
+    if (!isPaused) processChangedPaths()
+  })
 
   await listen<{ events: FSEvent[]; pocket_path: string }>(
     "pocket-fs-event",
@@ -43,9 +45,10 @@ export const initGlobalFSEvents = async () => {
         .map((p) =>
           p.replace(`${pocket_path}${sep()}`, "").replace(`${pocket_path}`, "")
         )
+        .filter((p) => !p.startsWith(".tmp"))
 
       changedPaths.forEach((p) => queuedChanges.add(p))
-      if (!isPaused) processChangedPaths()
+      if (!isPaused) window.setTimeout(() => processChangedPaths(), 0)
     }
   )
 }

@@ -334,7 +334,5 @@ export const invokeInstallAndUpdateCores = async (args: {
     fast_downloads: boolean
   }
 }): Promise<void> => {
-  console.log("call install_and_update_cores")
   const result = await invoke<void>("install_and_update_cores", args)
-  console.log(result)
 }

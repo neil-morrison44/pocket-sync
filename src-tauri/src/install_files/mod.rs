@@ -72,12 +72,8 @@ pub async fn install_file(
             let total_bytes = content.len();
             tokio::fs::write(&new_file_path, content).await?;
 
-            if let Some(mtime) = archive_info
-                .mtime
-                .as_deref()
-                .and_then(|s| s.parse::<u64>().ok())
-            {
-                let time = SystemTime::UNIX_EPOCH + Duration::from_millis(mtime);
+            if let Some(mtime) = archive_info.mtime {
+                let time = SystemTime::UNIX_EPOCH + Duration::from_secs(mtime);
                 set_mtime(&new_file_path, SystemTimeSpec::Absolute(time))?;
             }
 

@@ -13,7 +13,8 @@ pub struct RawMetadataItem {
     pub name: String,
     pub crc32: Option<String>,
     pub md5: Option<String>,
-    pub mtime: Option<String>,
+    #[serde_as(as = "Option<DisplayFromStr>")]
+    pub mtime: Option<u64>,
     #[serde_as(as = "Option<DisplayFromStr>")]
     pub size: Option<u64>,
 }

@@ -280,9 +280,11 @@
   flex-direction: row;
   flex-wrap: wrap;
   overflow: hidden;
-  justify-content: flex-start;
+  justify-content: center;
   align-content: flex-start;
   gap: 6px;
+
+  transform: rotateZ(30deg);
 }
 
 .update__core-item-grid-item {

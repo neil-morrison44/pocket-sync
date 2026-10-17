@@ -17,10 +17,12 @@ export const RequiredFileInfoSelectorFamily = atomFamily<
 
     const archiveMetadataUrl = await get(archiveMetadataUrlSelector)
     const skipAlternateAssets = await get(skipAlternateAssetsSelector)
-    return await invokeFindRequiredFiles(
+    const files = await invokeFindRequiredFiles(
       coreName,
       !skipAlternateAssets,
       archiveMetadataUrl
     )
+
+    return files
   })
 )
