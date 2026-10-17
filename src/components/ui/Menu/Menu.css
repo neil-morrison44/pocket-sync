@@ -1,0 +1,42 @@
+/* The chevron sits after the label */
+.menu__trigger {
+  gap: var(--space-xs);
+}
+
+/* The open list, styled like the Select list */
+.menu__content {
+  z-index: 2000;
+  min-width: var(--radix-dropdown-menu-trigger-width);
+  max-height: min(360px, var(--radix-dropdown-menu-content-available-height));
+  overflow-y: auto;
+  padding: var(--space-xs);
+  border-radius: var(--radius-popover);
+  background-color: var(--theme-surface-sunken);
+  border: 1px solid var(--theme-surface);
+  color: var(--theme-text);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 50%);
+}
+
+.menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding-block: var(--space-xs);
+  padding-inline: var(--space-sm);
+  border-radius: var(--radius);
+  font-size: var(--font-size-md);
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+
+  &[data-highlighted] {
+    background-color: var(--theme-surface-raised);
+  }
+}
+
+.menu__item-detail {
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+}

@@ -1,0 +1,75 @@
+/* Resets the global `button` element styles from style.css */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2em;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  font: inherit;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: none;
+
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.toggle--is-disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+/* Slanted filter chip; pressed uses the selection colour */
+.toggle--theme-control {
+  height: var(--control-height, 28px);
+  padding-block: 0;
+
+  /* Like Button: ~1.35× the space above and below the text */
+  padding-inline: calc(
+    (var(--control-height, 28px) - 16px) / 2 * 1.35 + var(--slant) / 2
+  );
+  background-color: var(--theme-control-background);
+  color: var(--theme-control-text);
+  position: relative;
+  clip-path: var(--shape-slant);
+
+  /* clip-path also clips outlines, so focus is a ring drawn inside the shape */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: var(--focus-ring-inset, 0);
+    background-color: var(--focus-ring-colour, var(--theme-focus));
+    clip-path: var(--shape-slant-ring);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  :root.keyboard-focus &:focus::after {
+    visibility: visible;
+  }
+
+  &:hover:not(.toggle--is-disabled) {
+    filter: brightness(80%);
+  }
+
+  &:active:not(.toggle--is-disabled) {
+    transform: scale(0.97);
+  }
+
+  &.toggle--is-pressed {
+    background-color: var(--theme-selection);
+    color: var(--theme-selection-text);
+  }
+
+  &.toggle--is-pressed::after {
+    background-color: var(--theme-selection-text);
+  }
+}

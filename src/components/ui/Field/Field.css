@@ -1,0 +1,46 @@
+/* Label above its control, hint or error below */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+
+  /* Inputs take the field's width */
+  & .text-input {
+    width: 100%;
+  }
+}
+
+.field__label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--theme-text-headline);
+}
+
+.field__hint {
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+}
+
+.field__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-body);
+
+  & > .icon {
+    flex-shrink: 0;
+
+    /* centred on the first line, like Callout */
+    margin-top: calc((1.5em - 16px) / 2);
+    color: var(--theme-danger);
+  }
+}
+
+/* Inline code in hints, e.g. an example path */
+.field code {
+  font-family: var(--font-code);
+  font-size: var(--font-size-code);
+  color: var(--theme-text-body);
+}

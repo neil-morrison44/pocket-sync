@@ -1,41 +1,62 @@
-.details{
+.details {
   display: flex;
   flex-direction: column;
   align-items: stretch;
   width: 100%;
 }
 
+/* A section heading that opens and closes its content */
 .details__title {
-  font-size: 1.25rem;
-  border-bottom: 1px solid white;
-  padding: 10px;
-  font-weight: bold;
-  cursor: pointer;
   display: flex;
+  align-items: center;
   justify-content: flex-start;
-  gap: 12px;
+  gap: var(--space-sm);
+  width: 100%;
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  border-bottom: 1px solid var(--theme-separator);
+  border-radius: 0;
+  background-color: var(--theme-background);
+  box-shadow: none;
+  color: var(--theme-text-headline);
+  font: inherit;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  text-align: start;
+  cursor: pointer;
   user-select: none;
-  /* stylelint-disable-next-line property-no-vendor-prefix */
-  -webkit-user-select: none;
 
-  &:hover{
-    background-color: rgb(255 255 255 / 10%);
+  &:hover {
+    border-color: var(--theme-separator);
+    background-color: var(--theme-overlay);
   }
 
+  &:active {
+    transform: none;
+  }
 
-  & > :last-child{
+  &:focus {
+    outline: none;
+  }
+
+  & > :last-child {
     margin-inline-start: auto;
   }
-
 }
 
+:root.keyboard-focus .details__title:focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: -2px;
+}
+
+/* Stays on top while its section scrolls under it (above the tiles) */
 .details__title--sticky {
   position: sticky;
   top: 0;
-  background-color: var(--background-colour);
+  z-index: 2;
 }
 
-
 .details__content {
-  padding: 15px;
+  padding: var(--space-md) 0;
 }

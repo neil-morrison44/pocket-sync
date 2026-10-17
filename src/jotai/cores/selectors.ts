@@ -10,6 +10,7 @@ import {
 import { JTCrtConfig } from "../../types"
 import { pocketPathAtom } from "../atoms"
 import { Atom, atom } from "jotai"
+import { demoCoreUpdatesAtom } from "./atoms"
 import { atomFamily } from "jotai-family"
 
 type UpdateInfo = {
@@ -18,11 +19,32 @@ type UpdateInfo = {
   latestVersion: string
 }
 
+/** How many cores the demo flag marks as updatable. */
+const DEMO_UPDATE_COUNT = 3
+
+/**
+ * With the dev demo flag on, the first few installed cores (by name), which
+ * the UI then shows as updatable. Empty in production builds.
+ */
+export const demoUpdateCoreNamesSelector = atom<Promise<string[]>>(
+  async (get) => {
+    if (!import.meta.env.DEV) return []
+    if (!(await get(demoCoreUpdatesAtom))) return []
+    const installed = await get(coresListSelector)
+    return [...installed].sort().slice(0, DEMO_UPDATE_COUNT)
+  }
+)
+
+/** The version a demo update pretends to offer. */
+export const demoUpdateVersion = (installedVersion: string) =>
+  `${installedVersion}-demo`
+
 export const installedCoresWithUpdatesSelector = atom<Promise<UpdateInfo[]>>(
   async (get) => {
-    const [installedCores, coreInventory] = await Promise.all([
+    const [installedCores, coreInventory, demoCores] = await Promise.all([
       get(coresListSelector),
       get(coreInventoryAtom),
+      get(demoUpdateCoreNamesSelector),
     ])
 
     return (
@@ -32,10 +54,15 @@ export const installedCoresWithUpdatesSelector = atom<Promise<UpdateInfo[]>>(
           const inventoryItem = coreInventory.cores.data.find(
             ({ id }) => coreName === id
           )
+          const installedVersion = coreInfo.core.metadata.version
+          const latestVersion = inventoryItem?.releases[0].core.metadata.version
           return {
             coreName,
-            installedVersion: coreInfo.core.metadata.version,
-            latestVersion: inventoryItem?.releases[0].core.metadata.version,
+            installedVersion,
+            latestVersion:
+              demoCores.includes(coreName) && latestVersion === installedVersion
+                ? demoUpdateVersion(installedVersion)
+                : latestVersion,
           }
         })
       )

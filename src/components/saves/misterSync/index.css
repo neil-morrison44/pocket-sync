@@ -1,150 +1,231 @@
-.mister-sync{
+/* The session: header bar, two panes, activity at the bottom */
+.mister-sync {
+  --padding: var(--page-padding-inline);
+
   display: flex;
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
-  box-sizing: border-box;
-  gap: 10px;
 }
 
-.mister-sync__login{
+/* The Pocket's saves on the left, the comparison beside them */
+.mister-sync__panes {
+  display: grid;
+  flex: 1 1 0;
+  grid-template-columns: minmax(220px, 1fr) minmax(0, 2fr);
+  min-height: 0;
+  margin-top: var(--space-lg);
+  border-top: 1px solid var(--theme-separator);
+}
+
+.mister-sync__list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin: 0 20vw;
-  background-color: var(--hover-colour);
-  padding: 15px;
-  border-radius: 10px;
+  min-height: 0;
+  overflow: auto;
+  border-right: 1px solid var(--theme-separator);
+  background-color: var(--theme-surface-sunken);
 
-  & label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 1.125rem;
-    align-items: center;
-
-    & input {
-      width: 50%;
-      padding: 10px;
-      font-size: 1rem;
-    }
+  .saves__info-save-files-platform {
+    top: 0;
   }
 }
 
-.mister-sync__status{
-  background-color: var(--info-colour);
+.mister-sync__list-group {
   display: flex;
-  justify-content: space-around;
-  text-align: center;
-  flex-basis: 20vh;
-  flex-shrink: 0;
+  flex-direction: column;
+  padding-bottom: var(--space-sm);
+}
+
+/* A save to compare: a row, marked when chosen */
+.mister-sync__list-item {
+  margin: 0;
+  padding: var(--space-xs) var(--padding, 20px);
+  border: none;
+  border-inline-start: 3px solid transparent;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--theme-text-body);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  text-align: start;
+  cursor: pointer;
+
+  &:hover {
+    border-color: transparent;
+    background-color: var(--theme-overlay);
+  }
+
+  &:active {
+    transform: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+:root.keyboard-focus .mister-sync__list-item:focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: -2px;
+}
+
+.mister-sync__list-item--selected,
+.mister-sync__list-item--selected:hover {
+  border-inline-start-color: var(--theme-selection);
+  background-color: var(--theme-overlay);
+  color: var(--theme-text-headline);
+  font-weight: 600;
+}
+
+.mister-sync__list-empty {
+  margin: 0;
+  padding: var(--space-lg) var(--padding, 20px);
+  color: var(--theme-text-soft);
+}
+
+.mister-sync__detail {
+  min-height: 0;
+  overflow: auto;
+  padding: var(--space-2xl) var(--page-padding-inline);
+}
+
+.mister-sync__compare {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  max-width: var(--content-max-width);
+}
+
+.mister-sync__compare-header {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 15px;
+  gap: var(--space-sm) var(--space-lg);
 }
 
-
-.mister-sync__log{
-  background-color: var(--info-colour);
-  color: white;
-  padding: 20px;
-  overflow: auto;
-  white-space: pre-wrap;
-  flex-basis: 20vh;
-  flex-shrink: 0;
-  font-family: monospace;
-  box-sizing: border-box;
+h2.mister-sync__compare-title {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-title-sm);
+  font-weight: normal;
+  line-height: 1.2;
+  color: var(--theme-text-headline);
 }
 
-.mister-sync__content{
-  flex-grow: 1;
-  overflow: hidden;
+/* Pocket and MiSTer side by side; the newer one framed in the accent */
+.mister-sync__sides {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-lg);
 }
 
-.mister-sync__saves-list{
-  position: relative;
-  height: 100%;
-  overflow: auto;
-
-  --controls-height: 0px;
-  --labels-height: 0px;
-}
-
-.mister-sync__saves-list-group{
-  padding: 10px;
-}
-
-.mister-sync__saves-list-item{
-  cursor: pointer;
-  border-bottom: 1px solid rgb(255 255 255 / 20%);
-  margin-bottom: 5px;
-  padding: 5px;
-
-  &:hover{
-    background-color: rgb(255 255 255 / 10%);
-    border-bottom: 1px solid rgb(255 255 255 / 80%);
-  }
-}
-
-
-.mister-sync__status-equals{
+.mister-sync__side {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: var(--space-sm);
+  min-width: 0;
+  padding: var(--space-lg);
+  border: 1px solid var(--theme-separator);
+  border-radius: var(--radius-card);
+  background-color: var(--theme-surface-sunken);
 }
 
-.mister-sync__status-to-pocket, .mister-sync__status-to-mister{
-  width: 100px;
-  height: 30px;
-  transition: clip-path 0.2s;
-  background: var(--colour);
-  cursor: pointer;
-  position: relative;
-  animation: none 0.4s linear infinite;
+.mister-sync__side--newer {
+  border-color: var(--theme-accent-foreground);
 }
 
-.mister-sync__status-to-pocket{
-  --colour: var(--green-colour);
-
-  animation-direction: reverse;
-  clip-path: polygon(30% 50%, 100% 50%, 100% 100%, 0 100%, 30% 0);
+.mister-sync__side-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  font-weight: 600;
+  color: var(--theme-text-headline);
 }
 
-.mister-sync__status-to-pocket--equals {
-  clip-path: polygon(20% 50%, 100% 50%, 100% 100%, 0 100%, 0 50%);
-}
+/* Small labels above their values, like the detail pages' facts */
+.mister-sync__facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2xs) var(--space-md);
+  margin: 0;
+  font-size: var(--font-size-sm);
 
-.mister-sync__status-to-mister{
-  --colour: var(--selection-colour);
-
-  animation-direction: forward;
-  clip-path: polygon(0 0, 100% 0, 65% 100%, 65% 50%, 0 50%);
-}
-
-.mister-sync__status-to-mister--equals {
-  clip-path: polygon(0 0, 100% 0, 100% 50%, 80% 50%, 0 50%);
-}
-
-.mister-sync__status-to-pocket:hover, .mister-sync__status-to-mister:hover {
-  background: var(--colour) linear-gradient(90deg, var(--colour) 0%, #fff4 42%, var(--colour) 100%);
-  background-size: 20px 20px;
-  animation-name: background-progess;
-}
-
-@keyframes background-progess {
-  0% {
-    background-position: 0 0;
+  dt {
+    color: var(--theme-text-soft);
   }
 
-  100% {
-    background-position: 20px 0;
+  dd {
+    margin: 0;
+    color: var(--theme-text-body);
   }
 }
 
-.mister-sync__pocket, .mister-sync__mister{
-  flex-grow: 0;
-  flex-basis: 33vw;
-  overflow: hidden;
+.mister-sync__code {
+  font-family: var(--font-code);
+  font-size: var(--font-size-xs);
 }
 
-.mister-sync__crc{
-  opacity: 0.7;
+.mister-sync__path {
+  color: var(--theme-text-soft);
+  overflow-wrap: anywhere;
+}
+
+.mister-sync__not-found {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+}
+
+/* Copy to the Pocket on the left, to the MiSTer on the right, like the
+   sides above */
+.mister-sync__copy {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--control-gap);
+}
+
+.mister-sync__callout-action {
+  margin-top: var(--space-sm);
+}
+
+.mister-sync__tips {
+  margin: 0;
+  padding-inline-start: 1.25em;
+  white-space: normal;
+}
+
+/* The session's messages, folded at the bottom */
+.mister-sync__activity {
+  flex-shrink: 0;
+  max-height: 30vh;
+  overflow: auto;
+  padding: var(--space-sm) var(--page-padding-inline);
+  border-top: 1px solid var(--theme-separator);
+  background-color: var(--theme-surface-sunken);
+  font-size: var(--font-size-sm);
+
+  summary {
+    color: var(--theme-text-headline);
+    cursor: pointer;
+  }
+
+  ol {
+    margin: var(--space-xs) 0 0;
+    padding-inline-start: 1.5em;
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+    color: var(--theme-text-body);
+  }
+}
+
+/* The preview (Settings → Developer) covers the page beside the sidebar */
+.mister-sync-preview {
+  position: fixed;
+  inset: 0 0 0 var(--sidebar-width, 0);
+  z-index: 900;
+  background-color: var(--theme-background);
 }

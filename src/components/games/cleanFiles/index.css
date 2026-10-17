@@ -1,22 +1,26 @@
-.clean-files {
-  display: flex;
-  gap: 10px;
-  justify-content: space-between;
+.clean-files__intro,
+.clean-files__count {
+  margin: 0;
+  color: var(--theme-text-body);
 }
 
+.clean-files__count {
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+}
+
+/* The files to delete, in a scrolling box */
 .clean-files__list {
-  border-radius: 5px;
-  padding: 20px;
-  background-color: var(--info-colour);
-  flex-grow: 1;
+  max-height: 260px;
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
   overflow: auto;
-}
-
-.clean-files_button-loader {
-  height: 30px;
-  background-color: transparent;
-
-  &::before {
-    width: 40px;
-  }
+  border: 1px solid var(--theme-separator);
+  border-radius: var(--radius-card);
+  background-color: var(--theme-surface-sunken);
+  list-style: none;
+  font-family: var(--font-code);
+  font-size: var(--font-size-xs);
+  color: var(--theme-text-body);
+  overflow-wrap: anywhere;
 }

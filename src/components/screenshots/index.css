@@ -1,114 +1,52 @@
-.screenshots--none {
+/* Empty state: plain centred text */
+
+/* Small hint under the empty state: the key combo, then how it works */
+.screenshots__how-to {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  height: 100vh;
-  font-size: 3rem;
-  padding: 20px;
-  box-sizing: border-box;
-  font-family: GamePocket;
-  font-smooth: never;
-  -webkit-font-smoothing: none;
-  text-align: center;
-  line-height: 45px;
+  gap: var(--space-sm);
+  max-width: 36ch;
+  margin-top: var(--space-lg);
+  font-size: var(--font-size-sm);
 }
 
+.screenshots__key {
+  font-weight: 600;
+  color: var(--theme-text-headline);
+}
+
+/* Previous / next, on the left and right edge of the detail view */
 .screenshots__button {
-  position: absolute;
-  background-color: var(--light-colour);
+  position: fixed;
+
+  /* Not a transform, so the button keeps its own press effect */
+  top: calc(50% - var(--control-height, 28px) / 2);
   z-index: 1000;
-  top: 50%;
-  width: 30px;
-  height: 100px;
-  transform: translateY(-50%);
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0.2;
-  user-select: none;
-
-  &:hover {
-    opacity: 0.75;
-  }
-
-  &:active {
-    opacity: 1;
-  }
-
-  &::before {
-    content: "";
-    display: block;
-    width: 10px;
-    height: 10px;
-    aspect-ratio: 1 / 1;
-    border: 2px solid white;
-    border-right-color: transparent;
-    border-bottom-color: transparent;
-    transform: rotate(-45deg);
-  }
 }
 
 .screenshots__button--previous {
-  left: 0;
-  padding-left: 5px;
+  left: calc(var(--sidebar-width, 0px) + var(--space-sm));
 }
 
 .screenshots__button--next {
-  right: 0;
-  padding-right: 5px;
-
-  &::before {
-    transform: rotate(135deg);
-  }
+  right: var(--space-sm);
 }
 
-.screenshots__item {
-  overflow: hidden;
-  position: relative;
-  aspect-ratio: 160 / 144;
-  cursor: pointer;
-  border: 2px solid transparent;
-  box-sizing: border-box;
-}
-
-.screenshots__item--selected {
-  border-color: var(--selection-colour);
-}
-
-.screenshots__item-image {
-  width: 100%;
-  height: 100%;
+/* The picture in the Pocket's 10:9 screen, letterboxed in black */
+.screenshots__image {
+  aspect-ratio: 10 / 9;
   object-fit: contain;
-  background-color: #111;
-  image-rendering: pixelated;
+  background-color: black;
 }
 
-.screenshots__loading-item {
-  height: 190px !important;
+/* One section per game, core or day; room before the next header */
+.screenshots__group .grid {
+  padding-block: var(--space-lg) var(--space-2xl);
+}
+
+/* Holds a screenshot's place while it loads, in the Game Boy's shape */
+.screenshots__skeleton {
+  height: auto;
   aspect-ratio: 160 / 144;
-}
-
-.screenshots__item-info {
-  background-color: var(--info-colour);
-  padding: 5px;
-  font-size: 0.875rem;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  opacity: 0;
-  transform: translateY(80%);
-  transition: opacity 0.25s linear, transform 0.2s ease-out;
-}
-
-.screenshots__item:hover .screenshots__item-info {
-  opacity: 0.8;
-  transform: translateY(0);
-}
-
-.screenshots__item-info-line {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
 }

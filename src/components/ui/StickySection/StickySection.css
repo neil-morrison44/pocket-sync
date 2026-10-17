@@ -1,0 +1,21 @@
+.sticky-section {
+  scroll-margin-top: 0;
+}
+
+/* Stays at the top while its section scrolls underneath */
+h2.sticky-section__title {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  margin: 0 0 var(--space-xl);
+  padding: var(--space-lg) 0 var(--space-sm);
+  background-color: var(--theme-background);
+  border-bottom: 1px solid var(--theme-separator);
+  font-size: var(--font-size-title-sm);
+  line-height: 1.2;
+  color: var(--theme-text-headline);
+}
+
+.sticky-section + .sticky-section {
+  margin-top: var(--space-2xl);
+}

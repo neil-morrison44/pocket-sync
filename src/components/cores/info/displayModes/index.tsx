@@ -1,6 +1,6 @@
 import { VideoJSONSelectorFamily } from "../../../../jotai/screenshots/selectors"
 import { useCallback, useMemo } from "react"
-import { SupportsBubble } from "../supportsBubble"
+import Toggle from "../../../ui/Toggle"
 
 import "./index.css"
 import { useTranslation } from "react-i18next"
@@ -8,8 +8,7 @@ import { pocketPathAtom } from "../../../../jotai/atoms"
 import { VideoJSON } from "../../../../types"
 import { invokeSaveFile } from "../../../../utils/invokes"
 import { confirm } from "@tauri-apps/plugin-dialog"
-import { WarningIcon } from "../requiredFiles/warningIcon"
-import { Tip } from "../../../tip"
+import Callout from "../../../ui/Callout"
 import { useAtomValue } from "jotai"
 import { useSmoothedAtomValue } from "../../../../utils/jotai"
 
@@ -100,20 +99,20 @@ export const DisplayModes = ({ coreName }: DisplayModesProps) => {
       {Object.entries(DISPLAY_MODES).map(
         ([name, { id, requiresCoreResponse }]) => {
           return (
-            <SupportsBubble
-              supports={activeModes.includes(id)}
+            <Toggle
+              value={activeModes.includes(id)}
               key={name}
-              onClick={() => toggleVideoMode(id, requiresCoreResponse)}
+              onChange={() => toggleVideoMode(id, requiresCoreResponse)}
             >
               {t(`display_modes.${name}`)}
-            </SupportsBubble>
+            </Toggle>
           )
         }
       )}
       {tooManyModes && (
-        <Tip warning>
+        <Callout variant="warning">
           {t("display_modes_limit", { count: activeModes.length })}
-        </Tip>
+        </Callout>
       )}
     </div>
   )

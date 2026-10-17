@@ -1,27 +1,37 @@
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
-  color: #f6f6f6;
-
-  --background-colour: #2f2f2f;
-  --hover-colour: #222;
-  --info-colour: #111;
-  --light-colour: #555;
-  --green-colour: #589050;
-  --red-colour: rgb(200 80 88);
-  --purple-colour: #885090;
-  --selection-colour: #396cd8;
-  --orange-colour: #c69327;
-
-  background-color: var(--background-colour);
+  color: var(--theme-text-body);
+  background-color: var(--theme-background);
   font-synthesis: none;
   text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-size-adjust: 100%;
-  accent-color: var(--green-colour);
+  accent-color: var(--theme-accent);
+}
+
+/* Text selection in the accent, not the system blue */
+::selection {
+  background-color: var(--theme-selection);
+  color: var(--theme-selection-text);
+}
+
+/* macOS: the title bar overlays the app; the traffic lights sit in the
+   sidebar */
+:root.platform-macos {
+  --titlebar-inset: 28px;
+
+  /* The collapsed sidebar stays as wide as the traffic lights */
+  --sidebar-collapsed-width: 78px;
+}
+
+/* No rubber-band overscroll on the app window */
+html,
+body {
+  overscroll-behavior: none;
 }
 
 body {
@@ -30,49 +40,21 @@ body {
   overflow-x: hidden;
 }
 
-.container {
-  margin: 0;
-  padding: 10vh 0;
-  padding-bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-  height: 100vh;
-  box-sizing: border-box;
-  gap: 20px;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
-.row {
-  display: flex;
-  justify-content: center;
-}
-
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--theme-accent-foreground);
   text-decoration: inherit;
 }
 
 a:hover {
-  color: #535bf2;
+  color: var(--theme-text-headline);
 }
 
 h1 {
+  color: var(--theme-text-headline);
   text-align: center;
-  font-family: GamePocket;
-  font-size: 4rem;
+  font-family: var(--font-display);
+  font-size: var(--font-size-hero);
   /* stylelint-disable-next-line property-no-unknown */
   font-smooth: never;
   -webkit-font-smoothing: none;
@@ -82,42 +64,201 @@ h1 {
 }
 
 h2 {
+  color: var(--theme-text-headline);
   text-align: left;
-  font-family: GamePocket;
-  font-size: 3rem;
+  font-family: var(--font-display);
+  font-size: var(--font-size-title-xl);
   /* stylelint-disable-next-line property-no-unknown */
   font-smooth: never;
   -webkit-font-smoothing: none;
-  padding: 0 10px;
+  padding: 0 var(--page-padding-inline); /* lines up with the header bar */
   margin-bottom: 15px;
   font-variant-ligatures: discretionary-ligatures;
 
   /* line-height: 3.2rem; */
 }
 
-button {
+/* Legacy look for buttons with their own classes (being migrated to <Button>) */
+:where(button[class]) {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  color: #fff;
-  background-color: #0f0f0f98;
+  color: var(--theme-text-headline);
+  background-color: var(--theme-overlay);
   transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgb(0 0 0 / 20%);
+
+  /* No drop shadows in the redesign */
+  box-shadow: none;
   cursor: pointer;
 
   &:hover {
-    border-color: var(--selection-colour);
+    border-color: var(--theme-separator);
   }
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.97);
   }
+}
+
+/* Plain <button>s (mostly in modals) look like a secondary <Button> */
+:where(button:not([class])) {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-height: var(--control-height, 28px);
+  padding: 4px 12px;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: var(--theme-control-background);
+  color: var(--theme-control-text);
+  font: inherit;
+  font-weight: 500;
+  clip-path: var(--shape-slant);
+  cursor: pointer;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: var(--focus-ring-inset, 0);
+    background-color: var(--focus-ring-colour, var(--theme-focus));
+    clip-path: var(--shape-slant-ring);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  &:hover:not(:disabled) {
+    filter: brightness(90%);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.4;
+  }
+}
+
+:root.keyboard-focus :where(button:not([class])):focus::after {
+  visibility: visible;
 }
 
 input,
 button {
   outline: none;
+}
+
+/* Focus rings only show for keyboard navigation (see useKeyboardFocus) */
+:root:not(.keyboard-focus) :focus {
+  outline: none;
+}
+
+/* A small accent dot on a button, e.g. for unread updates. Its parent needs
+   position: relative. */
+.notification-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background-color: var(--theme-accent);
+  box-shadow: 0 0 0 2px var(--theme-background);
+  pointer-events: none;
+}
+
+/* Modern style: the controls that are slanted in the slanted style aren't
+   clipped (so focus rings can sit outside); their corners come from here */
+:root[data-style="modern"]
+  :is(
+    .button,
+    .tag,
+    .text-input,
+    .select--theme-control,
+    .toggle--theme-control,
+    .tabs__trigger,
+    .sidebar__item,
+    .settings__nav-item,
+    .settings__nav-section-title,
+    .switch__track,
+    .tooltip,
+    .path-field__value,
+    .core-inputs__key,
+    .platform-info__banner-edit,
+    .about__sponsor .link,
+    button:not([class])
+  ) {
+  border-radius: var(--radius);
+}
+
+/* Focus rings follow the control's radius in modern: a 2px inset shadow
+   instead of the clip-path frame, rounded concentrically with the control
+   (its radius plus the ring's offset outside it) */
+:root[data-style="modern"]
+  :is(
+    .button,
+    .text-input,
+    .select--theme-control,
+    .toggle--theme-control,
+    .tabs__trigger,
+    .sidebar__item,
+    .settings__nav-item,
+    .settings__nav-section-title,
+    .switch__track,
+    button:not([class])
+  )::after {
+  border-radius: calc(var(--radius) - var(--focus-ring-inset, 0px));
+  background-color: transparent;
+  box-shadow: inset 0 0 0 2px var(--focus-ring-colour, var(--theme-focus));
+  clip-path: none;
+}
+
+/* Frames around rounded items are concentric: the item's radius plus the
+   frame's padding (3px) */
+:root[data-style="modern"] .tabs__list {
+  border-radius: calc(var(--radius) + 3px);
+}
+
+/* The 1px frames drawn with clip-path in the slanted style would keep square
+   corners; in modern they are an inset border that follows the radius */
+:root[data-style="modern"]
+  :is(
+    .button,
+    .tabs__list,
+    .path-field__value,
+    .text-input--variant-code
+  )::before,
+:root[data-style="modern"][data-theme="light"] .text-input::before {
+  border-radius: inherit;
+  background-color: transparent;
+  box-shadow: inset 0 0 0 1px var(--theme-separator);
+  clip-path: none;
+}
+
+/* Buttons only show the frame when their theme sets an outline */
+:root[data-style="modern"] .button::before {
+  box-shadow: inset 0 0 0 1px var(--button-outline, transparent);
+}
+
+/* Tertiary buttons have no outline in modern, only the hover background */
+:root[data-style="modern"] .button--theme-tertiary {
+  --button-outline: transparent;
+}
+
+/* Native radios and checkboxes (e.g. core settings, the zip file tree):
+   the accent when checked, our focus ring instead of the browser's */
+input:is([type="radio"], [type="checkbox"]) {
+  accent-color: var(--theme-accent);
+}
+
+:root.keyboard-focus input:is([type="radio"], [type="checkbox"]):focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: 2px;
 }

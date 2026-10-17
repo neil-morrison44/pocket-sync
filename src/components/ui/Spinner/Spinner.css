@@ -1,0 +1,12 @@
+.spinner {
+  display: inline-grid;
+  color: var(--theme-text-soft);
+
+  & > * {
+    grid-area: 1 / 1;
+  }
+}
+
+.spinner__base {
+  color: color-mix(in srgb, var(--theme-text-headline) 22%, transparent);
+}

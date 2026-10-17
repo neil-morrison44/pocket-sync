@@ -3,62 +3,87 @@
     "app_name": "Pocket Sync",
     "new_firmware": "Neue Pocket-Firmware v{version} verfügbar",
     "update_available": "Aktualisierung verfügbar! {version}",
-    "sponsor_link": "Schließen Sie sich {count, number} Personen beim Sponsoring über GitHub an",
+    "sponsor_link": "Schließ dich {count, number} Personen an, die über GitHub sponsern",
     "whats_new": "Was ist neu?",
-    "close_changelog": "Schließen"
+    "library_updates": "Bibliotheks-Updates",
+    "side_panel": "Updates",
+    "show_updates": "Updates anzeigen",
+    "hide_updates": "Updates ausblenden",
+    "pocket_colours": "Pocket-Farben",
+    "body_colour": "Gehäuse",
+    "button_colour": "Tasten",
+    "stats": {
+      "firmware": "Firmware",
+      "cores": "Kerne",
+      "games": "Spiele"
+    },
+    "show_updates_new": "Updates anzeigen (neu)",
+    "open_sd_card": "SD-Karte öffnen"
   },
   "app": {
     "app_name": "Pocket Sync",
     "connect_button": "Mit Pocket/SD-Karte verbinden",
-    "not_pocket_tip": "In diesem Ordner befindet sich scheinbar kein Pocket-Dateisystem. Die SD-Karte muss zuerst vom Pocket initialisiert werden."
+    "not_pocket_tip": "In diesem Ordner befindet sich scheinbar kein Pocket-Dateisystem. Die SD-Karte muss zuerst vom Pocket initialisiert werden.",
+    "close": "Schließen",
+    "loading": "Wird geladen",
+    "dismiss": "Ausblenden",
+    "no_results": "Nichts passt zu deiner Suche oder deinen Filtern.",
+    "clear_search": "Suche leeren",
+    "filters": "Filter",
+    "clear_filters": "Filter zurücksetzen"
   },
   "clean_files": {
     "close_button": "Schließen",
-    "delete_files_button": "Dateien löschen",
+    "delete_files_button": "{count, plural, one {# Datei} other {# Dateien}} löschen",
     "files_found": "{count, plural, =0 {Keine Dateien zur Bereinigung} one {# Datei zur Bereinigung} other {# Dateien zur Bereinigung} } gefunden",
-    "title": "Dateien bereinigen"
+    "title": "Dateien bereinigen",
+    "intro": "macOS legt versteckte Dateien (._… und .DS_Store) auf der SD-Karte ab. Der Pocket kann sie als kaputte Spiele anzeigen. Das hier sind die in Assets.",
+    "none_found": "Nichts aufzuräumen: In Assets gibt es keine versteckten macOS-Dateien.",
+    "deleting": "Lösche…"
   },
   "mrom": {
     "close_button": "Schließen",
-    "move_dumps": "ROMs verschieben",
     "headers": {
-      "platform": "Plattform",
-      "library_image": "Bibliotheksbild",
-      "name": "Name",
-      "destination": "Ziel"
+      "destination": "Ziel",
+      "dumped_save": "Vom Modul",
+      "pocket_save": "Vom MROM-Kern"
+    },
+    "intro": "Der MROM-Kern kopiert deine Game-Boy-Module und ihre Spielstände nach Assets/mrom. Verschieb sie in die Ordner für Game Boy und Game Boy Color, damit andere Kerne sie spielen können. Jedes Spiel kann einen Spielstand mitnehmen.",
+    "none_found": "Keine Modul-Dumps in Assets/mrom gefunden.",
+    "moving": "Verschiebe…",
+    "move_count": "{count, plural, one {# ROM} other {# ROMs}} verschieben",
+    "save_label": "Spielstand",
+    "save": {
+      "none": "Keiner"
+    },
+    "save_hint": {
+      "dump": "Der Spielstand, der auf dem Modul war, beim Dumpen mitkopiert.",
+      "pocket": "Der Spielstand, den der MROM-Kern für dieses Spiel in Saves/mrom ablegt.",
+      "none": "Das Spiel wird ohne Spielstand verschoben."
     }
   },
   "update_all": {
     "title": "Alle aktualisieren",
-    "heading": {
-      "update": "Aktualisieren",
-      "required_files": "Erforderliche Dateien installieren",
-      "platform_files": "Plattformdateien ersetzen"
-    },
     "buttons": {
-      "update": "{count, plural, =0 {none} one {# ausgewählten Kern} other {# ausgewählte Kerne} } aktualisieren",
       "close": "Schließen"
-    },
-    "update": {
-      "title": "Aktualisiere {coreName}: { step, select, core { Kern aktualisieren... } files { erforderliche Dateien herunterladen... } filecheck { Dateien werden überprüft... } other {on no} }"
-    },
-    "no_updates_found": "Keine Aktualisierung für installierte Kerne gefunden"
+    }
   },
   "core_info": {
     "author": "Autor",
     "controls": {
-      "back": "Zurück zur Liste",
-      "install": "Installieren",
-      "required_files": "Benötigte Dateien",
-      "uninstall": "Deinstallieren",
-      "update": "Aktualisieren"
+      "back": "Zurück zu den Kernen",
+      "install": "Kern installieren",
+      "required_files": "Benötigte Dateien laden",
+      "uninstall": "Kern deinstallieren",
+      "update_to": "Auf {version} aktualisieren",
+      "install_version": "Version installieren",
+      "install_release": "Diese Version installieren"
     },
     "inputs": "Eingaben",
     "modal": {
-      "close": "Schließen",
       "input_core": "Kern",
       "no_settings_found": "Keine Einstellungen gefunden!",
-      "reset_all": "Alle zurücksetzen"
+      "reset_all": "Alle Einstellungen zurücksetzen"
     },
     "analogizer": "Dieser Kern unterstützt den <1>Analogizer-FPGA</1>",
     "requires_license": {
@@ -68,18 +93,20 @@
     "firmware_too_low": "Dieser Kern benötigt Firmware v{core_firmware}. Die derzeit installierte Version ist v{pocket_firmware}",
     "not_in_inventory": "{coreName} nicht im Inventar",
     "platform": {
-      "edit": "Bearbeiten",
-      "wikipedia": "Wikipedia"
+      "wikipedia": "Wikipedia",
+      "open": "Plattform öffnen"
     },
     "replaced": "Dieser Kern wurde durch <1>{replacementCore}</1> ersetzt",
     "platforms": "Plattformen",
     "release_date": "Veröffentlichungsdatum",
     "releases": {
       "release_history": "Veröffentlichungsverlauf",
-      "show_previous": "Vorherige Veröffentlichungen anzeigen"
+      "show_previous": "Vorherige Veröffentlichungen anzeigen",
+      "latest": "Neueste",
+      "prerelease": "Vorabversion",
+      "on_github": "Auf GitHub ansehen"
     },
     "required_files": "Benötigte Dateien",
-    "required_files_count": "{count} / {total} Dateien",
     "settings": "Einstellungen",
     "sponsor": "Unterstützen",
     "download_count": "Downloads",
@@ -91,15 +118,18 @@
       "cartridges": "Module",
       "dock": "Dock",
       "dock_dac": "Dock (Analog)",
-      "save_states_and_sleep": "Speicherstände / Ruhemodus"
+      "save_states_and_sleep": "Speicherstände / Ruhemodus",
+      "link_port": "Link-Kabel",
+      "analogizer": "Analogizer"
     },
     "url": "URL",
+    "source_code": "Quellcode",
     "version": "Version",
     "display_modes_title": "Anzeigemodi",
     "display_mode_warning": "Dieser Anzeigemodus benötigt eine Aktualisierung des Kerns. Trotzdem aktivieren?",
     "info_txt_title": "Info.txt",
     "previous_version": "Vorherige Versionen",
-    "display_modes_limit": "Kerne unterstützen nur bis zu 16 Anzeigemodi, Sie haben {count} ausgewählt",
+    "display_modes_limit": "Kerne unterstützen nur bis zu 16 Anzeigemodi, du hast {count} ausgewählt",
     "display_modes": {
       "crt_trinitron": "CRT Trinitron",
       "grayscale_lcd": "Greyscale LCD",
@@ -123,12 +153,50 @@
       "original_lynx_plus": "Original Lynx+",
       "pinball_neon_matrix": "Pinball Neon Matrix",
       "vacuum_fluorescent": "Vacuum Fluorescent"
-    }
+    },
+    "tabs": {
+      "label": "Kerndetails",
+      "overview": "Übersicht",
+      "releases": "Veröffentlichungen"
+    },
+    "tags": {
+      "installed": "Installiert",
+      "update": "Update {version}",
+      "ai": "KI {score, number, percent}",
+      "license": "Lizenz",
+      "manual": "Manuell",
+      "manual_hint": "Von Hand installiert (z. B. aus einer .zip). Der Kern ist nicht in der Kernliste, daher kann Pocket Sync ihn nicht aktualisieren."
+    },
+    "guide": {
+      "install": "Bei der Installation wird Version {version} in den Ordner „Cores“ auf deiner SD-Karte geladen. Braucht der Kern zusätzliche Dateien, etwa BIOS-Dateien, kannst du diese danach hier laden.",
+      "update": "Version {version} ist verfügbar. Installiert ist {installed}.",
+      "up_to_date": "Installiert und aktuell.",
+      "required_files_missing": "{count} von {total} benötigten Dateien gefunden. Lade die fehlenden, damit der Kern läuft.",
+      "required_files_found": "Alle {total} benötigten Dateien gefunden.",
+      "update_title": "Update verfügbar"
+    },
+    "preset": "Voreinstellung",
+    "inputs_empty": "Dieser Kern legt keine Tastenbelegung fest.",
+    "input_keys": {
+      "pad_btn_a": "A",
+      "pad_btn_b": "B",
+      "pad_btn_x": "X",
+      "pad_btn_y": "Y",
+      "pad_trig_l": "L",
+      "pad_trig_r": "R",
+      "pad_btn_start": "Start",
+      "pad_btn_select": "Select"
+    },
+    "firmware_required": "Benötigte Firmware",
+    "core_settings_title": "Kerneinstellungen",
+    "display_modes_hint": "Schalte die Anzeigemodi ein, die auf dem Pocket zur Auswahl stehen sollen.",
+    "previous_version_hint": "Installiere eine beliebige veröffentlichte Version, z. B. um nach einem Update zurückzugehen.",
+    "core_settings_hint": "Änderungen werden sofort auf der SD-Karte gespeichert."
   },
   "core_info_required_files": {
     "close": "Schließen",
     "download_all": "Alle herunterladen",
-    "no_link_tip": "Bitte prüfen Sie die Einstellungssektion für mehr Optionen für benötigte Dateien",
+    "no_link_tip": "Es ist kein Archiv eingerichtet, daher können keine benötigten Dateien geladen werden. Füge eins unter Einstellungen → Downloads hinzu.",
     "skip_alternates_label": "Alternative Dateien überspringen",
     "title": "Benötigte Dateien",
     "file_status": {
@@ -139,7 +207,10 @@
       "not_checked": "Unbekannt",
       "found_at_root": "Datei verifiziert. Im Wurzelverzeichnis gefunden",
       "root_needs_update": "Datei stimmt nicht überein. Bitte das Wurzelverzeichnis überprüfen"
-    }
+    },
+    "intro": "Manche Kerne brauchen zusätzliche Dateien, etwa BIOS- oder ROM-Dateien. Sie werden aus dem Archiv geladen, das in den Einstellungen eingerichtet ist.",
+    "summary": "{found} von {total} gefunden",
+    "to_download": "{size} herunterzuladen"
   },
   "cores": {
     "controls": {
@@ -148,102 +219,186 @@
       "refresh": "Aktualisieren",
       "search": "Suchen",
       "updatable": "Aktualisierbar",
-      "update_all": "Alle aktualisieren",
-      "filters_group": "Filter",
       "sort_options": {
         "name": "Name",
         "last_update": "Letztes Update"
-      }
+      },
+      "features": "Funktionen",
+      "features_count": "Funktionen ({count})",
+      "platform": "Plattform",
+      "update_all_count": "Alle aktualisieren ({count})",
+      "all": "Alle",
+      "license": "Lizenz",
+      "license_free": "Nur freie",
+      "license_required": "Braucht eine Lizenz",
+      "ai": "KI-Anteil",
+      "ai_none": "Keiner",
+      "ai_up_to": "Bis {max, number, percent}",
+      "author": "Autor"
     },
     "install_tip": "Kerne (oder andere Komponenten in einer ZIP-Datei) können auch durch Ziehen der .zip in dieses Fenster installiert werden",
     "installed": "Installiert ({count})",
-    "not_installed": "Verfügbar ({count})"
+    "not_installed": "Verfügbar ({count})",
+    "updates": "Verfügbare Updates ({count})",
+    "installed_filtered": "Installiert ({count} / {total})",
+    "not_installed_filtered": "Verfügbar ({count} / {total})",
+    "selection": {
+      "title": "Aktualisieren und installieren",
+      "install_title": "Zusätzlich installieren",
+      "cancel": "Abbrechen",
+      "start": "Starten ({count})",
+      "install_several": "Mehrere installieren…",
+      "filtered": "Zeigt die verfügbaren Kerne, die zur Suche und den Filtern auf der Seite Kerne passen.",
+      "release": "v{version} · {date, date, medium}"
+    }
   },
   "error": {
-    "report": "Dies kann über GitHub gemeldet werden. Den folgenden Text und eine Anleitung zum Reproduzieren anhängen",
+    "report": "Wenn es öfter passiert, melde es bitte mit den Details unten und dem, was du gerade gemacht hast.",
     "retry": "Wiederholen",
-    "title": "Fehler",
+    "title": "Etwas ist schiefgelaufen",
     "repair": {
       "title": "Reparieren",
       "in_progress": "Reparieren...",
       "fixes": {
         "redownload_file": "Erneut herunterladen <pre>{path}</pre> aus <bold>{coreName}</bold>"
-      }
-    }
+      },
+      "available": "Das lässt sich reparieren"
+    },
+    "report_link": "Auf GitHub melden",
+    "details": "Technische Details"
   },
   "fetch": {
     "controls": {
-      "add_fetch_item": "Neuen Abruf hinzufügen",
-      "refresh": "Aktualisieren"
+      "add_fetch_item": "Abrufquelle hinzufügen",
+      "refresh": "Status aktualisieren",
+      "fetch_all": "Alle abrufen"
     },
-    "fetch_button": "Abruf",
-    "file_count": "{count} / {total, plural, one {# Datei} other {# Dateien}}",
+    "fetch_button": "Dateien abrufen",
     "loading": "lade...",
     "new": {
-      "add_extension": "Hinzufügen",
-      "add_fetch": "Abruf hinzufügen",
-      "archive_name": "Archivname: <i>https://archive.org/details/[dieser Teil hier]</i>",
+      "add_extension": "Erweiterung hinzufügen",
+      "add_fetch": "Abrufquelle hinzufügen",
       "archive_tip": "Dies funktioniert nicht für Archive mit komprimierten Dateien. Zusätzlich sollten die Dateierweiterungen, die beim Herunterladen der Metadaten-Dateien ignoriert werden sollen, festgelegt werden.",
-      "close": "Schließen",
-      "destination": "Zielordner",
-      "extensions": "Auf Dateierweiterungen beschränken:",
-      "origin": "Ursprungsordner",
       "title": "Neuen Abruf hinzufügen",
       "validating_archive_name": "Archiv „{name}“ wird überprüft...",
-      "invalid_archive_name": "Kein Archiv unter https://archive.org/details/{name} gefunden"
+      "invalid_archive_name": "Kein Archiv unter https://archive.org/details/{name} gefunden",
+      "intro": "Fetch kopiert Dateien auf die SD-Karte und hält sie aktuell. „Dateien abrufen“ kopiert alles, was auf der Karte fehlt oder in der Quelle neuer ist.",
+      "type_label": "Quelle",
+      "type_hint": {
+        "filesystem": "Ein Ordner auf diesem Computer, z. B. deine BIOS- oder Spielesammlung.",
+        "archive_org": "Ein Eintrag auf archive.org, dessen Dateien nicht gezippt sind."
+      },
+      "origin_label": "Ordner auf diesem Computer",
+      "origin_hint": "Alles darin wird kopiert, auch die Unterordner.",
+      "archive_label": "Archivname",
+      "archive_hint": "Der Teil nach archive.org/details/ in der Adresse des Eintrags, z. B. <code>openFPGA-Files</code>.",
+      "archive_found": "Auf archive.org gefunden",
+      "extensions_label": "Dateiendungen (optional)",
+      "extensions_hint": "Nur Dateien mit diesen Endungen werden geladen, z. B. bin oder rom. Leer lassen für alle Dateien, auch die Metadaten-Dateien von archive.org.",
+      "extension_placeholder": "z. B. bin",
+      "remove_extension": "{extension} entfernen",
+      "destination_label": "Ordner auf der SD-Karte",
+      "destination_hint": "Wohin die Dateien kommen, z. B. <code>/Assets/gb/common</code> für Game-Boy-Spiele oder -BIOS-Dateien.",
+      "choose_folder": "Ordner wählen",
+      "no_folder": "Kein Ordner gewählt",
+      "cancel": "Abbrechen",
+      "edit_title": "Abrufquelle bearbeiten",
+      "save_changes": "Änderungen speichern"
     },
-    "remove_button": "Entfernen",
-    "remove_confirm": "Dieser Vorgang entfernt die Abrufkonfiguration, aber nicht die Dateien. Sind Sie sicher?",
+    "remove_button": "Quelle entfernen",
+    "remove_confirm": "Dadurch wird die Abrufkonfiguration entfernt, aber nicht die Dateien. Bist du sicher?",
     "types": {
       "archive_org": "Internetarchiv",
       "filesystem": "Lokale Dateien"
-    }
+    },
+    "empty": {
+      "title": "Noch keine Abrufquellen",
+      "text": "Abrufen kopiert Dateien auf die SD-Karte, aus einem Ordner auf deinem Computer oder von archive.org. Füge eine Quelle hinzu."
+    },
+    "to_destination": "Nach {destination} auf der SD-Karte",
+    "only_extensions": "Nur {extensions}",
+    "archive_link": "archive.org/details/{name}",
+    "status": {
+      "empty": "Keine Dateien gefunden",
+      "complete": "{total, plural, one {# Datei, aktuell} other {Alle # Dateien aktuell}}",
+      "to_fetch": "{missing} von {total, plural, one {# Datei} other {# Dateien}} abzurufen"
+    },
+    "last_fetched": "Zuletzt abgerufen <time></time>",
+    "open_destination": "Ordner auf der SD-Karte öffnen",
+    "open_source": "Ordner öffnen",
+    "edit_button": "Quelle bearbeiten"
   },
   "firmware": {
     "current": "Aktuelle Firmware: v{version}",
     "downloading_firmware": "Firmware herunterladen...",
-    "load_firmware": "Auf SD-Karte laden",
+    "load_firmware": "Firmware auf SD-Karte laden",
     "loaded_firmware": "Firmware {version} befindet sich auf der SD-Karte",
     "loaded_firmware_info": "Pocket anschließen und einschalten zum Installieren",
     "no_firmware_loaded": "Keine Firmwaredatei zur Installation auf der SD-Karte",
-    "options": {
-      "latest": "v{version} (aktuell)",
-      "older": "v{version} ({date, date, short})",
-      "previous_versions": "Vorherige Versionen"
-    },
     "release_notes": {
-      "from": "Von ",
-      "title": "v{version} - { published, date, short } Veröffentlichungshinweise:"
+      "from": "Von "
     },
-    "remove_button": "Entfernen"
+    "remove_button": "Firmware entfernen",
+    "current_label": "Installierte Firmware",
+    "versions_title": "Firmware-Versionen",
+    "jump_to": "Springe zu",
+    "badge_latest": "Neueste",
+    "badge_installed": "Installiert",
+    "published": "{date, date, medium}",
+    "loaded_current": "Die Installationsdatei der installierten Firmware (v{version}) liegt noch auf der SD-Karte.",
+    "loaded_current_info": "Sie wird nicht mehr gebraucht und kann entfernt werden.",
+    "remove_installer": "Installationsdatei entfernen"
   },
   "games": {
     "controls": {
       "category": "Kategorie",
       "clean_files": "Dateien bereinigen",
-      "instance_json": "Instanz-JSON",
+      "instance_json": "Instanz-JSON erstellen",
       "refresh": "Aktualisieren",
-      "search": "Suchen"
+      "search": "Suchen",
+      "mrom": "MROM-Dumps verschieben",
+      "platform": "Plattform",
+      "all": "Alle"
     },
     "item": {
       "game_count": "{count, plural, =0 {Keine Spiele} one {# Spiel} other {# Spiele}}"
-    }
+    },
+    "open_folder": "Ordner öffnen",
+    "none": "Keine Spiele gefunden. Installiere einen Kern und lege dann Spiele in dessen Ordner auf der SD-Karte ab.",
+    "show_in_folder": "Im Ordner anzeigen",
+    "empty_title": "Noch keine Spiele",
+    "no_core": "Kein Kern installiert",
+    "find_core": "Kern finden",
+    "accepts": "Nimmt {extensions}",
+    "read_by": "Gelesen von <cores></cores>"
   },
   "image_editor": {
     "cancel": "Abbrechen",
     "import_image": "Bild importieren",
-    "remove": "Entfernen",
-    "reset": "Zurücksetzen",
+    "remove": "Ebene entfernen",
+    "reset": "Ebene zurücksetzen",
     "rotate": "Rotieren",
-    "save": "Speichern",
-    "scale": "Skalieren"
+    "save": "Bild speichern",
+    "scale": "Skalieren",
+    "title": "Bild bearbeiten",
+    "move_up": "Nach oben",
+    "move_down": "Nach unten",
+    "hint": "Zieh in der Vorschau, um die gewählte Ebene zu verschieben.",
+    "hint_empty": "Importiere ein Bild und zieh es dann in der Vorschau an die richtige Stelle.",
+    "position_x": "Horizontal",
+    "position_y": "Vertikal",
+    "discard_confirm": "Deine Änderungen an diesem Bild verwerfen?",
+    "discard": "Verwerfen",
+    "keep_editing": "Weiter bearbeiten"
   },
   "instance_json": {
-    "available_for": "Automatische instance.json-Dateigenerierung verfügbar für:",
     "close_button": "Schließen",
     "skipped_file": "{file_name} übersprungen",
     "title": "Instanz-JSON-Datei generieren",
-    "wrote_file": "{file_name} geschrieben"
+    "wrote_file": "{file_name} geschrieben",
+    "intro": "Manche Kerne (meist für CD-Systeme) brauchen pro Spiel eine instance.json, damit der Pocket Spiele aus mehreren Dateien starten kann. Erstelle sie aus dem Spieleordner eines Kerns.",
+    "none_available": "Keiner der installierten Kerne erstellt Instanzdateien.",
+    "build": "Erstellen"
   },
   "layout": {
     "cores": "Kerne",
@@ -254,89 +409,166 @@
     "platforms": "Plattformen",
     "pocket_sync": "Pocket Sync",
     "save_states": "Speicherstände",
-    "saves": "Spielstände",
+    "saves": "Sicherungen",
     "screenshots": "Bildschirmfotos",
     "plugins": "Plugins",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "collapse_sidebar": "Seitenleiste einklappen",
+    "expand_sidebar": "Seitenleiste ausklappen",
+    "views": "Ansichten",
+    "core_updates": "{count, plural, one {# Kern-Update} other {# Kern-Updates}}",
+    "firmware_update": "Firmware {version} verfügbar"
   },
   "plugins": {
     "buttons": {
       "add": "Plugin hinzufügen",
-      "refresh": "Aktualisieren"
+      "refresh": "Plugins aktualisieren",
+      "run": "Plugin starten"
     },
-    "remove": "Entfernen",
-    "confirm_remove": "Dadurch werden auch alle lokalen Daten gelöscht, die das Plugin auf diesem Computer gespeichert hat. Sind Sie sicher?",
-    "confirm_exit": "Das Plugin läuft noch. Möchten Sie das Fenster wirklich schließen?",
+    "remove": "Plugin entfernen",
+    "confirm_remove": "Dadurch werden auch alle lokalen Daten gelöscht, die das Plugin auf diesem Computer gespeichert hat. Bist du sicher?",
+    "confirm_exit": "Das Plugin läuft noch. Möchtest du das Fenster wirklich schließen?",
     "safe_to_close": "Das Plugin wurde beendet, dieses Fenster kann geschlossen werden.",
     "submit": "Einreichen",
-    "info": "Die Plugin-Spezifikation, ein Beispiel-Plugin und Werkzeuge zum Erstellen von Plugins finden Sie unter <1>github.com/{repo}</1>",
+    "info": "Plugins sind kleine Werkzeuge von anderen, die in Pocket Sync laufen, jedes in einem eigenen Fenster. Füge eins über seinen GitHub-Link hinzu. Die Plugin-Spezifikation, ein Beispiel-Plugin und Werkzeuge zum Erstellen von Plugins findest du unter <1>github.com/{repo}</1>",
     "add_modal": {
       "title": "Plugin per URL hinzufügen",
       "add": "Plugin prüfen und installieren",
       "cancel": "Stornieren",
-      "invalid": "Unter dieser URL wurde kein gültiges Plugin gefunden."
+      "invalid": "Unter dieser URL wurde kein gültiges Plugin gefunden.",
+      "url_label": "GitHub-Repository",
+      "hint": "Die Adresse des Plugin-Repositorys. Sein neuestes Release braucht eine plugin.wasm- und eine plugin.json-Datei.",
+      "checking": "Wird geprüft …"
+    },
+    "empty": {
+      "title": "Keine Plugins installiert",
+      "text": "Plugins ergänzen Pocket Sync um weitere Werkzeuge."
+    },
+    "running": "Läuft …",
+    "controls": {
+      "search": "Suchen",
+      "author": "Autor",
+      "all": "Alle"
     }
   },
   "palettes": {
     "buttons": {
-      "add_via_code": "Über Code hinzufügen",
-      "new": "Neue Palette",
-      "back": "Zurück zur Liste",
-      "palette_town": "Palettenstadt"
+      "add_via_code": "Palette über Code hinzufügen",
+      "new": "Palette erstellen",
+      "back": "Zurück zu den Paletten",
+      "palette_town": "Palettenstadt durchsuchen"
     },
     "town": {
       "title": "Palettenstadt",
       "repo_link": "Paletten von <1>github.com/{repo}</1>",
-      "close": "Schließen"
+      "intro": "Klick auf eine Palette, um sie auf die SD-Karte zu legen.",
+      "installed": "Auf der SD-Karte"
     },
     "item": {
-      "duplicate": "Duplizieren",
-      "rename": "Umbenennen",
+      "duplicate": "Palette duplizieren",
+      "rename": "Palette umbenennen",
       "copy_code": "Code zum Teilen kopieren",
-      "delete": "Löschen"
+      "delete": "Palette löschen"
     },
     "add_via_code": {
       "title": "Über geteilten Code hinzufügen",
       "cancel": "Abbrechen",
-      "add": "Hinzufügen"
+      "add": "Palette hinzufügen",
+      "label": "Code",
+      "hint": "Füge einen Code ein, der mit „{button}“ bei einer Palette kopiert wurde.",
+      "found": "Fügt die Palette „{name}“ hinzu.",
+      "invalid": "Das ist kein Paletten-Code. Prüfe, ob der ganze Code kopiert wurde."
     },
     "full": {
       "inputs": {
         "background": "Hintergrund",
-        "obj0": "Obj0",
-        "obj1": "Obj1",
+        "obj0": "Sprites 0",
+        "obj1": "Sprites 1",
         "window": "Fenster",
         "off": "LCD aus"
       },
-      "save": "Speichern",
-      "reset": "Zurücksetzen",
-      "emu_credit": "GB-Emulator übernommen von <1>roblouie/gameboy-emulator</1>"
-    }
+      "save": "Palette speichern",
+      "reset": "Farben zurücksetzen",
+      "emu_credit": "GB-Emulator übernommen von <1>roblouie/gameboy-emulator</1>",
+      "preview_game": "Spiel",
+      "no_games": "Lege ein Game-Boy-Spiel (.gb) in Assets/gb auf der SD-Karte ab, um die Palette darin auszuprobieren."
+    },
+    "empty": {
+      "title": "Noch keine Paletten",
+      "text": "Erstelle eine Palette, füge eine per Code hinzu oder stöbere in Palette Town."
+    },
+    "controls": {
+      "search": "Paletten durchsuchen",
+      "group_by": "Gruppieren nach",
+      "group": {
+        "folder": "Ordner",
+        "none": "Keine"
+      }
+    },
+    "groups": {
+      "root": "Nicht in einem Ordner"
+    },
+    "count": "{count, plural, one {# Palette} other {# Paletten}}"
   },
   "mister_sync": {
     "controls": {
-      "back": "Beenden",
+      "back": "MiSTer-Synchronisation beenden",
       "search": "Speicherstände suchen",
       "save_mapping": "Spielstandmapping"
     },
     "login": {
       "connect": "Verbinden",
-      "host": "Host / IP-Adresse:",
-      "password": "Kennwort:",
-      "username": "Benutzername:"
+      "host": "Host oder IP-Adresse",
+      "password": "Kennwort",
+      "username": "Benutzername"
     },
     "mister": "MiSTer",
     "not_found": "Nicht gefunden",
     "pocket": "Pocket",
     "tip_1": "Der MiSTer-FTP-Server muss aktiviert werden",
-    "tip_2": "Stellen Sie vor der Übertragung sicher, dass der Spielstand zwischen Pocket und MiSTer kompatibel ist",
+    "tip_2": "Stell vor der Übertragung sicher, dass der Spielstand zwischen Pocket und MiSTer kompatibel ist",
     "tip_3": "Das Spiel muss auf dem Pocket und dem MiSTer exakt gleich benannt sein, damit der Spielstand gefunden wird.",
     "unsupported": "{platform} ist nicht gemapped",
     "mapping": {
-      "close": "Schließen",
-      "clear": "Leeren",
-      "reset": "Auf Standard zurücksetzen"
-    }
+      "clear": "Zuordnung leeren",
+      "reset": "Auf Standard zurücksetzen",
+      "title": "Spielstand-Zuordnung",
+      "intro": "Zieh von einer Pocket-Plattform zum MiSTer-Ordner, in den ihre Spielstände gehören (oder umgekehrt). Fahr über eine Plattform, um ihre Verbindungen zu sehen."
+    },
+    "connect": {
+      "title": "Mit MiSTer verbinden",
+      "host_hint": "Die Adresse des MiSTer in deinem Netzwerk, z. B. 192.168.0.10.",
+      "demo_hint": "Vorschau: jeder Host verbindet, außer „fail“.",
+      "failed": "Keine Verbindung zum MiSTer. Prüfe die Adresse, die Anmeldung und ob sein FTP eingeschaltet ist.",
+      "connecting": "Verbinde…",
+      "cancel": "Abbrechen"
+    },
+    "list": {
+      "title": "Spielstände auf dem Pocket",
+      "empty": "Keine passenden Spielstände."
+    },
+    "compare": {
+      "pick_title": "Spielstand wählen",
+      "pick": "Wähle links einen Spielstand, um ihn mit dem des MiSTer zu vergleichen und in beide Richtungen zu kopieren.",
+      "same": "Auf beiden gleich",
+      "pocket_newer": "Neuer auf dem Pocket",
+      "mister_newer": "Neuer auf dem MiSTer",
+      "missing": "Noch nicht auf dem MiSTer"
+    },
+    "newer": "Neuer",
+    "modified": "Geändert",
+    "checksum": "Prüfsumme",
+    "folder": "MiSTer-Ordner",
+    "copy_to_pocket": "Auf den Pocket kopieren",
+    "copy_to_mister": "Auf den MiSTer kopieren",
+    "confirm": {
+      "to_mister": "Den Spielstand auf dem MiSTer durch den vom Pocket ersetzen?",
+      "to_pocket": "Den Spielstand auf dem Pocket durch den vom MiSTer ersetzen?"
+    },
+    "activity": "Aktivität ({count})",
+    "activity_empty": "Noch nichts passiert.",
+    "demo_note": "Vorschau mit erfundenen Spielständen: Nichts wird an einen MiSTer gesendet oder auf der SD-Karte geändert.",
+    "date": "{date, date, medium} {date, time, short}"
   },
   "news_feed": {
     "last_updated": "Zuletzt aktualisiert <1></1>",
@@ -344,27 +576,27 @@
   },
   "platform_info": {
     "controls": {
-      "back": "Zurück zur Liste",
-      "data_packs": "Datenpakete",
-      "image_packs": "Bildpakete"
+      "back": "Zurück zu den Plattformen",
+      "data_packs": "Datenpakete verwalten",
+      "image_packs": "Bildpakete verwalten"
     },
-    "cores": "Kerne",
-    "edit": "Bearbeiten"
+    "cores": "Installierte Kerne",
+    "edit": "Bearbeiten",
+    "details": "Details",
+    "no_cores": "Keine installierten Kerne nutzen diese Plattform.",
+    "games": "Spiele",
+    "no_games": "Keine Spiele im Ordner dieser Plattform auf der SD-Karte."
   },
   "platforms": {
     "cancel": "Abbrechen",
     "controls": {
-      "data_packs": "Datenpakete",
-      "remove_coreless": "Coreless entfernen",
+      "data_packs": "Datenpakete verwalten",
+      "remove_coreless": "Plattformen ohne Kern entfernen",
       "archive": "Archivplattformen",
-      "image_packs": "Bildpakete",
+      "image_packs": "Bildpakete verwalten",
       "search": "Suchen"
     },
     "archive": {
-      "apply_changes": "Änderungen speichern",
-      "close": "Schließen, ohne zu speichern",
-      "search_placeholder": "Archivierte Plattformen",
-      "archive_all": "Alle archivieren",
       "filters": {
         "all": "Alle",
         "category": "Kategorie",
@@ -374,17 +606,22 @@
     },
     "data_packs": {
       "apply_changes": "{count, plural, =0 {0 Änderungen} one {1 Änderungen} other {# Änderungen}} anwenden",
-      "close": "Schließen",
-      "current": "Aktuell"
+      "current": "Aktuell",
+      "intro": "Datenpakete aus der Community können Name, Kategorie, Hersteller und Jahr einer Plattform ersetzen. Wähle eins pro Plattform; Aktuell behält, was auf der SD-Karte ist. Nur Plattformen mit einer anderen Version werden gezeigt."
     },
     "delete_unused": "{count, plural, one {# ungenutzte Plattform} other {# ungenutzte Plattformen}} löschen?",
     "edit": "Bearbeiten",
     "image_packs": {
       "apply_changes": "{count, plural, =0 {0 Änderungen} one {1 Änderung} other {# Änderungen}} anwenden",
-      "close": "Schließen",
-      "current": "Aktuell"
+      "current": "Aktuell",
+      "intro": "Bildpakete aus der Community ersetzen die Bilder, die der Pocket für jede Plattform zeigt. Wähle eins pro Plattform; Aktuell behält das Bild auf der SD-Karte."
     },
-    "save": "Speichern"
+    "save": "Änderungen speichern",
+    "archived": "Archiviert",
+    "empty": {
+      "title": "Keine Plattformen auf der SD-Karte",
+      "text": "Plattformen kommen mit der Installation von Kernen hinzu."
+    }
   },
   "progress": {
     "remaining_time": "Verbleibende Zeit (ungefähr): {remainingTime}",
@@ -393,7 +630,7 @@
   "save_info": {
     "confirm_restore": "Von Sicherung wiederherstellen?",
     "controls": {
-      "back": "Zurück zur Liste",
+      "back": "Zurück zu den Sicherungen",
       "hide_unchanged": "Unveränderte ausblenden",
       "search": "Suchen"
     },
@@ -401,15 +638,28 @@
     "date": "{date, date, short}",
     "newer": "Neuer",
     "older": "Älter",
-    "time": "{date, time, short}"
+    "time": "{date, time, short}",
+    "explainer": "Jede Spalte ist eine Sicherung, die älteste links. Ein Balken zeigt, wie lange ein Spielstand gleich blieb; der grüne ist gerade auf dem Pocket. Klick auf einen anderen, um diese Version wiederherzustellen.",
+    "restore": "Wiederherstellen",
+    "restore_version": "Version vom {date, date, short}, {date, time, short} wiederherstellen",
+    "show_on_sd_card": "Auf der SD-Karte zeigen"
   },
   "save_states": {
     "cartridge": "Modul",
-    "confirm_delete": "Sind Sie sicher, dass sie {count, plural, =0 {keine Speicherstände} one {einen Speicherstand} other {# Speicherstände}} löschen möchten?",
+    "confirm_delete": "Bist du sicher, dass du {count, plural, =0 {keine Speicherstände} one {einen Speicherstand} other {# Speicherstände}} löschen möchtest?",
     "controls": {
       "clear_selection": "Auswahl aufheben",
       "delete_selection": "Ausgewählte löschen ({count})",
-      "search": "Suchen"
+      "search": "Suchen",
+      "core": "Kern",
+      "platform": "Plattform",
+      "all": "Alle",
+      "group_by": "Gruppieren nach",
+      "group": {
+        "core": "Kern",
+        "game": "Spiel"
+      },
+      "game": "Spiel"
     },
     "count": "( {count} / 128 )",
     "item": {
@@ -418,48 +668,88 @@
     },
     "photos": {
       "title": "Fotoexport",
+      "open_export": "Fotos exportieren",
       "palette": "Palette",
       "custom": "Benutzerdefiniert",
-      "close": "Schließen",
       "export_selected": "Ausgewählte exportieren",
       "export_all": "Alle exportieren",
       "colours": {
         "gb": "GB",
         "gb_player": "GB Player",
         "black_and_white": "Schwarz & Weiß"
-      }
-    }
+      },
+      "photo_number": "Foto {number} von {total}",
+      "shade": "Farbton {number}"
+    },
+    "empty": {
+      "title": "Noch keine Speicherstände",
+      "text": "Memories sind Speicherstände: eine Momentaufnahme des Spiels, zu der du jederzeit zurückkehren kannst."
+    },
+    "how_to": {
+      "save": "Drück während des Spiels die <key>Analogue-Taste</key> und <key>Oben</key>, um eine Memory zu speichern.",
+      "load": "Drück die <key>Analogue-Taste</key> und <key>Unten</key>, um die neueste zu laden. Schalte dafür zuerst <key>Enable Quick Load</key> in den Einstellungen des Pocket unter Memories ein."
+    },
+    "count_game": "{count, plural, one {# Speicherstand} other {# Speicherstände}}",
+    "unknown_game": "Unbekanntes Spiel"
   },
   "saves": {
     "backups": "Sicherungen: {count}",
-    "confirm_delete": "Sind sie sicher, dass Sie dieses Sicherungsziel entfernen möchten?",
+    "confirm_delete": "Bist du sicher, dass du dieses Sicherungsziel entfernen möchtest?",
     "controls": {
       "add_backup_location": "Sicherungsziel hinzufügen",
-      "mister_sync": "MiSTer-Synchronisation"
+      "mister_sync": "MiSTer-Synchronisation öffnen"
     },
-    "latest_backup": "Letzte Sicherung: {date, date, long}, {date, time, short}",
-    "none": "Fügen Sie oben ein Sicherungsziel hinzu",
+    "none": "Füge oben ein Sicherungsziel hinzu",
     "not_found": "Nicht gefunden",
     "oldest_backup": "Älteste Sicherung: {date, date, long}, {date, time, short}",
     "remove": "Ort entfernen",
-    "view_saves": "Spielstände anzeigen"
+    "view_saves": "Spielstände anzeigen",
+    "copy_path": "Pfad kopieren",
+    "open_folder": "Ordner öffnen",
+    "copied": "Kopiert",
+    "location_title": "Ziel {number}",
+    "back_up_now": "Jetzt sichern",
+    "backing_up": "Wird gesichert…",
+    "last_backup_label": "Letzte Sicherung",
+    "never": "Noch keine Sicherungen",
+    "empty_title": "Noch keine Sicherungen"
   },
   "screenshot_info": {
     "controls": {
-      "back": "Zurück zur Liste",
-      "save": "Speichern",
-      "share": "Teilen",
-      "upscaled": "Hochskaliert"
-    }
+      "back": "Zurück zu den Bildschirmfotos",
+      "save": "Bildschirmfoto speichern",
+      "share": "Bildschirmfoto teilen",
+      "upscaled": "Hochskaliert",
+      "previous": "Vorheriger Screenshot",
+      "next": "Nächster Screenshot"
+    },
+    "dimensions": "{width} × {height} px"
   },
   "screenshots": {
     "controls": {
       "delete_selected": "Auswahl löschen ({count})",
       "export_selected": "Auswahl exportieren ({count})",
       "search": "Suchen",
-      "select": "Auswählen"
+      "select": "Auswählen",
+      "group_by": "Gruppieren nach",
+      "group": {
+        "game": "Spiel",
+        "core": "Kern",
+        "date": "Datum"
+      },
+      "game": "Spiel",
+      "core": "Kern",
+      "all": "Alle"
     },
-    "no_screenshots": "Sobald Sie Bildschirmfotos erstellen, erscheinen diese hier"
+    "no_screenshots": "Sobald du Bildschirmfotos erstellst, erscheinen sie hier",
+    "how_to": "Drück während des Spiels die <key>Analogue-Taste</key> und <key>Start</key> gleichzeitig. Das Bildschirmfoto wird auf der SD-Karte gespeichert und erscheint hier.",
+    "empty_title": "Noch keine Bildschirmfotos",
+    "taken": "{date, date, medium}, {date, time, short}",
+    "count": "{count, plural, one {# Screenshot} other {# Screenshots}}",
+    "unknown_game": "Unbekanntes Spiel",
+    "unknown_core": "Unbekannter Kern",
+    "unknown_date": "Ohne Datum",
+    "group_date": "{date, date, full}"
   },
   "settings": {
     "3d_pocket": {
@@ -500,7 +790,7 @@
     },
     "alternate_skip": {
       "checkbox": "Alternative Assets überspringen",
-      "ramble_1": "Diese Einstellung überspring json-Dateien im „_alternatives“-Ordner,\nd.h. Sie erhalten nur die „Haupt“-Titel für die Kerne, welche ihre JSON-Dateien auf diese Weise sortieren.",
+      "ramble_1": "Diese Einstellung überspringt JSON-Dateien im „_alternatives“-Ordner,\nd. h. du erhältst nur die „Haupt“-Titel für die Kerne, die ihre JSON-Dateien auf diese Weise sortieren.",
       "ramble_2": "<b>Warnung:</b> wenn diese Option deaktiviert wird, dauert das Installieren von benötigten Dateien <b>deutlich</b> länger.",
       "title": "Alternative Assets überspringen"
     },
@@ -508,22 +798,24 @@
       "title": "Sprache"
     },
     "archive": {
-      "save": "Speichern",
+      "save": "URL speichern",
       "title": "ROM & BIOS-Archiv (Benötigte Dateien)",
-      "warning": "Bitte überprüfen Sie ihre lokalen Gesetze bezüglich des Herunterladens von möglicherweise urheberrechtlich geschützten (Arcade-) ROM & BIOS-Dateien.\nFalls das für Sie in Ordnung ist, kopieren Sie die folgende URL in die Eingabe und klicken Sie „Speichern“."
+      "warning": "Bitte prüfe deine lokalen Gesetze zum Herunterladen von möglicherweise urheberrechtlich geschützten (Arcade-) ROM- & BIOS-Dateien.\nFalls das für dich in Ordnung ist, kopiere die folgende URL in die Eingabe und klicke auf „Speichern“.",
+      "copy_url": "URL kopieren",
+      "copied": "Kopiert"
     },
     "github_token": {
       "title": "Github-Token",
-      "remove": "Entfernen",
-      "ramble": "Wenn Sie Probleme mit der GitHub-Ratenbegrenzung haben, fügen Sie unten ein PAT-Token hinzu.\nFür das PAT-Token sollten keine Bereiche festgelegt sein, und es wird auf Ihrem Computer und nicht auf der SD-Karte des Pocket gespeichert."
+      "remove": "Token entfernen",
+      "ramble": "Wenn du Probleme mit der GitHub-Ratenbegrenzung hast, füge unten ein PAT-Token hinzu.\nFür das PAT-Token sollten keine Bereiche festgelegt sein, und es wird auf deinem Computer und nicht auf der SD-Karte des Pocket gespeichert."
     },
     "clear_file_cache": {
       "button": "Dateicache leeren",
-      "ramble": "Um die USB- und SD-Kartenübertragung zu vereinfachen, werden größere Dateien in das Dateisystem des Computers kopiert und gespeichert.\nFalls Probleme auftreten, versuchen Sie den Dateicache zu leeren.",
+      "ramble": "Um die USB- und SD-Kartenübertragung zu vereinfachen, werden größere Dateien in das Dateisystem des Computers kopiert und gespeichert.\nFalls Probleme auftreten, leere den Dateicache.",
       "title": "Dateicache leeren"
     },
     "disconnect": {
-      "button": "Trennen",
+      "button": "Pocket trennen",
       "ramble": "Zum „Mit Pocket verbinden“-Bildschirm zurückkehren (SD-Karte / USB-Laufwerk wird nicht ausgeworfen)",
       "title": "Trennen"
     },
@@ -534,12 +826,12 @@
     },
     "keep_platform_data": {
       "checkbox": "Vorhandene Plattformdateien beibehalten",
-      "ramble": "Dadurch wird die Option „Alle aktualisieren“ und „Einzelkernaktualisierungen“ so geändert, dass vorhandene Plattformdaten (Bilder und Informationen) standardmäßig nicht aktualisiert werden. Aktivieren Sie diese Option, wenn Sie benutzerdefinierte Daten eingerichtet haben.",
-      "title": "Ersetzen Sie bei Updates keine Plattformdateien"
+      "ramble": "Dadurch werden „Alle aktualisieren“ und Updates einzelner Kerne so geändert, dass vorhandene Plattformdaten (Bilder und Informationen) standardmäßig nicht aktualisiert werden. Aktiviere diese Option, wenn du eigene Daten eingerichtet hast.",
+      "title": "Plattformdateien bei Updates nicht ersetzen"
     },
     "turbo_downloads": {
       "checkbox": "Schnelle Downloads aktivieren",
-      "ramble": "Das Aktivieren dieser Einstellung teilt Dateien aus dem Archiv in kleinere Stücke auf. Diese Stücke werden dann parallel heruntergeladen, was in einer Beschleunigung um bis zu Faktor 8 führen kann. Diese Methode wird jedoch mehr Bandbreite benötigen und unzuverlässiger sein. Falls Sie diese Einstellung aktivieren, ziehen Sie es in Betracht <1>das Internetarchiv zu unterstützen</1>.",
+      "ramble": "Diese Einstellung teilt Dateien aus dem Archiv in kleinere Stücke auf, die parallel heruntergeladen werden. Das kann bis zu 8-mal schneller sein, braucht aber mehr Bandbreite und ist weniger zuverlässig. Wenn du sie aktivierst, denk darüber nach, <1>das Internet Archive zu unterstützen</1>.",
       "title": "Schnelle Downloads"
     },
     "logs": {
@@ -548,21 +840,43 @@
     },
     "hidden_cores": {
       "title": "Versteckte Kerne",
-      "ramble": "Diese Kerne werden aus der Liste der verfügbaren, nicht installierten Kerne ausgeblendet. Wenn sie installiert sind, werden sie nicht ausgeblendet.\nSie können Kerne von ihren Infoseiten ausblenden.",
-      "button": "Liste der versteckten Kerne löschen"
+      "ramble": "Diese Kerne werden aus der Liste der verfügbaren, nicht installierten Kerne ausgeblendet. Wenn sie installiert sind, werden sie nicht ausgeblendet.\nDu kannst Kerne auf ihren Infoseiten ausblenden.",
+      "button": "Liste der versteckten Kerne leeren"
     },
     "gb_palettes_conversion": {
       "title": "GB Palettenformate",
-      "ramble": "Duplizieren Sie die .pal-Dateien in .gbp-Dateien. Kopiert die 4 für den Hintergrund verwendeten Farben in die neuen .gbp-Dateien.\nDurch Umschalten wird für jede .pal-Datei in /Assets/gb/common/palettes eine .gbp-Datei erstellt.",
+      "ramble": "Dupliziert die .pal-Dateien als .gbp-Dateien und kopiert die 4 Hintergrundfarben in die neuen .gbp-Dateien.\nBeim Einschalten wird für jede .pal-Datei in /Assets/gb/common/palettes eine .gbp-Datei erstellt.",
       "checkbox": "Automatische .gbp-Dateien aktivieren"
     },
-    "thanks": "Danksagungen:"
+    "thanks": "Danksagungen:",
+    "sections": "Einstellungsbereiche",
+    "section_titles": {
+      "display": "Anzeige",
+      "downloads": "Downloads",
+      "files": "Dateien",
+      "connection": "Verbindung"
+    },
+    "theme": {
+      "title": "Design",
+      "label": "Erscheinungsbild",
+      "system": "System",
+      "dark": "Dunkel",
+      "light": "Hell",
+      "style_label": "Stil",
+      "style_slanted": "Schräg",
+      "style_modern": "Gerade"
+    },
+    "dismissed_notes": {
+      "title": "Ausgeblendete Hinweise",
+      "ramble": "Hinweise, die du geschlossen hast, etwa der Tipp zum Hineinziehen von .zip-Dateien, können wieder angezeigt werden.",
+      "button": "{count, plural, =0 {Hinweise wieder anzeigen} one {# Hinweis wieder anzeigen} other {# Hinweise wieder anzeigen}}"
+    }
   },
   "time_ago": {
     "less_than_1_min_ago": "vor weniger als einer Minute"
   },
   "uninstall_core": {
-    "confirm_text": "Dies entfernt nur den Kern. Spiele, Spielstände, Bibliothek-Daten oder Plattforminformationen werden nicht entfernt. Sind Sie sicher?",
+    "confirm_text": "Dies entfernt nur den Kern. Spiele, Spielstände, Bibliotheksdaten oder Plattforminformationen werden nicht entfernt. Bist du sicher?",
     "confirm_title": "Kern deinstallieren"
   },
   "zip_install": {
@@ -572,7 +886,7 @@
       "other": "Andere"
     },
     "cancel_button": "Abbrechen",
-    "confirm_button": "Bestätigen",
+    "confirm_button": "Dateien installieren",
     "remove_duplicate": "Doppelte Dateien entfernen",
     "scanning": "Dateien überprüfen...",
     "moved_files_info": "Behandelt Fälle, in denen Dateien verschoben wurden, z.B. JSON-Dateien befinden sich nun unter „_alternatives“",
@@ -581,7 +895,12 @@
       "cancel": "Überspringen",
       "text": "{list}\n\nAssets, Speicherstände, etc. werden verschoben und der alte Kern wird entfernt.",
       "title": "Kerne ersetzen?"
-    }
+    },
+    "drop": {
+      "title": "Zum Installieren ablegen",
+      "text": "Pocket Sync installiert die Kerne und Dateien aus der .zip auf deiner SD-Karte."
+    },
+    "downloading": "Wird heruntergeladen …"
   },
   "version": {
     "update_alt": "Aktualisierung {version} verfügbar",
@@ -591,5 +910,18 @@
   "jobs": {
     "Running": "Abbrechen",
     "Stopping": "Breche ab..."
+  },
+  "pocket_buttons": {
+    "select": "Select",
+    "analogue": "Analogue",
+    "start": "Start",
+    "a": "A",
+    "b": "B",
+    "x": "X",
+    "y": "Y",
+    "up": "Oben",
+    "down": "Unten",
+    "left": "Links",
+    "right": "Rechts"
   }
 }

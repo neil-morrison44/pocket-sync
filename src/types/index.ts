@@ -5,7 +5,8 @@ export type Screenshot = {
   game: string
   author: string
   core: string
-  timestamp: Date
+  /** When it was taken, from the file name; null if the name has no date. */
+  timestamp: Date | null
 }
 
 export type VideoJSON = {
@@ -237,6 +238,8 @@ export type PocketColour =
   | "gbc_grape"
   | "gbc_berry"
   | "gbc_gold"
+  | "supreme_red"
+  | "supreme_gold"
 
 export type PocketSyncConfig = {
   version: string

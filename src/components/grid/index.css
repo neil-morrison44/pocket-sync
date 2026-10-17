@@ -3,7 +3,7 @@
   grid-auto-flow: row;
   grid-template-columns: repeat(2, minmax(100px, 1fr));
   gap: 15px;
-  padding: 10px;
+  padding: 10px var(--page-padding-inline); /* lines up with the header bar */
   align-items: stretch;
   justify-items: stretch;
   grid-template-rows: repeat(auto-fill, minmax(100px, 1fr));
@@ -22,4 +22,9 @@
   @media (min-width: 1200px) {
     grid-template-columns: repeat(5, minmax(100px, 1fr));
   }
+}
+
+:root.keyboard-focus .grid > [role="button"]:focus {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: 3px;
 }

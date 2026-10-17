@@ -58,6 +58,10 @@
         "height": 880,
         "resizable": true,
         "title": "Pocket Sync",
+        "theme": "Dark",
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "backgroundColor": "#1f1f1f",
         "width": 1080
       }
     ],

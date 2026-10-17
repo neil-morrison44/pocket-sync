@@ -25,6 +25,39 @@ import { GBPalettesConversion } from "./items/gbPalettes"
 import { useSmoothedAtom, useSmoothedAtomValue } from "../../utils/jotai"
 import { useAtom, useSetAtom } from "jotai"
 import { cacheDirSizeSelector } from "../../jotai/selectors"
+import Switch from "../ui/Switch"
+import { SettingsNav } from "./nav"
+import { useColourOptions } from "./colourOptions"
+import {
+  StylePreference,
+  stylePreferenceAtom,
+  ThemePreference,
+  themePreferenceAtom,
+} from "../../jotai/theme/atoms"
+import StickySection from "../ui/StickySection"
+import Callout from "../ui/Callout"
+import { dismissedNotesAtom } from "../../jotai/settings/atoms"
+import {
+  demoCoreUpdatesAtom,
+  demoFirmwareUpdateAtom,
+} from "../../jotai/cores/atoms"
+import { demoPluginsAtom } from "../../jotai/plugins/atoms"
+import PathField from "../ui/PathField"
+import { openFolder } from "../../utils/openFolder"
+
+const DEFAULT_ARCHIVE_URL = "https://archive.org/download/openFPGA-Files"
+import Button from "../ui/Button"
+import Select from "../ui/Select"
+import Slider from "../ui/Slider"
+import { PhotoExportModal } from "../saveStates/photoExportModal"
+import { MisterSyncDemo } from "../saves/misterSync/flow"
+import { MROMModal } from "../games/mrom"
+import { InstanceJson } from "../games/instanceJson"
+import { ErrorBoundary } from "../errorBoundary"
+import { UpdateDemoStop, UpdateModalDemo } from "../update/modal/demo"
+import Spinner, { SPINNER_FRAME_MS } from "../ui/Spinner/Spinner"
+import ProgressBar from "../ui/ProgressBar"
+import TextInput from "../ui/TextInput"
 
 export const Settings = () => {
   const config = useSmoothedAtomValue(PocketSyncConfigSelector)
@@ -43,6 +76,10 @@ export const Settings = () => {
 
   const updateConfig = useUpdateConfig()
   const { t } = useTranslation("settings")
+  const { t: tSaves } = useTranslation("saves")
+  const colourOptions = useColourOptions()
+  const [themePreference, setThemePreference] = useAtom(themePreferenceAtom)
+  const [stylePreference, setStylePreference] = useAtom(stylePreferenceAtom)
   const onDisconnect = useCallback(
     () => emit("pocket-connection", { connetcted: false }),
     []
@@ -54,313 +91,511 @@ export const Settings = () => {
 
   return (
     <div className="settings">
+      <SettingsNav />
+      <Thanks />
       <div className="settings__items">
-        <div className="settings__row">
-          <h3 className="settings__row-title">{t("3d_pocket.title")}</h3>
+        <StickySection
+          id="settings-section-display"
+          title={t("section_titles.display")}
+        >
+          <div className="settings__row" id="settings-theme">
+            <h3 className="settings__row-title">{t("theme.title")}</h3>
 
-          <label className="settings__checkbox">
-            {t("3d_pocket.body_label")}
-            <select
-              value={config.colour}
-              onChange={({ target }) =>
-                updateConfig("colour", target.value as PocketColour)
-              }
-            >
-              <ColoursList />
-            </select>
-          </label>
+            <div className="settings__checkbox">
+              <label htmlFor="settings-theme-select">{t("theme.label")}</label>
 
-          <label className="settings__checkbox">
-            {t("3d_pocket.buttons_label")}
-            <select
-              value={config.button_colour ?? "match"}
-              onChange={({ target }) => {
-                if (target.value === "match") {
-                  updateConfig("button_colour", undefined)
-                } else {
-                  updateConfig("button_colour", target.value as PocketColour)
+              <Select<ThemePreference>
+                id="settings-theme-select"
+                value={themePreference}
+                onChange={setThemePreference}
+                options={[
+                  { value: "system", label: t("theme.system") },
+
+                  { value: "dark", label: t("theme.dark") },
+
+                  { value: "light", label: t("theme.light") },
+                ]}
+              />
+            </div>
+
+            <div className="settings__checkbox">
+              <label htmlFor="settings-style-select">
+                {t("theme.style_label")}
+              </label>
+
+              <Select<StylePreference>
+                id="settings-style-select"
+                value={stylePreference}
+                onChange={setStylePreference}
+                options={[
+                  { value: "slanted", label: t("theme.style_slanted") },
+                  { value: "modern", label: t("theme.style_modern") },
+                ]}
+              />
+            </div>
+          </div>
+
+          <div className="settings__row" id="settings-3d_pocket">
+            <h3 className="settings__row-title">{t("3d_pocket.title")}</h3>
+
+            <div className="settings__checkbox">
+              <label htmlFor="settings-body-colour">
+                {t("3d_pocket.body_label")}
+              </label>
+              <Select
+                id="settings-body-colour"
+                value={config.colour}
+                options={colourOptions}
+                onChange={(value) => updateConfig("colour", value)}
+              />
+            </div>
+
+            <div className="settings__checkbox">
+              <label htmlFor="settings-button-colour">
+                {t("3d_pocket.buttons_label")}
+              </label>
+              <Select<PocketColour | "match">
+                id="settings-button-colour"
+                value={config.button_colour ?? "match"}
+                options={[
+                  { value: "match", label: t("3d_pocket.match_body") },
+                  ...colourOptions,
+                ]}
+                onChange={(value) =>
+                  updateConfig(
+                    "button_colour",
+                    value === "match" ? undefined : value
+                  )
                 }
-              }}
-            >
-              <option value={"match"}>{t("3d_pocket.match_body")}</option>
-              <ColoursList />
-            </select>
-          </label>
-        </div>
+              />
+            </div>
+          </div>
+          <div className="settings__row" id="settings-language">
+            <h3 className="settings__row-title">{t("language.title")}</h3>
 
-        <div className="settings__row">
-          <h3 className="settings__row-title">{t("archive.title")}</h3>
-          <div className="settings__ramble">{t("archive.warning")}</div>
-          {/* eslint-disable-next-line react/jsx-no-literals */}
-          <pre>{"https://archive.org/download/openFPGA-Files"}</pre>
-          <div className="settings__text-input-and-save">
-            <input
-              type="text"
-              className="settings__text-input"
-              value={archiveUrlInput}
-              onChange={({ target }) => setArchiveUrl(target.value)}
+            <Switch
+              className="settings__checkbox"
+              label={t("language.checkbox")}
+              value={alwaysUseEnglish.value}
+              onChange={(checked) => setAlwaysUseEnglish({ value: checked })}
             />
-            <button
-              onClick={() => updateConfig("archive_url", archiveUrlInput)}
-            >
-              {t("archive.save")}
-            </button>
           </div>
-        </div>
-        <div className="settings__row">
-          <h3 className="settings__row-title">{t("turbo_downloads.title")}</h3>
-          <div className="settings__ramble">
-            <Trans i18nKey={"turbo_downloads.ramble"} t={t}>
-              {"_"}
-              <Link href="https://archive.org/donate">{"_"}</Link>
-            </Trans>
+          <div className="settings__row" id="settings-hide_ai_score">
+            <h3 className="settings__row-title">{t("hide_ai_score.title")}</h3>
+            <div className="settings__ramble">{t("hide_ai_score.ramble")}</div>
+            <Switch
+              className="settings__checkbox"
+              label={t("hide_ai_score.checkbox")}
+              value={config.hide_ai_score ?? false}
+              onChange={(checked) => updateConfig("hide_ai_score", checked)}
+            />
           </div>
-          <label className="settings__checkbox">
-            {t("turbo_downloads.checkbox")}
-            <input
-              type="checkbox"
-              checked={turboDownloads.enabled}
-              onChange={({ target }) =>
+          <HiddenCores />
+          <div className="settings__row" id="settings-dismissed_notes">
+            <h3 className="settings__row-title">
+              {t("dismissed_notes.title")}
+            </h3>
+            <div className="settings__ramble">
+              {t("dismissed_notes.ramble")}
+            </div>
+            <Suspense>
+              <ResetDismissedNotes />
+            </Suspense>
+          </div>
+        </StickySection>
+
+        <StickySection
+          id="settings-section-downloads"
+          title={t("section_titles.downloads")}
+        >
+          <div className="settings__row" id="settings-archive">
+            <h3 className="settings__row-title">{t("archive.title")}</h3>
+            <Callout variant="warning">{t("archive.warning")}</Callout>
+            <PathField
+              className="settings__path"
+              value={DEFAULT_ARCHIVE_URL}
+              copyLabel={t("archive.copy_url")}
+              copiedLabel={t("archive.copied")}
+            />
+            <div className="settings__text-input-and-save">
+              <TextInput
+                className="settings__text-input"
+                label={t("archive.title")}
+                value={archiveUrlInput}
+                onChange={setArchiveUrl}
+              />
+              <Button
+                onClick={() => updateConfig("archive_url", archiveUrlInput)}
+              >
+                {t("archive.save")}
+              </Button>
+            </div>
+          </div>
+          <div className="settings__row" id="settings-turbo_downloads">
+            <h3 className="settings__row-title">
+              {t("turbo_downloads.title")}
+            </h3>
+            <div className="settings__ramble">
+              <Trans i18nKey={"turbo_downloads.ramble"} t={t}>
+                {"_"}
+                <Link href="https://archive.org/donate">{"_"}</Link>
+              </Trans>
+            </div>
+            <Switch
+              className="settings__checkbox"
+              label={t("turbo_downloads.checkbox")}
+              value={turboDownloads.enabled}
+              onChange={(checked) =>
                 setTurboDownloads({
                   ...turboDownloads,
-                  enabled: target.checked,
+                  enabled: checked,
                 })
               }
             />
-          </label>
-        </div>
-
-        <div className="settings__row">
-          <h3 className="settings__row-title">
-            {t("keep_platform_data.title")}
-          </h3>
-          <div className="settings__ramble">
-            {t("keep_platform_data.ramble")}
           </div>
-          <label className="settings__checkbox">
-            {t("keep_platform_data.checkbox")}
-            <input
-              type="checkbox"
-              checked={keepPlatformData.enabled}
-              onChange={({ target }) =>
+          <div className="settings__row" id="settings-alternate_skip">
+            <h3 className="settings__row-title">{t("alternate_skip.title")}</h3>
+            <div className="settings__ramble">
+              {t("alternate_skip.ramble_1")}
+            </div>
+            <Callout variant="warning">
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: t("alternate_skip.ramble_2"),
+                }}
+              />
+            </Callout>
+            <Switch
+              className="settings__checkbox"
+              label={t("alternate_skip.checkbox")}
+              value={skipAlternateAssets}
+              onChange={(checked) =>
+                updateConfig("skipAlternateAssets", checked)
+              }
+            />
+          </div>
+          <div className="settings__row" id="settings-keep_platform_data">
+            <h3 className="settings__row-title">
+              {t("keep_platform_data.title")}
+            </h3>
+            <div className="settings__ramble">
+              {t("keep_platform_data.ramble")}
+            </div>
+            <Switch
+              className="settings__checkbox"
+              label={t("keep_platform_data.checkbox")}
+              value={keepPlatformData.enabled}
+              onChange={(checked) =>
                 setKeepPlatformData({
                   ...keepPlatformData,
-                  enabled: target.checked,
+                  enabled: checked,
                 })
               }
             />
-          </label>
-        </div>
-
-        <div className="settings__row">
-          <h3 className="settings__row-title">{t("language.title")}</h3>
-
-          <label className="settings__checkbox">
-            {t("language.checkbox")}
-            <input
-              type="checkbox"
-              checked={alwaysUseEnglish.value}
-              onChange={({ target }) =>
-                setAlwaysUseEnglish({ value: target.checked })
-              }
-            />
-          </label>
-        </div>
-
-        <div className="settings__row">
-          <h3 className="settings__row-title">{t("alternate_skip.title")}</h3>
-          <div className="settings__ramble">{t("alternate_skip.ramble_1")}</div>
-          <div
-            className="settings__ramble"
-            dangerouslySetInnerHTML={{ __html: t("alternate_skip.ramble_2") }}
-          ></div>
-          <label className="settings__checkbox">
-            {t("alternate_skip.checkbox")}
-            <input
-              type="checkbox"
-              checked={skipAlternateAssets}
-              onChange={({ target }) =>
-                updateConfig("skipAlternateAssets", target.checked)
-              }
-            />
-          </label>
-        </div>
-
-        <div className="settings__row">
-          <h3 className="settings__row-title">{t("hide_ai_score.title")}</h3>
-          <div className="settings__ramble">{t("hide_ai_score.ramble")}</div>
-          <label className="settings__checkbox">
-            {t("hide_ai_score.checkbox")}
-            <input
-              type="checkbox"
-              checked={config.hide_ai_score ?? false}
-              onChange={({ target }) =>
-                updateConfig("hide_ai_score", target.checked)
-              }
-            />
-          </label>
-        </div>
-
-        <GBPalettesConversion />
-
-        <div className="settings__row">
-          <h3 className="settings__row-title">{t("reconnect.title")}</h3>
-          <div className="settings__ramble">
-            <Trans
-              t={t}
-              i18nKey="reconnect.ramble"
-              values={{ ppath: reconnectWhenOpened.path }}
-            >
-              {"_"}
-              <pre>{"_"}</pre>
-              {"_"}
-            </Trans>
           </div>
-          <label className="settings__checkbox">
-            {t("reconnect.checkbox")}
-            <input
-              type="checkbox"
-              checked={reconnectWhenOpened.enable}
-              onChange={({ target }) => {
+          <GithubToken />
+        </StickySection>
+
+        <StickySection
+          id="settings-section-files"
+          title={t("section_titles.files")}
+        >
+          <GBPalettesConversion />
+          <div className="settings__row" id="settings-clear_file_cache">
+            <h3 className="settings__row-title">
+              {t("clear_file_cache.title")}
+            </h3>
+            <div className="settings__ramble">
+              {t("clear_file_cache.ramble")}
+            </div>
+
+            <div className="settings__checkbox">
+              <Suspense>
+                <CacheSize />
+              </Suspense>
+              <Button
+                theme="destructive"
+                icon="trash"
+                onClick={async () => {
+                  await invokeClearFileCache()
+                  refreshCacheSize()
+                }}
+              >
+                {t("clear_file_cache.button")}
+              </Button>
+            </div>
+          </div>
+          <div className="settings__row" id="settings-logs">
+            <h3 className="settings__row-title">{t("logs.title")}</h3>
+            <div className="settings__actions">
+              <Button icon="folder" onClick={() => openLogDir()}>
+                {t("logs.button")}
+              </Button>
+            </div>
+          </div>
+        </StickySection>
+
+        <StickySection
+          id="settings-section-connection"
+          title={t("section_titles.connection")}
+        >
+          <div className="settings__row" id="settings-reconnect">
+            <h3 className="settings__row-title">{t("reconnect.title")}</h3>
+            <div className="settings__ramble">
+              {/* The translations embed the path; it's shown below in a
+                  PathField instead, so it can't overflow the column */}
+              <Trans t={t} i18nKey="reconnect.ramble" values={{ ppath: "" }}>
+                {"_"}
+                <Omit />
+                {"_"}
+              </Trans>
+            </div>
+            {reconnectWhenOpened.path && (
+              <PathField
+                className="settings__path"
+                value={reconnectWhenOpened.path}
+                copyLabel={tSaves("copy_path")}
+                copiedLabel={tSaves("copied")}
+                onOpen={() => openFolder(reconnectWhenOpened.path)}
+                openLabel={tSaves("open_folder")}
+              />
+            )}
+            <Switch
+              className="settings__checkbox"
+              label={t("reconnect.checkbox")}
+              value={reconnectWhenOpened.enable}
+              onChange={(checked) => {
                 setReconnectWhenOpened({
                   ...reconnectWhenOpened,
-                  enable: target.checked,
+                  enable: checked,
                 })
               }}
             />
-          </label>
-        </div>
+          </div>
+          <div className="settings__row" id="settings-disconnect">
+            <h3 className="settings__row-title">{t("disconnect.title")}</h3>
+            <div className="settings__ramble">{t("disconnect.ramble")}</div>
+            <div className="settings__actions">
+              <Button onClick={() => onDisconnect()}>
+                {t("disconnect.button")}
+              </Button>
+            </div>
+          </div>
+        </StickySection>
 
-        <div className="settings__row">
-          <h3 className="settings__row-title">{t("clear_file_cache.title")}</h3>
-          <div className="settings__ramble">{t("clear_file_cache.ramble")}</div>
-
-          <label className="settings__checkbox">
-            <button
-              onClick={async () => {
-                await invokeClearFileCache()
-                refreshCacheSize()
-              }}
-            >
-              {t("clear_file_cache.button")}
-            </button>
-            <Suspense>
-              <CacheSize />
-            </Suspense>
-          </label>
-        </div>
-
-        <div className="settings__row">
-          <h3 className="settings__row-title">{t("disconnect.title")}</h3>
-          <div className="settings__ramble">{t("disconnect.ramble")}</div>
-          <label className="settings__checkbox">
-            <button onClick={() => onDisconnect()}>
-              {t("disconnect.button")}
-            </button>
-          </label>
-        </div>
-
-        <div className="settings__row">
-          <h3 className="settings__row-title">{t("logs.title")}</h3>
-          <label className="settings__checkbox">
-            <button onClick={() => openLogDir()}>{t("logs.button")}</button>
-          </label>
-        </div>
-
-        <HiddenCores />
-        <GithubToken />
+        {import.meta.env.DEV && <DeveloperSettings />}
       </div>
-
-      <Thanks />
     </div>
   )
 }
 
-type OptionsListProps = {
-  values: string[]
-  i18nPrefix: string
-}
-
-const OptionsList = ({ values, i18nPrefix }: OptionsListProps) => {
+/**
+ * Development builds only: tools for previewing UI states, e.g. cores with
+ * updates. Not in the section menu.
+ */
+const DeveloperSettings = () => {
   const { t } = useTranslation("settings")
-  return values.map((value) => (
-    <option key={value} value={value}>
-      {t(`${i18nPrefix}.${value}`)}
-    </option>
-  ))
-}
-
-const ColoursList = () => {
-  const { t } = useTranslation("settings")
+  const [demoUpdates, setDemoUpdates] = useAtom(demoCoreUpdatesAtom)
+  const [demoFirmware, setDemoFirmware] = useAtom(demoFirmwareUpdateAtom)
+  const [demoPlugins, setDemoPlugins] = useAtom(demoPluginsAtom)
 
   return (
-    <>
-      <OptionsList
-        values={["black", "white", "glow"]}
-        i18nPrefix="3d_pocket.colours"
-      />
-      <optgroup label={t("3d_pocket.transparent_label")}>
-        <OptionsList
-          values={[
-            "trans_clear",
-            "trans_smoke",
-            "trans_blue",
-            "trans_green",
-            "trans_orange",
-            "trans_purple",
-            "trans_red",
-          ]}
-          i18nPrefix="3d_pocket.colours"
+    <StickySection
+      id="settings-section-developer"
+      title={t("section_titles.developer")}
+    >
+      <div className="settings__row" id="settings-demo_updates">
+        <h3 className="settings__row-title">{t("demo_updates.title")}</h3>
+        <div className="settings__ramble">{t("demo_updates.ramble")}</div>
+        <Switch
+          className="settings__checkbox"
+          label={t("demo_updates.checkbox")}
+          value={demoUpdates}
+          onChange={setDemoUpdates}
         />
-      </optgroup>
-      <optgroup label={t("3d_pocket.classic_label")}>
-        <OptionsList
-          values={[
-            "indigo",
-            "red",
-            "green",
-            "blue",
-            "yellow",
-            "pink",
-            "orange",
-            "silver",
-          ]}
-          i18nPrefix="3d_pocket.colours"
+        <Switch
+          className="settings__checkbox"
+          label={t("demo_updates.firmware_checkbox")}
+          value={demoFirmware}
+          onChange={setDemoFirmware}
         />
-      </optgroup>
-      <optgroup label={t("3d_pocket.aluminium_label")}>
-        <OptionsList
-          values={[
-            "aluminium_natural",
-            "aluminium_noir",
-            "aluminium_black",
-            "aluminium_indigo",
-          ]}
-          i18nPrefix="3d_pocket.colours"
+        <Switch
+          className="settings__checkbox"
+          label={t("demo_updates.plugins_checkbox")}
+          value={demoPlugins}
+          onChange={setDemoPlugins}
         />
-      </optgroup>
-      <optgroup label={t("3d_pocket.gbc_label")}>
-        <OptionsList
-          values={[
-            "gbc_kiwi",
-            "gbc_dandelion",
-            "gbc_teal",
-            "gbc_grape",
-            "gbc_berry",
-            "gbc_gold",
-          ]}
-          i18nPrefix="3d_pocket.colours"
-        />
-      </optgroup>
-      <optgroup label={t("3d_pocket.supreme_label")}>
-        <OptionsList
-          values={["supreme_red", "supreme_gold"]}
-          i18nPrefix="3d_pocket.colours"
-        />
-      </optgroup>
-    </>
+      </div>
+      <LoadingPreview />
+      <ModalPreviews />
+    </StickySection>
   )
 }
+
+/**
+ * Opens modals with made-up data, to look at them without the real thing:
+ * the photo export with generated photos, and the update progress with a
+ * scripted update that holds at a chosen phase. Nothing is changed.
+ */
+const ModalPreviews = () => {
+  const { t } = useTranslation("settings")
+  const [photosOpen, setPhotosOpen] = useState(false)
+  const [updateStop, setUpdateStop] = useState<UpdateDemoStop>("downloads")
+  const [updateOpen, setUpdateOpen] = useState(false)
+  const [misterOpen, setMisterOpen] = useState(false)
+  const [mromOpen, setMromOpen] = useState(false)
+  const [instanceOpen, setInstanceOpen] = useState(false)
+  const [errorOpen, setErrorOpen] = useState(false)
+
+  return (
+    <div className="settings__row" id="settings-modal_previews">
+      <h3 className="settings__row-title">{t("modal_previews.title")}</h3>
+      <div className="settings__ramble">{t("modal_previews.ramble")}</div>
+      <div className="settings__actions">
+        <Button icon="camera" onClick={() => setPhotosOpen(true)}>
+          {t("modal_previews.photo_export")}
+        </Button>
+        <Button icon="save" onClick={() => setMisterOpen(true)}>
+          {t("modal_previews.mister")}
+        </Button>
+        <Button icon="gamepad" onClick={() => setMromOpen(true)}>
+          {t("modal_previews.mrom")}
+        </Button>
+        <Button icon="tools" onClick={() => setInstanceOpen(true)}>
+          {t("modal_previews.instance_json")}
+        </Button>
+        <Button icon="warning-diamond" onClick={() => setErrorOpen(true)}>
+          {t("modal_previews.error")}
+        </Button>
+      </div>
+      <div className="settings__actions">
+        <Select
+          label={t("modal_previews.stop_at")}
+          value={updateStop}
+          onChange={setUpdateStop}
+          options={[
+            { value: "cores", label: t("modal_previews.stops.cores") },
+            {
+              value: "required_files",
+              label: t("modal_previews.stops.required_files"),
+            },
+            { value: "downloads", label: t("modal_previews.stops.downloads") },
+            { value: "finished", label: t("modal_previews.stops.finished") },
+          ]}
+        />
+        <Button icon="upload" onClick={() => setUpdateOpen(true)}>
+          {t("modal_previews.update")}
+        </Button>
+      </div>
+      {photosOpen && (
+        <PhotoExportModal
+          path="demo"
+          demo
+          onClose={() => setPhotosOpen(false)}
+        />
+      )}
+      {mromOpen && <MROMModal demo onClose={() => setMromOpen(false)} />}
+      {instanceOpen && (
+        <InstanceJson demo onClose={() => setInstanceOpen(false)} />
+      )}
+      {errorOpen && <ErrorPreview onClose={() => setErrorOpen(false)} />}
+      {misterOpen && (
+        <Suspense>
+          <MisterSyncDemo onClose={() => setMisterOpen(false)} />
+        </Suspense>
+      )}
+      {updateOpen && (
+        <Suspense>
+          <UpdateModalDemo
+            stopAt={updateStop}
+            onClose={() => setUpdateOpen(false)}
+          />
+        </Suspense>
+      )}
+    </div>
+  )
+}
+
+/** Throws on render, so the error screen around it shows. */
+const ThrowPreviewError = (): never => {
+  throw new Error(
+    "Preview: something went wrong while reading Cores/Example.Core/core.json"
+  )
+}
+
+/**
+ * The real error screen over the page, with a made-up error; the button
+ * on top closes it (Retry just shows it again).
+ */
+const ErrorPreview = ({ onClose }: { onClose: () => void }) => {
+  const { t } = useTranslation("settings")
+  return (
+    <div className="settings__error-preview">
+      <div className="settings__error-preview-close">
+        <Button icon="close" onClick={onClose}>
+          {t("modal_previews.close")}
+        </Button>
+      </div>
+      <ErrorBoundary>
+        <ThrowPreviewError />
+      </ErrorBoundary>
+    </div>
+  )
+}
+
+/** The loading spinners and progress bar, with the spinner's speed. */
+const LoadingPreview = () => {
+  const { t } = useTranslation("settings")
+  const [frameMs, setFrameMs] = useState(SPINNER_FRAME_MS)
+  return (
+    <div className="settings__row" id="settings-loading_preview">
+      <h3 className="settings__row-title">{t("loading_preview.title")}</h3>
+      <div className="settings__ramble">
+        {t("loading_preview.ramble", { default: SPINNER_FRAME_MS })}
+      </div>
+      <div className="settings__loading-preview">
+        <Spinner frameMs={frameMs} />
+        <Spinner variant="keypad" frameMs={frameMs} />
+        <Spinner size={20} frameMs={frameMs} />
+        <Spinner variant="keypad" size={20} frameMs={frameMs} />
+      </div>
+      <Slider
+        className="settings__slider"
+        label={t("loading_preview.speed", { ms: frameMs })}
+        formatValue={() => null}
+        min={16}
+        max={400}
+        step={4}
+        value={frameMs}
+        onChange={setFrameMs}
+      />
+      <div className="settings__loading-preview settings__loading-preview--bars">
+        <ProgressBar value={62} label="Assets/gb/common/Example.gb" />
+        <ProgressBar ariaLabel={t("loading_preview.title")} />
+      </div>
+    </div>
+  )
+}
+
+/** Shows the info notes the user closed again. */
+const ResetDismissedNotes = () => {
+  const { t } = useTranslation("settings")
+  const [dismissed, setDismissed] = useAtom(dismissedNotesAtom)
+  return (
+    <div className="settings__actions">
+      <Button
+        icon="reload"
+        disabled={dismissed.length === 0}
+        onClick={() => setDismissed([])}
+      >
+        {t("dismissed_notes.button", { count: dismissed.length })}
+      </Button>
+    </div>
+  )
+}
+
+/** Drops a `<Trans>` placeholder's content. */
+const Omit = () => null
 
 export const CacheSize = () => {
   const [cacheSize] = useAtom(cacheDirSizeSelector)

@@ -1,32 +1,28 @@
+/* A container, so the short-window layout can size the Pocket from the
+   width left beside the updates panel */
 .about {
+  container: about / inline-size;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
+  align-items: stretch;
   height: 100vh;
   text-align: center;
   overflow: hidden;
-  width: calc(100vw - var(--sidebar-width));
+  width: 100%;
   flex-shrink: 1;
 }
 
+/* Update banners are primary buttons, a little larger than controls */
 .about__update-link {
-  font-size: 1.25rem;
-  background-color: var(--green-colour);
-  padding: 10px 30px;
-  border-radius: 25px;
-  white-space: nowrap;
-  margin-left: auto;
-  margin-right: auto;
-  cursor: pointer;
+  --control-height: 36px;
 
-  &:hover{
-    filter: brightness(90%);
-  }
+  align-self: center;
+  font-size: var(--font-size-lg);
+  padding-inline: 24px;
 }
 
 .about__top {
-  flex-grow: 1;
+  flex: 1 1 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -34,7 +30,17 @@
   width: 100%;
 
   h1 {
-    margin-block-end: 15px;
+    margin-block: 0 15px;
+
+    /* Scales with the column so the title never overflows it */
+    font-size: clamp(var(--font-size-title-lg), 11cqi, var(--font-size-hero));
+
+    /* The filter paints only inside the element's box. :root sets a fixed
+       24px line-height, which made the box much shorter than the glyphs, so
+       they were clipped until hover enlarged the painted area. A relative
+       line-height plus padding keeps the whole title inside the box. */
+    line-height: 1.2;
+    padding: 0.15em 0.25em;
     filter: drop-shadow(0 0 red) drop-shadow(0 0 blue) drop-shadow(0 0 green);
     transition: filter 1s;
     width: max-content;
@@ -44,81 +50,328 @@
     --x: calc(15px * var(--scale-x));
     --y: calc(5px * var(--scale-y));
 
-    &:hover{
-      filter: drop-shadow(var(--x) var(--y) red) drop-shadow(var(--x) var(--y) blue) drop-shadow(var(--x) var(--y) green);
+    &:hover {
+      filter: drop-shadow(var(--x) var(--y) red)
+        drop-shadow(var(--x) var(--y) blue) drop-shadow(var(--x) var(--y) green);
       transition: none;
     }
   }
 }
 
-.about__title{
+.about__title {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
 
-.about__sponsor{
-  width: 100%;
-  padding: 5px;
-  padding-block-end: 0;
-  box-sizing: border-box;
+.about__sponsor {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  margin-block-end: var(--space-lg);
   gap: 10px;
   align-items: center;
 
-  .link{
+  /* Slanted like the other controls, so it reads as an action */
+  .link {
     display: flex;
     align-items: center;
-    gap: 5px;
-    will-change: opacity, background-color;
-    opacity: 0.8;
-    font-size: 1rem;
+    gap: var(--space-sm);
+    height: 32px;
+    padding-inline: 16px;
+    font-size: var(--font-size-md);
     text-decoration: none;
-    background-color: rgb(255 255 255 / 10%);
-    padding-inline: 15px;
-    border-radius: 50px;
-    border: 1px solid rgb(255 255 255 / 10%);
+    color: var(--theme-text-headline);
+    background-color: var(--theme-overlay);
+    clip-path: var(--shape-slant);
+    cursor: pointer;
   }
 
-  .link:hover{
-    opacity: 1;
-    background-color: rgb(0 0 0 / 10%);
-    border-color: white;
+  .link:hover {
+    background-color: var(--theme-sidebar-item-active);
   }
 }
 
-.about__news {
+.about__main {
+  position: relative;
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+  min-width: 0;
+  padding: var(--space-lg);
+  box-sizing: border-box;
+
+  /* The home screen fits the window and never scrolls */
+  overflow: hidden;
+}
+
+.about__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-xs);
   width: 100%;
 }
 
-.about__changelog-text{
-  overflow: auto;
-  text-align: left;
-  padding-inline: 20px;
-  background-color: var(--hover-colour);
-  border-radius: inherit;
-  flex-grow: 1;
+/* Installed firmware, cores and games, below the Pocket */
+.about__stats {
+  justify-content: center;
+  padding-top: var(--space-lg);
 }
 
-.about__changelog-image{
+.about__stats--loading {
+  display: flex;
+  gap: var(--space-2xl);
+}
+
+/* Label above its select inside the colour popover */
+.about__colour-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+
+  .select {
+    justify-content: space-between;
+  }
+}
+
+/* App version, small in the bottom-right corner */
+.about__version {
+  position: absolute;
+  right: var(--space-lg);
+  bottom: var(--space-lg);
+  font-size: var(--font-size-xs);
+  color: var(--theme-text-soft);
+}
+
+/* The buttons, with a hint below them */
+.about__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  max-width: 100%;
+  padding-block: var(--space-lg);
+
+  .callout {
+    max-width: 52ch;
+    text-align: start;
+  }
+}
+
+.about__buttons {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+/* Holds the unread dot on the panel toggle */
+.about__news-toggle {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Side panel: library updates or the changelog, switched with tabs */
+.about__news {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 340px;
+  min-height: 0;
+  overflow: hidden;
+  border-left: 1px solid var(--theme-border);
+  background-color: var(--theme-surface-sunken);
+  transition:
+    width 150ms ease,
+    border-color 150ms ease;
+}
+
+/* Slides closed like the sidebar; the content keeps its width meanwhile */
+.about__news--closed {
+  width: 0;
+  border-left-color: transparent;
+}
+
+.about__news-inner {
+  display: flex;
+  flex-direction: column;
+  width: 340px;
+  height: 100%;
+  min-height: 0;
+}
+
+.about__pocket-area {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  container-type: size;
+}
+
+/* Square, as large as the area allows, at most 520px */
+.about__pocket {
+  width: min(100cqh, 100cqw, 520px);
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+
+  .three-pocket {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about__news {
+    transition: none;
+  }
+}
+
+/* Same row style as the library updates beside it */
+.about__changelog-text {
+  text-align: left;
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-body);
+
+  /* No specificity, so the list rule below can add the bullets' room */
+  & > :where(:not(.about__changelog-title, .about__changelog-break)) {
+    padding-inline: var(--space-lg);
+  }
+
+  /* Running text is body colour; only titles are headline */
+  & :is(p, li) {
+    color: var(--theme-text-body);
+  }
+
+  /* Lists keep room for their bullets inside the side padding */
+  & > :is(ul, ol) {
+    margin-block: var(--space-xs);
+    padding-inline: calc(var(--space-lg) + 1.25em) var(--space-lg);
+  }
+
+  & li + li {
+    margin-top: var(--space-2xs);
+  }
+
+  /* Sub-headings inside a release (e.g. "Fixes") */
+  & > :is(h3, h4, h5):not(.about__changelog-title) {
+    margin: var(--space-md) 0 var(--space-2xs);
+    font-family: var(--font-body);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--theme-text-headline);
+  }
+}
+
+.about__changelog-image {
   max-width: 60%;
 }
 
-.about__changelog-break:not(:first-of-type){
+.about__changelog-break:not(:first-of-type) {
   width: 100%;
-  height: 4px;
-  background-color: var(--selection-colour);
-  opacity: 0.5;
+  height: 1px;
+  margin-top: var(--space-md);
+  background-color: var(--theme-separator);
 }
 
-.about__changelog-title{
+.about__changelog-date {
+  padding: 0 var(--space-lg);
+  font-size: var(--font-size-code);
+  color: var(--theme-text-soft);
+}
+
+.about__changelog-title {
   display: flex;
   justify-content: space-between;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: var(--space-md) var(--space-lg) 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--theme-text-headline);
   white-space: nowrap;
 
   span {
     white-space: normal;
+  }
+}
+
+.about__news-tabs {
+  flex-grow: 1;
+}
+
+/* Marks the end of the rendered releases; more load as it nears */
+.about__changelog-more {
+  height: 1px;
+}
+
+/* Short windows: the Pocket and the info (title, banners, stats, buttons)
+   side by side, as one group centred in the window, so nothing is cut off
+   and the Pocket stays next to the text */
+@media (height <= 700px) {
+  .about__main {
+    /* 100cqi is the whole home view (sidebar excluded) */
+    --compact-pocket-width: min(80vh, 40cqi);
+
+    display: grid;
+    grid-template-columns: var(--compact-pocket-width) minmax(0, max-content);
+    grid-auto-flow: row dense;
+    place-content: center;
+    column-gap: var(--space-2xl);
+  }
+
+  /* With the updates panel open, the Pocket gets a share of what's left
+     beside it, so the title, stats and buttons keep their room */
+  .about--news-open .about__main {
+    --compact-pocket-width: min(80vh, calc((100cqi - 340px) * 0.35));
+  }
+
+  /* Only when the window is short and narrow at once: the space left
+     beside the panel can't hold the Pocket next to the info */
+  @container about (width < 700px) {
+    .about--news-open .about__main {
+      --compact-pocket-width: 0px;
+
+      column-gap: 0;
+    }
+
+    .about--news-open .about__pocket-area {
+      display: none;
+    }
+  }
+
+  /* The title, banners and the Pocket join the grid themselves */
+  .about__top {
+    display: contents;
+  }
+
+  /* The Pocket fills the first column, beside every row of info */
+  .about__pocket-area {
+    grid-column: 1;
+    grid-row: 1 / span 6;
+    align-self: center;
+    container-type: normal;
+  }
+
+  .about__pocket {
+    width: var(--compact-pocket-width);
+  }
+
+  /* Everything else stacks in the second column */
+  .about__top > :not(.about__pocket-area),
+  .about__main > :not(.about__top, .about__toolbar, .about__version) {
+    grid-column: 2;
+    justify-self: center;
+  }
+
+  /* Out of the flow, in the top-right corner */
+  .about__toolbar {
+    position: absolute;
+    top: var(--space-lg);
+    right: var(--space-lg);
+    width: auto;
   }
 }

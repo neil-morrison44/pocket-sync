@@ -9,6 +9,7 @@ import { readJSONFile } from "../../utils/readJSONFile"
 import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { atom, Atom } from "jotai"
 import { atomFamily } from "jotai-family"
+import { keepPrevious } from "../../utils/jotai"
 
 export const VideoJSONSelectorFamily = atomFamily<
   string,
@@ -35,6 +36,19 @@ export const screenshotsListSelector = atom<Promise<string[]>>(async (get) => {
   return await invokeListFiles("Memories/Screenshots")
 })
 
+/**
+ * When a screenshot was taken, from its file name: the Pocket names them
+ * `YYYYMMDD_HHMMSS.png` in its local time. The file is read into memory, so
+ * its own modified date would be "now". Null for other names.
+ */
+const parseScreenshotDate = (fileName: string): Date | null => {
+  const match = /^(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})/.exec(fileName)
+  if (!match) return null
+  const [year, month, day, hours, minutes, seconds] = match.slice(1).map(Number)
+  const date = new Date(year, month - 1, day, hours, minutes, seconds)
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
 export const SingleScreenshotSelectorFamily = atomFamily<
   string,
   Atom<Promise<Screenshot | null>>
@@ -51,11 +65,52 @@ export const SingleScreenshotSelectorFamily = atomFamily<
     return {
       file,
       file_name: fileName,
-      timestamp: new Date(file.lastModified),
+      timestamp: parseScreenshotDate(fileName),
       ...metadata,
     }
   })
 )
+
+export type ScreenshotInfo = {
+  fileName: string
+  game: string
+  platform: string
+  /** The full core name, e.g. "Spiritualized.GB"; empty if unknown. */
+  core: string
+  timestamp: Date | null
+}
+
+/**
+ * What every screenshot shows (game, core, date), for grouping and filters.
+ * Reads every screenshot once; each one is cached for the grid afterwards.
+ */
+export const screenshotsInfoSelector = atom<Promise<ScreenshotInfo[]>>(
+  async (get) => {
+    const fileNames = await get(screenshotsListSelector)
+    const screenshots = await Promise.all(
+      fileNames.map((fileName) => get(SingleScreenshotSelectorFamily(fileName)))
+    )
+    return screenshots.flatMap((screenshot, index) =>
+      screenshot
+        ? [
+            {
+              fileName: fileNames[index],
+              game: screenshot.game,
+              platform: screenshot.platform,
+              core:
+                screenshot.author && screenshot.core
+                  ? `${screenshot.author}.${screenshot.core}`
+                  : "",
+              timestamp: screenshot.timestamp,
+            },
+          ]
+        : []
+    )
+  }
+)
+
+/** The same, keeping the last list while it reloads after file events. */
+export const screenshotsInfoKeptSelector = keepPrevious(screenshotsInfoSelector)
 
 export const SingleScreenshotImageSelectorFamily = atomFamily<
   string,
@@ -73,19 +128,5 @@ export const SingleScreenshotImageSelectorFamily = atomFamily<
 
     image.src = URL.createObjectURL(screenshot.file)
     return loadPromise
-  })
-)
-
-export const ImageDimensionsSelectorFamily = atomFamily<
-  string,
-  Atom<Promise<{ width: number; height: number }>>
->((src) =>
-  atom(async () => {
-    const image = new Image()
-    image.src = src
-
-    return new Promise<{ width: number; height: number }>((resolve) => {
-      image.onload = () => resolve({ width: image.width, height: image.height })
-    })
   })
 )

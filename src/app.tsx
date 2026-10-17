@@ -1,27 +1,12 @@
 import "./font.css"
-import "./app.css"
 import { pocketPathAtom, reconnectWhenOpenedAtom } from "./jotai/atoms"
 import { Layout } from "./components/layout"
-import React, {
-  Suspense,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react"
+import { Suspense, useCallback, useEffect, useRef, useState } from "react"
 import { invokeOpenPocket, invokeOpenPocketFolder } from "./utils/invokes"
-import { Tip } from "./components/tip"
-import { NewsFeed } from "./components/newsFeed"
 import { currentViewAtom } from "./jotai/view/atoms"
-import { useTranslation } from "react-i18next"
-import { ColourContextProviderRandomised } from "./components/three/colourContext"
-import { useAtom, useAtomValue, useSetAtom } from "jotai"
+import { useAtom, useSetAtom } from "jotai"
 import { useAtomFnSet } from "./utils/jotai"
-import { ErrorBoundary } from "./components/errorBoundary"
-
-const Pocket = React.lazy(() =>
-  import("./components/three/pocket").then((m) => ({ default: m.Pocket }))
-)
+import { refreshAllFSWatchers } from "./jotai/fileSystem/atoms"
 
 export const App = () => {
   const [pocketPath, setPocketPath] = useAtom(pocketPathAtom)
@@ -30,7 +15,6 @@ export const App = () => {
   )
   const setView = useSetAtom(currentViewAtom)
   const [attempts, setAttempts] = useState(0)
-  const { t } = useTranslation("app")
   const reconnectRef = useRef<boolean>(false)
 
   useEffect(() => {
@@ -48,6 +32,12 @@ export const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Another folder or card may be connected now: read everything again
+  // instead of showing what was cached from the previous one
+  useEffect(() => {
+    if (pocketPath) refreshAllFSWatchers()
+  }, [pocketPath])
+
   const onOpenPocket = useCallback(async () => {
     const result = await invokeOpenPocket()
 
@@ -61,38 +51,15 @@ export const App = () => {
     }
   }, [setView, setPocketPath, setReconnectWhenOpened])
 
-  if (pocketPath) {
-    return (
-      <Suspense>
-        <Layout />
-      </Suspense>
-    )
-  }
-
   return (
-    <div className="container">
-      <h1>{t("app_name")}</h1>
-
-      <ErrorBoundary>
-        <Suspense fallback={<div style={{ flexGrow: 1 }}></div>}>
-          <ColourContextProviderRandomised changeInterval={15000}>
-            <Pocket move="spin" />
-          </ColourContextProviderRandomised>
-        </Suspense>
-      </ErrorBoundary>
-
-      {attempts > 0 && <Tip>{t("not_pocket_tip")}</Tip>}
-
-      <div className="row">
-        <button type="button" onClick={() => onOpenPocket()}>
-          {t("connect_button")}
-        </button>
-      </div>
-      <Suspense
-        fallback={<div className="news-feed" style={{ flexGrow: 1 }}></div>}
-      >
-        <NewsFeed />
-      </Suspense>
-    </div>
+    <Suspense>
+      <Layout
+        connection={{
+          connected: Boolean(pocketPath),
+          onConnect: onOpenPocket,
+          attempts,
+        }}
+      />
+    </Suspense>
   )
 }

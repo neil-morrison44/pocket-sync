@@ -1,72 +1,143 @@
-.photo-export-modal {
-
-}
-
-.photo-export-modal__layout{
-  display: grid;
-  gap: 12px;
-  grid-template-columns: 1fr 1.5fr;
-  align-items: center;
-  justify-items: center;
-  flex-grow: 0;
-  overflow: hidden;
-}
-
-.photo-export-modal__image-grid {
+/* Presets and custom shades on one row */
+.photo-export-modal__palette-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  grid-template-columns: auto;
-  overflow: auto;
-  height: 100%;
-  align-items: baseline;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md) var(--space-2xl);
+}
 
-  .photo-export-modal__canvas {
-    flex-grow: 0;
-    flex-shrink: 0;
-    cursor: pointer;
-    width: 100px;
+.photo-export-modal__presets,
+.photo-export-modal__colour-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+}
 
-    &:hover{
-      transform: scale(1.1);
-    }
+.photo-export-modal__label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--theme-text-headline);
+}
+
+/* The preset's four shades, in its button */
+.photo-export-modal__preset-swatches {
+  display: inline-flex;
+  border: 1px solid rgb(0 0 0 / 20%);
+
+  span {
+    width: 6px;
+    height: 12px;
   }
+}
+
+.photo-export-modal__colour-input {
+  inline-size: 32px;
+  block-size: 32px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--theme-separator);
+  border-radius: var(--radius);
+  background: none;
+  cursor: pointer;
+
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  &::-webkit-color-swatch {
+    border: none;
+  }
+
+  &:hover {
+    border-color: var(--theme-text-soft);
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+:root.keyboard-focus .photo-export-modal__colour-input:focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: var(--focus-offset);
+}
+
+/* The chosen photo large on the left, all 30 on the right */
+.photo-export-modal__layout {
+  display: grid;
+  flex: 1 1 0;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: var(--space-2xl);
+  min-height: 0;
+}
+
+.photo-export-modal__large {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  min-height: 0;
+}
+
+.photo-export-modal__caption {
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
 }
 
 .photo-export-modal__canvas {
-  image-rendering: pixelated;
+  display: block;
   width: 100%;
   height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
 }
 
-.photo-export-modal__colour-inputs{
-  margin-inline-start: auto;
-  display: inherit;
-  align-items: inherit;
-  gap: inherit;
-}
-
-.photo-export-modal__palette-bar{
-  display: flex;
-  align-items: center;
-  grid-column: 1;
-  grid-row: 1;
-  gap: 10px;
-}
-
-.photo-export-modal__colour-input{
-  width: 40px;
-  height: 40px;
-}
-
-.photo-export-modal__export-buttons{
+.photo-export-modal__skeleton {
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 12px;
-  margin-block-start: auto;
+  height: auto;
+  aspect-ratio: 128 / 112;
+}
 
-  > button {
-    flex-grow: 1;
+.photo-export-modal__image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  align-content: start;
+  gap: var(--space-sm);
+  min-height: 0;
+  padding: var(--space-2xs);
+  overflow: auto;
+}
+
+/* A photo to pick: a ring on hover, the accent when chosen */
+.photo-export-modal__thumb {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius);
+  background: none;
+  cursor: pointer;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+
+  &:hover {
+    outline-color: var(--theme-separator);
   }
+
+  &:focus {
+    outline-color: transparent;
+  }
+}
+
+.photo-export-modal__thumb--selected,
+.photo-export-modal__thumb--selected:hover {
+  outline-color: var(--theme-accent);
+}
+
+:root.keyboard-focus .photo-export-modal__thumb:focus-visible {
+  outline-color: var(--theme-focus);
 }

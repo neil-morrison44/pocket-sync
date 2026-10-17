@@ -1,0 +1,90 @@
+.switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+
+.switch__label {
+  cursor: pointer;
+}
+
+/* Slanted track with a square, pixel-like thumb. The thumb sits
+   --switch-inset from the edges; the slant needs a little more room at the
+   sides, so in the modern style (no slant) it's equal all round. */
+.switch__track {
+  --switch-inset: 5px;
+  --switch-side: calc(var(--switch-inset) + var(--slant) * 0.8);
+
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  position: relative;
+  width: 44px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: var(--theme-control-off);
+  clip-path: var(--shape-slant);
+  cursor: pointer;
+  transition: background-color 100ms ease;
+
+  /* clip-path also clips outlines, so focus is a ring drawn inside the shape */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: var(--focus-ring-inset, 0);
+    background-color: var(--focus-ring-colour, var(--theme-focus));
+    clip-path: var(--shape-slant-ring);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  :root.keyboard-focus &:focus::after {
+    visibility: visible;
+  }
+
+  &[data-state="checked"] {
+    /* visible on the green (inside the shape) */
+    --focus-ring-colour: var(--focus-ring-on-accent, var(--theme-accent-text));
+
+    background-color: var(--theme-accent);
+  }
+}
+
+.switch__thumb {
+  display: block;
+  width: 14px;
+  height: 14px;
+  background-color: var(--theme-text);
+  transform: translateX(var(--switch-side));
+  transition: transform 100ms ease;
+
+  &[data-state="checked"] {
+    background-color: var(--theme-accent-text);
+    transform: translateX(calc(44px - 14px - var(--switch-side)));
+  }
+}
+
+.switch--is-disabled {
+  opacity: 0.4;
+
+  .switch__label,
+  .switch__track {
+    cursor: default;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .switch__track,
+  .switch__thumb {
+    transition: none;
+  }
+}

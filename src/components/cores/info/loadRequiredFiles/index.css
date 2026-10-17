@@ -1,57 +1,69 @@
+/* As wide as modals go, as tall as the list needs */
 .load-required-files {
-  width: max-content;
-  height: max-content;
-  max-height: 80%;
-  min-width: 66vw;
-  min-height: 50%;
+  height: fit-content;
+  max-height: calc(100% - 100px);
 }
 
-.load-required-files__files {
-  background-color: var(--info-colour);
-  padding-block: 10px;
-  gap: 5px;
-  border-radius: 10px;
-  overflow: auto;
-  flex-grow: 1;
+.load-required-files__intro {
+  margin: 0;
+  color: var(--theme-text-body);
+}
 
+.load-required-files__summary {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+}
+
+.load-required-files__files--loading {
+  display: flex;
+  padding: var(--space-2xl);
+}
+
+/* One row per file: name, size, path, status tag */
+.load-required-files__files {
   display: grid;
-  grid-template-columns: auto auto auto auto;
-  column-gap: 0.5em;
-  row-gap: 0.5em;
+  flex-grow: 1;
+  grid-template-columns: auto auto 1fr auto;
+  align-content: start;
+  overflow: auto;
+  border-top: 1px solid var(--theme-separator);
 }
 
 .load-required-files__row {
   display: grid;
   grid-column: 1 / 5;
   grid-template-columns: subgrid;
-  border-bottom: 1px solid rgb(255 255 255 / 25%);
-  padding-inline: 20px;
-  padding-block-end: 5px;
-}
-
-.load-required-files__row--exists {
-  opacity: 0.75;
-}
-
-.load-required-files__buttons {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.load-required-files__skip-notice {
-  text-align: right;
-  opacity: 0.6;
-  font-size: 0.87rem;
-
-  &:hover {
-    opacity: 0.8;
-  }
-}
-
-.load-required-files__skip-input {
-  display: inline-flex;
-  gap: 4px;
   align-items: center;
-  cursor: pointer;
+  column-gap: var(--space-lg);
+  min-height: 40px;
+  border-bottom: 1px solid var(--theme-separator);
+  color: var(--theme-text-body);
+}
+
+.load-required-files__row-name {
+  font-weight: 600;
+  color: var(--theme-text-headline);
+}
+
+.load-required-files__row-size,
+.load-required-files__row-path {
+  color: var(--theme-text-soft);
+  font-size: var(--font-size-sm);
+  overflow-wrap: anywhere;
+}
+
+/* Downloaded files step back; the tag says why */
+.load-required-files__row--exists .load-required-files__row-name {
+  color: var(--theme-text-body);
+}
+
+/* Skip toggle on the left, Download All on the right */
+.load-required-files__buttons {
+  --control-height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
 }

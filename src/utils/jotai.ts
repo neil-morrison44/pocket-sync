@@ -57,6 +57,31 @@ export const atomWithAppLocalStorage = <T>(
   )
 }
 
+/**
+ * Like `atomWithAppLocalStorage`, but after a write the value is returned
+ * as-is instead of as a promise, so setting it never suspends the UI. Use it
+ * for UI preferences that toggle with an animation (sidebar, panels, theme);
+ * a suspended toggle shows a loader instead of the transition.
+ */
+export const atomWithAppLocalSetting = <T>(
+  fileName: string,
+  initialValue: T
+) => {
+  const fileAtom = atomWithAppLocalStorage(fileName, initialValue)
+  const valueAtom = atom<{ value: T } | null>(null)
+
+  return atom(
+    (get): T | Promise<T> => {
+      const stored = get(valueAtom)
+      return stored ? stored.value : get(fileAtom)
+    },
+    async (_get, set, newValue: T) => {
+      set(valueAtom, { value: newValue })
+      await set(fileAtom, newValue)
+    }
+  )
+}
+
 export const useSmoothedAtomValue = <T>(atom: Atom<Promise<T>>) => {
   const store = useStore()
   const [firstProm] = useState(() => store.get(atom))
@@ -143,5 +168,38 @@ export const loadable = <Value>(
     } catch (error) {
       return { state: "hasError", error }
     }
+  })
+}
+
+/**
+ * The atom's value without suspending on a refresh: while a new value loads
+ * (e.g. after a file event), it keeps the previous one, so lists don't fall
+ * back to their loading state each time. `undefined` until the first value.
+ */
+export const keepPrevious = <Value>(
+  anAtom: Atom<Value>
+): Atom<Awaited<Value> | undefined> => unwrap(anAtom, (previous) => previous)
+
+/**
+ * Like `keepPrevious`, but suspends on the first load instead of returning
+ * `undefined`, so it drops in for the atom itself: a refresh keeps showing
+ * the previous value instead of the Suspense fallback. With `areEqual`, a
+ * re-read that gives an equal value returns the previous one itself, so
+ * atoms built on it don't run (and suspend) again.
+ */
+export const keepPreviousOrSuspend = <Value>(
+  anAtom: Atom<Value>,
+  areEqual?: (a: Awaited<Value>, b: Awaited<Value>) => boolean
+): Atom<Value | Awaited<Value>> => {
+  const PENDING = Symbol("pending")
+  const unwrapped = unwrap(anAtom, (previous) => previous ?? PENDING)
+  let last: { value: Awaited<Value> } | null = null
+  return atom((get) => {
+    const value = get(unwrapped)
+    if (value === PENDING) return get(anAtom)
+    const current = value as Awaited<Value>
+    if (areEqual && last && areEqual(last.value, current)) return last.value
+    last = { value: current }
+    return current
   })
 }

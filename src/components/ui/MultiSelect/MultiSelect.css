@@ -1,0 +1,117 @@
+/* Panel like the Select list; its radius is concentric with the rows */
+.multi-select__content {
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  min-width: max(var(--radix-popover-trigger-width), 240px);
+  max-height: min(60vh, var(--radix-popover-content-available-height));
+  overflow: hidden;
+  border-radius: var(--radius-popover);
+  background-color: var(--theme-surface-sunken);
+  border: 1px solid var(--theme-surface);
+  color: var(--theme-text);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 50%);
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.multi-select__search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  border-bottom: 1px solid var(--theme-separator);
+  color: var(--theme-text-soft);
+}
+
+.multi-select__search-field {
+  flex-grow: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--theme-text-headline);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  outline: none;
+
+  &::placeholder {
+    color: var(--theme-text-soft);
+  }
+}
+
+.multi-select__list {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--space-xs);
+}
+
+/* Resets the global `button` element styles from style.css */
+.multi-select__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  margin: 0;
+  padding-block: var(--space-xs);
+  padding-inline: var(--space-sm);
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: var(--font-size-md);
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+
+  &:active {
+    transform: none;
+  }
+
+  /* Virtual focus (combobox) and real focus (plain list) */
+  &[data-active-item],
+  &:hover,
+  :root.keyboard-focus &:focus {
+    background-color: var(--theme-surface-raised);
+  }
+}
+
+/* A square box that shows the check, so unchecked rows still read as
+   options */
+.multi-select__check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border: 1px solid var(--theme-separator);
+  color: var(--theme-accent-foreground);
+}
+
+/* Some labels contain line breaks for narrow layouts; they read as spaces */
+.multi-select__label {
+  white-space: normal;
+}
+
+.multi-select__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-xs);
+  padding: var(--space-xs);
+  border-top: 1px solid var(--theme-separator);
+}
+
+/* Something is chosen: like a pressed toggle */
+.button.multi-select--is-active {
+  --button-background: var(--theme-selection);
+  --button-text: var(--theme-selection-text);
+}

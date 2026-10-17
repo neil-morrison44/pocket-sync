@@ -1,162 +1,163 @@
+/* One horizontal tile per source, in a column */
+.fetch__list {
+  --tile-media-width: 56px;
 
-
-.fetch__list{
-  padding: 20px;
   display: flex;
-  gap: 20px;
   flex-direction: column;
-}
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--page-padding-inline) var(--space-2xl);
 
-.fetch__list-item{
-  background-color: var(--info-colour);
-  padding: 20px;
-  border-radius: 5px;
-  display: flex;
-  gap: 15px;
-
-  > button{
-    background-color: var(--background-colour);
+  &:empty {
+    display: none;
   }
 }
 
-.fetch__list-item-type{
-  font-weight: bold;
-  font-size: 1.125rem;
+/* Full paths are long: one line, cut at the start so the end shows */
+.fetch__path {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  direction: rtl;
+  text-align: left;
 }
 
-.fetch__type-select{
-  font-size: 1.5rem;
-}
-
-.fetch__list-item-info {
-  display: flex;
-  gap: 10px;
-  flex-direction: column;
-}
-
-.fetch__list-item-destination{
-  display: flex;
-  align-items: flex-end;
-  gap: 5px;
-
-  &::before{
-    font-family: GamePocket;
-    content: "@face00@";
-    font-variant-ligatures: discretionary-ligatures;
-    font-size: 1.5rem;
-  }
-}
-
-.fetch__status {
-  place-self: center center;
-  text-align: center;
-  border-radius: 5px;
-  font-size: 1.25rem;
-  padding: 10px;
-  margin-inline-start: auto;
-}
-
-
-.fetch__status--none{
-  background-color: var(--red-colour);
-}
-
-.fetch__status--partial{
-  background-color: rgb(177 133 44);
-}
-
-.fetch__status--complete{
-  background-color: var(--green-colour);
-}
-
-.fetch__new{
-  display: flex;
-  gap: 20px;
-}
-
-.fetch__new-content{
-  display: flex;
-  gap: inherit;
-  flex-direction: column;
-  overflow: auto;
-}
-
-.fetch__folder-picker{
-  display: flex;
-  gap: 20px;
-  justify-content: space-between;
-  align-items: stretch;
-}
-
-.fetch__text-input{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  > input {
-    font-size: 1rem;
-    padding: 5px 10px;
-  }
-}
-
-.fetch__folder-picker-value{
-  box-sizing: border-box;
-  font-size: 1.25rem;
-  background-color: rgb(255 255 255 / 20%);
-  display: flex;
-  align-items: center;
-  padding-inline: 10px;
-  cursor: pointer;
-  flex-grow: 1;
-}
-
-.fetch__folder-button{
-  flex-basis: 25%;
-}
-
-.fetch__list-input-list{
-  appearance: none;
-  padding: 0;
+/* Where it's from, then the file status */
+.fetch__tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  align-items: center;
+  gap: var(--space-xs);
 }
 
-.fetch__list-input-list-item{
-  appearance: none;
+.fetch__item .tile__subtitle .link {
+  color: inherit;
+}
+
+/* Icon at the top left, next to the title, not centred on the tile */
+.fetch__item.tile .tile__open {
+  align-items: flex-start;
+}
+
+.fetch__item .tile__actions {
+  flex-shrink: 0;
+  align-items: center;
+}
+
+/* ---------- Add Fetch Source ---------- */
+
+.fetch__intro {
   margin: 0;
-  border-radius: 5px;
-  background-color: rgb(255 255 255 / 20%);
+  color: var(--theme-text-body);
+}
+
+/* The chosen folder and the Choose Folder button on one row */
+.fetch__folder-picker {
+  display: flex;
+  gap: var(--space-sm);
+
+  & .fetch__folder-picker-value {
+    flex-grow: 1;
+    width: auto;
+    cursor: pointer;
+  }
+
+  & .text-input__field {
+    cursor: pointer;
+  }
+}
+
+.fetch__list-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.fetch__list-input-add {
+  display: flex;
+  gap: var(--space-sm);
+
+  & .text-input {
+    flex-grow: 1;
+    width: auto;
+  }
+}
+
+.fetch__extensions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A removable chip, like a tag with a close button */
+.fetch__extension {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  height: 24px;
+  padding-inline: var(--space-sm) var(--space-2xs);
+  border-radius: var(--radius-chip);
+  background-color: var(--theme-overlay);
+  color: var(--theme-text-headline);
+  font-family: var(--font-code);
+  font-size: var(--font-size-code);
+}
+
+/* Resets the global `button` element styles from style.css */
+.fetch__extension-remove {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-inline: 20px;
-  padding-block: 5px;
-  gap: 15px;
-}
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: none;
+  background: none;
+  color: var(--theme-text-soft);
+  cursor: pointer;
 
-.fetch__list-input-add{
-  display: flex;
-  gap: 20px;
-  width: 50%;
-
-  > * {
-    flex-basis: min-content;
-    font-size: 1rem;
+  &:hover {
+    background-color: var(--theme-overlay);
+    color: var(--theme-text-headline);
   }
 
-  > input {
-    flex-grow: 1;
-    padding-inline: 10px;
+  :root.keyboard-focus &:focus {
+    outline: 2px solid var(--theme-focus);
   }
 }
 
-.fetch__archive-check{
-  width: 100%;
-  text-align: center;
-  font-size: 1.25rem;
+/* The archive lookup's result, on its own line below the hint */
+.fetch__archive-status {
+  display: block;
+  margin-top: var(--space-xs);
+
+  & > span {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
 }
 
-.fetch__close-button{
-  margin-block-start: auto;
+.fetch__archive-status--valid .icon {
+  color: var(--theme-accent-foreground);
+}
+
+.fetch__archive-status--invalid {
+  color: var(--theme-text-body);
+
+  & .icon {
+    color: var(--theme-danger);
+  }
+}
+
+:root.keyboard-focus .fetch__extension-remove:focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: 1px;
 }

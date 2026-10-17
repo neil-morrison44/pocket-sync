@@ -7,23 +7,19 @@ import {
 import { PlatformInfoSelectorFamily } from "../../jotai/platforms/selectors"
 
 import "./index.css"
-import { Version } from "./version"
 import { SearchContextSelfHidingConsumer } from "../search/context"
 import { InventoryItem } from "../../types"
 import { useUpdateAvailable } from "../../hooks/useUpdateAvailable"
-import { KeyIcon } from "./icons/keyIcon"
-import { useTranslation } from "react-i18next"
 import { useInventoryItem } from "../../hooks/useInventoryItem"
-import {
-  CorePlatformSelectorFamily,
-  PlatformInventoryImageSelectorFamily,
-} from "../../jotai/inventory/selectors"
-import { PlatformImage } from "./platformImage"
-import { AnalogizerIcon } from "./icons/AnalogizerIcon"
+import { CorePlatformSelectorFamily } from "../../jotai/inventory/selectors"
+import { InventoryPlatformImage, PlatformImage } from "./platformImage"
 import { PocketSyncConfigSelector } from "../../jotai/config/selectors"
 import { useAtomValue } from "jotai"
-import { aiCheckAtom } from "../../jotai/cores/atoms"
 import { useMemo } from "react"
+import { CoreTags } from "./tags"
+import { getCoreFeatures, hasFeatures, passesTagFilters } from "./features"
+import { aiCheckAtom } from "../../jotai/cores/atoms"
+import Tile from "../ui/Tile"
 
 type CoreItemProps = {
   coreName: string
@@ -39,15 +35,21 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
   const { platform } = useAtomValue(PlatformInfoSelectorFamily(mainPlatformId))
   const canUpdate = useUpdateAvailable(coreName)
   const inventoryItem = useInventoryItem(coreName)
-  const config = useAtomValue(PocketSyncConfigSelector)
-
   const aiCheck = useAtomValue(aiCheckAtom)
-  const coreAIScore = useMemo(
-    () => aiCheck[coreName]?.overall_score ?? 0,
-    [coreName, aiCheck]
-  )
+  const tagInfo = {
+    requiresLicense: Boolean(inventoryItem?.releases[0].updaters?.license),
+    aiScore: aiCheck[coreName]?.overall_score ?? 0,
+  }
 
-  const showAIScore = config.hide_ai_score !== true
+  // the inventory knows features of older core.json files that lack them
+  const coreFeatures = useMemo(
+    () =>
+      getCoreFeatures(
+        coreName,
+        inventoryItem?.releases[0].core.framework ?? core.framework
+      ),
+    [coreName, inventoryItem, core.framework]
+  )
 
   return (
     <SearchContextSelfHidingConsumer
@@ -59,50 +61,51 @@ export const CoreItem = ({ coreName, onClick }: CoreItemProps) => {
         platform.category || "",
         `${platform.year}`,
       ]}
-      otherFn={({ onlyUpdates, category }) => {
+      otherFn={({
+        onlyUpdates,
+        category,
+        features,
+        platform: platformId,
+        author,
+        license,
+        maxAi,
+      }) => {
+        if (author && author !== "All" && coreName.split(".")[0] !== author)
+          return false
+        if (!passesTagFilters(tagInfo, { license, maxAi })) return false
         if (category !== "All") {
           if (platform.category !== category) return false
         }
+        if (
+          platformId &&
+          platformId !== "All" &&
+          !core.metadata.platform_ids.includes(platformId)
+        )
+          return false
+        if (!hasFeatures(coreFeatures, features)) return false
 
         if (!onlyUpdates) return true
         return canUpdate !== null
       }}
     >
-      <div className="cores__item" role="button" onClick={onClick}>
-        <PlatformImage
-          className="cores__platform-image"
-          platformId={mainPlatformId}
-        />
-
-        <div className="cores__info-blurb">
-          <div className="cores__info-blurb-name">
-            {core.metadata.shortname}
-          </div>
-
-          <Version coreName={coreName} />
-
-          <div className="cores__author-tag">
-            <img className="cores__author-tag-image" src={imageSrc} />
+      <Tile
+        onClick={onClick}
+        media={
+          <PlatformImage
+            platformId={mainPlatformId}
+            label={core.metadata.shortname}
+          />
+        }
+        title={core.metadata.shortname}
+        subtitle={
+          <>
+            <img className="tile__avatar" src={imageSrc} alt="" />
             {core.metadata.author}
-          </div>
-        </div>
-        {inventoryItem && inventoryItem.releases[0].updaters?.license && (
-          <SponsorBanner />
-        )}
-        {coreName.endsWith("_Analogizer") && (
-          <div className="cores__item-analogizer">
-            <AnalogizerIcon />
-          </div>
-        )}
-        {showAIScore && coreAIScore > 0 && (
-          <div
-            className="cores__item-ai-score"
-            style={{ opacity: coreAIScore }}
-          >
-            {"AI"}
-          </div>
-        )}
-      </div>
+          </>
+        }
+        meta={core.metadata.version}
+        tags={<CoreTags coreName={coreName} installed />}
+      />
     </SearchContextSelfHidingConsumer>
   )
 }
@@ -119,80 +122,31 @@ export const NotInstalledCoreItem = ({
   const { id: identifier } = inventoryItem
   const version = inventoryItem.releases[0].core.metadata.version
   const platform_id = inventoryItem.releases[0].core.metadata.platform_ids[0]
-  const requires_license = inventoryItem.releases[0].updaters?.license
-
-  const imageUrl = useAtomValue(
-    PlatformInventoryImageSelectorFamily(platform_id)
-  )
-
-  const platform = useAtomValue(CorePlatformSelectorFamily(platform_id))
 
   const config = useAtomValue(PocketSyncConfigSelector)
   const authorImageUrl = `https://openfpga-library.github.io/analogue-pocket/assets/images/authors/${identifier}.png`
   const [author] = identifier.split(".")
 
-  const aiCheck = useAtomValue(aiCheckAtom)
-  const coreAIScore = useMemo(
-    () => aiCheck[identifier]?.overall_score ?? 0,
-    [identifier, aiCheck]
-  )
-
-  const showAIScore = config.hide_ai_score !== true
-
   if (config.hidden_cores && config.hidden_cores.includes(identifier))
     return null
 
   return (
-    <SearchContextSelfHidingConsumer
-      fields={[platform_id, identifier, inventoryItem.repository?.owner || ""]}
-      otherFn={({ category }) => {
-        if (category === "All") return true
-        return category === platform?.category
-      }}
-    >
-      <div className="cores__item cores__item--not-installed" onClick={onClick}>
-        <img
-          className="cores__platform-image"
-          src={imageUrl}
-          height="165"
-          width="521"
-        ></img>
-        {identifier.endsWith("_Analogizer") && (
-          <div className="cores__item-analogizer">
-            <AnalogizerIcon />
-          </div>
-        )}
-        {showAIScore && coreAIScore > 0 && (
-          <div
-            className="cores__item-ai-score"
-            style={{ opacity: coreAIScore }}
-          >
-            {"AI"}
-          </div>
-        )}
-        <div className="cores__info-blurb">
-          <div className="cores__info-blurb-name">{platform_id}</div>
-          <div className="version">{version}</div>
-          <div className="cores__author-tag">
-            <img className="cores__author-tag-image" src={authorImageUrl} />
-
-            {author}
-          </div>
-          {requires_license && <SponsorBanner />}
-        </div>
-      </div>
-    </SearchContextSelfHidingConsumer>
-  )
-}
-
-const SponsorBanner = () => {
-  const { t } = useTranslation("core_info")
-  return (
-    <div
-      className="cores__item-sponsor-banner"
-      title={t("requires_license.all")}
-    >
-      <KeyIcon />
-    </div>
+    // Filtered by the list already (`filterNotInstalledCores`), so only
+    // matches are rendered
+    <Tile
+      onClick={onClick}
+      media={
+        <InventoryPlatformImage platformId={platform_id} label={platform_id} />
+      }
+      title={platform_id}
+      subtitle={
+        <>
+          <img className="tile__avatar" src={authorImageUrl} alt="" />
+          {author}
+        </>
+      }
+      meta={version}
+      tags={<CoreTags coreName={identifier} installed={false} />}
+    />
   )
 }

@@ -7,6 +7,7 @@ import { FirmwareInfo, FirmwareListItem } from "../../types"
 import { allFirmwaresAtom } from "./atoms"
 import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import { Atom, atom } from "jotai"
+import { demoFirmwareUpdateAtom } from "../cores/atoms"
 import { atomFamilyDeepEqual } from "../../utils/jotai"
 
 export const latestFirmwareSelector = atom<Promise<FirmwareListItem>>(
@@ -14,14 +15,6 @@ export const latestFirmwareSelector = atom<Promise<FirmwareListItem>>(
     const firmwares = await get(allFirmwaresAtom)
     const [latestInfo, ..._] = firmwares
     return latestInfo
-  }
-)
-
-export const previousFirmwareListSelector = atom<Promise<FirmwareListItem[]>>(
-  async (get) => {
-    const firmwares = await get(allFirmwaresAtom)
-    const [_, ...previousFirmwares] = firmwares
-    return previousFirmwares
   }
 )
 
@@ -59,8 +52,23 @@ export const FirmwareDetailsSelectorFamily = atomFamilyDeepEqual<
   Atom<Promise<FirmwareInfo>>
 >(({ version }) =>
   atom(async () => {
+    // A version's details never change, so they're cached across restarts to
+    // avoid refetching (and hitting rate limits)
+    const cacheKey = `pocket-sync:firmware-details:${version}`
+    try {
+      const cached = localStorage.getItem(cacheKey)
+      if (cached) return JSON.parse(cached) as FirmwareInfo
+    } catch {
+      // storage unavailable or corrupt: fetch instead
+    }
+
     const details = await invokeGetFirmwareDetails(version)
     details.file_name = details.download_url?.split("/").at(-1) || "unknown"
+    try {
+      localStorage.setItem(cacheKey, JSON.stringify(details))
+    } catch {
+      // caching is best effort
+    }
     return details
   })
 )
@@ -83,6 +91,10 @@ export const updateAvailableSelector = atom<Promise<string | null>>(
 
     if (currentFirmware.version !== latestFirmware.version)
       return latestFirmware.version
+
+    // Dev demo flag: preview the update UI with the firmware up to date
+    if (import.meta.env.DEV && (await get(demoFirmwareUpdateAtom)))
+      return `${latestFirmware.version}-demo`
 
     return null
   }

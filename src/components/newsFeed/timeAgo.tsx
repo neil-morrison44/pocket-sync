@@ -19,9 +19,12 @@ export const TimeAgo = ({ since }: { since: number }) => {
 
   const timeText = useMemo(() => {
     const secondsDiff = Math.round((since - now) / 1000)
-    if (secondsDiff < -60)
-      return timeAgoFormatter.format(Math.ceil(secondsDiff / 60), "minutes")
-    return t("less_than_1_min_ago")
+    if (secondsDiff > -60) return t("less_than_1_min_ago")
+    const minutes = Math.ceil(secondsDiff / 60)
+    if (minutes > -60) return timeAgoFormatter.format(minutes, "minutes")
+    const hours = Math.ceil(minutes / 60)
+    if (hours > -24) return timeAgoFormatter.format(hours, "hours")
+    return timeAgoFormatter.format(Math.ceil(hours / 24), "days")
   }, [now, since, t, timeAgoFormatter])
 
   return <span>{timeText}</span>

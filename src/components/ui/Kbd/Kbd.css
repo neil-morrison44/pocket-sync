@@ -1,0 +1,46 @@
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font: inherit;
+  font-size: var(--font-size-2xs);
+  line-height: 1;
+}
+
+/* An outlined key cap; filled while the key is held */
+.kbd__key {
+  border-radius: var(--radius-chip);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.6em;
+  height: 1.6em;
+  box-sizing: border-box;
+  border: 1px solid var(--kbd-border, var(--theme-separator));
+  color: var(--kbd-text, var(--theme-text-soft));
+  font-weight: 500;
+  text-transform: uppercase;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+.kbd__key--is-wide {
+  padding-inline: 0.4em;
+  text-transform: none;
+}
+
+/* Pressing is instant, releasing eases back */
+.kbd__key--is-pressed {
+  border-color: transparent;
+  background-color: var(--kbd-pressed-background, var(--theme-surface));
+  color: var(--kbd-pressed-text, var(--theme-text-headline));
+  transition-duration: 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kbd__key {
+    transition: none;
+  }
+}

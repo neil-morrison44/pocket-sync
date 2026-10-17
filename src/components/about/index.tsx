@@ -1,17 +1,19 @@
+import Callout from "../ui/Callout"
 import React, {
   ReactNode,
   startTransition,
   Suspense,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
-  useState,
 } from "react"
 import { GithubReleasesSelectorFamily } from "../../jotai/github/selectors"
 import { AppVersionSelector } from "../../jotai/selectors"
 import { ErrorBoundary } from "../errorBoundary"
 import { Link } from "../link"
 import { NewsFeed } from "../newsFeed"
+import { newsFeedAtom, newsLastReadAtom } from "../../jotai/newsFeed/atoms"
 
 import "./index.css"
 import { updateAvailableSelector } from "../../jotai/firmware/selectors"
@@ -19,11 +21,32 @@ import { currentViewAtom } from "../../jotai/view/atoms"
 
 import { useTranslation } from "react-i18next"
 import { semverCompare } from "../../utils/semverCompare"
-import { ColourContextProviderFromConfig } from "../three/colourContext"
-import { Changelog } from "./changelog"
-import { useAtomValue, useSetAtom } from "jotai"
+import { ColourContextProviderAuto } from "../three/colourContext"
+import { ChangelogPanel } from "./changelog"
+import Tabs from "../ui/Tabs"
+import { useAtom, useAtomValue, useSetAtom } from "jotai"
 import { sponsorCountAtom } from "../../jotai/github/atoms"
 import { AllPlatformImagesSelector } from "../../jotai/platforms/selectors"
+import Icon from "../ui/Icon"
+import Button from "../ui/Button"
+import Popover from "../ui/Popover"
+import Select from "../ui/Select"
+import Skeleton from "../ui/Skeleton"
+import Stats from "../ui/Stats"
+import { PocketSyncConfigSelector } from "../../jotai/config/selectors"
+import { currentFirmwareVersionSelector } from "../../jotai/firmware/selectors"
+import { coresListSelector } from "../../jotai/selectors"
+import { installedGamesCountSelector } from "../../jotai/games/selectors"
+import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
+import { useColourOptions } from "../settings/colourOptions"
+import { PocketColour } from "../../types"
+import type { Connection } from "../layout"
+import IconButton from "../ui/IconButton"
+import { pocketPathAtom } from "../../jotai/atoms"
+import { openFolder } from "../../utils/openFolder"
+import { atomWithAppLocalSetting } from "../../utils/jotai"
+import { open } from "@tauri-apps/plugin-shell"
+import { useDisconnectPocket } from "../../hooks/useDisconnectPocket"
 
 const Pocket = React.lazy(() =>
   import("../three/pocket").then((m) => ({ default: m.Pocket }))
@@ -39,79 +62,225 @@ const StaticScreen = React.lazy(() =>
   import("../three/staticScreen").then((m) => ({ default: m.StaticScreen }))
 )
 
-export const About = () => {
-  const [changelogOpen, setChangelogOpen] = useState<boolean>(false)
+/** Whether the start screen's updates panel is shown; remembered locally. */
+export const newsPanelOpenAtom = atomWithAppLocalSetting(
+  "ui_news_panel_open",
+  true
+)
+
+export const About = ({ connection }: { connection: Connection }) => {
   const { t } = useTranslation("about")
+  const { t: tApp } = useTranslation("app")
+  const { t: tSettings } = useTranslation("settings")
+  const { connected } = connection
   const AppVersion = useAtomValue(AppVersionSelector)
+  // Leaves the folder, but keeps its path so Reconnect still works. Called
+  // "Disconnect" like in Settings until the SD card can really be ejected
+  const onDisconnect = useDisconnectPocket()
+  const [newsPanelOpen, setNewsPanelOpen] = useAtom(newsPanelOpenAtom)
   const version = `v${AppVersion}`
 
   return (
-    <div className="about">
-      {changelogOpen && (
-        <Changelog
-          onClose={() => startTransition(() => setChangelogOpen(false))}
-        />
+    <div className={`about ${newsPanelOpen ? "about--news-open" : ""}`}>
+      {connected && (
+        <Suspense>
+          <PlatformImagePreload />
+        </Suspense>
       )}
-      <Suspense>
-        <PlatformImagePreload />
-      </Suspense>
-      <div className="about__sponsor">
-        <Suspense>
-          <div
-            className="link"
-            onClick={() => startTransition(() => setChangelogOpen(true))}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              viewBox="0 -960 960 960"
-              width="24px"
-              fill="currentColor"
-            >
-              <path d="M160-80v-440H80v-240h208q-5-9-6.5-19t-1.5-21q0-50 35-85t85-35q23 0 43 8.5t37 23.5q17-16 37-24t43-8q50 0 85 35t35 85q0 11-2 20.5t-6 19.5h208v240h-80v440H160Zm400-760q-17 0-28.5 11.5T520-800q0 17 11.5 28.5T560-760q17 0 28.5-11.5T600-800q0-17-11.5-28.5T560-840Zm-200 40q0 17 11.5 28.5T400-760q17 0 28.5-11.5T440-800q0-17-11.5-28.5T400-840q-17 0-28.5 11.5T360-800ZM160-680v80h280v-80H160Zm280 520v-360H240v360h200Zm80 0h200v-360H520v360Zm280-440v-80H520v80h280Z" />
-            </svg>
-            {t("whats_new")}
-          </div>
-          <SponsorLink />
-        </Suspense>
-      </div>
-      <div className="about__top">
-        <div className="about__title">
-          <SillyTitleEffect>{t("app_name")}</SillyTitleEffect>
-          {version}
-        </div>
-        <Suspense>
-          <FirmwareUpdateAvailable />
-        </Suspense>
-
-        <Suspense>
-          <AppUpdateAvailable />
-        </Suspense>
-
-        <Suspense fallback={<div className="three-pocket"></div>}>
-          <ErrorBoundary>
-            <ColourContextProviderFromConfig>
-              <Pocket
-                move="back-and-forth"
-                screenMaterial={
-                  <Suspense fallback={<StaticScreen />}>
-                    <RandomScreenshotScreen />
-                  </Suspense>
-                }
+      <div className="about__main">
+        <div className="about__toolbar" data-tauri-drag-region>
+          <Suspense
+            fallback={
+              <NewsToggleButton
+                open={newsPanelOpen}
+                onToggle={() => setNewsPanelOpen(!newsPanelOpen)}
               />
-            </ColourContextProviderFromConfig>
-          </ErrorBoundary>
-        </Suspense>
+            }
+          >
+            <NewsToggle
+              open={newsPanelOpen}
+              onToggle={() => setNewsPanelOpen(!newsPanelOpen)}
+            />
+          </Suspense>
+        </div>
+        <div className="about__top">
+          <div className="about__title">
+            <div className="about__sponsor">
+              <Suspense>
+                <SponsorLink />
+              </Suspense>
+            </div>
+            <SillyTitleEffect>{t("app_name")}</SillyTitleEffect>
+          </div>
+          {connected && (
+            <Suspense>
+              <FirmwareUpdateAvailable />
+            </Suspense>
+          )}
+
+          <Suspense>
+            <AppUpdateAvailable />
+          </Suspense>
+
+          {/* Takes the height left after the title, banners, stats and
+              buttons; the Pocket fits into it, so the page never scrolls.
+              Its size follows the window height, not the width, so the
+              canvas doesn't resize while the sidebar or panel animate. */}
+          <div className="about__pocket-area">
+            <div className="about__pocket">
+              <Suspense fallback={<div className="three-pocket"></div>}>
+                <ErrorBoundary>
+                  <ColourContextProviderAuto
+                    fromConfig={connected}
+                    changeInterval={15000}
+                  >
+                    <Pocket
+                      move={connected ? "back-and-forth" : "spin"}
+                      screenMaterial={
+                        connected ? (
+                          <Suspense fallback={<StaticScreen />}>
+                            <RandomScreenshotScreen />
+                          </Suspense>
+                        ) : undefined
+                      }
+                    />
+                  </ColourContextProviderAuto>
+                </ErrorBoundary>
+              </Suspense>
+            </div>
+          </div>
+        </div>
+        {connected && (
+          <Suspense fallback={<PocketStatsSkeleton />}>
+            <PocketStats />
+          </Suspense>
+        )}
+        <span className="about__version">{version}</span>
+        <div className="about__actions">
+          <div className="about__buttons">
+            {connected ? (
+              <>
+                {/* Beside Eject, so it reads as a setting of the Pocket, not
+                    of the app */}
+                <Suspense>
+                  <PocketColoursPopover />
+                </Suspense>
+                <OpenSDCardButton />
+                <Button theme="tertiary" icon="logout" onClick={onDisconnect}>
+                  {tSettings("disconnect.button")}
+                </Button>
+              </>
+            ) : (
+              <Button theme="primary" onClick={connection.onConnect}>
+                {tApp("connect_button")}
+              </Button>
+            )}
+          </div>
+          {/* Below the button: why the chosen folder wasn't accepted */}
+          {!connected && connection.attempts > 0 && (
+            <Callout variant="warning">{tApp("not_pocket_tip")}</Callout>
+          )}
+        </div>
       </div>
 
-      <div className="about__news">
-        <Suspense
-          fallback={<div className="news-feed" style={{ flexGrow: 1 }}></div>}
-        >
-          <NewsFeed deepLinks />
-        </Suspense>
-      </div>
+      <aside
+        className={`about__news ${newsPanelOpen ? "" : "about__news--closed"}`}
+        inert={!newsPanelOpen}
+      >
+        <div className="about__news-inner">
+          <Suspense
+            fallback={<div className="news-feed news-feed--vertical"></div>}
+          >
+            <Tabs
+              className="about__news-tabs"
+              label={t("side_panel")}
+              tabs={[
+                {
+                  value: "library",
+                  label: t("library_updates"),
+                  content: (
+                    <NewsFeed deepLinks={connected} orientation="vertical" />
+                  ),
+                },
+                {
+                  value: "changelog",
+                  label: t("whats_new"),
+                  content: <ChangelogPanel />,
+                },
+              ]}
+            />
+          </Suspense>
+        </div>
+      </aside>
     </div>
+  )
+}
+
+/** Opens the SD card (the connected folder) in Finder / Explorer. */
+const OpenSDCardButton = () => {
+  const pocketPath = useAtomValue(pocketPathAtom)
+  const { t } = useTranslation("about")
+  if (!pocketPath) return null
+  return (
+    <IconButton
+      theme="tertiary"
+      icon="folder"
+      label={t("open_sd_card")}
+      onClick={() => openFolder(pocketPath)}
+    />
+  )
+}
+
+type NewsToggleProps = {
+  open: boolean
+  onToggle: () => void
+}
+
+/**
+ * Shows / hides the updates panel. A green dot marks library updates newer
+ * than the last ones seen; opening the panel marks them as seen.
+ */
+const NewsToggle = ({ open, onToggle }: NewsToggleProps) => {
+  const { items } = useAtomValue(newsFeedAtom)
+  const [lastRead, setLastRead] = useAtom(newsLastReadAtom)
+
+  const newest = useMemo(
+    () => Math.max(0, ...items.map(({ published }) => published.getTime())),
+    [items]
+  )
+  const unread = newest > lastRead
+
+  useEffect(() => {
+    if (open && unread) setLastRead(newest)
+  }, [open, unread, newest, setLastRead])
+
+  return <NewsToggleButton open={open} onToggle={onToggle} unread={unread} />
+}
+
+const NewsToggleButton = ({
+  open,
+  onToggle,
+  unread = false,
+}: NewsToggleProps & { unread?: boolean }) => {
+  const { t } = useTranslation("about")
+  const showDot = unread && !open
+  return (
+    <span className="about__news-toggle">
+      <IconButton
+        theme="tertiary"
+        icon="article"
+        label={
+          open
+            ? t("hide_updates")
+            : showDot
+              ? t("show_updates_new")
+              : t("show_updates")
+        }
+        aria-expanded={open}
+        onClick={onToggle}
+      />
+      {showDot && <span className="notification-dot" aria-hidden />}
+    </span>
   )
 }
 
@@ -123,7 +292,8 @@ const FirmwareUpdateAvailable = () => {
   if (!firmwareUpdateAvailable) return null
 
   return (
-    <div
+    <Button
+      theme="primary"
       className="about__update-link"
       onClick={() =>
         startTransition(() =>
@@ -134,7 +304,7 @@ const FirmwareUpdateAvailable = () => {
       {t("new_firmware", {
         version: firmwareUpdateAvailable,
       })}
-    </div>
+    </Button>
   )
 }
 
@@ -156,9 +326,13 @@ const AppUpdateAvailable = () => {
   if (!updateAvailable) return null
 
   return (
-    <Link href={selfReleases[0].html_url} className="about__update-link">
+    <Button
+      theme="primary"
+      className="about__update-link"
+      onClick={() => open(selfReleases[0].html_url)}
+    >
       {t("update_available", { version: selfReleases[0].tag_name })}
-    </Link>
+    </Button>
   )
 }
 
@@ -168,19 +342,7 @@ const SponsorLink = () => {
 
   return (
     <Link href={"https://github.com/sponsors/neil-morrison44"}>
-      <svg
-        width="1.47em"
-        height="1.44em"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 98 96"
-      >
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"
-          fill="white"
-        />
-      </svg>
+      <Icon icon="github" />
       {t("sponsor_link", { count: sponsorCount })}
     </Link>
   )
@@ -213,3 +375,77 @@ const PlatformImagePreload = () => {
   const _imageData = useAtomValue(AllPlatformImagesSelector)
   return null
 }
+
+/** Quick colour settings for the 3D Pocket, saved like the ones in Settings. */
+const PocketColoursPopover = () => {
+  const { t } = useTranslation("about")
+  const { t: tSettings } = useTranslation("settings")
+  const config = useAtomValue(PocketSyncConfigSelector)
+  const updateConfig = useUpdateConfig()
+  const colourOptions = useColourOptions()
+
+  return (
+    <Popover
+      title={t("pocket_colours")}
+      trigger={
+        // An icon button, so it doesn't compete with Disconnect
+        <IconButton
+          theme="tertiary"
+          icon="colors-swatch"
+          label={t("pocket_colours")}
+        />
+      }
+    >
+      <div className="about__colour-field">
+        <label htmlFor="about-body-colour">{t("body_colour")}</label>
+        <Select
+          id="about-body-colour"
+          value={config.colour}
+          options={colourOptions}
+          onChange={(value) => updateConfig("colour", value)}
+        />
+      </div>
+      <div className="about__colour-field">
+        <label htmlFor="about-button-colour">{t("button_colour")}</label>
+        <Select<PocketColour | "match">
+          id="about-button-colour"
+          value={config.button_colour ?? "match"}
+          options={[
+            { value: "match", label: tSettings("3d_pocket.match_body") },
+            ...colourOptions,
+          ]}
+          onChange={(value) =>
+            updateConfig("button_colour", value === "match" ? undefined : value)
+          }
+        />
+      </div>
+    </Popover>
+  )
+}
+
+/** Installed firmware, cores and games on the connected Pocket. */
+const PocketStats = () => {
+  const { t } = useTranslation("about")
+  const firmware = useAtomValue(currentFirmwareVersionSelector)
+  const cores = useAtomValue(coresListSelector)
+  const games = useAtomValue(installedGamesCountSelector)
+
+  return (
+    <Stats
+      className="about__stats"
+      items={[
+        { label: t("stats.firmware"), value: `v${firmware.version}` },
+        { label: t("stats.cores"), value: cores.length },
+        { label: t("stats.games"), value: games },
+      ]}
+    />
+  )
+}
+
+const PocketStatsSkeleton = () => (
+  <div className="about__stats about__stats--loading" aria-hidden>
+    <Skeleton width="60px" height="2.4rem" />
+    <Skeleton width="60px" height="2.4rem" />
+    <Skeleton width="60px" height="2.4rem" />
+  </div>
+)

@@ -6,13 +6,12 @@ import {
 } from "../../../jotai/platforms/selectors"
 import { ImagePack, PlatformId } from "../../../types"
 import { PlatformImage } from "../../cores/platformImage"
-import { Link } from "../../link"
-import { Loader } from "../../loader"
-import { Modal } from "../../modal"
+import { Modal, ModalSuspense } from "../../modal"
 import { useTranslation } from "react-i18next"
 
 import "./index.css"
-import { PlatformName } from "./platformName"
+import Button from "../../ui/Button"
+import { PackLane, PackOption, packLabel } from "../packs"
 import { OnlyLoadsWhenShown } from "../../../utils/onlyLoadsWhenShown"
 import { invokeSaveMultipleFiles } from "../../../utils/invokes"
 import { useAtomValue } from "jotai"
@@ -23,7 +22,7 @@ type ImagePacksProps = {
   singlePlatformId?: PlatformId
 }
 
-export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
+const ImagePacksContent = ({ onClose, singlePlatformId }: ImagePacksProps) => {
   const allPlatformIds = useAtomValue(platformsListSelector)
   const platformIds = useMemo(() => {
     if (singlePlatformId) return [singlePlatformId]
@@ -80,118 +79,101 @@ export const ImagePacks = ({ onClose, singlePlatformId }: ImagePacksProps) => {
   )
 
   return (
-    <Modal className="image-packs">
-      <div className="image-packs__content">
-        <div className="image-packs__column image-packs__column--current">
-          <div className="image-packs__column-name">
-            {t("image_packs.current")}
-          </div>
-          {platformIds.map((pId) => (
-            <div
-              key={pId}
-              className={`image-packs__item ${
-                selections[pId] === undefined
-                  ? "image-packs__item--selected"
-                  : ""
-              }`}
-              onClick={() => setSelections((s) => ({ ...s, [pId]: undefined }))}
-            >
-              <OnlyLoadsWhenShown height={103}>
-                <Suspense>
-                  <PlatformName platformId={pId} />
-                  <PlatformImage
+    <Modal
+      className="image-packs"
+      title={t("controls.image_packs")}
+      onClose={onClose}
+    >
+      <p className="packs__intro">{t("image_packs.intro")}</p>
+      <div className="packs__lanes">
+        {platformIds.map((pId) => (
+          <OnlyLoadsWhenShown height={120} key={pId}>
+            <PackLane platformId={pId}>
+              <PackOption
+                label={t("image_packs.current")}
+                selected={selections[pId] === undefined}
+                onSelect={() =>
+                  setSelections((s) => ({ ...s, [pId]: undefined }))
+                }
+              >
+                <Suspense
+                  fallback={<div className="image-packs__placeholder" />}
+                >
+                  <PlatformImage platformId={pId} />
+                </Suspense>
+              </PackOption>
+              {imagePackSorted.map((pack) => (
+                <Suspense
+                  key={`${pId}-${pack.owner}-${pack.repository}-${pack.variant}`}
+                >
+                  <PackImageOption
+                    {...pack}
                     platformId={pId}
-                    className="image-packs__image"
+                    onSelect={() =>
+                      setSelections((s) => ({ ...s, [pId]: pack }))
+                    }
+                    selected={
+                      JSON.stringify(selections[pId]) === JSON.stringify(pack)
+                    }
                   />
                 </Suspense>
-              </OnlyLoadsWhenShown>
-            </div>
-          ))}
-        </div>
-
-        {imagePackSorted.map((pack) => (
-          <Suspense key={`${pack.owner}-${pack.repository}-${pack.variant}`}>
-            <div className="image-packs__column">
-              <div className="image-packs__column-name">
-                <Link
-                  href={`https://github.com/${pack.owner}/${pack.repository}`}
-                >
-                  <b>{pack.owner}</b>
-                  <div title={pack.repository}>{pack.repository}</div>
-                  <small title={pack.variant}>{pack.variant}</small>
-                </Link>
-              </div>
-
-              {platformIds.map((pId) => (
-                <OnlyLoadsWhenShown
-                  key={`${pId}-${pack.owner}-${pack.repository}-${pack.variant}`}
-                  height={103}
-                >
-                  <Suspense
-                    fallback={
-                      <div className="image-packs__item image-packs__item--missing">
-                        <Loader />
-                      </div>
-                    }
-                  >
-                    <PackColumnItem
-                      {...pack}
-                      platformId={pId}
-                      onClick={() =>
-                        setSelections((s) => ({ ...s, [pId]: pack }))
-                      }
-                      isSelected={
-                        JSON.stringify(selections[pId]) === JSON.stringify(pack)
-                      }
-                    />
-                  </Suspense>
-                </OnlyLoadsWhenShown>
               ))}
-            </div>
-          </Suspense>
+            </PackLane>
+          </OnlyLoadsWhenShown>
         ))}
       </div>
 
-      <div className="image-packs__buttons">
-        <button onClick={applyChanges}>
+      <div className="modal__actions">
+        <Button theme="tertiary" onClick={onClose}>
+          {t("cancel")}
+        </Button>
+        <Button
+          theme="primary"
+          disabled={changeCount === 0}
+          onClick={applyChanges}
+        >
           {t("image_packs.apply_changes", { count: changeCount })}
-        </button>
-        <button onClick={onClose}>{t("image_packs.close")}</button>
+        </Button>
       </div>
     </Modal>
   )
 }
 
-type PackColumnItemProps = ImagePack & {
+type PackImageOptionProps = ImagePack & {
   platformId: PlatformId
-  onClick: () => void
-  isSelected: boolean
+  onSelect: () => void
+  selected: boolean
 }
 
-const PackColumnItem = ({
-  owner,
-  repository,
-  variant,
+/** A pack's image for the platform; nothing if the pack has none. */
+const PackImageOption = ({
   platformId,
-  onClick,
-  isSelected,
-}: PackColumnItemProps) => {
+  onSelect,
+  selected,
+  ...pack
+}: PackImageOptionProps) => {
   const imagePackImage = useAtomValue(
-    ImagePackImageSelectorFamily({ owner, repository, variant, platformId })
+    ImagePackImageSelectorFamily({ ...pack, platformId })
   )
-
-  if (!imagePackImage)
-    return <div className="image-packs__item image-packs__item--missing"></div>
+  if (!imagePackImage) return null
 
   return (
-    <div
-      className={`image-packs__item ${
-        isSelected ? "image-packs__item--selected" : ""
-      }`}
-      onClick={onClick}
+    <PackOption label={packLabel(pack)} selected={selected} onSelect={onSelect}>
+      <img src={imagePackImage.imageSrc} alt="" />
+    </PackOption>
+  )
+}
+
+/** Opens right away with a loader while its data loads. */
+export const ImagePacks = (props: ImagePacksProps) => {
+  const { t } = useTranslation("platforms")
+  return (
+    <ModalSuspense
+      className="image-packs"
+      title={t("controls.image_packs")}
+      onClose={props.onClose}
     >
-      <PlatformName platformId={platformId} />
-      <img src={imagePackImage.imageSrc}></img>
-    </div>
+      <ImagePacksContent {...props} />
+    </ModalSuspense>
   )
 }

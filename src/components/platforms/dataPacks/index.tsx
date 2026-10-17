@@ -8,9 +8,11 @@ import {
   platformsListSelector,
 } from "../../../jotai/platforms/selectors"
 import { PlatformId, ImagePack, PlatformInfoJSON } from "../../../types"
-import { Modal } from "../../modal"
+import { Modal, ModalSuspense } from "../../modal"
 
 import "./index.css"
+import Button from "../../ui/Button"
+import { PackLane, PackOption, packLabel } from "../packs"
 import { useTranslation } from "react-i18next"
 import { invokeSaveMultipleFiles } from "../../../utils/invokes"
 import { useAtomValue } from "jotai"
@@ -22,7 +24,7 @@ type DataPacksProps = {
   onClose: () => void
 }
 
-export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
+const DataPacksContent = ({ onClose, platformId }: DataPacksProps) => {
   const imagePacks = useAtomValue(imagePackListSelector)
   const platformIds = useAtomValue(platformsListSelector)
   const { t } = useTranslation("platforms")
@@ -75,14 +77,18 @@ export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
   )
 
   return (
-    <Modal className="data-packs">
-      <div className="data-packs__content">
+    <Modal
+      className="data-packs"
+      title={t("controls.data_packs")}
+      onClose={onClose}
+    >
+      <p className="packs__intro">{t("data_packs.intro")}</p>
+      <div className="packs__lanes">
         {sortedPlatformIds.map((platformId) => (
-          <OnlyLoadsWhenShown height={166}>
-            <Suspense key={platformId}>
-              <div className="data-packs__lane">
+          <OnlyLoadsWhenShown height={120} key={platformId}>
+            <Suspense>
+              <PackLane platformId={platformId}>
                 <CurrentJSON
-                  key={platformId}
                   platformId={platformId}
                   selected={selections[platformId] === undefined}
                   onClick={() =>
@@ -90,30 +96,48 @@ export const DataPacks = ({ onClose, platformId }: DataPacksProps) => {
                   }
                 />
                 {imagePacks.map((pack) => (
-                  <JsonInPack
-                    key={pack.repository + pack.variant + pack.owner}
-                    pack={pack}
-                    platformId={platformId}
-                    onClick={() =>
-                      setSelections((s) => ({ ...s, [platformId]: pack }))
-                    }
-                    selected={selections[platformId] === pack}
-                  />
+                  <Suspense key={pack.repository + pack.variant + pack.owner}>
+                    <JsonInPack
+                      pack={pack}
+                      platformId={platformId}
+                      onClick={() =>
+                        setSelections((s) => ({ ...s, [platformId]: pack }))
+                      }
+                      selected={selections[platformId] === pack}
+                    />
+                  </Suspense>
                 ))}
-              </div>
+              </PackLane>
             </Suspense>
           </OnlyLoadsWhenShown>
         ))}
       </div>
-      <div className="data-packs__buttons">
-        <button onClick={apply}>
+      <div className="modal__actions">
+        <Button theme="tertiary" onClick={onClose}>
+          {t("cancel")}
+        </Button>
+        <Button theme="primary" disabled={applyCount === 0} onClick={apply}>
           {t("data_packs.apply_changes", { count: applyCount })}
-        </button>
-        <button onClick={onClose}>{t("data_packs.close")}</button>
+        </Button>
       </div>
     </Modal>
   )
 }
+
+/** A platform's name, category, maker and year, as an option's content. */
+const PlatformFacts = ({
+  platform,
+}: {
+  platform: PlatformInfoJSON["platform"]
+}) => (
+  <>
+    <strong>{platform.name}</strong>
+    {platform.category && <span>{platform.category}</span>}
+    <span>
+      {[platform.manufacturer, platform.year].filter(Boolean).join(", ")}
+    </span>
+  </>
+)
 
 const CurrentJSON = ({
   platformId,
@@ -125,27 +149,20 @@ const CurrentJSON = ({
   onClick: () => void
 }) => {
   const { t } = useTranslation("platforms")
-  const currentJson = useAtomValue(PlatformInfoSelectorFamily(platformId))
-  const { platform } = currentJson
+  const { platform } = useAtomValue(PlatformInfoSelectorFamily(platformId))
 
   return (
-    <div
-      className={`data-packs__current-item ${
-        selected ? "data-packs__current-item--selected" : ""
-      }`}
-      onClick={onClick}
+    <PackOption
+      label={t("data_packs.current")}
+      selected={selected}
+      onSelect={onClick}
     >
-      <div>{t("data_packs.current")}</div>
-      <div className="cores__info-blurb">
-        <strong>{platform.name}</strong>
-        {platform.category ?? <div>{platform.category}</div>}
-        <div>{platform.manufacturer}</div>
-        <div>{platform.year}</div>
-      </div>
-    </div>
+      <PlatformFacts platform={platform} />
+    </PackOption>
   )
 }
 
+/** A pack's version of the platform; nothing if it's the same as now. */
 const JsonInPack = ({
   pack,
   platformId,
@@ -165,27 +182,10 @@ const JsonInPack = ({
   if (!packJson) return null
   if (comparePlatforms(packJson, currentJson)) return null
 
-  const { platform } = packJson
-
-  const titleText = `${pack.owner}: ${pack.repository} ${
-    pack.variant ? `- ${pack.variant}` : ""
-  }`
-
   return (
-    <div
-      className={`data-packs__pack-item ${
-        selected ? "data-packs__pack-item--selected" : ""
-      }`}
-      onClick={onClick}
-    >
-      <div>{titleText}</div>
-      <div className="cores__info-blurb">
-        <strong>{platform.name}</strong>
-        {platform.category ?? <div>{platform.category}</div>}
-        <div>{platform.manufacturer}</div>
-        <div>{platform.year}</div>
-      </div>
-    </div>
+    <PackOption label={packLabel(pack)} selected={selected} onSelect={onClick}>
+      <PlatformFacts platform={packJson.platform} />
+    </PackOption>
   )
 }
 
@@ -194,4 +194,18 @@ const comparePlatforms = (a: PlatformInfoJSON, b: PlatformInfoJSON) => {
     //@ts-ignore TS not being smart enough
     return b.platform[key] == value
   })
+}
+
+/** Opens right away with a loader while its data loads. */
+export const DataPacks = (props: DataPacksProps) => {
+  const { t } = useTranslation("platforms")
+  return (
+    <ModalSuspense
+      className="data-packs"
+      title={t("controls.data_packs")}
+      onClose={props.onClose}
+    >
+      <DataPacksContent {...props} />
+    </ModalSuspense>
+  )
 }

@@ -1,16 +1,17 @@
-import { useCallback, useState } from "react"
+import { Suspense, useCallback, useState } from "react"
 import { PocketSyncConfigSelector } from "../../jotai/config/selectors"
-import { Controls } from "../controls"
+import { Controls, ControlsActions } from "../controls"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { open } from "@tauri-apps/plugin-dialog"
 
+import EmptyState from "../ui/EmptyState"
 import "./index.css"
 import { SavesItem } from "./item"
 import { SaveInfo } from "./info"
 import { AllSavesSelector } from "../../jotai/saves/selectors"
 import { invokeBackupSaves } from "../../utils/invokes"
 import { SaveConfig } from "../../types"
-import { MisterSync } from "./misterSync"
+import { MisterConnect, MisterSession } from "./misterSync/flow"
 import { useTranslation } from "react-i18next"
 import { ControlsButton } from "../controls/inputs/button"
 import { useAtomValue } from "jotai"
@@ -24,7 +25,10 @@ export const Saves = () => {
   const { saves } = useAtomValue(PocketSyncConfigSelector)
   const { t } = useTranslation("saves")
 
-  const [misterSync, setMisterSync] = useState(false)
+  // Connect in a modal over this page, then the session as its own page
+  const [misterSync, setMisterSync] = useState<null | "connect" | "session">(
+    null
+  )
 
   const addBackupLocation = useCallback(async () => {
     const directory = await open({
@@ -57,20 +61,36 @@ export const Saves = () => {
       />
     )
 
-  if (misterSync) return <MisterSync onClose={() => setMisterSync(false)} />
+  if (misterSync === "session")
+    return <MisterSession onClose={() => setMisterSync(null)} />
 
   return (
     <div className="saves">
       <Controls>
-        <ControlsButton onClick={addBackupLocation}>
-          {t("controls.add_backup_location")}
-        </ControlsButton>
-        <ControlsButton onClick={() => setMisterSync(true)}>
-          {t("controls.mister_sync")}
-        </ControlsButton>
+        <ControlsActions>
+          <ControlsButton onClick={addBackupLocation} icon="folder-plus">
+            {t("controls.add_backup_location")}
+          </ControlsButton>
+          <ControlsButton onClick={() => setMisterSync("connect")}>
+            {t("controls.mister_sync")}
+          </ControlsButton>
+        </ControlsActions>
       </Controls>
 
-      {saves.length === 0 && <div className="saves__none">{t("none")}</div>}
+      {misterSync === "connect" && (
+        <Suspense>
+          <MisterConnect
+            onConnected={() => setMisterSync("session")}
+            onClose={() => setMisterSync(null)}
+          />
+        </Suspense>
+      )}
+
+      {saves.length === 0 && (
+        <EmptyState icon="save" title={t("empty_title")}>
+          {t("none")}
+        </EmptyState>
+      )}
       {saves.length > 0 && (
         <div className="saves__list">
           {saves.map((s, index) => (
@@ -78,6 +98,7 @@ export const Saves = () => {
               config={s}
               key={JSON.stringify(s)}
               onClickRestore={() => setSelectedSavebackup(index)}
+              number={index + 1}
             />
           ))}
         </div>

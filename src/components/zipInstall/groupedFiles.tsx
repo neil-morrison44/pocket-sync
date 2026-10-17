@@ -1,8 +1,8 @@
 import { useMemo } from "react"
 import { FileTreeNode } from "./types"
-import { platform } from "os"
 import { useFlattenedTree } from "./hooks"
 import { useTranslation } from "react-i18next"
+import Toggle from "../ui/Toggle"
 
 type ZippedCoresProps = {
   tree: FileTreeNode[]
@@ -158,20 +158,15 @@ const FileGroupCheckbox = ({
   allowedFiles,
   toggleFiles,
 }: FileGroupCheckboxProps) => {
+  const { t } = useTranslation("zip_install")
   const allFilesAllowed = useMemo(() => {
     return files.every((f) => allowedFiles?.includes(f))
   }, [toggleFiles, allowedFiles, files])
 
   return (
-    <label className="zip-install__cores-label">
-      <input
-        className="zip-install__cores-checkbox"
-        type="checkbox"
-        checked={allFilesAllowed}
-        onChange={() => toggleFiles(files)}
-      />
-      {`${name} - ${files.length} Files`}
-    </label>
+    <Toggle value={allFilesAllowed} onChange={() => toggleFiles(files)}>
+      {t("grouped_files.item", { name, count: files.length })}
+    </Toggle>
   )
 }
 

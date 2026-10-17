@@ -1,0 +1,195 @@
+/* Resets the global `button` element styles from style.css */
+.select {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  font: inherit;
+  font-weight: 400;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: none;
+
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-user-select: none;
+  user-select: none;
+
+  /* A field, not a button: no press scaling (wide selects looked off) */
+  &:active {
+    transform: none;
+  }
+}
+
+.select--is-disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.select__value {
+  font-weight: 700;
+}
+
+.select__chevron {
+  display: flex;
+  margin-inline-start: auto;
+}
+
+/* Slanted dropdown in the controls bar */
+.select--theme-control {
+  height: var(--control-height, 28px);
+  padding-block: 0;
+
+  /* Like Button: ~1.35× the space above and below the text */
+  padding-inline: calc(
+    (var(--control-height, 28px) - 16px) / 2 * 1.35 + var(--slant) / 2
+  );
+  background-color: var(--theme-control-background);
+  color: var(--theme-control-text);
+  position: relative;
+  clip-path: var(--shape-slant);
+
+  /* clip-path also clips outlines, so focus is a ring drawn inside the shape */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: var(--focus-ring-inset, 0);
+    background-color: var(--focus-ring-colour, var(--theme-focus));
+    clip-path: var(--shape-slant-ring);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  :root.keyboard-focus &:focus::after {
+    visibility: visible;
+  }
+
+  &:hover:not(.select--is-disabled) {
+    filter: brightness(80%);
+  }
+}
+
+/* A filter that's set: like a pressed toggle */
+.select--theme-control.select--is-active {
+  background-color: var(--theme-selection);
+  color: var(--theme-selection-text);
+
+  &::after {
+    background-color: var(--theme-selection-text);
+  }
+}
+
+/* The open list; its radius is concentric with the rows */
+.select__content {
+  z-index: 2000;
+  min-width: var(--radix-select-trigger-width);
+  max-height: var(--radix-select-content-available-height);
+  overflow: hidden;
+  border-radius: var(--radius-popover);
+  background-color: var(--theme-surface-sunken);
+  border: 1px solid var(--theme-surface);
+  color: var(--theme-text);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 50%);
+}
+
+.select__viewport {
+  padding: var(--space-xs);
+}
+
+.select__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-block: var(--space-xs);
+  padding-inline: var(--space-sm);
+  border-radius: var(--radius);
+  font-size: var(--font-size-md);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+
+  &[data-highlighted] {
+    background-color: var(--theme-surface-raised);
+  }
+
+  &[data-disabled] {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+.select__group + .select__group,
+.select__item + .select__group {
+  margin-top: var(--space-xs);
+  padding-top: var(--space-xs);
+  border-top: 1px solid var(--theme-border);
+}
+
+.select__group-label {
+  padding-block: var(--space-xs);
+  padding-inline: var(--space-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--theme-text-soft);
+}
+
+/* Label with a colour circle in front (SelectOption.swatch) */
+.select__option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.select__swatch {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-full);
+
+  /* Keeps white and black visible on any background */
+  box-shadow: inset 0 0 0 1px var(--theme-separator);
+}
+
+.select__item-indicator {
+  display: flex;
+  color: var(--theme-accent-foreground);
+
+  .select__item[data-highlighted] & {
+    color: var(--theme-accent-foreground);
+  }
+}
+
+/* Search field at the top of a searchable list */
+.select__search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  border-bottom: 1px solid var(--theme-separator);
+  color: var(--theme-text-soft);
+}
+
+.select__search-field {
+  flex-grow: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--theme-text-headline);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  outline: none;
+
+  &::placeholder {
+    color: var(--theme-text-soft);
+  }
+}

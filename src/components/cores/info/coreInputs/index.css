@@ -1,0 +1,78 @@
+.core-inputs {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  container-type: inline-size;
+  width: 100%;
+}
+
+/* The list first, so the mapping is readable without turning the Pocket;
+   side by side when there's room */
+.core-inputs__layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2xl);
+  width: 100%;
+
+  @container (min-width: 640px) {
+    grid-template-columns: minmax(220px, 1fr) minmax(0, 1.4fr);
+    align-items: start;
+  }
+}
+
+.core-inputs__pocket {
+  display: flex;
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 1 / 1;
+  justify-self: center;
+}
+
+.core-inputs__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin: 0;
+}
+
+.core-inputs__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  min-height: 36px;
+  border-bottom: 1px solid var(--theme-separator);
+}
+
+/* Same width for every row, so the actions line up */
+.core-inputs__key-cell {
+  display: flex;
+  align-items: center;
+  min-width: 96px;
+  margin: 0;
+}
+
+/* L and R, which have no glyph: a key cap with the name */
+.core-inputs__key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-width: 64px;
+  height: 24px;
+  padding-inline: var(--space-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  background-color: var(--theme-overlay);
+  color: var(--theme-text-headline);
+  clip-path: var(--shape-slant);
+}
+
+.core-inputs__action {
+  margin: 0;
+  color: var(--theme-text-body);
+}
+
+.core-inputs__empty {
+  color: var(--theme-text-soft);
+}

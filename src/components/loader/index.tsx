@@ -1,6 +1,8 @@
 import { MutableRefObject } from "react"
 import "./index.css"
 import { useBEM } from "../../hooks/useBEM"
+import Spinner from "../ui/Spinner"
+import { IconSize } from "../ui/Icon"
 
 type LoaderProps = {
   className?: string
@@ -9,6 +11,8 @@ type LoaderProps = {
   title?: string
   height?: number
   heightRef?: MutableRefObject<number>
+  /** Spinner size; 20 for small spots like buttons. */
+  size?: IconSize
 }
 
 export const Loader = ({
@@ -18,6 +22,7 @@ export const Loader = ({
   height,
   title = "",
   heightRef,
+  size = 40,
 }: LoaderProps) => {
   const heightValue = heightRef ? heightRef.current : height
   const heightPx = heightValue ? `${heightValue}px` : undefined
@@ -35,6 +40,8 @@ export const Loader = ({
       className={`${loaderClassName} ${className || ""}`}
       title={title}
       style={{ height: heightPx }}
-    ></div>
+    >
+      <Spinner size={size} />
+    </div>
   )
 }

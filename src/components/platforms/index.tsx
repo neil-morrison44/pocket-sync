@@ -5,10 +5,11 @@ import {
   platformsListSelector,
   platformsWithoutCoresSelector,
 } from "../../jotai/platforms/selectors"
-import { Controls } from "../controls"
+import { Controls, ControlsActions } from "../controls"
 import { Grid } from "../grid"
 import { Loader } from "../loader"
 import { SearchContextProvider } from "../search/context"
+import NoResults from "../ui/NoResults"
 import { PlatformInfo } from "./info"
 import { PlatformItem } from "./item"
 import "./index.css"
@@ -23,6 +24,8 @@ import { ControlsSearch } from "../controls/inputs/search"
 import { ControlsButton } from "../controls/inputs/button"
 import { useAtom, useAtomValue } from "jotai"
 import { useAtomCallback } from "jotai/utils"
+import { CardSkeleton } from "../ui/Skeleton"
+import EmptyState from "../ui/EmptyState"
 
 export const Platforms = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -84,15 +87,21 @@ export const Platforms = () => {
           value={searchQuery}
           onChange={setSearchQuery}
         />
-        <ControlsButton onClick={removeCorelessPlatforms}>
-          {t("controls.remove_coreless")}
-        </ControlsButton>
-        <ControlsButton onClick={() => setDataPacksOpen(true)}>
-          {t("controls.data_packs")}
-        </ControlsButton>
-        <ControlsButton onClick={() => setImagePacksOpen(true)}>
-          {t("controls.image_packs")}
-        </ControlsButton>
+        <ControlsActions>
+          <ControlsButton
+            theme="destructive"
+            icon="trash"
+            onClick={removeCorelessPlatforms}
+          >
+            {t("controls.remove_coreless")}
+          </ControlsButton>
+          <ControlsButton onClick={() => setDataPacksOpen(true)}>
+            {t("controls.data_packs")}
+          </ControlsButton>
+          <ControlsButton onClick={() => setImagePacksOpen(true)}>
+            {t("controls.image_packs")}
+          </ControlsButton>
+        </ControlsActions>
       </Controls>
 
       {imagePacksOpen && (
@@ -100,20 +109,28 @@ export const Platforms = () => {
       )}
       {dataPacksOpen && <DataPacks onClose={() => setDataPacksOpen(false)} />}
 
+      {sortedPlatformIds.length === 0 && (
+        <EmptyState icon="grid-2x2-2" title={t("empty.title")}>
+          {t("empty.text")}
+        </EmptyState>
+      )}
       <SearchContextProvider query={searchQuery}>
-        <Grid placeholderItemHeight={200}>
-          {sortedPlatformIds.map((id) => (
-            <Suspense fallback={<Loader title={id} height={200} />} key={id}>
-              <PlatformItem
-                id={id}
-                onClick={() => {
-                  setSelectedPlatform(id)
-                  pushScroll()
-                }}
-              />
-            </Suspense>
-          ))}
-        </Grid>
+        <div className="search-results">
+          <Grid placeholderItemHeight={200}>
+            {sortedPlatformIds.map((id) => (
+              <Suspense fallback={<CardSkeleton height={200} />} key={id}>
+                <PlatformItem
+                  id={id}
+                  onClick={() => {
+                    setSelectedPlatform(id)
+                    pushScroll()
+                  }}
+                />
+              </Suspense>
+            ))}
+          </Grid>
+          {sortedPlatformIds.length > 0 && <NoResults />}
+        </div>
       </SearchContextProvider>
     </div>
   )

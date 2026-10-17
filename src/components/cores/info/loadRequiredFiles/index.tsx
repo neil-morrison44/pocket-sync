@@ -2,9 +2,11 @@ import { Suspense, useMemo } from "react"
 
 import { useInstallRequiredFiles } from "../../../../hooks/useInstallRequiredFiles"
 import { skipAlternateAssetsSelector } from "../../../../jotai/config/selectors"
-import { Modal } from "../../../modal"
+import { Modal, ModalSuspense } from "../../../modal"
+import Button from "../../../ui/Button"
+import Toggle from "../../../ui/Toggle"
 import { Progress } from "../../../progress"
-import { Tip } from "../../../tip"
+import Callout from "../../../ui/Callout"
 import { useTranslation } from "react-i18next"
 
 import "./index.css"
@@ -16,6 +18,7 @@ import { DataSlotFile } from "../../../../types"
 import { Loader } from "../../../loader"
 import { JobsStopButton } from "../../../jobs/stop"
 import { useAtomValue } from "jotai"
+import prettyBytes from "pretty-bytes"
 
 const STATUS_SORT_ORDER = [
   "RootNeedsUpdate",
@@ -32,7 +35,7 @@ type LoadRequiredFilesProps = {
   onClose: () => void
 }
 
-export const LoadRequiredFiles = ({
+const LoadRequiredFilesContent = ({
   coreName,
   onClose,
 }: LoadRequiredFilesProps) => {
@@ -51,9 +54,11 @@ export const LoadRequiredFiles = ({
   const hasArchiveLink = useHasArchiveLink()
 
   return (
-    <Modal className="load-required-files">
-      <h2>{t("title")}</h2>
-
+    <Modal
+      className="load-required-files"
+      title={t("title")}
+      onClose={inProgress ? undefined : onClose}
+    >
       {inProgress && (
         <>
           <Progress
@@ -68,35 +73,33 @@ export const LoadRequiredFiles = ({
 
       {!inProgress && (
         <>
+          <p className="load-required-files__intro">{t("intro")}</p>
+          <Suspense fallback={null}>
+            <RequiredFilesSummary coreName={coreName} />
+          </Suspense>
           <Suspense
             fallback={
-              <div
-                className="load-required-files__files"
-                style={{ padding: "20px" }}
-              >
+              <div className="load-required-files__files load-required-files__files--loading">
                 <Loader className="loader--no-background" />
               </div>
             }
           >
             <RequiredFilesList coreName={coreName} />
           </Suspense>
-          {!hasArchiveLink && <Tip>{t("no_link_tip")}</Tip>}
-
-          <div className="load-required-files__skip-notice">
-            <label className="load-required-files__skip-input">
-              {t("skip_alternates_label")}
-              <input
-                type="checkbox"
-                checked={skipAlternateAssets}
-                onChange={({ target }) =>
-                  updateConfig("skipAlternateAssets", target.checked)
-                }
-              />
-            </label>
-          </div>
+          {!hasArchiveLink && (
+            <Callout variant="warning">{t("no_link_tip")}</Callout>
+          )}
 
           <div className="load-required-files__buttons">
-            <button onClick={onClose}>{t("close")}</button>
+            {/* A checkbox toggle, like the options in other modals */}
+            <Toggle
+              value={skipAlternateAssets}
+              onChange={(checked) =>
+                updateConfig("skipAlternateAssets", checked)
+              }
+            >
+              {t("skip_alternates_label")}
+            </Toggle>
 
             {hasArchiveLink && (
               <Suspense>
@@ -127,19 +130,43 @@ const RequiredFilesButton = ({
 }: RequiredFilesButtonProps) => {
   const requiredFiles = useAtomValue(RequiredFileInfoSelectorFamily(coreName))
   const { t } = useTranslation("core_info_required_files")
+  const toDownload = requiredFiles.filter(
+    ({ status }) => status.type !== "Exists" && status.type !== "NotFound"
+  )
   return (
-    <button
-      onClick={() =>
-        installRequiredFiles(
-          requiredFiles.filter(
-            ({ status }) =>
-              status.type !== "Exists" && status.type !== "NotFound"
-          )
-        )
-      }
+    <Button
+      theme="primary"
+      icon="download"
+      disabled={toDownload.length === 0}
+      onClick={() => installRequiredFiles(toDownload)}
     >
       {t("download_all")}
-    </button>
+    </Button>
+  )
+}
+
+/** How many files are there, and how much is left to download. */
+const RequiredFilesSummary = ({ coreName }: { coreName: string }) => {
+  const requiredFiles = useAtomValue(RequiredFileInfoSelectorFamily(coreName))
+  const { t } = useTranslation("core_info_required_files")
+  const found = requiredFiles.filter(({ status }) =>
+    ["Exists", "FoundAtRoot"].includes(status.type)
+  ).length
+  const bytes = requiredFiles.reduce((total, { status }) => {
+    if (
+      (status.type === "MissingButOnArchive" ||
+        status.type === "NeedsUpdateFromArchive") &&
+      status.size
+    )
+      return total + parseInt(status.size)
+    return total
+  }, 0)
+
+  return (
+    <p className="load-required-files__summary">
+      {t("summary", { found, total: requiredFiles.length })}
+      {bytes > 0 && ` · ${t("to_download", { size: prettyBytes(bytes) })}`}
+    </p>
   )
 }
 
@@ -179,5 +206,19 @@ const RequiredFilesList = ({ coreName }: RequiredFilesListProps) => {
         <RequiredFileRow info={r} key={r.path} />
       ))}
     </div>
+  )
+}
+
+/** Opens right away with a loader while its data loads. */
+export const LoadRequiredFiles = (props: LoadRequiredFilesProps) => {
+  const { t } = useTranslation("core_info_required_files")
+  return (
+    <ModalSuspense
+      className="load-required-files"
+      title={t("title")}
+      onClose={props.onClose}
+    >
+      <LoadRequiredFilesContent {...props} />
+    </ModalSuspense>
   )
 }

@@ -1,172 +1,247 @@
 .palettes {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-.palettes__list {
-  list-style: none;
+/* One folder's palettes below its header, like screenshots per game */
+.palettes__group .grid {
+  padding-block: var(--space-lg) var(--space-2xl);
+}
+
+.palettes__card-rename {
+  display: flex;
+  gap: var(--space-sm);
+
+  .text-input {
+    flex-grow: 1;
+    width: auto;
+  }
+}
+
+/* Keep the destructive action apart from the others */
+.palettes__card-delete {
+  margin-inline-start: auto;
+}
+
+/* Holds the preview's place while it loads */
+.palettes__preview-placeholder {
+  aspect-ratio: 5 / 4;
+  background-color: var(--theme-surface);
+}
+
+.palettes__list-item-canvas {
+  image-rendering: pixelated;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 4;
+  border: 1px solid var(--theme-border);
+  flex-shrink: 0;
+}
+
+/* ---------- Palette detail ---------- */
+
+/* The title is an input that looks like the other detail titles */
+.palette-detail__name {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  min-width: 0;
+}
+
+/* Small and soft above the name, cut off when too long */
+.palette-detail__folders {
+  overflow: hidden;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: normal;
+  line-height: 1.4;
+  color: var(--theme-text-soft);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.palette-detail__name-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.palette-detail__name-input {
+  flex: 0 1 auto;
+  min-width: 2ch;
+  max-width: 100%;
+  text-overflow: ellipsis;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  padding: 15px;
-  overflow: auto;
-}
+  padding: 0 var(--space-2xs);
+  border: none;
+  border-radius: var(--radius-input);
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
 
-.palettes__list-item {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
+  &:hover {
+    background-color: var(--theme-overlay);
+  }
 
-.palettes__list-item-input {
-  font-size: 2rem;
-}
-
-.palettes_code-modal{
-  height: min-content;
-  width: min-content;
-  display: flex;
-  gap: 15px;
-
-  h2 {
-    padding-inline: 0;
+  &:focus {
+    outline: none;
+    background-color: var(--theme-control-background);
+    color: var(--theme-control-text);
   }
 }
 
-.palettes_code-modal-input{
-  width: 60vw;
-  font-size: 1.25rem;
-  padding: 10px;
-}
-
-.palettes_code-modal-buttons{
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  align-items: center;
-}
-
-.palettes__list-item-info{
-  background-color: var(--info-colour);
-  padding: 15px;
-  border-radius: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 2rem;
-  font-family: GamePocket, sans-serif;
-  flex-grow: 1;
-  cursor: pointer;
-  gap: 20px;
-  line-height: 1.1em;
-
-  &:hover{
-    transform: scale(1.02);
-  }
-}
-
-.palettes__list-item-canvas{
-  image-rendering: pixelated;
-  width: 100px;
-  height: 80px;
-  border: 1px solid white;
+/* Shows the title can be edited; hidden while editing */
+.palette-detail__name-icon {
   flex-shrink: 0;
+  align-self: center;
+  color: var(--theme-text-soft);
 }
 
-.palettes__list-item-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  flex-shrink: 0;
+.palette-detail__name-input:focus + .palette-detail__name-icon {
+  visibility: hidden;
 }
 
-.palette__grid{
-  padding: 0;
-  padding-block-end: 0;
+/* The game on the left, the colours beside it; stacked when narrow */
+.palette-detail__layout {
   display: grid;
-  grid-template-rows: min-content 1fr max-content;
-  grid-template-columns: 1fr max-content;
-  flex-grow: 1;
-  gap: 15px;
-  /* stylelint-disable-next-line declaration-block-no-redundant-longhand-properties */
-  grid-template-areas:
-    "n n"
-    "p i"
-    "c c";
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: var(--space-2xl);
+  align-items: start;
 }
 
-.palette__emu-canvas{
-  image-rendering: pixelated;
-  width: 50%;
-  border: 2px solid black;
+@container (width < 640px) {
+  .palette-detail__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
-.palette__name {
-  grid-area: n;
-  font-size: 2.5rem;
-  font-family: GamePocket, sans-serif;
-  border-bottom: 2px solid white;
-  padding: 25px;
-  padding-block-end: 15px;
-}
-
-.palette__preview{
-  grid-area: p;
+/* The game, its select and the credit share one width */
+.palette-detail__preview {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  align-items: center;
+  align-items: stretch;
+  gap: var(--space-md);
+  width: 100%;
+  max-width: 480px;
 
-
-  select{
-    font-size: 2rem;
-    width: 60%;
+  > canvas:not(.palette__emu-canvas) {
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
   }
 }
 
-.palette__credits{
-  grid-area: c;
-  background-color: var(--info-colour);
-  padding: 15px;
-}
+/* As wide as the game; a long name is cut off */
+.palette-detail__game-select {
+  width: 100%;
+  min-width: 0;
 
-
-.palette__inputs{
-  grid-area: i;
-  padding: 15px;
-  background-color: var(--light-colour);
-  border-radius: 15px;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-
-  input {
-    block-size: 44px;
-    inline-size: 44px;
+  .select__value {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-
-  input:only-child {
-    inline-size: 100%;
-  }
-
 }
 
-.palette__inputs-set{
-  margin-block-end: 5px;
+/* The Game Boy screen at a whole multiple, crisp */
+.palette__emu-canvas {
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 160 / 144;
+  image-rendering: pixelated;
+  background-color: black;
 }
 
-.palette__inputs-set-title {
-  font-size: 1.25rem;
-  font-family: GamePocket, sans-serif;
+.palette-detail__no-games {
+  margin: 0;
 }
 
-.palette__inputs-buttons{
+/* Small and soft, below the game */
+.palette-detail__credit {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--theme-text-soft);
+}
+
+.palette-detail__colours {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.palette-detail__set {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.palette-detail__set-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--theme-text-headline);
+}
+
+.palette-detail__swatches {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+/* The colour picker as a plain swatch */
+.palette-detail__swatch {
+  inline-size: 44px;
+  block-size: 44px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--theme-separator);
+  border-radius: var(--radius);
+  background: none;
+  cursor: pointer;
+
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  &::-webkit-color-swatch {
+    border: none;
+    border-radius: 0;
+  }
+
+  /* A stronger border on hover, so it reads as something to click */
+  &:hover {
+    border-color: var(--theme-text-soft);
+  }
+
+  /* LCD off is a single colour, as wide as the four above */
+  &:only-child {
+    inline-size: calc(4 * 44px + 3 * var(--space-xs));
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  :root.keyboard-focus &:focus-visible {
+    outline: 2px solid var(--theme-focus);
+    outline-offset: var(--focus-offset);
+  }
+}
+
+.palette-detail__buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
 }
 
 .palettes__name {
   display: flex;
   align-items: center;
+}
+
+/* In a tile the preview is the media, edge to edge */
+.tile .palettes__list-item-canvas {
+  border: none;
 }

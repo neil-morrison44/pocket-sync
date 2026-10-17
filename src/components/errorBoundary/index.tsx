@@ -1,6 +1,7 @@
+import Callout from "../ui/Callout"
 import { Component, ErrorInfo, ReactNode, Suspense } from "react"
 import { Link } from "../link"
-import { Tip } from "../tip"
+import Button from "../ui/Button"
 
 import "./index.css"
 import { ViewDebug } from "./viewDebug"
@@ -48,45 +49,60 @@ export class ErrorBoundary extends Component<
 
       return (
         <div className="error-boundary">
-          <h1>
+          <h1 className="error-boundary__title">
             <Trans i18nKey="error:title"></Trans>
           </h1>
+
+          <p className="error-boundary__message">
+            {typeof this.state.error === "string" && this.state.error}
+            {this.state.error?.message}
+          </p>
+
+          {/* Shown when the error is one Pocket Sync can fix itself */}
+          {this.state.error && (
+            <NulledErrorBoundary>
+              <Suspense>
+                <RepairButton
+                  error={this.state.error}
+                  onFinishRepair={() => this.clearError()}
+                />
+              </Suspense>
+            </NulledErrorBoundary>
+          )}
+
+          <div className="error-boundary__actions">
+            <Button icon="folder" onClick={() => openLogDir()}>
+              <Trans i18nKey="settings:logs.button"></Trans>
+            </Button>
+            <Button
+              theme="primary"
+              icon="reload"
+              onClick={() => this.clearError()}
+            >
+              <Trans i18nKey="error:retry"></Trans>
+            </Button>
+          </div>
+
           {shouldShowReportTip && (
-            <Tip>
+            <Callout>
+              <Trans i18nKey="error:report"></Trans>{" "}
               <Link
                 href={"https://github.com/neil-morrison44/pocket-sync/issues"}
               >
-                <Trans i18nKey="error:report"></Trans>
+                <Trans i18nKey="error:report_link"></Trans>
               </Link>
-            </Tip>
+            </Callout>
           )}
-          <ViewDebug />
 
-          <div className="error-boundary__message">
-            {typeof this.state.error === "string" && this.state.error}
-            {this.state.error?.message}
-          </div>
-          <div className="error-boundary__stack">{this.state.error?.stack}</div>
-
-          <div className="error-boundary__buttons">
-            {this.state.error && (
-              <NulledErrorBoundary>
-                <Suspense>
-                  <RepairButton
-                    error={this.state.error}
-                    onFinishRepair={() => this.clearError()}
-                  />
-                </Suspense>
-              </NulledErrorBoundary>
-            )}
-            <button onClick={() => openLogDir()}>
-              <Trans i18nKey="settings:logs.button"></Trans>
-            </button>
-
-            <button onClick={() => this.clearError()}>
-              <Trans i18nKey="error:retry"></Trans>
-            </button>
-          </div>
+          <details className="error-boundary__details">
+            <summary>
+              <Trans i18nKey="error:details"></Trans>
+            </summary>
+            <ViewDebug />
+            <pre className="error-boundary__stack">
+              {this.state.error?.stack}
+            </pre>
+          </details>
         </div>
       )
     }

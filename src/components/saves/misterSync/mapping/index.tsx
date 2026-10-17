@@ -1,4 +1,5 @@
-import { Modal } from "../../../modal"
+import Button from "../../../ui/Button"
+import { Modal, ModalSuspense } from "../../../modal"
 import {
   platformListPocketSelector,
   platformsListMiSTerSelector,
@@ -30,12 +31,17 @@ type SaveMappingProps = {
   onClose: () => void
 }
 
-export const SaveMapping = ({ onClose }: SaveMappingProps) => {
+const SaveMappingContent = ({ onClose }: SaveMappingProps) => {
   const [joins, setJoins] = useSmoothedAtom(saveMappingAtom)
   const { t } = useTranslation("mister_sync")
 
   return (
-    <Modal className="mister-sync__mapping">
+    <Modal
+      className="mister-sync__mapping"
+      title={t("mapping.title")}
+      onClose={onClose}
+    >
+      <p className="mister-sync__mapping-intro">{t("mapping.intro")}</p>
       <Suspense>
         <div className="mister-sync__mapping-platform-list-header">
           <div>{t("pocket")}</div>
@@ -43,11 +49,17 @@ export const SaveMapping = ({ onClose }: SaveMappingProps) => {
         </div>
         <PlatformsList joins={joins} />
       </Suspense>
-      <button onClick={() => setJoins(DEFAULT_MISTER_SAVE_MAPPING)}>
-        {t("mapping.reset")}
-      </button>
-      <button onClick={() => setJoins([])}>{t("mapping.clear")}</button>
-      <button onClick={onClose}>{t("mapping.close")}</button>
+      <div className="modal__actions">
+        <Button theme="destructive" icon="trash" onClick={() => setJoins([])}>
+          {t("mapping.clear")}
+        </Button>
+        <Button
+          icon="reload"
+          onClick={() => setJoins(DEFAULT_MISTER_SAVE_MAPPING)}
+        >
+          {t("mapping.reset")}
+        </Button>
+      </div>
     </Modal>
   )
 }
@@ -211,6 +223,10 @@ const PlatformsList = ({ joins }: PlatformsListProps) => {
 
     const renderLoop = () => {
       context.clearRect(0, 0, cnv.width, cnv.height)
+      // The theme's colours, so the lines show in dark and light
+      const styles = getComputedStyle(cnv)
+      const ink = styles.getPropertyValue("--theme-text-headline").trim()
+      const outline = styles.getPropertyValue("--theme-background").trim()
 
       // joins
 
@@ -222,38 +238,38 @@ const PlatformsList = ({ joins }: PlatformsListProps) => {
         const sY = pocketPositions[join.pocket]
         context.moveTo(0, sY)
 
-        let outlineStyle = "black"
-        let innerStyle = "white"
+        // Links that aren't the hovered platform's, or while drawing a new
+        // one, step back
+        let alpha = 1
 
         if (hoveredRef.current) {
           if (
             hoveredRef.current.platform !== join.pocket &&
             hoveredRef.current.platform !== join.mister
           ) {
-            innerStyle = "rgba(255,255,255,0.1)"
-            outlineStyle = "rgba(0,0,0,0.1)"
+            alpha = 0.15
           }
         }
 
         if (newJoinOrigin) {
-          innerStyle = "rgba(255,255,255,0.1)"
-          outlineStyle = "rgba(0,0,0,0.1)"
+          alpha = 0.15
         }
 
         const eY = misterPositions[join.mister]
         context.lineTo(cnv.width, eY)
+        context.globalAlpha = alpha
         context.lineWidth = 5
-        context.strokeStyle = outlineStyle
+        context.strokeStyle = outline
         context.stroke()
 
-        context.strokeStyle = innerStyle
+        context.strokeStyle = ink
         context.lineWidth = 3
         context.stroke()
 
         context.restore()
       }
 
-      context.strokeStyle = "white"
+      context.strokeStyle = ink
       // in progress join
       if (newJoinOrigin) {
         context.save()
@@ -275,7 +291,7 @@ const PlatformsList = ({ joins }: PlatformsListProps) => {
 
       // draw dots
 
-      context.fillStyle = "white"
+      context.fillStyle = ink
       for (let index = 0; index < pocketPlatforms.length; index++) {
         const element = pocketPlatforms[index]
 
@@ -294,7 +310,7 @@ const PlatformsList = ({ joins }: PlatformsListProps) => {
         context.fill()
       }
 
-      context.strokeStyle = "white"
+      context.strokeStyle = ink
       context.lineWidth = 3
 
       if (!abortController.signal.aborted) requestAnimationFrame(renderLoop)
@@ -383,5 +399,19 @@ const PlatformsList = ({ joins }: PlatformsListProps) => {
         ></canvas>
       </div>
     </div>
+  )
+}
+
+/** Opens right away with a loader while its data loads. */
+export const SaveMapping = (props: SaveMappingProps) => {
+  const { t } = useTranslation("mister_sync")
+  return (
+    <ModalSuspense
+      className="mister-sync__mapping"
+      title={t("mapping.title")}
+      onClose={props.onClose}
+    >
+      <SaveMappingContent {...props} />
+    </ModalSuspense>
   )
 }

@@ -1,9 +1,33 @@
-.link{
+.link {
+  color: inherit;
+  font-weight: inherit;
   text-decoration: underline;
   cursor: pointer;
   display: inline-block;
 
   &:hover {
     opacity: 0.8;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+/* Our focus ring, not the browser's blue one */
+:root.keyboard-focus .link:focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: var(--focus-offset);
+  border-radius: var(--radius);
+}
+
+/* Titles that are links: underlined only on hover */
+.link--subtle {
+  text-decoration: none;
+
+  &:hover {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
 }

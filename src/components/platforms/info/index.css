@@ -1,0 +1,85 @@
+/* "Edit" label on the image; shows on hover and keyboard focus */
+.platform-info__banner-edit {
+  position: absolute;
+  right: var(--page-padding-inline);
+  bottom: var(--space-lg);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-lg);
+  background-color: var(--theme-control-background);
+  color: var(--theme-control-text);
+  font-weight: 500;
+  clip-path: var(--shape-slant);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+
+/* The banner is a button: clicking the image opens the image editor */
+.platform-info__banner-button {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
+  cursor: pointer;
+
+  &:active {
+    transform: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  :root.keyboard-focus &:focus {
+    outline: 2px solid var(--theme-focus);
+    outline-offset: calc(-2px - var(--focus-offset));
+  }
+
+  &:hover .platform-info__banner-edit,
+  :root.keyboard-focus &:focus .platform-info__banner-edit {
+    opacity: 1;
+  }
+}
+
+.platform-info__line {
+  color: var(--theme-text-soft);
+}
+
+.platform-info__fields {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--content-max-width);
+  border-top: 1px solid var(--theme-separator);
+}
+
+/* Cards span the content width; the grid brings its own padding */
+.platform-info__cores {
+  width: 100%;
+  padding: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .platform-info__banner-edit {
+    transition: none;
+  }
+}
+
+/* The games list takes the full reading width, like the fields above */
+.platform-info .detail-page__section > .games__system {
+  align-self: stretch;
+  max-width: var(--content-max-width);
+}
+
+/* Our focus ring on the image that opens the editor */
+:root.keyboard-focus .platform-info__banner-button:focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: -2px;
+}

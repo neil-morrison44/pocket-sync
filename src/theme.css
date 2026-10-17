@@ -1,0 +1,322 @@
+/*
+ * Theme tokens — the single source of truth for UI colours.
+ *
+ * Themes: each theme sets the semantic `--theme-*` tokens. To add a theme,
+ *    copy the dark block, change the values, and set `data-theme="<name>"`
+ *    on <html>.
+ *    Styles (`data-style`: slanted or modern, shown as Straight) layer on
+ *    top of either theme: shapes and contrast.
+ *
+ * Components should consume tokens from here (or alias them locally, e.g.
+ * `--sidebar-background: var(--theme-sidebar-background)`), never hard-code
+ * colours.
+ */
+
+/* ---------- Themes ---------- */
+
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --theme-background: #2f2f2f;
+  --theme-surface: #555;
+  --theme-surface-hover: #222;
+  --theme-surface-sunken: #111;
+  --theme-surface-raised: #2a2a2a; /* hover on cards and list items */
+  --theme-tile-hover: var(--theme-sidebar-background); /* hover on tiles */
+  --theme-border: #333;
+  --theme-separator: rgb(255 255 255 / 14%); /* light dividers between rows */
+  --theme-overlay: rgb(255 255 255 / 10%);
+
+  /* Text: three levels from one colour, dimmed with alpha so they work on any
+     surface. Headline for titles, body for running text, soft for secondary
+     info like dates. */
+  --theme-text: #f6f6f6;
+  --theme-text-headline: var(--theme-text);
+  --theme-text-body: rgb(246 246 246 / 84%);
+  --theme-text-soft: rgb(246 246 246 / 53%);
+
+  /* Inverse (tooltips, toasts) */
+  --theme-inverse-background: #f6f6f6;
+  --theme-inverse-text: #1f1f1f;
+
+  /* Accents */
+  --theme-accent: var(--analogue-green); /* fills: buttons, tags, switches */
+  --theme-accent-text: #111; /* text and icons on the accent */
+  --theme-accent-foreground: var(--theme-accent); /* text, icons, borders */
+  --theme-danger: rgb(200 80 88);
+  --theme-danger-text: #fff; /* text on the danger colour */
+  --theme-warning: #c69327;
+  --theme-highlight: #885090;
+  --theme-analogizer: #659cde; /* Analogizer brand blue, only for its tags */
+  --theme-selection: var(--theme-accent); /* selected items */
+  --theme-selection-text: var(--theme-accent-text);
+  --theme-focus: var(--theme-accent); /* keyboard focus rings */
+
+  /* Controls */
+  --theme-control-background: #eee;
+  --theme-control-text: #000;
+  --theme-control-off: #111; /* off state of switches */
+  --theme-input-background: #fff;
+  --theme-input-text: #000;
+  --theme-input-placeholder: #757575;
+
+  /* Media */
+  --theme-media-background: #fff;
+  --theme-scrim: rgb(0 0 0 / 75%); /* behind text on top of images */
+  --theme-scrim-text: #fff;
+
+  /* Sidebar */
+  --theme-sidebar-background: #1f1f1f;
+  --theme-sidebar-item-hover: #2a2a2a;
+  --theme-sidebar-item-active: #333;
+}
+
+/* Light: the white Analogue Pocket. Black controls like the Analogue site.
+   Fills use the Analogue green with dark text, as in the dark theme; green
+   text, icons and borders on the light page use a darker green, because the
+   Analogue green on white is too low in contrast for them. */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* Surfaces */
+  --theme-background: #f4f4f1;
+  --theme-surface: #c9c9c4;
+  --theme-surface-hover: #e6e6e2;
+  --theme-surface-sunken: #e9e9e5;
+  --theme-surface-raised: #deded9;
+  --theme-tile-hover: var(--theme-surface-raised); /* the sidebar is the tiles' colour */
+  --theme-border: #d4d4cf;
+  --theme-separator: rgb(0 0 0 / 12%);
+  --theme-overlay: rgb(0 0 0 / 5%);
+
+  /* Text */
+  --theme-text: #1a1a1a;
+  --theme-text-headline: var(--theme-text);
+  --theme-text-body: rgb(26 26 26 / 84%);
+  --theme-text-soft: rgb(26 26 26 / 55%);
+
+  /* Inverse */
+  --theme-inverse-background: #1a1a1a;
+  --theme-inverse-text: #f4f4f1;
+
+  /* Accents */
+  --theme-accent: var(--analogue-green);
+  --theme-accent-text: #111;
+  --theme-accent-foreground: #1e8e4e;
+  --theme-danger: #c03a44;
+  --theme-danger-text: #fff;
+  --theme-warning: #a8710f;
+  --theme-highlight: #885090;
+  --theme-analogizer: #2f6fbf;
+  --theme-selection: var(--theme-accent);
+  --theme-selection-text: var(--theme-accent-text);
+  --theme-focus: var(--theme-accent); /* matches the green fills */
+
+  /* Controls */
+  --theme-control-background: #222;
+  --theme-control-text: #f6f6f6;
+  --theme-control-off: #c9c9c4;
+  --theme-input-background: #fff;
+  --theme-input-text: #000;
+  --theme-input-placeholder: #757575;
+
+  /* Media */
+  --theme-media-background: #fff;
+  --theme-scrim: rgb(0 0 0 / 70%);
+  --theme-scrim-text: #fff;
+
+  /* Sidebar */
+  --theme-sidebar-background: #e9e9e5;
+  --theme-sidebar-item-hover: #dfdfdb;
+  --theme-sidebar-item-active: #d4d4cf;
+}
+
+/* ---------- Styles ---------- */
+
+/* Modern: straight edges and more contrast, closer to the Analogue site.
+   Works with both themes; the fonts stay the same. */
+:root[data-style="modern"] {
+  --slant: 0px;
+
+  /* No clipping in the modern style: corners come from border-radius (see
+     style.css), and the focus ring can sit outside the control, 2px away
+     (--focus-offset). The slanted style has to keep it inside the edge,
+     since clip-path clips everything outside the shape. */
+  --shape-slant: none;
+  --focus-ring-inset: calc(-1 * (var(--focus-offset) + 2px));
+  --focus-ring-on-accent: var(--theme-focus); /* outside, not on the green */
+  --shape-slant-ring: polygon(
+    evenodd,
+    0 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 0,
+    2px 2px,
+    calc(100% - 2px) 2px,
+    calc(100% - 2px) calc(100% - 2px),
+    2px calc(100% - 2px),
+    2px 2px
+  );
+}
+
+:root[data-style="modern"]:not([data-theme="light"]) {
+  --theme-background: #3a3a3a;
+  --theme-surface: #3a3a3a;
+  --theme-surface-hover: #161616;
+  --theme-surface-sunken: #000;
+  --theme-surface-raised: #1a1a1a;
+  --theme-tile-hover: var(--theme-surface-raised);
+  --theme-border: #262626;
+  --theme-separator: rgb(255 255 255 / 20%);
+  --theme-overlay: rgb(255 255 255 / 6%);
+  --theme-text: #fff;
+  --theme-text-body: rgb(255 255 255 / 90%);
+  --theme-text-soft: rgb(255 255 255 / 62%);
+  --theme-control-background: #fff;
+  --theme-control-text: #000;
+  --theme-control-off: #000;
+  --theme-sidebar-background: #0d0e10;
+  --theme-sidebar-item-hover: #161616;
+  --theme-sidebar-item-active: #262626;
+}
+
+:root[data-style="modern"][data-theme="light"] {
+  --theme-background: #fff;
+  --theme-surface: #d6d6d6;
+  --theme-surface-hover: #f0f0f0;
+  --theme-surface-sunken: #f2f2f2;
+  --theme-surface-raised: #ebebeb;
+  --theme-tile-hover: var(--theme-surface-raised);
+  --theme-border: #e0e0e0;
+  --theme-separator: rgb(0 0 0 / 16%);
+  --theme-overlay: rgb(0 0 0 / 4%);
+  --theme-text: #000;
+  --theme-text-body: rgb(0 0 0 / 88%);
+  --theme-text-soft: rgb(0 0 0 / 60%);
+  --theme-control-background: #000;
+  --theme-control-text: #fff;
+  --theme-control-off: #cfcfcf;
+
+  /* Set apart from the white content, like the dark sidebar */
+  --theme-sidebar-background: #f0f0f0;
+  --theme-sidebar-item-hover: #e6e6e6;
+  --theme-sidebar-item-active: #dcdcdc;
+}
+
+/* ---------- Theme-independent tokens & aliases ---------- */
+
+:root {
+  /* The green Analogue uses for its buttons (site, manual); the dark
+     themes' accent. Brand colour, the same in every theme. */
+  --analogue-green: #84e38f;
+
+  /* Layout & typography */
+  --content-max-width: 720px; /* text-heavy content; tiled grids may be wider */
+  --titlebar-inset: 0px; /* room for the macOS traffic lights */
+
+  /* 8px sidebar padding + 12px item padding on each side of a 16px icon,
+     plus the 1px border */
+  --sidebar-collapsed-width: 57px;
+
+  /* Side padding of header bars and the page content below them, so both
+     line up */
+  --page-padding-inline: var(--space-xl);
+
+  /* Height of the sticky header bar (28px controls + 2 × 12px padding +
+     1px separator), for things that stick just below it */
+  --header-bar-height: 53px;
+
+  /* Corner radii: one default, and a token per kind of element that points
+     at it, so each can change on its own. Slanted shapes (clip-path) don't
+     show a radius; the modern style rounds them through --shape-slant. */
+  --radius: 2px;
+  --radius-button: var(--radius);
+  --radius-chip: var(--radius);
+  --radius-card: var(--radius);
+  --radius-input: var(--radius);
+  --radius-modal: var(--radius);
+
+  /* Nested corners stay concentric: a frame around rounded items gets their
+     radius plus its padding, e.g. the tab frame, popovers and dropdown lists */
+  --radius-popover: calc(var(--radius) + var(--space-xs));
+  --radius-full: 999px;
+  --space-2xs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 10px;
+  --space-lg: 12px;
+  --space-xl: 16px;
+  --space-2xl: 20px;
+  --font-body: "Inter", "Avenir", "Helvetica", "Arial", sans-serif;
+  --font-display: "GamePocket", monospace;
+  --font-code: ui-monospace, "SF Mono", "Menlo", monospace;
+
+  /* Font sizes: the only sizes components use (root is 16px). Body text is
+     md; xs for labels and tags, sm for secondary text and controls; the
+     title sizes are for the GamePocket display font. Relative sizes (em)
+     stay for things that follow their surroundings, e.g. icons. */
+  --font-size-2xs: 0.6875rem; /* 11px: badges, key caps */
+  --font-size-xs: 0.75rem; /* 12px: labels, tags, captions */
+  --font-size-sm: 0.875rem; /* 14px: secondary text, controls */
+  --font-size-code: 0.8125rem; /* 13px: monospace, which runs large */
+  --font-size-md: 1rem; /* 16px: body text */
+  --font-size-lg: 1.125rem; /* 18px: lead text */
+  --font-size-xl: 1.25rem; /* 20px: emphasised rows */
+  --font-size-title-sm: 1.5rem; /* 24px: section titles */
+  --font-size-title-md: 2rem; /* 32px: modal titles, big figures */
+  --font-size-title-lg: 2.5rem; /* 40px: item titles */
+  --font-size-title-xl: 3rem; /* 48px: page titles */
+  --font-size-hero: 4rem; /* 64px: the app name */
+
+  /* Shapes: the slanted cut used by controls, sidebar items, tabs and
+     tooltips. Change --slant to adjust every slanted edge at once. The
+     outline (1px) and ring (2px, focus) are frames inside the shape, because
+     clip-path also clips borders, outlines and shadows; their inner corners
+     are approximated for 28–36px tall elements. */
+  --slant: 5px;
+  --shape-slant: polygon(
+    var(--slant) 0,
+    100% 0,
+    calc(100% - var(--slant)) 100%,
+    0 100%
+  );
+  --shape-slant-outline: polygon(
+    evenodd,
+    var(--slant) 0,
+    100% 0,
+    calc(100% - var(--slant)) 100%,
+    0 100%,
+    var(--slant) 0,
+    calc(var(--slant) + 0.9px) 1px,
+    calc(100% - 1.1px) 1px,
+    calc(100% - var(--slant) - 0.9px) calc(100% - 1px),
+    1.1px calc(100% - 1px),
+    calc(var(--slant) + 0.9px) 1px
+  );
+
+  /* Focus ring: 2px wide, on the edge itself (it can't sit outside the
+     edge: clip-path clips everything outside the shape; an inset ring with
+     a gap looked like a second frame). --focus-offset is the gap used where
+     rings can sit outside, e.g. in the modern style. */
+  --focus-offset: 2px;
+  --shape-slant-ring: polygon(
+    evenodd,
+    var(--slant) 0,
+    100% 0,
+    calc(100% - var(--slant)) 100%,
+    0 100%,
+    var(--slant) 0,
+    calc(var(--slant) + 1.7px) 2px,
+    calc(100% - 2.3px) 2px,
+    calc(100% - var(--slant) - 1.7px) calc(100% - 2px),
+    2.3px calc(100% - 2px),
+    calc(var(--slant) + 1.7px) 2px
+  );
+
+  /* The gap between controls in a row. Two slanted edges side by side look
+     the gap plus the slant apart, so the slant comes off (8px in modern) */
+  --control-gap: calc(var(--space-sm) - var(--slant));
+}

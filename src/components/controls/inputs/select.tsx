@@ -1,5 +1,6 @@
 import { ReactNode, startTransition } from "react"
 import { useTranslation } from "react-i18next"
+import Select from "../../ui/Select"
 
 type ControlsSelectProps<T extends string> = {
   options: T[]
@@ -7,6 +8,10 @@ type ControlsSelectProps<T extends string> = {
   children: ReactNode
   onChange: (value: T) => void
   i18nPrefix?: string
+  /** Placeholder of a search field; adds one, for long lists. */
+  searchPlaceholder?: string
+  /** Marks a filter that's set (see `Select`'s `active`). */
+  active?: boolean
 }
 
 export const ControlsSelect = <T extends string>({
@@ -15,24 +20,23 @@ export const ControlsSelect = <T extends string>({
   selected,
   onChange,
   i18nPrefix,
+  searchPlaceholder,
+  active,
 }: ControlsSelectProps<T>) => {
   const { t } = useTranslation()
 
   return (
-    <label className="controls__item controls__select">
-      {children}
-      <select
-        value={selected}
-        onChange={({ target }) =>
-          startTransition(() => onChange(target.value as T))
-        }
-      >
-        {options.map((v) => (
-          <option value={v} key={v}>
-            {i18nPrefix ? t(`${i18nPrefix}.${v}`) : v}
-          </option>
-        ))}
-      </select>
-    </label>
+    <Select
+      label={children}
+      searchable={Boolean(searchPlaceholder)}
+      searchPlaceholder={searchPlaceholder}
+      active={active}
+      value={selected}
+      onChange={(value) => startTransition(() => onChange(value))}
+      options={options.map((value) => ({
+        value,
+        label: i18nPrefix ? t(`${i18nPrefix}.${value}`) : value,
+      }))}
+    />
   )
 }

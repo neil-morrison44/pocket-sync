@@ -1,0 +1,85 @@
+/* Slanted like the other controls; height follows the controls bar */
+.text-input {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  height: var(--control-height, 28px);
+
+  /* Like a button's, but tighter: half the space above and below the text,
+     plus half the slant */
+  padding-inline: calc(
+    (var(--control-height, 28px) - 16px) / 2 + var(--slant) / 2
+  );
+  background-color: var(--theme-input-background);
+  color: var(--theme-input-text);
+  position: relative;
+  clip-path: var(--shape-slant);
+  cursor: text;
+  width: 200px;
+  box-sizing: border-box;
+
+  /* clip-path also clips outlines, so focus is a ring drawn inside the shape */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: var(--focus-ring-inset, 0);
+    background-color: var(--focus-ring-colour, var(--theme-focus));
+    clip-path: var(--shape-slant-ring);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  :root.keyboard-focus &:focus-within::after {
+    visibility: visible;
+  }
+}
+
+.text-input__field {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 500;
+  outline: none;
+
+  &::placeholder {
+    color: var(--theme-input-placeholder);
+  }
+}
+
+/* Dark code frame for URLs, tokens and paths, like PathField */
+.text-input--variant-code {
+  background-color: var(--theme-background);
+  color: var(--theme-text-body);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--theme-separator);
+    clip-path: var(--shape-slant-outline);
+    pointer-events: none;
+  }
+
+  .text-input__field {
+    font-family: var(--font-code);
+    font-size: var(--font-size-code);
+    font-weight: 400;
+  }
+}
+
+/* In the light theme the white field sits on a white bar: a 1px frame
+   (drawn inside the slanted shape, like the code variant's) */
+:root[data-theme="light"] .text-input::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--theme-separator);
+  clip-path: var(--shape-slant-outline);
+  pointer-events: none;
+}

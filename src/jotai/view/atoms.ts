@@ -4,7 +4,6 @@ export const VIEWS_LIST = [
   "Pocket Sync",
   "Games",
   "Cores",
-  "Update",
   "Screenshots",
   "Saves",
   "Save States",
@@ -33,3 +32,6 @@ export const currentViewAtom = atom<ViewAndSubview>({
   view: "Pocket Sync",
   selected: null,
 })
+
+/** The Games search, so other views can open Games searched for a game. */
+export const gamesSearchAtom = atom("")

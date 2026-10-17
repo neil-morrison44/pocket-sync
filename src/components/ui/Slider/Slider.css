@@ -1,0 +1,98 @@
+/* Label and value on top, the track below */
+.slider {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 120px;
+}
+
+.slider--is-disabled {
+  opacity: 0.4;
+}
+
+.slider__header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  font-size: var(--font-size-xs);
+  color: var(--theme-text-soft);
+}
+
+.slider__value {
+  font-variant-numeric: tabular-nums;
+  color: var(--theme-text-body);
+}
+
+.slider__root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 16px;
+  touch-action: none;
+  user-select: none;
+  cursor: pointer;
+}
+
+.slider--is-disabled .slider__root {
+  cursor: default;
+}
+
+.slider__track {
+  position: relative;
+  flex-grow: 1;
+  height: 4px;
+  background-color: var(--theme-control-off, var(--theme-overlay));
+}
+
+/* The filled part, in the accent like a switch that's on */
+.slider__range {
+  position: absolute;
+  height: 100%;
+  background-color: var(--theme-accent);
+}
+
+/* A square thumb, slanted like the controls (rounded in Straight). The
+   shape is drawn by ::before, so the focus ring (::after) can sit outside
+   it: inside a thumb this small a ring would hardly show. */
+.slider__thumb {
+  position: relative;
+  display: block;
+  width: 12px;
+  height: 16px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--theme-control-background);
+    clip-path: var(--shape-slant);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: calc(-1 * (var(--focus-offset, 2px) + 2px));
+    background-color: var(--theme-focus);
+    clip-path: var(--shape-slant-ring);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+:root[data-style="modern"] .slider__thumb {
+  &::before {
+    border-radius: var(--radius);
+  }
+
+  &::after {
+    border-radius: calc(var(--radius) + 4px);
+  }
+}
+
+:root.keyboard-focus .slider__thumb:focus-visible::after {
+  visibility: visible;
+}

@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next"
 import { ProgressScreen } from "../three/progressScreen"
 import { ColourContextProviderFromConfig } from "../three/colourContext"
 import React, { Suspense } from "react"
+import "./index.css"
 
 const Pocket = React.lazy(() =>
   import("../three/pocket").then((m) => ({ default: m.Pocket }))
@@ -33,13 +34,7 @@ export const Progress = ({
         />
       </Suspense>
       {remainingTime && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "100%",
-          }}
-        >
+        <div className="progress__meta">
           <div>{t("remaining_time", { remainingTime })}</div>
           {speed && <div>{t("speed", { speed })}</div>}
         </div>

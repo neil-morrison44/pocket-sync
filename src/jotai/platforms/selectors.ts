@@ -73,17 +73,6 @@ export const CoresForPlatformSelectorFamily = atomFamily<
   })
 )
 
-export const MainPlatformForCoreSelectorFamily = atomFamily<
-  string,
-  Atom<Promise<PlatformInfoJSON>>
->((coreName: string) =>
-  atom(async (get) => {
-    const coreInfo = await get(CoreInfoSelectorFamily(coreName))
-    const mainPlatformId = coreInfo.core.metadata.platform_ids[0]
-    return get(PlatformInfoSelectorFamily(mainPlatformId))
-  })
-)
-
 export const PlatformExistsSelectorFamily = atomFamily<
   PlatformId,
   Atom<Promise<boolean>>
@@ -134,6 +123,17 @@ export const AllPlatformImagesSelector = atom<
   get(fsWatchAtomFamily("Platforms/_images"))
   return await invokeReadAllPlatformImages()
 })
+
+/** Whether the SD card has an image for the platform. */
+export const PlatformImageExistsSelectorFamily = atomFamily<
+  PlatformId,
+  Atom<Promise<boolean>>
+>((platformId: PlatformId) =>
+  atom(async (get) => {
+    const allPlatformImages = await get(AllPlatformImagesSelector)
+    return Boolean(allPlatformImages[platformId])
+  })
+)
 
 export const PlatformImageSelectorFamily = atomFamily<
   PlatformId,

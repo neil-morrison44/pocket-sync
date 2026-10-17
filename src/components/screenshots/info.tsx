@@ -1,22 +1,21 @@
-import { Suspense, useCallback, useEffect, useState } from "react"
-import {
-  ImageDimensionsSelectorFamily,
-  SingleScreenshotSelectorFamily,
-} from "../../jotai/screenshots/selectors"
+import { useCallback, useEffect, useState } from "react"
+import { SingleScreenshotSelectorFamily } from "../../jotai/screenshots/selectors"
 import { VideoJSONSelectorFamily } from "../../jotai/screenshots/selectors"
 import "./info.css"
 
 import { useSaveFile } from "../../hooks/saveFile"
-import { Controls } from "../controls"
-import { CoreTag } from "../shared/coreTag"
-import { Loader } from "../loader"
+import { Controls, ControlsActions } from "../controls"
+import { Link } from "../link"
+import { useOpenGame } from "../../hooks/useOpenGame"
+import { gameDisplayName } from "../../utils/gameName"
+import { currentViewAtom } from "../../jotai/view/atoms"
 import { useUpscaler } from "./hooks/useUpscaler"
 import { useTranslation } from "react-i18next"
 import { ControlsBackButton } from "../controls/inputs/backButton"
 import { ControlsButton } from "../controls/inputs/button"
 import { ControlsCheckbox } from "../controls/inputs/checkbox"
 import { imageModeAtom } from "../../jotai/screenshots/atom"
-import { useAtom, useAtomValue } from "jotai"
+import { useAtom, useAtomValue, useSetAtom } from "jotai"
 
 type ScreenshotInfoProps = {
   fileName: string
@@ -32,7 +31,15 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
   )
   const upscaler = useUpscaler()
   const [imageSrc, setImageSrc] = useState<string | null>(null)
+  // Read off the shown image when it loads, so the size appears with it
+  // (loading it a second time to measure showed it a moment later)
+  const [size, setSize] = useState<{ width: number; height: number } | null>(
+    null
+  )
   const { t } = useTranslation("screenshot_info")
+  const { t: tScreenshots } = useTranslation("screenshots")
+  const viewCore = useSetAtom(currentViewAtom)
+  const openGame = useOpenGame()
 
   useEffect(() => {
     let cancelled = false
@@ -76,17 +83,6 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
         <ControlsBackButton onClick={onBack}>
           {t("controls.back")}
         </ControlsBackButton>
-        <ControlsButton
-          onClick={() => {
-            if (!imageSrc) return
-            saveFile(screenshot.file_name, imageSrc)
-          }}
-        >
-          {t("controls.save")}
-        </ControlsButton>
-        <ControlsButton onClick={openShareSheet}>
-          {t("controls.share")}
-        </ControlsButton>
         <ControlsCheckbox
           checked={imageMode === "upscaled"}
           onChange={(checked) =>
@@ -95,37 +91,75 @@ export const ScreenshotInfo = ({ fileName, onBack }: ScreenshotInfoProps) => {
         >
           {t("controls.upscaled")}
         </ControlsCheckbox>
+        <ControlsActions>
+          <ControlsButton
+            icon="save"
+            onClick={() => {
+              if (!imageSrc) return
+              saveFile(screenshot.file_name, imageSrc)
+            }}
+          >
+            {t("controls.save")}
+          </ControlsButton>
+          <ControlsButton icon="share" onClick={openShareSheet}>
+            {t("controls.share")}
+          </ControlsButton>
+        </ControlsActions>
       </Controls>
-      <img
-        className="screenshot-info__raw-image"
-        src={imageSrc || undefined}
-      ></img>
+      <div className="screenshot-info__image-area">
+        <img
+          className="screenshot-info__image"
+          src={imageSrc || undefined}
+          alt={screenshot.game}
+          onLoad={({ currentTarget }) =>
+            setSize({
+              width: currentTarget.naturalWidth,
+              height: currentTarget.naturalHeight,
+            })
+          }
+        />
+      </div>
 
-      <div className="screenshot-info__info">
-        <div className="screenshot-info__name">
-          {screenshot.game}
-          {imageSrc && (
-            <Suspense>
-              <ImageDimensions imageSrc={imageSrc} />
-            </Suspense>
+      {/* Game and date first; where it's from and the file below, soft */}
+      <footer className="screenshot-info__info">
+        <div className="screenshot-info__title-row">
+          <h2 className="screenshot-info__title">
+            {/* Opens Games searched for it, until games have own pages */}
+            {screenshot.game ? (
+              <Link subtle onClick={() => openGame(screenshot.game)}>
+                {gameDisplayName(screenshot.game)}
+              </Link>
+            ) : (
+              screenshot.file_name
+            )}
+          </h2>
+          {screenshot.timestamp && (
+            <span className="screenshot-info__date">
+              {tScreenshots("taken", { date: screenshot.timestamp })}
+            </span>
           )}
         </div>
-        {screenshot.platform && <div>{screenshot.platform}</div>}
-        {screenshot.core && screenshot.author && (
-          <Suspense fallback={<Loader />}>
-            <CoreTag coreName={`${screenshot.author}.${screenshot.core}`} />
-          </Suspense>
-        )}
-        <div>{screenshot.file_name}</div>
-      </div>
+        <div className="screenshot-info__meta">
+          {screenshot.platform && <span>{screenshot.platform}</span>}
+          {screenshot.core && screenshot.author && (
+            <Link
+              subtle
+              onClick={() =>
+                viewCore({
+                  view: "Cores",
+                  selected: `${screenshot.author}.${screenshot.core}`,
+                })
+              }
+            >
+              {`${screenshot.author}.${screenshot.core}`}
+            </Link>
+          )}
+          {size && <span>{t("dimensions", size)}</span>}
+          <span className="screenshot-info__file-name">
+            {screenshot.file_name}
+          </span>
+        </div>
+      </footer>
     </div>
-  )
-}
-
-const ImageDimensions = ({ imageSrc }: { imageSrc: string }) => {
-  const size = useAtomValue(ImageDimensionsSelectorFamily(imageSrc))
-  return (
-    // eslint-disable-next-line react/jsx-no-literals
-    <span className="screenshot-info__dimensions">{`(${size.width}px x ${size.height}px)`}</span>
   )
 }

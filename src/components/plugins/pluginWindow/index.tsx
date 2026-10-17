@@ -1,3 +1,4 @@
+import Callout from "../../ui/Callout"
 import {
   useEffect,
   useEffectEvent,
@@ -12,6 +13,8 @@ import { listen, emit } from "@tauri-apps/api/event"
 import "./index.css"
 import { ask } from "@tauri-apps/plugin-dialog"
 import { useTranslation } from "react-i18next"
+import Button from "../../ui/Button"
+import TextInput from "../../ui/TextInput"
 
 type PluginWindowProps = {
   pluginId: string
@@ -164,7 +167,7 @@ const PluginMessageRenderer = ({
   if (!message) return null
 
   if (message === "Exit") {
-    return <div>{t("safe_to_close")}</div>
+    return <Callout>{t("safe_to_close")}</Callout>
   }
 
   if ("Choice" in message) {
@@ -174,7 +177,7 @@ const PluginMessageRenderer = ({
         <div className="plugins-window__query">{query}</div>
         <div className="plugins-window__buttons">
           {choices.map((c) => (
-            <button
+            <Button
               key={c}
               onClick={() => {
                 const message: HostMessage = { Answer: { name, value: c } }
@@ -183,7 +186,7 @@ const PluginMessageRenderer = ({
               }}
             >
               {c}
-            </button>
+            </Button>
           ))}
         </div>
       </>
@@ -204,15 +207,21 @@ const PluginMessageRenderer = ({
     return (
       <>
         <div className="plugins-window__query">{query}</div>
-        <input
-          className="plugins-window__text-input"
-          onChange={({ target }) => setInputString(target.value)}
-          autoFocus
-          onKeyDown={({ key }) => {
-            if (key === "Enter") submitText()
-          }}
-        />
-        <button onClick={submitText}>{t("submit")}</button>
+        <div className="plugins-window__answer">
+          <TextInput
+            className="plugins-window__text-input"
+            label={query}
+            value={inputString}
+            onChange={setInputString}
+            autoFocus
+            onKeyDown={({ key }) => {
+              if (key === "Enter") submitText()
+            }}
+          />
+          <Button theme="primary" onClick={submitText}>
+            {t("submit")}
+          </Button>
+        </div>
       </>
     )
   }

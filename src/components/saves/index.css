@@ -7,20 +7,6 @@
   --padding: 20px;
 }
 
-.saves__none {
-  width: 100%;
-  height: calc(100vh - var(--controls-height));
-  font-size: 3rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: GamePocket;
-  font-smooth: never;
-  -webkit-font-smoothing: none;
-  text-align: center;
-  line-height: 45px;
-}
-
 .saves__list {
   padding: var(--padding);
   overflow: auto;
@@ -29,148 +15,223 @@
   flex-direction: column;
 }
 
+/* One backup location: title, path and stats, then actions */
 .saves__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
   padding: var(--padding);
-  border-radius: 15px;
-  background-color: var(--info-colour);
-  display: grid;
-  gap: var(--padding);
-  align-items: center;
-  grid-template-columns: 1fr max-content max-content;
-  grid-template-areas:
-    "b r c"
-    "d r c";
+  background-color: var(--theme-surface-sunken);
+  border: 1px solid var(--theme-separator);
 }
 
 .saves__item--not-found {
   cursor: unset;
 }
 
-.saves__item-path {
-  grid-area: b;
-  word-break: break-all;
+.saves__item-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  font-weight: 600;
+  color: var(--theme-text-headline);
+}
+
+.saves__item-folder {
+  font-weight: 400;
+  color: var(--theme-text-soft);
+  overflow-wrap: anywhere;
 }
 
 .saves__info {
-  grid-area: d;
-}
-
-.saves__item-remove-button {
-  grid-area: r;
-  cursor: pointer;
-  color: var(--red-colour);
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-.saves__item-restore-button {
-  grid-area: c;
-  padding: 10px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  font-size: 1.25rem;
-  cursor: pointer;
-
-  &::after {
-    content: "";
-    display: block;
-    width: 40px;
-    height: 40px;
-    border-right: 2px solid white;
-    border-top: 2px solid white;
-    flex-grow: 0;
-    flex-shrink: 0;
-    transform: rotate(45deg);
-  }
-
-  &:hover {
-    transform: scale(1.1);
-  }
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0;
+  color: var(--theme-text-soft);
 }
 
+.saves__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-xl);
+}
+
+.saves__item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* Keep the destructive action apart from the others */
+.saves__item-remove {
+  margin-inline-start: auto;
+}
+
+/* Backup detail: one column per backup (oldest left), one row per save
+   file, bars where the file stayed the same. Its own stacking context, so
+   the column lines (z-index -1) sit above the page's background, behind
+   the rows. */
+.saves--info {
+  isolation: isolate;
+  min-height: 100vh;
+}
+
+.saves__info-table {
+  position: relative;
+}
+
+/* The dates, below the header bar */
 .saves__info-save-files-timestamps {
   position: sticky;
-  top: var(--controls-height);
-  background-color: var(--info-colour);
+  top: var(--header-bar-height);
+  z-index: 2;
+  align-items: center;
+  height: var(--labels-height);
   padding: 0 var(--padding);
+  background-color: var(--theme-background);
+  border-bottom: 1px solid var(--theme-separator);
 }
 
 .saves__info-timestamp {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--font-size-sm);
+  line-height: 1.3;
+  color: var(--theme-text-headline);
   text-align: center;
+  white-space: nowrap;
 }
 
+.saves__info-time {
+  font-size: var(--font-size-xs);
+  color: var(--theme-text-soft);
+}
+
+/* Fills the page behind the rows; same columns and side padding */
 .saves__info-save-files-background {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  min-height: calc(100vh);
-  display: grid;
-  justify-content: center;
-  padding: 20px;
-  box-sizing: border-box;
+  inset: 0;
   z-index: -1;
+  display: grid;
+  padding: 0 var(--padding);
+  pointer-events: none;
 }
 
+/* A line down the middle of each backup's column */
 .saves__info-save-files-background-column {
-  width: 100%;
-  height: 100%;
-  display: block;
   position: relative;
 
   &::after {
     content: "";
-    opacity: 0.25;
-    width: 3px;
-    height: 100%;
-    background-color: var(--light-colour);
-    display: block;
-    left: 50%;
     position: absolute;
-    transform: translateX(-50%);
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background-color: var(--theme-separator);
   }
 }
 
 .saves__info-save-files {
-  padding: var(--padding);
-  padding-top: 5px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--padding) var(--space-lg);
+}
+
+/* Game name, then the save's path small, then show-on-card */
+.saves__info-save-file-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2xs) var(--space-sm);
+  padding-block: var(--space-2xs);
+}
+
+.saves__info-save-file-name {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--theme-text-headline);
 }
 
 .saves__info-save-file-path {
-  font-size: 1rem;
-  padding: 5px var(--padding);
+  min-width: 0;
+  font-family: var(--font-code);
+  font-size: var(--font-size-xs);
+  color: var(--theme-text-soft);
+  overflow-wrap: anywhere;
 }
 
-.saves__info-save-file-versions {
-  display: grid;
+.saves__info-save-file-reveal {
+  --control-height: 24px;
 }
 
+/* A stretch of backups with the same content. The one on the Pocket now is
+   green; the others restore that version on click */
 .saves__info-save-file-version {
-  padding: 5px 10px;
-  background-color: var(--light-colour);
-  border-radius: 5px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  margin: 0;
+  padding: 0 var(--space-sm);
+  overflow: hidden;
+  border: none;
+  border-radius: var(--radius-button);
+  background-color: var(--theme-control-background);
+  color: var(--theme-control-text);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.saves__info-save-file-version--current {
+  background-color: var(--theme-accent);
+  color: var(--theme-accent-text);
+  font-weight: 600;
 }
 
 .saves__info-save-file-version--other {
   cursor: pointer;
 
-  &:hover {
-    background-color: var(--green-colour);
+  &:focus {
+    outline: none;
   }
 }
 
+/* "Restore" replaces "Older" / "Newer" on hover and focus */
+.saves__info-restore {
+  display: none;
+}
+
+.saves__info-save-file-version--other:is(:hover, :focus-visible) {
+  filter: brightness(85%);
+
+  .saves__info-label {
+    display: none;
+  }
+
+  .saves__info-restore {
+    display: inline;
+  }
+}
+
+:root.keyboard-focus .saves__info-save-file-version--other:focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: var(--focus-offset);
+}
+
+/* Sticks below the dates */
 .saves__info-save-files-platform {
   position: sticky;
-  top: calc(var(--controls-height) + var(--labels-height));
-  background-color: var(--hover-colour);
-  padding: 10px 20px;
+  top: calc(var(--header-bar-height) + var(--labels-height));
+  z-index: 1;
+  padding: var(--space-lg) var(--padding) var(--space-xs);
+  background-color: var(--theme-background);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--theme-text-soft);
 }

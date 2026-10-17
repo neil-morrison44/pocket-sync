@@ -1,0 +1,18 @@
+/* Slanted label in the inverse colours */
+.tooltip {
+  z-index: 2000;
+
+  /* The buttons' ratio: side padding is ~1.35× the space above and below
+     the text, plus half the slant. Its own line height, since :root's fixed
+     24px made the 12px label twice as tall as its text. */
+  --tooltip-padding-block: var(--space-xs);
+
+  padding-block: var(--tooltip-padding-block);
+  padding-inline: calc(var(--tooltip-padding-block) * 1.35 + var(--slant) / 2);
+  background-color: var(--theme-inverse-background);
+  color: var(--theme-inverse-text);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  line-height: 1.4;
+  clip-path: var(--shape-slant);
+}

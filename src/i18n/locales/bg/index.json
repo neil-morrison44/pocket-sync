@@ -5,61 +5,86 @@
     "update_available": "Наличен е ъпдейт! {version}",
     "sponsor_link": "Включи се към {count, number} човека, спонсори чрез GitHub",
     "whats_new": "какво ново",
-    "close_changelog": "Затвори"
+    "library_updates": "Обновления в библиотеката",
+    "side_panel": "Обновления",
+    "show_updates": "Покажи обновленията",
+    "hide_updates": "Скрий обновленията",
+    "pocket_colours": "Цветове на Pocket",
+    "body_colour": "Корпус",
+    "button_colour": "Бутони",
+    "stats": {
+      "firmware": "Фърмуер",
+      "cores": "Ядра",
+      "games": "Игри"
+    },
+    "show_updates_new": "Покажи обновленията (нови)",
+    "open_sd_card": "Отвори SD картата"
   },
   "app": {
     "app_name": "Pocket Sync",
     "connect_button": "Свържи се към Pocket / SD карта",
-    "not_pocket_tip": "Тази папка не изглежда като файловата система на Pocket. SD картата трябва да бъде инициализирана през Pocket поне веднъж."
+    "not_pocket_tip": "Тази папка не изглежда като файловата система на Pocket. SD картата трябва да бъде инициализирана през Pocket поне веднъж.",
+    "close": "Затвори",
+    "loading": "Зареждане",
+    "dismiss": "Скрий",
+    "no_results": "Нищо не отговаря на търсенето или филтрите.",
+    "clear_search": "Изчисти търсенето",
+    "filters": "Филтри",
+    "clear_filters": "Изчисти филтрите"
   },
   "clean_files": {
     "close_button": "Затвори",
-    "delete_files_button": "Изтрий Файлове",
+    "delete_files_button": "Изтрий {count, plural, one {# файл} other {# файла}}",
     "files_found": "{count, plural, =0 {Няма файлове за почистване.} one {# файл за почистване.} other {# файлове за почистване.} }",
-    "title": "Почистване на файлове"
+    "title": "Почистване на файлове",
+    "intro": "macOS записва скрити файлове (._… и .DS_Store) на SD картата. Pocket може да ги покаже като повредени игри. Това са тези в Assets.",
+    "none_found": "Няма какво да се почисти: в Assets няма скрити файлове от macOS.",
+    "deleting": "Изтриване…"
   },
   "mrom": {
     "close_button": "Затвори",
-    "move_dumps": "Преместване на ROM-ове",
     "headers": {
-      "platform": "Платформа",
-      "library_image": "Изображение от библиотеката",
-      "name": "Име",
-      "destination": "Дестинация"
+      "destination": "Дестинация",
+      "dumped_save": "От касетата",
+      "pocket_save": "От ядрото MROM"
+    },
+    "intro": "Ядрото MROM копира твоите касети за Game Boy и записите в тях в Assets/mrom. Премести ги в папките за Game Boy и Game Boy Color, за да ги пускат и други ядра. Всяка игра може да вземе един запис със себе си.",
+    "none_found": "Няма намерени копия на касети в Assets/mrom.",
+    "moving": "Преместване…",
+    "move_count": "Премести {count, plural, one {# ROM} other {# ROM-а}}",
+    "save_label": "Запис",
+    "save": {
+      "none": "Без"
+    },
+    "save_hint": {
+      "dump": "Записът от касетата, копиран при извличането ѝ.",
+      "pocket": "Записът, който ядрото MROM пази за тази игра в Saves/mrom.",
+      "none": "Играта се премества без запис."
     }
   },
   "update_all": {
     "title": "Обнови всички",
-    "heading": {
-      "update": "Обнови",
-      "required_files": "Инсталирай нужните файлове",
-      "platform_files": "Замести платформените файлове"
-    },
     "buttons": {
-      "update": "Обнови {count, plural, =0 {none} one {# избраното ядро} other {# избраните ядра} }",
       "close": "Затвори"
-    },
-    "update": {
-      "title": "Обновяване на {coreName}: { step, select, core { обновяване на ядрото... } files { изтегляне на нужните файлове... } filecheck { проверка на файловете... } other {on no} }"
-    },
-    "no_updates_found": "Няма намерени ъпдейти за инсталираните ядра"
+    }
   },
   "core_info": {
     "author": "Автор",
     "controls": {
-      "back": "Назад към списъка",
-      "install": "Инсталирай",
-      "required_files": "Нужни файлове",
-      "uninstall": "Деинсталирай",
-      "update": "Обнови",
-      "hide_core": "Скрий ядро"
+      "back": "Назад към ядрата",
+      "install": "Инсталирай ядро",
+      "required_files": "Зареди нужните файлове",
+      "uninstall": "Деинсталирай ядро",
+      "hide_core": "Скрий ядро",
+      "update_to": "Обнови до {version}",
+      "install_version": "Инсталирай версия",
+      "install_release": "Инсталирай тази версия"
     },
     "inputs": "Контроли",
     "modal": {
-      "close": "Затвори",
       "input_core": "Ядро",
       "no_settings_found": "Няма намерени настройки!",
-      "reset_all": "Инициализирай всичко"
+      "reset_all": "Нулирай всички настройки"
     },
     "analogizer": "Това ядро поддържа <1>Analogizer-FPGA</1>",
     "requires_license": {
@@ -69,18 +94,20 @@
     "firmware_too_low": "Това ядро изисква фърмуер версия {core_firmware}, текущата версия е {pocket_firmware}",
     "not_in_inventory": "{coreName} не е в списъка с ядра",
     "platform": {
-      "edit": "Редактирай",
-      "wikipedia": "Уикипедия"
+      "wikipedia": "Уикипедия",
+      "open": "Отвори платформата"
     },
     "replaced": "Това ядро е заменено от <1>{replacementCore}</1>",
     "platforms": "Платформи",
     "release_date": "Дата на релийз",
     "releases": {
       "release_history": "История на релийзи",
-      "show_previous": "Покажи предишни релийзи"
+      "show_previous": "Покажи предишни релийзи",
+      "latest": "Последна",
+      "prerelease": "Предварителна версия",
+      "on_github": "Виж в GitHub"
     },
     "required_files": "Нужни файлове",
-    "required_files_count": "{count} / {total} файла",
     "hide_core_confirm": "Това ще скрие ядрото от списъка, скритите ядра могат да се менажират през Настройки",
     "settings": "Настройки",
     "sponsor": "Спонсор",
@@ -93,9 +120,12 @@
       "cartridges": "Дискети",
       "dock": "Док",
       "dock_dac": "Док (Analog)",
-      "save_states_and_sleep": "Запазени състояния / Заспиване"
+      "save_states_and_sleep": "Запазени състояния / Заспиване",
+      "link_port": "Link кабел",
+      "analogizer": "Analogizer"
     },
     "url": "URL",
+    "source_code": "Изходен код",
     "version": "Версия",
     "display_modes_title": "Режими на екран",
     "display_mode_warning": "Този режим на екрана изисква обновление на ядрото, сигурни ли сте, че искате да го включите?",
@@ -130,12 +160,50 @@
       "title": "Analogizer конфигурация",
       "video": "Analog Video",
       "snac": "SNAC Контролери"
-    }
+    },
+    "tabs": {
+      "label": "Подробности за ядрото",
+      "overview": "Преглед",
+      "releases": "Релийзи"
+    },
+    "tags": {
+      "installed": "Инсталирано",
+      "update": "Обновяване {version}",
+      "ai": "ИИ {score, number, percent}",
+      "license": "Лиценз",
+      "manual": "Ръчно",
+      "manual_hint": "Инсталирано ръчно (напр. от .zip). Ядрото не е в списъка с ядра, затова Pocket Sync не може да го обновява."
+    },
+    "guide": {
+      "install": "Инсталирането изтегля версия {version} в папката Cores на SD картата. Ако ядрото се нуждае от допълнителни файлове, например BIOS файлове, можете да ги заредите тук след това.",
+      "update": "Налична е версия {version}. Инсталирана е {installed}.",
+      "up_to_date": "Инсталирано и актуално.",
+      "required_files_missing": "Намерени са {count} от {total} нужни файла. Заредете липсващите, за да работи ядрото.",
+      "required_files_found": "Намерени са всички {total} нужни файла.",
+      "update_title": "Има обновление"
+    },
+    "preset": "Шаблон",
+    "inputs_empty": "Това ядро не задава разпределение на бутоните.",
+    "input_keys": {
+      "pad_btn_a": "A",
+      "pad_btn_b": "B",
+      "pad_btn_x": "X",
+      "pad_btn_y": "Y",
+      "pad_trig_l": "L",
+      "pad_trig_r": "R",
+      "pad_btn_start": "Start",
+      "pad_btn_select": "Select"
+    },
+    "firmware_required": "Нужен фърмуер",
+    "core_settings_title": "Настройки на ядрото",
+    "display_modes_hint": "Включете режимите на екрана, от които искате да избирате на Pocket.",
+    "previous_version_hint": "Инсталирайте която и да е издадена версия, например за да се върнете след обновяване.",
+    "core_settings_hint": "Промените се запазват веднага на SD картата."
   },
   "core_info_required_files": {
     "close": "Затвори",
     "download_all": "Изтегли всичко",
-    "no_link_tip": "Прочетете секция Настройки за повече опции спрямо нужни файлове",
+    "no_link_tip": "Няма зададен архив, затова нужните файлове не могат да се изтеглят. Добави такъв в Настройки → Изтегляния.",
     "skip_alternates_label": "Пропусни алтернативни файлове",
     "title": "Нужни файлове",
     "file_status": {
@@ -146,7 +214,10 @@
       "not_checked": "Неясни",
       "found_at_root": "Файлът е проверен. Намерен в основната директория",
       "root_needs_update": "Разминаване във файловете. Моля, проверете основната директория"
-    }
+    },
+    "intro": "Някои ядра се нуждаят от допълнителни файлове, напр. BIOS или ROM файлове. Те се изтеглят от архива, зададен в настройките.",
+    "summary": "{found} от {total} намерени",
+    "to_download": "{size} за изтегляне"
   },
   "cores": {
     "controls": {
@@ -155,102 +226,186 @@
       "refresh": "Обнови",
       "search": "Търси",
       "updatable": "Обновяеми",
-      "update_all": "Обнови всичко",
-      "filters_group": "Филтри",
       "sort_options": {
         "name": "Име",
         "last_update": "Последно обновяване"
-      }
+      },
+      "features": "Функции",
+      "features_count": "Функции ({count})",
+      "platform": "Платформа",
+      "update_all_count": "Обнови всички ({count})",
+      "all": "Всички",
+      "license": "Лиценз",
+      "license_free": "Само безплатни",
+      "license_required": "Изисква лиценз",
+      "ai": "AI дял",
+      "ai_none": "Без",
+      "ai_up_to": "До {max, number, percent}",
+      "author": "Автор"
     },
     "install_tip": "Можете също да инсталирате ядра (или друг zip) чрез провлачване на .zip файла към този прозорец",
     "installed": "Инсталирани ({count})",
-    "not_installed": "Налични ({count})"
+    "not_installed": "Налични ({count})",
+    "updates": "Налични обновления ({count})",
+    "installed_filtered": "Инсталирани ({count} / {total})",
+    "not_installed_filtered": "Налични ({count} / {total})",
+    "selection": {
+      "title": "Обнови и инсталирай",
+      "install_title": "Инсталирай също",
+      "cancel": "Отказ",
+      "start": "Започни ({count})",
+      "install_several": "Инсталирай няколко…",
+      "filtered": "Показват се наличните ядра, които отговарят на търсенето и филтрите в страницата Ядра.",
+      "release": "v{version} · {date, date, medium}"
+    }
   },
   "error": {
-    "report": "Можете да докладвате това в GitHub, включете текста по-долу и какво точно направихте",
+    "report": "Ако продължава да се случва, моля, съобщи за това с подробностите по-долу и какво правеше.",
     "retry": "Опитай пак",
-    "title": "Грешка",
+    "title": "Нещо се обърка",
     "repair": {
       "title": "Поправи",
       "in_progress": "Поправяне...",
       "fixes": {
         "redownload_file": "Изтегли отново <pre>{path}</pre> от <bold>{coreName}</bold>"
-      }
-    }
+      },
+      "available": "Това може да се поправи"
+    },
+    "report_link": "Съобщи в GitHub",
+    "details": "Технически подробности"
   },
   "fetch": {
     "controls": {
-      "add_fetch_item": "Добави нов източник",
-      "refresh": "Обнови"
+      "add_fetch_item": "Добави източник",
+      "refresh": "Обнови статуса",
+      "fetch_all": "Изтегли всички"
     },
-    "fetch_button": "Извлечи",
-    "file_count": "{count} / {total, plural, one {# Файл} other {# Файлове}}",
+    "fetch_button": "Извлечи файлове",
     "loading": "зареждане...",
     "new": {
-      "add_extension": "Добави",
+      "add_extension": "Добави разширение",
       "add_fetch": "Добави източник",
-      "archive_name": "Име на архив: <i>https://archive.org/details/[this bit here]</i>",
       "archive_tip": "Това няма да проработи за архиви, в които файловете са zip-нати, трябва да изберете кои разширения да бъдат избягвани при изтеглянето на файловете с метаданни.",
-      "close": "Затвори",
-      "destination": "Изходна папка",
-      "extensions": "Лимит на файлови разширения:",
-      "origin": "Папка източник",
       "title": "Добави нов източник",
       "validating_archive_name": "Проверка на архив \"{name}\"...",
-      "invalid_archive_name": "Не е намерен архив в https://archive.org/details/{name}"
+      "invalid_archive_name": "Не е намерен архив в https://archive.org/details/{name}",
+      "intro": "Fetch копира файлове на SD картата и ги поддържа актуални. „Извлечи файлове“ копира всичко, което липсва на картата или е по-ново в източника.",
+      "type_label": "Източник",
+      "type_hint": {
+        "filesystem": "Папка на този компютър, напр. колекцията ти от BIOS файлове или игри.",
+        "archive_org": "Елемент в archive.org, чиито файлове не са архивирани (zip)."
+      },
+      "origin_label": "Папка на този компютър",
+      "origin_hint": "Копира се всичко в нея, включително подпапките.",
+      "archive_label": "Име на архива",
+      "archive_hint": "Частта след archive.org/details/ в адреса на елемента, напр. <code>openFPGA-Files</code>.",
+      "archive_found": "Намерен в archive.org",
+      "extensions_label": "Разширения на файловете (по избор)",
+      "extensions_hint": "Изтеглят се само файлове с тези разширения, напр. bin или rom. Остави празно за всички файлове, включително метаданните на archive.org.",
+      "extension_placeholder": "напр. bin",
+      "remove_extension": "Премахни {extension}",
+      "destination_label": "Папка на SD картата",
+      "destination_hint": "Къде отиват файловете, напр. <code>/Assets/gb/common</code> за игри или BIOS файлове за Game Boy.",
+      "choose_folder": "Избери папка",
+      "no_folder": "Няма избрана папка",
+      "cancel": "Отказ",
+      "edit_title": "Редактиране на източник",
+      "save_changes": "Запази промените"
     },
-    "remove_button": "Премахни",
+    "remove_button": "Премахни източник",
     "remove_confirm": "Това ще премахне конфигурацията на източника, но не и файловете. Сигурни ли сте?",
     "types": {
       "archive_org": "Интернет архив",
       "filesystem": "Локални файлове"
-    }
+    },
+    "empty": {
+      "title": "Все още няма източници",
+      "text": "Изтеглянето копира файлове на SD картата от папка на компютъра или от archive.org. Добави източник, за да започнеш."
+    },
+    "to_destination": "Към {destination} на SD картата",
+    "only_extensions": "Само {extensions}",
+    "archive_link": "archive.org/details/{name}",
+    "status": {
+      "empty": "Няма намерени файлове",
+      "complete": "{total, plural, one {# файл, актуален} other {Всички # файла са актуални}}",
+      "to_fetch": "{missing} от {total, plural, one {# файл} other {# файла}} за извличане"
+    },
+    "last_fetched": "Последно извличане <time></time>",
+    "open_destination": "Отвори папката на SD картата",
+    "open_source": "Отвори папката",
+    "edit_button": "Редактирай източника"
   },
   "firmware": {
     "current": "Текущ фърмуер: v{version}",
     "downloading_firmware": "Изтегляне на фърмуер...",
-    "load_firmware": "Зареди на SD карта",
+    "load_firmware": "Зареди фърмуер на SD картата",
     "loaded_firmware": "Фърмуер {version} е на SD картата",
     "loaded_firmware_info": "поставете SD картата и включете Pocket за да инсталирате",
     "no_firmware_loaded": "Няма фърмуер файл на SD картата, който да бъде инсталиран",
-    "options": {
-      "latest": "v{version} (последна)",
-      "older": "v{version} ({date, date, short})",
-      "previous_versions": "Предишни версии"
-    },
     "release_notes": {
-      "from": "От ",
-      "title": "v{version} - { published, date, short } Релийз коментари:"
+      "from": "От "
     },
-    "remove_button": "Премахни"
+    "remove_button": "Премахни фърмуер",
+    "current_label": "Инсталиран фърмуер",
+    "versions_title": "Версии на фърмуера",
+    "jump_to": "Към",
+    "badge_latest": "Последна",
+    "badge_installed": "Инсталирана",
+    "published": "{date, date, medium}",
+    "loaded_current": "Инсталационният файл на инсталирания фърмуер (v{version}) все още е на SD картата.",
+    "loaded_current_info": "Вече не е нужен и може да бъде премахнат.",
+    "remove_installer": "Премахни инсталационния файл"
   },
   "games": {
     "controls": {
       "category": "Категория",
       "clean_files": "Изчисти файлове",
-      "instance_json": "JSON на тази инстанция",
+      "instance_json": "Създай JSON на инстанция",
       "refresh": "Обнови",
-      "search": "Търси"
+      "search": "Търси",
+      "mrom": "Премести MROM дъмпове",
+      "platform": "Платформа",
+      "all": "Всички"
     },
     "item": {
       "game_count": "{count, plural, =0 {Няма игри} one {# Игра} other {# Игри}}"
-    }
+    },
+    "open_folder": "Отвори папката",
+    "none": "Няма намерени игри. Инсталирайте ядро, след това добавете игри в неговата папка на SD картата.",
+    "show_in_folder": "Покажи в папката",
+    "empty_title": "Все още няма игри",
+    "no_core": "Няма инсталирано ядро",
+    "find_core": "Намери ядро",
+    "accepts": "Приема {extensions}",
+    "read_by": "Използва се от <cores></cores>"
   },
   "image_editor": {
     "cancel": "Откажи",
     "import_image": "Импортирай изображение",
-    "remove": "Премахни",
-    "reset": "Инициализирай",
+    "remove": "Премахни слоя",
+    "reset": "Нулирай слоя",
     "rotate": "Завърти",
-    "save": "Съхрани",
-    "scale": "Скалирай"
+    "save": "Съхрани изображение",
+    "scale": "Скалирай",
+    "title": "Редактирай изображението",
+    "move_up": "Премести нагоре",
+    "move_down": "Премести надолу",
+    "hint": "Плъзни върху прегледа, за да преместиш избрания слой.",
+    "hint_empty": "Импортирай изображение и после го плъзни върху прегледа, за да го наместиш.",
+    "position_x": "Хоризонтално",
+    "position_y": "Вертикално",
+    "discard_confirm": "Да се отхвърлят ли промените по това изображение?",
+    "discard": "Отхвърли",
+    "keep_editing": "Продължи редакцията"
   },
   "instance_json": {
-    "available_for": "Автоматично създаване на файл instance.json налично за:",
     "close_button": "Затвори",
     "skipped_file": "Пропуснати {file_name}",
     "title": "Създаване на Instance JSON файлове",
-    "wrote_file": "Записан {file_name}"
+    "wrote_file": "Записан {file_name}",
+    "intro": "Някои ядра (най-вече за CD системи) се нуждаят от instance.json за всяка игра, за да може Pocket да пуска игри от няколко файла. Създай ги от папката с игри на ядрото.",
+    "none_available": "Нито едно от инсталираните ядра не създава такива файлове.",
+    "build": "Създай"
   },
   "layout": {
     "cores": "Ядра",
@@ -261,76 +416,118 @@
     "platforms": "Платформи",
     "pocket_sync": "Pocket Sync",
     "save_states": "Съхранени състояния",
-    "saves": "Запазвания",
+    "saves": "Резервни копия",
     "screenshots": "Скрийншоти",
     "plugins": "Плъгини",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "collapse_sidebar": "Свий страничната лента",
+    "expand_sidebar": "Разгъни страничната лента",
+    "views": "Изгледи",
+    "core_updates": "{count, plural, one {# обновление на ядро} other {# обновления на ядра}}",
+    "firmware_update": "Наличен фърмуер {version}"
   },
   "plugins": {
     "buttons": {
       "add": "Добавяне на плъгин",
-      "refresh": "Опресняване"
+      "refresh": "Опресни плъгините",
+      "run": "Стартирай плъгин"
     },
-    "remove": "Премахване",
+    "remove": "Премахни плъгин",
     "confirm_remove": "Това ще премахне и всички локални данни, които плъгинът е съхранил на този компютър. Сигурни ли сте?",
     "confirm_exit": "Плъгинът все още работи, сигурни ли сте, че искате да затворите прозореца?",
     "safe_to_close": "Плъгинът е завършен, този прозорец може да бъде затворен",
     "submit": "Изпращане",
-    "info": "Спецификацията на плъгина, примерен плъгин и инструменти за изграждане на плъгини можете да намерите на <1>github.com/{repo}</1>",
+    "info": "Плъгините са малки инструменти от други хора, които работят в Pocket Sync, всеки в свой прозорец. Добави плъгин чрез връзката му в GitHub. Спецификацията, примерен плъгин и инструменти за създаване на плъгини има на <1>github.com/{repo}</1>",
     "add_modal": {
       "title": "Добавяне на плъгин чрез URL адрес",
       "add": "Проверете и инсталирайте плъгина",
       "cancel": "Отказ",
-      "invalid": "Не е намерен валиден плъгин на този URL адрес"
+      "invalid": "Не е намерен валиден плъгин на този URL адрес",
+      "url_label": "GitHub хранилище",
+      "hint": "Адресът на хранилището на плъгина. Последното му издание трябва да съдържа файловете plugin.wasm и plugin.json.",
+      "checking": "Проверка…"
+    },
+    "empty": {
+      "title": "Няма инсталирани плъгини",
+      "text": "Плъгините добавят още инструменти към Pocket Sync."
+    },
+    "running": "Работи…",
+    "controls": {
+      "search": "Търсене",
+      "author": "Автор",
+      "all": "Всички"
     }
   },
   "palettes": {
     "buttons": {
-      "add_via_code": "Добави чрез код",
-      "new": "Нова палитра",
-      "back": "Назад към списъка",
-      "palette_town": "Град на палитри"
+      "add_via_code": "Добави палитра чрез код",
+      "new": "Създай палитра",
+      "back": "Назад към палитрите",
+      "palette_town": "Разгледай Града на палитри"
     },
     "town": {
       "title": "Град на палитри",
       "repo_link": "Палитри от <1>github.com/{repo}</1>",
-      "close": "Затвори"
+      "intro": "Щракни върху палитра, за да я добавиш на SD картата.",
+      "installed": "На SD картата"
     },
     "item": {
-      "duplicate": "Клонирай",
-      "rename": "Преименувай",
+      "duplicate": "Клонирай палитра",
+      "rename": "Преименувай палитра",
       "copy_code": "Копирай код за споделяне",
-      "delete": "Изтрий"
+      "delete": "Изтрий палитра"
     },
     "add_via_code": {
       "title": "Добави чрез код за споделяне",
       "cancel": "Откажи",
-      "add": "Добави"
+      "add": "Добави палитра",
+      "label": "Код за споделяне",
+      "hint": "Постави код, копиран с „{button}“ от палитра.",
+      "found": "Добавя палитрата „{name}“.",
+      "invalid": "Това не е код за споделяне на палитра. Провери дали е копиран целият код."
     },
     "full": {
       "inputs": {
         "background": "Фон",
-        "obj0": "Obj0",
-        "obj1": "Obj1",
-        "window": "прозорец",
+        "obj0": "Спрайтове 0",
+        "obj1": "Спрайтове 1",
+        "window": "Прозорец",
         "off": "LCD изключен"
       },
-      "save": "Съхрани",
-      "reset": "Инициализирай",
-      "emu_credit": "GB емулатор адаптиран от <1>roblouie/gameboy-emulator</1>"
-    }
+      "save": "Съхрани палитра",
+      "reset": "Нулирай цветовете",
+      "emu_credit": "GB емулатор адаптиран от <1>roblouie/gameboy-emulator</1>",
+      "preview_game": "Игра",
+      "no_games": "Постави игра за Game Boy (.gb) в Assets/gb на SD картата, за да изпробваш палитрата в нея."
+    },
+    "empty": {
+      "title": "Все още няма палитри",
+      "text": "Създай палитра, добави от код или разгледай Palette Town."
+    },
+    "controls": {
+      "search": "Търси палитри",
+      "group_by": "Групирай по",
+      "group": {
+        "folder": "Папка",
+        "none": "Без"
+      }
+    },
+    "groups": {
+      "root": "Извън папка"
+    },
+    "count": "{count, plural, one {# палитра} other {# палитри}}"
   },
   "mister_sync": {
     "controls": {
-      "back": "Изход",
+      "back": "Излез от MiSTer Sync",
       "search": "Търси запазвания",
       "save_mapping": "Мапинг на запазвания"
     },
     "login": {
-      "connect": "Свържи",
-      "host": "Хост / IP Адрес:",
-      "password": "Парола:",
-      "username": "Потребител:"
+      "connect": "Свържи се",
+      "host": "Хост или IP адрес",
+      "password": "Парола",
+      "username": "Потребител"
     },
     "mister": "MiSTer",
     "not_found": "Не е намерен",
@@ -340,10 +537,45 @@
     "tip_3": "Играта трябва да има абсолютно същото име в Pocket и в MiSTer за да бъде намерен Save файла",
     "unsupported": "{platform} не е мапната",
     "mapping": {
-      "close": "Затвори",
-      "clear": "Изчисти",
-      "reset": "Върни първоначалното състояние"
-    }
+      "clear": "Изчисти съпоставянето",
+      "reset": "Върни първоначалното състояние",
+      "title": "Съответствие на записите",
+      "intro": "Плъзни от платформа на Pocket към папката на MiSTer, в която отиват записите ѝ (или обратно). Посочи платформа, за да видиш връзките ѝ."
+    },
+    "connect": {
+      "title": "Свържи се с MiSTer",
+      "host_hint": "Адресът на MiSTer в мрежата ти, напр. 192.168.0.10.",
+      "demo_hint": "Преглед: всеки хост се свързва, освен „fail“.",
+      "failed": "Неуспешна връзка с MiSTer. Провери адреса, данните за вход и дали FTP е включен.",
+      "connecting": "Свързване…",
+      "cancel": "Отказ"
+    },
+    "list": {
+      "title": "Записи на Pocket",
+      "empty": "Няма съвпадащи записи."
+    },
+    "compare": {
+      "pick_title": "Избери запис",
+      "pick": "Избери запис вляво, за да го сравниш с този на MiSTer и да го копираш в двете посоки.",
+      "same": "Еднакви и на двете",
+      "pocket_newer": "По-нов на Pocket",
+      "mister_newer": "По-нов на MiSTer",
+      "missing": "Още го няма на MiSTer"
+    },
+    "newer": "По-нов",
+    "modified": "Променен",
+    "checksum": "Контролна сума",
+    "folder": "Папка на MiSTer",
+    "copy_to_pocket": "Копирай на Pocket",
+    "copy_to_mister": "Копирай на MiSTer",
+    "confirm": {
+      "to_mister": "Да се замени ли записът на MiSTer с този от Pocket?",
+      "to_pocket": "Да се замени ли записът на Pocket с този от MiSTer?"
+    },
+    "activity": "Активност ({count})",
+    "activity_empty": "Още нищо не се е случило.",
+    "demo_note": "Преглед с измислени записи: нищо не се изпраща към MiSTer и нищо не се променя на SD картата.",
+    "date": "{date, date, medium} {date, time, short}"
   },
   "news_feed": {
     "last_updated": "Последно обновление <1></1>",
@@ -351,27 +583,27 @@
   },
   "platform_info": {
     "controls": {
-      "back": "Обратно в списъка",
-      "data_packs": "Колекция данни",
-      "image_packs": "Колекция изображения"
+      "back": "Назад към платформите",
+      "data_packs": "Управлявай колекции данни",
+      "image_packs": "Управлявай колекции изображения"
     },
-    "cores": "Ядра",
-    "edit": "Редактирай"
+    "cores": "Инсталирани ядра",
+    "edit": "Редактирай",
+    "details": "Подробности",
+    "no_cores": "Няма инсталирани ядра за тази платформа.",
+    "games": "Игри",
+    "no_games": "Няма игри в папката на тази платформа на SD картата."
   },
   "platforms": {
     "cancel": "Откажи",
     "controls": {
-      "data_packs": "Колекция данни",
-      "remove_coreless": "Премахни без ядра",
+      "data_packs": "Управлявай колекции данни",
+      "remove_coreless": "Премахни платформи без ядра",
       "archive": "Архивни платформи",
-      "image_packs": "Колекция изображения",
+      "image_packs": "Управлявай колекции изображения",
       "search": "Търси"
     },
     "archive": {
-      "apply_changes": "Запазване на промените",
-      "close": "Затвори без запазване",
-      "search_placeholder": "Архивирани платформи",
-      "archive_all": "Архивиране на всички",
       "filters": {
         "all": "Всички",
         "category": "Категория",
@@ -381,17 +613,22 @@
     },
     "data_packs": {
       "apply_changes": "Приложи {count, plural, =0 {0 Промени} one {1 Промяна} other {# Промени}}",
-      "close": "Затвори",
-      "current": "Текущи"
+      "current": "Текущи",
+      "intro": "Пакетите с данни от общността могат да заменят името, категорията, производителя и годината на платформа. Избери един за платформа; Текущ запазва това, което е на SD картата. Показват се само платформи с друга версия."
     },
     "delete_unused": "Изтрий {count, plural, one {# неизползвана платформа} other {# неизползвани платформи}}?",
     "edit": "Редактирай",
     "image_packs": {
       "apply_changes": "Приложи {count, plural, =0 {0 Промени} one {1 Промяна} other {# Промени}}",
-      "close": "Затвори",
-      "current": "Текущи"
+      "current": "Текущи",
+      "intro": "Пакетите с изображения от общността заменят картинките, които Pocket показва за всяка платформа. Избери един за платформа; Текущ запазва изображението на SD картата."
     },
-    "save": "Съхрани"
+    "save": "Съхрани промените",
+    "archived": "Архивирана",
+    "empty": {
+      "title": "Няма платформи на SD картата",
+      "text": "Платформите се добавят при инсталиране на ядра."
+    }
   },
   "progress": {
     "remaining_time": "Оставащо време (прибл.): {remainingTime}",
@@ -400,7 +637,7 @@
   "save_info": {
     "confirm_restore": "Възстанови от бекъп?",
     "controls": {
-      "back": "Обратно в списъка",
+      "back": "Назад към резервните копия",
       "hide_unchanged": "Скрий непроменените",
       "search": "Търси"
     },
@@ -408,7 +645,11 @@
     "date": "{date, date, short}",
     "newer": "Нови",
     "older": "По-стари",
-    "time": "{date, time, short}"
+    "time": "{date, time, short}",
+    "explainer": "Всяка колона е резервно копие, най-старото е вляво. Лентата показва колко дълго запазената игра е останала същата; зелената е в Pocket в момента. Щракни върху друга, за да възстановиш тази версия.",
+    "restore": "Възстанови",
+    "restore_version": "Възстанови версията от {date, date, short}, {date, time, short}",
+    "show_on_sd_card": "Покажи на SD картата"
   },
   "save_states": {
     "cartridge": "Дискета",
@@ -416,7 +657,16 @@
     "controls": {
       "clear_selection": "Изчисти избора",
       "delete_selection": "Изтрий избраните ({count})",
-      "search": "Търси"
+      "search": "Търси",
+      "core": "Ядро",
+      "platform": "Платформа",
+      "all": "Всички",
+      "group_by": "Групирай по",
+      "group": {
+        "core": "Ядро",
+        "game": "Игра"
+      },
+      "game": "Игра"
     },
     "count": "( {count} / 128 )",
     "item": {
@@ -425,48 +675,88 @@
     },
     "photos": {
       "title": "Експорт на снимка",
+      "open_export": "Експорт на снимки",
       "palette": "Палитра",
       "custom": "По избор",
-      "close": "Затвори",
       "export_selected": "Експортирай избраните",
       "export_all": "Експорт на всичко",
       "colours": {
         "gb": "GB",
         "gb_player": "GB Player",
         "black_and_white": "Черно-бяло"
-      }
-    }
+      },
+      "photo_number": "Снимка {number} от {total}",
+      "shade": "Нюанс {number}"
+    },
+    "empty": {
+      "title": "Все още няма запазени състояния",
+      "text": "Спомените са запазени състояния: моментна снимка на играта, към която можеш да се върнеш по всяко време."
+    },
+    "how_to": {
+      "save": "Натисни <key>бутона Analogue</key> и <key>Нагоре</key> по време на игра, за да запазиш спомен.",
+      "load": "Натисни <key>бутона Analogue</key> и <key>Надолу</key>, за да заредиш последния. Първо включи <key>Enable Quick Load</key> в настройките на Pocket → Memories."
+    },
+    "count_game": "{count, plural, one {# запазено състояние} other {# запазени състояния}}",
+    "unknown_game": "Неизвестна игра"
   },
   "saves": {
     "backups": "Бекъпи: {count}",
     "confirm_delete": "Сигурни ли сте, че искате да изтриете тази бекъп локация?",
     "controls": {
-      "add_backup_location": "Добави бекъп локация",
-      "mister_sync": "MiSTer Sync"
+      "add_backup_location": "Добави локация за резервни копия",
+      "mister_sync": "Отвори MiSTer Sync"
     },
-    "latest_backup": "Последен бекъп: {date, date, long}, {date, time, short}",
     "none": "Добави бекъп локация отгоре",
     "not_found": "Не е намерена",
     "oldest_backup": "Най-стар бекъп: {date, date, long}, {date, time, short}",
     "remove": "Премахни локация",
-    "view_saves": "Виж съхранения"
+    "view_saves": "Виж съхранения",
+    "copy_path": "Копирай пътя",
+    "open_folder": "Отвори папката",
+    "copied": "Копирано",
+    "location_title": "Локация {number}",
+    "back_up_now": "Архивирай сега",
+    "backing_up": "Архивиране…",
+    "last_backup_label": "Последно копие",
+    "never": "Все още няма копия",
+    "empty_title": "Все още няма резервни копия"
   },
   "screenshot_info": {
     "controls": {
-      "back": "Обратно в списъка",
-      "save": "Съхрани",
-      "share": "Сподели",
-      "upscaled": "Прескалирано"
-    }
+      "back": "Назад към скрийншотите",
+      "save": "Съхрани скрийншот",
+      "share": "Сподели скрийншот",
+      "upscaled": "Прескалирано",
+      "previous": "Предишна екранна снимка",
+      "next": "Следваща екранна снимка"
+    },
+    "dimensions": "{width} × {height} px"
   },
   "screenshots": {
     "controls": {
       "delete_selected": "Изтрий избраните ({count})",
       "export_selected": "Експортирай избраните ({count})",
       "search": "Търси",
-      "select": "Избери"
+      "select": "Избери",
+      "group_by": "Групирай по",
+      "group": {
+        "game": "Игра",
+        "core": "Ядро",
+        "date": "Дата"
+      },
+      "game": "Игра",
+      "core": "Ядро",
+      "all": "Всички"
     },
-    "no_screenshots": "След като направиш няколко скрийншота ще се появят тук"
+    "no_screenshots": "След като направиш няколко скрийншота ще се появят тук",
+    "how_to": "Натисни <key>бутона Analogue</key> и <key>Start</key> едновременно по време на игра. Скрийншотът се запазва на SD картата и се появява тук.",
+    "empty_title": "Все още няма скрийншоти",
+    "taken": "{date, date, medium}, {date, time, short}",
+    "count": "{count, plural, one {# екранна снимка} other {# екранни снимки}}",
+    "unknown_game": "Неизвестна игра",
+    "unknown_core": "Неизвестно ядро",
+    "unknown_date": "Без дата",
+    "group_date": "{date, date, full}"
   },
   "settings": {
     "3d_pocket": {
@@ -520,13 +810,15 @@
       "checkbox": "Винаги използвай Английски (US)"
     },
     "archive": {
-      "save": "Съхрани",
+      "save": "Съхрани URL",
       "title": "ROM & BIOS архив (Нужни файлове)",
-      "warning": "Моля проверете местните закони свързани с изтеглянето на защитени ROM & BIOS файлове.\nАко сте ок с това, копирайте следния url в полето и натиснете \"Съхрани\"."
+      "warning": "Моля проверете местните закони свързани с изтеглянето на защитени ROM & BIOS файлове.\nАко сте ок с това, копирайте следния url в полето и натиснете \"Съхрани\".",
+      "copy_url": "Копирай URL",
+      "copied": "Копирано"
     },
     "github_token": {
       "title": "Github Token",
-      "remove": "Премахни",
+      "remove": "Премахни токена",
       "ramble": "Ако имате проблеми с GitHub rate limit, добавете PAT тоукън отдолу.\nPAT тоукъна няма настроени никакви скоупове, и се съхранява на вашият компютър вместо на SD картата на Pocket."
     },
     "clear_file_cache": {
@@ -535,7 +827,7 @@
       "title": "Изчисти файл кеша"
     },
     "disconnect": {
-      "button": "Прекъсване",
+      "button": "Изключи Pocket",
       "ramble": "Връщане на \"Свържи Pocket\" екрана (Това не изключва безопасно SD картата / USB флашката)",
       "title": "Прекъсване"
     },
@@ -568,7 +860,29 @@
       "ramble": "Клонирай .pal файловете в .gbp файлове. Копира 4-те цвята използвани за фон в новите .gbp файлове.\nВключването ще създаде .gbp файл за всеки .pal файл в /Assets/gb/common/palettes",
       "checkbox": "Включи автоматични .gbp файлове"
     },
-    "thanks": "Благодарности на:"
+    "thanks": "Благодарности на:",
+    "sections": "Раздели на настройките",
+    "section_titles": {
+      "display": "Изглед",
+      "downloads": "Изтегляния",
+      "files": "Файлове",
+      "connection": "Връзка"
+    },
+    "theme": {
+      "title": "Тема",
+      "label": "Външен вид",
+      "system": "Системна",
+      "dark": "Тъмна",
+      "light": "Светла",
+      "style_label": "Стил",
+      "style_slanted": "Скосен",
+      "style_modern": "Прав"
+    },
+    "dismissed_notes": {
+      "title": "Скрити съобщения",
+      "ramble": "Съобщенията, които си затворил, като съвета за плъзгане на .zip файлове, могат да се покажат отново.",
+      "button": "{count, plural, =0 {Покажи съобщенията отново} one {Покажи # съобщение отново} other {Покажи # съобщения отново}}"
+    }
   },
   "time_ago": {
     "less_than_1_min_ago": "преди по-малко от минута"
@@ -585,7 +899,7 @@
       "other": "други"
     },
     "cancel_button": "Откажи",
-    "confirm_button": "Потвърди",
+    "confirm_button": "Инсталирай файловете",
     "remove_duplicate": "Премахни дублирани съществуващи файлове",
     "scanning": "Сканиране на файлове...",
     "moved_files_info": "Обработва случаи на преместени файлове, напр. JSON файловете са вече в `_alternatives`",
@@ -594,7 +908,12 @@
       "cancel": "Пропусни",
       "text": "{list}\n\nАсети, Съхранения и др. ще бъдат прехвърлени и старото ядро ще бъде изтрито.",
       "title": "Замени ядра?"
-    }
+    },
+    "drop": {
+      "title": "Пуснете, за да инсталирате",
+      "text": "Pocket Sync ще инсталира ядрата и файловете от .zip файла на SD картата."
+    },
+    "downloading": "Изтегляне…"
   },
   "version": {
     "update_alt": "Налично е обновление {version}",
@@ -604,5 +923,18 @@
   "jobs": {
     "Running": "Откажи",
     "Stopping": "Отказване..."
+  },
+  "pocket_buttons": {
+    "select": "Select",
+    "analogue": "Analogue",
+    "start": "Start",
+    "a": "A",
+    "b": "B",
+    "x": "X",
+    "y": "Y",
+    "up": "Нагоре",
+    "down": "Надолу",
+    "left": "Наляво",
+    "right": "Надясно"
   }
 }

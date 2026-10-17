@@ -2,6 +2,7 @@ import { PocketSyncConfigSelector } from "../../../jotai/config/selectors"
 import { useUpdateConfig } from "../hooks/useUpdateConfig"
 import { useTranslation } from "react-i18next"
 import { useAtomValue } from "jotai"
+import Button from "../../ui/Button"
 
 export const HiddenCores = () => {
   const updateConfig = useUpdateConfig()
@@ -12,7 +13,7 @@ export const HiddenCores = () => {
   const hasHiddenCores = hiddenCores.length !== 0
 
   return (
-    <div className="settings__row">
+    <div className="settings__row" id="settings-hidden_cores">
       <h3 className="settings__row-title">{t("hidden_cores.title")}</h3>
       <div className="settings__ramble">{t("hidden_cores.ramble")}</div>
       <ul className="settings__items-input-list">
@@ -32,9 +33,11 @@ export const HiddenCores = () => {
         ))}
       </ul>
       {hasHiddenCores && (
-        <button onClick={() => updateConfig("hidden_cores", [])}>
-          {t("hidden_cores.button")}
-        </button>
+        <div className="settings__actions">
+          <Button onClick={() => updateConfig("hidden_cores", [])}>
+            {t("hidden_cores.button")}
+          </Button>
+        </div>
       )}
     </div>
   )

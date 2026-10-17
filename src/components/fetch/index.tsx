@@ -1,4 +1,14 @@
-import { ReactNode, Suspense, useCallback, useMemo, useState } from "react"
+import {
+  createContext,
+  ReactNode,
+  Suspense,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
 
 import "./index.css"
 
@@ -7,8 +17,8 @@ import {
   PathFileInfoSelectorFamily,
 } from "../../jotai/archive/selectors"
 import { useInstallRequiredFiles } from "../../hooks/useInstallRequiredFiles"
-import { FetchFileMetadataWithStatus, FileCopy } from "../../types"
-import { Controls } from "../controls"
+import { FetchFileMetadataWithStatus, FetchType, FileCopy } from "../../types"
+import { Controls, ControlsActions } from "../controls"
 import { PocketSyncConfigSelector } from "../../jotai/config/selectors"
 import { NewFetch } from "./new"
 import { invokeCopyFiles } from "../../utils/invokes"
@@ -17,25 +27,111 @@ import { splitAsPath } from "../../utils/splitAsPath"
 import { archiveBumpAtom } from "../../jotai/archive/atoms"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { confirm } from "@tauri-apps/plugin-dialog"
-import { useTranslation } from "react-i18next"
+import { Trans, useTranslation } from "react-i18next"
 import { ControlsButton } from "../controls/inputs/button"
+import Button from "../ui/Button"
+import EmptyState from "../ui/EmptyState"
 import { ProgressLoader, ProgressLoaderInner } from "../loader/progress"
 import { usePreventGlobalZipInstallModal } from "../../hooks/usePreventGlobalZipInstall"
 import { FetchInfoSelectorFamily } from "../../jotai/fetch/selectors"
-import { useAtomValue, useSetAtom } from "jotai"
+import { useAtomValue } from "jotai"
+import { useAtomCallback } from "jotai/utils"
+import { pocketPathAtom } from "../../jotai/atoms"
+import { fsWatchAtomFamily } from "../../jotai/fileSystem/atoms"
+import { fetchLastRunAtom, fetchSourceKey } from "../../jotai/fetch/atoms"
+import { openFolder } from "../../utils/openFolder"
+import { TimeAgo } from "../newsFeed/timeAgo"
+import { Link } from "../link"
+import Icon from "../ui/Icon"
+import IconButton from "../ui/IconButton"
+import Skeleton from "../ui/Skeleton"
+import Tag, { TagList } from "../ui/Tag"
+import Tile from "../ui/Tile"
 
 type FileStatus = "complete" | "partial" | "none" | "waiting"
+
+/**
+ * Lets each source offer its Fetch to the page's Fetch All: registers it
+ * while there's something to fetch; returns the unregister function.
+ */
+const FetchAllContext = createContext<
+  ((key: string, fetch: () => Promise<unknown>) => () => void) | null
+>(null)
 
 export const Fetch = () => {
   const config = useAtomValue(PocketSyncConfigSelector)
   const updateConfig = useUpdateConfig()
   const [newFetchOpen, setNewFetchOpen] = useState<boolean>(false)
+  const [editing, setEditing] = useState<{
+    fetch: FetchType
+    index: number
+  } | null>(null)
   const { t } = useTranslation("fetch")
+
+  // The sources with something to fetch, for Fetch All
+  const fetchersRef = useRef(new Map<string, () => Promise<unknown>>())
+  const [pendingCount, setPendingCount] = useState(0)
+  const [isFetchingAll, setIsFetchingAll] = useState(false)
+  const registerFetch = useCallback(
+    (key: string, fetch: () => Promise<unknown>) => {
+      const fetchers = fetchersRef.current
+      fetchers.set(key, fetch)
+      setPendingCount(fetchers.size)
+      return () => {
+        if (fetchers.get(key) === fetch) fetchers.delete(key)
+        setPendingCount(fetchers.size)
+      }
+    },
+    []
+  )
+  // One source after another, like pressing each Fetch Files in turn
+  const fetchAll = useCallback(async () => {
+    setIsFetchingAll(true)
+    for (const fetch of [...fetchersRef.current.values()]) {
+      try {
+        await fetch()
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    setIsFetchingAll(false)
+  }, [])
 
   usePreventGlobalZipInstallModal()
 
-  const setArchiveBumpAtom = useSetAtom(archiveBumpAtom)
-  const list = config.fetches || []
+  const list = useMemo(() => config.fetches || [], [config.fetches])
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  // Reads every source and its destination again, and waits for them, so
+  // the button can show that it's working. Local folders are cached by
+  // path like everything on the card, so they're marked as changed.
+  const refreshStatus = useAtomCallback(
+    useCallback(
+      async (get, set) => {
+        setIsRefreshing(true)
+        set(archiveBumpAtom, (count) => count + 1)
+        const now = Date.now()
+        list.forEach((item) => {
+          set(fsWatchAtomFamily(item.destination), now)
+          if (item.type === "filesystem") set(fsWatchAtomFamily(item.path), now)
+        })
+        await Promise.allSettled(
+          list.map((item) =>
+            item.type === "filesystem"
+              ? get(
+                  FetchInfoSelectorFamily({
+                    origin: item.path,
+                    destination: item.destination,
+                  })
+                )
+              : get(ArchiveMetadataSelectorFamily({ archiveName: item.name }))
+          )
+        )
+        setIsRefreshing(false)
+      },
+      [list]
+    )
+  )
 
   const removeItem = useCallback(
     async (index: number) => {
@@ -53,44 +149,70 @@ export const Fetch = () => {
   return (
     <div className="fetch">
       <Controls>
-        <ControlsButton onClick={() => setNewFetchOpen(true)}>
-          {t("controls.add_fetch_item")}
-        </ControlsButton>
-        <ControlsButton
-          onClick={() => {
-            setArchiveBumpAtom((c) => c + 1)
-          }}
-        >
-          {t("controls.refresh")}
-        </ControlsButton>
+        <ControlsActions>
+          <ControlsButton onClick={() => setNewFetchOpen(true)}>
+            {t("controls.add_fetch_item")}
+          </ControlsButton>
+          <ControlsButton loading={isRefreshing} onClick={refreshStatus}>
+            {t("controls.refresh")}
+          </ControlsButton>
+          <ControlsButton
+            icon="download"
+            loading={isFetchingAll}
+            disabled={pendingCount === 0}
+            onClick={fetchAll}
+          >
+            {t("controls.fetch_all")}
+          </ControlsButton>
+        </ControlsActions>
       </Controls>
       {newFetchOpen && <NewFetch onClose={() => setNewFetchOpen(false)} />}
-      <div className="fetch__list">
-        {list.map((item, index) => {
-          switch (item.type) {
-            case "archive.org":
-              return (
-                <Suspense key={item.name}>
-                  <ArchiveOrgItem
-                    onRemove={() => removeItem(index)}
-                    {...item}
-                  />
-                </Suspense>
-              )
-            case "filesystem":
-              return (
-                <Suspense key={`${item.path}->${item.destination}`}>
-                  <FileSystemItem
-                    onRemove={() => removeItem(index)}
-                    {...item}
-                  />
-                </Suspense>
-              )
-            default:
-              return null
+      {editing && (
+        <NewFetch editing={editing} onClose={() => setEditing(null)} />
+      )}
+      {list.length === 0 && (
+        <EmptyState
+          icon="download"
+          title={t("empty.title")}
+          action={
+            <Button theme="primary" onClick={() => setNewFetchOpen(true)}>
+              {t("controls.add_fetch_item")}
+            </Button>
           }
-        })}
-      </div>
+        >
+          {t("empty.text")}
+        </EmptyState>
+      )}
+      <FetchAllContext.Provider value={registerFetch}>
+        <div className="fetch__list">
+          {list.map((item, index) => {
+            switch (item.type) {
+              case "archive.org":
+                return (
+                  <Suspense key={item.name}>
+                    <ArchiveOrgItem
+                      onEdit={() => setEditing({ fetch: item, index })}
+                      onRemove={() => removeItem(index)}
+                      {...item}
+                    />
+                  </Suspense>
+                )
+              case "filesystem":
+                return (
+                  <Suspense key={`${item.path}->${item.destination}`}>
+                    <FileSystemItem
+                      onEdit={() => setEditing({ fetch: item, index })}
+                      onRemove={() => removeItem(index)}
+                      {...item}
+                    />
+                  </Suspense>
+                )
+              default:
+                return null
+            }
+          })}
+        </div>
+      </FetchAllContext.Provider>
     </div>
   )
 }
@@ -98,59 +220,240 @@ export const Fetch = () => {
 const FileSystemItem = ({
   path,
   destination,
+  onEdit,
   onRemove,
 }: {
   path: string
   destination: string
+  onEdit: () => void
   onRemove: () => void
 }) => {
   const [isCopying, setIsCopying] = useState<boolean>(false)
-  const { t } = useTranslation("fetch")
+  const recordFetch = useRecordFetch(fetchSourceKey(path, destination))
+  const rereadDestination = useRereadDestination(destination)
 
   const copy = useCallback(
     async (files: FileCopy[]) => {
       setIsCopying(true)
       await invokeCopyFiles(files.filter(({ exists }) => !exists))
+      // Shows the new status right away, without waiting for a file event
+      rereadDestination()
       setIsCopying(false)
+      recordFetch()
     },
-    [setIsCopying]
+    [recordFetch, rereadDestination]
   )
 
   return (
-    <div className="fetch__list-item">
-      <div className="fetch__list-item-info">
-        <div className="fetch__list-item-type">{t("types.filesystem")}</div>
-        <div className="fetch__list-item-name">{path}</div>
-        <div className="fetch__list-item-destination">{destination}</div>
-      </div>
+    <Suspense
+      fallback={
+        <FetchTile
+          icon="folder"
+          kind="filesystem"
+          title={folderName(path)}
+          subtitle={<SourceFolderLink path={path} />}
+          destination={destination}
+          status={<FileStatus status="waiting" files={[]} />}
+          onEdit={onEdit}
+          onRemove={onRemove}
+        />
+      }
+    >
+      <FileSystemStatus path={path} destination={destination}>
+        {(status, files) => (
+          <FetchTile
+            icon="folder"
+            kind="filesystem"
+            title={folderName(path)}
+            subtitle={<SourceFolderLink path={path} />}
+            destination={destination}
+            status={
+              isCopying ? (
+                <ProgressLoader name="copy_files" />
+              ) : (
+                <FileStatus status={status} files={files} />
+              )
+            }
+            fetchDisabled={isCopying || status === "complete"}
+            sourceKey={fetchSourceKey(path, destination)}
+            onFetch={() => copy(files)}
+            onEdit={onEdit}
+            onRemove={onRemove}
+          />
+        )}
+      </FileSystemStatus>
+    </Suspense>
+  )
+}
 
-      {isCopying && (
-        <div className="fetch__status">
-          <ProgressLoader name="copy_files" />
-        </div>
-      )}
-      {!isCopying && (
+/** Marks a destination on the card as changed, so its files are read again. */
+const useRereadDestination = (destination: string) =>
+  useAtomCallback(
+    useCallback(
+      (_get, set) => set(fsWatchAtomFamily(destination), Date.now()),
+      [destination]
+    )
+  )
+
+/** Saves "now" as the source's last fetch time. */
+const useRecordFetch = (sourceKey: string) => {
+  const save = useAtomCallback(
+    useCallback(
+      (get, set) => {
+        const current = get(fetchLastRunAtom)
+        const write = (runs: Record<string, number>) =>
+          set(fetchLastRunAtom, { ...runs, [sourceKey]: Date.now() })
+        if (current instanceof Promise) return current.then(write)
+        return write(current)
+      },
+      [sourceKey]
+    )
+  )
+  return useCallback(() => {
+    save()
+  }, [save])
+}
+
+/** A local source's folder; opens it, like the archive.org link does. */
+const SourceFolderLink = ({ path }: { path: string }) => {
+  const { t } = useTranslation("fetch")
+  return (
+    <Link
+      className="fetch__path"
+      title={t("open_source")}
+      onClick={() => openFolder(path)}
+    >
+      {path}
+    </Link>
+  )
+}
+
+/** The last folder of a path, as the source's title. */
+const folderName = (path: string) =>
+  splitAsPath(path).filter(Boolean).pop() ?? path
+
+type FetchTileProps = {
+  icon: "folder" | "archive"
+  /** Shown as a tag: a folder on this computer, or the Internet Archive. */
+  kind: FetchType["type"]
+  title: ReactNode
+  subtitle: ReactNode
+  destination: string
+  extensions?: string[]
+  /** File count tag, or the progress while fetching. */
+  status: ReactNode
+  /** Leaves the Fetch button out while the status is loading. */
+  onFetch?: () => Promise<unknown>
+  fetchDisabled?: boolean
+  /** Identifies the source for its last fetch time. */
+  sourceKey?: string
+  onEdit: () => void
+  onRemove: () => void
+}
+
+/** One fetch source: what it copies, where to, its status and actions. */
+const FetchTile = ({
+  icon,
+  kind,
+  title,
+  subtitle,
+  destination,
+  extensions,
+  status,
+  onFetch,
+  fetchDisabled = false,
+  sourceKey,
+  onEdit,
+  onRemove,
+}: FetchTileProps) => {
+  const { t } = useTranslation("fetch")
+
+  // Offers this source's Fetch to Fetch All while there's something to
+  // fetch; registered once, calling the latest onFetch
+  const registerFetch = useContext(FetchAllContext)
+  const onFetchRef = useRef(onFetch)
+  useEffect(() => {
+    onFetchRef.current = onFetch
+  })
+  const canFetch = Boolean(onFetch) && !fetchDisabled
+  useEffect(() => {
+    if (!registerFetch || !canFetch || !sourceKey) return
+    return registerFetch(sourceKey, async () => await onFetchRef.current?.())
+  }, [registerFetch, canFetch, sourceKey])
+
+  const pocketPath = useAtomValue(pocketPathAtom)
+  const lastRuns = useAtomValue(fetchLastRunAtom)
+  const lastRun = sourceKey ? lastRuns[sourceKey] : undefined
+  return (
+    <Tile
+      orientation="horizontal"
+      className="fetch__item"
+      media={
+        <span className="tile__icon">
+          <Icon icon={icon} size={24} />
+        </span>
+      }
+      title={title}
+      subtitle={subtitle}
+      meta={
         <>
-          <Suspense fallback={<FileStatus status="waiting" files={[]} />}>
-            <FileSystemStatus path={path} destination={destination}>
-              {(status, files) => (
-                <>
-                  <FileStatus status={status} files={files} />
-                  <button
-                    onClick={() => {
-                      copy(files)
-                    }}
-                  >
-                    {t("fetch_button")}
-                  </button>
-                </>
-              )}
-            </FileSystemStatus>
-          </Suspense>
-          <button onClick={onRemove}>{t("remove_button")}</button>
+          <span>{t("to_destination", { destination })}</span>
+          {extensions && extensions.length > 0 && (
+            <span>
+              {t("only_extensions", { extensions: extensions.join(", ") })}
+            </span>
+          )}
+          {lastRun && (
+            <span>
+              <Trans
+                t={t}
+                i18nKey="last_fetched"
+                components={{ time: <TimeAgo since={lastRun} /> }}
+              />
+            </span>
+          )}
         </>
-      )}
-    </div>
+      }
+      tags={
+        <div className="fetch__tags">
+          <Tag>
+            {t(
+              kind === "archive.org" ? "types.archive_org" : "types.filesystem"
+            )}
+          </Tag>
+          {status}
+        </div>
+      }
+      actions={
+        <>
+          {onFetch && (
+            <Button icon="download" disabled={fetchDisabled} onClick={onFetch}>
+              {t("fetch_button")}
+            </Button>
+          )}
+          <IconButton
+            theme="tertiary"
+            icon="pencil"
+            label={t("edit_button")}
+            onClick={onEdit}
+          />
+          {pocketPath && (
+            <IconButton
+              theme="tertiary"
+              icon="folder"
+              label={t("open_destination")}
+              onClick={() => openFolder(`${pocketPath}/${destination}`)}
+            />
+          )}
+          <IconButton
+            theme="destructive"
+            icon="trash"
+            label={t("remove_button")}
+            onClick={onRemove}
+          />
+        </>
+      }
+    />
   )
 }
 
@@ -176,7 +479,8 @@ const FileSystemStatus = ({
         exists:
           pocketFileInfo.find(
             (pF) =>
-              pF.name === f.name && pF.mtime && f.mtime && pF.mtime >= f.mtime
+              // A date of 0 (1 Jan 1970) is a date too, not a missing one
+              pF.name === f.name && pF.mtime >= f.mtime
           ) !== undefined,
       })),
     [fsFileInfo, pocketPath, destination, pocketFileInfo]
@@ -196,80 +500,99 @@ const ArchiveOrgItem = ({
   name,
   destination,
   extensions,
+  onEdit,
   onRemove,
 }: {
   name: string
   destination: string
   extensions?: string[]
+  onEdit: () => void
   onRemove: () => void
 }) => {
+  const rereadDestination = useRereadDestination(destination)
   const { installRequiredFiles, inProgress, percent, message } =
     useInstallRequiredFiles(
       `install_archive_files-${btoa(name).replaceAll("=", "")}`
     )
   const { t } = useTranslation("fetch")
+  const recordArchiveFetch = useRecordFetch(fetchSourceKey(name, destination))
+
+  const subtitle = (
+    <Link href={`https://archive.org/details/${name}`}>
+      {t("archive_link", { name })}
+    </Link>
+  )
 
   return (
-    <div className="fetch__list-item">
-      <div className="fetch__list-item-info">
-        <div className="fetch__list-item-type">{t("types.archive_org")}</div>
-        <div className="fetch__list-item-name">{name}</div>
-        <div className="fetch__list-item-destination">{destination}</div>
-      </div>
-      {inProgress && (
-        <div className="fetch__status">
-          <ProgressLoaderInner
-            percent={percent}
-            message={message}
-            showToken={false}
+    <Suspense
+      fallback={
+        <FetchTile
+          icon="archive"
+          kind="archive.org"
+          title={name}
+          subtitle={subtitle}
+          destination={destination}
+          extensions={extensions}
+          status={<FileStatus status="waiting" files={[]} />}
+          onEdit={onEdit}
+          onRemove={onRemove}
+        />
+      }
+    >
+      <ArchiveOrgStatus
+        name={name}
+        destination={destination}
+        extensions={extensions}
+      >
+        {(status, files) => (
+          <FetchTile
+            icon="archive"
+            kind="archive.org"
+            title={name}
+            subtitle={subtitle}
+            destination={destination}
+            extensions={extensions}
+            status={
+              inProgress ? (
+                <ProgressLoaderInner
+                  percent={percent}
+                  message={message}
+                  showToken={false}
+                />
+              ) : (
+                <FileStatus status={status} files={files} />
+              )
+            }
+            fetchDisabled={inProgress || status === "complete"}
+            sourceKey={fetchSourceKey(name, destination)}
+            onFetch={() =>
+              installRequiredFiles(
+                files
+                  .filter(({ exists }) => !exists)
+                  .map((f) => ({
+                    name: f.name,
+                    path: `${f.path.replace(/^(\/|\\)+/, "")}/${f.name}`,
+                    required: true,
+                    status: {
+                      type: "MissingButOnArchive",
+                      url: f.name,
+                      crc32: "",
+                      name: f.name,
+                      mtime: "0",
+                    },
+                  })),
+                `https://archive.org/download/${name}`
+              ).then(() => {
+                rereadDestination()
+                recordArchiveFetch()
+              })
+            }
+            onEdit={onEdit}
+            onRemove={onRemove}
           />
-        </div>
-      )}
-      {!inProgress && (
-        <>
-          <Suspense fallback={<FileStatus status="waiting" files={[]} />}>
-            <ArchiveOrgStatus
-              name={name}
-              destination={destination}
-              extensions={extensions}
-            >
-              {(status, files) => (
-                <>
-                  <FileStatus status={status} files={files} />
-
-                  <button
-                    onClick={async () => {
-                      await installRequiredFiles(
-                        files
-                          .filter(({ exists }) => !exists)
-                          .map((f) => ({
-                            name: f.name,
-                            path: `${f.path.replace(/^(\/|\\)+/, "")}/${
-                              f.name
-                            }`,
-                            required: true,
-                            status: {
-                              type: "MissingButOnArchive",
-                              url: f.name,
-                              crc32: "",
-                              name: f.name,
-                              mtime: "0",
-                            },
-                          })),
-                        `https://archive.org/download/${name}`
-                      )
-                    }}
-                  >
-                    {t("fetch_button")}
-                  </button>
-                </>
-              )}
-            </ArchiveOrgStatus>
-          </Suspense>
-          <button onClick={onRemove}>{t("remove_button")}</button>
-        </>
-      )}
-    </div>
+        )}
+      </ArchiveOrgStatus>
+    </Suspense>
   )
 }
 
@@ -342,14 +665,23 @@ const FileStatus = ({
 }) => {
   const { t } = useTranslation("fetch")
 
-  const statusText = useMemo(() => {
-    if (status === "waiting") return t("loading")
-    const count = files.filter(({ exists }) => exists).length
-    const total = files.length
-    return t("file_count", { count, total })
-  }, [files, status, t])
+  if (status === "waiting") return <Skeleton width={96} />
 
+  const total = files.length
+  const missing = files.filter(({ exists }) => !exists).length
   return (
-    <div className={`fetch__status fetch__status--${status}`}>{statusText}</div>
+    <TagList>
+      {total === 0 && <Tag>{t("status.empty")}</Tag>}
+      {total > 0 && missing === 0 && (
+        <Tag theme="accent" icon="check">
+          {t("status.complete", { total })}
+        </Tag>
+      )}
+      {total > 0 && missing > 0 && (
+        <Tag theme={missing < total ? "warning" : "neutral"}>
+          {t("status.to_fetch", { missing, total })}
+        </Tag>
+      )}
+    </TagList>
   )
 }

@@ -1,0 +1,249 @@
+/* One card style for every grid of items: media on top, text below, the
+   card radius, and a hover that lightens the background */
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background-color: var(--theme-surface-sunken);
+  color: var(--theme-text-body);
+
+  /* A frame above the media: transparent by default, a separator in the
+     light theme (white images would blend into the page), the selection
+     colour when selected */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid transparent;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+}
+
+:root[data-theme="light"] .tile::after {
+  border-color: var(--theme-separator);
+}
+
+/* As specific as the light frame above, so selection wins in every theme */
+:root .tile.tile--is-selected::after {
+  border: 2px solid var(--theme-selection);
+}
+
+.tile--is-interactive {
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--theme-tile-hover);
+  }
+
+  &[role="button"]:active {
+    transform: scale(0.99);
+  }
+
+  :root.keyboard-focus &:focus,
+  :root.keyboard-focus &:has(.tile__open:focus) {
+    outline: 2px solid var(--theme-focus);
+    outline-offset: 3px;
+  }
+}
+
+/* Resets the global `button` element styles from style.css */
+.tile__open {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+
+  &:is(button) {
+    cursor: pointer;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:active {
+    transform: none;
+  }
+}
+
+.tile__media {
+  background-color: var(--theme-media-background);
+
+  & > * {
+    display: block;
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+  }
+}
+
+.tile__body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  /* Lets long names and links shrink instead of pushing the actions out */
+  min-width: 0;
+  gap: var(--space-xs);
+  padding: var(--space-md);
+}
+
+.tile__title {
+  font-weight: 600;
+  color: var(--theme-text-headline);
+  overflow-wrap: anywhere;
+}
+
+/* A square icon as the media, for items without a picture (e.g. fetch
+   sources) */
+.tile__media:has(> .tile__icon) {
+  background: none;
+}
+
+.tile__media > .tile__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  background-color: var(--theme-overlay);
+  color: var(--theme-text-soft);
+}
+
+.tile__subtitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+}
+
+/* Links in the subtitle (a repository, an archive) stay on one line */
+.tile__subtitle > .link {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: inherit;
+}
+
+.tile__description {
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-body);
+  white-space: pre-line;
+}
+
+.tile__meta {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-sm);
+  font-size: var(--font-size-xs);
+  color: var(--theme-text-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* At the bottom, so tiles in a row line up */
+.tile__tags {
+  margin-top: auto;
+  padding-top: var(--space-xs);
+
+  /* Hidden when there's nothing in it, e.g. a core without tags (an empty
+     TagList); a loader or progress still shows */
+  &:empty,
+  &:has(> .tag-list:only-child:empty) {
+    display: none;
+  }
+}
+
+.tile__actions {
+  display: flex;
+  gap: var(--space-xs);
+  padding: 0 var(--space-sm) var(--space-sm);
+}
+
+/* Horizontal: a small picture left, text beside it, actions on the right.
+   The frame, background and hover stay the same as the vertical tile. */
+.tile--orientation-horizontal {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  padding: var(--space-md);
+
+  /* Text starts at the top of the picture */
+  & .tile__open {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-lg);
+  }
+
+  & .tile__media {
+    flex-shrink: 0;
+    width: var(--tile-media-width, 120px);
+  }
+
+  & .tile__body {
+    gap: var(--space-sm);
+    padding: 0;
+  }
+
+  & .tile__actions {
+    padding: 0;
+  }
+}
+
+/* An author's pixel icon next to their name in the subtitle */
+.tile__avatar {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  image-rendering: pixelated;
+}
+
+/* Overlay: only the picture, like a photo gallery; the text shows on top
+   of it on hover and keyboard focus (screenshots) */
+.tile--orientation-overlay {
+  background: none;
+
+  & .tile__media {
+    height: 100%;
+  }
+
+  & .tile__body {
+    /* Text levels for the dark scrim, whatever the theme */
+    --theme-text-headline: var(--theme-scrim-text);
+    --theme-text-body: var(--theme-scrim-text);
+    --theme-text-soft: color-mix(
+      in srgb,
+      var(--theme-scrim-text) 72%,
+      transparent
+    );
+
+    position: absolute;
+    inset: auto 0 0;
+    gap: 0;
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--theme-scrim);
+    opacity: 0;
+    transition: opacity 0.15s ease-out;
+  }
+
+  &:hover .tile__body,
+  :root.keyboard-focus &:focus .tile__body,
+  :root.keyboard-focus &:focus-within .tile__body {
+    opacity: 1;
+  }
+}

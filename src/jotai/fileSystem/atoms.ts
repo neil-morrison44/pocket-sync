@@ -6,7 +6,30 @@ import { splitAsPath } from "../../utils/splitAsPath"
 import { FSEvent } from "../../types"
 import { sep } from "@tauri-apps/api/path"
 
-export const fsWatchAtomFamily = atomFamily((path: string) => atom(Date.now()))
+const fsWatchAtoms = atomFamily((path: string) => atom(Date.now()))
+
+/**
+ * Changes whenever something under `path` (relative to the SD card) changes.
+ * Paths are normalised, so "/Fetch Example" and "Fetch Example/" watch the
+ * same folder as the file events ("Fetch Example"); "/" is the card's root.
+ */
+export const fsWatchAtomFamily = (path: string) => {
+  const trimmed = path.replace(/^[\\/]+|[\\/]+$/g, "")
+  return fsWatchAtoms(trimmed === "" ? "/" : trimmed)
+}
+
+/**
+ * Marks everything read from the SD card as changed, so it's read again.
+ * Reads are cached by their path on the card, so after connecting another
+ * folder or card the old one's files would otherwise still show.
+ */
+export const refreshAllFSWatchers = () => {
+  const store = getDefaultStore()
+  const now = Date.now()
+  for (const path of fsWatchAtoms.getParams()) {
+    store.set(fsWatchAtoms(path), now)
+  }
+}
 
 export const initGlobalFSEvents = async () => {
   const store = getDefaultStore()
@@ -18,6 +41,10 @@ export const initGlobalFSEvents = async () => {
       store.set(fsWatchAtomFamily(relativePath), Date.now())
       const parts = splitAsPath(relativePath)
       let currentPath = ""
+
+      // Files at the top of the SD card (e.g. a firmware .bin) change the
+      // root listing, which is watched as "/"
+      if (parts.length <= 1) store.set(fsWatchAtomFamily("/"), Date.now())
 
       for (const part of parts) {
         currentPath = currentPath ? `${currentPath}/${part}` : part

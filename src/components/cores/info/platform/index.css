@@ -1,60 +1,91 @@
+/* One platform: optional image, category, name, maker and year, then links */
 .cores__platform-info {
-  border-radius: 12px;
-  background-color: var(--background-colour);
+  border-radius: var(--radius-card);
   display: flex;
-  grid-template-columns: max-content min-content;
-  gap: 15px;
-  overflow: hidden;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm) var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
+  border: 1px solid var(--theme-separator);
+  color: var(--theme-text-body);
+}
 
-  & > * {
-    padding: 10px 0;
-  }
+.cores__platform-info-image {
+  width: 160px;
+  height: auto;
+  image-rendering: pixelated;
+  background-color: var(--theme-media-background);
+}
 
-  & > *:first-child {
-    padding-left: 15px;
-  }
+.cores__platform-info-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
 
-  & > *:last-child {
-    padding-right: 15px;
-  }
+.cores__platform-info-category {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--theme-text-soft);
 }
 
 .cores__platform-info-name {
-  font-size: 1.25rem;
+  color: var(--theme-text-headline);
 }
 
-.cores__platform-info-edit {
+.cores__platform-info-maker {
+  color: var(--theme-text-soft);
+}
+
+.cores__platform-info-links {
+  display: flex;
+  gap: var(--space-lg);
+  margin-inline-start: auto;
+}
+
+/* Looks like a link; opens the platform's page */
+.cores__platform-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
+  color: var(--theme-text-headline);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--theme-separator);
+  text-underline-offset: 0.2em;
   cursor: pointer;
 
   &:hover {
-    opacity: 0.9;
+    text-decoration-color: currentcolor;
+  }
+
+  &:active {
+    transform: none;
   }
 }
 
-.cores__platform-info-cateogry {
-  border-right: 1px solid white;
-  padding-right: 15px;
-  box-sizing: border-box;
-  background-color: var(--light-colour);
-  display: flex;
-  align-items: center;
+/* The comma is punctuation, not a translatable string */
+.cores__platform-year::before {
+  content: ", ";
 }
 
+.cores__platform-line .cores__platform-link {
+  font-weight: inherit;
+}
 
-.cores__platform-info--non-existent{
-  padding-block: 10px;
-  padding-inline: 15px;
-  padding-inline-start: 10px;
-  width: min-content;
-  display: flex;
-  align-items: flex-start;
-  gap: 5px;
+.cores__platform-info--non-existent {
+  font-family: var(--font-code);
+}
 
-  &::before{
-    content: "#";
-    font-family: GamePocket, sans-serif;
-    font-size: 2em;
-    transform: translateY(0.1em);
-    opacity: 0.75;
-  }
+.cores__platform-line {
+  color: var(--theme-text-soft);
 }

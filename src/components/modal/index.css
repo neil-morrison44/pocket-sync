@@ -1,27 +1,89 @@
+.modal__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgb(0 0 0 / 60%);
+}
+
+/* Always centred in the window, also when a modal sets its own size;
+   content scrolls inside. No transform: popovers inside use fixed
+   positioning, which a transform would break. */
 .modal {
+  position: fixed;
+  inset: 0;
+  margin: auto;
   width: calc(100% - 100px);
   height: calc(100% - 100px);
-  background-color: var(--background-colour);
-  border-radius: 10px;
+
+  /* At most 800px wide, so long lines and wide layouts stay readable */
+  max-width: min(800px, calc(100% - 100px));
+  max-height: calc(100% - 100px);
+  z-index: 1001;
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  gap: var(--space-md);
   box-sizing: border-box;
-  padding: 20px;
-  gap: 10px;
-  border: none;
-  color: white;
+  padding: var(--space-2xl);
+  overflow: auto;
+  border-radius: var(--radius-modal);
+  background-color: var(--theme-background);
+  color: var(--theme-text-body);
+  box-shadow: 0 8px 32px rgb(0 0 0 / 50%);
 
-  &::backdrop {
-    background-color: rgb(0 0 0 / 80%);
+  &:focus {
+    outline: none;
   }
 }
 
+/* Only as large as its content */
 .modal--fit-content {
   width: fit-content;
   height: fit-content;
 }
 
-.modal h2 {
-  margin-block-start: 8px;
+/* A form: a readable width, as tall as its content */
+.modal--form {
+  width: min(560px, calc(100% - 100px));
+  height: fit-content;
+  gap: var(--space-xl);
+
+  /* While loading: about as tall as a short form, not a sliver */
+  & > .loader {
+    min-height: 160px;
+  }
+}
+
+/* Buttons at the end of a modal: dismiss first, the main action last.
+   Always at the very bottom, also when the content is shorter, so they
+   close the modal off. */
+.modal__actions {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: flex-end;
+  gap: var(--control-gap);
+  margin-top: auto;
+  padding-top: var(--space-sm);
+}
+
+/* Title left, close button right */
+.modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+
+h2.modal__title {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-title-md);
+  font-weight: normal;
+  line-height: 1.1;
+  color: var(--theme-text-headline);
+}
+
+.modal__close {
+  flex-shrink: 0;
 }

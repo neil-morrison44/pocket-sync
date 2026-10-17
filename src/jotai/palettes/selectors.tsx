@@ -9,14 +9,19 @@ import { githubHeadersSelector } from "../settings/selectors"
 import { WalkDirSelectorFamily } from "../selectors"
 import { Atom, atom } from "jotai"
 import { atomFamily } from "jotai-family"
+import { keepPrevious, keepPreviousOrSuspend } from "../../utils/jotai"
 
 export const palettesListSelector = atom<Promise<string[]>>(async (get) => {
   const path = "Assets/gb/common/Palettes"
   get(fsWatchAtomFamily(path))
-  const r = await get(WalkDirSelectorFamily({ path, extensions: ["pal"] }))
-  console.log("palettes?", r)
   return get(WalkDirSelectorFamily({ path, extensions: ["pal"] }))
 })
+
+/**
+ * The palettes list, keeping the last one while it reloads: saving a palette
+ * fires several file events, and each used to show the skeletons again.
+ */
+export const palettesListKeptSelector = keepPrevious(palettesListSelector)
 
 export const PaletteColoursSelectorFamily = atomFamily<
   string,
@@ -179,4 +184,22 @@ export const DownloadablePaletteColoursSelectorFamily = atomFamily<
       off: Array.from(data.subarray(48, 51)) as rgb,
     } satisfies Palette
   })
+)
+
+/**
+ * A palette's colours and share code, keeping the shown ones while the file
+ * is read again (saving fires several file events, each used to blank the
+ * palette page and its tile).
+ */
+export const PaletteColoursKeptSelectorFamily = atomFamily((name: string) =>
+  keepPreviousOrSuspend(PaletteColoursSelectorFamily(name))
+)
+
+export const PaletteCodeKeptSelectorFamily = atomFamily((name: string) =>
+  keepPreviousOrSuspend(PaletteCodeSelectorFamily(name))
+)
+
+/** The Game Boy games to preview palettes with; kept while they reload. */
+export const paletteGamesSelector = keepPreviousOrSuspend(
+  WalkDirSelectorFamily({ path: "Assets/gb", extensions: ["gb"] })
 )

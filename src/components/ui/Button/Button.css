@@ -1,0 +1,110 @@
+/* Resets the global `button` element styles from style.css */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  font: inherit;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: none;
+
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.button--is-disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+/* Themes only set colours; the shared slanted block below uses them */
+.button--theme-primary {
+  --button-background: var(--theme-accent);
+  --button-text: var(--theme-accent-text);
+
+  /* Inside the shape the ring sits on green, so it takes the text colour */
+  --focus-ring-colour: var(--focus-ring-on-accent, var(--theme-accent-text));
+}
+
+.button--theme-secondary {
+  --button-background: var(--theme-control-background);
+  --button-text: var(--theme-control-text);
+}
+
+/* Outline only */
+.button--theme-tertiary {
+  --button-background: transparent;
+  --button-text: var(--theme-text-headline);
+  --button-outline: var(--theme-text-soft);
+  --button-hover-background: var(--theme-overlay);
+  --button-hover-filter: none;
+}
+
+.button--theme-destructive {
+  --button-background: var(--theme-danger);
+  --button-text: var(--theme-danger-text);
+}
+
+/* Slanted button, the app's signature shape */
+.button--theme-primary,
+.button--theme-secondary,
+.button--theme-tertiary,
+.button--theme-destructive {
+  height: var(--control-height, 28px);
+  padding-block: 0;
+
+  /* ~1.35× the space above and below the text (6px at 28px), plus half the
+     slant, so text keeps the same distance from the slanted edge */
+  padding-inline: calc(
+    (var(--control-height, 28px) - 16px) / 2 * 1.35 + var(--slant) / 2
+  );
+  position: relative;
+  background-color: var(--button-background);
+  color: var(--button-text);
+  clip-path: var(--shape-slant);
+
+  /* A 1px slanted frame for outlined themes; clip-path clips real borders */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--button-outline, transparent);
+    clip-path: var(--shape-slant-outline);
+    pointer-events: none;
+  }
+
+  /* clip-path also clips outlines, so focus is a ring drawn inside the shape */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: var(--focus-ring-inset, 0);
+    background-color: var(--focus-ring-colour, var(--theme-focus));
+    clip-path: var(--shape-slant-ring);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  :root.keyboard-focus &:focus::after {
+    visibility: visible;
+  }
+
+  &:hover:not(.button--is-disabled) {
+    background-color: var(--button-hover-background, var(--button-background));
+    filter: var(--button-hover-filter, brightness(90%));
+  }
+
+  &:active:not(.button--is-disabled) {
+    transform: scale(0.97);
+  }
+}

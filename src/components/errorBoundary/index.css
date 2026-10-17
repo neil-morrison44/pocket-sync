@@ -1,62 +1,93 @@
+/* The message, a repair when there is one, actions, then the details */
 .error-boundary {
-  padding: 20px;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  gap: var(--space-lg);
+  max-width: var(--content-max-width);
+  min-height: 100vh;
   box-sizing: border-box;
+  padding: var(--space-2xl) var(--page-padding-inline);
 }
 
+h1.error-boundary__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-title-lg);
+  font-weight: normal;
+  line-height: 1.1;
+  color: var(--theme-text-headline);
+}
+
+/* The error itself, set off in red */
 .error-boundary__message {
+  margin: 0;
+  padding: var(--space-sm) var(--space-lg);
+  border-inline-start: 3px solid var(--theme-danger);
+  background-color: color-mix(in srgb, var(--theme-danger) 10%, transparent);
+  color: var(--theme-text-headline);
   white-space: pre-wrap;
-  color: var(--red-colour);
+  overflow-wrap: anywhere;
+}
+
+/* A fix Pocket Sync can do itself, framed in the accent */
+.error-boundary__repair {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md) var(--space-lg);
+  padding: var(--space-lg);
+  border: 1px solid var(--theme-accent-foreground);
+  border-radius: var(--radius-card);
+  background-color: var(--theme-surface-sunken);
+}
+
+.error-boundary__repair-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  color: var(--theme-text-body);
+
+  strong {
+    color: var(--theme-text-headline);
+  }
+
+  code {
+    font-family: var(--font-code);
+    font-size: var(--font-size-code);
+  }
+}
+
+.error-boundary__actions {
+  display: flex;
+  gap: var(--control-gap);
+}
+
+.error-boundary__details {
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+
+  summary {
+    color: var(--theme-text-body);
+    cursor: pointer;
+  }
+}
+
+.error-boundary__where {
+  margin: var(--space-sm) 0 0;
+  font-family: var(--font-code);
+  font-size: var(--font-size-xs);
 }
 
 .error-boundary__stack {
-  white-space: pre-wrap;
-  flex-grow: 1;
+  max-height: 40vh;
+  margin: var(--space-sm) 0 0;
+  padding: var(--space-sm) var(--space-md);
   overflow: auto;
-}
-
-.error-boundary__buttons{
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.error-boundary__repair-button{
-  font-size: 1.1rem;
-  background-color: var(--green-colour);
-  text-shadow: 0 0 2px rgb(0 0 0 / 80%);
-  border: 2px solid white;
-  animation: border-pulse 2s linear infinite;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 16px;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  max-width: 100%;
-}
-
-@keyframes border-pulse {
-  0%, 100% {
-    border-color: white;
-  }
-
-  50% {
-    border-color: transparent;
-  }
-}
-
-.error-boundary__repair-button-title{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.2em;
-  font-size: 1.25rem;
-  font-weight: bold;
-}
-
-.error-boundary__repair-button-title--in-progress{
-  grid-column: 1 / span 3;
+  border-radius: var(--radius-card);
+  background-color: var(--theme-surface-sunken);
+  font-family: var(--font-code);
+  font-size: var(--font-size-xs);
+  color: var(--theme-text-body);
+  white-space: pre-wrap;
 }

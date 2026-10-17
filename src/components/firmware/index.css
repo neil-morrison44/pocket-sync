@@ -1,62 +1,107 @@
-.firmware{
-  display: grid;
-  height: 100%;
-
-  /* overflow: hidden; */
-  box-sizing: border-box;
-  padding: 15px;
-  gap: 10px;
-  grid-template-areas: "c c d d"
-    "s s s s"
-    "r r r r";
-  grid-template-rows: 100px min-content 1fr;
-  overflow: hidden;
-  justify-content: stretch;
-  align-items: center;
-}
-
-.firmware__current{
-  grid-area: c;
-  font-size: 2rem;
-  white-space: nowrap;
-}
-
-.firmware__downloaded{
-  text-align: center;
-  grid-area: d;
+/* Status on top, versions below, full width; the release notes' text is
+   capped to a readable width */
+.firmware {
   display: flex;
-  gap: 15px;
-  justify-content: space-around;
+  flex-direction: column;
+  gap: var(--space-2xl);
+  padding: var(--space-2xl) var(--page-padding-inline);
+  box-sizing: border-box;
+}
+
+.firmware__status {
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-xl);
+  background-color: var(--theme-surface-sunken);
+  border: 1px solid var(--theme-border);
+}
+
+.firmware__current {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.firmware__label {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--theme-text-soft);
+}
+
+.firmware__current-version {
+  font-family: var(--font-display);
+  font-size: var(--font-size-title-lg);
+  line-height: 1.2;
+  color: var(--theme-text-headline);
+}
+
+.firmware__downloaded {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--theme-border);
+  color: var(--theme-text-body);
+}
+
+.firmware__downloaded-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.firmware__downloaded-info {
+  color: var(--theme-text-soft);
+}
+
+/* Nothing waiting on the SD card: fine, so quiet */
+.firmware__downloaded--none {
+  justify-content: flex-start;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+
+  & .icon {
+    color: var(--theme-accent-foreground);
+  }
 }
 
 .firmware__progress {
   display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.firmware__versions {
+  display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: var(--space-sm);
 }
 
-.firmware__release-notes{
-  grid-area: r;
-
-  h2{
-    line-height: unset;
-    margin-block-end: 0.5em;
-  }
-
-  p{
-    margin-block: 0.25em 0.25em;
-  }
-}
-
-.firmware__selector{
-  grid-area: s;
+.firmware__versions-header {
   display: flex;
   align-items: center;
-  gap: 15px;
+  justify-content: space-between;
+  gap: var(--space-lg);
 }
 
-.firmware__select{
-  font-size: 2rem;
-  flex-grow: 1;
+h2.firmware__heading {
+  margin: 0;
+  padding: 0;
+  font-size: var(--font-size-title-sm);
+  line-height: 1.2;
+  color: var(--theme-text-headline);
+}
+
+.firmware__notes-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
 }

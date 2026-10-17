@@ -1,84 +1,55 @@
-.save-states {
-  --controls-height: 55px;
-}
-
-.save-states__list {
+/* One group per core (Cartridge first) or per game, each with a sticky
+   header */
+.save-states__group {
   display: flex;
-  flex-direction: column-reverse;
-}
+  flex-direction: column;
 
-.save-states__items {
-  display: flex;
-  gap: 8px;
-  padding: 10px;
-  flex-wrap: wrap;
-}
-
-.save-states__items:empty {
-  display: none;
-
-  & + .save-states__core-header {
+  /* Hidden when the search or filters leave it empty */
+  &:not(:has(.save-states__item, .skeleton, .skeleton-card)) {
     display: none;
   }
 }
 
-.save-states__core-header {
-  background-color: var(--hover-colour);
-  padding: 10px 20px;
-  position: sticky;
-  top: var(--controls-height);
+.save-states__core-avatar {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  image-rendering: pixelated;
+}
+
+/* A grid of horizontal tiles (wider than the cores' columns), with room
+   before the next header */
+.grid.save-states__items {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  padding-block: var(--space-lg) var(--space-2xl);
+}
+
+/* The Pocket's screen is 10:9 (1600 × 1440). Save state images are stored
+   at the core's own resolution and shown stretched to the screen, so they
+   take its shape here too, like on the device */
+.save-states__image {
+  aspect-ratio: 10 / 9;
+}
+
+/* Empty state: saving and loading side by side, each under its buttons */
+.save-states__how-to {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2xl);
+  margin-top: var(--space-lg);
+  font-size: var(--font-size-sm);
 }
 
-.save-states__core-header-count {
-  margin-left: auto;
-}
-
-.save-states__item {
-  display: flex;
-  align-items: center;
-  background-color: var(--info-colour);
-  padding: 10px;
-  box-sizing: border-box;
-  gap: 20px;
-  cursor: pointer;
-  border: 2px solid transparent;
-
-  &:hover {
-    transform: scale(1.05);
-  }
-}
-
-.save-states__item--selected {
-  border-color: var(--selection-colour);
-}
-
-.save-states__item-info {
+.save-states__how-to-step {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  gap: var(--space-sm);
+  max-width: 30ch;
 }
 
-.save-states__item-name {
-  font-weight: bold;
-  overflow-wrap: break-word;
-}
-
-.save-states__item-image {
-  flex-shrink: 0;
-  width: 123px;
-  height: auto;
-  aspect-ratio: 160 / 144;
-}
-
-
-.save-states__camera-export-button {
-  align-self: flex-start;
-  opacity: 0.6;
-
-  &:hover{
-    opacity: 1;
-  }
+.save-states__key {
+  font-weight: 600;
+  color: var(--theme-text-headline);
 }

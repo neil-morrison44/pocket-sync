@@ -1,0 +1,12 @@
+/* Same button, square: as wide as it's tall, plus the slant (0 in the
+   modern style), which cuts into two corners and made it look narrow */
+.icon-button {
+  flex-shrink: 0;
+  width: calc(var(--control-height, 28px) + var(--slant));
+  padding-inline: 0;
+}
+
+/* Icon-only tertiary buttons drop the outline; hover still shows a background */
+.icon-button.button--theme-tertiary {
+  --button-outline: transparent;
+}

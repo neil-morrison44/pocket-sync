@@ -1,4 +1,9 @@
 import { Modal } from "../modal"
+import Button from "../ui/Button"
+import ProgressBar from "../ui/ProgressBar"
+import Icon from "../ui/Icon"
+import Toggle from "../ui/Toggle"
+import Tooltip from "../ui/Tooltip"
 import {
   useAllowedFiles,
   useListenForDownloadProgress,
@@ -36,18 +41,21 @@ const ModalProgressBar = ({
   totalSize: number
   downloaded: number
 }) => (
-  <Modal className="zip-install__progress-modal">
-    <label htmlFor="download" className="zip-install__progress-bar-label">
-      {url}
-    </label>
-    <progress
-      id="download"
-      className="zip-install__progress-bar"
-      max={totalSize}
-      value={downloaded}
-    ></progress>
+  <Modal
+    className="modal--form zip-install__progress-modal"
+    title={<DownloadingTitle />}
+  >
+    <ProgressBar
+      label={<span className="zip-install__progress-url">{url}</span>}
+      value={totalSize > 0 ? (downloaded / totalSize) * 100 : undefined}
+    />
   </Modal>
 )
+
+const DownloadingTitle = () => {
+  const { t } = useTranslation("zip_install")
+  return <>{t("downloading")}</>
+}
 
 const ZipInstallInner = ({
   files,
@@ -93,16 +101,14 @@ const ZipInstallInner = ({
 
   if (progress) {
     return (
-      <Modal>
-        <h2>{title}</h2>
+      <Modal title={title}>
         <Progress percent={(progress.value / progress.max) * 100} />
       </Modal>
     )
   }
 
   return (
-    <Modal>
-      <h2 className="zip-install__title">{title}</h2>
+    <Modal title={title} onClose={cancel}>
       {tree && (
         <GroupedFiles
           tree={tree}
@@ -126,20 +132,28 @@ const ZipInstallInner = ({
           ))}
       </div>
 
+      {/* The option on the left; Cancel and the main action on the right */}
       <div className="zip-install__controls">
-        <button onClick={cancel}>{t("cancel_button")}</button>
-        <label
-          className="zip-install__control-checkbox"
-          title={t("moved_files_info")}
-        >
-          <input
-            type="checkbox"
-            checked={handleMovedFiles}
-            onChange={({ target }) => setHandleMovedFiles(target.checked)}
-          />
+        <Toggle value={handleMovedFiles} onChange={setHandleMovedFiles}>
           {t("remove_duplicate")}
-        </label>
-        <button onClick={confirm}>{t("confirm_button")}</button>
+        </Toggle>
+        <Tooltip label={t("moved_files_info")}>
+          <span
+            className="zip-install__control-info"
+            tabIndex={0}
+            aria-label={t("moved_files_info")}
+          >
+            <Icon icon="info" />
+          </span>
+        </Tooltip>
+        <div className="modal__actions zip-install__actions">
+          <Button theme="tertiary" onClick={cancel}>
+            {t("cancel_button")}
+          </Button>
+          <Button theme="primary" onClick={confirm}>
+            {t("confirm_button")}
+          </Button>
+        </div>
       </div>
     </Modal>
   )

@@ -1,0 +1,26 @@
+/* Panel like the Select list */
+.popover {
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  min-width: 260px;
+  padding: var(--space-lg);
+  border-radius: var(--radius-popover);
+  background-color: var(--theme-surface-sunken);
+  border: 1px solid var(--theme-separator);
+  color: var(--theme-text-body);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 40%);
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.popover__title {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--theme-text-soft);
+}

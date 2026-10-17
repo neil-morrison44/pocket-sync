@@ -1,0 +1,25 @@
+.no-results {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: var(--space-2xl) var(--page-padding-inline);
+  color: var(--theme-text-soft);
+}
+
+/* Shown once the list around it has nothing left to show. Loading
+   placeholders count as results, so it doesn't flash while loading. */
+.search-results:not(
+    :has(
+      .tile,
+      .skeleton,
+      .skeleton-card,
+      .loader,
+      .games__system,
+      [data-search-result]
+    )
+  )
+  > .no-results {
+  display: flex;
+}

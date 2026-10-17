@@ -1,4 +1,6 @@
-import { CSSProperties, ReactNode, useId, useState } from "react"
+import { CSSProperties, ReactNode } from "react"
+import Button from "../../ui/Button"
+import Popover from "../../ui/Popover"
 
 type ControlsPopoverButtonProps = {
   children: ReactNode
@@ -6,42 +8,20 @@ type ControlsPopoverButtonProps = {
   renderPopoverContent: () => ReactNode
 }
 
+/** A controls-bar button that opens a panel, e.g. a filter list. */
 export const ControlsPopoverButton = ({
   children,
   style,
   renderPopoverContent,
-}: ControlsPopoverButtonProps) => {
-  const popoverId = useId()
-  const anchorName = `--anchor-${popoverId.replace(/:/g, "")}`
-
-  return (
-    <>
-      <button
-        type="button"
-        className="controls__popover-button"
-        popoverTarget={popoverId}
-        popoverTargetAction="toggle"
-        style={
-          {
-            ...style,
-            anchorName: anchorName,
-          } as React.CSSProperties
-        }
-      >
+}: ControlsPopoverButtonProps) => (
+  <Popover
+    align="start"
+    trigger={
+      <Button icon="chevron-down" style={style}>
         {children}
-      </button>
-      <div
-        id={popoverId}
-        className="controls__popover-content"
-        popover="auto"
-        style={
-          {
-            positionAnchor: anchorName,
-          } as React.CSSProperties
-        }
-      >
-        {renderPopoverContent()}
-      </div>
-    </>
-  )
-}
+      </Button>
+    }
+  >
+    {renderPopoverContent()}
+  </Popover>
+)

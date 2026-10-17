@@ -1,0 +1,70 @@
+.skeleton {
+  height: 0.875em;
+  background-color: var(--theme-surface-raised);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--theme-overlay) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: skeleton-shimmer 1.4s linear infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+
+  to {
+    background-position: -50% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+/* Same proportions as the core and game cards */
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 160px;
+  background-color: var(--theme-surface-sunken);
+}
+
+.skeleton-card__media {
+  height: auto;
+  aspect-ratio: 521 / 165;
+}
+
+.skeleton-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+}
+
+/* Like a horizontal Tile: a 120px image at the Pocket's 10:9 beside the
+   text, so swapping it for the tile doesn't move anything */
+.skeleton-card--horizontal {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-lg);
+  box-sizing: border-box;
+  padding: var(--space-md);
+
+  .skeleton-card__media {
+    flex-shrink: 0;
+    width: 120px;
+    aspect-ratio: 10 / 9;
+  }
+
+  .skeleton-card__body {
+    flex-grow: 1;
+    padding: 0;
+  }
+}

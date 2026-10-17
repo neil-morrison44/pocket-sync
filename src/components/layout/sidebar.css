@@ -1,0 +1,204 @@
+.sidebar {
+  --sidebar-background: var(--theme-sidebar-background);
+  --sidebar-border: var(--theme-border);
+  --sidebar-foreground: var(--theme-text-soft);
+  --sidebar-foreground-active: var(--theme-text-headline);
+  --sidebar-item-hover: var(--theme-sidebar-item-hover);
+  --sidebar-item-active: var(--theme-sidebar-item-active);
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: sticky;
+  top: 0;
+  box-sizing: border-box;
+  width: var(--sidebar-width);
+  height: 100vh;
+  padding: calc(12px + var(--titlebar-inset)) 8px 12px;
+  flex-shrink: 0;
+  z-index: 1000;
+  overflow: hidden auto;
+  background-color: var(--sidebar-background);
+  border-right: 1px solid var(--sidebar-border);
+  transition:
+    width 150ms ease,
+    padding 150ms ease;
+
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Holds every view tab; the collapse toggle sits below it, outside the tab
+   list */
+.sidebar__list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  gap: 8px;
+  min-height: 0;
+}
+
+.sidebar__nav,
+.sidebar__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar__group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  & + & {
+    padding-top: 8px;
+    border-top: 1px solid var(--sidebar-border);
+  }
+}
+
+.sidebar__footer {
+  gap: 2px;
+  padding-top: 8px;
+  border-top: 1px solid var(--sidebar-border);
+}
+
+.sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 36px;
+  padding-inline: 12px;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  color: var(--sidebar-foreground);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  position: relative;
+  clip-path: var(--shape-slant);
+  transition:
+    background-color 100ms ease,
+    color 100ms ease;
+
+  /* clip-path also clips outlines, so focus is a ring drawn inside the shape */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: var(--focus-ring-inset, 0);
+    background-color: var(--focus-ring-colour, var(--theme-focus));
+    clip-path: var(--shape-slant-ring);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  :root.keyboard-focus &:focus::after {
+    visibility: visible;
+  }
+
+  &:hover:not([data-disabled]) {
+    background-color: var(--sidebar-item-hover);
+    color: var(--sidebar-foreground-active);
+  }
+
+  /* Views that need a connected SD card */
+  &[data-disabled] {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+.sidebar__icon {
+  flex-shrink: 0;
+}
+
+.sidebar__item--active {
+  background-color: var(--sidebar-item-active);
+  color: var(--sidebar-foreground-active);
+
+  & .sidebar__icon {
+    color: var(--theme-accent-foreground);
+  }
+}
+
+.sidebar__item--muted {
+  font-weight: 400;
+}
+
+.sidebar__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 150ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar__label {
+    transition: none;
+  }
+}
+
+/* Icons keep their position; labels fade while the width animates */
+/* Centres the 40px items (icon plus item padding) in the collapsed width;
+   8px, as when expanded, unless the width grows for the traffic lights */
+.sidebar--collapsed {
+  padding-inline: calc((var(--sidebar-collapsed-width) - 1px - 40px) / 2);
+
+  & .sidebar__label {
+    opacity: 0;
+  }
+}
+
+/* Window drag area above the items (holds the macOS traffic lights) */
+.sidebar__drag-region {
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(var(--titlebar-inset) + 8px);
+}
+
+/* Notification count (or dot) in the accent green, at the item's end; on
+   the icon when the sidebar is collapsed */
+.sidebar__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  margin-inline-start: auto;
+  padding-inline: var(--space-xs);
+  box-sizing: border-box;
+  border-radius: var(--radius-full);
+  background-color: var(--theme-accent);
+  color: var(--theme-accent-text);
+  font-size: var(--font-size-2xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* No number (e.g. firmware): the same circle, empty */
+.sidebar__badge--dot {
+  padding: 0;
+}
+
+.sidebar--collapsed .sidebar__badge {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  min-width: 8px;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  font-size: 0;
+}

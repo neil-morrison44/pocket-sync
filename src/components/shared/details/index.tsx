@@ -1,5 +1,6 @@
 import { ReactNode, startTransition, Suspense, useState } from "react"
 import "./index.css"
+import Icon from "../../ui/Icon"
 
 type DetailsProps = {
   title: string
@@ -20,51 +21,22 @@ export const Details = ({
 
   return (
     <div className="details">
-      <div
+      {/* A real button, so the section opens with the keyboard too */}
+      <button
+        type="button"
         className={`details__title ${sticky ? "details__title--sticky" : ""}`}
+        aria-expanded={isOpen}
         onClick={() => startTransition(() => setIsOpen((c) => !c))}
       >
         {renderIcon && renderIcon()}
         {title}
-        {isOpen ? <ContractIcon /> : <ExpandIcon />}
-      </div>
+        {isOpen ? <Icon icon="chevron-up" /> : <Icon icon="chevron-down" />}
+      </button>
       {isOpen && (
         <div className="details__content">
           <Suspense>{children}</Suspense>
         </div>
       )}
     </div>
-  )
-}
-
-const ExpandIcon = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="1.5em"
-      viewBox="0 -960 960 960"
-      width="1.5em"
-    >
-      <path
-        fill="currentColor"
-        d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"
-      />
-    </svg>
-  )
-}
-
-const ContractIcon = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="1.5em"
-      viewBox="0 -960 960 960"
-      width="1.5em"
-    >
-      <path
-        fill="currentColor"
-        d="m296-345-56-56 240-240 240 240-56 56-184-184-184 184Z"
-      />
-    </svg>
   )
 }

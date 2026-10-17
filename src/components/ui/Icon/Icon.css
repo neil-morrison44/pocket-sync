@@ -1,0 +1,43 @@
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  shape-rendering: crispedges;
+}
+
+/* Height from `size`, width from the mark's own proportions */
+.icon--is-brand {
+  width: auto;
+  shape-rendering: auto;
+}
+
+.icon--is-glyph {
+  font-family: var(--font-display);
+  font-variant-ligatures: discretionary-ligatures;
+  font-feature-settings: "dlig" 1;
+  font-weight: normal;
+  line-height: 1;
+  white-space: nowrap;
+
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-font-smoothing: none;
+}
+
+/* Follows the surrounding text: pixel icons a bit taller than the letters
+   (16px next to 12px text), glyphs and brand marks as tall as the letters */
+.icon--size-text {
+  width: 1.3334em;
+  height: 1.3334em;
+
+  &.icon--is-glyph {
+    width: auto;
+    height: auto;
+    font-size: 1em;
+  }
+
+  /* A little shorter than the letters, like brand marks at fixed sizes */
+  &.icon--is-brand {
+    width: auto;
+    height: 0.8em;
+  }
+}

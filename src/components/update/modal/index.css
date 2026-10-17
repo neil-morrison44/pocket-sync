@@ -1,0 +1,314 @@
+/* ---------- Update progress modal ---------- */
+
+/* A container, so the layout follows the modal's width (at most 800px) */
+.update-modal {
+  container-type: inline-size;
+}
+
+/* The phases on the left, the animation (or the report) beside them */
+.update__modal {
+  display: grid;
+  flex: 1 1 0;
+  grid-template: "s b" minmax(0, 1fr) / minmax(240px, 1fr) minmax(0, 2fr);
+  gap: var(--space-2xl);
+  min-height: 0;
+  overflow: hidden;
+}
+
+@container (width < 600px) {
+  .update__modal {
+    grid-template:
+      "s" auto
+      "b" minmax(0, 1fr) / minmax(0, 1fr);
+  }
+}
+
+/* One step per phase: icon, text, folded errors */
+.update-modal__phases {
+  grid-area: s;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.update-modal__phase {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: var(--space-xs) var(--space-sm);
+  align-items: start;
+  font-size: var(--font-size-md);
+  line-height: 1.4;
+  color: var(--theme-text-soft);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.update-modal__phase-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.4em;
+}
+
+.update-modal__phase--in_progress {
+  color: var(--theme-text-headline);
+  font-weight: 600;
+}
+
+.update-modal__phase--finished {
+  color: var(--theme-text-body);
+
+  .update-modal__phase-icon {
+    color: var(--theme-accent-foreground);
+  }
+}
+
+.update-modal__errors {
+  grid-column: 2;
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  color: var(--theme-text-body);
+
+  summary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--theme-danger);
+    cursor: pointer;
+  }
+
+  ul {
+    max-height: 120px;
+    margin: var(--space-xs) 0 0;
+    padding-inline-start: 1.25em;
+    overflow: auto;
+    color: var(--theme-text-body);
+  }
+}
+
+/* Progress bars, speed, skip buttons */
+.update-modal__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--theme-separator);
+
+  /* As tall as its tallest content (two bars, speed, skip), in every
+     phase: otherwise the 3D scene above resized, and the Pocket in it
+     moved, each time the footer changed */
+  min-height: 104px;
+  box-sizing: border-box;
+}
+
+.update-modal__bars {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-lg);
+}
+
+.update-modal__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm) var(--space-lg);
+  font-size: var(--font-size-sm);
+  color: var(--theme-text-soft);
+}
+
+.update-modal__skip {
+  display: flex;
+  gap: var(--space-sm);
+  margin-inline-start: auto;
+}
+
+/* ---------- Animations (phases one to three) ---------- */
+
+.update__core-3d-scene,
+.update__core-flythrough,
+.update__core-item-grid,
+.update__core-finish-report {
+  grid-area: b;
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.update__core-3d-scene,
+.update__core-flythrough {
+  container-type: size;
+  perspective: 50px;
+  transform-style: preserve-3d;
+}
+
+.update__core-item-grid {
+  container-type: size;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: var(--space-xs);
+}
+
+.update__core-item-grid-item {
+  height: 40px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background-color: var(--theme-media-background);
+  transition: opacity 0.2s;
+  will-change: opacity;
+}
+
+.update__core-flythrough-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: 40px;
+  padding: var(--space-xs);
+  overflow: hidden;
+  border-radius: var(--radius);
+  background-color: var(--theme-media-background);
+  transition:
+    transform 0.5s linear,
+    opacity 0.5s ease-out;
+  will-change: transform, opacity;
+}
+
+/* ---------- Finished report ---------- */
+
+.update__core-finish-report {
+  overflow: auto;
+}
+
+.update-modal__report {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+h3.update-modal__report-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--theme-text-headline);
+}
+
+.update-modal__report-check {
+  color: var(--theme-accent-foreground);
+}
+
+/* Updated, installed, files: side by side, stacked when narrow */
+.update-modal__report-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-lg);
+}
+
+.update-modal__report-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+h4.update-modal__report-column-title {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--theme-text-soft);
+}
+
+.update-modal__report-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* A core: platform image, name, version; opens the core */
+.update-modal__report-core {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-xs) var(--space-sm);
+  border: none;
+  border-radius: var(--radius-card);
+  background-color: var(--theme-surface-sunken);
+  color: var(--theme-text-body);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  text-align: start;
+  cursor: pointer;
+
+  .update__list-item-image {
+    flex-shrink: 0;
+    height: 32px;
+    width: auto;
+  }
+
+  &:hover {
+    background-color: var(--theme-surface-raised);
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+:root.keyboard-focus .update-modal__report-core:focus-visible {
+  outline: 2px solid var(--theme-focus);
+  outline-offset: var(--focus-offset);
+}
+
+.update-modal__report-core-name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--theme-text-headline);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.update-modal__report-core-version {
+  margin-inline-start: auto;
+  color: var(--theme-text-soft);
+}
+
+.update-modal__report-files {
+  font-size: var(--font-size-sm);
+
+  summary {
+    display: flex;
+    gap: var(--space-sm);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-card);
+    background-color: var(--theme-surface-sunken);
+    color: var(--theme-text-headline);
+    cursor: pointer;
+  }
+
+  ul {
+    max-height: 200px;
+    margin: var(--space-xs) 0;
+    padding-inline-start: 1.5em;
+    overflow: auto;
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+    color: var(--theme-text-body);
+  }
+}
+
+.update-modal__report-count {
+  margin-inline-start: auto;
+  color: var(--theme-text-soft);
+}

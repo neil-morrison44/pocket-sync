@@ -48,6 +48,8 @@ export const useCanvasToDragStamps = (
 
       setImageStamps((stamps) => {
         const stamp = stamps[selectedStampIndex]
+        // e.g. no layer left after removing them all
+        if (!stamp) return stamps
         const currentIndex = stamps.findIndex((i) => i === stamp)
         const updated = {
           ...stamp,

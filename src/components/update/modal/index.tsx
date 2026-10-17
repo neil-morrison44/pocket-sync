@@ -1,4 +1,4 @@
-import { emit, listen } from "@tauri-apps/api/event"
+import { emit } from "@tauri-apps/api/event"
 import { Activity, Suspense, useCallback, useEffect, useState } from "react"
 import { Modal } from "../../modal"
 import { useTranslation } from "react-i18next"
@@ -11,58 +11,87 @@ import {
 import prettyBytes from "pretty-bytes"
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { Canvas } from "@react-three/fiber"
+import { NoToneMapping } from "three"
 import { UpdateThreeScene } from "./threeScene"
 import { UpdateFinishedReport } from "./finishedReport"
 import { useUpdateEventManager } from "./hooks"
 import { useAtomValue } from "jotai"
 import { PocketSyncConfigSelector } from "../../../jotai/config/selectors"
 import { Link } from "../../link"
+import Button from "../../ui/Button"
+import Icon from "../../ui/Icon"
+import ProgressBar from "../../ui/ProgressBar"
+import Spinner from "../../ui/Spinner"
+import { REQUIRED_FILES_EVENT, useUpdateListen } from "./events"
+// The core images' styles are shared with the rest of `update`
+import "../index.css"
+import "./index.css"
 
 type UpdateModalProps = {
   onClose: () => void
+  /**
+   * Can be closed before it's finished; for the demo (Settings →
+   * Developer), which may stop at any phase.
+   */
+  dismissible?: boolean
+  /** Skipping only happens in a real update; the demo ignores it. */
+  demo?: boolean
 }
 
-export const UpdateModal = ({ onClose }: UpdateModalProps) => {
+/**
+ * Progress of a bulk install / update: the four phases as steps on the
+ * left, the matching animation beside them, and the progress bars (and
+ * skip buttons) below. Ends with a report of what changed.
+ */
+export const UpdateModal = ({
+  onClose,
+  dismissible = false,
+  demo = false,
+}: UpdateModalProps) => {
   const { t } = useTranslation("update")
   const updateState = useUpdateEventManager()
+  const finished = updateState.phases.three === "finished"
 
   return (
-    <Modal>
+    <Modal
+      className="update-modal"
+      title={t("modal_title")}
+      onClose={finished || dismissible ? onClose : undefined}
+    >
       <div className="update__modal">
-        <div className="update__modal-status">
-          <ol>
-            {Object.entries(updateState.phases).map(
-              ([phaseName, phaseStatus]) => {
-                return (
-                  <li
-                    key={phaseName}
-                    className={`update__modal-status-line update__modal-status-line--${phaseStatus}`}
-                  >
-                    {t(
-                      `phase_status.${phaseName}.${phaseStatus}`,
-                      updateState.phaseArgs[phaseName as "one" | "three"]
-                    )}
-                    {phaseName === "one" &&
-                      updateState.errors.one.length > 0 && (
-                        <Errors errors={updateState.errors.one} />
-                      )}
-                    {phaseName === "three" &&
-                      updateState.errors.three.length > 0 && (
-                        <Errors errors={updateState.errors.three} />
-                      )}
-                  </li>
-                )
-              }
-            )}
-          </ol>
-          {updateState.currentEvent?.type ==
-            "PhaseThreeDownloadProgressEvent" && (
-            <PhaseThreeControls coreName={updateState.currentEvent.core_name} />
+        <ol className="update-modal__phases">
+          {Object.entries(updateState.phases).map(
+            ([phaseName, phaseStatus]) => (
+              <li
+                key={phaseName}
+                className={`update-modal__phase update-modal__phase--${phaseStatus}`}
+              >
+                <span className="update-modal__phase-icon">
+                  {phaseStatus === "in_progress" ? (
+                    <Spinner size={16} />
+                  ) : (
+                    <Icon
+                      icon={phaseStatus === "finished" ? "check" : "circle"}
+                    />
+                  )}
+                </span>
+                <span className="update-modal__phase-text">
+                  {t(
+                    `phase_status.${phaseName}.${phaseStatus}`,
+                    updateState.phaseArgs[phaseName as "one" | "three"]
+                  )}
+                </span>
+                {phaseName === "one" && updateState.errors.one.length > 0 && (
+                  <Errors errors={updateState.errors.one} />
+                )}
+                {phaseName === "three" &&
+                  updateState.errors.three.length > 0 && (
+                    <Errors errors={updateState.errors.three} />
+                  )}
+              </li>
+            )
           )}
-          {updateState.phases.three === "finished" && (
-            <button onClick={onClose}>{t("buttons.close")}</button>
-          )}
-        </div>
+        </ol>
 
         <Activity
           mode={updateState.phases.two === "in_progress" ? "visible" : "hidden"}
@@ -114,6 +143,9 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
           <Canvas
             className="update__core-3d-scene"
             camera={{ fov: 10, position: [0, 0, 50] }}
+            // Like the home screen's Pocket: the default tone mapping made
+            // the black body nearly pure black
+            onCreated={(state) => (state.gl.toneMapping = NoToneMapping)}
           >
             <UpdateThreeScene
               progress={
@@ -151,7 +183,7 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
           </Canvas>
         </Activity>
       </div>
-      <div className="update__modal-progress">
+      <div className="update-modal__footer">
         {updateState.phases.one === "in_progress" && (
           <PhaseOneLoading
             coreName={
@@ -165,7 +197,14 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
         )}
         {updateState.currentEvent?.type ===
           "PhaseThreeDownloadProgressEvent" && (
-          <PhaseThreeLoading {...updateState.currentEvent} />
+          <PhaseThreeLoading {...updateState.currentEvent} demo={demo} />
+        )}
+        {finished && (
+          <div className="modal__actions">
+            <Button theme="primary" onClick={onClose}>
+              {t("buttons.close")}
+            </Button>
+          </div>
         )}
       </div>
     </Modal>
@@ -177,12 +216,14 @@ const PhaseTwoLoading = () => {
     Record<string, { x: number; y: number; progress: number }>
   >({})
 
+  const listen = useUpdateListen()
+
   useEffect(() => {
-    const unlisten = listen<{
+    return listen<{
       context: string
       progress: number
       finished: number
-    }>("progress-event::required_files_for_core", ({ payload }) => {
+    }>(REQUIRED_FILES_EVENT, (payload) => {
       setCoreStats((cs) => ({
         ...cs,
         [payload.context]: {
@@ -192,11 +233,7 @@ const PhaseTwoLoading = () => {
         },
       }))
     })
-
-    return () => {
-      unlisten.then((l) => l())
-    }
-  }, [])
+  }, [listen])
 
   return (
     <>
@@ -217,42 +254,54 @@ const PhaseTwoLoading = () => {
   )
 }
 
-const PhaseThreeControls = ({ coreName }: { coreName: String }) => {
+const PhaseThreeControls = ({
+  coreName,
+  demo,
+}: {
+  coreName: string
+  demo: boolean
+}) => {
   const { t } = useTranslation("update")
   const [hasConfirmedSkip, setHasConfirmedSkip] = useState(false)
   const skipAllForCore = useCallback(async () => {
     if (!hasConfirmedSkip) {
-      const allow = confirm(t("buttons.skip_core_warning.text"), {
+      const allow = await confirm(t("buttons.skip_core_warning.text"), {
         title: t("buttons.skip_core_warning.title"),
         kind: "warning",
       })
       if (!allow) return
     }
     setHasConfirmedSkip(true)
+    if (demo) return
     await emit("install_and_update_cores::skip_event", {
       type: "Core",
       core_name: coreName,
     })
-  }, [coreName, hasConfirmedSkip])
+  }, [coreName, hasConfirmedSkip, demo, t])
 
   const skipFile = useCallback(async () => {
     if (!hasConfirmedSkip) {
-      const allow = confirm(t("buttons.skip_file_warning.text"), {
+      const allow = await confirm(t("buttons.skip_file_warning.text"), {
         title: t("buttons.skip_file_warning.title"),
         kind: "warning",
       })
       if (!allow) return
     }
     setHasConfirmedSkip(true)
+    if (demo) return
     await emit("install_and_update_cores::skip_event", {
       type: "File",
     })
-  }, [coreName, hasConfirmedSkip])
+  }, [hasConfirmedSkip, demo, t])
 
   return (
-    <div className="update__controls">
-      <button onClick={skipFile}>{t("buttons.skip_file")}</button>
-      <button onClick={skipAllForCore}>{t("buttons.skip_core")}</button>
+    <div className="update-modal__skip">
+      <Button theme="tertiary" onClick={skipFile}>
+        {t("buttons.skip_file")}
+      </Button>
+      <Button theme="tertiary" onClick={skipAllForCore}>
+        {t("buttons.skip_core")}
+      </Button>
     </div>
   )
 }
@@ -266,31 +315,20 @@ const PhaseOneLoading = ({ coreName, progress }: PhaseOneLoadingProps) => {
   const { t } = useTranslation("update")
 
   return (
-    <>
-      <div></div>
-      <div>
-        <label>
-          {t("progress.one", {
-            progress,
-            core_name: coreName,
-          })}
-          <progress
-            className="update__modal-progress-bar"
-            value={progress * 100}
-            max="100"
-          />
-        </label>
-      </div>
-      <div></div>
-    </>
+    <ProgressBar
+      value={progress * 100}
+      label={t("progress.one", { progress, core_name: coreName })}
+    />
   )
 }
 
-type PhaseThreeLoadingProps = {} & PhaseThreeArgs
+type PhaseThreeLoadingProps = { demo: boolean } & PhaseThreeArgs
 
-const PhaseThreeLoading = ({ ...props }: PhaseThreeLoadingProps) => {
+/** This file's and all files' progress, speed, size; skip buttons. */
+const PhaseThreeLoading = ({ demo, ...props }: PhaseThreeLoadingProps) => {
   const config = useAtomValue(PocketSyncConfigSelector)
   const {
+    core_name,
     file_name,
     elapsed_time,
     downloaded_bytes,
@@ -313,52 +351,52 @@ const PhaseThreeLoading = ({ ...props }: PhaseThreeLoadingProps) => {
 
   return (
     <>
-      <div>
+      <div className="update-modal__bars">
+        <ProgressBar
+          value={download_progress * 100}
+          label={t("progress.three.file", {
+            progress: download_progress,
+            file_name,
+          })}
+        />
+        <ProgressBar
+          value={totalProgress * 100}
+          label={t("progress.three.total", {
+            progress: totalProgress,
+            eta: formatDownloadTime(etaSeconds),
+          })}
+        />
+      </div>
+      <div className="update-modal__meta">
+        <span>
+          {`${speedBps > 0 ? `${prettyBytes(speedBps)}/s` : "0 B/s"} · ${prettyBytes(downloaded_bytes)} / ${prettyBytes(totalBytes)}`}
+        </span>
         {config.archive_url?.includes("archive.org") && (
           <Link href="https://archive.org/donate/">
             {t("donate_archive_org")}
           </Link>
         )}
-      </div>
-      <div>
-        <label>
-          {t("progress.three.file", {
-            progress: download_progress,
-            file_name,
-          })}
-          <progress
-            className="update__modal-progress-bar"
-            value={download_progress * 100}
-            max="100"
-          />
-        </label>
-        <label>
-          {t("progress.three.total", {
-            progress: totalProgress,
-            eta: formatDownloadTime(etaSeconds),
-          })}
-          <progress
-            className="update__modal-progress-bar"
-            value={totalProgress * 100}
-            max="100"
-          />
-        </label>
-      </div>
-
-      <div>
-        <div>{speedBps > 0 ? `${prettyBytes(speedBps)}/s` : "0B/s"}</div>
-        {prettyBytes(downloaded_bytes)} / {prettyBytes(totalBytes)}
+        <PhaseThreeControls coreName={core_name} demo={demo} />
       </div>
     </>
   )
 }
 
+/** A phase's errors, folded: the count, then each different one. */
 const Errors = ({ errors }: { errors: string[] }) => {
-  const allErrorsText = Array.from(new Set(errors)).join(",\n")
+  const { t } = useTranslation("update")
+  const unique = Array.from(new Set(errors))
   return (
-    <div className="update__modal-errors">
-      <div className="update__modal-errors-count">{errors.length}</div>
-      {allErrorsText}
-    </div>
+    <details className="update-modal__errors">
+      <summary>
+        <Icon icon="warning-diamond" />
+        {t("errors", { count: errors.length })}
+      </summary>
+      <ul>
+        {unique.map((error) => (
+          <li key={error}>{error}</li>
+        ))}
+      </ul>
+    </details>
   )
 }

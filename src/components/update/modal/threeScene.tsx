@@ -73,6 +73,10 @@ export const UpdateThreeScene = ({
 }: UpdateThreeSceneProps) => {
   return (
     <>
+      {/* A base light from the front: the Pocket's own lights sit at fixed
+          spots, and the layout places it closer to the camera than them */}
+      <ambientLight intensity={0.8} />
+      <directionalLight position={[2, 4, 10]} intensity={2} />
       <Suspense>
         <Lights />
         <PocketEnv />

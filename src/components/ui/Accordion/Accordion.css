@@ -1,0 +1,110 @@
+/* Each row is its own light card */
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.accordion__item {
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  border: 1px solid var(--theme-separator);
+}
+
+/* The header row holds the toggle and an optional action; it carries the
+   background so both share it */
+.accordion__header {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  background-color: var(--theme-overlay);
+
+  &:has(.accordion__trigger[data-state="open"]) {
+    border-bottom: 1px solid var(--theme-separator);
+  }
+}
+
+.accordion__action {
+  flex-shrink: 0;
+  padding-inline-end: var(--space-sm);
+}
+
+.accordion__chevron {
+  margin-inline-start: auto;
+  transition: transform 150ms ease;
+}
+
+/* The whole header row toggles the content */
+.accordion__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-grow: 1;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding-inline: var(--space-lg);
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: transparent;
+  color: var(--theme-text-body);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--theme-separator);
+  }
+
+  /* Rows don't scale when pressed */
+  &:active {
+    transform: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  :root.keyboard-focus &:focus {
+    outline: 2px solid var(--theme-focus);
+    outline-offset: calc(-2px - var(--focus-offset));
+  }
+
+  &[data-state="open"] {
+    .accordion__chevron {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.accordion__title {
+  font-weight: 700;
+  color: var(--theme-text-headline);
+}
+
+.accordion__meta {
+  color: var(--theme-text-soft);
+}
+
+/* Radix hides closed rows with the hidden attribute, which display: flex
+   would override (an empty padded strip under the header) */
+.accordion__content[hidden] {
+  display: none;
+}
+
+.accordion__content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion__chevron {
+    transition: none;
+  }
+}
