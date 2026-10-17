@@ -13,9 +13,9 @@ type ScreenshotProps = {
 }
 
 /**
- * A screenshot as a tile like every other grid: the picture in the
- * Pocket's 10:9 screen (black bars like on the device), the game, its
- * platform and when it was taken.
+ * A screenshot in the gallery: only the picture in the Pocket's 10:9
+ * screen (black bars like on the device); the game, its platform and when
+ * it was taken show on top of it on hover.
  */
 export const Screenshot = ({
   fileName,
@@ -33,6 +33,7 @@ export const Screenshot = ({
   return (
     <Tile
       className="screenshots__item"
+      orientation="overlay"
       onClick={onClick}
       selected={selected}
       media={<img className="screenshots__image" src={blob} alt="" />}

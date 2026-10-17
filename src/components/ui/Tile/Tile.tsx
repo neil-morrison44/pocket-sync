@@ -34,8 +34,10 @@ export interface TileProps {
    *   palettes)
    * - `horizontal`: a small image on the left, text beside it, actions on
    *   the right (save states)
+   * - `overlay`: only the media, like a photo gallery; the text shows on top
+   *   of it on hover and keyboard focus (screenshots)
    */
-  orientation?: "vertical" | "horizontal"
+  orientation?: "vertical" | "horizontal" | "overlay"
   className?: string
 }
 

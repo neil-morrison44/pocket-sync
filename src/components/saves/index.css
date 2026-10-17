@@ -33,8 +33,7 @@
   display: flex;
   align-items: baseline;
   gap: var(--space-sm);
-  font-size: var(--font-size-lg);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--theme-text-headline);
 }
 

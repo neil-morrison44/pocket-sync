@@ -24,6 +24,7 @@
   --theme-surface-hover: #222;
   --theme-surface-sunken: #111;
   --theme-surface-raised: #2a2a2a; /* hover on cards and list items */
+  --theme-tile-hover: var(--theme-sidebar-background); /* hover on tiles */
   --theme-border: #333;
   --theme-separator: rgb(255 255 255 / 14%); /* light dividers between rows */
   --theme-overlay: rgb(255 255 255 / 10%);
@@ -63,6 +64,8 @@
 
   /* Media */
   --theme-media-background: #fff;
+  --theme-scrim: rgb(0 0 0 / 75%); /* behind text on top of images */
+  --theme-scrim-text: #fff;
 
   /* Sidebar */
   --theme-sidebar-background: #1f1f1f;
@@ -83,6 +86,7 @@
   --theme-surface-hover: #e6e6e2;
   --theme-surface-sunken: #e9e9e5;
   --theme-surface-raised: #deded9;
+  --theme-tile-hover: var(--theme-surface-raised); /* the sidebar is the tiles' colour */
   --theme-border: #d4d4cf;
   --theme-separator: rgb(0 0 0 / 12%);
   --theme-overlay: rgb(0 0 0 / 5%);
@@ -120,6 +124,8 @@
 
   /* Media */
   --theme-media-background: #fff;
+  --theme-scrim: rgb(0 0 0 / 70%);
+  --theme-scrim-text: #fff;
 
   /* Sidebar */
   --theme-sidebar-background: #e9e9e5;
@@ -162,6 +168,7 @@
   --theme-surface-hover: #161616;
   --theme-surface-sunken: #000;
   --theme-surface-raised: #1a1a1a;
+  --theme-tile-hover: var(--theme-surface-raised);
   --theme-border: #262626;
   --theme-separator: rgb(255 255 255 / 20%);
   --theme-overlay: rgb(255 255 255 / 6%);
@@ -182,6 +189,7 @@
   --theme-surface-hover: #f0f0f0;
   --theme-surface-sunken: #f2f2f2;
   --theme-surface-raised: #ebebeb;
+  --theme-tile-hover: var(--theme-surface-raised);
   --theme-border: #e0e0e0;
   --theme-separator: rgb(0 0 0 / 16%);
   --theme-overlay: rgb(0 0 0 / 4%);

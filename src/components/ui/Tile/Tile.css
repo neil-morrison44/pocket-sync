@@ -36,7 +36,7 @@
   cursor: pointer;
 
   &:hover {
-    background-color: var(--theme-surface-raised);
+    background-color: var(--theme-tile-hover);
   }
 
   &[role="button"]:active {
@@ -106,12 +106,6 @@
   font-weight: 600;
   color: var(--theme-text-headline);
   overflow-wrap: anywhere;
-}
-
-/* Horizontal tiles have room for a larger title */
-.tile--orientation-horizontal .tile__title {
-  font-size: var(--font-size-lg);
-  line-height: 1.3;
 }
 
 /* A square icon as the media, for items without a picture (e.g. fetch
@@ -189,14 +183,11 @@
   gap: var(--space-lg);
   padding: var(--space-md);
 
+  /* Text starts at the top of the picture */
   & .tile__open {
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--space-lg);
-  }
-
-  &:not(:has(.tile__open)) {
-    align-items: center;
   }
 
   & .tile__media {
@@ -220,4 +211,39 @@
   width: 18px;
   height: 18px;
   image-rendering: pixelated;
+}
+
+/* Overlay: only the picture, like a photo gallery; the text shows on top
+   of it on hover and keyboard focus (screenshots) */
+.tile--orientation-overlay {
+  background: none;
+
+  & .tile__media {
+    height: 100%;
+  }
+
+  & .tile__body {
+    /* Text levels for the dark scrim, whatever the theme */
+    --theme-text-headline: var(--theme-scrim-text);
+    --theme-text-body: var(--theme-scrim-text);
+    --theme-text-soft: color-mix(
+      in srgb,
+      var(--theme-scrim-text) 72%,
+      transparent
+    );
+
+    position: absolute;
+    inset: auto 0 0;
+    gap: 0;
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--theme-scrim);
+    opacity: 0;
+    transition: opacity 0.15s ease-out;
+  }
+
+  &:hover .tile__body,
+  :root.keyboard-focus &:focus .tile__body,
+  :root.keyboard-focus &:focus-within .tile__body {
+    opacity: 1;
+  }
 }

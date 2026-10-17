@@ -3,7 +3,10 @@ import { useTranslation } from "react-i18next"
 import { useAtomValue } from "jotai"
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { PocketSyncConfigSelector } from "../../jotai/config/selectors"
-import { turboDownloadsAtom } from "../../jotai/settings/atoms"
+import {
+  keepPlatformDataAtom,
+  turboDownloadsAtom,
+} from "../../jotai/settings/atoms"
 import { invokeInstallAndUpdateCores } from "../../utils/invokes"
 
 /**
@@ -15,6 +18,7 @@ export const useInstallAndUpdateCores = () => {
   const { t } = useTranslation("update")
   const config = useAtomValue(PocketSyncConfigSelector)
   const turboDownloads = useAtomValue(turboDownloadsAtom)
+  const keepPlatformData = useAtomValue(keepPlatformDataAtom)
   const [running, setRunning] = useState(false)
 
   const start = useCallback(
@@ -39,13 +43,13 @@ export const useInstallAndUpdateCores = () => {
         updateList,
         options: {
           include_alternate_files: !config.skipAlternateAssets,
-          retain_platform_files: true,
+          retain_platform_files: keepPlatformData.enabled,
           archive_url: config.archive_url ?? undefined,
           fast_downloads: turboDownloads.enabled,
         },
       })
     },
-    [config, turboDownloads, t]
+    [config, turboDownloads, keepPlatformData, t]
   )
 
   const finish = useCallback(() => setRunning(false), [])

@@ -150,6 +150,7 @@ const DownloadGraph = ({ perVersions }: DownloadGraphProps) => {
         }) => (
           <Tooltip
             key={release}
+            disableHoverableContent
             label={
               <span className="core-info__download-graph-tooltip">
                 {t("download_bar_title", {

@@ -212,6 +212,7 @@ export const Settings = () => {
             <h3 className="settings__row-title">{t("archive.title")}</h3>
             <Callout variant="warning">{t("archive.warning")}</Callout>
             <PathField
+              className="settings__path"
               value={DEFAULT_ARCHIVE_URL}
               copyLabel={t("archive.copy_url")}
               copiedLabel={t("archive.copied")}
