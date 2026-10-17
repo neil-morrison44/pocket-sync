@@ -188,7 +188,9 @@ export const FolderSizeSelectorFamily = atomFamily<
   Atom<Promise<string>>
 >((path) =>
   atom(async (get) => {
-    get(fsWatchAtomFamily(path))
+    const pocketPath = get(pocketPathAtom) ?? ""
+    const relativePath = path.replace(pocketPath, "")
+    get(fsWatchAtomFamily(relativePath))
     const size = await invokeFolderSize(path)
     return prettyBytes(size)
   })

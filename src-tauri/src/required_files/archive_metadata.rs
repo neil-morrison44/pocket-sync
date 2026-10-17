@@ -13,7 +13,8 @@ pub struct RawMetadataItem {
     pub name: String,
     pub crc32: Option<String>,
     pub md5: Option<String>,
-    pub mtime: Option<String>,
+    #[serde_as(as = "Option<DisplayFromStr>")]
+    pub mtime: Option<u64>,
     #[serde_as(as = "Option<DisplayFromStr>")]
     pub size: Option<u64>,
 }
@@ -117,7 +118,7 @@ mod tests {
                 name: String::from("a_test_file.bin"),
                 crc32: Some(String::from("8049042f")),
                 md5: Some(String::from("f46af2ef83e0d4359e13290208828664")),
-                mtime: Some(String::from("1695137679")),
+                mtime: Some(1695137679),
                 size: Some(3473472)
             }]
         );

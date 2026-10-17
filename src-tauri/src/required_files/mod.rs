@@ -94,7 +94,8 @@ pub struct DataSlot {
 pub struct ArchiveInfo {
     pub url: String,
     crc32: String,
-    pub mtime: Option<String>,
+    #[serde_as(as = "Option<DisplayFromStr>")]
+    pub mtime: Option<u64>,
     #[serde_as(as = "Option<DisplayFromStr>")]
     pub size: Option<u64>,
 }
