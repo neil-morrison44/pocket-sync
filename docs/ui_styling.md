@@ -1,6 +1,13 @@
 # UI styling guide
 
-The reasoning behind these choices, the character principles and the current status are in [redesign-plan.md](redesign-plan.md).
+How Pocket Sync's UI is put together: the principles, the theme tokens and the shared components.
+
+## Principles
+
+1. Keep the character: hard edges and slants, pixel type for titles, the 3D Pocket and the playful details.
+2. Colour is sparse and means something: the Analogue green for active, selected and update states, red for danger.
+3. Consistency over one-offs: shared components and tokens, the same info box for every hint.
+4. Keyboard first, readable widths, no drop shadows.
 
 ## How styling works today
 
@@ -82,7 +89,3 @@ Shared pieces outside `ui/`: `shared/groupHeader` (the sticky heading of a group
 - Notification dots use `.notification-dot` (accent green, on a `position: relative` parent); sidebar items take a count badge (`sidebar__badge`).
 - Modals (`components/modal`, Radix Dialog) always get a `title`. Pass `onClose` whenever the modal can be dismissed: it adds the close icon button and Escape. Leave it out (or pass `undefined` while busy) when it mustn't close. Don't add a separate "Close" button; "Cancel" next to a confirming action is fine.
 - Use real `<button>`s for clickable elements, with `aria-current` / `aria-label` where needed and a `:focus-visible` outline.
-
-## Redesign progress
-
-Status, decisions and next steps are tracked in [redesign-plan.md](redesign-plan.md).
