@@ -77,6 +77,7 @@
     },
     "replaced": "Core này đã được thay thế bằng <1>{replacementCore}</1>",
     "platforms": "Nền tảng",
+    "plugins": "Các plugin",
     "release_date": "Ngày phát hành",
     "releases": {
       "release_history": "Lịch sử phát hành",

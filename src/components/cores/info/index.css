@@ -16,7 +16,7 @@
   font-size: 2rem;
 }
 
-.core-info__replaced{
+.core-info__replaced {
   background-color: var(--red-colour);
   font-size: 1.8rem;
   padding: 2rem;
@@ -27,7 +27,7 @@
   justify-content: center;
   gap: 0.25em;
 
-  &::after{
+  &::after {
     content: "";
     width: 1.5rem;
     height: 1.5rem;
@@ -41,17 +41,18 @@
   &:hover {
     /* filter: brightness(110%); */
 
-    &::after{
+    &::after {
       opacity: 1;
     }
 
-    & strong{
+    & strong {
       text-decoration: underline;
     }
   }
 }
 
-.core-info__requires-license, .core-info__analogizer{
+.core-info__requires-license,
+.core-info__analogizer {
   background-color: var(--purple-colour);
   white-space: pre-wrap;
   display: flex;
@@ -59,11 +60,11 @@
   padding: 12px;
 }
 
-.core-info__analogizer{
+.core-info__analogizer {
   background-color: rgb(101 156 222);
 }
 
-.core-info__firmware-warning{
+.core-info__firmware-warning {
   background-color: var(--red-colour);
   cursor: pointer;
   white-space: pre-wrap;
@@ -100,7 +101,7 @@
 }
 
 .core-info__info-row--hide-if-null {
-  &:has(>:first-child:last-child){
+  &:has(> :first-child:last-child) {
     display: none;
   }
 }
@@ -129,11 +130,44 @@
   border-radius: 5px;
 }
 
-.core-info__platforms {
+.core-info__platforms,
+.core-info__plugins {
   padding: 10px 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.core-info__mini-plugin-item {
+  background-color: var(--background-colour);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  row-gap: 0px;
+  padding-inline: 12px;
+  padding-block: 4px;
+  border-radius: 12px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: color-mix(
+      in srgb,
+      var(--background-colour),
+      var(--selection-colour) 25%
+    );
+  }
+}
+
+.core-info__mini-plugin-item--install {
+  background-color: var(--green-colour);
+}
+
+.core-info__mini-plugin-item {
+  display: grid;
+
+  grid-template-areas:
+    "i n p"
+    "i v p";
 }
 
 .core-info__platform-loader {
@@ -149,7 +183,7 @@
 .core-info__supports--button {
   cursor: pointer;
 
-  &:hover{
+  &:hover {
     opacity: 1;
     filter: brightness(150%);
   }
@@ -159,8 +193,7 @@
   white-space: pre-wrap;
 }
 
-
-.core-info__download-graph-bar{
+.core-info__download-graph-bar {
   display: block;
   position: absolute;
   background-color: white;
@@ -168,22 +201,22 @@
   bottom: 0;
   cursor: pointer;
 
-  &:hover{
+  &:hover {
     opacity: 1;
   }
 }
 
-.core-info__previous-select{
+.core-info__previous-select {
   font-size: 1.5rem;
   min-width: 25vw;
   accent-color: var(--selection-colour);
 }
 
-.core-info__previous-install-button{
+.core-info__previous-install-button {
   background-color: var(--selection-colour);
   margin-left: 12px;
 
-  &:active{
+  &:active {
     transform: scale(0.95);
   }
 }

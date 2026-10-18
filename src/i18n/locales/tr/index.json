@@ -74,6 +74,7 @@
     },
     "replaced": "Bu çekirdek <1>{replacementCore</1> ile değiştirildi",
     "platforms": "Platformlar",
+    "plugins": "Eklentiler",
     "release_date": "Yayın tarihi",
     "releases": {
       "release_history": "Yayın geçmişi",

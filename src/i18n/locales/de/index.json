@@ -73,6 +73,7 @@
     },
     "replaced": "Dieser Kern wurde durch <1>{replacementCore}</1> ersetzt",
     "platforms": "Plattformen",
+    "plugins": "Plugins",
     "release_date": "Veröffentlichungsdatum",
     "releases": {
       "release_history": "Veröffentlichungsverlauf",
