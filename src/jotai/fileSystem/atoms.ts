@@ -13,11 +13,6 @@ export const fsWatchAtomFamily = (path: string) => {
   return fsWatchAtoms(trimmed === "" ? "/" : trimmed)
 }
 
-/**
- * Marks everything read from the SD card as changed, so it's read again.
- * Reads are cached by their path on the card, so after connecting another
- * folder or card the old one's files would otherwise still show.
- */
 export const refreshAllFSWatchers = () => {
   const store = getDefaultStore()
   const now = Date.now()

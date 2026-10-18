@@ -34,12 +34,6 @@ export const DataJSONSelectorFamily = atomFamily<
   })
 )
 
-/**
- * The installed cores' folder names. Any file change in a core's folder
- * (e.g. its video.json) marks `Cores` as changed; the list stays the same
- * object unless cores were added or removed, so the Cores page doesn't
- * suspend and render every core again.
- */
 export const coresListSelector = keepPreviousOrSuspend(
   atom<Promise<string[]>>(async (get) => {
     get(fsWatchAtomFamily("Cores"))

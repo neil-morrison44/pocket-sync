@@ -16,10 +16,6 @@ export const AllSavesSelector = atom<Promise<string[]>>(async (get) => {
   return saves.map((f) => f.replace(/^\//g, ""))
 })
 
-/**
- * Bumped after a backup runs, so backup lists re-read their folders (they
- * aren't file-watched).
- */
 export const backupsRefreshAtom = atom(0)
 
 export const BackupZipsSelectorFamily = atomFamily<

@@ -49,8 +49,6 @@ export const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Another folder or card may be connected now: read everything again
-  // instead of showing what was cached from the previous one
   useEffect(() => {
     if (pocketPath) refreshAllFSWatchers()
   }, [pocketPath])
