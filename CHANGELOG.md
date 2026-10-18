@@ -1,4 +1,18 @@
 # Changelog
+<a id="v7.1.0"></a>
+# [v7.1.0 - Allows cores to present a list of installable & runnable plugins to the user](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.1.0) - 2026-10-18
+
+## What's Changed
+* Adds a way to install & run plugins from a core's info window by [@neil-morrison44](https://github.com/neil-morrison44) in [#496](https://github.com/neil-morrison44/pocket-sync/pull/496)
+
+<img width="1413" height="1090" alt="Screenshot 2026-10-18 at 03 30 00" src="https://github.com/user-attachments/assets/bd6d7243-0027-4403-8efd-4449be465f25" />
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.3...v7.1.0
+
+[Changes][v7.1.0]
+
+
 <a id="v7.0.3"></a>
 # [v7.0.3 - Fix some issues with the UI not refreshing when files changed](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.0.3) - 2026-10-17
 
@@ -2031,6 +2045,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v7.1.0]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.3...v7.1.0
 [v7.0.3]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.2...v7.0.3
 [v7.0.2]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.1...v7.0.2
 [v7.0.1]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.0...v7.0.1
