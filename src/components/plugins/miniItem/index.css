@@ -1,0 +1,63 @@
+.plugins-mini-item {
+  background-color: var(--background-colour);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  row-gap: 0px;
+  padding-inline: 12px;
+  padding-block: 4px;
+  border-radius: 12px;
+  text-wrap: nowrap;
+
+  &:hover {
+    cursor: pointer;
+    background-color: color-mix(
+      in srgb,
+      var(--background-colour),
+      var(--selection-colour) 25%
+    );
+  }
+}
+
+.plugins-mini-item--install {
+  background-color: var(--green-colour);
+}
+
+.plugins-mini-item--run {
+  display: grid;
+
+  grid-template-areas:
+    "i n p"
+    "i v p";
+}
+
+.plugins-mini-item__play {
+  width: 40px;
+  grid-area: p;
+  background-color: var(--green-colour);
+  border-radius: 100px;
+  aspect-ratio: 1 / 1;
+  place-self: center center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+
+  &::after {
+    content: "";
+    width: 50%;
+    height: 50%;
+    display: block;
+    background-color: white;
+    clip-path: polygon(20% 0, 100% 50%, 20% 100%);
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}

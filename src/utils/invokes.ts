@@ -10,6 +10,7 @@ import {
   PocketPluginInfo,
   PlatformInfoJSON,
   PlatformId,
+  UpdatersJSON,
 } from "../types"
 import { debug } from "@tauri-apps/plugin-log"
 import { path } from "@tauri-apps/api"
@@ -335,4 +336,10 @@ export const invokeInstallAndUpdateCores = async (args: {
   }
 }): Promise<void> => {
   const result = await invoke<void>("install_and_update_cores", args)
+}
+
+export const invokeGetAllUpdatersFiles = async (): Promise<
+  Record<string, UpdatersJSON>
+> => {
+  return await invoke<Record<string, UpdatersJSON>>("get_all_updaters_files")
 }
