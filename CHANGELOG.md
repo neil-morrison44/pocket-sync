@@ -1,4 +1,21 @@
 # Changelog
+<a id="v7.1.1"></a>
+# [v7.1.1 - More data fixes & showing suggested plugins in the Plugins tab](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.1.1) - 2026-10-18
+
+## What's Changed
+* Fix Fetch status for local folders by [@olivierbrcknr](https://github.com/olivierbrcknr) in [#497](https://github.com/neil-morrison44/pocket-sync/pull/497)
+* Fix pages reloading and showing stale data by [@olivierbrcknr](https://github.com/olivierbrcknr) in [#498](https://github.com/neil-morrison44/pocket-sync/pull/498)
+* Fix save state names and thumbnails, and an Update All setting by [@olivierbrcknr](https://github.com/olivierbrcknr) in [#499](https://github.com/neil-morrison44/pocket-sync/pull/499)
+* Adds list of core-suggested plugins to the plugins view too by [@neil-morrison44](https://github.com/neil-morrison44) in [#500](https://github.com/neil-morrison44/pocket-sync/pull/500)
+
+## New Contributors
+* [@olivierbrcknr](https://github.com/olivierbrcknr) made their first contribution in [#497](https://github.com/neil-morrison44/pocket-sync/pull/497)
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v7.1.0...v7.1.1
+
+[Changes][v7.1.1]
+
+
 <a id="v7.1.0"></a>
 # [v7.1.0 - Allows cores to present a list of installable & runnable plugins to the user](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.1.0) - 2026-10-18
 
@@ -2045,6 +2062,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v7.1.1]: https://github.com/neil-morrison44/pocket-sync/compare/v7.1.0...v7.1.1
 [v7.1.0]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.3...v7.1.0
 [v7.0.3]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.2...v7.0.3
 [v7.0.2]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.1...v7.0.2
