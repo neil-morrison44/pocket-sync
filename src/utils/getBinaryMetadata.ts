@@ -18,14 +18,18 @@ const CP437_HIGH =
  */
 const decodeField = (bytes: Uint8Array) => {
   const field = bytes.filter((byte) => byte !== 0)
-  let text: string
-  try {
-    text = new TextDecoder("utf-8", { fatal: true }).decode(field)
-  } catch {
-    text = Array.from(field, (byte) =>
-      byte < 0x80 ? String.fromCharCode(byte) : CP437_HIGH[byte - 0x80]
-    ).join("")
+  const utf8Text = new TextDecoder("utf-8", { fatal: false }).decode(field)
+  const UTF8ReplacementChar = "\ufffd"
+  if (!utf8Text.includes(UTF8ReplacementChar)) {
+    return utf8Text.normalize("NFC").trim()
   }
+
+  const raw = new TextDecoder("x-user-defined").decode(field)
+  const text = Array.from(raw, (char) => {
+    const code = char.charCodeAt(0)
+    return code < 0x80 ? char : CP437_HIGH[code - 0xf780]
+  }).join("")
+
   return text.normalize("NFC").trim()
 }
 
