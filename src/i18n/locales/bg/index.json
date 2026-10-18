@@ -74,6 +74,7 @@
     },
     "replaced": "Това ядро е заменено от <1>{replacementCore}</1>",
     "platforms": "Платформи",
+    "plugins": "Плъгини",
     "release_date": "Дата на релийз",
     "releases": {
       "release_history": "История на релийзи",

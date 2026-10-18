@@ -15,6 +15,7 @@ import { useBEM } from "../../hooks/useBEM"
 import { Trans, useTranslation } from "react-i18next"
 import { invokeUninstallPlugin } from "../../utils/invokes"
 import { ask } from "@tauri-apps/plugin-dialog"
+import { usePluginRunner } from "./hooks"
 
 export const Plugins = () => {
   const [addPluginModalOpen, setAddPluginModalOpen] = useState<boolean>(false)
@@ -63,25 +64,8 @@ type PluginItemProps = {
 
 const PluginItem = ({ plugin }: PluginItemProps) => {
   const { t } = useTranslation("plugins")
-  const [isRunning, setIsRunning] = useState<boolean>(false)
   const updateConfig = useUpdateConfig()
-
-  const openPluginWindow = useCallback(
-    async (pluginId: string, pluginName: string) => {
-      setIsRunning(true)
-      const webview = new WebviewWindow(`plugin-${pluginId}`, {
-        url: `/plugin/${pluginId}`,
-        title: `${pluginName}`,
-        width: 600,
-        height: 900,
-        resizable: true,
-        alwaysOnTop: true,
-      })
-
-      webview.once("tauri://destroyed", () => setIsRunning(false))
-    },
-    [setIsRunning]
-  )
+  const [isRunning, openPluginWindow] = usePluginRunner()
 
   const removePlugin = useCallback(async () => {
     const confirmation = await ask(t("confirm_remove"), {

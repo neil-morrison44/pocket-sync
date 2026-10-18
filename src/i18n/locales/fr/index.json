@@ -70,6 +70,7 @@
     },
     "replaced": "Ce cœur a été remplacé par <1>{replacementCore}</1>",
     "platforms": "Plateformes",
+    "plugins": "Plugins",
     "release_date": "Date de sortie",
     "releases": {
       "release_history": "Historique des versions",

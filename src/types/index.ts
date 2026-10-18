@@ -181,6 +181,7 @@ export type InventoryItem = {
 export type UpdatersJSON = {
   license?: { filename: string }
   previous?: string[]
+  plugins?: string[]
 }
 
 export type GithubRelease = {

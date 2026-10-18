@@ -41,7 +41,10 @@ import { Modal } from "../../modal"
 import { DisplayModes } from "./displayModes"
 import { SupportsBubble } from "./supportsBubble"
 import { Details } from "../../shared/details"
-import { CoreInfoTxtSelectorFamily } from "../../../jotai/cores/selectors"
+import {
+  CoreInfoTxtSelectorFamily,
+  CoreUpdatersJSONSelectorFamily,
+} from "../../../jotai/cores/selectors"
 import { ProgressLoader } from "../../loader/progress"
 import { AnalogizerIcon } from "../icons/AnalogizerIcon"
 import { DownloadCount } from "./downloadCounts"
@@ -52,6 +55,9 @@ import { useSmoothedAtomValue } from "../../../utils/jotai"
 import { aiCheckAtom } from "../../../jotai/cores/atoms"
 import { AIReport } from "./aiReport"
 import { PocketSyncConfigSelector } from "../../../jotai/config/selectors"
+import { pluginListSelector } from "../../../jotai/plugins/selectors"
+import { useUpdateConfig } from "../../settings/hooks/useUpdateConfig"
+import { usePluginRunner } from "../../plugins/hooks"
 
 type CoreInfoProps = {
   coreName: string
@@ -85,6 +91,13 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
   const coreAIScore = useMemo(
     () => aiCheck[coreName]?.overall_score ?? 0,
     [coreName, aiCheck]
+  )
+
+  const updatersInfo = useAtomValue(CoreUpdatersJSONSelectorFamily(coreName))
+
+  const pluginsList = useMemo(
+    () => updatersInfo?.plugins ?? [],
+    [inventoryItem]
   )
 
   const showAIReport = config.hide_ai_score !== true && coreAIScore > 0
@@ -298,6 +311,21 @@ export const InstalledCoreInfo = ({ coreName, onBack }: CoreInfoProps) => {
             </div>
           </Suspense>
         </div>
+        {pluginsList.length > 0 && (
+          <div className="core-info__info-row">
+            <strong>
+              {t("plugins")}
+              {":"}
+            </strong>
+            <Suspense>
+              <div className="core-info__plugins">
+                {pluginsList.map((url) => (
+                  <PluginMiniItem key={url} url={url} />
+                ))}
+              </div>
+            </Suspense>
+          </div>
+        )}
         <div className="core-info__info-row core-info__info-row--stretch">
           <button
             style={{ backgroundColor: "var(--light-colour)" }}
@@ -431,3 +459,54 @@ const InfoTxt = ({ coreName }: { coreName: string }) => {
   const infoTxt = useAtomValue(CoreInfoTxtSelectorFamily(coreName))
   return <div className="core-info__info-txt">{infoTxt}</div>
 }
+
+const PluginMiniItem = ({ url }: { url: string }) => {
+  const pluginList = useAtomValue(pluginListSelector)
+  const updateConfig = useUpdateConfig()
+  const pluginInfo = pluginList.find(({ github_url }) => github_url === url)
+  const [_isRunning, openPluginWindow] = usePluginRunner()
+
+  if (!pluginInfo) {
+    return (
+      <div
+        className="core-info__mini-plugin-item core-info__mini-plugin-item--install"
+        onClick={() =>
+          updateConfig("plugins", (current) => [...(current || []), url])
+        }
+      >
+        <DownloadIcon />
+        {url.replace("https://github.com/", "")}
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className="core-info__mini-plugin-item"
+      onClick={() => openPluginWindow(pluginInfo.id, pluginInfo.name)}
+    >
+      {pluginInfo.logo_url && (
+        <img style={{ gridArea: "i" }} src={pluginInfo.logo_url} />
+      )}
+
+      <div style={{ gridArea: "n" }}>{pluginInfo.name}</div>
+      <div style={{ gridArea: "v" }}>{pluginInfo.version}</div>
+      <div
+        style={{ gridArea: "p", width: "40px" }}
+        className="plugins__item-play"
+      ></div>
+    </div>
+  )
+}
+
+const DownloadIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    height="24px"
+    viewBox="0 -960 960 960"
+    width="24px"
+    fill="#e3e3e3"
+  >
+    <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+  </svg>
+)

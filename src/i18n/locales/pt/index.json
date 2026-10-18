@@ -73,6 +73,7 @@
     },
     "replaced": "Este núcleo foi substituído por <1>{replacementCore}</1>",
     "platforms": "Plataformas",
+    "plugins": "Plug-ins",
     "release_date": "Data de Lançamento",
     "releases": {
       "release_history": "Histórico de Lançamentos",

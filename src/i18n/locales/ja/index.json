@@ -73,6 +73,7 @@
     },
     "replaced": "このコアは <1>{replacementCore}</1> に置き換えられました",
     "platforms": "プラットフォーム",
+    "plugins": "プラグイン",
     "release_date": "リリース日",
     "releases": {
       "release_history": "履歴",

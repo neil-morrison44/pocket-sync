@@ -7,7 +7,7 @@ import {
   invokeReadTextFile,
   invokeSaveFile,
 } from "../../utils/invokes"
-import { JTCrtConfig } from "../../types"
+import { JTCrtConfig, UpdatersJSON } from "../../types"
 import { pocketPathAtom } from "../atoms"
 import { Atom, atom } from "jotai"
 import { atomFamily } from "jotai-family"
@@ -57,6 +57,20 @@ export const CoreInfoTxtSelectorFamily = atomFamily<
     if (!exists) return ""
     const text = await invokeReadTextFile(path)
     return text
+  })
+)
+
+export const CoreUpdatersJSONSelectorFamily = atomFamily<
+  string,
+  Atom<Promise<UpdatersJSON | null>>
+>((coreName) =>
+  atom(async (get) => {
+    const path = `Cores/${coreName}/updaters.json`
+    get(fsWatchAtomFamily(path))
+    const exists = await invokeFileExists(path)
+    if (!exists) return null
+    const text = await invokeReadTextFile(path)
+    return JSON.parse(text)
   })
 )
 
