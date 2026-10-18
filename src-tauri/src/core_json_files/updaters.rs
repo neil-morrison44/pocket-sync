@@ -9,8 +9,15 @@ pub struct CoreUpdateDetails {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct LicenseInfo {
+    pub filename: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct UpdatersFile {
     pub previous: Option<Vec<CoreUpdateDetails>>,
+    pub plugins: Option<Vec<String>>,
+    pub license: Option<LicenseInfo>,
 }
 
 impl UpdatersFile {

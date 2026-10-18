@@ -3,6 +3,7 @@ import { coreInventoryAtom } from "../inventory/atoms"
 import { fsWatchAtomFamily } from "../fileSystem/atoms"
 import {
   invokeFileExists,
+  invokeGetAllUpdatersFiles,
   invokeReadBinaryFile,
   invokeReadTextFile,
   invokeSaveFile,
@@ -143,3 +144,10 @@ export const JTCRTConfigSelector = atom(
     invokeSaveFile(path, binary)
   }
 )
+
+export const allUpdatersFilesSelector = atom<
+  Promise<Record<string, UpdatersJSON>>
+>(async (get) => {
+  get(fsWatchAtomFamily("Cores"))
+  return invokeGetAllUpdatersFiles()
+})

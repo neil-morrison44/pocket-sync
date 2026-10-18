@@ -290,6 +290,7 @@ fn main() {
             commands::files::find_cleanable_files,
             commands::cores::list_instance_packageable_cores,
             commands::cores::run_packager_for_core,
+            commands::cores::get_all_updaters_files,
             get_news_feed,
             begin_mister_sync_session,
             commands::files::get_file_metadata,

@@ -3,8 +3,7 @@ import { Controls } from "../controls"
 import { ControlsButton } from "../controls/inputs/button"
 import { pluginListSelector } from "../../jotai/plugins/selectors"
 import { Modal } from "../modal"
-import { useCallback, useState } from "react"
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow"
+import { Suspense, useCallback, useMemo, useState } from "react"
 import "./index.css"
 import { useUpdateConfig } from "../settings/hooks/useUpdateConfig"
 import { useAtomCallback } from "jotai/utils"
@@ -16,6 +15,8 @@ import { Trans, useTranslation } from "react-i18next"
 import { invokeUninstallPlugin } from "../../utils/invokes"
 import { ask } from "@tauri-apps/plugin-dialog"
 import { usePluginRunner } from "./hooks"
+import { allUpdatersFilesSelector } from "../../jotai/cores/selectors"
+import { PluginMiniItem } from "./miniItem"
 
 export const Plugins = () => {
   const [addPluginModalOpen, setAddPluginModalOpen] = useState<boolean>(false)
@@ -43,6 +44,9 @@ export const Plugins = () => {
       </div>
 
       <div className="plugins__info">
+        <Suspense>
+          <SuggestedPlugins />
+        </Suspense>
         <Trans
           t={t}
           i18nKey="info"
@@ -54,6 +58,44 @@ export const Plugins = () => {
           </Link>
         </Trans>
       </div>
+    </div>
+  )
+}
+
+const SuggestedPlugins = () => {
+  const updatersFiles = useAtomValue(allUpdatersFilesSelector)
+  const installedPlugins = useAtomValue(pluginListSelector)
+
+  const coresWithUninstalledPlugins = useMemo(() => {
+    return Object.entries(updatersFiles)
+      .map(([key, { plugins }]) => {
+        return [
+          key,
+          {
+            plugins: (plugins ?? []).filter(
+              (url) =>
+                !installedPlugins.find(({ github_url }) => github_url === url)
+            ),
+          },
+        ] as const
+      })
+      .filter(([_, { plugins }]) => (plugins ?? []).length > 0)
+  }, [installedPlugins, updatersFiles])
+
+  if (coresWithUninstalledPlugins.length === 0) return
+
+  return (
+    <div className="plugins__suggested-list">
+      {coresWithUninstalledPlugins.map(([coreName, { plugins }]) => (
+        <div className="plugins__suggested-list-item">
+          <div>{coreName}</div>
+          <div className="plugins__suggested-list-item-plugins">
+            {(plugins ?? []).map((url) => (
+              <PluginMiniItem key={url} url={url} />
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
