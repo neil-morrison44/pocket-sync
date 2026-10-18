@@ -145,3 +145,26 @@ export const loadable = <Value>(
     }
   })
 }
+
+/**
+ * The atom's value, but a refresh keeps showing the previous value instead
+ * of suspending (only the first load suspends). With `areEqual`, a re-read
+ * that gives an equal value returns the previous one itself, so atoms and
+ * components built on it don't run (and suspend) again.
+ */
+export const keepPreviousOrSuspend = <Value>(
+  anAtom: Atom<Value>,
+  areEqual?: (a: Awaited<Value>, b: Awaited<Value>) => boolean
+): Atom<Value | Awaited<Value>> => {
+  const PENDING = Symbol("pending")
+  const unwrapped = unwrap(anAtom, (previous) => previous ?? PENDING)
+  let last: { value: Awaited<Value> } | null = null
+  return atom((get) => {
+    const value = get(unwrapped)
+    if (value === PENDING) return get(anAtom)
+    const current = value as Awaited<Value>
+    if (areEqual && last && areEqual(last.value, current)) return last.value
+    last = { value: current }
+    return current
+  })
+}

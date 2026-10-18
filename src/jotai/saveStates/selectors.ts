@@ -25,9 +25,10 @@ const SaveStateBinarySelectorFamily = atomFamily<
   string,
   Atom<Promise<Uint8Array>>
 >((path) =>
-  atom(async () => {
-    const file = await invokeReadBinaryFile(`Memories/Save States/${path}`)
-    return file
+  atom(async (get) => {
+    const fullPath = `Memories/Save States/${path}`
+    get(fsWatchAtomFamily(fullPath))
+    return await invokeReadBinaryFile(fullPath)
   })
 )
 

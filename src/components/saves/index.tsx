@@ -7,13 +7,16 @@ import { open } from "@tauri-apps/plugin-dialog"
 import "./index.css"
 import { SavesItem } from "./item"
 import { SaveInfo } from "./info"
-import { AllSavesSelector } from "../../jotai/saves/selectors"
+import {
+  AllSavesSelector,
+  backupsRefreshAtom,
+} from "../../jotai/saves/selectors"
 import { invokeBackupSaves } from "../../utils/invokes"
 import { SaveConfig } from "../../types"
 import { MisterSync } from "./misterSync"
 import { useTranslation } from "react-i18next"
 import { ControlsButton } from "../controls/inputs/button"
-import { useAtomValue } from "jotai"
+import { useAtomValue, useSetAtom } from "jotai"
 
 export const Saves = () => {
   const [selectedSaveBackup, setSelectedSavebackup] = useState<number | null>(
@@ -23,6 +26,7 @@ export const Saves = () => {
   const updateConfig = useUpdateConfig()
   const { saves } = useAtomValue(PocketSyncConfigSelector)
   const { t } = useTranslation("saves")
+  const refreshBackups = useSetAtom(backupsRefreshAtom)
 
   const [misterSync, setMisterSync] = useState(false)
 
@@ -47,7 +51,8 @@ export const Saves = () => {
       newSaveLocation.backup_location,
       newSaveLocation.backup_count
     )
-  }, [allSaves, saves, updateConfig])
+    refreshBackups((count) => count + 1)
+  }, [allSaves, saves, updateConfig, refreshBackups])
 
   if (selectedSaveBackup !== null)
     return (

@@ -17,10 +17,11 @@ import { getCurrentWindow, Window } from "@tauri-apps/api/window"
 import { Atom, atom } from "jotai"
 import { atomWithRefresh } from "jotai/utils"
 import { atomFamily } from "jotai-family"
-import { atomFamilyDeepEqual } from "../utils/jotai"
+import { atomFamilyDeepEqual, keepPreviousOrSuspend } from "../utils/jotai"
 import { appCacheDir } from "@tauri-apps/api/path"
 import prettyBytes from "pretty-bytes"
 import { pocketPathAtom } from "./atoms"
+import deepEqual from "fast-deep-equal/es6"
 
 export const DataJSONSelectorFamily = atomFamily<
   string,
@@ -33,10 +34,19 @@ export const DataJSONSelectorFamily = atomFamily<
   })
 )
 
-export const coresListSelector = atom<Promise<string[]>>(async (get) => {
-  get(fsWatchAtomFamily("Cores"))
-  return await invokeListFolders("Cores")
-})
+/**
+ * The installed cores' folder names. Any file change in a core's folder
+ * (e.g. its video.json) marks `Cores` as changed; the list stays the same
+ * object unless cores were added or removed, so the Cores page doesn't
+ * suspend and render every core again.
+ */
+export const coresListSelector = keepPreviousOrSuspend(
+  atom<Promise<string[]>>(async (get) => {
+    get(fsWatchAtomFamily("Cores"))
+    return await invokeListFolders("Cores")
+  }),
+  deepEqual
+)
 
 export const CoreInfoSelectorFamily = atomFamily<
   string,
