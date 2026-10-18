@@ -44,7 +44,10 @@ import {
   UpdateFilterOptions,
 } from "../../jotai/update/atom"
 import { OtherFilterType, UpdateControls } from "./controls"
-import { turboDownloadsAtom } from "../../jotai/settings/atoms"
+import {
+  keepPlatformDataAtom,
+  turboDownloadsAtom,
+} from "../../jotai/settings/atoms"
 import { currentViewAtom } from "../../jotai/view/atoms"
 
 export const Update = () => {
@@ -131,6 +134,7 @@ const UpdateOptions = ({ onStart, listElement }: UpdateOptionsProps) => {
 
   const config = useAtomValue(PocketSyncConfigSelector)
   const turboDownloads = useAtomValue(turboDownloadsAtom)
+  const keepPlatformData = useAtomValue(keepPlatformDataAtom)
 
   const startCallback = useCallback(async () => {
     if (config.archive_url === "" || config.archive_url === null) {
@@ -151,7 +155,7 @@ const UpdateOptions = ({ onStart, listElement }: UpdateOptionsProps) => {
       updateList: selectedCores.update,
       options: {
         include_alternate_files: !config.skipAlternateAssets,
-        retain_platform_files: true,
+        retain_platform_files: keepPlatformData.enabled,
         archive_url: config.archive_url ?? undefined,
         fast_downloads: turboDownloads.enabled,
       },
@@ -159,7 +163,7 @@ const UpdateOptions = ({ onStart, listElement }: UpdateOptionsProps) => {
 
     // shouldn't need to do this but the observer might break when the list suspends
     setSelectedCores({ install: [], update: [] })
-  }, [config, selectedCores])
+  }, [config, selectedCores, keepPlatformData, turboDownloads])
 
   // bad React but I don't care,
   // can't think of a better way to have each core item manage wether it's hidden or shown
