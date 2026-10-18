@@ -22,7 +22,9 @@ import { ControlsButton } from "../controls/inputs/button"
 import { ProgressLoader, ProgressLoaderInner } from "../loader/progress"
 import { usePreventGlobalZipInstallModal } from "../../hooks/usePreventGlobalZipInstall"
 import { FetchInfoSelectorFamily } from "../../jotai/fetch/selectors"
-import { useAtomValue, useSetAtom } from "jotai"
+import { useAtomValue } from "jotai"
+import { useAtomCallback } from "jotai/utils"
+import { fsWatchAtomFamily } from "../../jotai/fileSystem/atoms"
 
 type FileStatus = "complete" | "partial" | "none" | "waiting"
 
@@ -34,8 +36,23 @@ export const Fetch = () => {
 
   usePreventGlobalZipInstallModal()
 
-  const setArchiveBumpAtom = useSetAtom(archiveBumpAtom)
   const list = config.fetches || []
+
+  // Local folders are cached by path like everything on the card, and
+  // aren't watched, so they're marked as changed to be read again
+  const refreshStatus = useAtomCallback(
+    useCallback(
+      (_get, set) => {
+        set(archiveBumpAtom, (count) => count + 1)
+        const now = Date.now()
+        list.forEach((item) => {
+          set(fsWatchAtomFamily(item.destination), now)
+          if (item.type === "filesystem") set(fsWatchAtomFamily(item.path), now)
+        })
+      },
+      [list]
+    )
+  )
 
   const removeItem = useCallback(
     async (index: number) => {
@@ -56,11 +73,7 @@ export const Fetch = () => {
         <ControlsButton onClick={() => setNewFetchOpen(true)}>
           {t("controls.add_fetch_item")}
         </ControlsButton>
-        <ControlsButton
-          onClick={() => {
-            setArchiveBumpAtom((c) => c + 1)
-          }}
-        >
+        <ControlsButton onClick={refreshStatus}>
           {t("controls.refresh")}
         </ControlsButton>
       </Controls>
@@ -176,7 +189,8 @@ const FileSystemStatus = ({
         exists:
           pocketFileInfo.find(
             (pF) =>
-              pF.name === f.name && pF.mtime && f.mtime && pF.mtime >= f.mtime
+              // A date of 0 (1 Jan 1970) is a date too, not a missing one
+              pF.name === f.name && pF.mtime >= f.mtime
           ) !== undefined,
       })),
     [fsFileInfo, pocketPath, destination, pocketFileInfo]
