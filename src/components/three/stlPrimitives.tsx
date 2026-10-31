@@ -1,6 +1,6 @@
 import { useLoader } from "@react-three/fiber"
 import { useLayoutEffect, useRef } from "react"
-import { STLLoader } from "three/examples/jsm/loaders/STLLoader"
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js"
 import frontSTL from "../../../openscad_models/front.stl"
 import backSTL from "../../../openscad_models/back.stl"
 import dpadSTL from "../../../openscad_models/dpad.stl"

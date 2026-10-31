@@ -10,6 +10,11 @@ const config: StorybookConfig = {
   features: {
     componentsManifest: true,
   },
+  // serve under a subpath when CI sets STORYBOOK_BASE_PATH (GitHub Pages);
+  // left unset locally so `storybook dev` still serves from /
+  ...(process.env.STORYBOOK_BASE_PATH
+    ? { basePath: process.env.STORYBOOK_BASE_PATH }
+    : {}),
 }
 
 export default config
