@@ -1,14 +1,34 @@
 import { Lights, Body as PocketBody } from "../../three/pocket"
-import { Float } from "@react-three/drei"
+import { Float, type FloatProps } from "@react-three/drei"
 import { Fullscreen, Container, Content } from "@react-three/uikit"
-import { Suspense, useRef, useState } from "react"
+import { Suspense, useLayoutEffect, useRef, useState } from "react"
 import { PocketEnv } from "../../three/env"
 import { ColourContextProviderFromConfig } from "../../three/colourContext"
 import { DownloadItemsModel } from "./downloadItemsModel"
 import { CoreLogoScreen } from "../../three/coreLogoScreen"
 import { StaticScreen } from "../../three/staticScreen"
 import { useFrame } from "@react-three/fiber"
-import { MathUtils, ShaderMaterial } from "three"
+import { MathUtils, ShaderMaterial, Group } from "three"
+
+/**
+ * drei's `Float` renders its inner (animated) group with `matrixAutoUpdate={false}`.
+ * uikit's `Content` measures its children with `Box3.expandByObject`, which calls
+ * `updateWorldMatrix(false, false)` — that can NOT recompute `matrixWorld` for a
+ * node with `matrixAutoUpdate: false` (force is always false), so if a render frame
+ * has already baked uikit's scaled-down world transform, the measurement captures the
+ * stale world-frame matrix → cached box ~100× too small → `childrenMatrix` scale ~100×
+ * too big (the "giant model" flake). Flipping the flag on the inner group makes the
+ * measurement deterministic (always local frame) while keeping rendering identical
+ * (the matrix is recomposed from the same position/quaternion/scale every frame).
+ * drei's `Float` forwards its ref to exactly this inner group.
+ */
+const UikitSafeFloat = (props: FloatProps) => {
+  const innerRef = useRef<Group>(null)
+  useLayoutEffect(() => {
+    if (innerRef.current) innerRef.current.matrixAutoUpdate = true
+  }, [])
+  return <Float ref={innerRef} {...props} />
+}
 
 const AnimatedProgress = ({
   progress,
@@ -46,14 +66,14 @@ const AnimatedProgress = ({
         alignItems="center"
         opacity={Math.max(0, Math.min(1, (1 - smoothProgress) * 5))}
       >
-        <Float
+        <UikitSafeFloat
           speed={2}
           rotationIntensity={2}
           floatIntensity={0.75}
           floatingRange={[-0.2, 0.2]}
         >
           <DownloadItemsModel model={loadingModel} />
-        </Float>
+        </UikitSafeFloat>
       </Content>
       <Container flexBasis={0} flexGrow={1 - smoothProgress} />
     </>
@@ -71,6 +91,28 @@ export const UpdateThreeScene = ({
   coreName,
   loadingModel = "Chip",
 }: UpdateThreeSceneProps) => {
+  const pocket = (
+    <group scale={5} rotation={[0, -0.5, 0]}>
+      <UikitSafeFloat
+        speed={0.5}
+        rotationIntensity={1.5}
+        floatIntensity={0.75}
+        floatingRange={[-0.2, 0.2]}
+      >
+        <PocketBody
+          jauntyAngle={false}
+          screenMaterial={
+            coreName ? (
+              <Suspense fallback={<StaticScreen />}>
+                <CoreLogoScreen coreName={coreName} />
+              </Suspense>
+            ) : null
+          }
+        />
+      </UikitSafeFloat>
+    </group>
+  )
+
   return (
     <>
       <Suspense>
@@ -99,25 +141,7 @@ export const UpdateThreeScene = ({
             <Container>
               <Content width="auto" height="100%">
                 <ColourContextProviderFromConfig>
-                  <group scale={5} rotation={[0, -0.5, 0]}>
-                    <Float
-                      speed={0.5}
-                      rotationIntensity={1.5}
-                      floatIntensity={0.75}
-                      floatingRange={[-0.2, 0.2]}
-                    >
-                      <PocketBody
-                        jauntyAngle={false}
-                        screenMaterial={
-                          coreName ? (
-                            <Suspense fallback={<StaticScreen />}>
-                              <CoreLogoScreen coreName={coreName} />
-                            </Suspense>
-                          ) : null
-                        }
-                      />
-                    </Float>
-                  </group>
+                  {pocket}
                 </ColourContextProviderFromConfig>
               </Content>
             </Container>
