@@ -31,12 +31,6 @@ export const GLITTER_VERTEX = /* glsl */ `
   }
 `
 
-// A stylised CD: a silvery metal disc whose surface sheens rainbow. Real CD
-// iridescence comes from thin-film interference and depends on viewing angle,
-// but a flat disc facing the camera has a near-constant angle — so we fake the
-// classic look by painting concentric rainbow bands in *object space* (so they
-// spin with the disc) and adding a bright rainbow rim where the surface goes
-// edge-on. Purely cosmetic, and cheap: a handful of dot products per fragment.
 export const DISC_VERTEX = /* glsl */ `
   varying vec3 vLocalPos;
   varying vec3 vWorldNormal;
@@ -48,13 +42,7 @@ export const DISC_VERTEX = /* glsl */ `
     vec4 worldPos = modelMatrix * vec4(position, 1.0);
     vWorldPos = worldPos.xyz;
     vWorldNormal = normalize(mat3(modelMatrix) * normal);
-    // Radial direction in the disc's flat face (cylinder axis = local Y, so the
-    // face lies in local XZ), rotated into world space. The fragment gate uses
-    // this against a fixed world light: whichever object-space spoke is aligned
-    // with the light gets lit, and as the disc spins (UikitSafeFloat) the aligned
-    // spoke changes — which is exactly the "a different set of spokes lights up
-    // as it rotates" behaviour. modelMatrix isn't available in the fragment
-    // shader, so we bake the world transform here.
+
     vec3 radial = vec3(position.x, 0.0, position.z);
     if (dot(radial, radial) < 1e-8) radial = vec3(0.0, 0.0, 1.0);
     vRadialWorld = normalize(mat3(modelMatrix) * radial);
@@ -62,13 +50,6 @@ export const DISC_VERTEX = /* glsl */ `
   }
 `
 
-// A stylised real-CD look: a DARK, reflective disc body with two opposite
-// bright rainbow "spoke fans" (a full line through the hub). The rainbow is a
-// STATIC conic gradient painted in object space (hue = f(angle around hub)); a
-// WORLD-FIXED gate decides which object-space spokes are currently lit, so as
-// the disc spins a different set of them shows the hue while the rest stays the
-// dark reflective base. Purely cosmetic and cheap: a handful of dot/pow per
-// fragment, no texture fetches, no loops.
 export const DISC_FRAGMENT = /* glsl */ `
   uniform float uTime;
   varying vec3 vLocalPos;
@@ -84,31 +65,18 @@ export const DISC_FRAGMENT = /* glsl */ `
   }
 
   void main() {
-    // 1) Static conic rainbow painted in object space — a full wheel around the
-    //    hub, so hue varies across each fan's width (the spectrum wedge).
     float conic  = atan(vLocalPos.z, vLocalPos.x);   // -PI..PI, object space
     float hue    = fract(conic / 6.2831853 + uTime * 0.012);
     vec3 rainbow = hsv2rgb(vec3(hue, 0.85, 1.0));
 
-    // 2) Gate: a fixed world light “lights” the object-space spoke currently
-    //    aligned with it. vRadialWorld is already world-space, so the gate is
-    //    fixed in the world while the disc spins -> the lit spokes move. The
-    //    world light is PROJECTED into the disc's own plane (N is the face
-    //    normal, uniform across a flat disc) so this works for any tilt/orient
-    //    of the disc. abs() yields two opposite fans (0° and 180°).
     vec3 N   = normalize(vWorldNormal);
     vec3 Lw  = vec3(0.0, 1.0, 0.0);                    // fixed world “light” (top)
     vec3 Lp  = normalize(Lw - dot(Lw, N) * N);         // -> into the disc plane
     float align = dot(normalize(vRadialWorld), Lp);
     float gate  = pow(clamp(abs(align), 0.0, 1.0), 2.5);
 
-    // Fine radial striations inside the fan (the data-track reflection): lines
-    // run RADIALY (constant angle), not concentric rings — keep them subtle so
-    // they read as texture, not a rainbow bullseye.
     float streak = 0.82 + 0.18 * sin(conic * 220.0);
 
-    // 3) Dark reflective base: soft ambient by view angle + a tight specular
-    //    glint + a faint grazing rim — “dark & reflective”, not silver/pastel.
     vec3 V   = normalize(cameraPosition - vWorldPos);
     float NdV = clamp(dot(N, V), 0.0, 1.0);
     vec3 dark = mix(vec3(0.07), vec3(0.19), NdV);
@@ -117,8 +85,6 @@ export const DISC_FRAGMENT = /* glsl */ `
     float rim  = pow(1.0 - NdV, 3.0);
     vec3 base = dark + spec * 0.6 + rim * 0.12;
 
-    // 4) Where the spoke passes show the brightened rainbow; elsewhere the
-    //    reflective dark base.
     vec3 fan = rainbow * (0.9 + 0.25 * streak);
     gl_FragColor = vec4(mix(base, fan, gate), 1.0);
   }
