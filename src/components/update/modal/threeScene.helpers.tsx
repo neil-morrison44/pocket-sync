@@ -104,22 +104,37 @@ export const DISC_FRAGMENT = /* glsl */ `
     vec3 rainbow  = hsv2rgb(vec3(hue, 0.85, 1.0));
 
     float align = dot(normalize(vRadialView), fanAxis);
-    // Steep exponent keeps the rainbow wedge narrow (the "dark" region is the
-    // backdrop). ~60% of the previous width was exponent 2.5; 8 is ~60% size.
     float gate  = pow(clamp(abs(align), 0.0, 1.0), 8.0);
+
+    // Radial position in local units (rim ~0.772, hole ~0.15).
+    float rn = length(vLocalPos.xz) / 0.772;
+
+    // The hub: a darker band around the central hole (see reference images),
+    // dark just outside the hole and fading out by rn ~0.45.
+    float hubMask = 1.0 - smoothstep(0.15, 0.45, rn);
+    // A sharper circular edge at the hub's outer boundary, in addition to the
+    // fade — the crisp rim visible in the reference images.
+    float edgeMask = 1.0 - smoothstep(0.0, 0.018, abs(rn - 0.25));
+
+    // Fade the rainbow out over the hub (and its edge) so both read cleanly.
+    gate *= 1.0 - max(hubMask, edgeMask);
 
     float streak = 0.82 + 0.18 * sin(conic * 220.0);
 
-    // Base silver: dark body + a fixed world light spec + a bright rim where the
-    // surface goes edge-on (view-based).
+    // Base silver: brightened grey body, darkened over the hub band, + a fixed
+    // world light spec + a bright rim where the surface goes edge-on.
     vec3 V    = normalize(cameraPosition - vWorldPos);
     vec3 Nf   = normalize(vWorldNormal);
     float NdV = clamp(dot(Nf, V), 0.0, 1.0);
-    vec3 dark = mix(vec3(0.07), vec3(0.19), NdV);
-    vec3 Ls   = normalize(vec3(-0.35, 0.5, 0.85));
-    float spec = pow(clamp(dot(Nf, normalize(Ls + V)), 0.0, 1.0), 160.0);
-    float rim  = pow(1.0 - NdV, 3.0);
-    vec3 base = dark + spec * 0.6 + rim * 0.12;
+    vec3 body    = mix(vec3(0.29), vec3(0.39), NdV);
+    vec3 hubGrey = mix(vec3(0.05), vec3(0.12), NdV);
+    vec3 grey    = mix(body, hubGrey, hubMask);
+    // The sharper edge: a distinct, slightly darker line at the hub's boundary.
+    grey = mix(grey, vec3(0.03), edgeMask * 0.7);
+    vec3 Ls      = normalize(vec3(-0.35, 0.5, 0.85));
+    float spec   = pow(clamp(dot(Nf, normalize(Ls + V)), 0.0, 1.0), 160.0);
+    float rim    = pow(1.0 - NdV, 3.0);
+    vec3 base    = grey + spec * 0.6 + rim * 0.12;
 
     vec3 fan = rainbow * (0.9 + 0.25 * streak);
     gl_FragColor = vec4(mix(base, fan, gate), 1.0);
