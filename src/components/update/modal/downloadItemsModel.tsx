@@ -6,7 +6,6 @@ import * as THREE from "three"
 import React, { useEffect, useMemo } from "react"
 import { useGLTF } from "@react-three/drei"
 import { GLTF } from "three-stdlib"
-import { useFrame } from "@react-three/fiber"
 import { DISC_VERTEX, DISC_FRAGMENT } from "./threeScene.helpers"
 
 import downloadItemsModel from "./downloadItems.glb"
@@ -51,14 +50,15 @@ export const DownloadItemsModel = ({
 }: DownloadItemsModelProps) => {
   const { nodes, materials } = useGLTF(downloadItemsModel) as any as GLTFResult
 
-  // CD-like rainbow for the Disk: a lightweight custom shader paints
-  // concentric rainbow bands in object space (so they spin with the disc) plus
-  // a bright rainbow rim where the surface goes edge-on. The base grey look is
-  // irrelevant — the disc is a stylised CD, not a PBR object.
+  // CD-like rainbow for the Disk: a lightweight custom shader paints a rainbow
+  // wheel in object space (so it spins with the disc). The rainbow "fans" are
+  // anchored to the view — they sweep from top/bottom (disc flat, facing the
+  // camera) to left/right (disc facing down) and the hue shifts with that tilt,
+  // so the look responds to the disc's orientation in real time. See
+  // threeScene.helpers.tsx.
   const discMaterial = useMemo(() => {
     if (model !== "Disk") return null
     const mat = new THREE.ShaderMaterial({
-      uniforms: { uTime: { value: 0 } },
       vertexShader: DISC_VERTEX,
       fragmentShader: DISC_FRAGMENT,
     })
@@ -69,13 +69,6 @@ export const DownloadItemsModel = ({
     Object.assign(mat, { color: new THREE.Color(0xffffff) })
     return mat
   }, [model])
-
-  // Drive the shimmer's slow hue drift.
-  useFrame((state) => {
-    if (discMaterial) {
-      discMaterial.uniforms.uTime.value = state.clock.elapsedTime
-    }
-  })
 
   // Don't leak the material when the model changes or the component unmounts.
   useEffect(() => {

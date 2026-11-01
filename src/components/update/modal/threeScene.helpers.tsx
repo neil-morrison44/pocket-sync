@@ -35,7 +35,8 @@ export const DISC_VERTEX = /* glsl */ `
   varying vec3 vLocalPos;
   varying vec3 vWorldNormal;
   varying vec3 vWorldPos;
-  varying vec3 vRadialWorld;
+  varying vec3 vRadialView;
+  varying vec3 vFaceNormalView;
 
   void main() {
     vLocalPos = position;
@@ -43,19 +44,25 @@ export const DISC_VERTEX = /* glsl */ `
     vWorldPos = worldPos.xyz;
     vWorldNormal = normalize(mat3(modelMatrix) * normal);
 
+    // View-space directions (anchor the fans to the camera, so they respond to
+    // BOTH model rotation (the app's Float tumble) and camera orbit (the story's
+    // OrbitControls). normalMatrix = the modelView normal matrix, already in view space.
     vec3 radial = vec3(position.x, 0.0, position.z);
     if (dot(radial, radial) < 1e-8) radial = vec3(0.0, 0.0, 1.0);
-    vRadialWorld = normalize(mat3(modelMatrix) * radial);
+    vRadialView = normalize(normalMatrix * radial);
+    // The disc's true face normal (local cylinder axis +Y) in view space.
+    vFaceNormalView = normalize(normalMatrix * vec3(0.0, 1.0, 0.0));
+
     gl_Position = projectionMatrix * viewMatrix * worldPos;
   }
 `
 
 export const DISC_FRAGMENT = /* glsl */ `
-  uniform float uTime;
   varying vec3 vLocalPos;
   varying vec3 vWorldNormal;
   varying vec3 vWorldPos;
-  varying vec3 vRadialWorld;
+  varying vec3 vRadialView;
+  varying vec3 vFaceNormalView;
 
   // HSV -> RGB (cheap, no sin/cos).
   vec3 hsv2rgb(vec3 c) {
@@ -64,24 +71,53 @@ export const DISC_FRAGMENT = /* glsl */ `
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
   }
 
-  void main() {
-    float conic  = atan(vLocalPos.z, vLocalPos.x);   // -PI..PI, object space
-    float hue    = fract(conic / 6.2831853 + uTime * 0.012);
-    vec3 rainbow = hsv2rgb(vec3(hue, 0.85, 1.0));
+  // Unit vector in the disc plane along the screen axis ref (the in-plane part
+  // of ref). Falls back to alt when ref is parallel to the face normal
+  // (disc edge-on), where the projection degenerates to zero.
+  vec3 inPlane(vec3 N, vec3 ref, vec3 alt) {
+    vec3 p = ref - dot(ref, N) * N;
+    if (dot(p, p) < 1e-8) p = alt - dot(alt, N) * N;
+    return normalize(p);
+  }
 
-    vec3 N   = normalize(vWorldNormal);
-    vec3 Lw  = vec3(0.0, 1.0, 0.0);                    // fixed world “light” (top)
-    vec3 Lp  = normalize(Lw - dot(Lw, N) * N);         // -> into the disc plane
-    float align = dot(normalize(vRadialWorld), Lp);
-    float gate  = pow(clamp(abs(align), 0.0, 1.0), 2.5);
+  void main() {
+    float conic = atan(vLocalPos.z, vLocalPos.x);   // -PI..PI, object space
+
+    // --- Dynamic fan axis (view-anchored) --------------------------------
+    // N is the disc's face normal in CAMERA space (constant across the disc).
+    vec3 N = normalize(vFaceNormalView);
+
+    // How "downwards" the face points in the view: 0 facing the camera, +1
+    // facing down, -1 facing up. Drives both the fan-axis sweep and the hue shift.
+    float tilt = asin(clamp(-N.y, -1.0, 1.0));      // -PI/2 .. PI/2
+
+    // In-plane (view-space) basis anchored to the view axes: eRight ~ view +X
+    // (left/right), eTop ~ the in-plane perpendicular (top/bottom when flat).
+    // The fan axis sweeps from eTop (disc flat) to eRight (disc facing down).
+    vec3 eRight = inPlane(N, vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0));
+    vec3 eTop   = normalize(cross(N, eRight));
+    vec3 fanAxis = eRight * sin(tilt) + eTop * cos(tilt);   // unit, in-plane
+
+    // Hue wheel (object space, spins with the disc) + a tilt-driven hue shift so
+    // the palette cycles as the disc faces down. Time-free, by design.
+    float hue     = fract(conic / 6.2831853 + tilt * 0.25);
+    vec3 rainbow  = hsv2rgb(vec3(hue, 0.85, 1.0));
+
+    float align = dot(normalize(vRadialView), fanAxis);
+    // Steep exponent keeps the rainbow wedge narrow (the "dark" region is the
+    // backdrop). ~60% of the previous width was exponent 2.5; 8 is ~60% size.
+    float gate  = pow(clamp(abs(align), 0.0, 1.0), 8.0);
 
     float streak = 0.82 + 0.18 * sin(conic * 220.0);
 
-    vec3 V   = normalize(cameraPosition - vWorldPos);
-    float NdV = clamp(dot(N, V), 0.0, 1.0);
+    // Base silver: dark body + a fixed world light spec + a bright rim where the
+    // surface goes edge-on (view-based).
+    vec3 V    = normalize(cameraPosition - vWorldPos);
+    vec3 Nf   = normalize(vWorldNormal);
+    float NdV = clamp(dot(Nf, V), 0.0, 1.0);
     vec3 dark = mix(vec3(0.07), vec3(0.19), NdV);
     vec3 Ls   = normalize(vec3(-0.35, 0.5, 0.85));
-    float spec = pow(clamp(dot(N, normalize(Ls + V)), 0.0, 1.0), 160.0);
+    float spec = pow(clamp(dot(Nf, normalize(Ls + V)), 0.0, 1.0), 160.0);
     float rim  = pow(1.0 - NdV, 3.0);
     vec3 base = dark + spec * 0.6 + rim * 0.12;
 
