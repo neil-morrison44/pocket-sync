@@ -1,4 +1,19 @@
 # Changelog
+<a id="v7.2.0"></a>
+# [v7.2.0 - Visual improvements to update all & layout fixes for plugins](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.2.0) - 2026-11-02
+
+## What's Changed
+* Visual improvements to the update all screen by [@neil-morrison44](https://github.com/neil-morrison44) in [#503](https://github.com/neil-morrison44/pocket-sync/pull/503)
+* fix: preserve plugin footer space while logs grow by [@zenibako](https://github.com/zenibako) in [#501](https://github.com/neil-morrison44/pocket-sync/pull/501)
+
+## New Contributors
+* [@zenibako](https://github.com/zenibako) made their first contribution in [#501](https://github.com/neil-morrison44/pocket-sync/pull/501)
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v7.1.1...v7.2.0
+
+[Changes][v7.2.0]
+
+
 <a id="v7.1.1"></a>
 # [v7.1.1 - More data fixes & showing suggested plugins in the Plugins tab](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.1.1) - 2026-10-18
 
@@ -2062,6 +2077,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v7.2.0]: https://github.com/neil-morrison44/pocket-sync/compare/v7.1.1...v7.2.0
 [v7.1.1]: https://github.com/neil-morrison44/pocket-sync/compare/v7.1.0...v7.1.1
 [v7.1.0]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.3...v7.1.0
 [v7.0.3]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.2...v7.0.3
