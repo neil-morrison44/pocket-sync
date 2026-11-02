@@ -1,4 +1,6 @@
 .plugins-window {
+  --plugin-log-min-height: min(8rem, 20vh);
+
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -15,7 +17,8 @@
   white-space: pre-wrap;
   border-radius: 12px;
   font-size: 1.2em;
-  flex-grow: 1;
+  flex: 1 1 0;
+  min-height: var(--plugin-log-min-height);
   overflow: auto;
   overflow-x: hidden;
   box-sizing: border-box;
@@ -29,13 +32,17 @@
   white-space: pre-wrap;
   font-size: 1.2em;
   overflow: auto;
-  max-height: 50vh;
+  max-height: calc(100vh - var(--plugin-log-min-height) - 24px);
   height: auto;
-  flex-basis: content;
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
   box-sizing: border-box;
+}
+
+.plugins-window__control > * {
+  flex-shrink: 0;
 }
 
 .plugins-window__query {
