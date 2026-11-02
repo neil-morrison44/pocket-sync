@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react"
 import {
+  CanvasTexture,
   MeshPhysicalMaterial,
   NearestFilter,
   SRGBColorSpace,
-  Texture,
 } from "three"
 
 type ProgressScreenProps = {
@@ -25,7 +25,10 @@ export const ProgressScreen = ({
   message,
 }: ProgressScreenProps) => {
   const materialRef = useRef<MeshPhysicalMaterial | null>(null)
+  const textureRef = useRef<CanvasTexture | null>(null)
+  const contextRef = useRef<CanvasRenderingContext2D | null>(null)
 
+  // Create the persistent canvas + CanvasTexture once and wire it into the material.
   useEffect(() => {
     const canvas = document.createElement("canvas")
     canvas.width = 160 * SCALE
@@ -33,6 +36,33 @@ export const ProgressScreen = ({
 
     const context = canvas.getContext("2d")
     if (!context) return
+
+    const texture = new CanvasTexture(canvas)
+    texture.anisotropy = 4
+    texture.minFilter = NearestFilter
+    texture.magFilter = NearestFilter
+    texture.colorSpace = SRGBColorSpace
+
+    textureRef.current = texture
+    contextRef.current = context
+
+    if (materialRef.current) {
+      materialRef.current.map = texture
+      materialRef.current.emissiveMap = texture
+      materialRef.current.needsUpdate = true
+    }
+
+    return () => {
+      texture.dispose()
+    }
+  }, [])
+
+  // Redraw the persistent canvas on prop change, then flag the texture for re-upload.
+  useEffect(() => {
+    const context = contextRef.current
+    if (!context) return
+
+    const canvas = context.canvas
 
     context.fillStyle = DARKEST_GREEN
     context.fillRect(0, 0, canvas.width, canvas.height)
@@ -56,28 +86,10 @@ export const ProgressScreen = ({
       context.fillStyle = LIGHT_GREEN
       context.fillText(message, canvas.width / 2, canvas.height * 0.9)
     }
-    canvas.toBlob((b) => {
-      if (!b) return
-      const image = new Image()
-      image.src = URL.createObjectURL(b)
 
-      image.onload = () => {
-        const newTexture = new Texture()
-        newTexture.image = image
-        newTexture.needsUpdate = true
-        newTexture.anisotropy = 4
-        newTexture.minFilter = NearestFilter
-        newTexture.magFilter = NearestFilter
-        newTexture.colorSpace = SRGBColorSpace
-
-        if (!materialRef.current) return
-        materialRef.current.map?.dispose()
-        materialRef.current.map = newTexture
-        materialRef.current.emissiveMap = newTexture
-        materialRef.current.needsUpdate = true
-      }
-    })
+    if (textureRef.current) textureRef.current.needsUpdate = true
   }, [value, max, message])
+
   return (
     <meshPhysicalMaterial
       attach="material"

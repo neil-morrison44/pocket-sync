@@ -1,6 +1,13 @@
 import { Lights, Body as PocketBody } from "../../three/pocket"
-import { Fullscreen, Container, Content, Custom } from "@react-three/uikit"
-import { Suspense, useMemo, useRef, useState } from "react"
+import {
+  Fullscreen,
+  Container,
+  Content,
+  Custom,
+  type VanillaContainer,
+  type VanillaContent,
+} from "@react-three/uikit"
+import { Suspense, useMemo, useRef } from "react"
 import { PocketEnv } from "../../three/env"
 import { ColourContextProviderFromConfig } from "../../three/colourContext"
 import { DownloadItemsModel } from "./downloadItemsModel"
@@ -23,10 +30,16 @@ const AnimatedProgress = ({
 }) => {
   const clampedPosition = Math.max(0, Math.min(1, progress ?? 0))
 
-  const [smoothProgress, setSmoothProgress] = useState(0)
   const currentProgressRef = useRef(0)
   const glitterMaterialRef = useRef<ShaderMaterial>(null)
   const glitterUniforms = useMemo(() => ({ uTime: { value: 0 } }), [])
+
+  // Imperative uikit refs: drive flexGrow/opacity via setProperties each frame
+  // instead of React state, so the uikit subtree doesn't re-render (and
+  // re-measure) on every frame.
+  const leftSpacerRef = useRef<VanillaContainer>(null)
+  const rightSpacerRef = useRef<VanillaContainer>(null)
+  const itemContentRef = useRef<VanillaContent>(null)
 
   useFrame((state, delta) => {
     const safeDelta = Math.min(delta, 0.1)
@@ -41,7 +54,19 @@ const AnimatedProgress = ({
     } else {
       currentProgressRef.current = clampedPosition
     }
-    setSmoothProgress(currentProgressRef.current)
+
+    const smoothProgress = currentProgressRef.current
+    if (leftSpacerRef.current) {
+      leftSpacerRef.current.setProperties({ flexGrow: smoothProgress })
+    }
+    if (rightSpacerRef.current) {
+      rightSpacerRef.current.setProperties({ flexGrow: 1 - smoothProgress })
+    }
+    if (itemContentRef.current) {
+      itemContentRef.current.setProperties({
+        opacity: Math.max(0, Math.min(1, (1 - smoothProgress) * 5)),
+      })
+    }
 
     if (glitterMaterialRef.current) {
       glitterMaterialRef.current.uniforms.uTime.value = state.clock.elapsedTime
@@ -78,11 +103,12 @@ const AnimatedProgress = ({
         flexDirection="row"
         alignItems="center"
       >
-        <Container flexGrow={smoothProgress} flexBasis={0} />
+        <Container ref={leftSpacerRef} flexGrow={0} flexBasis={0} />
         <Content
+          ref={itemContentRef}
           height="46%"
           alignItems="center"
-          opacity={Math.max(0, Math.min(1, (1 - smoothProgress) * 5))}
+          opacity={1}
         >
           <UikitSafeFloat
             speed={2}
@@ -93,7 +119,7 @@ const AnimatedProgress = ({
             <DownloadItemsModel model={loadingModel} />
           </UikitSafeFloat>
         </Content>
-        <Container flexBasis={0} flexGrow={1 - smoothProgress} />
+        <Container ref={rightSpacerRef} flexBasis={0} flexGrow={1} />
       </Container>
     </Container>
   )
