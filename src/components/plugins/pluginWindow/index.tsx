@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useEffectEvent,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react"
+import { useEffect, useRef, useState } from "react"
 import { invokeKillPlugin, invokeRunPlugin } from "../../../utils/invokes"
 import { getCurrentWindow } from "@tauri-apps/api/window"
 import { listen, emit } from "@tauri-apps/api/event"
@@ -24,6 +18,10 @@ type PluginMessage =
 
 type HostMessage = { Answer: { name: string; value: string } } | "Kill"
 
+// The Tauri-facing wrapper: kicks off the plugin, listens for its log output
+// and messages, and handles closing the window. It accumulates that state and
+// feeds it down to <PluginWindowView>, which is pure presentation (and so can
+// be previewed directly in Storybook without any Tauri).
 export const PluginWindow = ({ pluginId }: PluginWindowProps) => {
   const [messageLog, setMessageLog] = useState<string[]>([""])
   const { t } = useTranslation("plugins")
@@ -109,6 +107,37 @@ export const PluginWindow = ({ pluginId }: PluginWindowProps) => {
     }
   }, [closeWindowOnExit, currentPluginMessage])
 
+  // Report the user's answer back to the plugin over Tauri, then clear the
+  // prompt so the log is shown again.
+  const onAnswer = (name: string, value: string) => {
+    const message: HostMessage = { Answer: { name, value } }
+    emit("plugin-host-message", message)
+    setCurrentPluginMessage(null)
+  }
+
+  return (
+    <PluginWindowView
+      logs={messageLog}
+      message={currentPluginMessage}
+      onAnswer={onAnswer}
+    />
+  )
+}
+
+type PluginWindowViewProps = {
+  logs: string[]
+  message: PluginMessage | null
+  onAnswer: (name: string, value: string) => void
+}
+
+// Pure presentation: renders the accumulated log and whatever the plugin is
+// currently asking. It owns no Tauri and no app state — everything arrives via
+// props — so it can be rendered in Storybook in any of its states directly.
+export const PluginWindowView = ({
+  logs,
+  message,
+  onAnswer,
+}: PluginWindowViewProps) => {
   const logContainerRef = useRef<HTMLDivElement>(null)
   const isScrolledToBottomRef = useRef<boolean>(true)
 
@@ -126,7 +155,7 @@ export const PluginWindow = ({ pluginId }: PluginWindowProps) => {
     if (isScrolledToBottomRef.current) {
       terminal.scrollTop = terminal.scrollHeight
     }
-  }, [messageLog])
+  }, [logs])
 
   return (
     <div className="plugins-window">
@@ -135,15 +164,12 @@ export const PluginWindow = ({ pluginId }: PluginWindowProps) => {
         onScroll={handleScroll}
         ref={logContainerRef}
       >
-        {messageLog.map((text, index) => (
+        {logs.map((text, index) => (
           <div key={index}>{text}</div>
         ))}
       </div>
       <div className="plugins-window__control">
-        <PluginMessageRenderer
-          message={currentPluginMessage}
-          onAnswer={() => setCurrentPluginMessage(null)}
-        />
+        <PluginMessageRenderer message={message} onAnswer={onAnswer} />
       </div>
     </div>
   )
@@ -151,9 +177,12 @@ export const PluginWindow = ({ pluginId }: PluginWindowProps) => {
 
 type PluginMessageRendererProps = {
   message: PluginMessage | null
-  onAnswer: () => void
+  onAnswer: (name: string, value: string) => void
 }
 
+// Renders a single plugin message (a choice prompt, a text prompt, or the
+// "safe to close" notice). Presentational: it reports the user's answer to
+// `onAnswer` and lets the parent decide what to do with it.
 const PluginMessageRenderer = ({
   message,
   onAnswer,
@@ -174,14 +203,7 @@ const PluginMessageRenderer = ({
         <div className="plugins-window__query">{query}</div>
         <div className="plugins-window__buttons">
           {choices.map((c) => (
-            <button
-              key={c}
-              onClick={() => {
-                const message: HostMessage = { Answer: { name, value: c } }
-                emit("plugin-host-message", message)
-                onAnswer()
-              }}
-            >
+            <button key={c} onClick={() => onAnswer(name, c)}>
               {c}
             </button>
           ))}
@@ -193,13 +215,7 @@ const PluginMessageRenderer = ({
   if ("Text" in message) {
     const { name, query } = message.Text
 
-    const submitText = () => {
-      const outputMessage: HostMessage = {
-        Answer: { name, value: inputString },
-      }
-      emit("plugin-host-message", outputMessage)
-      onAnswer()
-    }
+    const submitText = () => onAnswer(name, inputString)
 
     return (
       <>
