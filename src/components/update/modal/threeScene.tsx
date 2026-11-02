@@ -1,14 +1,18 @@
 import { Lights, Body as PocketBody } from "../../three/pocket"
-import { Float } from "@react-three/drei"
-import { Fullscreen, Container, Content } from "@react-three/uikit"
-import { Suspense, useRef, useState } from "react"
+import { Fullscreen, Container, Content, Custom } from "@react-three/uikit"
+import { Suspense, useMemo, useRef, useState } from "react"
 import { PocketEnv } from "../../three/env"
 import { ColourContextProviderFromConfig } from "../../three/colourContext"
 import { DownloadItemsModel } from "./downloadItemsModel"
 import { CoreLogoScreen } from "../../three/coreLogoScreen"
 import { StaticScreen } from "../../three/staticScreen"
 import { useFrame } from "@react-three/fiber"
-import { MathUtils, ShaderMaterial } from "three"
+import { MathUtils, type ShaderMaterial } from "three"
+import {
+  UikitSafeFloat,
+  GLITTER_VERTEX,
+  GLITTER_FRAGMENT,
+} from "./threeScene.helpers"
 
 const AnimatedProgress = ({
   progress,
@@ -21,8 +25,10 @@ const AnimatedProgress = ({
 
   const [smoothProgress, setSmoothProgress] = useState(0)
   const currentProgressRef = useRef(0)
+  const glitterMaterialRef = useRef<ShaderMaterial>(null)
+  const glitterUniforms = useMemo(() => ({ uTime: { value: 0 } }), [])
 
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     const safeDelta = Math.min(delta, 0.1)
 
     if (clampedPosition > currentProgressRef.current) {
@@ -36,27 +42,60 @@ const AnimatedProgress = ({
       currentProgressRef.current = clampedPosition
     }
     setSmoothProgress(currentProgressRef.current)
+
+    if (glitterMaterialRef.current) {
+      glitterMaterialRef.current.uniforms.uTime.value = state.clock.elapsedTime
+    }
   })
 
   return (
-    <>
-      <Container flexGrow={smoothProgress} flexBasis={0} />
-      <Content
-        height="50%"
-        alignItems="center"
-        opacity={Math.max(0, Math.min(1, (1 - smoothProgress) * 5))}
+    <Container width="100%" height="100%" positionType="relative">
+      {/* Glitter "tube": full-width band the download item flies through. Sized
+          a little taller than the pocket so it reads as the backdrop. */}
+      <Custom
+        positionType="absolute"
+        width="100%"
+        height="100%"
+        positionLeft="0%"
+        positionTop="0%"
+        transformTranslateZ={-1}
+        renderOrder={-10}
       >
-        <Float
-          speed={2}
-          rotationIntensity={2}
-          floatIntensity={0.75}
-          floatingRange={[-0.2, 0.2]}
+        <shaderMaterial
+          ref={glitterMaterialRef}
+          transparent
+          depthWrite={false}
+          uniforms={glitterUniforms}
+          vertexShader={GLITTER_VERTEX}
+          fragmentShader={GLITTER_FRAGMENT}
+        />
+      </Custom>
+
+      {/* Download item slides left -> right as progress advances. */}
+      <Container
+        width="100%"
+        height="100%"
+        flexDirection="row"
+        alignItems="center"
+      >
+        <Container flexGrow={smoothProgress} flexBasis={0} />
+        <Content
+          height="46%"
+          alignItems="center"
+          opacity={Math.max(0, Math.min(1, (1 - smoothProgress) * 5))}
         >
-          <DownloadItemsModel model={loadingModel} />
-        </Float>
-      </Content>
-      <Container flexBasis={0} flexGrow={1 - smoothProgress} />
-    </>
+          <UikitSafeFloat
+            speed={2}
+            rotationIntensity={2}
+            floatIntensity={0.75}
+            floatingRange={[-0.2, 0.2]}
+          >
+            <DownloadItemsModel model={loadingModel} />
+          </UikitSafeFloat>
+        </Content>
+        <Container flexBasis={0} flexGrow={1 - smoothProgress} />
+      </Container>
+    </Container>
   )
 }
 
@@ -71,6 +110,28 @@ export const UpdateThreeScene = ({
   coreName,
   loadingModel = "Chip",
 }: UpdateThreeSceneProps) => {
+  const pocket = (
+    <group scale={5} rotation={[0, -0.5, 0]}>
+      <UikitSafeFloat
+        speed={0.5}
+        rotationIntensity={1.5}
+        floatIntensity={0.75}
+        floatingRange={[-0.2, 0.2]}
+      >
+        <PocketBody
+          jauntyAngle={false}
+          screenMaterial={
+            coreName ? (
+              <Suspense fallback={<StaticScreen />}>
+                <CoreLogoScreen coreName={coreName} />
+              </Suspense>
+            ) : null
+          }
+        />
+      </UikitSafeFloat>
+    </group>
+  )
+
   return (
     <>
       <Suspense>
@@ -78,7 +139,7 @@ export const UpdateThreeScene = ({
         <PocketEnv />
       </Suspense>
 
-      <Fullscreen flexDirection="row" justifyContent="center" height="220px">
+      <Fullscreen flexDirection="row" justifyContent="center" height="300px">
         <Container flexGrow={1} alignItems="center" flexDirection="row">
           {progress !== undefined && (
             <Suspense fallback={null}>
@@ -99,25 +160,7 @@ export const UpdateThreeScene = ({
             <Container>
               <Content width="auto" height="100%">
                 <ColourContextProviderFromConfig>
-                  <group scale={5} rotation={[0, -0.5, 0]}>
-                    <Float
-                      speed={0.5}
-                      rotationIntensity={1.5}
-                      floatIntensity={0.75}
-                      floatingRange={[-0.2, 0.2]}
-                    >
-                      <PocketBody
-                        jauntyAngle={false}
-                        screenMaterial={
-                          coreName ? (
-                            <Suspense fallback={<StaticScreen />}>
-                              <CoreLogoScreen coreName={coreName} />
-                            </Suspense>
-                          ) : null
-                        }
-                      />
-                    </Float>
-                  </group>
+                  {pocket}
                 </ColourContextProviderFromConfig>
               </Content>
             </Container>
@@ -127,53 +170,4 @@ export const UpdateThreeScene = ({
       </Suspense>
     </>
   )
-}
-
-const sharedUniforms = {
-  uTime: { value: 0 },
-}
-
-// 2. Define the custom Material Class extending THREE.ShaderMaterial
-class GlitterMaterial extends ShaderMaterial {
-  constructor() {
-    super({
-      uniforms: sharedUniforms,
-      transparent: true,
-      depthWrite: false,
-      vertexShader: `
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform float uTime;
-        varying vec2 vUv;
-
-        // Pseudo-random noise function
-        float random(vec2 st) {
-          return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
-        }
-
-        void main() {
-          vec2 uv = vUv;
-          // Travel to the right over time
-          uv.x -= uTime * 0.05;
-
-          // Create a grid for the glitter flakes
-          vec2 grid = floor(uv * vec2(300.0, 50.0));
-          float rand = random(grid);
-
-          // Twinkle effect using sine waves offset by the random value
-          float twinkle = sin(uTime * 4.0 + rand * 10.0) * 0.5 + 0.5;
-
-          // Threshold to only show the brightest spots (sparse glitter)
-          float glitter = step(0.97, rand) * twinkle;
-
-          gl_FragColor = vec4(vec3(1.0), glitter * 0.8);
-        }
-      `,
-    })
-  }
 }

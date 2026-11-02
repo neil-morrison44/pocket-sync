@@ -1,5 +1,6 @@
 import { useLoader } from "@react-three/fiber"
-import { STLLoader } from "three/examples/jsm/loaders/STLLoader"
+import { useLayoutEffect, useRef } from "react"
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js"
 import frontSTL from "../../../openscad_models/front.stl"
 import backSTL from "../../../openscad_models/back.stl"
 import dpadSTL from "../../../openscad_models/dpad.stl"
@@ -19,7 +20,12 @@ import {
   Vector2,
   Vector3,
 } from "three"
-import { Geometry, Base, Subtraction } from "@react-three/csg"
+import {
+  Geometry,
+  Base,
+  Subtraction,
+  type CSGGeometryRef,
+} from "@react-three/csg"
 import { RoundedBoxGeometry } from "@react-three/drei"
 
 type FrontMeshPrimitiveProps = {
@@ -32,8 +38,22 @@ export const FrontMeshPrimitive = ({
   const geom = useLoader(STLLoader, frontSTL)
   assignUVs(geom)
 
+  // @react-three/csg keeps its operations group on matrixAutoUpdate={false} (it
+  // pins matrixWorld to identity while evaluating CSG). uikit's Content measures
+  // its children with Box3.expandByObject, which CANNOT recompute world matrices
+  // for such nodes — so if a render frame has baked uikit's scaled-down world
+  // transform, the invisible helper brush inside contaminates the cached
+  // bounding box (stretched toward the camera) → wrong childrenMatrix scale
+  // (the "small models" flake variant). Flipping the flag is safe: the CSG
+  // geometry is computed at mount (before this effect runs), and the brush
+  // stays invisible.
+  const csgRef = useRef<CSGGeometryRef>(null)
+  useLayoutEffect(() => {
+    if (csgRef.current) csgRef.current.operations.matrixAutoUpdate = true
+  }, [])
+
   return (
-    <Geometry computeVertexNormals>
+    <Geometry ref={csgRef} computeVertexNormals>
       <Base geometry={geom} />
       {hasLogo && (
         <Subtraction position={[0, -48, 0]} rotation={[0, 0, 0]}>

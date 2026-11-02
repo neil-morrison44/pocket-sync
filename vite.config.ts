@@ -1,22 +1,18 @@
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
+import babel from "@rolldown/plugin-babel"
 import postcssNesting from "postcss-nesting"
 import i18nextLoader from "vite-plugin-i18next-loader"
 
-import jotaiDebugLabel from "jotai/babel/plugin-debug-label"
-import jotaiReactRefresh from "jotai/babel/plugin-react-refresh"
+import jotaiDebugLabel from "jotai-babel/plugin-debug-label"
+import jotaiReactRefresh from "jotai-babel/plugin-react-refresh"
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    react({
-      babel: {
-        plugins: [
-          jotaiDebugLabel,
-          jotaiReactRefresh,
-          "babel-plugin-react-compiler",
-        ],
-      },
+    react({ compiler: true }),
+    babel({
+      plugins: [jotaiDebugLabel, jotaiReactRefresh],
     }),
     i18nextLoader({ paths: ["./src/i18n/locales"] }),
   ],

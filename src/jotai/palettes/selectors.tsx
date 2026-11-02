@@ -37,7 +37,7 @@ export const PaletteColoursSelectorFamily = atomFamily<
   })
 )
 
-const parsePalette = (data: Uint8Array): [rgb, rgb, rgb, rgb] => {
+export const parsePalette = (data: Uint8Array): [rgb, rgb, rgb, rgb] => {
   return data
     .reduce(
       (acc, current, index) => {
