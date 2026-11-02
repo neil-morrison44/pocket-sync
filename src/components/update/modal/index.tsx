@@ -12,6 +12,7 @@ import prettyBytes from "pretty-bytes"
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { Canvas } from "@react-three/fiber"
 import { UpdateThreeScene } from "./threeScene"
+import { useScaledDpr } from "../../three/pocket"
 import { UpdateFinishedReport } from "./finishedReport"
 import { useUpdateEventManager } from "./hooks"
 import { useAtomValue } from "jotai"
@@ -25,6 +26,7 @@ type UpdateModalProps = {
 export const UpdateModal = ({ onClose }: UpdateModalProps) => {
   const { t } = useTranslation("update")
   const updateState = useUpdateEventManager()
+  const dpr = useScaledDpr()
 
   return (
     <Modal>
@@ -114,6 +116,7 @@ export const UpdateModal = ({ onClose }: UpdateModalProps) => {
           <Canvas
             className="update__core-3d-scene"
             camera={{ fov: 10, position: [0, 0, 50] }}
+            dpr={dpr}
           >
             <UpdateThreeScene
               progress={

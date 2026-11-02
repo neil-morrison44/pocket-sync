@@ -56,6 +56,12 @@ type PocketProps = {
 const SWAY_SPEED = 0.2
 const MAX_PERF_LEVEL = 3
 
+export const useScaledDpr = (): number => {
+  const perfLevel = useSmoothedAtomValue(performanceLevelAtom)
+  const dprScale = [0.5, 0.75, 1, 1][perfLevel]
+  return window.devicePixelRatio * dprScale
+}
+
 export const Pocket = ({
   move = "none",
   screenMaterial,
@@ -64,7 +70,7 @@ export const Pocket = ({
   const perfLevel = useSmoothedAtomValue(performanceLevelAtom)
   const setPerfLevel = useSetAtom(performanceLevelAtom)
   const seenPerfLevelsRef = useRef(new Array<number>())
-  const dprScale = [0.5, 0.75, 1, 1][perfLevel]
+  const dpr = useScaledDpr()
 
   const setAndStorePerfLevel = useCallback(
     (updater: (currVal: number) => number) => {
@@ -84,7 +90,7 @@ export const Pocket = ({
       className="three-pocket"
       camera={{ fov: 50, position: [0, 0, 42] }}
       onCreated={(state) => (state.gl.toneMapping = NoToneMapping)}
-      dpr={window.devicePixelRatio * dprScale}
+      dpr={dpr}
     >
       <PerformanceMonitor
         onIncline={() => {
