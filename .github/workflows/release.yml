@@ -29,7 +29,7 @@ jobs:
           cache: "npm"
       - uses: dtolnay/rust-toolchain@stable
       - name: Rust cache
-        uses: Swatinem/rust-cache@v4
+        uses: Swatinem/rust-cache@v2
         with:
           workspaces: "src-tauri -> target"
       - name: install dependencies (ubuntu only)
