@@ -97,7 +97,11 @@ pub async fn get_all_updaters_files(
                 let updaters_json_path = path.join("updaters.json");
                 if updaters_json_path.exists() {
                     let content = read_to_string(&updaters_json_path).await?;
-                    let updaters_file: UpdatersFile = serde_json::from_str(&content)?;
+                    let updaters_file: UpdatersFile =
+                        serde_json::from_str(&content).map_err(|source| AppError::JsonFile {
+                            path: updaters_json_path.clone(),
+                            source,
+                        })?;
                     updaters_map.insert(core_name.to_string(), updaters_file);
                 }
             }

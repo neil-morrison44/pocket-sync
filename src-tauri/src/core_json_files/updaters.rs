@@ -1,3 +1,4 @@
+use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::{fs, path::PathBuf};
 
@@ -21,16 +22,22 @@ pub struct UpdatersFile {
 }
 
 impl UpdatersFile {
-    pub fn from_core_path(core_path: &PathBuf) -> Option<UpdatersFile> {
+    pub fn from_core_path(core_path: &PathBuf) -> Result<Option<UpdatersFile>> {
         let updaters_file_path = core_path.join("updaters.json");
 
         if !updaters_file_path.exists() {
-            return None;
-        } else {
-            let file_string = fs::read_to_string(updaters_file_path).unwrap();
-            let file: UpdatersFile = serde_json::from_str(&file_string).unwrap();
-            return Some(file);
+            return Ok(None);
         }
+
+        let file_string = fs::read_to_string(&updaters_file_path)?;
+        let file: UpdatersFile = serde_json::from_str(&file_string).map_err(|e| {
+            anyhow::anyhow!(
+                "Failed to parse JSON file {}: {}",
+                updaters_file_path.display(),
+                e
+            )
+        })?;
+        Ok(Some(file))
     }
 }
 
@@ -59,7 +66,7 @@ mod tests {
     #[test]
     fn test_from_core_path() -> Result<(), Box<dyn Error>> {
         let core_folder = core_folder_setup()?;
-        let updaters_file = UpdatersFile::from_core_path(&core_folder).unwrap();
+        let updaters_file = UpdatersFile::from_core_path(&core_folder).unwrap().unwrap();
         dbg!("{:?}", &updaters_file);
 
         assert_eq!(

@@ -98,8 +98,12 @@ pub async fn run_plugin(
     let host_path_dir = plugin_data_dir.join("host");
     let json_path = plugin_data_dir.join("plugin.json");
 
-    let file = tokio::fs::File::open(json_path).await?.into_std().await;
-    let plugin_info: PluginInfo = serde_json::from_reader(file)?;
+    let json_text = tokio::fs::read_to_string(&json_path).await?;
+    let plugin_info: PluginInfo =
+        serde_json::from_str(&json_text).map_err(|source| AppError::JsonFile {
+            path: json_path.clone(),
+            source,
+        })?;
 
     let (tx, rx) = mpsc::channel::<HostMessage>();
 
@@ -355,7 +359,11 @@ pub async fn list_and_install_plugins(
 
         let plugin_json_path = plugin_data_dir.join("plugin.json");
         let plugin_info_str = fs::read_to_string(&plugin_json_path).await?;
-        let plugin_info: PluginInfo = serde_json::from_str(&plugin_info_str)?;
+        let plugin_info: PluginInfo =
+            serde_json::from_str(&plugin_info_str).map_err(|source| AppError::JsonFile {
+                path: plugin_json_path.clone(),
+                source,
+            })?;
 
         plugins_list.push(PluginListItem {
             id: plugin_id,

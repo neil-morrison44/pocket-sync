@@ -1,5 +1,5 @@
 use futures::StreamExt;
-use log::info;
+use log::{info, warn};
 use nestify::nest;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
@@ -351,12 +351,13 @@ async fn start_zip_install_flow(
     let main_window = window.clone();
     let install_confirm = zip_confirm_event.wait_for_confirmation(&window).await?;
 
-    let (paths, handle_moved_files, allow) = match install_confirm {
+    let (paths, handle_moved_files, allow, delete_missing) = match install_confirm {
         FromTSPayload::InstallConfirmation {
             paths,
             handle_moved_files,
             allow,
-        } => (paths, handle_moved_files, allow),
+            delete_missing,
+        } => (paths, handle_moved_files, allow, delete_missing),
         _ => panic!("Wrong install_confirm type"),
     };
 
@@ -433,11 +434,29 @@ async fn start_zip_install_flow(
             continue;
         }
 
-        tokio::fs::create_dir_all(destination.parent().unwrap()).await?;
-        if !source.is_dir() {
-            tokio::fs::copy(&source, &destination).await?;
+        if !source.exists() {
+            if !delete_missing {
+                // A confirmed path missing from the zip is still an error
+                tokio::fs::copy(&source, &destination).await?;
+            } else if destination.is_file() {
+                // Repair install: we know this file is corrupt (the repair was
+                // triggered by a parse error on it), and the fresh zip doesn't
+                // contain it, so remove the corrupt copy
+                if let Err(err) = tokio::fs::remove_file(&destination).await {
+                    println!(
+                        "Failed to delete corrupt file {}: {}",
+                        destination.display(),
+                        err
+                    );
+                }
+            }
         } else {
-            tokio::fs::create_dir(&destination).await?;
+            tokio::fs::create_dir_all(destination.parent().unwrap()).await?;
+            if !source.is_dir() {
+                tokio::fs::copy(&source, &destination).await?;
+            } else {
+                tokio::fs::create_dir(&destination).await?;
+            }
         }
 
         FromRustPayload::InstallZipEvent {
@@ -460,11 +479,20 @@ async fn start_zip_install_flow(
 
     for core_path in cores {
         let full_core_path = pocket_path.join(core_path);
-        if let Some(updaters_file) = UpdatersFile::from_core_path(&full_core_path) {
-            if let Some(previous) = updaters_file.previous {
-                let new_core = CoreFile::from_core_path(&full_core_path).unwrap();
-                process_core_replacements(&window, &pocket_path, &new_core.into(), &previous).await;
+        let updaters_file = match UpdatersFile::from_core_path(&full_core_path) {
+            Ok(file) => file,
+            Err(error) => {
+                warn!(
+                    "Skipping core replacement for {:?}: {}",
+                    full_core_path, error
+                );
+                continue;
             }
+        };
+
+        if let Some(previous) = updaters_file.and_then(|file| file.previous) {
+            let new_core = CoreFile::from_core_path(&full_core_path).unwrap();
+            process_core_replacements(&window, &pocket_path, &new_core.into(), &previous).await;
         }
     }
 

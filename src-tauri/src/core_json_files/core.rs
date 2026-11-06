@@ -1,4 +1,4 @@
-use super::{updaters::CoreUpdateDetails, CoreDetails};
+use super::{CoreDetails, updaters::CoreUpdateDetails};
 use anyhow::Result;
 use nestify::nest;
 use serde::{Deserialize, Serialize};
@@ -35,8 +35,14 @@ pub enum CoreFile {
 impl CoreFile {
     pub fn from_core_path(core_path: &PathBuf) -> Result<CoreFile> {
         let core_file_path = core_path.join("core.json");
-        let file_string = fs::read_to_string(core_file_path)?;
-        let file: CoreFile = serde_json::from_str(&file_string)?;
+        let file_string = fs::read_to_string(&core_file_path)?;
+        let file: CoreFile = serde_json::from_str(&file_string).map_err(|e| {
+            anyhow::anyhow!(
+                "Failed to parse JSON file {}: {}",
+                core_file_path.display(),
+                e
+            )
+        })?;
         return Ok(file);
     }
 }

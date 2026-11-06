@@ -12,6 +12,8 @@ import { useAtomValue } from "jotai"
 
 const CORE_FILE_REGEX = /Cores[\/\\]([^\/\\]+)[\/\\]/
 const PLATFORM_FILE_REGEX = /Platforms[\/\\]([^\/\\]+)\.json/
+const PRESET_FILE_REGEX = /Presets[\/\\]([^\/\\]+)[\/\\]/
+const SETTINGS_FILE_REGEX = /Settings[\/\\]([^\/\\]+)[\/\\]/
 
 type RepairButtonProps = {
   error: Error
@@ -70,8 +72,18 @@ export const RepairButton = ({
     case "json_error": {
       const path = repairableCause.path
 
-      if (path.startsWith("Cores")) {
-        const coreMatch = path.match(CORE_FILE_REGEX)
+      // Cores, Presets & Settings files all live under the core's name, which
+      // is the first path segment — so the repair (redownload core) is the
+      // same for all of them
+      const coreNamePrefixes: [prefix: string, regex: RegExp][] = [
+        ["Cores", CORE_FILE_REGEX],
+        ["Presets", PRESET_FILE_REGEX],
+        ["Settings", SETTINGS_FILE_REGEX],
+      ]
+
+      for (const [prefix, regex] of coreNamePrefixes) {
+        if (!path.startsWith(prefix)) continue
+        const coreMatch = path.match(regex)
         if (!coreMatch) return null
         const coreName = coreMatch[1]
 
@@ -87,7 +99,9 @@ export const RepairButton = ({
             )}
           </GetDownloadURLForCore>
         )
-      } else if (path.startsWith("Platforms")) {
+      }
+
+      if (path.startsWith("Platforms")) {
         const platformMatch = path.match(PLATFORM_FILE_REGEX)
         if (!platformMatch) return null
         const platformId = platformMatch[1]
@@ -192,6 +206,10 @@ const RepairRedownloadFiles = ({
       paths,
       handle_moved_files: false,
       allow: true,
+      // These paths are known corrupt (the repair was triggered by a parse
+      // error on them) — if the fresh zip doesn't contain a file, the
+      // backend deletes the corrupt copy instead of failing
+      delete_missing: true,
     })
 
     await (() => {

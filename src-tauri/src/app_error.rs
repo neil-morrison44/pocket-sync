@@ -1,4 +1,5 @@
 use serde::Serialize;
+use std::path::PathBuf;
 use std::time::SystemTimeError;
 use thiserror::Error;
 
@@ -22,8 +23,15 @@ pub enum AppError {
     #[error(transparent)]
     SystemTimeError(#[from] SystemTimeError),
 
-    #[error(transparent)]
+    #[error("transparent")]
     Serde(#[from] serde_json::Error),
+
+    #[error("Failed to parse JSON file {path}: {source}")]
+    JsonFile {
+        path: PathBuf,
+        #[source]
+        source: serde_json::Error,
+    },
 
     #[error("Something went wrong: {0}")]
     Other(String),

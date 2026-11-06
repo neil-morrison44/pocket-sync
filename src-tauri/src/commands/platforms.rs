@@ -1,9 +1,9 @@
 use crate::{PocketSyncState, app_error::AppError, file_cache::get_file_with_cache};
 use log::debug;
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, io::ErrorKind, path::Path};
+use std::{collections::HashMap, io::ErrorKind, path::Path, sync::Arc};
 use tauri::Manager;
-use tokio::{fs, io::AsyncReadExt};
+use tokio::{fs, io::AsyncReadExt, sync::Semaphore};
 
 #[derive(Serialize, Deserialize)]
 pub struct PlatformData {
@@ -55,6 +55,7 @@ async fn read_platforms_from_dir(
     }
 
     let mut entries = tokio::fs::read_dir(dir).await?;
+    let semaphore = Arc::new(Semaphore::new(64));
     let mut tasks = Vec::new();
 
     while let Ok(Some(entry)) = entries.next_entry().await {
@@ -68,8 +69,10 @@ async fn read_platforms_from_dir(
 
                 let path_clone = path.clone();
                 let stem_string = file_stem.to_string();
+                let permit = semaphore.clone().acquire_owned().await?;
 
                 tasks.push(tokio::spawn(async move {
+                    let _permit = permit;
                     let mut attempts = 0;
                     let max_attempts = 5;
 
@@ -147,6 +150,7 @@ pub async fn all_platform_images(
     };
 
     let cache_dir = app_handle.path().app_cache_dir().ok();
+    let semaphore = Arc::new(Semaphore::new(64));
     let mut tasks = Vec::new();
 
     while let Ok(Some(entry)) = entries.next_entry().await {
@@ -157,8 +161,10 @@ pub async fn all_platform_images(
                 let short_name = stem.to_string();
                 let path_clone = path.clone();
                 let cache_dir_clone = cache_dir.clone();
+                let permit = semaphore.clone().acquire_owned().await?;
 
                 tasks.push(tokio::spawn(async move {
+                    let _permit = permit;
                     let mut attempts = 0;
                     let max_attempts = 5;
                     loop {

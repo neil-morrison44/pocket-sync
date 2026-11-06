@@ -1,8 +1,5 @@
-import {
-  invokeGetFirmwareDetails,
-  invokeListFiles,
-  invokeReadTextFile,
-} from "../../utils/invokes"
+import { invokeGetFirmwareDetails, invokeListFiles } from "../../utils/invokes"
+import { readJSONFile } from "../../utils/readJSONFile"
 import { FirmwareInfo, FirmwareListItem } from "../../types"
 import { allFirmwaresAtom } from "./atoms"
 import { fsWatchAtomFamily } from "../fileSystem/atoms"
@@ -32,8 +29,7 @@ export const currentFirmwareVersionSelector = atom<
   }>
 >(async (get) => {
   get(fsWatchAtomFamily("Analogue_Pocket.json"))
-  const analoguePocketJson = await invokeReadTextFile("Analogue_Pocket.json")
-  const parsedJSON = JSON.parse(analoguePocketJson) as {
+  const parsedJSON = await readJSONFile<{
     product: "Analogue Pocket"
     firmware: {
       runtime: {
@@ -42,7 +38,7 @@ export const currentFirmwareVersionSelector = atom<
         build_date: string
       }
     }
-  }
+  }>("Analogue_Pocket.json")
   const hexValue = parsedJSON.firmware.runtime.byte.toString(16)
   const version = hexValue.startsWith("b")
     ? `1.1-beta-${hexValue[1]}`
