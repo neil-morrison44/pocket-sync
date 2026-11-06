@@ -41,7 +41,7 @@ tempdir = "0.3.7"
 time = "0.3.36"
 tokio = { version = "1.48.0", features = ["macros"] }
 walkdir = "2.5.0"
-zip = { version = "2.2.2", features = ["deflate", "time"] }
+zip = { version = "4.6.1", features = ["deflate", "time"] }
 log = "^0.4"
 log-panics = { version = "2.1.0", features = ["with-backtrace"] }
 anyhow = "1.0.89"
@@ -59,7 +59,7 @@ tauri-plugin-window-state = "2.5.0"
 tauri-plugin-process = "2.4.0"
 tauri-plugin-locale = "2.0.1"
 tauri-plugin-opener = "2.7.0"
-extism = "1.21.0"
+extism = "1.41.0"
 thiserror = "2.0.18"
 webbrowser = "1.2.1"
 sys-locale = "0.3.2"
@@ -81,5 +81,5 @@ default = ["custom-protocol"]
 custom-protocol = ["tauri/custom-protocol"]
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
-tauri-plugin-updater = "2.13.0"
+tauri-plugin-updater = "2.14.1"
 tauri-plugin-window-state = "2.4.0"
