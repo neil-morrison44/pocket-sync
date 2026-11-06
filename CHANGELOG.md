@@ -1,4 +1,17 @@
 # Changelog
+<a id="v7.2.1"></a>
+# [v7.2.1 - Better JSON errors, hopefully fix too many open files error, some security updates](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.2.1) - 2026-11-06
+
+## What's Changed
+* Improve JSON parse error message & potential Too Many Open Files fix by [@neil-morrison44](https://github.com/neil-morrison44) in [#506](https://github.com/neil-morrison44/pocket-sync/pull/506)
+* Security warning fixes & speed up PR workflows by [@neil-morrison44](https://github.com/neil-morrison44) in [#508](https://github.com/neil-morrison44/pocket-sync/pull/508)
+
+
+**Full Changelog**: https://github.com/neil-morrison44/pocket-sync/compare/v7.2.0...v7.2.1
+
+[Changes][v7.2.1]
+
+
 <a id="v7.2.0"></a>
 # [v7.2.0 - Visual improvements to update all & layout fixes for plugins](https://github.com/neil-morrison44/pocket-sync/releases/tag/v7.2.0) - 2026-11-02
 
@@ -2077,6 +2090,7 @@ Search is improved a lot:
 [Changes][v0.1.0]
 
 
+[v7.2.1]: https://github.com/neil-morrison44/pocket-sync/compare/v7.2.0...v7.2.1
 [v7.2.0]: https://github.com/neil-morrison44/pocket-sync/compare/v7.1.1...v7.2.0
 [v7.1.1]: https://github.com/neil-morrison44/pocket-sync/compare/v7.1.0...v7.1.1
 [v7.1.0]: https://github.com/neil-morrison44/pocket-sync/compare/v7.0.3...v7.1.0
