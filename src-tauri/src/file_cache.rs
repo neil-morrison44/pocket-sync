@@ -33,6 +33,7 @@ pub async fn get_file_with_cache(path: &PathBuf, cache_dir: &PathBuf) -> io::Res
             };
 
             if let Some(cache_path) = cache_path {
+                drop(file);
                 let cached_file = tokio::fs::File::open(&cache_path).await?;
                 // cached_file.sync_all().await?;
                 trace!("Returning cached file {cache_path:?}");

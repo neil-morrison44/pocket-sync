@@ -80,6 +80,11 @@ pub enum FromTSPayload {
         paths: Vec<PathBuf>,
         handle_moved_files: bool,
         allow: bool,
+        /// When true (repair installs), a confirmed path that isn't in the zip
+        /// has its existing on-card file deleted instead of erroring — we know
+        /// it's corrupt because the repair was triggered by a parse error on it.
+        #[serde(default)]
+        delete_missing: bool,
     },
     ReplaceConfirmation {
         allow: bool,
