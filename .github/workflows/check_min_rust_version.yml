@@ -1,14 +1,16 @@
 name: Check min Rust version
 on: [pull_request]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check_min:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: 1.96
+      - uses: dtolnay/rust-toolchain@1.96
       - name: install dependencies (ubuntu only)
         run: |
           sudo apt-get update

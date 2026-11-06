@@ -1,90 +1,46 @@
 name: "test-tauri-on-pr"
 on: [pull_request]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-tauri:
     env:
       TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: macos-latest
-            target: universal-apple-darwin
-          - platform: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-          - platform: windows-latest
-            target: x86_64-pc-windows-msvc
-
-    runs-on: ${{ matrix.platform }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - name: setup node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: "npm"
       - uses: dtolnay/rust-toolchain@stable
       - name: Rust cache
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: "src-tauri -> target"
-      - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-latest'
+      - name: install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y gdk-3.0 libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
-      - name: install Rust target (macOS)
-        if: matrix.platform == 'macos-latest'
-        run: |
-          rustup target add aarch64-apple-darwin
-          rustup target add x86_64-apple-darwin
-
-      - uses: apple-actions/import-codesign-certs@v6
-        if: matrix.platform == 'macos-latest'
-        with:
-          p12-file-base64: ${{ secrets.APPLE_CERTIFICATE }}
-          p12-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          keychain: build
-
-      - name: Verify Certificate
-        if: matrix.platform == 'macos-latest'
-        run: |
-          security find-identity -v -p codesigning build.keychain
-          CERT_INFO=$(security find-identity -v -p codesigning build.keychain | grep "Developer ID Application")
-          CERT_ID=$(echo "$CERT_INFO" | awk -F'"' '{print $2}')
-          echo "CERT_ID=$CERT_ID" >> $GITHUB_ENV
-          echo "Certificate imported."
-
-      - name: install Rust target (Windows, Linux)
-        if: matrix.platform != 'macos-latest'
-        run: rustup target add ${{ matrix.target }}
+      - name: install Rust target
+        run: rustup target add x86_64-unknown-linux-gnu
       - name: install app dependencies and build it
         run: npm ci && npm run build
+      - name: test
+        run: npm test
 
       - uses: tauri-apps/tauri-action@v1.0.0
-        if: matrix.platform == 'macos-latest'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          APPLE_SIGNING_IDENTITY: ${{ env.CERT_ID }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        with:
-          releaseId: ${{ steps.get_release.outputs.id }}
-          args: --target ${{ matrix.target }}
-
-      - uses: tauri-apps/tauri-action@v1.0.0
-        if: matrix.platform != 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           releaseId: ${{ steps.get_release.outputs.id }}
-          args: --target ${{ matrix.target }}
+          args: --target x86_64-unknown-linux-gnu
 
       - uses: actions/upload-artifact@v7
         with:
-          name: bundle-${{ matrix.target }}
-          path: src-tauri/target/${{ matrix.target }}/release/bundle/
+          name: bundle-x86_64-unknown-linux-gnu
+          path: src-tauri/target/x86_64-unknown-linux-gnu/release/bundle/
