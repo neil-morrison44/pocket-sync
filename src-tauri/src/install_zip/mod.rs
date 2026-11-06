@@ -1,5 +1,5 @@
 use futures::StreamExt;
-use log::info;
+use log::{info, warn};
 use nestify::nest;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
@@ -460,11 +460,20 @@ async fn start_zip_install_flow(
 
     for core_path in cores {
         let full_core_path = pocket_path.join(core_path);
-        if let Some(updaters_file) = UpdatersFile::from_core_path(&full_core_path) {
-            if let Some(previous) = updaters_file.previous {
-                let new_core = CoreFile::from_core_path(&full_core_path).unwrap();
-                process_core_replacements(&window, &pocket_path, &new_core.into(), &previous).await;
+        let updaters_file = match UpdatersFile::from_core_path(&full_core_path) {
+            Ok(file) => file,
+            Err(error) => {
+                warn!(
+                    "Skipping core replacement for {:?}: {}",
+                    full_core_path, error
+                );
+                continue;
             }
+        };
+
+        if let Some(previous) = updaters_file.and_then(|file| file.previous) {
+            let new_core = CoreFile::from_core_path(&full_core_path).unwrap();
+            process_core_replacements(&window, &pocket_path, &new_core.into(), &previous).await;
         }
     }
 

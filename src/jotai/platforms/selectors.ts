@@ -244,12 +244,14 @@ export const DataPackJsonSelectorFamily = atomFamilyDeepEqual<
       parsed = JSON.parse(text)
     } catch (err) {
       console.warn(
-        `Data Pack Error: ${JSON.stringify({
-          owner,
-          repository,
-          variant,
-          platformId,
-        })}`,
+        `Data Pack Error: failed to parse ${packPath}/Platforms/${platformId}.json — ${JSON.stringify(
+          {
+            owner,
+            repository,
+            variant,
+            platformId,
+          }
+        )}`,
         err
       )
     }
