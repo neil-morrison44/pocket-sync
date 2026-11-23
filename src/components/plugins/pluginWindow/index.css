@@ -26,6 +26,43 @@
   overflow-wrap: anywhere;
 }
 
+.plugins-window__log--markdown {
+  white-space: normal;
+}
+
+.plugins-window__log--markdown > :first-child {
+  margin-top: 0;
+}
+
+/* keeps GamePocket from style.css, just smaller */
+.plugins-window__log--markdown h1 {
+  font-size: 2.4rem;
+  margin: 0.4em 0 0.3em;
+}
+
+.plugins-window__log--markdown h2,
+.plugins-window__log--markdown h3,
+.plugins-window__log--markdown h4 {
+  font-family: inherit;
+  -webkit-font-smoothing: auto;
+  padding: 0;
+  margin: 0.8em 0 0.3em;
+  line-height: 1.2;
+}
+
+.plugins-window__log--markdown h2 {
+  font-size: 1.35em;
+}
+
+.plugins-window__log--markdown h3,
+.plugins-window__log--markdown h4 {
+  font-size: 1.15em;
+}
+
+.plugins-window__log--markdown pre {
+  white-space: pre-wrap;
+}
+
 .plugins-window__control {
   color: white;
   padding: 12px;

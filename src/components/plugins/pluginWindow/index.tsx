@@ -6,6 +6,9 @@ import { listen, emit } from "@tauri-apps/api/event"
 import "./index.css"
 import { ask } from "@tauri-apps/plugin-dialog"
 import { useTranslation } from "react-i18next"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
+import { Link } from "../../link"
 
 type PluginWindowProps = {
   pluginId: string
@@ -25,6 +28,7 @@ type HostMessage = { Answer: { name: string; value: string } } | "Kill"
 export const PluginWindow = ({ pluginId }: PluginWindowProps) => {
   const [messageLog, setMessageLog] = useState<string[]>([""])
   const { t } = useTranslation("plugins")
+  const [markdown, setMarkdown] = useState<boolean>(false)
   const [closeWindowOnExit, setCloseWindowOnExit] = useState<boolean>(false)
   const [currentPluginMessage, setCurrentPluginMessage] =
     useState<PluginMessage | null>(null)
@@ -48,13 +52,18 @@ export const PluginWindow = ({ pluginId }: PluginWindowProps) => {
       })
     })
 
+    const formatPromise = listen("plugin-output-format", (event) => {
+      if (ignore) return
+      setMarkdown(event.payload === "markdown")
+    })
+
     const messagesPromise = listen("plugin-plugin-message", (event) => {
       if (ignore) return
       setCurrentPluginMessage(event.payload as PluginMessage)
     })
 
     const runPlugin = async () => {
-      await Promise.all([logsPromise, messagesPromise])
+      await Promise.all([logsPromise, messagesPromise, formatPromise])
       if (invokedPluginRef.current !== pluginId && !ignore) {
         invokedPluginRef.current = pluginId
         console.log(`Triggering Rust backend for plugin: ${pluginId}`)
@@ -68,6 +77,7 @@ export const PluginWindow = ({ pluginId }: PluginWindowProps) => {
       ignore = true
       logsPromise.then((unlisten) => unlisten())
       messagesPromise.then((unlisten) => unlisten())
+      formatPromise.then((unlisten) => unlisten())
     }
   }, [pluginId])
 
@@ -118,6 +128,7 @@ export const PluginWindow = ({ pluginId }: PluginWindowProps) => {
   return (
     <PluginWindowView
       logs={messageLog}
+      markdown={markdown}
       message={currentPluginMessage}
       onAnswer={onAnswer}
     />
@@ -126,6 +137,7 @@ export const PluginWindow = ({ pluginId }: PluginWindowProps) => {
 
 type PluginWindowViewProps = {
   logs: string[]
+  markdown?: boolean
   message: PluginMessage | null
   onAnswer: (name: string, value: string) => void
 }
@@ -135,6 +147,7 @@ type PluginWindowViewProps = {
 // props — so it can be rendered in Storybook in any of its states directly.
 export const PluginWindowView = ({
   logs,
+  markdown = false,
   message,
   onAnswer,
 }: PluginWindowViewProps) => {
@@ -160,13 +173,27 @@ export const PluginWindowView = ({
   return (
     <div className="plugins-window">
       <div
-        className="plugins-window__log"
+        className={`plugins-window__log ${
+          markdown ? "plugins-window__log--markdown" : ""
+        }`}
         onScroll={handleScroll}
         ref={logContainerRef}
       >
-        {logs.map((text, index) => (
-          <div key={index}>{text}</div>
-        ))}
+        {markdown ? (
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            skipHtml
+            disallowedElements={["img"]}
+            components={{
+              a: ({ href, children }) => <Link href={href}>{children}</Link>,
+            }}
+          >
+            {/* trailing double space = hard break */}
+            {logs.join("  \n")}
+          </ReactMarkdown>
+        ) : (
+          logs.map((text, index) => <div key={index}>{text}</div>)
+        )}
       </div>
       <div className="plugins-window__control">
         <PluginMessageRenderer message={message} onAnswer={onAnswer} />
