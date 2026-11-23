@@ -122,3 +122,20 @@ export const Finished: Story = {
     onAnswer,
   },
 }
+
+export const Markdown: Story = {
+  // Plugin opted in via "output_format": "markdown"
+  args: {
+    logs: [
+      "# Markdown output",
+      "",
+      "Some **bold**, some *italic*, some `code`, and a [link](https://example.com).",
+      "",
+      "- first item",
+      "- second item",
+    ],
+    markdown: true,
+    message: null,
+    onAnswer,
+  },
+}

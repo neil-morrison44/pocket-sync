@@ -17,6 +17,7 @@ struct PluginInfo {
     description: Option<String>,
     logo_url: Option<String>,
     allowed_hosts: Vec<String>,
+    output_format: Option<String>,
 }
 
 #[derive(Clone, Serialize, Deserialize, FromBytes, Debug)]
@@ -105,6 +106,11 @@ pub async fn run_plugin(
             source,
         })?;
 
+    let markdown = plugin_info.output_format.as_deref() == Some("markdown");
+    if markdown {
+        window.emit("plugin-output-format", "markdown")?;
+    }
+
     let (tx, rx) = mpsc::channel::<HostMessage>();
 
     let listen_id = window.listen("plugin-host-message", move |event| {
@@ -126,6 +132,12 @@ pub async fn run_plugin(
             .with_allowed_path(host_path_dir.to_string_lossy().to_string(), "host")
             .with_config_key("locale", locale)
             .with_allowed_hosts(plugin_info.allowed_hosts.clone().into_iter());
+
+        let manifest = if markdown {
+            manifest.with_config_key("output_format", "markdown")
+        } else {
+            manifest
+        };
 
         let user_data = UserData::new(());
 
